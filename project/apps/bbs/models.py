@@ -1,0 +1,134 @@
+from __future__ import division
+
+from django.db import models
+
+from django.conf import settings
+
+
+# Create your models here.
+class Contestant(models.Model):
+    """The name of the contestant"""
+
+    contestant_CHOICES = (
+        (1, "Quartet"),
+        (2, "Chorus"),
+        (3, "Collegiate"),
+        (4, "Senior"),
+    )
+
+    DISTRICT_CHOICES = (
+        (1, 'CAR'),
+        (2, 'CSD'),
+        (3, 'DIX'),
+        (4, 'EVG'),
+        (5, 'FWD'),
+        (6, 'ILL'),
+        (7, 'JAD'),
+        (8, 'LOL'),
+        (9, 'MAD'),
+        (10, 'NED'),
+        (11, 'NSC'),
+        (12, 'ONT'),
+        (13, 'PIO'),
+        (14, 'RMD'),
+        (15, 'SLD'),
+        (16, 'SUN'),
+        (17, 'SWD'),
+        (18, 'BABS'),
+        (19, 'NZABS'),
+        (20, 'SNOBS'),
+        (21, 'BHA'),
+    )
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(null=True)
+    location = models.CharField(blank=True, null=True, max_length=200)
+    seed = models.IntegerField(blank=True, null=True)
+    prelim = models.FloatField(blank=True, null=True)
+    contestant_type = models.IntegerField(blank=True, null=True, choices=contestant_CHOICES)
+    district = models.IntegerField(blank=True, null=True, choices=DISTRICT_CHOICES)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class Convention(models.Model):
+
+    CONTEST_TYPE_CHOICES = (
+        ('Quartet', 'Quartet'),
+        ('Chorus', 'Chorus'),
+        ('Collegiate', 'Collegiate'),
+        ('Senior', 'Senior'),
+    )
+
+    LEVEL_CHOICES = (
+        ("INT", "International"),
+        ("DIS", "District"),
+        ("DIV", "Division"),
+    )
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(null=True)
+    year = models.CharField(null=True, blank=True, max_length=4)
+    contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)
+    level = models.CharField(max_length=200, blank=True, null=True, choices=LEVEL_CHOICES)
+
+    def __unicode__(self):
+        return '{year} {level} {contest_type}'.format(
+            year=self.year,
+            level=self.level,
+            contest_type=self.contest_type)
+
+    class Meta:
+        ordering = ['year', 'level', 'contest_type']
+
+
+class Performance(models.Model):
+
+    ROUND_CHOICES = (
+        ('Quarters', 'Quarter Finals'),
+        ('Semis', 'Semi-Finals'),
+        ('Finals', 'Finals'),
+    )
+
+    contestant = models.ForeignKey(Contestant, blank=True, null=True)
+    convention = models.ForeignKey(Convention, blank=True, null=True)
+    # contest = models.CharField(max_length=20, blank=True, null=True, choices=CONTEST_CHOICES)
+    contest_round = models.CharField(max_length=20, blank=True, choices=ROUND_CHOICES)
+    slot = models.IntegerField(blank=True, null=True)
+
+    song_one = models.CharField(default="Song One", max_length=200)
+    score_one = models.FloatField(blank=True, null=True)
+    mus_one = models.FloatField(blank=True, null=True)
+    prs_one = models.FloatField(blank=True, null=True)
+    sng_one = models.FloatField(blank=True, null=True)
+
+    song_two = models.CharField(default="Song Two", max_length=200)
+    score_two = models.FloatField(blank=True, null=True)
+    mus_two = models.FloatField(blank=True, null=True)
+    prs_two = models.FloatField(blank=True, null=True)
+    sng_two = models.FloatField(blank=True, null=True)
+    user_scores = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Score', blank=True, null=True)
+
+    def __unicode__(self):
+        return '{convention}, {contestant_type}, {contestant_round}, {contestant}'.format(
+            convention=self.convention,
+            contestant_type=self.contest,
+            contestant_round=self.contest_round,
+            contestant=self.contestant)
+
+    class Meta:
+        ordering = ['convention', 'contest_round', 'slot']
+
+
+class Score(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    performance = models.ForeignKey(Performance, blank=True, null=True)
+    song_one = models.FloatField(blank=True, null=True, help_text="""
+        Enter your score for the first song, 0-100.""")
+    song_two = models.FloatField(blank=True, null=True, help_text="""
+        Enter your score for the second song, 0-100.""")
+    notes = models.TextField(blank=True)
