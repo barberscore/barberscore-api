@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>
+Enter Code
+</title>
+{% endblock title %}
+
+{% block content %}
+Enter the code you were texted to complete login.<br>
+    <form action='{% url "noncense_response" %}' method='post'>
+        {% csrf_token %}
+        {{response_form.as_p}}
+        <input type='submit' value='Submit'>
+    </form>
+<br><br>
+{% endblock content %}

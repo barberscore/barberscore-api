@@ -55,7 +55,7 @@ class Contestant(models.Model):
         ordering = ['name']
 
 
-class Convention(models.Model):
+class Contest(models.Model):
 
     CONTEST_TYPE_CHOICES = (
         ('Quartet', 'Quartet'),
@@ -70,7 +70,7 @@ class Convention(models.Model):
         ("DIV", "Division"),
     )
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(null=True, blank=True, max_length=200)
     slug = models.SlugField(null=True)
     year = models.CharField(null=True, blank=True, max_length=4)
     contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)
@@ -95,10 +95,11 @@ class Performance(models.Model):
     )
 
     contestant = models.ForeignKey(Contestant, blank=True, null=True)
-    convention = models.ForeignKey(Convention, blank=True, null=True)
-    # contest = models.CharField(max_length=20, blank=True, null=True, choices=CONTEST_CHOICES)
+    contest = models.ForeignKey(Contest, blank=True, null=True)
+    slug = models.SlugField(blank=True)
     contest_round = models.CharField(max_length=20, blank=True, choices=ROUND_CHOICES)
     slot = models.IntegerField(blank=True, null=True)
+    stage_time = models.DateTimeField()
 
     song_one = models.CharField(default="Song One", max_length=200)
     score_one = models.FloatField(blank=True, null=True)
@@ -111,22 +112,21 @@ class Performance(models.Model):
     mus_two = models.FloatField(blank=True, null=True)
     prs_two = models.FloatField(blank=True, null=True)
     sng_two = models.FloatField(blank=True, null=True)
-    user_scores = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Score', blank=True, null=True)
+    # rating = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Rating', blank=True, null=True)
 
     def __unicode__(self):
-        return '{convention}, {contestant_type}, {contestant_round}, {contestant}'.format(
-            convention=self.convention,
-            contestant_type=self.contest,
+        return '{contest}, {contestant_round}, {contestant}'.format(
+            contest=self.contest,
             contestant_round=self.contest_round,
             contestant=self.contestant)
 
     class Meta:
-        ordering = ['convention', 'contest_round', 'slot']
+        ordering = ['contest', 'contest_round', 'slot']
 
 
-class Score(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    performance = models.ForeignKey(Performance, blank=True, null=True)
+class Rating(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null = True)
+    performance = models.ForeignKey(Performance, null=True)
     song_one = models.FloatField(blank=True, null=True, help_text="""
         Enter your score for the first song, 0-100.""")
     song_two = models.FloatField(blank=True, null=True, help_text="""

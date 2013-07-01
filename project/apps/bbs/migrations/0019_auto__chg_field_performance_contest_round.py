@@ -29,17 +29,17 @@ class Migration(SchemaMigration):
             'seed': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
-        u'bbs.convention': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Convention'},
+        u'bbs.contest': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Contest'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
         u'bbs.performance': {
-            'Meta': {'ordering': "['convention', 'contest_round', 'slot']", 'object_name': 'Performance'},
+            'Meta': {'ordering': "['contest', 'contest_round', 'slot']", 'object_name': 'Performance'},
             'contest_round': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contestant']", 'null': 'True', 'blank': 'True'}),
-            'convention': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Convention']", 'null': 'True', 'blank': 'True'}),
+            'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mus_one': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'mus_two': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),

@@ -13,19 +13,19 @@ from django_tables2 import RequestConfig
 from .tables import (
     PerformanceTable,
     ContestantTable,
-    ConventionTable,
-    ScoreTable,
+    ContestTable,
+    RatingTable,
 )
 
 from .models import (
-    Convention,
+    Contest,
     Contestant,
     Performance,
-    Score,
+    Rating,
 )
 
 from .forms import (
-    ScoreForm,
+    RatingForm,
     ProfileForm,
 )
 
@@ -34,20 +34,11 @@ def home(request):
     return render(request, 'home.html', )
 
 
-@login_required
-def score(request, performance):
-    s, created = Score.objects.get_or_create(user=request.user, performance_id=performance)
-    if request.method == 'POST':
-        form = ScoreForm(request.POST, instance=s)
-        if form.is_valid():
-            form.save()
-            return redirect('success')
-    else:
-        form = ScoreForm(instance=s)
-    return render(request, 'score.html', {'form': form, 'score': s})
-
-
 def success(request):
+    return render(request, 'success.html')
+
+
+def submit_and_next(request):
     return render(request, 'success.html')
 
 
@@ -61,34 +52,45 @@ def profile(request):
     else:
         form = ProfileForm(instance=request.user)
     return render(request, 'profile.html', {'form': form})
+ # ##############
 
 
 def contestants(request):
     contestants = get_list_or_404(Contestant)
     table = ContestantTable(contestants)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'table.html', {'contestants': contestants, 'table': table})
+    return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
 
 
-def conventions(request):
-    conventions = get_list_or_404(Convention)
-    table = ConventionTable(conventions)
+def contests(request):
+    contests = get_list_or_404(Contest)
+    table = ContestTable(contests)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'table.html', {'conventions': conventions, 'table': table})
+    return render(request, 'contests.html', {'contests': contests, 'table': table})
 
 
 def performances(request):
-    performances = get_list_or_404(Performance)
-    table = PerformanceTable(performances)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'table.html', {'performances': performances, 'table': table})
+    performances = Performance.objects.all()
+    if performances:
+        table = PerformanceTable(performances)
+        RequestConfig(request, paginate={"per_page": 50}).configure(table)
+        return render(request, 'performances.html', {'performances': performances, 'table': table})
+    else:
+        return render(request, 'no_performances.html')
 
 
-def scores(request):
-    scores = get_list_or_404(Score)
-    table = ScoreTable(scores)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'table.html', {'scores': scores, 'table': table})
+@login_required
+def ratings(request):
+    # ratings = get_list_or_404(Rating)
+    ratings = Rating.objects.filter(user=request.user)
+    if ratings:
+        table = RatingTable(ratings)
+        RequestConfig(request, paginate={"per_page": 50}).configure(table)
+        return render(request, 'ratings.html', {'ratings': ratings, 'table': table})
+    else:
+        return render(request, 'no_ratings.html')
+
+# ###########
 
 
 def contestant(request, contestant):
@@ -96,21 +98,39 @@ def contestant(request, contestant):
     return render(request, 'contestant.html', {'contestant': contestant})
 
 
-def convention(request, convention):
-    convention = get_object_or_404(Convention, slug=convention)
-    # table = ConventionTable(convention)
-    # RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'convention.html', {'convention': convention})
+def contest_round(request, contest, contest_round):
+    contest = get_object_or_404(Contest, slug=contest)
+    performances = Performance.objects.filter(
+        contest=contest,
+        contest_round__iexact=contest_round).order_by('slot')
+    table = PerformanceTable(performances)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'contest.html', {'contest': contest, 'table': table})
+
+
+def contest(request, contest):
+    contest = get_object_or_404(Contest, slug=contest)
+    performances = Performance.objects.filter(contest=contest).order_by('slot')
+    table = PerformanceTable(performances)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'contest.html', {'contest': contest, 'table': table})
 
 
 def performance(request, performance):
-    performance = get_object_or_404(Performance, pk=performance)
-    score, is_created = Score.objects.get_or_create(user=request.user, performance=performance)
+    performance = get_object_or_404(Performance, slug=performance)
+    return render(request, 'performance.html', {'performance': performance})
+
+
+@login_required
+def rating(request, performance):
+    performance = Performance.objects.get(slug__iexact=performance)
+    next_performance = performance.get_next_by_stage_time()
+    rating, created = Rating.objects.get_or_create(user=request.user, performance=performance)
     if request.method == 'POST':
-        form = ScoreForm(request.POST, instance=score)
+        form = RatingForm(request.POST, instance=rating)
         if form.is_valid():
             form.save()
-            return redirect('success')
+            return redirect('rating', next_performance.slug)
     else:
-        form = ScoreForm(instance=score)
-    return render(request, 'performance.html', {'form': form, 'performance': performance, 'score': score})
+        form = RatingForm(instance=rating)
+    return render(request, 'rating.html', {'form': form, 'rating': rating})

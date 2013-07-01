@@ -8,46 +8,46 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Convention'
-        db.create_table(u'bbs_convention', (
+        # Adding model 'Contest'
+        db.create_table(u'bbs_contest', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
         ))
-        db.send_create_signal(u'bbs', ['Convention'])
+        db.send_create_signal(u'bbs', ['Contest'])
 
         # Deleting field 'Contest.date'
         db.delete_column(u'bbs_contest', 'date')
 
-        # Adding field 'Contest.convention'
-        db.add_column(u'bbs_contest', 'convention',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bbs.Convention'], null=True, blank=True),
+        # Adding field 'Contest.contest'
+        db.add_column(u'bbs_contest', 'contest',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bbs.Contest'], null=True, blank=True),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'Convention'
-        db.delete_table(u'bbs_convention')
+        # Deleting model 'Contest'
+        db.delete_table(u'bbs_contest')
 
         # Adding field 'Contest.date'
         db.add_column(u'bbs_contest', 'date',
                       self.gf('django.db.models.fields.DateField')(default=datetime.datetime(2013, 6, 29, 0, 0)),
                       keep_default=False)
 
-        # Deleting field 'Contest.convention'
-        db.delete_column(u'bbs_contest', 'convention_id')
+        # Deleting field 'Contest.contest'
+        db.delete_column(u'bbs_contest', 'contest_id')
 
 
     models = {
         u'bbs.contest': {
             'Meta': {'object_name': 'Contest'},
-            'convention': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Convention']", 'null': 'True', 'blank': 'True'}),
+            'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
         },
-        u'bbs.convention': {
-            'Meta': {'object_name': 'Convention'},
+        u'bbs.contest': {
+            'Meta': {'object_name': 'Contest'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})

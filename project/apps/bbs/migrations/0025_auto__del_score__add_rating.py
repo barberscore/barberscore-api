@@ -8,24 +8,47 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Deleting model 'Score'
+        db.delete_table(u'bbs_score')
 
-        # Changing field 'Contestant.location'
-        db.alter_column(u'bbs_contestant', 'location', self.gf('django.db.models.fields.CharField')(max_length=200, null=True))
-        # Adding field 'Performance.foo'
-        db.add_column(u'bbs_performance', 'foo',
-                      self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True),
-                      keep_default=False)
+        # Adding model 'Rating'
+        db.create_table(u'bbs_rating', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['noncense.MobileUser'], null=True, blank=True)),
+            ('performance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bbs.Performance'], null=True, blank=True)),
+            ('song_one', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('song_two', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('notes', self.gf('django.db.models.fields.TextField')(blank=True)),
+        ))
+        db.send_create_signal(u'bbs', ['Rating'])
 
 
     def backwards(self, orm):
+        # Adding model 'Score'
+        db.create_table(u'bbs_score', (
+            ('notes', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['noncense.MobileUser'], null=True, blank=True)),
+            ('song_one', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('song_two', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('performance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bbs.Performance'], null=True, blank=True)),
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal(u'bbs', ['Score'])
 
-        # Changing field 'Contestant.location'
-        db.alter_column(u'bbs_contestant', 'location', self.gf('django.db.models.fields.CharField')(default='', max_length=200))
-        # Deleting field 'Performance.foo'
-        db.delete_column(u'bbs_performance', 'foo')
+        # Deleting model 'Rating'
+        db.delete_table(u'bbs_rating')
 
 
     models = {
+        u'bbs.contest': {
+            'Meta': {'ordering': "['year', 'level', 'contest_type']", 'object_name': 'Contest'},
+            'contest_type': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'level': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'}),
+            'year': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
+        },
         u'bbs.contestant': {
             'Meta': {'ordering': "['name']", 'object_name': 'Contestant'},
             'contestant_type': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -37,18 +60,11 @@ class Migration(SchemaMigration):
             'seed': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
-        u'bbs.contest': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Contest'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
-        },
         u'bbs.performance': {
-            'Meta': {'ordering': "['contest_round', 'slot']", 'object_name': 'Performance'},
-            'contest_round': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contestant']", 'null': 'True', 'blank': 'True'}),
+            'Meta': {'ordering': "['contest', 'contest_round', 'slot']", 'object_name': 'Performance'},
             'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
-            'foo': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'contest_round': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
+            'contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contestant']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mus_one': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'mus_two': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
@@ -61,10 +77,10 @@ class Migration(SchemaMigration):
             'sng_two': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'song_one': ('django.db.models.fields.CharField', [], {'default': "'Song One'", 'max_length': '200'}),
             'song_two': ('django.db.models.fields.CharField', [], {'default': "'Song Two'", 'max_length': '200'}),
-            'user_scores': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['noncense.MobileUser']", 'null': 'True', 'through': u"orm['bbs.Score']", 'blank': 'True'})
+            'user_scores': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['noncense.MobileUser']", 'null': 'True', 'through': u"orm['bbs.Rating']", 'blank': 'True'})
         },
-        u'bbs.score': {
-            'Meta': {'object_name': 'Score'},
+        u'bbs.rating': {
+            'Meta': {'object_name': 'Rating'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'notes': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'performance': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Performance']", 'null': 'True', 'blank': 'True'}),

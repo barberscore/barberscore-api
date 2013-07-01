@@ -2,11 +2,5 @@
 
 
 {% block content %}
-{{performance.contestant}}<br>
-<form action = "{% url 'performance' performance.id %}" method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="Submit">
-</form>
-
+{{performance}}<br>
 {% endblock content %}

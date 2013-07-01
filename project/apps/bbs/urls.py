@@ -6,11 +6,17 @@ urlpatterns = patterns(
     # url(r'score/(?P<performance>\d+)$', 'score', name='score'),
     url(r'success/$', 'success', name='success'),
     url(r'profile/$', 'profile', name='profile'),
+
+
     url(r'performance/$', 'performances', name='performances'),
     url(r'contestant/$', 'contestants', name='contestants'),
-    url(r'convention/$', 'conventions', name='conventions'),
-    url(r'score/$', 'scores', name='scores'),
+    url(r'contest/$', 'contests', name='contests'),
+    url(r'rating/$', 'ratings', name='ratings'),
+
+
     url(r'contestant/(?P<contestant>[\w-]+)/$', 'contestant', name='contestant'),
     url(r'performance/(?P<performance>[\w-]+)/$', 'performance', name='performance'),
-    url(r'convention/(?P<convention>[\w-]+)/$', 'convention', name='convention'),
+    url(r'contest/(?P<contest>[\w-]+)/$', 'contest', name='contest'),
+    url(r'contest/(?P<contest>[\w-]+)/(?P<contest_round>[\w-]+)/$', 'contest_round', name='contest_round'),
+    url(r'rating/(?P<performance>[\w-]+)/$', 'rating', name='rating'),
 )

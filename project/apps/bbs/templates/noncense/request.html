@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>
+Login
+</title>
+{% endblock title %}
+
+{% block content %}
+Enter your mobile number to login.  You will be directed to the next screen
+and will receive a text with a four-digit code on your mobile phone.
+    <form action='{% url "noncense_request" %}' method='post'>
+        {% csrf_token %}
+        {{request_form.as_p}}
+        <input type='submit' value='Submit'>
+    </form>
+<strong>We will not call, text, share,
+or use your mobile number for any purpose other than logging in.</strong>
+{% endblock content %}

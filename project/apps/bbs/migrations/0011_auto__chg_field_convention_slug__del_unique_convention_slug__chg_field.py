@@ -14,12 +14,12 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'Contest', fields ['slug']
         db.delete_unique(u'bbs_contest', ['slug'])
 
-        # Removing unique constraint on 'Convention', fields ['slug']
-        db.delete_unique(u'bbs_convention', ['slug'])
+        # Removing unique constraint on 'Contest', fields ['slug']
+        db.delete_unique(u'bbs_contest', ['slug'])
 
 
-        # Changing field 'Convention.slug'
-        db.alter_column(u'bbs_convention', 'slug', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True))
+        # Changing field 'Contest.slug'
+        db.alter_column(u'bbs_contest', 'slug', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True))
 
         # Changing field 'Contest.slug'
         db.alter_column(u'bbs_contest', 'slug', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True))
@@ -29,10 +29,10 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
 
-        # User chose to not deal with backwards NULL issues for 'Convention.slug'
-        raise RuntimeError("Cannot reverse this migration. 'Convention.slug' and its values cannot be restored.")
-        # Adding unique constraint on 'Convention', fields ['slug']
-        db.create_unique(u'bbs_convention', ['slug'])
+        # User chose to not deal with backwards NULL issues for 'Contest.slug'
+        raise RuntimeError("Cannot reverse this migration. 'Contest.slug' and its values cannot be restored.")
+        # Adding unique constraint on 'Contest', fields ['slug']
+        db.create_unique(u'bbs_contest', ['slug'])
 
 
         # User chose to not deal with backwards NULL issues for 'Contest.slug'
@@ -50,13 +50,13 @@ class Migration(SchemaMigration):
     models = {
         u'bbs.contest': {
             'Meta': {'object_name': 'Contest'},
-            'convention': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Convention']", 'null': 'True', 'blank': 'True'}),
+            'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
-        u'bbs.convention': {
-            'Meta': {'object_name': 'Convention'},
+        u'bbs.contest': {
+            'Meta': {'object_name': 'Contest'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})

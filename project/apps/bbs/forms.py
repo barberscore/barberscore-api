@@ -5,13 +5,13 @@ from noncense.models import (
 )
 
 from .models import (
-    Score,
+    Rating,
 )
 
 
-class ScoreForm(forms.ModelForm):
+class RatingForm(forms.ModelForm):
     class Meta:
-        model = Score
+        model = Rating
         exclude = ['user', 'performance']
 
 

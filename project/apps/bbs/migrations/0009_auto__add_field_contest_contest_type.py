@@ -23,13 +23,13 @@ class Migration(SchemaMigration):
         u'bbs.contest': {
             'Meta': {'object_name': 'Contest'},
             'contest_type': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'convention': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Convention']", 'null': 'True', 'blank': 'True'}),
+            'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
         },
-        u'bbs.convention': {
-            'Meta': {'object_name': 'Convention'},
+        u'bbs.contest': {
+            'Meta': {'object_name': 'Contest'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})

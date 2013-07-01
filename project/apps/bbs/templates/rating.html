@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action = "{% url 'rating' rating.performance.slug %}" method="post">
+    {% csrf_token %}
+    {{form.as_table}}
+    <br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock content %}

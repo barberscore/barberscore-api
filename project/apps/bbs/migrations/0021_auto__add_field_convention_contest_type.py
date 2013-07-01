@@ -8,15 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Convention.contest_type'
-        db.add_column(u'bbs_convention', 'contest_type',
+        # Adding field 'Contest.contest_type'
+        db.add_column(u'bbs_contest', 'contest_type',
                       self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'Convention.contest_type'
-        db.delete_column(u'bbs_convention', 'contest_type')
+        # Deleting field 'Contest.contest_type'
+        db.delete_column(u'bbs_contest', 'contest_type')
 
 
     models = {
@@ -31,8 +31,8 @@ class Migration(SchemaMigration):
             'seed': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
-        u'bbs.convention': {
-            'Meta': {'ordering': "['year', 'level', 'contest_type']", 'object_name': 'Convention'},
+        u'bbs.contest': {
+            'Meta': {'ordering': "['year', 'level', 'contest_type']", 'object_name': 'Contest'},
             'contest_type': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'level': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
@@ -41,11 +41,11 @@ class Migration(SchemaMigration):
             'year': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
         },
         u'bbs.performance': {
-            'Meta': {'ordering': "['convention', 'contest_round', 'slot']", 'object_name': 'Performance'},
+            'Meta': {'ordering': "['contest', 'contest_round', 'slot']", 'object_name': 'Performance'},
             'contest': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'contest_round': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contestant']", 'null': 'True', 'blank': 'True'}),
-            'convention': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Convention']", 'null': 'True', 'blank': 'True'}),
+            'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mus_one': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'mus_two': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),

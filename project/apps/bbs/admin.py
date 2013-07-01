@@ -1,19 +1,15 @@
 from django.contrib import admin
 
 from .models import (
-    Convention,
+    Contest,
     Contestant,
     Performance,
-    Score
+    Rating,
 )
 
 
-class ConventionAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("year","level", "contest_type")}
-
-
 class ContestAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("name",)}
+    prepopulated_fields = {"slug": ("year", "level", "contest_type")}
 
 
 class ContestantAdmin(admin.ModelAdmin):
@@ -25,12 +21,19 @@ class ContestantAdmin(admin.ModelAdmin):
 class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
     fieldsets = [
-        (None, {'fields': ['convention', 'contest_round', 'contestant', 'slot']}),
+        (None, {'fields': ['contest', 'contest_round', 'contestant', 'slot', 'stage_time']}),
         ('Scores', {'fields': [('song_one', 'score_one'), ('song_two', 'score_two')]}),
         ('Detail', {'fields': [('mus_one', 'prs_one', 'sng_one'), ('mus_two', 'prs_two', 'sng_two')], 'classes':['collapse']})
     ]
+    list_display = ['__unicode__', 'stage_time']
 
-admin.site.register(Convention, ConventionAdmin)
+
+class RatingAdmin(admin.ModelAdmin):
+    save_on_top = True
+    raw_id_fields = ['performance']
+    list_display = ['user', 'performance']
+
+admin.site.register(Contest, ContestAdmin)
 admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Performance, PerformanceAdmin)
-admin.site.register(Score)
+admin.site.register(Rating, RatingAdmin)

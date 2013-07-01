@@ -8,13 +8,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Convention.year'
-        db.add_column(u'bbs_convention', 'year',
+        # Adding field 'Contest.year'
+        db.add_column(u'bbs_contest', 'year',
                       self.gf('django.db.models.fields.CharField')(max_length=4, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'Convention.level'
-        db.add_column(u'bbs_convention', 'level',
+        # Adding field 'Contest.level'
+        db.add_column(u'bbs_contest', 'level',
                       self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True),
                       keep_default=False)
 
@@ -25,11 +25,11 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting field 'Convention.year'
-        db.delete_column(u'bbs_convention', 'year')
+        # Deleting field 'Contest.year'
+        db.delete_column(u'bbs_contest', 'year')
 
-        # Deleting field 'Convention.level'
-        db.delete_column(u'bbs_convention', 'level')
+        # Deleting field 'Contest.level'
+        db.delete_column(u'bbs_contest', 'level')
 
         # Deleting field 'Performance.contest'
         db.delete_column(u'bbs_performance', 'contest')
@@ -47,8 +47,8 @@ class Migration(SchemaMigration):
             'seed': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
-        u'bbs.convention': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Convention'},
+        u'bbs.contest': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Contest'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'level': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
@@ -56,11 +56,11 @@ class Migration(SchemaMigration):
             'year': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
         },
         u'bbs.performance': {
-            'Meta': {'ordering': "['convention', 'contest_round', 'slot']", 'object_name': 'Performance'},
+            'Meta': {'ordering': "['contest', 'contest_round', 'slot']", 'object_name': 'Performance'},
             'contest': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'contest_round': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'contestant': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contestant']", 'null': 'True', 'blank': 'True'}),
-            'convention': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Convention']", 'null': 'True', 'blank': 'True'}),
+            'contest': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['bbs.Contest']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mus_one': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'mus_two': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),

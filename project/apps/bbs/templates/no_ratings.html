@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
+{% block title %}
+<title>
+No Ratings Found
+</title>
+{% endblock title %}
+
 {% block content %}
-{% if user.is_authenticated %}
-<p>
-Navigate using the top menu.
-</p>
+You haven't yet rated any performances. <br><br>
+To rate a performance, click below.  You'll be taken to the
+main contest page where you can pick a contest and then rate a performance.<br><br>
 <p>
 To see a list of performances by contest, click below:<br>
 <a href="{% url 'contest_round' 'quartet' 'quarters' %}">Quartet Quarters</a><br>
@@ -13,17 +18,4 @@ To see a list of performances by contest, click below:<br>
 <a href="{% url 'contest' 'chorus' %}">Chorus Finals</a><br>
 <a href="{% url 'contest' 'collegiate' %}">Collegiate Finals</a><br>
 </p>
-<p>
-To see a list of all contestants, click below:<br>
-<a href="{% url 'contestants' %}">All Contestants</a><br>
-</p>
-<p>
-    To see your ratings, click below:<br>
-    <a href="{% url 'ratings' %}">All Ratings</a><br>
-</p>
-{% else %}
-Welcome to Barberscore, a simple way to track peformances during convention.<br>
-Description<br>
-<a href="{% url 'noncense_request' %}">Login Now</a>
-{% endif %}
 {% endblock content %}
