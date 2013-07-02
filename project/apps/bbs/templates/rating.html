@@ -8,14 +8,16 @@
 
 
 {% block content %}
-{{performance.contest.get_contest_type_display}} {{performance.get_contest_round_display}}<br>
-Contestant #{{performance.slot}}<br>
-<a href="{% url 'contestant' performance.contestant.slug %}">{{performance.contestant.name}}</a><br><br>
+<p>
+{{performance.contest.get_contest_type_display}} {{performance.get_contest_round_display}}</P>
+<p>
+Contestant #{{performance.slot}},
+<a href="{% url 'contestant' performance.contestant.slug %}">{{performance.contestant.name}}</a></p>
 <form action = "{% url 'rating' rating.performance.slug %}" method="post">
     {% csrf_token %}
     {{form.as_p}}
     <br>
-    <input type="submit" value="Save and Next">
+    <input type="submit" value="Save and Rate Next Performance">
 </form>
 
 {% endblock content %}
