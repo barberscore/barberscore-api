@@ -7,7 +7,10 @@ Enter Code
 {% endblock title %}
 
 {% block content %}
-Enter the code you were texted to complete login.<br>
+<p>
+Enter the four-digit code you were texted.  It may take up to 30 seconds to receive the text.
+</P>
+
     <form action='{% url "noncense_response" %}' method='post'>
         {% csrf_token %}
         {{response_form.as_p}}

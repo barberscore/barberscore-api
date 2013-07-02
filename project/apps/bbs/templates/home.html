@@ -4,31 +4,38 @@
 {% if user.is_authenticated %}
 <p>
 Navigate using the top menu or via the links below.
-To return to this screen, click "Barberscore" in the upper left hand corner.
+To return to this screen, click <a href="{% url 'home' %}">Barberscore</a> in the upper left hand corner.
+</p>
+{% include 'contest_list.html' %}
+<p>
+To see a list of all contestants:<br>
+<a href="{% url 'contestants' %}">Contestants</a><br>
 </p>
 <p>
-To see a list of performances by contest, click below:<br>
-<a href="{% url 'contest' 'quartet' 'quarters' %}">Quartet Quarters</a><br>
-<a href="{% url 'contest' 'quartet' 'semis' %}">Quartet Semis</a><br>
-<a href="{% url 'contest' 'quartet' 'finals' %}">Quartet Finals</a><br>
-<a href="{% url 'contest' 'chorus' 'finals' %}">Chorus Finals</a><br>
-<a href="{% url 'contest' 'collegiate' 'finals' %}">Collegiate Finals</a><br>
+    To see your ratings (requires login):<br>
+    <a href="{% url 'ratings' %}">Ratings</a><br>
 </p>
 <p>
-To see a list of all contestants, click below:<br>
-<a href="{% url 'contestants' %}">All Contestants</a><br>
-</p>
-<p>
-    To see your ratings, click below:<br>
-    <a href="{% url 'ratings' %}">All Ratings</a><br>
-</p>
-<p>
-    To add your name to your profile, click below:<br>
+    To add your name to your profile (requires login):<br>
     <a href="{% url 'profile' %}">Profile</a><br>
-
+</p>
 {% else %}
-Welcome to Barberscore, a simple way to track peformances during convention.<br>
-Description<br>
-<a href="{% url 'noncense_request' %}">Login Now</a>
+<p>
+Welcome to Barberscore, a simple way to track peformances during the Toronto Convention of the Barbershop Harmony Society.
+</p>
+
+<p>
+This free app provides the list of contestants and contest schedule, along with a way to write notes and rate performances on your mobile phone or desktop.  Getting the list of contestants is available immediately; rating performances requires a mobile phone for login.
+</p>
+
+<p><strong><a href="{% url 'noncense_request' %}">Login Now</a></strong></p>
+
+<p>
+    I will not be using or sharing your personal information in any way; I'm just a barbershopper and a geek and thought it would be cool to build something for convention.
+</p>
+
+<p>
+    My name is <a href = "http://www.davidbinetti.com">David Binetti</a>, I've sung with the <a href = "http://www.harmonizers.org">Harmonizers</a> and <a href = "http://www.vihchorus.org">Voices in Harmony</a>.  Source code for this app can be found <a href = "http://www.github.com/dbinetti/barberscore">here</a>.  If you have any questions or need support email me at <a href='mailto:support@barberscore.zendesk.com'>support@barberscore.zendesk.com</a>.
+</p>
 {% endif %}
 {% endblock content %}

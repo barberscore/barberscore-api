@@ -1,5 +1,21 @@
 {% extends 'base.html' %}
 
+{% load humanize %}
+{% load render_table from django_tables2 %}
+
 {% block content %}
-{{contestant.name}}
+<p><strong>{{contestant.name}}</strong> ({{contestant.get_district_display}})</P>
+<p>
+    {{contestant.location}}<br>
+    Prelim Score: {{contestant.prelim}}<br>
+    Seeded: {{contestant.seed|ordinal}}<br>
+
+</P>
+<P>
+    Performances:<br>
+    {% for performance in performances %}
+    {{performance.stage_time}}<br>
+    {% endfor %}
+</P>
+
 {% endblock content %}

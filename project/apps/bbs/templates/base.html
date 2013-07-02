@@ -57,8 +57,11 @@
               {# <li class="active"><a href="{% url 'home' %}">Home</a></li> #}
               <li><a href="{% url 'contests' %}">Contests</a></li>
               <li><a href="{% url 'contestants' %}">Contestants</a></li>
+              {# {% if mobileuser.is_authenticated %} #}
               <li><a href="{% url 'ratings' %}">Ratings</a></li>
               <li><a href="{% url 'profile' %}">Profile</a></li>
+              <li><a href="{% url 'logout' %}">Logout</a></li>
+              {# {% endif authenticated %} #}
             </ul>
           </div><!--/.nav-collapse -->
         </div>

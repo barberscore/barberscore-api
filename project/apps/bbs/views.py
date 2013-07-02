@@ -92,7 +92,8 @@ def ratings(request):
 
 def contestant(request, contestant):
     contestant = get_object_or_404(Contestant, slug=contestant)
-    return render(request, 'contestant.html', {'contestant': contestant})
+    performances = Performance.objects.filter(contestant=contestant).order_by('stage_time')
+    return render(request, 'contestant.html', {'contestant': contestant, 'performances': performances})
 
 
 def contest(request, contest, contest_round):
