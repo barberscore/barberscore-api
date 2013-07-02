@@ -14,8 +14,8 @@ class ContestAdmin(admin.ModelAdmin):
 
 class ContestantAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ['name', 'slug', 'district']
-    list_filter = ['district']
+    list_display = ['name', 'slug', 'district', 'seed']
+    list_filter = ['district', 'contestant_type']
 
 
 class PerformanceAdmin(admin.ModelAdmin):
@@ -26,6 +26,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         ('Detail', {'fields': [('mus_one', 'prs_one', 'sng_one'), ('mus_two', 'prs_two', 'sng_two')], 'classes':['collapse']})
     ]
     list_display = ['__unicode__', 'stage_time']
+    list_filter = ['contest']
 
 
 class RatingAdmin(admin.ModelAdmin):

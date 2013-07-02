@@ -117,10 +117,11 @@ class Performance(models.Model):
     # rating = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Rating', blank=True, null=True)
 
     def __unicode__(self):
-        return '{contest} {contestant_round}, Slot {slot}'.format(
+        return '{contest} {contestant_round}, Slot {slot}: {contestant}'.format(
             contest=self.contest,
             contestant_round=self.contest_round,
-            slot=self.slot)
+            slot=self.slot,
+            contestant=self.contestant)
 
     class Meta:
         ordering = ['contest', 'contest_round', 'slot']
