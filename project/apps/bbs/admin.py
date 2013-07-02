@@ -32,7 +32,8 @@ class PerformanceAdmin(admin.ModelAdmin):
 class RatingAdmin(admin.ModelAdmin):
     save_on_top = True
     raw_id_fields = ['performance']
-    list_display = ['user', 'performance']
+    list_display = ['user', 'performance', 'song_one', 'song_two']
+    list_filter = ['user']
 
 admin.site.register(Contest, ContestAdmin)
 admin.site.register(Contestant, ContestantAdmin)
