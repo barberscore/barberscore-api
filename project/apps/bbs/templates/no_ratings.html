@@ -8,14 +8,6 @@ No Ratings Found
 
 {% block content %}
 You haven't yet rated any performances. <br><br>
-To rate a performance, click below.  You'll be taken to the
-main contest page where you can pick a contest and then rate a performance.<br><br>
-<p>
-To see a list of performances by contest, click below:<br>
-<a href="{% url 'contest' 'quartet' 'quarters' %}">Quartet Quarters</a><br>
-<a href="{% url 'contest' 'quartet' 'semis' %}">Quartet Semis</a><br>
-<a href="{% url 'contest' 'quartet' 'finals' %}">Quartet Finals</a><br>
-<a href="{% url 'contest' 'chorus' 'finals' %}">Chorus Finals</a><br>
-<a href="{% url 'contest' 'collegiate' 'finals' %}">Collegiate Finals</a><br>
-</p>
+To rate a performance, click a contest below and then click a performance to enter your score and notes.<br><br>
+{% include 'contest_list.html' %}
 {% endblock content %}

@@ -37,8 +37,8 @@ class PerformanceTable(tables.Table):
 
 
 class ContestantTable(tables.Table):
-    # name = tables.LinkColumn('contestant', args=[A('slug')])
-    name = tables.Column()
+    name = tables.LinkColumn('contestant', args=[A('slug')])
+    # name = tables.Column()
     contestant_type = tables.Column()
     district = tables.Column()
     location = tables.Column()
