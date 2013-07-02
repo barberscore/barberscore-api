@@ -3,5 +3,12 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-{% render_table table %}
+<p>
+To see a list of performances by contest, click below:<br>
+<a href="{% url 'contest' 'quartet' 'quarters' %}">Quartet Quarters</a><br>
+<a href="{% url 'contest' 'quartet' 'semis' %}">Quartet Semis</a><br>
+<a href="{% url 'contest' 'quartet' 'finals' %}">Quartet Finals</a><br>
+<a href="{% url 'contest' 'chorus' 'finals' %}">Chorus Finals</a><br>
+<a href="{% url 'contest' 'collegiate' 'finals' %}">Collegiate Finals</a><br>
+</p>
 {% endblock content %}

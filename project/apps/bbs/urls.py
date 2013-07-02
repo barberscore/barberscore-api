@@ -10,13 +10,17 @@ urlpatterns = patterns(
 
     url(r'performance/$', 'performances', name='performances'),
     url(r'contestant/$', 'contestants', name='contestants'),
-    url(r'contest/$', 'contests', name='contests'),
     url(r'rating/$', 'ratings', name='ratings'),
 
 
     url(r'contestant/(?P<contestant>[\w-]+)/$', 'contestant', name='contestant'),
     url(r'performance/(?P<performance>[\w-]+)/$', 'performance', name='performance'),
-    url(r'contest/(?P<contest>[\w-]+)/$', 'contest', name='contest'),
-    url(r'contest/(?P<contest>[\w-]+)/(?P<contest_round>[\w-]+)/$', 'contest_round', name='contest_round'),
+    url(r'contest/(?P<contest>[\w-]+)/(?P<contest_round>[\w-]+)/$', 'contest', name='contest'),
     url(r'rating/(?P<performance>[\w-]+)/$', 'rating', name='rating'),
+
+
+    url(r'contest/$', 'contests', name='contests'),
+    # url(r'contest/(?P<contest>[\w-]+)/$', 'contest', name='contest'),
+
+
 )

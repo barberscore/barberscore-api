@@ -29,7 +29,7 @@ MANAGERS = ADMINS
 
 ALLOWED_HOSTS = []
 
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'America/Toronto'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -126,7 +126,7 @@ INSTALLED_APPS = (
     'django.contrib.formtools',
     'south',
     'django_tables2',
-    'crispy_forms',
+    'floppyforms',
     'apps.bbs',
 )
 

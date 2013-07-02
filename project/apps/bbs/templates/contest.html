@@ -2,6 +2,9 @@
 
 {% load render_table from django_tables2 %}
 {% block content %}
-{{contest.name}}<br>
+{{contest.name}}
+<p>
+    Click on the contestant name to rate the performance.
+</p>
 {% render_table table %}
 {% endblock content %}

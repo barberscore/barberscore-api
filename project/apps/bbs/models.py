@@ -4,6 +4,8 @@ from django.db import models
 
 from django.conf import settings
 
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 
 # Create your models here.
 class Contestant(models.Model):
@@ -58,10 +60,10 @@ class Contestant(models.Model):
 class Contest(models.Model):
 
     CONTEST_TYPE_CHOICES = (
-        ('Quartet', 'Quartet'),
-        ('Chorus', 'Chorus'),
-        ('Collegiate', 'Collegiate'),
-        ('Senior', 'Senior'),
+        ('Quartet', 'Quartet Contest'),
+        ('Chorus', 'Chorus Contest'),
+        ('Collegiate', 'Collegiate Contest'),
+        ('Senior', 'Senior Contest'),
     )
 
     LEVEL_CHOICES = (
@@ -89,7 +91,7 @@ class Contest(models.Model):
 class Performance(models.Model):
 
     ROUND_CHOICES = (
-        ('Quarters', 'Quarter Finals'),
+        ('Quarters', 'Quarter-Finals'),
         ('Semis', 'Semi-Finals'),
         ('Finals', 'Finals'),
     )
@@ -115,20 +117,27 @@ class Performance(models.Model):
     # rating = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Rating', blank=True, null=True)
 
     def __unicode__(self):
-        return '{contest}, {contestant_round}, {contestant}'.format(
+        return '{contest} {contestant_round}, Slot {slot}'.format(
             contest=self.contest,
             contestant_round=self.contest_round,
-            contestant=self.contestant)
+            slot=self.slot)
 
     class Meta:
         ordering = ['contest', 'contest_round', 'slot']
 
 
+
 class Rating(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null = True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     performance = models.ForeignKey(Performance, null=True)
-    song_one = models.FloatField(blank=True, null=True, help_text="""
-        Enter your score for the first song, 0-100.""")
-    song_two = models.FloatField(blank=True, null=True, help_text="""
-        Enter your score for the second song, 0-100.""")
+    song_one = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    song_two = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
     notes = models.TextField(blank=True)
+
+    # def clean(self):
+    # # Don't allow draft entries to have a pub_date.
+    #     if self.song_one > 100 or self.song_one < 0:
+    #         raise ValidationError('Rating must be between 0-100.')
+    #     # Set the pub_date for published items if it hasn't been set already.
+    #     if self.song_two > 100 or self.song_one < 0:
+    #         raise ValidationError('Rating must be between 0-100.')

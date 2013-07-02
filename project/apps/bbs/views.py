@@ -13,7 +13,7 @@ from django_tables2 import RequestConfig
 from .tables import (
     PerformanceTable,
     ContestantTable,
-    ContestTable,
+    # ContestTable,
     RatingTable,
 )
 
@@ -31,7 +31,7 @@ from .forms import (
 
 
 def home(request):
-    return render(request, 'home.html', )
+    return render(request, 'home.html')
 
 
 def success(request):
@@ -63,10 +63,7 @@ def contestants(request):
 
 
 def contests(request):
-    contests = get_list_or_404(Contest)
-    table = ContestTable(contests)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contests.html', {'contests': contests, 'table': table})
+    return render(request, 'contests.html')
 
 
 def performances(request):
@@ -98,22 +95,17 @@ def contestant(request, contestant):
     return render(request, 'contestant.html', {'contestant': contestant})
 
 
-def contest_round(request, contest, contest_round):
+def contest(request, contest, contest_round):
     contest = get_object_or_404(Contest, slug=contest)
     performances = Performance.objects.filter(
         contest=contest,
         contest_round__iexact=contest_round).order_by('slot')
-    table = PerformanceTable(performances)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contest.html', {'contest': contest, 'table': table})
-
-
-def contest(request, contest):
-    contest = get_object_or_404(Contest, slug=contest)
-    performances = Performance.objects.filter(contest=contest).order_by('slot')
-    table = PerformanceTable(performances)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contest.html', {'contest': contest, 'table': table})
+    if performances:
+        table = PerformanceTable(performances)
+        RequestConfig(request, paginate={"per_page": 50}).configure(table)
+        return render(request, 'contest.html', {'contest': contest, 'performances': performances, 'table': table})
+    else:
+        return render(request, 'no_performances.html', {'contest': contest, 'contest_round': contest_round})
 
 
 def performance(request, performance):
@@ -133,4 +125,4 @@ def rating(request, performance):
             return redirect('rating', next_performance.slug)
     else:
         form = RatingForm(instance=rating)
-    return render(request, 'rating.html', {'form': form, 'rating': rating})
+    return render(request, 'rating.html', {'form': form, 'rating': rating, 'performance': performance})

@@ -2,7 +2,7 @@ import django_tables2 as tables
 from django_tables2.utils import A
 
 
-from .templatetags.bbstags import score
+from .templatetags.bbstags import score, time_only
 
 
 class ScoreColumn(tables.Column):
@@ -13,23 +13,24 @@ class ScoreColumn(tables.Column):
             return None
 
 
+class TimeColumn(tables.Column):
+    def render(self, value):
+        if value:
+            return time_only(value)
+        else:
+            return None
+
+
 class PerformanceTable(tables.Table):
-    slot = tables.Column()
-    contestant = tables.LinkColumn('performance', args=[A('slug')])
+    # slot = tables.Column()
+    stage_time = TimeColumn()
+    contestant = tables.LinkColumn('rating', args=[A('slug')])
     prelim = tables.Column(accessor='contestant.prelim')
-    seed = tables.Column(accessor='contestant.seed')
+    # seed = tables.Column(accessor='contestant.seed')
     song_one = tables.Column()
-    score_one = ScoreColumn()
+    # score_one = ScoreColumn()
     song_two = tables.Column()
-    score_two = ScoreColumn()
-
-    class Meta:
-        attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
-
-
-class ContestTable(tables.Table):
-    # name = tables.LinkColumn('contest_round', args=[A('slug'), A('contest_round')])
-    name = tables.Column()
+    # score_two = ScoreColumn()
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
@@ -48,11 +49,10 @@ class ContestantTable(tables.Table):
 
 class RatingTable(tables.Table):
 
-    performance = tables.LinkColumn('rating', args=[A('performance.slug')])
-    song_one = ScoreColumn()
-    song_two = ScoreColumn()
-
+    performance = tables.LinkColumn('rating', accessor='performance', args=[A('performance.slug')])
+    contestant = tables.Column(accessor='performance.contestant')
+    song_one = tables.Column()
+    song_two = tables.Column()
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
-
