@@ -8,7 +8,7 @@ Login
 
 {% block content %}
 <p>
-Enter your mobile number to login.  You will be directed to the next screen
+Enter your North American mobile number to login.  You will be directed to the next screen
 and will receive a text with a four-digit code on your mobile phone.</p>
     <form action='{% url "noncense_request" %}' method='post'>
         {% csrf_token %}
