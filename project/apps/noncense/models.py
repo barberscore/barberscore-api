@@ -42,6 +42,7 @@ class MobileUser(AbstractBaseUser):
 
     first_name = models.CharField(blank=True, max_length=25)
     last_name = models.CharField(blank=True, max_length=25)
+    prediction = models.TextField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

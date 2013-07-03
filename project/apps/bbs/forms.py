@@ -37,4 +37,4 @@ class RatingForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = MobileUser
-        fields = ('first_name', 'last_name',)
+        fields = ('first_name', 'last_name', 'prediction')

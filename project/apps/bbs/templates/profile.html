@@ -8,7 +8,9 @@ Update Profile</title>
 
 {% block content %}
     <p>
-    Update your profile to add your name.  While we don't currently do anything with your name, if we decide to make your ratings public then your name will be attached to them.  This is purely optional.
+    Update your profile to add your name.  While we don't currently do anything with your name, if we decide to make your ratings public then your name will be attached to them.  This is purely optional.</p>
+<p>
+    You can also make your prediction in the text field.  I'll figure out a better way to do this later, but for now it's a place to put your stake in the ground.
 </P>
 <form action = "{% url 'profile' %}" method="post">
     {% csrf_token %}
