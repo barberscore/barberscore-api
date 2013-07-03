@@ -45,6 +45,7 @@ class Contestant(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(null=True)
     location = models.CharField(blank=True, null=True, max_length=200)
+    director = models.CharField(blank=True, null=True, max_length=200)
     seed = models.IntegerField(blank=True, null=True)
     prelim = models.FloatField(blank=True, null=True)
     contestant_type = models.IntegerField(blank=True, null=True, choices=contestant_CHOICES)
