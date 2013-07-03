@@ -1,8 +1,7 @@
 import floppyforms as forms
 from floppyforms.widgets import PhoneNumberInput
 
-
-from noncense.models import (
+from apps.noncense.models import (
     MobileUser,
 )
 

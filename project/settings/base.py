@@ -128,6 +128,8 @@ INSTALLED_APPS = (
     'django_tables2',
     'floppyforms',
     'apps.bbs',
+    'apps.noncense',
+    'django_localflavor_us',
 )
 
 
@@ -141,13 +143,13 @@ LOGOUT_URL = 'logout'
 # below and update your URLconf if you wish to use the stock Django
 # authentication.
 
-INSTALLED_APPS += (
-    'noncense',
-)
+# INSTALLED_APPS += (
+#     'noncense',
+# )
 
 
 AUTHENTICATION_BACKENDS = (
-    'noncense.backends.NonceBackend',
+    'apps.noncense.backends.NonceBackend',
     'django.contrib.auth.backends.ModelBackend',)
 
 AUTH_USER_MODEL = 'noncense.MobileUser'

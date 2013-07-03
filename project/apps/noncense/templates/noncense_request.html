@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>
+Nonce Login
+</title>
+{% endblock title %}
+
+{% block content %}
+    <form action='{% url "noncense_request" %}' method='post'>
+        {% csrf_token %}
+        {{request_form.as_p}}
+        <input type='submit' value='Submit'>
+    </form>
+<br><br>
+{% endblock content %}
