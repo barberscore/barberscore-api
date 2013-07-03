@@ -1365,6 +1365,1966 @@
     }
 },
 {
+    "pk": 3, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 2, 
+        "part": "Tenor", 
+        "name": "Daniel Rushing", 
+        "slug": "daniel-rushing"
+    }
+},
+{
+    "pk": 4, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 3, 
+        "part": "Tenor", 
+        "name": "Alexander L\u00f6fstedt", 
+        "slug": "alexander-lofstedt"
+    }
+},
+{
+    "pk": 5, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 4, 
+        "part": "Tenor", 
+        "name": "Joseph Livesey", 
+        "slug": "joseph-livesey"
+    }
+},
+{
+    "pk": 6, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 5, 
+        "part": "Tenor", 
+        "name": "Eric Bjornsen", 
+        "slug": "eric-bjornsen"
+    }
+},
+{
+    "pk": 7, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 6, 
+        "part": "Tenor", 
+        "name": "Jonathan Green", 
+        "slug": "jonathan-green"
+    }
+},
+{
+    "pk": 8, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 7, 
+        "part": "Tenor", 
+        "name": "Steven Kelly", 
+        "slug": "steven-kelly"
+    }
+},
+{
+    "pk": 9, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 8, 
+        "part": "Tenor", 
+        "name": "Evan Brooksby", 
+        "slug": "evan-brooksby"
+    }
+},
+{
+    "pk": 10, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 9, 
+        "part": "Tenor", 
+        "name": "Max Power Stevenson", 
+        "slug": "max-power-stevenson"
+    }
+},
+{
+    "pk": 11, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 10, 
+        "part": "Tenor", 
+        "name": "Seth Lafler", 
+        "slug": "seth-lafler"
+    }
+},
+{
+    "pk": 12, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 11, 
+        "part": "Tenor", 
+        "name": "Jordan Travis", 
+        "slug": "jordan-travis"
+    }
+},
+{
+    "pk": 13, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 12, 
+        "part": "Tenor", 
+        "name": "Peter Westers", 
+        "slug": "peter-westers"
+    }
+},
+{
+    "pk": 14, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 13, 
+        "part": "Tenor", 
+        "name": "Jay Althof", 
+        "slug": "jay-althof"
+    }
+},
+{
+    "pk": 15, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 14, 
+        "part": "Tenor", 
+        "name": "Henrik Rosenberg", 
+        "slug": "henrik-rosenberg"
+    }
+},
+{
+    "pk": 16, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 15, 
+        "part": "Tenor", 
+        "name": "Paul Cochran", 
+        "slug": "paul-cochran"
+    }
+},
+{
+    "pk": 17, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 16, 
+        "part": "Tenor", 
+        "name": "Russ Blackstone", 
+        "slug": "russ-blackstone"
+    }
+},
+{
+    "pk": 18, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 17, 
+        "part": "Tenor", 
+        "name": "Zane Sutton", 
+        "slug": "zane-sutton"
+    }
+},
+{
+    "pk": 19, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 18, 
+        "part": "Tenor", 
+        "name": "Nate Masterson", 
+        "slug": "nate-masterson"
+    }
+},
+{
+    "pk": 20, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 19, 
+        "part": "Tenor", 
+        "name": "Austin Veteto", 
+        "slug": "austin-veteto"
+    }
+},
+{
+    "pk": 21, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 20, 
+        "part": "Tenor", 
+        "name": "Ted Chamberlain", 
+        "slug": "ted-chamberlain"
+    }
+},
+{
+    "pk": 22, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 21, 
+        "part": "Tenor", 
+        "name": "David Zimmerman", 
+        "slug": "david-zimmerman"
+    }
+},
+{
+    "pk": 23, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 22, 
+        "part": "Tenor", 
+        "name": "Thomas Bullock", 
+        "slug": "thomas-bullock"
+    }
+},
+{
+    "pk": 24, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 23, 
+        "part": "Tenor", 
+        "name": "Will Rodriguez", 
+        "slug": "will-rodriguez"
+    }
+},
+{
+    "pk": 25, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 24, 
+        "part": "Tenor", 
+        "name": "Jeff Hunkin", 
+        "slug": "jeff-hunkin"
+    }
+},
+{
+    "pk": 26, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 25, 
+        "part": "Tenor", 
+        "name": "Michael Nesler", 
+        "slug": "michael-nesler"
+    }
+},
+{
+    "pk": 27, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 26, 
+        "part": "Tenor", 
+        "name": "Tim Knapp", 
+        "slug": "tim-knapp"
+    }
+},
+{
+    "pk": 28, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 27, 
+        "part": "Tenor", 
+        "name": "Todd Kidder", 
+        "slug": "todd-kidder"
+    }
+},
+{
+    "pk": 29, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 28, 
+        "part": "Tenor", 
+        "name": "Keith Olson", 
+        "slug": "keith-olson"
+    }
+},
+{
+    "pk": 30, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 29, 
+        "part": "Tenor", 
+        "name": "Matt Gray", 
+        "slug": "matt-gray"
+    }
+},
+{
+    "pk": 31, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 30, 
+        "part": "Tenor", 
+        "name": "Bill Wells", 
+        "slug": "bill-wells"
+    }
+},
+{
+    "pk": 32, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 31, 
+        "part": "Tenor", 
+        "name": "Roger Ross", 
+        "slug": "roger-ross"
+    }
+},
+{
+    "pk": 33, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 32, 
+        "part": "Tenor", 
+        "name": "Ryan Griffith", 
+        "slug": "ryan-griffith"
+    }
+},
+{
+    "pk": 34, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 33, 
+        "part": "Tenor", 
+        "name": "Alexander Brandt", 
+        "slug": "alexander-brandt"
+    }
+},
+{
+    "pk": 35, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 34, 
+        "part": "Tenor", 
+        "name": "Craig Brown", 
+        "slug": "craig-brown"
+    }
+},
+{
+    "pk": 36, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 35, 
+        "part": "Tenor", 
+        "name": "Jim Halvorson", 
+        "slug": "jim-halvorson"
+    }
+},
+{
+    "pk": 37, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 36, 
+        "part": "Tenor", 
+        "name": "Kevin Morey", 
+        "slug": "kevin-morey"
+    }
+},
+{
+    "pk": 38, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 37, 
+        "part": "Tenor", 
+        "name": "Thor Young", 
+        "slug": "thor-young"
+    }
+},
+{
+    "pk": 39, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 38, 
+        "part": "Tenor", 
+        "name": "David Strasser", 
+        "slug": "david-strasser"
+    }
+},
+{
+    "pk": 40, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 39, 
+        "part": "Tenor", 
+        "name": "Rob Menaker", 
+        "slug": "rob-menaker"
+    }
+},
+{
+    "pk": 41, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 40, 
+        "part": "Tenor", 
+        "name": "Paul Saca", 
+        "slug": "paul-saca"
+    }
+},
+{
+    "pk": 42, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 41, 
+        "part": "Tenor", 
+        "name": "Andy Foster", 
+        "slug": "andy-foster"
+    }
+},
+{
+    "pk": 43, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 42, 
+        "part": "Tenor", 
+        "name": "John Ward", 
+        "slug": "john-ward"
+    }
+},
+{
+    "pk": 44, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 43, 
+        "part": "Tenor", 
+        "name": "Will Baughman", 
+        "slug": "will-baughman"
+    }
+},
+{
+    "pk": 45, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 44, 
+        "part": "Tenor", 
+        "name": "Alex Rubin", 
+        "slug": "alex-rubin"
+    }
+},
+{
+    "pk": 46, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 45, 
+        "part": "Tenor", 
+        "name": "Tim Beutel", 
+        "slug": "tim-beutel"
+    }
+},
+{
+    "pk": 47, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 46, 
+        "part": "Tenor", 
+        "name": "Scott McCarthy", 
+        "slug": "scott-mccarthy"
+    }
+},
+{
+    "pk": 48, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 47, 
+        "part": "Tenor", 
+        "name": "Larry Bomback", 
+        "slug": "larry-bomback"
+    }
+},
+{
+    "pk": 49, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 48, 
+        "part": "Tenor", 
+        "name": "Drew Wheaton", 
+        "slug": "drew-wheaton"
+    }
+},
+{
+    "pk": 50, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 49, 
+        "part": "Tenor", 
+        "name": "Shane Scott", 
+        "slug": "shane-scott"
+    }
+},
+{
+    "pk": 51, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 50, 
+        "part": "Tenor", 
+        "name": "Puck Ross", 
+        "slug": "puck-ross"
+    }
+},
+{
+    "pk": 52, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 2, 
+        "part": "Lead", 
+        "name": "Howard McAdory", 
+        "slug": "howard-mcadory"
+    }
+},
+{
+    "pk": 53, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 3, 
+        "part": "Lead", 
+        "name": "Victor Nilsson", 
+        "slug": "victor-nilsson"
+    }
+},
+{
+    "pk": 54, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 4, 
+        "part": "Lead", 
+        "name": "Doug Broersma", 
+        "slug": "doug-broersma"
+    }
+},
+{
+    "pk": 55, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 5, 
+        "part": "Lead", 
+        "name": "Timothy McMullan", 
+        "slug": "timothy-mcmullan"
+    }
+},
+{
+    "pk": 56, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 6, 
+        "part": "Lead", 
+        "name": "Jayson McCarter", 
+        "slug": "jayson-mccarter"
+    }
+},
+{
+    "pk": 57, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 7, 
+        "part": "Lead", 
+        "name": "Ian Kelly", 
+        "slug": "ian-kelly"
+    }
+},
+{
+    "pk": 58, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 8, 
+        "part": "Lead", 
+        "name": "Donald Drake", 
+        "slug": "donald-drake"
+    }
+},
+{
+    "pk": 59, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 9, 
+        "part": "Lead", 
+        "name": "Christopher Weber", 
+        "slug": "christopher-weber"
+    }
+},
+{
+    "pk": 60, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 10, 
+        "part": "Lead", 
+        "name": "Todd Reavis", 
+        "slug": "todd-reavis"
+    }
+},
+{
+    "pk": 61, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 11, 
+        "part": "Lead", 
+        "name": "Kevin Harris", 
+        "slug": "kevin-harris"
+    }
+},
+{
+    "pk": 62, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 12, 
+        "part": "Lead", 
+        "name": "Jamey Carey", 
+        "slug": "jamey-carey"
+    }
+},
+{
+    "pk": 63, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 13, 
+        "part": "Lead", 
+        "name": "Tony Blackwood", 
+        "slug": "tony-blackwood"
+    }
+},
+{
+    "pk": 64, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 14, 
+        "part": "Lead", 
+        "name": "Steven Hansen", 
+        "slug": "steven-hansen"
+    }
+},
+{
+    "pk": 65, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 15, 
+        "part": "Lead", 
+        "name": "Phil Garrott", 
+        "slug": "phil-garrott"
+    }
+},
+{
+    "pk": 66, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 16, 
+        "part": "Lead", 
+        "name": "Denis Laflamme", 
+        "slug": "denis-laflamme"
+    }
+},
+{
+    "pk": 67, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 17, 
+        "part": "Lead", 
+        "name": "Caleb Fouse", 
+        "slug": "caleb-fouse"
+    }
+},
+{
+    "pk": 68, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 18, 
+        "part": "Lead", 
+        "name": "Garrett Gillingham", 
+        "slug": "garrett-gillingham"
+    }
+},
+{
+    "pk": 69, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 19, 
+        "part": "Lead", 
+        "name": "Mark Fortino", 
+        "slug": "mark-fortino"
+    }
+},
+{
+    "pk": 70, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 20, 
+        "part": "Lead", 
+        "name": "Gavin Jensen", 
+        "slug": "gavin-jensen"
+    }
+},
+{
+    "pk": 71, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 21, 
+        "part": "Lead", 
+        "name": "Theo Hicks", 
+        "slug": "theo-hicks"
+    }
+},
+{
+    "pk": 72, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 22, 
+        "part": "Lead", 
+        "name": "Jamie Sharp", 
+        "slug": "jamie-sharp"
+    }
+},
+{
+    "pk": 73, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 23, 
+        "part": "Lead", 
+        "name": "Jeremy Conover", 
+        "slug": "jeremy-conover"
+    }
+},
+{
+    "pk": 74, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 24, 
+        "part": "Lead", 
+        "name": "Marcellus Washburn", 
+        "slug": "marcellus-washburn"
+    }
+},
+{
+    "pk": 75, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 25, 
+        "part": "Lead", 
+        "name": "Joshua Van Gorder", 
+        "slug": "joshua-van-gorder"
+    }
+},
+{
+    "pk": 76, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 26, 
+        "part": "Lead", 
+        "name": "Tom Halley", 
+        "slug": "tom-halley"
+    }
+},
+{
+    "pk": 77, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 27, 
+        "part": "Lead", 
+        "name": "Richard Brunner", 
+        "slug": "richard-brunner"
+    }
+},
+{
+    "pk": 78, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 28, 
+        "part": "Lead", 
+        "name": "Heath Walker", 
+        "slug": "heath-walker"
+    }
+},
+{
+    "pk": 79, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 29, 
+        "part": "Lead", 
+        "name": "Josh Szolomayer", 
+        "slug": "josh-szolomayer"
+    }
+},
+{
+    "pk": 80, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 30, 
+        "part": "Lead", 
+        "name": "Brad Brown", 
+        "slug": "brad-brown"
+    }
+},
+{
+    "pk": 81, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 31, 
+        "part": "Lead", 
+        "name": "Tony DeRosa", 
+        "slug": "tony-derosa"
+    }
+},
+{
+    "pk": 82, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 32, 
+        "part": "Lead", 
+        "name": "Tony Colosimo", 
+        "slug": "tony-colosimo"
+    }
+},
+{
+    "pk": 83, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 33, 
+        "part": "Lead", 
+        "name": "Graeme Allen", 
+        "slug": "graeme-allen"
+    }
+},
+{
+    "pk": 84, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 34, 
+        "part": "Lead", 
+        "name": "Robert Strong", 
+        "slug": "robert-strong"
+    }
+},
+{
+    "pk": 85, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 35, 
+        "part": "Lead", 
+        "name": "Larry Halvorson", 
+        "slug": "larry-halvorson"
+    }
+},
+{
+    "pk": 86, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 36, 
+        "part": "Lead", 
+        "name": "Toby Shaver", 
+        "slug": "toby-shaver"
+    }
+},
+{
+    "pk": 87, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 37, 
+        "part": "Lead", 
+        "name": "Andrew Borts", 
+        "slug": "andrew-borts"
+    }
+},
+{
+    "pk": 88, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 38, 
+        "part": "Lead", 
+        "name": "Matthew Hopper", 
+        "slug": "matthew-hopper"
+    }
+},
+{
+    "pk": 89, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 39, 
+        "part": "Lead", 
+        "name": "Patrick Haedtler", 
+        "slug": "patrick-haedtler"
+    }
+},
+{
+    "pk": 90, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 40, 
+        "part": "Lead", 
+        "name": "Tim Brooks", 
+        "slug": "tim-brooks"
+    }
+},
+{
+    "pk": 91, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 41, 
+        "part": "Lead", 
+        "name": "Keith Rees", 
+        "slug": "keith-rees"
+    }
+},
+{
+    "pk": 92, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 42, 
+        "part": "Lead", 
+        "name": "Cecil Brown", 
+        "slug": "cecil-brown"
+    }
+},
+{
+    "pk": 93, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 43, 
+        "part": "Lead", 
+        "name": "Mark Lang", 
+        "slug": "mark-lang"
+    }
+},
+{
+    "pk": 94, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 44, 
+        "part": "Lead", 
+        "name": "Sean Devine", 
+        "slug": "sean-devine"
+    }
+},
+{
+    "pk": 95, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 45, 
+        "part": "Lead", 
+        "name": "Benjamin Harding", 
+        "slug": "benjamin-harding"
+    }
+},
+{
+    "pk": 96, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 46, 
+        "part": "Lead", 
+        "name": "Dave Campbell", 
+        "slug": "dave-campbell"
+    }
+},
+{
+    "pk": 97, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 47, 
+        "part": "Lead", 
+        "name": "Wayne Grimmer", 
+        "slug": "wayne-grimmer"
+    }
+},
+{
+    "pk": 98, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 48, 
+        "part": "Lead", 
+        "name": "Kevin Hughes", 
+        "slug": "kevin-hughes"
+    }
+},
+{
+    "pk": 99, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 49, 
+        "part": "Lead", 
+        "name": "Eddie Holt", 
+        "slug": "eddie-holt"
+    }
+},
+{
+    "pk": 100, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 50, 
+        "part": "Lead", 
+        "name": "Dave Calland", 
+        "slug": "dave-calland"
+    }
+},
+{
+    "pk": 101, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 2, 
+        "part": "Baritone", 
+        "name": "James Estes", 
+        "slug": "james-estes"
+    }
+},
+{
+    "pk": 102, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 3, 
+        "part": "Baritone", 
+        "name": "Mattias Larsson", 
+        "slug": "mattias-larsson"
+    }
+},
+{
+    "pk": 103, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 4, 
+        "part": "Baritone", 
+        "name": "Mark Metzger", 
+        "slug": "mark-metzger"
+    }
+},
+{
+    "pk": 104, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 5, 
+        "part": "Baritone", 
+        "name": "Daniel Ryan", 
+        "slug": "daniel-ryan"
+    }
+},
+{
+    "pk": 105, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 6, 
+        "part": "Baritone", 
+        "name": "Matthew Kopser", 
+        "slug": "matthew-kopser"
+    }
+},
+{
+    "pk": 106, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 7, 
+        "part": "Baritone", 
+        "name": "Sean Kelly", 
+        "slug": "sean-kelly"
+    }
+},
+{
+    "pk": 107, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 8, 
+        "part": "Baritone", 
+        "name": "Rob Hopkins", 
+        "slug": "rob-hopkins"
+    }
+},
+{
+    "pk": 108, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 9, 
+        "part": "Baritone", 
+        "name": "John Dorgan", 
+        "slug": "john-dorgan"
+    }
+},
+{
+    "pk": 109, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 10, 
+        "part": "Baritone", 
+        "name": "Bryan Pulver", 
+        "slug": "bryan-pulver"
+    }
+},
+{
+    "pk": 110, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 11, 
+        "part": "Baritone", 
+        "name": "Dave Baldwin", 
+        "slug": "dave-baldwin"
+    }
+},
+{
+    "pk": 111, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 12, 
+        "part": "Baritone", 
+        "name": "Steve Wheeler", 
+        "slug": "steve-wheeler"
+    }
+},
+{
+    "pk": 112, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 13, 
+        "part": "Baritone", 
+        "name": "Tom Matchinsky", 
+        "slug": "tom-matchinsky"
+    }
+},
+{
+    "pk": 113, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 14, 
+        "part": "Baritone", 
+        "name": "Johannes Bergman", 
+        "slug": "johannes-bergman"
+    }
+},
+{
+    "pk": 114, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 15, 
+        "part": "Baritone", 
+        "name": "Jay Dougherty", 
+        "slug": "jay-dougherty"
+    }
+},
+{
+    "pk": 115, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 16, 
+        "part": "Baritone", 
+        "name": "Brent Morton", 
+        "slug": "brent-morton"
+    }
+},
+{
+    "pk": 116, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 17, 
+        "part": "Baritone", 
+        "name": "Aaron Walker", 
+        "slug": "aaron-walker"
+    }
+},
+{
+    "pk": 117, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 18, 
+        "part": "Baritone", 
+        "name": "Ben Krinke", 
+        "slug": "ben-krinke"
+    }
+},
+{
+    "pk": 118, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 19, 
+        "part": "Baritone", 
+        "name": "Jeff Veteto", 
+        "slug": "jeff-veteto"
+    }
+},
+{
+    "pk": 119, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 20, 
+        "part": "Baritone", 
+        "name": "Ira Allen", 
+        "slug": "ira-allen"
+    }
+},
+{
+    "pk": 120, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 21, 
+        "part": "Baritone", 
+        "name": "Kohl Kitzmiller", 
+        "slug": "kohl-kitzmiller"
+    }
+},
+{
+    "pk": 121, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 22, 
+        "part": "Baritone", 
+        "name": "Brent Dunavant", 
+        "slug": "brent-dunavant"
+    }
+},
+{
+    "pk": 122, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 23, 
+        "part": "Baritone", 
+        "name": "Andrew Miller", 
+        "slug": "andrew-miller"
+    }
+},
+{
+    "pk": 123, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 24, 
+        "part": "Baritone", 
+        "name": "Will Hunkin", 
+        "slug": "will-hunkin"
+    }
+},
+{
+    "pk": 124, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 25, 
+        "part": "Baritone", 
+        "name": "Michael Hull", 
+        "slug": "michael-hull"
+    }
+},
+{
+    "pk": 125, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 26, 
+        "part": "Baritone", 
+        "name": "Ross Trube", 
+        "slug": "ross-trube"
+    }
+},
+{
+    "pk": 126, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 27, 
+        "part": "Baritone", 
+        "name": "Gabriel Caretto", 
+        "slug": "gabriel-caretto"
+    }
+},
+{
+    "pk": 127, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 28, 
+        "part": "Baritone", 
+        "name": "Brent Graham", 
+        "slug": "brent-graham"
+    }
+},
+{
+    "pk": 128, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 29, 
+        "part": "Baritone", 
+        "name": "John Brockman", 
+        "slug": "john-brockman"
+    }
+},
+{
+    "pk": 129, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 30, 
+        "part": "Baritone", 
+        "name": "David Rozycki", 
+        "slug": "david-rozycki"
+    }
+},
+{
+    "pk": 130, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 31, 
+        "part": "Baritone", 
+        "name": "Mike McGee", 
+        "slug": "mike-mcgee"
+    }
+},
+{
+    "pk": 131, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 32, 
+        "part": "Baritone", 
+        "name": "Joe Sawyer", 
+        "slug": "joe-sawyer"
+    }
+},
+{
+    "pk": 132, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 33, 
+        "part": "Baritone", 
+        "name": "Ravi Raghuram", 
+        "slug": "ravi-raghuram"
+    }
+},
+{
+    "pk": 133, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 34, 
+        "part": "Baritone", 
+        "name": "Shawn King", 
+        "slug": "shawn-king"
+    }
+},
+{
+    "pk": 134, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 35, 
+        "part": "Baritone", 
+        "name": "Nick Pizzo", 
+        "slug": "nick-pizzo"
+    }
+},
+{
+    "pk": 135, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 36, 
+        "part": "Baritone", 
+        "name": "Mark Spear", 
+        "slug": "mark-spear"
+    }
+},
+{
+    "pk": 136, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 37, 
+        "part": "Baritone", 
+        "name": "Eddie Mejia", 
+        "slug": "eddie-mejia"
+    }
+},
+{
+    "pk": 137, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 38, 
+        "part": "Baritone", 
+        "name": "Russell Watterson", 
+        "slug": "russell-watterson"
+    }
+},
+{
+    "pk": 138, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 39, 
+        "part": "Baritone", 
+        "name": "Alan Gordon", 
+        "slug": "alan-gordon"
+    }
+},
+{
+    "pk": 139, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 40, 
+        "part": "Baritone", 
+        "name": "Clay Hine", 
+        "slug": "clay-hine"
+    }
+},
+{
+    "pk": 140, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 41, 
+        "part": "Baritone", 
+        "name": "Peter Nugent", 
+        "slug": "peter-nugent"
+    }
+},
+{
+    "pk": 141, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 42, 
+        "part": "Baritone", 
+        "name": "Joseph Hunter", 
+        "slug": "joseph-hunter"
+    }
+},
+{
+    "pk": 142, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 43, 
+        "part": "Baritone", 
+        "name": "Harold Haflett", 
+        "slug": "harold-haflett"
+    }
+},
+{
+    "pk": 143, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 44, 
+        "part": "Baritone", 
+        "name": "Dan Rubin", 
+        "slug": "dan-rubin"
+    }
+},
+{
+    "pk": 144, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 45, 
+        "part": "Baritone", 
+        "name": "Bryan Ziegler", 
+        "slug": "bryan-ziegler"
+    }
+},
+{
+    "pk": 145, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 46, 
+        "part": "Baritone", 
+        "name": "Robert VanBuskirk", 
+        "slug": "robert-vanbuskirk"
+    }
+},
+{
+    "pk": 146, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 47, 
+        "part": "Baritone", 
+        "name": "T.J. Carollo", 
+        "slug": "tj-carollo"
+    }
+},
+{
+    "pk": 147, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 48, 
+        "part": "Baritone", 
+        "name": "Aaron Hughes", 
+        "slug": "aaron-hughes"
+    }
+},
+{
+    "pk": 148, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 49, 
+        "part": "Baritone", 
+        "name": "KJ McAleesejergins", 
+        "slug": "kj-mcaleesejergins"
+    }
+},
+{
+    "pk": 149, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 50, 
+        "part": "Baritone", 
+        "name": "Casey Parsons", 
+        "slug": "casey-parsons"
+    }
+},
+{
+    "pk": 150, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 2, 
+        "part": "Bass", 
+        "name": "Jimmy Barr", 
+        "slug": "jimmy-barr"
+    }
+},
+{
+    "pk": 151, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 3, 
+        "part": "Bass", 
+        "name": "Martin Jang\u00f6", 
+        "slug": "martin-jango"
+    }
+},
+{
+    "pk": 152, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 4, 
+        "part": "Bass", 
+        "name": "Tom Metzger", 
+        "slug": "tom-metzger"
+    }
+},
+{
+    "pk": 153, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 5, 
+        "part": "Bass", 
+        "name": "Dan Davenport", 
+        "slug": "dan-davenport"
+    }
+},
+{
+    "pk": 154, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 6, 
+        "part": "Bass", 
+        "name": "Kurt Boutin", 
+        "slug": "kurt-boutin"
+    }
+},
+{
+    "pk": 155, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 7, 
+        "part": "Bass", 
+        "name": "Michael Kelly", 
+        "slug": "michael-kelly"
+    }
+},
+{
+    "pk": 156, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 8, 
+        "part": "Bass", 
+        "name": "David White", 
+        "slug": "david-white"
+    }
+},
+{
+    "pk": 157, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 9, 
+        "part": "Bass", 
+        "name": "Greg Martin", 
+        "slug": "greg-martin"
+    }
+},
+{
+    "pk": 158, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 10, 
+        "part": "Bass", 
+        "name": "Ross Larrison", 
+        "slug": "ross-larrison"
+    }
+},
+{
+    "pk": 159, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 11, 
+        "part": "Bass", 
+        "name": "Joel Hilchey", 
+        "slug": "joel-hilchey"
+    }
+},
+{
+    "pk": 160, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 12, 
+        "part": "Bass", 
+        "name": "James Masalskis", 
+        "slug": "james-masalskis"
+    }
+},
+{
+    "pk": 161, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 13, 
+        "part": "Bass", 
+        "name": "David Boyd", 
+        "slug": "david-boyd"
+    }
+},
+{
+    "pk": 162, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 14, 
+        "part": "Bass", 
+        "name": "Kenneth Nilsson", 
+        "slug": "kenneth-nilsson"
+    }
+},
+{
+    "pk": 163, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 15, 
+        "part": "Bass", 
+        "name": "Kyle Ricks", 
+        "slug": "kyle-ricks"
+    }
+},
+{
+    "pk": 164, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 16, 
+        "part": "Bass", 
+        "name": "Paul Elingson", 
+        "slug": "paul-elingson"
+    }
+},
+{
+    "pk": 165, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 17, 
+        "part": "Bass", 
+        "name": "Shaun Whisler", 
+        "slug": "shaun-whisler"
+    }
+},
+{
+    "pk": 166, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 18, 
+        "part": "Bass", 
+        "name": "Craig Johnson", 
+        "slug": "craig-johnson"
+    }
+},
+{
+    "pk": 167, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 19, 
+        "part": "Bass", 
+        "name": "Adam Veteto", 
+        "slug": "adam-veteto"
+    }
+},
+{
+    "pk": 168, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 20, 
+        "part": "Bass", 
+        "name": "Ty Jensen", 
+        "slug": "ty-jensen"
+    }
+},
+{
+    "pk": 169, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 21, 
+        "part": "Bass", 
+        "name": "Kyle Kitzmiller", 
+        "slug": "kyle-kitzmiller"
+    }
+},
+{
+    "pk": 170, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 22, 
+        "part": "Bass", 
+        "name": "Wallace Stanley", 
+        "slug": "wallace-stanley"
+    }
+},
+{
+    "pk": 171, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 23, 
+        "part": "Bass", 
+        "name": "Dan Walz", 
+        "slug": "dan-walz"
+    }
+},
+{
+    "pk": 172, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 24, 
+        "part": "Bass", 
+        "name": "Matt Gifford", 
+        "slug": "matt-gifford"
+    }
+},
+{
+    "pk": 173, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 25, 
+        "part": "Bass", 
+        "name": "Stephen Denino", 
+        "slug": "stephen-denino"
+    }
+},
+{
+    "pk": 174, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 26, 
+        "part": "Bass", 
+        "name": "Steve Kirsch", 
+        "slug": "steve-kirsch"
+    }
+},
+{
+    "pk": 175, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 27, 
+        "part": "Bass", 
+        "name": "Jason Dyer", 
+        "slug": "jason-dyer"
+    }
+},
+{
+    "pk": 176, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 28, 
+        "part": "Bass", 
+        "name": "Steven McDonald", 
+        "slug": "steven-mcdonald"
+    }
+},
+{
+    "pk": 177, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 29, 
+        "part": "Bass", 
+        "name": "Paul Tabone", 
+        "slug": "paul-tabone"
+    }
+},
+{
+    "pk": 178, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 30, 
+        "part": "Bass", 
+        "name": "Robert Lamont", 
+        "slug": "robert-lamont"
+    }
+},
+{
+    "pk": 179, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 31, 
+        "part": "Bass", 
+        "name": "Myron Whittlesey", 
+        "slug": "myron-whittlesey"
+    }
+},
+{
+    "pk": 180, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 32, 
+        "part": "Bass", 
+        "name": "Wayne Adams", 
+        "slug": "wayne-adams"
+    }
+},
+{
+    "pk": 181, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 33, 
+        "part": "Bass", 
+        "name": "Andy Isbell", 
+        "slug": "andy-isbell"
+    }
+},
+{
+    "pk": 182, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 34, 
+        "part": "Bass", 
+        "name": "Keith Therrell", 
+        "slug": "keith-therrell"
+    }
+},
+{
+    "pk": 183, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 35, 
+        "part": "Bass", 
+        "name": "Mike Stewart", 
+        "slug": "mike-stewart"
+    }
+},
+{
+    "pk": 184, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 36, 
+        "part": "Bass", 
+        "name": "Wally Krause", 
+        "slug": "wally-krause"
+    }
+},
+{
+    "pk": 185, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 37, 
+        "part": "Bass", 
+        "name": "Amos Velez", 
+        "slug": "amos-velez"
+    }
+},
+{
+    "pk": 186, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 38, 
+        "part": "Bass", 
+        "name": "Brent Suver", 
+        "slug": "brent-suver"
+    }
+},
+{
+    "pk": 187, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 39, 
+        "part": "Bass", 
+        "name": "Brett Littlefield", 
+        "slug": "brett-littlefield"
+    }
+},
+{
+    "pk": 188, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 40, 
+        "part": "Bass", 
+        "name": "Drew McMillan", 
+        "slug": "drew-mcmillan"
+    }
+},
+{
+    "pk": 189, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 41, 
+        "part": "Bass", 
+        "name": "Andy Funnell", 
+        "slug": "andy-funnell"
+    }
+},
+{
+    "pk": 190, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 42, 
+        "part": "Bass", 
+        "name": "Dan Rowland", 
+        "slug": "dan-rowland"
+    }
+},
+{
+    "pk": 191, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 43, 
+        "part": "Bass", 
+        "name": "Randy Baughman", 
+        "slug": "randy-baughman"
+    }
+},
+{
+    "pk": 192, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 44, 
+        "part": "Bass", 
+        "name": "Aaron Stratton", 
+        "slug": "aaron-stratton"
+    }
+},
+{
+    "pk": 193, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 45, 
+        "part": "Bass", 
+        "name": "Dan Wessler", 
+        "slug": "dan-wessler"
+    }
+},
+{
+    "pk": 194, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 46, 
+        "part": "Bass", 
+        "name": "Chris Arnold", 
+        "slug": "chris-arnold"
+    }
+},
+{
+    "pk": 195, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 47, 
+        "part": "Bass", 
+        "name": "Jeff Glemboski", 
+        "slug": "jeff-glemboski"
+    }
+},
+{
+    "pk": 196, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 48, 
+        "part": "Bass", 
+        "name": "Brian O\u2019Dell", 
+        "slug": "brian-odell"
+    }
+},
+{
+    "pk": 197, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 49, 
+        "part": "Bass", 
+        "name": "Mike O\u2019Neill", 
+        "slug": "mike-oneill"
+    }
+},
+{
+    "pk": 198, 
+    "model": "bbs.singer", 
+    "fields": {
+        "contestant": 50, 
+        "part": "Bass", 
+        "name": "Jared Wolf", 
+        "slug": "jared-wolf"
+    }
+},
+{
     "pk": 1, 
     "model": "bbs.contest", 
     "fields": {
@@ -3845,6 +5805,50 @@
     "fields": {
         "song_two": null, 
         "performance": 238, 
+        "notes": "", 
+        "user": 1, 
+        "song_one": null
+    }
+},
+{
+    "pk": 28, 
+    "model": "bbs.rating", 
+    "fields": {
+        "song_two": 0, 
+        "performance": 249, 
+        "notes": "", 
+        "user": 1, 
+        "song_one": 0
+    }
+},
+{
+    "pk": 29, 
+    "model": "bbs.rating", 
+    "fields": {
+        "song_two": null, 
+        "performance": 243, 
+        "notes": "", 
+        "user": 1, 
+        "song_one": null
+    }
+},
+{
+    "pk": 30, 
+    "model": "bbs.rating", 
+    "fields": {
+        "song_two": null, 
+        "performance": 244, 
+        "notes": "", 
+        "user": 1, 
+        "song_one": null
+    }
+},
+{
+    "pk": 31, 
+    "model": "bbs.rating", 
+    "fields": {
+        "song_two": null, 
+        "performance": 246, 
         "notes": "", 
         "user": 1, 
         "song_one": null

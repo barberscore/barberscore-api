@@ -5,11 +5,16 @@ from .models import (
     Contestant,
     Performance,
     Rating,
+    Singer,
 )
 
 
 class ContestAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("year", "level", "contest_type")}
+
+
+class SingerAdmin(admin.ModelAdmin):
+    save_on_top = True
 
 
 class ContestantAdmin(admin.ModelAdmin):
@@ -39,3 +44,4 @@ admin.site.register(Contest, ContestAdmin)
 admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Performance, PerformanceAdmin)
 admin.site.register(Rating, RatingAdmin)
+admin.site.register(Singer, SingerAdmin)

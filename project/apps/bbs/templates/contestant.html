@@ -15,6 +15,13 @@
 
 </P>
 <P>
+    Singers:<br>
+    {% for singer in singers %}
+    {{singer.name}}, {{singer.part}}<br>
+    {% endfor %}
+</P>
+
+<P>
     Performances:<br>
     {% for performance in performances %}
     {{performance.stage_time}}<br>

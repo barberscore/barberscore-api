@@ -57,6 +57,24 @@ class Contestant(models.Model):
         ordering = ['name']
 
 
+class Singer(models.Model):
+
+    PART_CHOICES = (
+        ("Lead", "Lead"),
+        ("Tenor", "Tenor"),
+        ("Baritone", "Baritone"),
+        ("Bass", "Bass"),
+    )
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(blank=True)
+    part = models.CharField(max_length=20, choices=PART_CHOICES)
+    contestant = models.ForeignKey(Contestant)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Contest(models.Model):
 
     CONTEST_TYPE_CHOICES = (
@@ -72,7 +90,7 @@ class Contest(models.Model):
         ("DIV", "Division"),
     )
 
-    name = models.CharField(null=True, blank=True, max_length=200)
+    name = models.CharField(default="Contest", max_length=200)
     slug = models.SlugField(null=True)
     year = models.CharField(null=True, blank=True, max_length=4)
     contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)

@@ -22,6 +22,7 @@ from .models import (
     Contestant,
     Performance,
     Rating,
+    Singer,
 )
 
 from .forms import (
@@ -93,7 +94,8 @@ def ratings(request):
 def contestant(request, contestant):
     contestant = get_object_or_404(Contestant, slug=contestant)
     performances = Performance.objects.filter(contestant=contestant).order_by('stage_time')
-    return render(request, 'contestant.html', {'contestant': contestant, 'performances': performances})
+    singers = Singer.objects.filter(contestant=contestant)
+    return render(request, 'contestant.html', {'contestant': contestant, 'performances': performances, 'singers': singers})
 
 
 def contest(request, contest, contest_round):
