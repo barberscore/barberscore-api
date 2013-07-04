@@ -24,12 +24,12 @@ class TimeColumn(tables.Column):
 class PerformanceTable(tables.Table):
     # slot = tables.Column()
     stage_time = TimeColumn()
-    contestant = tables.LinkColumn('rating', args=[A('slug')])
-    prelim = ScoreColumn(accessor='contestant.prelim')
-    seed = tables.Column(accessor='contestant.seed')
-    song_one = tables.Column()
+    contestant = tables.LinkColumn('contestant', args=[A('contestant.slug')])
+    prelim = ScoreColumn()
+    seed = tables.Column()
+    # song_one = tables.Column()
     # score_one = ScoreColumn()
-    song_two = tables.Column()
+    # song_two = tables.Column()/
     # score_two = ScoreColumn()
 
     class Meta:
@@ -47,12 +47,18 @@ class ContestantTable(tables.Table):
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
 
 
-class RatingTable(tables.Table):
+class ScoreTable(tables.Table):
+    # slot = tables.Column()
+    # stage_time = TimeColumn()
+    place = tables.Column()
+    # seed = tables.Column()
 
-    performance = tables.LinkColumn('rating', accessor='performance', args=[A('performance.slug')])
-    contestant = tables.Column(accessor='performance.contestant')
+    contestant = tables.LinkColumn('contestant', args=[A('contestant.slug')])
+    # prelim = ScoreColumn()
     song_one = tables.Column()
+    # score_one = ScoreColumn()
     song_two = tables.Column()
-
+    # score_two = ScoreColumn()
+    avg_score = ScoreColumn()
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}

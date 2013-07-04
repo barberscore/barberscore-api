@@ -14,25 +14,25 @@ from .tables import (
     PerformanceTable,
     ContestantTable,
     # ContestTable,
-    RatingTable,
+    ScoreTable
 )
 
 from .models import (
     Contest,
     Contestant,
     Performance,
-    Rating,
     Singer,
 )
 
 from .forms import (
-    RatingForm,
     ProfileForm,
 )
 
 
 def home(request):
-    return render(request, 'home.html')
+    scores = Contest.objects.filter(is_complete=True).order_by('date')
+    schedules = Contest.objects.filter(is_complete=False).order_by('date')
+    return render(request, 'home.html', {'scores': scores, 'schedules': schedules})
 
 
 def success(request):
@@ -53,11 +53,15 @@ def profile(request):
     else:
         form = ProfileForm(instance=request.user)
     return render(request, 'profile.html', {'form': form})
- # ##############
+
+
 
 
 def contestants(request):
     contestants = get_list_or_404(Contestant)
+        # next_performance_slug = performance.get_next_by_stage_time()
+        # prior_performance_slug
+    # return redirect('rating', next_performance.slug)
     table = ContestantTable(contestants)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
@@ -77,20 +81,6 @@ def performances(request):
         return render(request, 'no_performances.html')
 
 
-@login_required
-def ratings(request):
-    # ratings = get_list_or_404(Rating)
-    ratings = Rating.objects.filter(user=request.user)
-    if ratings:
-        table = RatingTable(ratings)
-        RequestConfig(request, paginate={"per_page": 50}).configure(table)
-        return render(request, 'ratings.html', {'ratings': ratings, 'table': table})
-    else:
-        return render(request, 'no_ratings.html')
-
-# ###########
-
-
 def contestant(request, contestant):
     contestant = get_object_or_404(Contestant, slug=contestant)
     performances = Performance.objects.filter(contestant=contestant).order_by('stage_time')
@@ -98,17 +88,16 @@ def contestant(request, contestant):
     return render(request, 'contestant.html', {'contestant': contestant, 'performances': performances, 'singers': singers})
 
 
-def contest(request, contest, contest_round):
+def contest(request, contest):
     contest = get_object_or_404(Contest, slug=contest)
     performances = Performance.objects.filter(
-        contest=contest,
-        contest_round__iexact=contest_round).order_by('slot')
+        contest=contest).order_by('slot')
     if performances:
         table = PerformanceTable(performances)
         RequestConfig(request, paginate={"per_page": 50}).configure(table)
         return render(request, 'contest.html', {'contest': contest, 'performances': performances, 'table': table})
     else:
-        return render(request, 'no_performances.html', {'contest': contest, 'contest_round': contest_round})
+        return render(request, 'no_performances.html', {'contest': contest})
 
 
 def performance(request, performance):
@@ -116,16 +105,13 @@ def performance(request, performance):
     return render(request, 'performance.html', {'performance': performance})
 
 
-@login_required
-def rating(request, performance):
-    performance = Performance.objects.get(slug__iexact=performance)
-    next_performance = performance.get_next_by_stage_time()
-    rating, created = Rating.objects.get_or_create(user=request.user, performance=performance)
-    if request.method == 'POST':
-        form = RatingForm(request.POST, instance=rating)
-        if form.is_valid():
-            form.save()
-            return redirect('rating', next_performance.slug)
+def score(request, contest):
+    contest = get_object_or_404(Contest, slug=contest)
+    performances = Performance.objects.filter(
+        contest=contest).exclude(is_complete=False).order_by('place')
+    if performances:
+        table = ScoreTable(performances)
+        RequestConfig(request, paginate={"per_page": 50}).configure(table)
+        return render(request, 'contest.html', {'contest': contest, 'performances': performances, 'table': table})
     else:
-        form = RatingForm(instance=rating)
-    return render(request, 'rating.html', {'form': form, 'rating': rating, 'performance': performance})
+        return render(request, 'no_performances.html', {'contest': contest})

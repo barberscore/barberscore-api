@@ -16,5 +16,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('apps.bbs.urls')),
     url(r'^', include('apps.noncense.urls')),
-
+    url(r'^', include('apps.rate.urls')),
 )

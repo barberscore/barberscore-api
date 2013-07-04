@@ -20,7 +20,7 @@ DATABASE_URL = get_env_variable("DATABASE_URL")
 
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
-PROJECT_ROOT = Path(__file__).ancestor(3)
+PROJECT_ROOT = Path(__file__).ancestor(2)
 
 ADMINS = (
 )
@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     'floppyforms',
     'apps.bbs',
     'apps.noncense',
+    'apps.rate',
     'django_localflavor_us',
 )
 

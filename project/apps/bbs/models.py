@@ -2,20 +2,13 @@ from __future__ import division
 
 from django.db import models
 
-from django.conf import settings
 
-from django.core.validators import MaxValueValidator, MinValueValidator
-
-
-# Create your models here.
 class Contestant(models.Model):
     """The name of the contestant"""
 
-    contestant_CHOICES = (
+    CONTESTANT_CHOICES = (
         (1, "Quartet"),
         (2, "Chorus"),
-        (3, "Collegiate"),
-        (4, "Senior"),
     )
 
     DISTRICT_CHOICES = (
@@ -46,9 +39,11 @@ class Contestant(models.Model):
     slug = models.SlugField(null=True)
     location = models.CharField(blank=True, null=True, max_length=200)
     director = models.CharField(blank=True, null=True, max_length=200)
-    seed = models.IntegerField(blank=True, null=True)
-    prelim = models.FloatField(blank=True, null=True)
-    contestant_type = models.IntegerField(blank=True, null=True, choices=contestant_CHOICES)
+    # seed = models.IntegerField(blank=True, null=True)
+    # prelim = models.FloatField(blank=True, null=True)
+    website = models.URLField(blank=True)
+    facebook = models.URLField(blank=True)
+    contestant_type = models.IntegerField(blank=True, null=True, choices=CONTESTANT_CHOICES)
     district = models.IntegerField(blank=True, null=True, choices=DISTRICT_CHOICES)
 
     def __unicode__(self):
@@ -91,20 +86,37 @@ class Contest(models.Model):
         ("DIV", "Division"),
     )
 
+    CONTEST_ROUND_CHOICES = (
+        ('Quarters', 'Quarter-Finals'),
+        ('Semis', 'Semi-Finals'),
+        ('Finals', 'Finals'),
+    )
+
     name = models.CharField(default="Contest", max_length=200)
+    date = models.DateField(null=True)
     slug = models.SlugField(null=True)
+    is_complete = models.BooleanField(default=False)
     year = models.CharField(null=True, blank=True, max_length=4)
     contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)
+    contest_round = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_ROUND_CHOICES)
     level = models.CharField(max_length=200, blank=True, null=True, choices=LEVEL_CHOICES)
 
     def __unicode__(self):
-        return '{year} {level} {contest_type}'.format(
+        return '{year} {level} {contest_type} {contest_round}'.format(
             year=self.year,
             level=self.level,
-            contest_type=self.contest_type)
+            contest_type=self.contest_type,
+            contest_round=self.contest_round)
 
     class Meta:
         ordering = ['year', 'level', 'contest_type']
+
+
+class Song(models.Model):
+    name = models.CharField(max_length=200, default='Unknown')
+
+    def __unicode__(self):
+        return self.name
 
 
 class Performance(models.Model):
@@ -118,46 +130,33 @@ class Performance(models.Model):
     contestant = models.ForeignKey(Contestant, blank=True, null=True)
     contest = models.ForeignKey(Contest, blank=True, null=True)
     slug = models.SlugField(blank=True)
-    contest_round = models.CharField(max_length=20, blank=True, choices=ROUND_CHOICES)
+    # contest_round = models.CharField(max_length=20, blank=True, choices=ROUND_CHOICES)
     slot = models.IntegerField(blank=True, null=True)
+    place = models.IntegerField(blank=True, null=True)
+    seed = models.IntegerField(blank=True, null=True)
+    prelim = models.IntegerField(blank=True, null=True)
+    is_complete = models.BooleanField(default=False)
     stage_time = models.DateTimeField()
 
-    song_one = models.CharField(default="Song One", max_length=200)
+    song_one = models.ForeignKey(Song, blank=True, null=True, related_name='song_one')
     score_one = models.FloatField(blank=True, null=True)
     mus_one = models.FloatField(blank=True, null=True)
     prs_one = models.FloatField(blank=True, null=True)
     sng_one = models.FloatField(blank=True, null=True)
 
-    song_two = models.CharField(default="Song Two", max_length=200)
+    song_two = models.ForeignKey(Song, blank=True, null=True, related_name='song_two')
     score_two = models.FloatField(blank=True, null=True)
     mus_two = models.FloatField(blank=True, null=True)
     prs_two = models.FloatField(blank=True, null=True)
     sng_two = models.FloatField(blank=True, null=True)
-    # rating = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Rating', blank=True, null=True)
+
+    avg_score = models.FloatField(blank=True, null=True)
 
     def __unicode__(self):
-        return '{contest} {contestant_round}, Slot {slot}: {contestant}'.format(
+        return '{contest} Slot {slot}: {contestant}'.format(
             contest=self.contest,
-            contestant_round=self.contest_round,
             slot=self.slot,
             contestant=self.contestant)
 
     class Meta:
-        ordering = ['contest', 'contest_round', 'slot']
-
-
-
-class Rating(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
-    performance = models.ForeignKey(Performance, null=True)
-    song_one = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    song_two = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    notes = models.TextField(blank=True)
-
-    # def clean(self):
-    # # Don't allow draft entries to have a pub_date.
-    #     if self.song_one > 100 or self.song_one < 0:
-    #         raise ValidationError('Rating must be between 0-100.')
-    #     # Set the pub_date for published items if it hasn't been set already.
-    #     if self.song_two > 100 or self.song_one < 0:
-    #         raise ValidationError('Rating must be between 0-100.')
+        ordering = ['contest', 'slot']

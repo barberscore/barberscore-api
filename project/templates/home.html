@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<p>
+    Welcome to Barberscore, a online, mobile-friendly program guide for the Barbershop Harmony Society Convention in Toronto.  Navigate using the top menu or from this home page.
+</p>
+    To see upcoming contest schedules:<br>
+    {% for schedule in schedules %}
+    <a href="{% url 'schedule' schedule.slug %}">{{schedule.get_contest_type_display}} {{schedule.get_contest_round_display}}</a><br>
+    {% endfor schedule %}
+
+<p>
+    To see prior contest scores:<br>
+        {% for score in scores %}
+
+    <a href="{% url 'score' score.slug%}">{{score.get_contest_type_display}} {{score.get_contest_round_display}}</a><br>
+        {% endfor schedule %}
+
+</p>
+
+<p>
+    To see all contestants:<br>
+    <a href="{% url 'contestants' %}">Contestants</a><br>
+</p>
+
+<p>
+    To add your name to your profile or to make predictions for all to see (requires US/Canadian mobile phone for login):<br>
+    <a href="{% url 'profile' %}">Profile</a><br>
+</p>
+
+{% endblock content %}
