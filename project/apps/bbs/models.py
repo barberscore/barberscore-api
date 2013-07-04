@@ -134,7 +134,7 @@ class Performance(models.Model):
     slot = models.IntegerField(blank=True, null=True)
     place = models.IntegerField(blank=True, null=True)
     seed = models.IntegerField(blank=True, null=True)
-    prelim = models.IntegerField(blank=True, null=True)
+    prelim = models.FloatField(blank=True, null=True)
     is_complete = models.BooleanField(default=False)
     stage_time = models.DateTimeField()
 
