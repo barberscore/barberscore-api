@@ -15,8 +15,8 @@
 <p>
     <strong>{{contestant.name}}</strong> ({{contestant.get_district_display}})<br>
     {{contestant.location}}<br>
-    {{contestant.website}}<br>
-    {{contestant.facebook}}
+    {{contestant.website|urlize}}<br>
+    {{contestant.facebook|urlize}}
 </p>
 
 {% if singers %}
