@@ -7,5 +7,6 @@ from .models import (
 
 class UserProfileAdmin(admin.ModelAdmin):
     save_on_top = True
+    search_fields = ['first_name', 'last_name']
 
 admin.site.register(UserProfile, UserProfileAdmin)
