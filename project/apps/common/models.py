@@ -1,11 +1,8 @@
-# import pytz
-
 from timezone_field import TimeZoneField
 
 from django.db import models
 
 from django.conf import settings
-
 
 
 class UserProfile(models.Model):
@@ -15,4 +12,3 @@ class UserProfile(models.Model):
     nickname = models.CharField(max_length=25, blank=True, unique=True)
     timezone = TimeZoneField(blank=True, null=True)
     prediction = models.TextField(blank=True)
-

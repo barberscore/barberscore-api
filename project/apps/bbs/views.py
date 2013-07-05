@@ -2,7 +2,6 @@ from __future__ import division
 
 from django.shortcuts import (
     render,
-    redirect,
     get_object_or_404,
     get_list_or_404)
 
@@ -29,26 +28,17 @@ def home(request):
     return render(request, 'home.html', {'scores': scores, 'schedules': schedules})
 
 
-def success(request):
-    return render(request, 'success.html')
-
-
-def submit_and_next(request):
-    return render(request, 'success.html')
-
-
 def contestants(request):
     contestants = get_list_or_404(Contestant)
-        # next_performance_slug = performance.get_next_by_stage_time()
-        # prior_performance_slug
-    # return redirect('rating', next_performance.slug)
     table = ContestantTable(contestants)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
 
 
 def contests(request):
-    return render(request, 'contests.html')
+    scores = Contest.objects.filter(is_complete=True).order_by('date')
+    schedules = Contest.objects.filter(is_complete=False).order_by('date')
+    return render(request, 'contests.html', {'scores': scores, 'schedules': schedules})
 
 
 def performances(request):

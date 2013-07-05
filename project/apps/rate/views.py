@@ -3,8 +3,7 @@ from __future__ import division
 from django.shortcuts import (
     render,
     redirect,
-    get_object_or_404,
-    get_list_or_404)
+)
 
 from django.contrib.auth.decorators import login_required
 
@@ -16,31 +15,30 @@ from apps.bbs.models import (
 
 from .tables import (
     RatingTable,
+    EnterRatingTable,
 )
 
 from .models import (
     Rating,
-    # UserProfile,
 )
 
 from .forms import (
     RatingForm,
-    # ProfileForm,
 )
-
-
 
 
 @login_required
 def ratings(request):
     # ratings = get_list_or_404(Rating)
+    performances = Performance.objects.filter(contest__is_complete=False)
+    performance_table = EnterRatingTable(performances)
     ratings = Rating.objects.filter(user=request.user)
     if ratings:
         table = RatingTable(ratings)
         RequestConfig(request, paginate={"per_page": 50}).configure(table)
-        return render(request, 'ratings.html', {'ratings': ratings, 'table': table})
+        return render(request, 'ratings.html', {'ratings': ratings, 'table': table, 'performance_table': performance_table})
     else:
-        return render(request, 'no_ratings.html')
+        return render(request, 'no_ratings.html', {'performance_table': performance_table})
 
 
 @login_required
@@ -56,16 +54,3 @@ def rating(request, performance):
     else:
         form = RatingForm(instance=rating)
     return render(request, 'rating.html', {'form': form, 'rating': rating, 'performance': performance})
-
-
-# @login_required
-# def profile(request):
-#     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-#     if request.method == 'POST':
-#         form = ProfileForm(request.POST, instance=user_profile)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('success')
-#     else:
-#         form = ProfileForm(instance=user_profile)
-#     return render(request, 'profile.html', {'form': form})

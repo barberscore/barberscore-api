@@ -3,12 +3,9 @@ from __future__ import division
 from django.shortcuts import (
     render,
     redirect,
-    get_object_or_404,
-    get_list_or_404)
+)
 
 from django.contrib.auth.decorators import login_required
-
-from django_tables2 import RequestConfig
 
 
 from .models import (
@@ -31,3 +28,7 @@ def profile(request):
     else:
         form = ProfileForm(instance=user_profile)
     return render(request, 'profile.html', {'form': form})
+
+
+def success(request):
+    return render(request, 'success.html')

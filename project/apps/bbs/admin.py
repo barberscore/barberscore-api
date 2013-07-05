@@ -31,7 +31,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         ('Scores', {'fields': [('song_one', 'score_one'), ('song_two', 'score_two')]}),
         ('Detail', {'fields': [('mus_one', 'prs_one', 'sng_one'), ('mus_two', 'prs_two', 'sng_two')], 'classes':['collapse']})
     ]
-    list_display = ['__unicode__', 'stage_time']
+    list_display = ['__unicode__', 'slug', 'stage_time']
     list_filter = ['contest']
     raw_id_fields = ['song_one', 'song_two']
 
