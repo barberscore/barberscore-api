@@ -2,15 +2,20 @@
 
 {% block title %}
 <title>
-Nonce Login
+Login
 </title>
 {% endblock title %}
 
 {% block content %}
+<p>
+Enter your North American mobile number to login.  You will be directed to the next screen
+and will receive a text with a four-digit code on your mobile phone.</p>
     <form action='{% url "noncense_request" %}' method='post'>
         {% csrf_token %}
         {{request_form.as_p}}
         <input type='submit' value='Submit'>
     </form>
-<br><br>
+<p>
+<strong>We will not call, text, share,
+or use your mobile number for any purpose other than logging in.</strong></p>
 {% endblock content %}
