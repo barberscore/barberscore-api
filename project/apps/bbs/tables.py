@@ -55,9 +55,9 @@ class ScoreTable(tables.Table):
 
     contestant = tables.LinkColumn('contestant', args=[A('contestant.slug')])
     # prelim = ScoreColumn()
-    song_one = tables.Column()
+    name_one = tables.Column()
     # score_one = ScoreColumn()
-    song_two = tables.Column()
+    name_two = tables.Column()
     # score_two = ScoreColumn()
     avg_score = ScoreColumn()
     class Meta:

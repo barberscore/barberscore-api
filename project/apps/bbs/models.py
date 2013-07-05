@@ -119,7 +119,7 @@ class Contest(models.Model):
 
 
 class Song(models.Model):
-    name = models.CharField(max_length=200, default='Unknown')
+    name = models.CharField(max_length=200, unique=True)
 
     def __unicode__(self):
         return self.name
@@ -145,12 +145,14 @@ class Performance(models.Model):
     stage_time = models.DateTimeField()
 
     song_one = models.ForeignKey(Song, blank=True, null=True, related_name='song_one')
+    name_one = models.CharField(max_length=200, blank=True)
     score_one = models.FloatField(blank=True, null=True)
     mus_one = models.FloatField(blank=True, null=True)
     prs_one = models.FloatField(blank=True, null=True)
     sng_one = models.FloatField(blank=True, null=True)
 
     song_two = models.ForeignKey(Song, blank=True, null=True, related_name='song_two')
+    name_two = models.CharField(max_length=200, blank=True)
     score_two = models.FloatField(blank=True, null=True)
     mus_two = models.FloatField(blank=True, null=True)
     prs_two = models.FloatField(blank=True, null=True)
