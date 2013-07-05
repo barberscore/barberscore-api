@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     'floppyforms',
     'apps.bbs',
     'apps.noncense',
+    'apps.common',
     'apps.rate',
     'django_localflavor_us',
 )

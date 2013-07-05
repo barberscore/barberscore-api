@@ -20,11 +20,15 @@ from .tables import (
 
 from .models import (
     Rating,
+    # UserProfile,
 )
 
 from .forms import (
     RatingForm,
+    # ProfileForm,
 )
+
+
 
 
 @login_required
@@ -52,3 +56,16 @@ def rating(request, performance):
     else:
         form = RatingForm(instance=rating)
     return render(request, 'rating.html', {'form': form, 'rating': rating, 'performance': performance})
+
+
+# @login_required
+# def profile(request):
+#     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+#     if request.method == 'POST':
+#         form = ProfileForm(request.POST, instance=user_profile)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('success')
+#     else:
+#         form = ProfileForm(instance=user_profile)
+#     return render(request, 'profile.html', {'form': form})

@@ -5,4 +5,6 @@ urlpatterns = patterns(
 
     url(r'rating/$', 'ratings', name='ratings'),
     url(r'rating/(?P<performance>[\w-]+)/$', 'rating', name='rating'),
+    # url(r'profile/$', 'profile', name='profile'),
+
 )

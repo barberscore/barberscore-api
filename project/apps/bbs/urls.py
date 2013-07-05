@@ -5,7 +5,6 @@ urlpatterns = patterns(
     url(r'^$', 'home', name='home'),
     # url(r'score/(?P<performance>\d+)$', 'score', name='score'),
     url(r'success/$', 'success', name='success'),
-    url(r'profile/$', 'profile', name='profile'),
 
 
     url(r'performance/$', 'performances', name='performances'),

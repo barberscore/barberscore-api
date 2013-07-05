@@ -11,7 +11,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MobileUser
-        fields = ('mobile', 'first_name', 'last_name')
+        fields = ('mobile', )
 
 
 class UserChangeForm(forms.ModelForm):
@@ -19,7 +19,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = MobileUser
-        fields = ['mobile', 'first_name', 'last_name']
+        fields = ['mobile', ]
 
 
 class MobileUserAdmin(UserAdmin):
@@ -30,15 +30,15 @@ class MobileUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('mobile', 'first_name', 'last_name', 'is_admin')
+    list_display = ('mobile', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('mobile', 'first_name', 'last_name',)}),
+        (None, {'fields': ('mobile', )}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('mobile', 'first_name', 'last_name',)}),
+            'fields': ('mobile', )}),
     )
     search_fields = ('mobile',)
     ordering = ('mobile',)

@@ -6,8 +6,6 @@ from django.shortcuts import (
     get_object_or_404,
     get_list_or_404)
 
-from django.contrib.auth.decorators import login_required
-
 from django_tables2 import RequestConfig
 
 from .tables import (
@@ -24,10 +22,6 @@ from .models import (
     Singer,
 )
 
-from .forms import (
-    ProfileForm,
-)
-
 
 def home(request):
     scores = Contest.objects.filter(is_complete=True).order_by('date')
@@ -41,20 +35,6 @@ def success(request):
 
 def submit_and_next(request):
     return render(request, 'success.html')
-
-
-@login_required
-def profile(request):
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('success')
-    else:
-        form = ProfileForm(instance=request.user)
-    return render(request, 'profile.html', {'form': form})
-
-
 
 
 def contestants(request):

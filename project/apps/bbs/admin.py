@@ -21,6 +21,7 @@ class ContestantAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ['name', 'slug', 'district', 'location', 'website', 'facebook']
     list_filter = ['district', 'contestant_type']
+    search_fields = ['name']
 
 
 class PerformanceAdmin(admin.ModelAdmin):
