@@ -1,8 +1,12 @@
+import pytz
+
 from django.db import models
 
 from django.contrib.auth.models import (
     BaseUserManager,
     AbstractBaseUser)
+
+from timezone_field import TimeZoneField
 
 
 class MobileUserManager(BaseUserManager):
@@ -43,6 +47,7 @@ class MobileUser(AbstractBaseUser):
     first_name = models.CharField(blank=True, max_length=25)
     last_name = models.CharField(blank=True, max_length=25)
     prediction = models.TextField(blank=True, null=True)
+    time_zone = TimeZoneField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

@@ -1,6 +1,11 @@
 from __future__ import division
 
+import pytz
+
 from django.db import models
+
+from django.conf import settings
+from timezone_field import TimeZoneField
 
 
 class Contestant(models.Model):
@@ -97,6 +102,7 @@ class Contest(models.Model):
     slug = models.SlugField(null=True)
     is_complete = models.BooleanField(default=False)
     year = models.CharField(null=True, blank=True, max_length=4)
+    time_zone = TimeZoneField(null=True, blank=True)
     contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)
     contest_round = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_ROUND_CHOICES)
     level = models.CharField(max_length=200, blank=True, null=True, choices=LEVEL_CHOICES)
@@ -151,6 +157,10 @@ class Performance(models.Model):
     sng_two = models.FloatField(blank=True, null=True)
 
     avg_score = models.FloatField(blank=True, null=True)
+
+        # def to_user_timezone(date, profile):
+        #     timezone = profile.timezone if profile.timezone else settings.TIME_ZONE
+        #     return date.replace(tzinfo=pytz.timezone(settings.TIME_ZONE)).astimezone(pytz.timezone(timezone))
 
     def __unicode__(self):
         return '{contest} Slot {slot}: {contestant}'.format(
