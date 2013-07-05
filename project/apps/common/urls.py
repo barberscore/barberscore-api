@@ -5,5 +5,6 @@ urlpatterns = patterns(
 
     url(r'profile/$', 'profile', name='profile'),
     url(r'success/$', 'success', name='success'),
+    url(r'about/$', 'about', name='about'),
 
 )

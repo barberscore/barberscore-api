@@ -32,3 +32,7 @@ def profile(request):
 
 def success(request):
     return render(request, 'success.html')
+
+
+def about(request):
+    return render(request, 'about.html')
