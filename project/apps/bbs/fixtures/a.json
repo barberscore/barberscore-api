@@ -1,3876 +1,5 @@
 [
 {
-    "pk": 2, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Real McCoy", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "the-real-mccoy"
-    }
-},
-{
-    "pk": 3, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Lemon Squeezy", 
-        "district": 20, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "lemon-squeezy"
-    }
-},
-{
-    "pk": 4, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Via Voice", 
-        "district": 4, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "via-voice"
-    }
-},
-{
-    "pk": 5, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Vocal Edition", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "vocal-edition"
-    }
-},
-{
-    "pk": 6, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "On Air", 
-        "district": 10, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "on-air"
-    }
-},
-{
-    "pk": 7, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Momma's Boys", 
-        "district": 4, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "mommas-boys"
-    }
-},
-{
-    "pk": 8, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Bravo!", 
-        "district": 15, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "bravo"
-    }
-},
-{
-    "pk": 9, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Velvet Hammer", 
-        "district": 6, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "velvet-hammer"
-    }
-},
-{
-    "pk": 10, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Sterling", 
-        "district": 17, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "sterling"
-    }
-},
-{
-    "pk": 11, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Chameleon", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "chameleon"
-    }
-},
-{
-    "pk": 12, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Majestyx", 
-        "district": 13, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "majestyx"
-    }
-},
-{
-    "pk": 13, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Vocality", 
-        "district": 8, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "vocality"
-    }
-},
-{
-    "pk": 14, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Q-Tones", 
-        "district": 20, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "q-tones"
-    }
-},
-{
-    "pk": 15, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Surround Sound", 
-        "district": 14, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "surround-sound"
-    }
-},
-{
-    "pk": 16, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Quantum", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "quantum"
-    }
-},
-{
-    "pk": 17, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "BoomTown", 
-        "district": 2, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "boomtown"
-    }
-},
-{
-    "pk": 18, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Ebb N' Flow", 
-        "district": 13, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "ebb-n-flow"
-    }
-},
-{
-    "pk": 19, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Premium Blend", 
-        "district": 2, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "premium-blend"
-    }
-},
-{
-    "pk": 20, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "4.0", 
-        "district": 4, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "4-point-0"
-    }
-},
-{
-    "pk": 21, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Instant Classic", 
-        "district": 1, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "instant-classic"
-    }
-},
-{
-    "pk": 22, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "County Line", 
-        "district": 17, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "county-line"
-    }
-},
-{
-    "pk": 23, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "1/2 Ton Pickup", 
-        "district": 11, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "half-ton-pickup"
-    }
-},
-{
-    "pk": 24, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Musical Island Boys", 
-        "district": 19, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "musical-island-boys"
-    }
-},
-{
-    "pk": 25, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Common Core", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "common-core"
-    }
-},
-{
-    "pk": 26, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Frank the Dog", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "frank-the-dog"
-    }
-},
-{
-    "pk": 27, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Artistic License", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "artistic-license"
-    }
-},
-{
-    "pk": 28, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "GQ", 
-        "district": 8, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "gq"
-    }
-},
-{
-    "pk": 29, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Crush", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "the-crush"
-    }
-},
-{
-    "pk": 30, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Shaken, Not Stirred ", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "shaken-not-stirred"
-    }
-},
-{
-    "pk": 31, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Main Street", 
-        "district": 16, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "main-street"
-    }
-},
-{
-    "pk": 32, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Da Capo", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "da-capo"
-    }
-},
-{
-    "pk": 33, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Full Effect", 
-        "district": 2, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "full-effect"
-    }
-},
-{
-    "pk": 34, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Decades", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "decades"
-    }
-},
-{
-    "pk": 35, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "95 North", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "95-north"
-    }
-},
-{
-    "pk": 36, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Party", 
-        "district": 13, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "the-party"
-    }
-},
-{
-    "pk": 37, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Society", 
-        "district": 16, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "the-society"
-    }
-},
-{
-    "pk": 38, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Con Men", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "the-con-men"
-    }
-},
-{
-    "pk": 39, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Masterpiece", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "masterpiece"
-    }
-},
-{
-    "pk": 40, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "A Mighty Wind", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "a-mighty-wind"
-    }
-},
-{
-    "pk": 41, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Steel", 
-        "district": 18, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "steel"
-    }
-},
-{
-    "pk": 42, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Up All Night", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "up-all-night"
-    }
-},
-{
-    "pk": 43, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Hot Air Buffoons", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "hot-air-buffoons"
-    }
-},
-{
-    "pk": 44, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Throwback", 
-        "district": 16, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "throwback"
-    }
-},
-{
-    "pk": 45, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "After Hours", 
-        "district": 6, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "after-hours"
-    }
-},
-{
-    "pk": 46, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Rubicon", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "rubicon"
-    }
-},
-{
-    "pk": 47, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Round Midnight", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "round-midnight"
-    }
-},
-{
-    "pk": 48, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Forefront", 
-        "district": 1, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "forefront"
-    }
-},
-{
-    "pk": 49, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Lunch Break", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "lunch-break"
-    }
-},
-{
-    "pk": 50, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Allies", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "", 
-        "contestant_type": 1, 
-        "slug": "the-allies"
-    }
-},
-{
-    "pk": 80, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "RSVP", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Germantown, TN ", 
-        "contestant_type": 2, 
-        "slug": "rsvp"
-    }
-},
-{
-    "pk": 81, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Singing Buckeyes", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Buckeye Columbus, OH ", 
-        "contestant_type": 2, 
-        "slug": "singing-buckeyes"
-    }
-},
-{
-    "pk": 82, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The New Tradition", 
-        "district": 6, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Northbrook, IL ", 
-        "contestant_type": 2, 
-        "slug": "the-new-tradition"
-    }
-},
-{
-    "pk": 83, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Circle City Sound", 
-        "district": 1, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Greater Indianapolis, IN ", 
-        "contestant_type": 2, 
-        "slug": "circle-city-sound"
-    }
-},
-{
-    "pk": 84, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "SenateAires", 
-        "district": 4, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Salem, OR ", 
-        "contestant_type": 2, 
-        "slug": "senateaires"
-    }
-},
-{
-    "pk": 85, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Westminster Chorus", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Westminster, CA ", 
-        "contestant_type": 2, 
-        "slug": "westminster-chorus"
-    }
-},
-{
-    "pk": 86, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Voices of California", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": "California Delta, CA ", 
-        "contestant_type": 2, 
-        "slug": "voices-of-california"
-    }
-},
-{
-    "pk": 87, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Atlanta Vocal Project", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Atlanta Metro, GA ", 
-        "contestant_type": 2, 
-        "slug": "atlanta-vocal-project"
-    }
-},
-{
-    "pk": 88, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Duke City Sound", 
-        "district": 14, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Bernalillo County, NM ", 
-        "contestant_type": 2, 
-        "slug": "duke-city-sound"
-    }
-},
-{
-    "pk": 89, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Vocal Evolution", 
-        "district": 21, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Perth, Australia ", 
-        "contestant_type": 2, 
-        "slug": "vocal-evolution"
-    }
-},
-{
-    "pk": 90, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Upstate Harmonizers", 
-        "district": 15, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Mohawk Valley, NY ", 
-        "contestant_type": 2, 
-        "slug": "upstate-harmonizers"
-    }
-},
-{
-    "pk": 91, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Pathfinder Chorus", 
-        "district": 2, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Fremont, NE ", 
-        "contestant_type": 2, 
-        "slug": "pathfinder-chorus"
-    }
-},
-{
-    "pk": 92, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Men of Independence", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Independence, OH ", 
-        "contestant_type": 2, 
-        "slug": "men-of-independence"
-    }
-},
-{
-    "pk": 93, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Chorus of the Chesapeake", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Dundalk, MD ", 
-        "contestant_type": 2, 
-        "slug": "chorus-of-the-chesapeake"
-    }
-},
-{
-    "pk": 94, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Heart of Texas", 
-        "district": 17, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Central Texas Corridor, TX ", 
-        "contestant_type": 2, 
-        "slug": "heart-of-texas"
-    }
-},
-{
-    "pk": 95, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Marcsmen", 
-        "district": 17, 
-        "director": null, 
-        "facebook": "", 
-        "location": "San Marcos, TX ", 
-        "contestant_type": 2, 
-        "slug": "the-marcsmen"
-    }
-},
-{
-    "pk": 96, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Sound of Illinois", 
-        "district": 6, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Bloomington, IL ", 
-        "contestant_type": 2, 
-        "slug": "sound-of-illinois"
-    }
-},
-{
-    "pk": 97, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Great Plains Harmony", 
-        "district": 8, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Fargo-Moorhead, ND", 
-        "contestant_type": 2, 
-        "slug": "great-plains-harmony"
-    }
-},
-{
-    "pk": 98, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "T.H.X.", 
-        "district": 16, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Sunrise, FL ", 
-        "contestant_type": 2, 
-        "slug": "thx"
-    }
-},
-{
-    "pk": 99, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Voices of Gotham", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Hells Kitchen, NY ", 
-        "contestant_type": 2, 
-        "slug": "voices-of-gotham"
-    }
-},
-{
-    "pk": 100, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Alliance", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Greater Central Ohio, OH ", 
-        "contestant_type": 2, 
-        "slug": "the-alliance"
-    }
-},
-{
-    "pk": 101, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Brothers in Harmony", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Hamilton Square, NJ ", 
-        "contestant_type": 2, 
-        "slug": "brothers-in-harmony"
-    }
-},
-{
-    "pk": 102, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Alexandria Harmonizers", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Alexandria, VA ", 
-        "contestant_type": 2, 
-        "slug": "alexandria-harmonizers"
-    }
-},
-{
-    "pk": 103, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Vocal Revolution", 
-        "district": 10, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Concord, MA ", 
-        "contestant_type": 2, 
-        "slug": "vocal-revolution"
-    }
-},
-{
-    "pk": 104, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Palmetto Vocal Project", 
-        "district": 11, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Mt. Pleasant, SC ", 
-        "contestant_type": 2, 
-        "slug": "palmetto-vocal-project"
-    }
-},
-{
-    "pk": 105, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Sound of the Rockies", 
-        "district": 14, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Denver Mile High, CO ", 
-        "contestant_type": 2, 
-        "slug": "sound-of-the-rockies"
-    }
-},
-{
-    "pk": 106, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Mountaintown Singers", 
-        "district": 13, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Mt. Pleasant, MI ", 
-        "contestant_type": 2, 
-        "slug": "mountaintown-singers"
-    }
-},
-{
-    "pk": 107, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Grand Central Chorus", 
-        "district": 18, 
-        "director": null, 
-        "facebook": "", 
-        "location": "East Midlands, UK ", 
-        "contestant_type": 2, 
-        "slug": "grand-central-chorus"
-    }
-},
-{
-    "pk": 108, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Northern Lights", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": "Toronto, Ontario ", 
-        "contestant_type": 2, 
-        "slug": "the-northern-lights"
-    }
-},
-{
-    "pk": 110, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Park Street", 
-        "district": 18, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "park-street"
-    }
-},
-{
-    "pk": 111, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Kickback", 
-        "district": 17, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "kickback"
-    }
-},
-{
-    "pk": 112, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Black Tie Affair", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "black-tie-affair"
-    }
-},
-{
-    "pk": 113, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Darlington Brothers", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-darlington-brothers"
-    }
-},
-{
-    "pk": 114, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Phantom Fifth", 
-        "district": 17, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "phantom-fifth"
-    }
-},
-{
-    "pk": 115, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Brovertones", 
-        "district": 2, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-brovertones"
-    }
-},
-{
-    "pk": 116, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Good Old Days", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-good-old-days"
-    }
-},
-{
-    "pk": 117, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Gimme Four", 
-        "district": 9, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "gimme-four"
-    }
-},
-{
-    "pk": 118, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Ballistic!", 
-        "district": 16, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "ballistic"
-    }
-},
-{
-    "pk": 119, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Epic Jazz", 
-        "district": 10, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "epic-jazz"
-    }
-},
-{
-    "pk": 120, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Blueshift", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "blueshift"
-    }
-},
-{
-    "pk": 121, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Shoptimus Prime", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "shoptimus-prime"
-    }
-},
-{
-    "pk": 122, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The New Edition", 
-        "district": 2, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-new-edition"
-    }
-},
-{
-    "pk": 123, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Skinny", 
-        "district": 11, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-skinny"
-    }
-},
-{
-    "pk": 124, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "After The Rain", 
-        "district": 15, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "after-the-rain"
-    }
-},
-{
-    "pk": 125, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Kordal Kombat", 
-        "district": 8, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "kordal-kombat"
-    }
-},
-{
-    "pk": 126, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "SBPC", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "sbpc"
-    }
-},
-{
-    "pk": 127, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Con Men", 
-        "district": 7, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-con-men"
-    }
-},
-{
-    "pk": 128, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Phase IV", 
-        "district": 3, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "phase-iv"
-    }
-},
-{
-    "pk": 129, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Flightline", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "flightline"
-    }
-},
-{
-    "pk": 130, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Sunny Boys", 
-        "district": 16, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-sunny-boys"
-    }
-},
-{
-    "pk": 131, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Lallerstedts", 
-        "district": 20, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "lallerstedts"
-    }
-},
-{
-    "pk": 132, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Fishbowl Boys", 
-        "district": 21, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-fishbowl-boys"
-    }
-},
-{
-    "pk": 133, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Tagline", 
-        "district": 18, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "tagline"
-    }
-},
-{
-    "pk": 134, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Wavelength", 
-        "district": 13, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "wavelength"
-    }
-},
-{
-    "pk": 135, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "The Newfangled Four", 
-        "district": 5, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "the-newfangled-four"
-    }
-},
-{
-    "pk": 136, 
-    "model": "bbs.contestant", 
-    "fields": {
-        "website": "", 
-        "name": "Pitch, Please! ", 
-        "district": 12, 
-        "director": null, 
-        "facebook": "", 
-        "location": null, 
-        "contestant_type": 1, 
-        "slug": "pitch-please"
-    }
-},
-{
-    "pk": 3, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 2, 
-        "part": "Tenor", 
-        "name": "Daniel Rushing", 
-        "slug": "daniel-rushing"
-    }
-},
-{
-    "pk": 4, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 3, 
-        "part": "Tenor", 
-        "name": "Alexander L\u00f6fstedt", 
-        "slug": "alexander-lofstedt"
-    }
-},
-{
-    "pk": 5, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 4, 
-        "part": "Tenor", 
-        "name": "Joseph Livesey", 
-        "slug": "joseph-livesey"
-    }
-},
-{
-    "pk": 6, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 5, 
-        "part": "Tenor", 
-        "name": "Eric Bjornsen", 
-        "slug": "eric-bjornsen"
-    }
-},
-{
-    "pk": 7, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 6, 
-        "part": "Tenor", 
-        "name": "Jonathan Green", 
-        "slug": "jonathan-green"
-    }
-},
-{
-    "pk": 8, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 7, 
-        "part": "Tenor", 
-        "name": "Steven Kelly", 
-        "slug": "steven-kelly"
-    }
-},
-{
-    "pk": 9, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 8, 
-        "part": "Tenor", 
-        "name": "Evan Brooksby", 
-        "slug": "evan-brooksby"
-    }
-},
-{
-    "pk": 10, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 9, 
-        "part": "Tenor", 
-        "name": "Max Power Stevenson", 
-        "slug": "max-power-stevenson"
-    }
-},
-{
-    "pk": 11, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 10, 
-        "part": "Tenor", 
-        "name": "Seth Lafler", 
-        "slug": "seth-lafler"
-    }
-},
-{
-    "pk": 12, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 11, 
-        "part": "Tenor", 
-        "name": "Jordan Travis", 
-        "slug": "jordan-travis"
-    }
-},
-{
-    "pk": 13, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 12, 
-        "part": "Tenor", 
-        "name": "Peter Westers", 
-        "slug": "peter-westers"
-    }
-},
-{
-    "pk": 14, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 13, 
-        "part": "Tenor", 
-        "name": "Jay Althof", 
-        "slug": "jay-althof"
-    }
-},
-{
-    "pk": 15, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 14, 
-        "part": "Tenor", 
-        "name": "Henrik Rosenberg", 
-        "slug": "henrik-rosenberg"
-    }
-},
-{
-    "pk": 16, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 15, 
-        "part": "Tenor", 
-        "name": "Paul Cochran", 
-        "slug": "paul-cochran"
-    }
-},
-{
-    "pk": 17, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 16, 
-        "part": "Tenor", 
-        "name": "Russ Blackstone", 
-        "slug": "russ-blackstone"
-    }
-},
-{
-    "pk": 18, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 17, 
-        "part": "Tenor", 
-        "name": "Zane Sutton", 
-        "slug": "zane-sutton"
-    }
-},
-{
-    "pk": 19, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 18, 
-        "part": "Tenor", 
-        "name": "Nate Masterson", 
-        "slug": "nate-masterson"
-    }
-},
-{
-    "pk": 20, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 19, 
-        "part": "Tenor", 
-        "name": "Austin Veteto", 
-        "slug": "austin-veteto"
-    }
-},
-{
-    "pk": 21, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 20, 
-        "part": "Tenor", 
-        "name": "Ted Chamberlain", 
-        "slug": "ted-chamberlain"
-    }
-},
-{
-    "pk": 22, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 21, 
-        "part": "Tenor", 
-        "name": "David Zimmerman", 
-        "slug": "david-zimmerman"
-    }
-},
-{
-    "pk": 23, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 22, 
-        "part": "Tenor", 
-        "name": "Thomas Bullock", 
-        "slug": "thomas-bullock"
-    }
-},
-{
-    "pk": 24, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 23, 
-        "part": "Tenor", 
-        "name": "Will Rodriguez", 
-        "slug": "will-rodriguez"
-    }
-},
-{
-    "pk": 25, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 24, 
-        "part": "Tenor", 
-        "name": "Jeff Hunkin", 
-        "slug": "jeff-hunkin"
-    }
-},
-{
-    "pk": 26, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 25, 
-        "part": "Tenor", 
-        "name": "Michael Nesler", 
-        "slug": "michael-nesler"
-    }
-},
-{
-    "pk": 27, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 26, 
-        "part": "Tenor", 
-        "name": "Tim Knapp", 
-        "slug": "tim-knapp"
-    }
-},
-{
-    "pk": 28, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 27, 
-        "part": "Tenor", 
-        "name": "Todd Kidder", 
-        "slug": "todd-kidder"
-    }
-},
-{
-    "pk": 29, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 28, 
-        "part": "Tenor", 
-        "name": "Keith Olson", 
-        "slug": "keith-olson"
-    }
-},
-{
-    "pk": 30, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 29, 
-        "part": "Tenor", 
-        "name": "Matt Gray", 
-        "slug": "matt-gray"
-    }
-},
-{
-    "pk": 31, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 30, 
-        "part": "Tenor", 
-        "name": "Bill Wells", 
-        "slug": "bill-wells"
-    }
-},
-{
-    "pk": 32, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 31, 
-        "part": "Tenor", 
-        "name": "Roger Ross", 
-        "slug": "roger-ross"
-    }
-},
-{
-    "pk": 33, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 32, 
-        "part": "Tenor", 
-        "name": "Ryan Griffith", 
-        "slug": "ryan-griffith"
-    }
-},
-{
-    "pk": 34, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 33, 
-        "part": "Tenor", 
-        "name": "Alexander Brandt", 
-        "slug": "alexander-brandt"
-    }
-},
-{
-    "pk": 35, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 34, 
-        "part": "Tenor", 
-        "name": "Craig Brown", 
-        "slug": "craig-brown"
-    }
-},
-{
-    "pk": 36, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 35, 
-        "part": "Tenor", 
-        "name": "Jim Halvorson", 
-        "slug": "jim-halvorson"
-    }
-},
-{
-    "pk": 37, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 36, 
-        "part": "Tenor", 
-        "name": "Kevin Morey", 
-        "slug": "kevin-morey"
-    }
-},
-{
-    "pk": 38, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 37, 
-        "part": "Tenor", 
-        "name": "Thor Young", 
-        "slug": "thor-young"
-    }
-},
-{
-    "pk": 39, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 38, 
-        "part": "Tenor", 
-        "name": "David Strasser", 
-        "slug": "david-strasser"
-    }
-},
-{
-    "pk": 40, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 39, 
-        "part": "Tenor", 
-        "name": "Rob Menaker", 
-        "slug": "rob-menaker"
-    }
-},
-{
-    "pk": 41, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 40, 
-        "part": "Tenor", 
-        "name": "Paul Saca", 
-        "slug": "paul-saca"
-    }
-},
-{
-    "pk": 42, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 41, 
-        "part": "Tenor", 
-        "name": "Andy Foster", 
-        "slug": "andy-foster"
-    }
-},
-{
-    "pk": 43, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 42, 
-        "part": "Tenor", 
-        "name": "John Ward", 
-        "slug": "john-ward"
-    }
-},
-{
-    "pk": 44, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 43, 
-        "part": "Tenor", 
-        "name": "Will Baughman", 
-        "slug": "will-baughman"
-    }
-},
-{
-    "pk": 45, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 44, 
-        "part": "Tenor", 
-        "name": "Alex Rubin", 
-        "slug": "alex-rubin"
-    }
-},
-{
-    "pk": 46, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 45, 
-        "part": "Tenor", 
-        "name": "Tim Beutel", 
-        "slug": "tim-beutel"
-    }
-},
-{
-    "pk": 47, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 46, 
-        "part": "Tenor", 
-        "name": "Scott McCarthy", 
-        "slug": "scott-mccarthy"
-    }
-},
-{
-    "pk": 48, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 47, 
-        "part": "Tenor", 
-        "name": "Larry Bomback", 
-        "slug": "larry-bomback"
-    }
-},
-{
-    "pk": 49, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 48, 
-        "part": "Tenor", 
-        "name": "Drew Wheaton", 
-        "slug": "drew-wheaton"
-    }
-},
-{
-    "pk": 50, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 49, 
-        "part": "Tenor", 
-        "name": "Shane Scott", 
-        "slug": "shane-scott"
-    }
-},
-{
-    "pk": 51, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 50, 
-        "part": "Tenor", 
-        "name": "Puck Ross", 
-        "slug": "puck-ross"
-    }
-},
-{
-    "pk": 52, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 2, 
-        "part": "Lead", 
-        "name": "Howard McAdory", 
-        "slug": "howard-mcadory"
-    }
-},
-{
-    "pk": 53, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 3, 
-        "part": "Lead", 
-        "name": "Victor Nilsson", 
-        "slug": "victor-nilsson"
-    }
-},
-{
-    "pk": 54, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 4, 
-        "part": "Lead", 
-        "name": "Doug Broersma", 
-        "slug": "doug-broersma"
-    }
-},
-{
-    "pk": 55, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 5, 
-        "part": "Lead", 
-        "name": "Timothy McMullan", 
-        "slug": "timothy-mcmullan"
-    }
-},
-{
-    "pk": 56, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 6, 
-        "part": "Lead", 
-        "name": "Jayson McCarter", 
-        "slug": "jayson-mccarter"
-    }
-},
-{
-    "pk": 57, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 7, 
-        "part": "Lead", 
-        "name": "Ian Kelly", 
-        "slug": "ian-kelly"
-    }
-},
-{
-    "pk": 58, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 8, 
-        "part": "Lead", 
-        "name": "Donald Drake", 
-        "slug": "donald-drake"
-    }
-},
-{
-    "pk": 59, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 9, 
-        "part": "Lead", 
-        "name": "Christopher Weber", 
-        "slug": "christopher-weber"
-    }
-},
-{
-    "pk": 60, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 10, 
-        "part": "Lead", 
-        "name": "Todd Reavis", 
-        "slug": "todd-reavis"
-    }
-},
-{
-    "pk": 61, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 11, 
-        "part": "Lead", 
-        "name": "Kevin Harris", 
-        "slug": "kevin-harris"
-    }
-},
-{
-    "pk": 62, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 12, 
-        "part": "Lead", 
-        "name": "Jamey Carey", 
-        "slug": "jamey-carey"
-    }
-},
-{
-    "pk": 63, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 13, 
-        "part": "Lead", 
-        "name": "Tony Blackwood", 
-        "slug": "tony-blackwood"
-    }
-},
-{
-    "pk": 64, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 14, 
-        "part": "Lead", 
-        "name": "Steven Hansen", 
-        "slug": "steven-hansen"
-    }
-},
-{
-    "pk": 65, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 15, 
-        "part": "Lead", 
-        "name": "Phil Garrott", 
-        "slug": "phil-garrott"
-    }
-},
-{
-    "pk": 66, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 16, 
-        "part": "Lead", 
-        "name": "Denis Laflamme", 
-        "slug": "denis-laflamme"
-    }
-},
-{
-    "pk": 67, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 17, 
-        "part": "Lead", 
-        "name": "Caleb Fouse", 
-        "slug": "caleb-fouse"
-    }
-},
-{
-    "pk": 68, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 18, 
-        "part": "Lead", 
-        "name": "Garrett Gillingham", 
-        "slug": "garrett-gillingham"
-    }
-},
-{
-    "pk": 69, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 19, 
-        "part": "Lead", 
-        "name": "Mark Fortino", 
-        "slug": "mark-fortino"
-    }
-},
-{
-    "pk": 70, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 20, 
-        "part": "Lead", 
-        "name": "Gavin Jensen", 
-        "slug": "gavin-jensen"
-    }
-},
-{
-    "pk": 71, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 21, 
-        "part": "Lead", 
-        "name": "Theo Hicks", 
-        "slug": "theo-hicks"
-    }
-},
-{
-    "pk": 72, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 22, 
-        "part": "Lead", 
-        "name": "Jamie Sharp", 
-        "slug": "jamie-sharp"
-    }
-},
-{
-    "pk": 73, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 23, 
-        "part": "Lead", 
-        "name": "Jeremy Conover", 
-        "slug": "jeremy-conover"
-    }
-},
-{
-    "pk": 74, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 24, 
-        "part": "Lead", 
-        "name": "Marcellus Washburn", 
-        "slug": "marcellus-washburn"
-    }
-},
-{
-    "pk": 75, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 25, 
-        "part": "Lead", 
-        "name": "Joshua Van Gorder", 
-        "slug": "joshua-van-gorder"
-    }
-},
-{
-    "pk": 76, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 26, 
-        "part": "Lead", 
-        "name": "Tom Halley", 
-        "slug": "tom-halley"
-    }
-},
-{
-    "pk": 77, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 27, 
-        "part": "Lead", 
-        "name": "Richard Brunner", 
-        "slug": "richard-brunner"
-    }
-},
-{
-    "pk": 78, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 28, 
-        "part": "Lead", 
-        "name": "Heath Walker", 
-        "slug": "heath-walker"
-    }
-},
-{
-    "pk": 79, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 29, 
-        "part": "Lead", 
-        "name": "Josh Szolomayer", 
-        "slug": "josh-szolomayer"
-    }
-},
-{
-    "pk": 80, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 30, 
-        "part": "Lead", 
-        "name": "Brad Brown", 
-        "slug": "brad-brown"
-    }
-},
-{
-    "pk": 81, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 31, 
-        "part": "Lead", 
-        "name": "Tony DeRosa", 
-        "slug": "tony-derosa"
-    }
-},
-{
-    "pk": 82, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 32, 
-        "part": "Lead", 
-        "name": "Tony Colosimo", 
-        "slug": "tony-colosimo"
-    }
-},
-{
-    "pk": 83, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 33, 
-        "part": "Lead", 
-        "name": "Graeme Allen", 
-        "slug": "graeme-allen"
-    }
-},
-{
-    "pk": 84, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 34, 
-        "part": "Lead", 
-        "name": "Robert Strong", 
-        "slug": "robert-strong"
-    }
-},
-{
-    "pk": 85, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 35, 
-        "part": "Lead", 
-        "name": "Larry Halvorson", 
-        "slug": "larry-halvorson"
-    }
-},
-{
-    "pk": 86, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 36, 
-        "part": "Lead", 
-        "name": "Toby Shaver", 
-        "slug": "toby-shaver"
-    }
-},
-{
-    "pk": 87, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 37, 
-        "part": "Lead", 
-        "name": "Andrew Borts", 
-        "slug": "andrew-borts"
-    }
-},
-{
-    "pk": 88, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 38, 
-        "part": "Lead", 
-        "name": "Matthew Hopper", 
-        "slug": "matthew-hopper"
-    }
-},
-{
-    "pk": 89, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 39, 
-        "part": "Lead", 
-        "name": "Patrick Haedtler", 
-        "slug": "patrick-haedtler"
-    }
-},
-{
-    "pk": 90, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 40, 
-        "part": "Lead", 
-        "name": "Tim Brooks", 
-        "slug": "tim-brooks"
-    }
-},
-{
-    "pk": 91, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 41, 
-        "part": "Lead", 
-        "name": "Keith Rees", 
-        "slug": "keith-rees"
-    }
-},
-{
-    "pk": 92, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 42, 
-        "part": "Lead", 
-        "name": "Cecil Brown", 
-        "slug": "cecil-brown"
-    }
-},
-{
-    "pk": 93, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 43, 
-        "part": "Lead", 
-        "name": "Mark Lang", 
-        "slug": "mark-lang"
-    }
-},
-{
-    "pk": 94, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 44, 
-        "part": "Lead", 
-        "name": "Sean Devine", 
-        "slug": "sean-devine"
-    }
-},
-{
-    "pk": 95, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 45, 
-        "part": "Lead", 
-        "name": "Benjamin Harding", 
-        "slug": "benjamin-harding"
-    }
-},
-{
-    "pk": 96, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 46, 
-        "part": "Lead", 
-        "name": "Dave Campbell", 
-        "slug": "dave-campbell"
-    }
-},
-{
-    "pk": 97, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 47, 
-        "part": "Lead", 
-        "name": "Wayne Grimmer", 
-        "slug": "wayne-grimmer"
-    }
-},
-{
-    "pk": 98, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 48, 
-        "part": "Lead", 
-        "name": "Kevin Hughes", 
-        "slug": "kevin-hughes"
-    }
-},
-{
-    "pk": 99, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 49, 
-        "part": "Lead", 
-        "name": "Eddie Holt", 
-        "slug": "eddie-holt"
-    }
-},
-{
-    "pk": 100, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 50, 
-        "part": "Lead", 
-        "name": "Dave Calland", 
-        "slug": "dave-calland"
-    }
-},
-{
-    "pk": 101, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 2, 
-        "part": "Baritone", 
-        "name": "James Estes", 
-        "slug": "james-estes"
-    }
-},
-{
-    "pk": 102, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 3, 
-        "part": "Baritone", 
-        "name": "Mattias Larsson", 
-        "slug": "mattias-larsson"
-    }
-},
-{
-    "pk": 103, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 4, 
-        "part": "Baritone", 
-        "name": "Mark Metzger", 
-        "slug": "mark-metzger"
-    }
-},
-{
-    "pk": 104, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 5, 
-        "part": "Baritone", 
-        "name": "Daniel Ryan", 
-        "slug": "daniel-ryan"
-    }
-},
-{
-    "pk": 105, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 6, 
-        "part": "Baritone", 
-        "name": "Matthew Kopser", 
-        "slug": "matthew-kopser"
-    }
-},
-{
-    "pk": 106, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 7, 
-        "part": "Baritone", 
-        "name": "Sean Kelly", 
-        "slug": "sean-kelly"
-    }
-},
-{
-    "pk": 107, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 8, 
-        "part": "Baritone", 
-        "name": "Rob Hopkins", 
-        "slug": "rob-hopkins"
-    }
-},
-{
-    "pk": 108, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 9, 
-        "part": "Baritone", 
-        "name": "John Dorgan", 
-        "slug": "john-dorgan"
-    }
-},
-{
-    "pk": 109, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 10, 
-        "part": "Baritone", 
-        "name": "Bryan Pulver", 
-        "slug": "bryan-pulver"
-    }
-},
-{
-    "pk": 110, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 11, 
-        "part": "Baritone", 
-        "name": "Dave Baldwin", 
-        "slug": "dave-baldwin"
-    }
-},
-{
-    "pk": 111, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 12, 
-        "part": "Baritone", 
-        "name": "Steve Wheeler", 
-        "slug": "steve-wheeler"
-    }
-},
-{
-    "pk": 112, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 13, 
-        "part": "Baritone", 
-        "name": "Tom Matchinsky", 
-        "slug": "tom-matchinsky"
-    }
-},
-{
-    "pk": 113, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 14, 
-        "part": "Baritone", 
-        "name": "Johannes Bergman", 
-        "slug": "johannes-bergman"
-    }
-},
-{
-    "pk": 114, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 15, 
-        "part": "Baritone", 
-        "name": "Jay Dougherty", 
-        "slug": "jay-dougherty"
-    }
-},
-{
-    "pk": 115, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 16, 
-        "part": "Baritone", 
-        "name": "Brent Morton", 
-        "slug": "brent-morton"
-    }
-},
-{
-    "pk": 116, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 17, 
-        "part": "Baritone", 
-        "name": "Aaron Walker", 
-        "slug": "aaron-walker"
-    }
-},
-{
-    "pk": 117, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 18, 
-        "part": "Baritone", 
-        "name": "Ben Krinke", 
-        "slug": "ben-krinke"
-    }
-},
-{
-    "pk": 118, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 19, 
-        "part": "Baritone", 
-        "name": "Jeff Veteto", 
-        "slug": "jeff-veteto"
-    }
-},
-{
-    "pk": 119, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 20, 
-        "part": "Baritone", 
-        "name": "Ira Allen", 
-        "slug": "ira-allen"
-    }
-},
-{
-    "pk": 120, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 21, 
-        "part": "Baritone", 
-        "name": "Kohl Kitzmiller", 
-        "slug": "kohl-kitzmiller"
-    }
-},
-{
-    "pk": 121, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 22, 
-        "part": "Baritone", 
-        "name": "Brent Dunavant", 
-        "slug": "brent-dunavant"
-    }
-},
-{
-    "pk": 122, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 23, 
-        "part": "Baritone", 
-        "name": "Andrew Miller", 
-        "slug": "andrew-miller"
-    }
-},
-{
-    "pk": 123, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 24, 
-        "part": "Baritone", 
-        "name": "Will Hunkin", 
-        "slug": "will-hunkin"
-    }
-},
-{
-    "pk": 124, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 25, 
-        "part": "Baritone", 
-        "name": "Michael Hull", 
-        "slug": "michael-hull"
-    }
-},
-{
-    "pk": 125, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 26, 
-        "part": "Baritone", 
-        "name": "Ross Trube", 
-        "slug": "ross-trube"
-    }
-},
-{
-    "pk": 126, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 27, 
-        "part": "Baritone", 
-        "name": "Gabriel Caretto", 
-        "slug": "gabriel-caretto"
-    }
-},
-{
-    "pk": 127, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 28, 
-        "part": "Baritone", 
-        "name": "Brent Graham", 
-        "slug": "brent-graham"
-    }
-},
-{
-    "pk": 128, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 29, 
-        "part": "Baritone", 
-        "name": "John Brockman", 
-        "slug": "john-brockman"
-    }
-},
-{
-    "pk": 129, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 30, 
-        "part": "Baritone", 
-        "name": "David Rozycki", 
-        "slug": "david-rozycki"
-    }
-},
-{
-    "pk": 130, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 31, 
-        "part": "Baritone", 
-        "name": "Mike McGee", 
-        "slug": "mike-mcgee"
-    }
-},
-{
-    "pk": 131, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 32, 
-        "part": "Baritone", 
-        "name": "Joe Sawyer", 
-        "slug": "joe-sawyer"
-    }
-},
-{
-    "pk": 132, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 33, 
-        "part": "Baritone", 
-        "name": "Ravi Raghuram", 
-        "slug": "ravi-raghuram"
-    }
-},
-{
-    "pk": 133, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 34, 
-        "part": "Baritone", 
-        "name": "Shawn King", 
-        "slug": "shawn-king"
-    }
-},
-{
-    "pk": 134, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 35, 
-        "part": "Baritone", 
-        "name": "Nick Pizzo", 
-        "slug": "nick-pizzo"
-    }
-},
-{
-    "pk": 135, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 36, 
-        "part": "Baritone", 
-        "name": "Mark Spear", 
-        "slug": "mark-spear"
-    }
-},
-{
-    "pk": 136, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 37, 
-        "part": "Baritone", 
-        "name": "Eddie Mejia", 
-        "slug": "eddie-mejia"
-    }
-},
-{
-    "pk": 137, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 38, 
-        "part": "Baritone", 
-        "name": "Russell Watterson", 
-        "slug": "russell-watterson"
-    }
-},
-{
-    "pk": 138, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 39, 
-        "part": "Baritone", 
-        "name": "Alan Gordon", 
-        "slug": "alan-gordon"
-    }
-},
-{
-    "pk": 139, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 40, 
-        "part": "Baritone", 
-        "name": "Clay Hine", 
-        "slug": "clay-hine"
-    }
-},
-{
-    "pk": 140, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 41, 
-        "part": "Baritone", 
-        "name": "Peter Nugent", 
-        "slug": "peter-nugent"
-    }
-},
-{
-    "pk": 141, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 42, 
-        "part": "Baritone", 
-        "name": "Joseph Hunter", 
-        "slug": "joseph-hunter"
-    }
-},
-{
-    "pk": 142, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 43, 
-        "part": "Baritone", 
-        "name": "Harold Haflett", 
-        "slug": "harold-haflett"
-    }
-},
-{
-    "pk": 143, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 44, 
-        "part": "Baritone", 
-        "name": "Dan Rubin", 
-        "slug": "dan-rubin"
-    }
-},
-{
-    "pk": 144, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 45, 
-        "part": "Baritone", 
-        "name": "Bryan Ziegler", 
-        "slug": "bryan-ziegler"
-    }
-},
-{
-    "pk": 145, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 46, 
-        "part": "Baritone", 
-        "name": "Robert VanBuskirk", 
-        "slug": "robert-vanbuskirk"
-    }
-},
-{
-    "pk": 146, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 47, 
-        "part": "Baritone", 
-        "name": "T.J. Carollo", 
-        "slug": "tj-carollo"
-    }
-},
-{
-    "pk": 147, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 48, 
-        "part": "Baritone", 
-        "name": "Aaron Hughes", 
-        "slug": "aaron-hughes"
-    }
-},
-{
-    "pk": 148, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 49, 
-        "part": "Baritone", 
-        "name": "KJ McAleesejergins", 
-        "slug": "kj-mcaleesejergins"
-    }
-},
-{
-    "pk": 149, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 50, 
-        "part": "Baritone", 
-        "name": "Casey Parsons", 
-        "slug": "casey-parsons"
-    }
-},
-{
-    "pk": 150, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 2, 
-        "part": "Bass", 
-        "name": "Jimmy Barr", 
-        "slug": "jimmy-barr"
-    }
-},
-{
-    "pk": 151, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 3, 
-        "part": "Bass", 
-        "name": "Martin Jang\u00f6", 
-        "slug": "martin-jango"
-    }
-},
-{
-    "pk": 152, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 4, 
-        "part": "Bass", 
-        "name": "Tom Metzger", 
-        "slug": "tom-metzger"
-    }
-},
-{
-    "pk": 153, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 5, 
-        "part": "Bass", 
-        "name": "Dan Davenport", 
-        "slug": "dan-davenport"
-    }
-},
-{
-    "pk": 154, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 6, 
-        "part": "Bass", 
-        "name": "Kurt Boutin", 
-        "slug": "kurt-boutin"
-    }
-},
-{
-    "pk": 155, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 7, 
-        "part": "Bass", 
-        "name": "Michael Kelly", 
-        "slug": "michael-kelly"
-    }
-},
-{
-    "pk": 156, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 8, 
-        "part": "Bass", 
-        "name": "David White", 
-        "slug": "david-white"
-    }
-},
-{
-    "pk": 157, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 9, 
-        "part": "Bass", 
-        "name": "Greg Martin", 
-        "slug": "greg-martin"
-    }
-},
-{
-    "pk": 158, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 10, 
-        "part": "Bass", 
-        "name": "Ross Larrison", 
-        "slug": "ross-larrison"
-    }
-},
-{
-    "pk": 159, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 11, 
-        "part": "Bass", 
-        "name": "Joel Hilchey", 
-        "slug": "joel-hilchey"
-    }
-},
-{
-    "pk": 160, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 12, 
-        "part": "Bass", 
-        "name": "James Masalskis", 
-        "slug": "james-masalskis"
-    }
-},
-{
-    "pk": 161, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 13, 
-        "part": "Bass", 
-        "name": "David Boyd", 
-        "slug": "david-boyd"
-    }
-},
-{
-    "pk": 162, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 14, 
-        "part": "Bass", 
-        "name": "Kenneth Nilsson", 
-        "slug": "kenneth-nilsson"
-    }
-},
-{
-    "pk": 163, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 15, 
-        "part": "Bass", 
-        "name": "Kyle Ricks", 
-        "slug": "kyle-ricks"
-    }
-},
-{
-    "pk": 164, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 16, 
-        "part": "Bass", 
-        "name": "Paul Elingson", 
-        "slug": "paul-elingson"
-    }
-},
-{
-    "pk": 165, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 17, 
-        "part": "Bass", 
-        "name": "Shaun Whisler", 
-        "slug": "shaun-whisler"
-    }
-},
-{
-    "pk": 166, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 18, 
-        "part": "Bass", 
-        "name": "Craig Johnson", 
-        "slug": "craig-johnson"
-    }
-},
-{
-    "pk": 167, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 19, 
-        "part": "Bass", 
-        "name": "Adam Veteto", 
-        "slug": "adam-veteto"
-    }
-},
-{
-    "pk": 168, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 20, 
-        "part": "Bass", 
-        "name": "Ty Jensen", 
-        "slug": "ty-jensen"
-    }
-},
-{
-    "pk": 169, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 21, 
-        "part": "Bass", 
-        "name": "Kyle Kitzmiller", 
-        "slug": "kyle-kitzmiller"
-    }
-},
-{
-    "pk": 170, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 22, 
-        "part": "Bass", 
-        "name": "Wallace Stanley", 
-        "slug": "wallace-stanley"
-    }
-},
-{
-    "pk": 171, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 23, 
-        "part": "Bass", 
-        "name": "Dan Walz", 
-        "slug": "dan-walz"
-    }
-},
-{
-    "pk": 172, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 24, 
-        "part": "Bass", 
-        "name": "Matt Gifford", 
-        "slug": "matt-gifford"
-    }
-},
-{
-    "pk": 173, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 25, 
-        "part": "Bass", 
-        "name": "Stephen Denino", 
-        "slug": "stephen-denino"
-    }
-},
-{
-    "pk": 174, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 26, 
-        "part": "Bass", 
-        "name": "Steve Kirsch", 
-        "slug": "steve-kirsch"
-    }
-},
-{
-    "pk": 175, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 27, 
-        "part": "Bass", 
-        "name": "Jason Dyer", 
-        "slug": "jason-dyer"
-    }
-},
-{
-    "pk": 176, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 28, 
-        "part": "Bass", 
-        "name": "Steven McDonald", 
-        "slug": "steven-mcdonald"
-    }
-},
-{
-    "pk": 177, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 29, 
-        "part": "Bass", 
-        "name": "Paul Tabone", 
-        "slug": "paul-tabone"
-    }
-},
-{
-    "pk": 178, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 30, 
-        "part": "Bass", 
-        "name": "Robert Lamont", 
-        "slug": "robert-lamont"
-    }
-},
-{
-    "pk": 179, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 31, 
-        "part": "Bass", 
-        "name": "Myron Whittlesey", 
-        "slug": "myron-whittlesey"
-    }
-},
-{
-    "pk": 180, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 32, 
-        "part": "Bass", 
-        "name": "Wayne Adams", 
-        "slug": "wayne-adams"
-    }
-},
-{
-    "pk": 181, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 33, 
-        "part": "Bass", 
-        "name": "Andy Isbell", 
-        "slug": "andy-isbell"
-    }
-},
-{
-    "pk": 182, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 34, 
-        "part": "Bass", 
-        "name": "Keith Therrell", 
-        "slug": "keith-therrell"
-    }
-},
-{
-    "pk": 183, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 35, 
-        "part": "Bass", 
-        "name": "Mike Stewart", 
-        "slug": "mike-stewart"
-    }
-},
-{
-    "pk": 184, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 36, 
-        "part": "Bass", 
-        "name": "Wally Krause", 
-        "slug": "wally-krause"
-    }
-},
-{
-    "pk": 185, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 37, 
-        "part": "Bass", 
-        "name": "Amos Velez", 
-        "slug": "amos-velez"
-    }
-},
-{
-    "pk": 186, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 38, 
-        "part": "Bass", 
-        "name": "Brent Suver", 
-        "slug": "brent-suver"
-    }
-},
-{
-    "pk": 187, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 39, 
-        "part": "Bass", 
-        "name": "Brett Littlefield", 
-        "slug": "brett-littlefield"
-    }
-},
-{
-    "pk": 188, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 40, 
-        "part": "Bass", 
-        "name": "Drew McMillan", 
-        "slug": "drew-mcmillan"
-    }
-},
-{
-    "pk": 189, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 41, 
-        "part": "Bass", 
-        "name": "Andy Funnell", 
-        "slug": "andy-funnell"
-    }
-},
-{
-    "pk": 190, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 42, 
-        "part": "Bass", 
-        "name": "Dan Rowland", 
-        "slug": "dan-rowland"
-    }
-},
-{
-    "pk": 191, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 43, 
-        "part": "Bass", 
-        "name": "Randy Baughman", 
-        "slug": "randy-baughman"
-    }
-},
-{
-    "pk": 192, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 44, 
-        "part": "Bass", 
-        "name": "Aaron Stratton", 
-        "slug": "aaron-stratton"
-    }
-},
-{
-    "pk": 193, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 45, 
-        "part": "Bass", 
-        "name": "Dan Wessler", 
-        "slug": "dan-wessler"
-    }
-},
-{
-    "pk": 194, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 46, 
-        "part": "Bass", 
-        "name": "Chris Arnold", 
-        "slug": "chris-arnold"
-    }
-},
-{
-    "pk": 195, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 47, 
-        "part": "Bass", 
-        "name": "Jeff Glemboski", 
-        "slug": "jeff-glemboski"
-    }
-},
-{
-    "pk": 196, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 48, 
-        "part": "Bass", 
-        "name": "Brian O\u2019Dell", 
-        "slug": "brian-odell"
-    }
-},
-{
-    "pk": 197, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 49, 
-        "part": "Bass", 
-        "name": "Mike O\u2019Neill", 
-        "slug": "mike-oneill"
-    }
-},
-{
-    "pk": 198, 
-    "model": "bbs.singer", 
-    "fields": {
-        "contestant": 50, 
-        "part": "Bass", 
-        "name": "Jared Wolf", 
-        "slug": "jared-wolf"
-    }
-},
-{
-    "pk": 1, 
-    "model": "bbs.contest", 
-    "fields": {
-        "name": "International Quartet Contest 2013", 
-        "level": "INT", 
-        "contest_type": "Quartet", 
-        "contest_round": "Quarters", 
-        "slug": "2013-int-quartet-quarters", 
-        "year": "2013", 
-        "date": "2013-07-03", 
-        "is_complete": true
-    }
-},
-{
-    "pk": 2, 
-    "model": "bbs.contest", 
-    "fields": {
-        "name": "International Choru", 
-        "level": "INT", 
-        "contest_type": "Chorus", 
-        "contest_round": "Finals", 
-        "slug": "2013-int-chorus-finals", 
-        "year": "2013", 
-        "date": "2013-07-05", 
-        "is_complete": false
-    }
-},
-{
-    "pk": 3, 
-    "model": "bbs.contest", 
-    "fields": {
-        "name": "International Collegiate Quartet Contest 2013", 
-        "level": "INT", 
-        "contest_type": "Collegiate", 
-        "contest_round": "Finals", 
-        "slug": "2013-int-collegiate-finals", 
-        "year": "2013", 
-        "date": "2013-07-02", 
-        "is_complete": true
-    }
-},
-{
-    "pk": 4, 
-    "model": "bbs.contest", 
-    "fields": {
-        "name": "Contest", 
-        "level": "INT", 
-        "contest_type": "Quartet", 
-        "contest_round": "Semis", 
-        "slug": "2013-int-quartet-semis", 
-        "year": "2013", 
-        "date": "2013-07-04", 
-        "is_complete": false
-    }
-},
-{
-    "pk": 5, 
-    "model": "bbs.contest", 
-    "fields": {
-        "name": "Contest", 
-        "level": "INT", 
-        "contest_type": "Quartet", 
-        "contest_round": "Finals", 
-        "slug": "2013-int-quartet-finals", 
-        "year": "2013", 
-        "date": "2013-07-06", 
-        "is_complete": false
-    }
-},
-{
-    "pk": 52, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "A Fool Such As I"
-    }
-},
-{
-    "pk": 53, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "All The Way"
-    }
-},
-{
-    "pk": 54, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Any Time"
-    }
-},
-{
-    "pk": 55, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Beautiful Dreamer"
-    }
-},
-{
-    "pk": 56, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Bring Me Sunshine"
-    }
-},
-{
-    "pk": 57, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Bye Bye Blues"
-    }
-},
-{
-    "pk": 58, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Charleston"
-    }
-},
-{
-    "pk": 59, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Come Fly With Me"
-    }
-},
-{
-    "pk": 60, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Crazy Man Medley"
-    }
-},
-{
-    "pk": 61, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Danny Boy"
-    }
-},
-{
-    "pk": 62, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Drivin' Me Crazy"
-    }
-},
-{
-    "pk": 63, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Every Breath You Take"
-    }
-},
-{
-    "pk": 64, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "For All We Know"
-    }
-},
-{
-    "pk": 65, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Forget You"
-    }
-},
-{
-    "pk": 66, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Good Enough For Now"
-    }
-},
-{
-    "pk": 67, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Gotta Lot Of Rhythm In My Soul "
-    }
-},
-{
-    "pk": 68, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Honey Little 'Lize"
-    }
-},
-{
-    "pk": 69, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Hooey"
-    }
-},
-{
-    "pk": 70, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "I Can't Give You Anything But Love, Baby "
-    }
-},
-{
-    "pk": 71, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "I Will"
-    }
-},
-{
-    "pk": 72, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "I'll Forget You"
-    }
-},
-{
-    "pk": 73, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "I'm Beginning To See The Light "
-    }
-},
-{
-    "pk": 74, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "I've Gotta Be Me"
-    }
-},
-{
-    "pk": 75, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "If I Only Had A Brain"
-    }
-},
-{
-    "pk": 76, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "It's Impossible"
-    }
-},
-{
-    "pk": 77, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Jazz Me Blues"
-    }
-},
-{
-    "pk": 78, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Kissing A Fool"
-    }
-},
-{
-    "pk": 79, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Late Night TV Medley"
-    }
-},
-{
-    "pk": 80, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Little Pal"
-    }
-},
-{
-    "pk": 81, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Love Is A Many Splendored Thing"
-    }
-},
-{
-    "pk": 82, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Love Me And The World Is Mine"
-    }
-},
-{
-    "pk": 83, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Mr. Success"
-    }
-},
-{
-    "pk": 84, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "My Foolish Heart"
-    }
-},
-{
-    "pk": 85, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "My Heart Stood Still"
-    }
-},
-{
-    "pk": 86, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Oh! Look At Me Now"
-    }
-},
-{
-    "pk": 87, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Rock It To (For) Me"
-    }
-},
-{
-    "pk": 88, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Roly Poly"
-    }
-},
-{
-    "pk": 89, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Somethin' About Ya"
-    }
-},
-{
-    "pk": 90, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Stormy Weather"
-    }
-},
-{
-    "pk": 91, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Swanee"
-    }
-},
-{
-    "pk": 92, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Sweet Pea"
-    }
-},
-{
-    "pk": 93, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Taking A Chance On Love"
-    }
-},
-{
-    "pk": 94, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "That's Life"
-    }
-},
-{
-    "pk": 95, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "The Way You Look Tonight "
-    }
-},
-{
-    "pk": 96, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "This Nearly Was Mine"
-    }
-},
-{
-    "pk": 97, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Wait Till The Sun Shines, Nellie "
-    }
-},
-{
-    "pk": 98, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "What Kind Of Fool Am I?"
-    }
-},
-{
-    "pk": 99, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "When It's Night Time In Dixie Land"
-    }
-},
-{
-    "pk": 100, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "When My Sugar Walks Down The Street "
-    }
-},
-{
-    "pk": 101, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Who'll Take My Place?"
-    }
-},
-{
-    "pk": 102, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "Yes Sir That's My Baby"
-    }
-},
-{
-    "pk": 103, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "You Are So Beautiful"
-    }
-},
-{
-    "pk": 104, 
-    "model": "bbs.song", 
-    "fields": {
-        "name": "You Took Advantage Of Me"
-    }
-},
-{
     "pk": 56, 
     "model": "bbs.performance", 
     "fields": {
@@ -3886,7 +15,7 @@
         "seed": 43, 
         "place": 43, 
         "song_one": 61, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": 92, 
         "contestant": 23, 
         "mus_one": 381.0, 
@@ -3912,7 +41,7 @@
         "seed": 39, 
         "place": 39, 
         "song_one": 53, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 70, 
         "contestant": 20, 
         "mus_one": 385.0, 
@@ -3938,7 +67,7 @@
         "seed": 16, 
         "place": null, 
         "song_one": null, 
-        "prelim": 82, 
+        "prelim": 82.0, 
         "song_two": null, 
         "contestant": 35, 
         "mus_one": null, 
@@ -3964,7 +93,7 @@
         "seed": 3, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 88.0, 
         "song_two": null, 
         "contestant": 40, 
         "mus_one": null, 
@@ -3990,7 +119,7 @@
         "seed": 14, 
         "place": null, 
         "song_one": null, 
-        "prelim": 83, 
+        "prelim": 83.0, 
         "song_two": null, 
         "contestant": 45, 
         "mus_one": null, 
@@ -4016,7 +145,7 @@
         "seed": 12, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 27, 
         "mus_one": null, 
@@ -4042,7 +171,7 @@
         "seed": 42, 
         "place": 38, 
         "song_one": 86, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 87, 
         "contestant": 17, 
         "mus_one": 378.0, 
@@ -4068,7 +197,7 @@
         "seed": 47, 
         "place": 44, 
         "song_one": 54, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": 96, 
         "contestant": 8, 
         "mus_one": 378.0, 
@@ -4094,7 +223,7 @@
         "seed": 23, 
         "place": 21, 
         "song_one": 56, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": 57, 
         "contestant": 11, 
         "mus_one": 397.0, 
@@ -4120,7 +249,7 @@
         "seed": 25, 
         "place": 23, 
         "song_one": 64, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": 68, 
         "contestant": 25, 
         "mus_one": 396.0, 
@@ -4146,7 +275,7 @@
         "seed": 46, 
         "place": 35, 
         "song_one": 73, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": 89, 
         "contestant": 22, 
         "mus_one": 385.0, 
@@ -4172,7 +301,7 @@
         "seed": 5, 
         "place": null, 
         "song_one": null, 
-        "prelim": 86, 
+        "prelim": 86.0, 
         "song_two": null, 
         "contestant": 32, 
         "mus_one": null, 
@@ -4198,7 +327,7 @@
         "seed": 45, 
         "place": 46, 
         "song_one": 77, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": 81, 
         "contestant": 34, 
         "mus_one": 377.0, 
@@ -4224,7 +353,7 @@
         "seed": 37, 
         "place": 42, 
         "song_one": 97, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 58, 
         "contestant": 18, 
         "mus_one": 382.0, 
@@ -4250,7 +379,7 @@
         "seed": 8, 
         "place": null, 
         "song_one": null, 
-        "prelim": 85, 
+        "prelim": 85.0, 
         "song_two": null, 
         "contestant": 48, 
         "mus_one": null, 
@@ -4276,7 +405,7 @@
         "seed": 26, 
         "place": null, 
         "song_one": null, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": null, 
         "contestant": 26, 
         "mus_one": null, 
@@ -4302,7 +431,7 @@
         "seed": 32, 
         "place": 32, 
         "song_one": 57, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 99, 
         "contestant": 33, 
         "mus_one": 387.0, 
@@ -4328,7 +457,7 @@
         "seed": 19, 
         "place": 22, 
         "song_one": 84, 
-        "prelim": 81, 
+        "prelim": 81.0, 
         "song_two": 95, 
         "contestant": 28, 
         "mus_one": 405.0, 
@@ -4354,7 +483,7 @@
         "seed": 17, 
         "place": null, 
         "song_one": null, 
-        "prelim": 81, 
+        "prelim": 81.0, 
         "song_two": null, 
         "contestant": 43, 
         "mus_one": null, 
@@ -4380,7 +509,7 @@
         "seed": 18, 
         "place": null, 
         "song_one": null, 
-        "prelim": 81, 
+        "prelim": 81.0, 
         "song_two": null, 
         "contestant": 21, 
         "mus_one": null, 
@@ -4406,7 +535,7 @@
         "seed": 9, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 3, 
         "mus_one": null, 
@@ -4432,7 +561,7 @@
         "seed": 15, 
         "place": null, 
         "song_one": null, 
-        "prelim": 82, 
+        "prelim": 82.0, 
         "song_two": null, 
         "contestant": 49, 
         "mus_one": null, 
@@ -4458,7 +587,7 @@
         "seed": 4, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 88.0, 
         "song_two": null, 
         "contestant": 31, 
         "mus_one": null, 
@@ -4484,7 +613,7 @@
         "seed": 37, 
         "place": null, 
         "song_one": null, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": null, 
         "contestant": 12, 
         "mus_one": null, 
@@ -4510,7 +639,7 @@
         "seed": 2, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 88.0, 
         "song_two": null, 
         "contestant": 39, 
         "mus_one": null, 
@@ -4536,7 +665,7 @@
         "seed": 40, 
         "place": 40, 
         "song_one": 63, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 65, 
         "contestant": 7, 
         "mus_one": 376.0, 
@@ -4562,7 +691,7 @@
         "seed": 1, 
         "place": null, 
         "song_one": null, 
-        "prelim": 90, 
+        "prelim": 90.0, 
         "song_two": null, 
         "contestant": 24, 
         "mus_one": null, 
@@ -4588,7 +717,7 @@
         "seed": 48, 
         "place": 48, 
         "song_one": 72, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": 104, 
         "contestant": 6, 
         "mus_one": 374.0, 
@@ -4614,7 +743,7 @@
         "seed": 21, 
         "place": null, 
         "song_one": null, 
-        "prelim": 80, 
+        "prelim": 80.0, 
         "song_two": null, 
         "contestant": 19, 
         "mus_one": null, 
@@ -4640,7 +769,7 @@
         "seed": 28, 
         "place": 33, 
         "song_one": 103, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": 83, 
         "contestant": 14, 
         "mus_one": 387.0, 
@@ -4666,7 +795,7 @@
         "seed": 32, 
         "place": 41, 
         "song_one": 91, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 80, 
         "contestant": 16, 
         "mus_one": 383.0, 
@@ -4692,7 +821,7 @@
         "seed": 11, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 47, 
         "mus_one": null, 
@@ -4718,7 +847,7 @@
         "seed": 29, 
         "place": 27, 
         "song_one": 78, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": 74, 
         "contestant": 46, 
         "mus_one": 389.0, 
@@ -4744,7 +873,7 @@
         "seed": 40, 
         "place": 36, 
         "song_one": 60, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 98, 
         "contestant": 30, 
         "mus_one": 382.0, 
@@ -4770,7 +899,7 @@
         "seed": 35, 
         "place": 29, 
         "song_one": 76, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 102, 
         "contestant": 41, 
         "mus_one": 391.0, 
@@ -4796,7 +925,7 @@
         "seed": 22, 
         "place": 24, 
         "song_one": 90, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": 71, 
         "contestant": 10, 
         "mus_one": 404.0, 
@@ -4822,7 +951,7 @@
         "seed": 49, 
         "place": 45, 
         "song_one": 82, 
-        "prelim": 73, 
+        "prelim": 73.0, 
         "song_two": 52, 
         "contestant": 15, 
         "mus_one": 385.0, 
@@ -4848,7 +977,7 @@
         "seed": 13, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 50, 
         "mus_one": null, 
@@ -4874,7 +1003,7 @@
         "seed": 43, 
         "place": 30, 
         "song_one": 93, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": 85, 
         "contestant": 38, 
         "mus_one": 386.0, 
@@ -4900,7 +1029,7 @@
         "seed": 10, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 29, 
         "mus_one": null, 
@@ -4926,7 +1055,7 @@
         "seed": 36, 
         "place": 34, 
         "song_one": 75, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 66, 
         "contestant": 36, 
         "mus_one": 385.0, 
@@ -4952,7 +1081,7 @@
         "seed": 24, 
         "place": 26, 
         "song_one": 67, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": 88, 
         "contestant": 2, 
         "mus_one": 390.0, 
@@ -4978,7 +1107,7 @@
         "seed": 30, 
         "place": 37, 
         "song_one": 100, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 76, 
         "contestant": 37, 
         "mus_one": 383.0, 
@@ -5004,7 +1133,7 @@
         "seed": 7, 
         "place": null, 
         "song_one": null, 
-        "prelim": 85, 
+        "prelim": 85.0, 
         "song_two": null, 
         "contestant": 44, 
         "mus_one": null, 
@@ -5030,7 +1159,7 @@
         "seed": 27, 
         "place": 28, 
         "song_one": 79, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": 69, 
         "contestant": 42, 
         "mus_one": 398.0, 
@@ -5056,7 +1185,7 @@
         "seed": 32, 
         "place": 47, 
         "song_one": 94, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 82, 
         "contestant": 9, 
         "mus_one": 380.0, 
@@ -5082,7 +1211,7 @@
         "seed": 6, 
         "place": null, 
         "song_one": null, 
-        "prelim": 86, 
+        "prelim": 86.0, 
         "song_two": null, 
         "contestant": 4, 
         "mus_one": null, 
@@ -5108,7 +1237,7 @@
         "seed": 31, 
         "place": 31, 
         "song_one": 55, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": 62, 
         "contestant": 5, 
         "mus_one": 387.0, 
@@ -5134,7 +1263,7 @@
         "seed": 20, 
         "place": 25, 
         "song_one": 101, 
-        "prelim": 80, 
+        "prelim": 80.0, 
         "song_two": 59, 
         "contestant": 13, 
         "mus_one": 401.0, 
@@ -5160,7 +1289,7 @@
         "seed": 4, 
         "place": null, 
         "song_one": null, 
-        "prelim": 87, 
+        "prelim": 87.0, 
         "song_two": null, 
         "contestant": 102, 
         "mus_one": null, 
@@ -5186,7 +1315,7 @@
         "seed": 13, 
         "place": null, 
         "song_one": null, 
-        "prelim": 81, 
+        "prelim": 81.0, 
         "song_two": null, 
         "contestant": 87, 
         "mus_one": null, 
@@ -5212,7 +1341,7 @@
         "seed": 8, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 101, 
         "mus_one": null, 
@@ -5238,7 +1367,7 @@
         "seed": 18, 
         "place": null, 
         "song_one": null, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": null, 
         "contestant": 93, 
         "mus_one": null, 
@@ -5264,7 +1393,7 @@
         "seed": 12, 
         "place": null, 
         "song_one": null, 
-        "prelim": 81, 
+        "prelim": 81.0, 
         "song_two": null, 
         "contestant": 83, 
         "mus_one": null, 
@@ -5290,7 +1419,7 @@
         "seed": 16, 
         "place": null, 
         "song_one": null, 
-        "prelim": 80, 
+        "prelim": 80.0, 
         "song_two": null, 
         "contestant": 88, 
         "mus_one": null, 
@@ -5342,7 +1471,7 @@
         "seed": 26, 
         "place": null, 
         "song_one": null, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": null, 
         "contestant": 97, 
         "mus_one": null, 
@@ -5368,7 +1497,7 @@
         "seed": 17, 
         "place": null, 
         "song_one": null, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": null, 
         "contestant": 94, 
         "mus_one": null, 
@@ -5394,7 +1523,7 @@
         "seed": 19, 
         "place": null, 
         "song_one": null, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": null, 
         "contestant": 92, 
         "mus_one": null, 
@@ -5420,7 +1549,7 @@
         "seed": 27, 
         "place": null, 
         "song_one": null, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": null, 
         "contestant": 106, 
         "mus_one": null, 
@@ -5446,7 +1575,7 @@
         "seed": 24, 
         "place": null, 
         "song_one": null, 
-        "prelim": 77, 
+        "prelim": 77.0, 
         "song_two": null, 
         "contestant": 104, 
         "mus_one": null, 
@@ -5472,7 +1601,7 @@
         "seed": 7, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 91, 
         "mus_one": null, 
@@ -5498,7 +1627,7 @@
         "seed": 25, 
         "place": null, 
         "song_one": null, 
-        "prelim": 77, 
+        "prelim": 77.0, 
         "song_two": null, 
         "contestant": 80, 
         "mus_one": null, 
@@ -5524,7 +1653,7 @@
         "seed": 6, 
         "place": null, 
         "song_one": null, 
-        "prelim": 85, 
+        "prelim": 85.0, 
         "song_two": null, 
         "contestant": 84, 
         "mus_one": null, 
@@ -5550,7 +1679,7 @@
         "seed": 22, 
         "place": null, 
         "song_one": null, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": null, 
         "contestant": 81, 
         "mus_one": null, 
@@ -5576,7 +1705,7 @@
         "seed": 9, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.0, 
         "song_two": null, 
         "contestant": 96, 
         "mus_one": null, 
@@ -5602,7 +1731,7 @@
         "seed": 3, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 88.0, 
         "song_two": null, 
         "contestant": 105, 
         "mus_one": null, 
@@ -5628,7 +1757,7 @@
         "seed": 14, 
         "place": null, 
         "song_one": null, 
-        "prelim": 80, 
+        "prelim": 80.0, 
         "song_two": null, 
         "contestant": 98, 
         "mus_one": null, 
@@ -5654,7 +1783,7 @@
         "seed": 5, 
         "place": null, 
         "song_one": null, 
-        "prelim": 86, 
+        "prelim": 86.0, 
         "song_two": null, 
         "contestant": 100, 
         "mus_one": null, 
@@ -5680,7 +1809,7 @@
         "seed": 15, 
         "place": null, 
         "song_one": null, 
-        "prelim": 80, 
+        "prelim": 80.0, 
         "song_two": null, 
         "contestant": 95, 
         "mus_one": null, 
@@ -5706,7 +1835,7 @@
         "seed": 11, 
         "place": null, 
         "song_one": null, 
-        "prelim": 83, 
+        "prelim": 83.0, 
         "song_two": null, 
         "contestant": 82, 
         "mus_one": null, 
@@ -5732,7 +1861,7 @@
         "seed": 2, 
         "place": null, 
         "song_one": null, 
-        "prelim": 90, 
+        "prelim": 90.0, 
         "song_two": null, 
         "contestant": 108, 
         "mus_one": null, 
@@ -5758,7 +1887,7 @@
         "seed": 23, 
         "place": null, 
         "song_one": null, 
-        "prelim": 77, 
+        "prelim": 77.0, 
         "song_two": null, 
         "contestant": 90, 
         "mus_one": null, 
@@ -5810,7 +1939,7 @@
         "seed": 21, 
         "place": null, 
         "song_one": null, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": null, 
         "contestant": 103, 
         "mus_one": null, 
@@ -5836,7 +1965,7 @@
         "seed": 20, 
         "place": null, 
         "song_one": null, 
-        "prelim": 79, 
+        "prelim": 79.0, 
         "song_two": null, 
         "contestant": 86, 
         "mus_one": null, 
@@ -5862,7 +1991,7 @@
         "seed": 10, 
         "place": null, 
         "song_one": null, 
-        "prelim": 83, 
+        "prelim": 83.0, 
         "song_two": null, 
         "contestant": 99, 
         "mus_one": null, 
@@ -5888,7 +2017,7 @@
         "seed": 1, 
         "place": null, 
         "song_one": null, 
-        "prelim": 94, 
+        "prelim": 94.0, 
         "song_two": null, 
         "contestant": 85, 
         "mus_one": null, 
@@ -5914,7 +2043,7 @@
         "seed": 26, 
         "place": null, 
         "song_one": null, 
-        "prelim": 68, 
+        "prelim": 68.0, 
         "song_two": null, 
         "contestant": 124, 
         "mus_one": null, 
@@ -5940,7 +2069,7 @@
         "seed": 7, 
         "place": null, 
         "song_one": null, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": null, 
         "contestant": 118, 
         "mus_one": null, 
@@ -5966,7 +2095,7 @@
         "seed": 13, 
         "place": null, 
         "song_one": null, 
-        "prelim": 73, 
+        "prelim": 73.0, 
         "song_two": null, 
         "contestant": 112, 
         "mus_one": null, 
@@ -5992,7 +2121,7 @@
         "seed": 12, 
         "place": null, 
         "song_one": null, 
-        "prelim": 73, 
+        "prelim": 73.0, 
         "song_two": null, 
         "contestant": 120, 
         "mus_one": null, 
@@ -6018,7 +2147,7 @@
         "seed": 27, 
         "place": null, 
         "song_one": null, 
-        "prelim": 66, 
+        "prelim": 66.0, 
         "song_two": null, 
         "contestant": 119, 
         "mus_one": null, 
@@ -6044,7 +2173,7 @@
         "seed": 17, 
         "place": null, 
         "song_one": null, 
-        "prelim": 72, 
+        "prelim": 72.0, 
         "song_two": null, 
         "contestant": 129, 
         "mus_one": null, 
@@ -6070,7 +2199,7 @@
         "seed": 2, 
         "place": null, 
         "song_one": null, 
-        "prelim": 77, 
+        "prelim": 77.0, 
         "song_two": null, 
         "contestant": 117, 
         "mus_one": null, 
@@ -6096,7 +2225,7 @@
         "seed": 16, 
         "place": null, 
         "song_one": null, 
-        "prelim": 72, 
+        "prelim": 72.0, 
         "song_two": null, 
         "contestant": 111, 
         "mus_one": null, 
@@ -6122,7 +2251,7 @@
         "seed": 19, 
         "place": null, 
         "song_one": null, 
-        "prelim": 72, 
+        "prelim": 72.0, 
         "song_two": null, 
         "contestant": 125, 
         "mus_one": null, 
@@ -6148,7 +2277,7 @@
         "seed": 3, 
         "place": null, 
         "song_one": null, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": null, 
         "contestant": 131, 
         "mus_one": null, 
@@ -6174,7 +2303,7 @@
         "seed": 9, 
         "place": null, 
         "song_one": null, 
-        "prelim": 74, 
+        "prelim": 74.0, 
         "song_two": null, 
         "contestant": 110, 
         "mus_one": null, 
@@ -6200,7 +2329,7 @@
         "seed": 14, 
         "place": null, 
         "song_one": null, 
-        "prelim": 73, 
+        "prelim": 73.0, 
         "song_two": null, 
         "contestant": 114, 
         "mus_one": null, 
@@ -6226,7 +2355,7 @@
         "seed": 24, 
         "place": null, 
         "song_one": null, 
-        "prelim": 70, 
+        "prelim": 70.0, 
         "song_two": null, 
         "contestant": 128, 
         "mus_one": null, 
@@ -6252,7 +2381,7 @@
         "seed": 23, 
         "place": null, 
         "song_one": null, 
-        "prelim": 71, 
+        "prelim": 71.0, 
         "song_two": null, 
         "contestant": 136, 
         "mus_one": null, 
@@ -6278,7 +2407,7 @@
         "seed": 18, 
         "place": null, 
         "song_one": null, 
-        "prelim": 72, 
+        "prelim": 72.0, 
         "song_two": null, 
         "contestant": 126, 
         "mus_one": null, 
@@ -6304,7 +2433,7 @@
         "seed": 4, 
         "place": null, 
         "song_one": null, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": null, 
         "contestant": 121, 
         "mus_one": null, 
@@ -6330,7 +2459,7 @@
         "seed": 21, 
         "place": null, 
         "song_one": null, 
-        "prelim": 71, 
+        "prelim": 71.0, 
         "song_two": null, 
         "contestant": 133, 
         "mus_one": null, 
@@ -6356,7 +2485,7 @@
         "seed": 10, 
         "place": null, 
         "song_one": null, 
-        "prelim": 74, 
+        "prelim": 74.0, 
         "song_two": null, 
         "contestant": 115, 
         "mus_one": null, 
@@ -6382,9 +2511,9 @@
         "seed": 6, 
         "place": null, 
         "song_one": null, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": null, 
-        "contestant": 127, 
+        "contestant": 38, 
         "mus_one": null, 
         "score_two": null, 
         "slug": "2013-int-collegiate-finals-18", 
@@ -6408,7 +2537,7 @@
         "seed": 22, 
         "place": null, 
         "song_one": null, 
-        "prelim": 71, 
+        "prelim": 71.0, 
         "song_two": null, 
         "contestant": 113, 
         "mus_one": null, 
@@ -6434,7 +2563,7 @@
         "seed": 8, 
         "place": null, 
         "song_one": null, 
-        "prelim": 75, 
+        "prelim": 75.0, 
         "song_two": null, 
         "contestant": 132, 
         "mus_one": null, 
@@ -6460,7 +2589,7 @@
         "seed": 15, 
         "place": null, 
         "song_one": null, 
-        "prelim": 72, 
+        "prelim": 72.0, 
         "song_two": null, 
         "contestant": 116, 
         "mus_one": null, 
@@ -6486,7 +2615,7 @@
         "seed": 11, 
         "place": null, 
         "song_one": null, 
-        "prelim": 74, 
+        "prelim": 74.0, 
         "song_two": null, 
         "contestant": 122, 
         "mus_one": null, 
@@ -6512,7 +2641,7 @@
         "seed": 1, 
         "place": null, 
         "song_one": null, 
-        "prelim": 78, 
+        "prelim": 78.0, 
         "song_two": null, 
         "contestant": 135, 
         "mus_one": null, 
@@ -6538,7 +2667,7 @@
         "seed": 25, 
         "place": null, 
         "song_one": null, 
-        "prelim": 69, 
+        "prelim": 69.0, 
         "song_two": null, 
         "contestant": 123, 
         "mus_one": null, 
@@ -6564,7 +2693,7 @@
         "seed": 5, 
         "place": null, 
         "song_one": null, 
-        "prelim": 76, 
+        "prelim": 76.0, 
         "song_two": null, 
         "contestant": 130, 
         "mus_one": null, 
@@ -6590,7 +2719,7 @@
         "seed": 20, 
         "place": null, 
         "song_one": null, 
-        "prelim": 72, 
+        "prelim": 72.0, 
         "song_two": null, 
         "contestant": 134, 
         "mus_one": null, 
@@ -6616,7 +2745,7 @@
         "seed": 12, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 83.5, 
         "song_two": null, 
         "contestant": 27, 
         "mus_one": null, 
@@ -6642,7 +2771,7 @@
         "seed": 13, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 83.5, 
         "song_two": null, 
         "contestant": 50, 
         "mus_one": null, 
@@ -6668,7 +2797,7 @@
         "seed": 14, 
         "place": null, 
         "song_one": null, 
-        "prelim": 83, 
+        "prelim": 83.1999969482422, 
         "song_two": null, 
         "contestant": 45, 
         "mus_one": null, 
@@ -6694,7 +2823,7 @@
         "seed": 11, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 83.9000015258789, 
         "song_two": null, 
         "contestant": 47, 
         "mus_one": null, 
@@ -6720,7 +2849,7 @@
         "seed": 8, 
         "place": null, 
         "song_one": null, 
-        "prelim": 85, 
+        "prelim": 84.6999969482422, 
         "song_two": null, 
         "contestant": 48, 
         "mus_one": null, 
@@ -6746,7 +2875,7 @@
         "seed": 3, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 88.1999969482422, 
         "song_two": null, 
         "contestant": 40, 
         "mus_one": null, 
@@ -6772,7 +2901,7 @@
         "seed": 5, 
         "place": null, 
         "song_one": null, 
-        "prelim": 86, 
+        "prelim": 86.3000030517578, 
         "song_two": null, 
         "contestant": 32, 
         "mus_one": null, 
@@ -6798,7 +2927,7 @@
         "seed": 16, 
         "place": null, 
         "song_one": null, 
-        "prelim": 82, 
+        "prelim": 81.5999984741211, 
         "song_two": null, 
         "contestant": 35, 
         "mus_one": null, 
@@ -6824,7 +2953,7 @@
         "seed": 15, 
         "place": null, 
         "song_one": null, 
-        "prelim": 82, 
+        "prelim": 82.5, 
         "song_two": null, 
         "contestant": 49, 
         "mus_one": null, 
@@ -6850,7 +2979,7 @@
         "seed": 2, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 88.5, 
         "song_two": null, 
         "contestant": 39, 
         "mus_one": null, 
@@ -6876,7 +3005,7 @@
         "seed": 6, 
         "place": null, 
         "song_one": null, 
-        "prelim": 86, 
+        "prelim": 85.6999969482422, 
         "song_two": null, 
         "contestant": 4, 
         "mus_one": null, 
@@ -6902,7 +3031,7 @@
         "seed": 10, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.4000015258789, 
         "song_two": null, 
         "contestant": 29, 
         "mus_one": null, 
@@ -6928,7 +3057,7 @@
         "seed": 9, 
         "place": null, 
         "song_one": null, 
-        "prelim": 84, 
+        "prelim": 84.4000015258789, 
         "song_two": null, 
         "contestant": 3, 
         "mus_one": null, 
@@ -6954,7 +3083,7 @@
         "seed": 4, 
         "place": null, 
         "song_one": null, 
-        "prelim": 88, 
+        "prelim": 87.5, 
         "song_two": null, 
         "contestant": 31, 
         "mus_one": null, 
@@ -6980,7 +3109,7 @@
         "seed": 7, 
         "place": null, 
         "song_one": null, 
-        "prelim": 85, 
+        "prelim": 85.3000030517578, 
         "song_two": null, 
         "contestant": 44, 
         "mus_one": null, 
@@ -7006,7 +3135,7 @@
         "seed": 21, 
         "place": null, 
         "song_one": null, 
-        "prelim": 80, 
+        "prelim": 80.0, 
         "song_two": null, 
         "contestant": 19, 
         "mus_one": null, 
@@ -7032,7 +3161,7 @@
         "seed": 1, 
         "place": null, 
         "song_one": null, 
-        "prelim": 90, 
+        "prelim": 89.8000030517578, 
         "song_two": null, 
         "contestant": 24, 
         "mus_one": null, 
@@ -7058,7 +3187,7 @@
         "seed": 18, 
         "place": null, 
         "song_one": null, 
-        "prelim": 81, 
+        "prelim": 81.1999969482422, 
         "song_two": null, 
         "contestant": 21, 
         "mus_one": null, 
@@ -7084,7 +3213,7 @@
         "seed": 17, 
         "place": null, 
         "song_one": null, 
-        "prelim": 81, 
+        "prelim": 81.3000030517578, 
         "song_two": null, 
         "contestant": 43, 
         "mus_one": null, 
@@ -7110,9 +3239,269 @@
         "seed": 26, 
         "place": null, 
         "song_one": null, 
-        "prelim": 78, 
+        "prelim": 78.5, 
         "song_two": null, 
         "contestant": 26, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 286, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 1, 
+        "prs_two": null, 
+        "stage_time": "2013-07-06T23:20:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 287, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 2, 
+        "prs_two": null, 
+        "stage_time": "2013-07-06T23:30:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 288, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 3, 
+        "prs_two": null, 
+        "stage_time": "2013-07-06T23:40:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 289, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 4, 
+        "prs_two": null, 
+        "stage_time": "2013-07-06T23:50:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 290, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 5, 
+        "prs_two": null, 
+        "stage_time": "2013-07-07T00:00:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 291, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 6, 
+        "prs_two": null, 
+        "stage_time": "2013-07-07T00:10:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 292, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 7, 
+        "prs_two": null, 
+        "stage_time": "2013-07-07T00:20:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 293, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 8, 
+        "prs_two": null, 
+        "stage_time": "2013-07-07T00:30:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 294, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 9, 
+        "prs_two": null, 
+        "stage_time": "2013-07-07T00:40:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
+        "mus_one": null, 
+        "score_two": null, 
+        "slug": "", 
+        "score_one": null, 
+        "sng_one": null
+    }
+},
+{
+    "pk": 295, 
+    "model": "bbs.performance", 
+    "fields": {
+        "slot": 10, 
+        "prs_two": null, 
+        "stage_time": "2013-07-07T00:50:00Z", 
+        "sng_two": null, 
+        "contest": 5, 
+        "mus_two": null, 
+        "prs_one": null, 
+        "avg_score": null, 
+        "is_complete": false, 
+        "seed": null, 
+        "place": null, 
+        "song_one": null, 
+        "prelim": null, 
+        "song_two": null, 
+        "contestant": null, 
         "mus_one": null, 
         "score_two": null, 
         "slug": "", 
