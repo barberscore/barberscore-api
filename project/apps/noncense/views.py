@@ -83,7 +83,43 @@ def alt_login(request, template_name='alternate_login.html'):
 def noncense_inbound(request):
 
     inbound = request.POST
-    i = InboundSMS(inbound_raw=inbound)
+    # inbound_test = inbound.__getitem__('baz')
+
+    smsmessagesid = inbound.__getitem__('SmsMessageSid')
+    accountsid = inbound.__getitem__('accountsid')
+    body = inbound.__getitem__('body')
+    fromzip = inbound.__getitem__('fromzip')
+    to = inbound.__getitem__('to')
+    tocity = inbound.__getitem__('tocity')
+    smssid = inbound.__getitem__('smssid')
+    fromstate = inbound.__getitem__('fromstate')
+    tocountry = inbound.__getitem__('tocountry')
+    _from = inbound.__getitem__('from')
+    apiversion = inbound.__getitem__('apiversion')
+    fromcity = inbound.__getitem__('fromcity')
+    tozip = inbound.__getitem__('tozip')
+    smsstatus = inbound.__getitem__('smsstatus')
+    tostate = inbound.__getitem__('tostate')
+    fromcountry = inbound.__getitem__('fromcountry')
+
+    i = InboundSMS(
+        inbound_raw=inbound_test,
+        smsmessagesid=smsmessagesid,
+        accountsid=accountsid,
+        body=body,
+        fromzip=fromzip,
+        to=to,
+        tocity=tocity,
+        smssid=smssid,
+        fromstate=fromstate,
+        tocountry=tocountry,
+        _from=_from,
+        apiversion=apiversion,
+        fromcity=fromcity,
+        tozip=tozip,
+        smsstatus=smsstatus,
+        tostate=tostate,
+        fromcountry=fromcountry)
     i.save()
     response = HttpResponse("Your text has been received and will be handled ASAP.", content_type="text/plain")
     return response
