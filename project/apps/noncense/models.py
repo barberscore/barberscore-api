@@ -78,4 +78,4 @@ class MobileUser(AbstractBaseUser):
 
 
 class InboundSMS(models.Model):
-    inbound_raw = models.CharField(max_length=200)
+    inbound_raw = models.TextField()
