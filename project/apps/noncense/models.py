@@ -79,7 +79,7 @@ class MobileUser(AbstractBaseUser):
 
 class InboundSMS(models.Model):
     inbound_raw = models.TextField(blank=True)
-    smsmessagesid = models.TextField(blank=True)
+    smsmessagesid = models.CharField(max_length=200, blank=True)
     accountsid = models.TextField(blank=True)
     body = models.TextField(blank=True)
     fromzip = models.TextField(blank=True)

@@ -4,6 +4,7 @@ from django.http import (
     HttpResponse,
 )
 
+import json
 from django.shortcuts import (
     render,
     redirect)
@@ -82,44 +83,44 @@ def alt_login(request, template_name='alternate_login.html'):
 @csrf_exempt
 def noncense_inbound(request):
 
-    inbound = request.POST
-    # inbound_test = inbound.__getitem__('baz')
+    json_data = request.body['SmsMessageSid']
+    # inbound_test = inbound.getlist('baz')
 
-    smsmessagesid = inbound.__getitem__('SmsMessageSid')
-    accountsid = inbound.__getitem__('accountsid')
-    body = inbound.__getitem__('body')
-    fromzip = inbound.__getitem__('fromzip')
-    to = inbound.__getitem__('to')
-    tocity = inbound.__getitem__('tocity')
-    smssid = inbound.__getitem__('smssid')
-    fromstate = inbound.__getitem__('fromstate')
-    tocountry = inbound.__getitem__('tocountry')
-    _from = inbound.__getitem__('from')
-    apiversion = inbound.__getitem__('apiversion')
-    fromcity = inbound.__getitem__('fromcity')
-    tozip = inbound.__getitem__('tozip')
-    smsstatus = inbound.__getitem__('smsstatus')
-    tostate = inbound.__getitem__('tostate')
-    fromcountry = inbound.__getitem__('fromcountry')
+    # smsmessagesid = inbound.get('SmsMessageSid')
+    # accountsid = inbound.getlist('accountsid')
+    # body = inbound.getlist('body')
+    # fromzip = inbound.getlist('fromzip')
+    # to = inbound.getlist('to')
+    # tocity = inbound.getlist('tocity')
+    # smssid = inbound.getlist('smssid')
+    # fromstate = inbound.getlist('fromstate')
+    # tocountry = inbound.getlist('tocountry')
+    # _from = inbound.getlist('from')
+    # apiversion = inbound.getlist('apiversion')
+    # fromcity = inbound.getlist('fromcity')
+    # tozip = inbound.getlist('tozip')
+    # smsstatus = inbound.getlist('smsstatus')
+    # tostate = inbound.getlist('tostate')
+    # fromcountry = inbound.getlist('fromcountry')
 
-    i = InboundSMS(
-        inbound_raw=inbound_test,
-        smsmessagesid=smsmessagesid,
-        accountsid=accountsid,
-        body=body,
-        fromzip=fromzip,
-        to=to,
-        tocity=tocity,
-        smssid=smssid,
-        fromstate=fromstate,
-        tocountry=tocountry,
-        _from=_from,
-        apiversion=apiversion,
-        fromcity=fromcity,
-        tozip=tozip,
-        smsstatus=smsstatus,
-        tostate=tostate,
-        fromcountry=fromcountry)
+    # i = InboundSMS(
+    #     smsmessagesid=smsmessagesid,
+    #     accountsid=accountsid,
+    #     body=body,
+    #     fromzip=fromzip,
+    #     to=to,
+    #     tocity=tocity,
+    #     smssid=smssid,
+    #     fromstate=fromstate,
+    #     tocountry=tocountry,
+    #     _from=_from,
+    #     apiversion=apiversion,
+    #     fromcity=fromcity,
+    #     tozip=tozip,
+    #     smsstatus=smsstatus,
+    #     tostate=tostate,
+    #     fromcountry=fromcountry)
+    i = InboundSMS(smsmessagesid=request.body)
     i.save()
     response = HttpResponse("Your text has been received and will be handled ASAP.", content_type="text/plain")
     return response
