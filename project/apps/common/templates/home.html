@@ -13,6 +13,12 @@
     {% endfor schedule %}
 </P>
 
+
+<p>
+    To see (or make) predictions:<br>
+    <a href="{% url 'predictions' %}">Predictions</a><br>
+</p>
+
 <p>
     To see prior contest scores:<br>
         {% for score in scores %}

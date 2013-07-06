@@ -9,7 +9,8 @@
 
 {% block content %}
 <p>
-Select one quartet for each slot and then click save.
+Select one quartet for each slot and then click save.<br>
+<a href="{% url 'predictions' %}">See all predictions</a>.
 </p>
 <form action = "{% url 'prediction' %}" method="post">
     {% csrf_token %}
