@@ -59,7 +59,7 @@ class ScoreTable(tables.Table):
     # score_one = ScoreColumn()
     name_two = tables.Column()
     # score_two = ScoreColumn()
-    avg_score = ScoreColumn()
+    avg_total_score = ScoreColumn()
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}

@@ -11,7 +11,7 @@ def score(value):
         value = float(value)
     except (ValueError, TypeError, UnicodeEncodeError):
         return ''
-    return '{0:.1f}'.format(value)
+    return '{0:.1%}'.format(value)
 
 
 @register.filter(expects_localtime=True, name='time_only')
