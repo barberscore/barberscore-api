@@ -44,8 +44,6 @@ class Contestant(models.Model):
     slug = models.SlugField(null=True)
     location = models.CharField(blank=True, null=True, max_length=200)
     director = models.CharField(blank=True, null=True, max_length=200)
-    # seed = models.IntegerField(blank=True, null=True)
-    # prelim = models.FloatField(blank=True, null=True)
     website = models.URLField(blank=True)
     facebook = models.URLField(blank=True)
     contestant_type = models.IntegerField(blank=True, null=True, choices=CONTESTANT_CHOICES)
@@ -106,6 +104,7 @@ class Contest(models.Model):
     contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)
     contest_round = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_ROUND_CHOICES)
     level = models.CharField(max_length=200, blank=True, null=True, choices=LEVEL_CHOICES)
+    panel_size = models.IntegerField(null=True)
 
     def __unicode__(self):
         return '{year} {level} {contest_type} {contest_round}'.format(
@@ -127,38 +126,46 @@ class Song(models.Model):
 
 class Performance(models.Model):
 
-    ROUND_CHOICES = (
-        ('Quarters', 'Quarter-Finals'),
-        ('Semis', 'Semi-Finals'),
-        ('Finals', 'Finals'),
-    )
-
     contestant = models.ForeignKey(Contestant, blank=True, null=True)
     contest = models.ForeignKey(Contest, blank=True, null=True)
     slug = models.SlugField(blank=True)
-    # contest_round = models.CharField(max_length=20, blank=True, choices=ROUND_CHOICES)
     slot = models.IntegerField(blank=True, null=True)
     place = models.IntegerField(blank=True, null=True)
     seed = models.IntegerField(blank=True, null=True)
     prelim = models.FloatField(blank=True, null=True)
     is_complete = models.BooleanField(default=False)
+    is_scratch = models.BooleanField(default=False)
+    men_on_stage = models.IntegerField(null=True)
     stage_time = models.DateTimeField()
 
     song_one = models.ForeignKey(Song, blank=True, null=True, related_name='song_one')
     name_one = models.CharField(max_length=200, blank=True)
-    score_one = models.FloatField(blank=True, null=True)
-    mus_one = models.FloatField(blank=True, null=True)
-    prs_one = models.FloatField(blank=True, null=True)
-    sng_one = models.FloatField(blank=True, null=True)
+
+    mus_one = models.IntegerField(blank=True, null=True)
+    prs_one = models.IntegerField(blank=True, null=True)
+    sng_one = models.IntegerField(blank=True, null=True)
+    score_one = models.IntegerField(blank=True, null=True)
+
+    avg_mus_one = models.FloatField(blank=True, null=True)
+    avg_prs_one = models.FloatField(blank=True, null=True)
+    avg_sng_one = models.FloatField(blank=True, null=True)
+    avg_score_one = models.FloatField(blank=True, null=True)
 
     song_two = models.ForeignKey(Song, blank=True, null=True, related_name='song_two')
     name_two = models.CharField(max_length=200, blank=True)
-    score_two = models.FloatField(blank=True, null=True)
-    mus_two = models.FloatField(blank=True, null=True)
-    prs_two = models.FloatField(blank=True, null=True)
-    sng_two = models.FloatField(blank=True, null=True)
 
-    avg_score = models.FloatField(blank=True, null=True)
+    mus_two = models.IntegerField(blank=True, null=True)
+    prs_two = models.IntegerField(blank=True, null=True)
+    sng_two = models.IntegerField(blank=True, null=True)
+    score_two = models.IntegerField(blank=True, null=True)
+
+    avg_mus_two = models.FloatField(blank=True, null=True)
+    avg_prs_two = models.FloatField(blank=True, null=True)
+    avg_sng_two = models.FloatField(blank=True, null=True)
+    avg_score_two = models.FloatField(blank=True, null=True)
+
+    total_score = models.IntegerField(blank=True, null=True)
+    avg_total_score = models.FloatField(blank=True, null=True)
 
         # def to_user_timezone(date, profile):
         #     timezone = profile.timezone if profile.timezone else settings.TIME_ZONE

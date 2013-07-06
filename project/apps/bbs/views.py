@@ -42,7 +42,7 @@ def contests(request):
 
 
 def performances(request):
-    performances = Performance.objects.all()
+    performances = Performance.objects.exclude(is_scratch=True)
     if performances:
         table = PerformanceTable(performances)
         RequestConfig(request, paginate={"per_page": 50}).configure(table)
@@ -53,7 +53,7 @@ def performances(request):
 
 def contestant(request, contestant):
     contestant = get_object_or_404(Contestant, slug=contestant)
-    performances = Performance.objects.filter(contestant=contestant).order_by('stage_time')
+    performances = Performance.objects.filter(contestant=contestant).exclude(is_scratch=True).order_by('stage_time')
     singers = Singer.objects.filter(contestant=contestant)
     return render(request, 'contestant.html', {'contestant': contestant, 'performances': performances, 'singers': singers})
 
@@ -61,7 +61,7 @@ def contestant(request, contestant):
 def contest(request, contest):
     contest = get_object_or_404(Contest, slug=contest)
     performances = Performance.objects.filter(
-        contest=contest).order_by('slot')
+        contest=contest).exclude(is_scratch=True).order_by('slot')
     if performances:
         table = PerformanceTable(performances)
         RequestConfig(request, paginate={"per_page": 50}).configure(table)
@@ -78,7 +78,7 @@ def performance(request, performance):
 def score(request, contest):
     contest = get_object_or_404(Contest, slug=contest)
     performances = Performance.objects.filter(
-        contest=contest).exclude(is_complete=False).order_by('place')
+        contest=contest).exclude(is_complete=False).exclude(is_scratch=True).order_by('place')
     if performances:
         table = ScoreTable(performances)
         RequestConfig(request, paginate={"per_page": 50}).configure(table)
