@@ -51,7 +51,7 @@ class ScoreTable(tables.Table):
     # slot = tables.Column()
     # stage_time = TimeColumn()
     place = tables.Column()
-    # seed = tables.Column()
+    seed = tables.Column()
 
     contestant = tables.LinkColumn('contestant', args=[A('contestant.slug')])
     # prelim = ScoreColumn()
