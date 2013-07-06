@@ -11,7 +11,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MobileUser
-        fields = ('mobile', )
+        fields = ['mobile', 'is_admin']
 
 
 class UserChangeForm(forms.ModelForm):
@@ -19,7 +19,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = MobileUser
-        fields = ['mobile', ]
+        fields = ['mobile', 'is_admin']
 
 
 class MobileUserAdmin(UserAdmin):
@@ -33,7 +33,7 @@ class MobileUserAdmin(UserAdmin):
     list_display = ('mobile', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('mobile', )}),
+        (None, {'fields': (('mobile', 'is_admin'),)}),
     )
     add_fieldsets = (
         (None, {
