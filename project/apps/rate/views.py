@@ -3,6 +3,7 @@ from __future__ import division
 from django.shortcuts import (
     render,
     redirect,
+    get_list_or_404,
 )
 
 from django.contrib.auth.decorators import login_required
@@ -16,14 +17,17 @@ from apps.bbs.models import (
 from .tables import (
     RatingTable,
     EnterRatingTable,
+    PredictionTable,
 )
 
 from .models import (
     Rating,
+    Prediction,
 )
 
 from .forms import (
     RatingForm,
+    PredictionForm,
 )
 
 
@@ -54,3 +58,23 @@ def rating(request, performance):
     else:
         form = RatingForm(instance=rating)
     return render(request, 'rating.html', {'form': form, 'rating': rating, 'performance': performance})
+
+
+@login_required
+def prediction(request):
+    prediction, created = Prediction.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = PredictionForm(request.POST, instance=prediction)
+        if form.is_valid():
+            form.save()
+            return redirect('prediction')
+    else:
+        form = PredictionForm(instance=prediction)
+    return render(request, 'prediction.html', {'form': form, 'prediction': prediction})
+
+
+def predictions(request):
+    predictions = get_list_or_404(Prediction)
+    table = PredictionTable(predictions)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'predictions.html', {'predictions': predictions, 'table': table})

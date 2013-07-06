@@ -45,3 +45,20 @@ class EnterRatingTable(tables.Table):
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
+
+
+class PredictionTable(tables.Table):
+    nickname = tables.Column(accessor='user.userprofile.nickname')
+    first = tables.Column()
+    second = tables.Column()
+    third = tables.Column()
+    fourth = tables.Column()
+    fifth = tables.Column()
+    sixth = tables.Column()
+    seventh = tables.Column()
+    eigth = tables.Column()
+    ninth = tables.Column()
+    tenth = tables.Column()
+
+    class Meta:
+        attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
