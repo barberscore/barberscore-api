@@ -4,7 +4,6 @@ from django.http import (
     HttpResponse,
 )
 
-import json
 from django.shortcuts import (
     render,
     redirect)
@@ -83,7 +82,6 @@ def alt_login(request, template_name='alternate_login.html'):
 @csrf_exempt
 def noncense_inbound(request):
 
-    json_data = request.body['SmsMessageSid']
     # inbound_test = inbound.getlist('baz')
 
     # smsmessagesid = inbound.get('SmsMessageSid')
@@ -120,7 +118,7 @@ def noncense_inbound(request):
     #     smsstatus=smsstatus,
     #     tostate=tostate,
     #     fromcountry=fromcountry)
-    i = InboundSMS(smsmessagesid=request.body)
+    i = InboundSMS(inbound_raw=request.body)
     i.save()
     response = HttpResponse("Your text has been received and will be handled ASAP.", content_type="text/plain")
     return response
