@@ -120,5 +120,5 @@ def noncense_inbound(request):
     #     fromcountry=fromcountry)
     i = InboundSMS(inbound_raw=request.body)
     i.save()
-    response = HttpResponse("Your text has been received and will be handled ASAP.", content_type="text/plain")
+    response = HttpResponse("This is an automated response from Barberscore.com  We will handle your request ASAP. 415-713-2126", content_type="text/plain")
     return response
