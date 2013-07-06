@@ -3,7 +3,10 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 
-from .models import MobileUser
+from .models import (
+    MobileUser,
+    InboundSMS,
+)
 
 
 class UserCreationForm(forms.ModelForm):
@@ -49,3 +52,4 @@ admin.site.register(MobileUser, MobileUserAdmin)
 # ... and, since we're not using Django's builtin permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+admin.site.register(InboundSMS)

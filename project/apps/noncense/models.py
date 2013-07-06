@@ -75,3 +75,7 @@ class MobileUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class InboundSMS(models.Model):
+    inbound_raw = models.CharField(max_length=200)

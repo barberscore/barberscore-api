@@ -1,5 +1,8 @@
 from twilio import TwilioRestException
 
+from django.http import (
+    HttpResponse,
+)
 
 from django.shortcuts import (
     render,
@@ -14,6 +17,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import AuthRequestForm, AuthResponseForm, AltLoginForm
 
 from .utils import sendcode
+
+from .models import InboundSMS
 
 
 @csrf_exempt
@@ -73,3 +78,12 @@ def alt_login(request, template_name='alternate_login.html'):
     else:
         return render(request, template_name, {'alt_login_form': alt_login_form})
 
+
+@csrf_exempt
+def noncense_inbound(request):
+
+    inbound = request.POST
+    i = InboundSMS(inbound_raw=inbound)
+    i.save()
+    response = HttpResponse("Your text has been received and will be handled ASAP.", content_type="text/plain")
+    return response
