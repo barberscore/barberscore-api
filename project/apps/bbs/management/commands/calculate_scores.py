@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
 
-        performances = Performance.objects.filter(is_complete=True)
+        performances = Performance.objects.filter(is_complete=True).exclude(is_scratch=True)
 
         for p in performances:
             points = p.contest.panel_size * 100

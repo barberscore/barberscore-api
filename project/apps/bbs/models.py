@@ -138,27 +138,21 @@ class Performance(models.Model):
     men_on_stage = models.IntegerField(null=True)
     stage_time = models.DateTimeField()
 
-    song_one = models.ForeignKey(Song, blank=True, null=True, related_name='song_one')
     name_one = models.CharField(max_length=200, blank=True)
-
     mus_one = models.IntegerField(blank=True, null=True)
     prs_one = models.IntegerField(blank=True, null=True)
     sng_one = models.IntegerField(blank=True, null=True)
     score_one = models.IntegerField(blank=True, null=True)
-
     avg_mus_one = models.FloatField(blank=True, null=True)
     avg_prs_one = models.FloatField(blank=True, null=True)
     avg_sng_one = models.FloatField(blank=True, null=True)
     avg_score_one = models.FloatField(blank=True, null=True)
 
-    song_two = models.ForeignKey(Song, blank=True, null=True, related_name='song_two')
     name_two = models.CharField(max_length=200, blank=True)
-
     mus_two = models.IntegerField(blank=True, null=True)
     prs_two = models.IntegerField(blank=True, null=True)
     sng_two = models.IntegerField(blank=True, null=True)
     score_two = models.IntegerField(blank=True, null=True)
-
     avg_mus_two = models.FloatField(blank=True, null=True)
     avg_prs_two = models.FloatField(blank=True, null=True)
     avg_sng_two = models.FloatField(blank=True, null=True)
@@ -166,10 +160,6 @@ class Performance(models.Model):
 
     total_score = models.IntegerField(blank=True, null=True)
     avg_total_score = models.FloatField(blank=True, null=True)
-
-        # def to_user_timezone(date, profile):
-        #     timezone = profile.timezone if profile.timezone else settings.TIME_ZONE
-        #     return date.replace(tzinfo=pytz.timezone(settings.TIME_ZONE)).astimezone(pytz.timezone(timezone))
 
     def __unicode__(self):
         return '{contest} Slot {slot}: {contestant}'.format(
