@@ -132,7 +132,7 @@ INSTALLED_APPS = (
     'apps.bbs',
     'apps.noncense',
     'apps.common',
-    # 'apps.rate',
+    'apps.rate',
     'django_localflavor_us',
 )
 
