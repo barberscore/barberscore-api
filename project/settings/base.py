@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'apps.common',
     # 'apps.rate',
     'django_localflavor_us',
+    'haystack',
 )
 
 
