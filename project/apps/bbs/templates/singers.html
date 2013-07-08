@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
-{% load render_table from django_tables2 %}
 
-{% comment %}
 {% block title %}
     <title>
-        Contestant List
+        Singer List
     </title>
 {% endblock title %}
-{% endcomment %}
+
 
 
 {% block content %}
-    {% render_table table %}
+    {% for singer in singers %}
+    {{singer}}<br>
+    {% endfor %}
 {% endblock content %}

@@ -90,3 +90,8 @@ def score(request, contest):
 def singer(request, singer):
     singer = get_object_or_404(Singer, slug=singer)
     return render(request, 'singer.html', {'singer': singer})
+
+
+def singers(request):
+    singers = get_list_or_404(Singer)
+    return render(request, 'singers.html', {'singers': singers})

@@ -1,12 +1,12 @@
 {% load static %}
-
+{% load menu %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
 
     {% block title %}
-    <title>Barberscore - Toronto 2013</title>
+    <title>Barberscore - </title>
     {% endblock title %}
 
     {% block meta-tags %}
@@ -54,6 +54,8 @@
           <a class="brand" href="{% url 'home' %}">Barberscore</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
+              {% comment %}
+
               {# <li class="active"><a href="{% url 'home' %}">Home</a></li> #}
               <li><a href="{% url 'about' %}">About</a></li>
               <li><a href="{% url 'contests' %}">Contests</a></li>
@@ -66,6 +68,11 @@
 
               <li><a href="{% url 'logout' %}">Logout</a></li>
               {# {% endif authenticated %} #}
+              {% endcomment %}
+              {% generate_menu %}
+
+              {% with menu=menus.main %}{% include "bootstrap-navbar.html" %}{% endwith %}
+
             </ul>
           </div><!--/.nav-collapse -->
         </div>
