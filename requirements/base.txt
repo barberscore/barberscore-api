@@ -1,6 +1,7 @@
 distribute==0.6.45
 dj-database-url==0.2.1
 django-floppyforms==1.1
+django-grappelli
 django-tables2==0.13.0
 gunicorn==0.17.4
 Django==1.5.1
