@@ -17,8 +17,6 @@ from .tables import (
 from .models import (
     Contest,
     Contestant,
-    Performance,
-    Singer,
 )
 
 
@@ -41,14 +39,10 @@ def contests(request):
     return render(request, 'contests.html', {'scores': scores, 'schedules': schedules})
 
 
-def performances(request):
-    performances = Performance.objects.exclude(is_scratch=True)
-    if performances:
-        table = PerformanceTable(performances)
-        RequestConfig(request, paginate={"per_page": 50}).configure(table)
-        return render(request, 'performances.html', {'performances': performances, 'table': table})
-    else:
-        return render(request, 'no_performances.html')
+def scores(request):
+    scores = Scores.objects.all()
+    return render(request, 'scores.html', {'scores': scores})
+
 
 
 def contestant(request, contestant):
