@@ -85,3 +85,8 @@ def score(request, contest):
         return render(request, 'contest.html', {'contest': contest, 'performances': performances, 'table': table})
     else:
         return render(request, 'no_performances.html', {'contest': contest})
+
+
+def singer(request, singer):
+    singer = get_object_or_404(Singer, slug=singer)
+    return render(request, 'singer.html', {'singer': singer})

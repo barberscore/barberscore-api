@@ -1,6 +1,7 @@
 from __future__ import division
 
 import pytz
+from django.core.urlresolvers import reverse
 
 from django.db import models
 
@@ -52,6 +53,9 @@ class Contestant(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('contestant', args=[str(self.slug)])
+
     class Meta:
         ordering = ['name']
 
@@ -72,6 +76,9 @@ class Singer(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('singer', args=[str(self.slug)])
 
 
 class Contest(models.Model):

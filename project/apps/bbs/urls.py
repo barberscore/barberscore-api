@@ -14,6 +14,7 @@ urlpatterns = patterns(
     url(r'performance/(?P<performance>[\w-]+)/$', 'performance', name='performance'),
     url(r'contest/(?P<contest>[\w-]+)/$', 'contest', name='schedule'),
     url(r'score/(?P<contest>[\w-]+)/$', 'score', name='score'),
+    url(r'singer/(?P<singer>[\w-]+)/$', 'singer', name='singer'),
 
 
 
