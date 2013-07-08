@@ -20,7 +20,7 @@ DATABASE_URL = get_env_variable("DATABASE_URL")
 
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
-PROJECT_ROOT = Path(__file__).ancestor(3)
+PROJECT_ROOT = Path(__file__).ancestor(2)
 
 ADMINS = (
 )
@@ -62,11 +62,13 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -120,6 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
@@ -128,6 +131,10 @@ INSTALLED_APPS = (
     'django_tables2',
     'floppyforms',
     'apps.bbs',
+    'apps.noncense',
+    'apps.common',
+    # 'apps.rate',
+    'django_localflavor_us',
 )
 
 
@@ -141,13 +148,13 @@ LOGOUT_URL = 'logout'
 # below and update your URLconf if you wish to use the stock Django
 # authentication.
 
-INSTALLED_APPS += (
-    'noncense',
-)
+# INSTALLED_APPS += (
+#     'noncense',
+# )
 
 
 AUTHENTICATION_BACKENDS = (
-    'noncense.backends.NonceBackend',
+    'apps.noncense.backends.NonceBackend',
     'django.contrib.auth.backends.ModelBackend',)
 
 AUTH_USER_MODEL = 'noncense.MobileUser'

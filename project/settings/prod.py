@@ -1,4 +1,6 @@
 from .base import *
+from memcacheify import memcacheify
+
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -27,3 +29,6 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 DEBUG = bool(get_env_variable("DJANGO_DEBUG"))
 TEMPLATE_DEBUG = DEBUG
+
+
+CACHES = memcacheify()

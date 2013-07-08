@@ -55,11 +55,15 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               {# <li class="active"><a href="{% url 'home' %}">Home</a></li> #}
+              <li><a href="{% url 'about' %}">About</a></li>
               <li><a href="{% url 'contests' %}">Contests</a></li>
               <li><a href="{% url 'contestants' %}">Contestants</a></li>
-              {# {% if mobileuser.is_authenticated %} #}
-              <li><a href="{% url 'ratings' %}">Ratings</a></li>
+              {# <li><a href="{% url 'predictions' %}">Predictions</a></li> #}
+              {# <li><a href="{% url 'ratings' %}">Ratings</a></li> #}
               <li><a href="{% url 'profile' %}">Profile</a></li>
+
+              {# <p><strong><a href="{% url 'noncense_request' %}">Login Now</a></strong></p> #}
+
               <li><a href="{% url 'logout' %}">Logout</a></li>
               {# {% endif authenticated %} #}
             </ul>
@@ -97,6 +101,19 @@
     {% block scripts %}
     {% endblock scripts %}
     {% block analytics %}
+    <script type="text/javascript">
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '51d86243613f5d6aff000026');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+    </script>
     {% endblock analytics %}
   </body>
 </html>

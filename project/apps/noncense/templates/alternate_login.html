@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>
+Alternate Login
+</title>
+{% endblock title %}
+{% block content %}
+
+<p>Sorry, we can't use that mobile number!</P>
+<p>Our system is currently only set up to handle US and Canadian phone numbers.  To use our alternate login system please enter up to the first ten digits of your international phone number and click continue.  You will be automatically logged in.</p>
+<p><strong>IMPORTANT NOTE: This is not secure!</strong>  This is just a babershop app and not a bank account so you probably don't care about this.  However, anyone else that knows and enters your phone number will be able to automatically enter the application in the same way.</p><p>So just be aware -- and Enjoy!</P>
+
+
+    <form action='{% url "alt_login" %}' method='post'>
+        {% csrf_token %}
+        {{alt_login_form.as_p}}
+        <input type='submit' value='Continue'>
+    </form>
+<br><br>
+{% endblock content %}

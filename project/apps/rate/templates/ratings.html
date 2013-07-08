@@ -17,10 +17,7 @@ edit your rating.
 <strong>Note that you will not be able to revise or enter ratings once the results are announced.</strong>
 </p>
 {% render_table table %}
-<p>
-    To enter more ratings, see the list of performances below:<br>
-    {% include 'contest_list.html' %}
-</p>
-
+<br><br>
+{% render_table performance_table %}
 
 {% endblock content %}
