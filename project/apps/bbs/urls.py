@@ -5,16 +5,12 @@ urlpatterns = patterns(
 
     url(r'^$', 'home', name='home'),
 
-    url(r'contestant/$', 'contestants', name='contestants'),
     url(r'contest/$', 'contests', name='contests'),
+    url(r'contest/(?P<slug>[\w-]+)/$', 'contest', name='contest'),
 
+    url(r'contestant/$', 'contestants', name='contestants'),
+    url(r'contestant/(?P<slug>[\w-]+)/$', 'contestant', name='contestant'),
 
-    url(r'contestant/(?P<contestant>[\w-]+)/$', 'contestant', name='contestant'),
-    url(r'contest/(?P<contest>[\w-]+)/$', 'contest', name='schedule'),
-
-    url(r'score/(?P<contest>[\w-]+)/$', 'score', name='score'),
-
-
-
-
+    url(r'score/$', 'scores', name='scores'),
+    url(r'score/(?P<slug>[\w-]+)/$', 'score', name='score'),
 )

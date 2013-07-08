@@ -21,53 +21,22 @@ class TimeColumn(tables.Column):
             return None
 
 
-class PerformanceTable(tables.Table):
-    # slot = tables.Column()
-    stage_time = TimeColumn()
-    contestant = tables.LinkColumn('contestant', args=[A('contestant.slug')])
-    prelim = ScoreColumn()
-    seed = tables.Column()
-    # song_one = tables.Column()
-    # score_one = ScoreColumn()
-    # song_two = tables.Column()/
-    # score_two = ScoreColumn()
+class ContestTable(tables.Table):
+    __unicode__ = tables.LinkColumn('contest', args=[A('slug')])
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
 
 
 class ContestantTable(tables.Table):
-    name = tables.LinkColumn('contestant', args=[A('slug')])
-    # name = tables.Column()
-    contestant_type = tables.Column()
-    district = tables.Column()
-    location = tables.Column()
+    __unicode__ = tables.LinkColumn('contestant', args=[A('slug')])
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
 
 
 class ScoreTable(tables.Table):
-    # slot = tables.Column()
-    # stage_time = TimeColumn()
-    place = tables.Column()
-    seed = tables.Column()
-
-    contestant = tables.LinkColumn('contestant', args=[A('contestant.slug')])
-    # prelim = ScoreColumn()
-    name_one = tables.Column()
-    avg_mus_one = ScoreColumn()
-    avg_prs_one = ScoreColumn()
-    avg_sng_one = ScoreColumn()
-    avg_score_one = ScoreColumn()
-    # score_one = ScoreColumn()
-    name_two = tables.Column()
-    avg_mus_two = ScoreColumn()
-    avg_prs_two = ScoreColumn()
-    avg_sng_two = ScoreColumn()
-    avg_score_two = ScoreColumn()
-    # score_two = ScoreColumn()
-    avg_total_score = ScoreColumn()
+    __unicode__ = tables.LinkColumn('score', args=[A('slug')])
 
     class Meta:
         attrs = {"class": "table table-condensed table-bordered table-hover table-summary"}
