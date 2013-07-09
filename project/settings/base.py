@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     # 'apps.rate',
     'django_localflavor_us',
     'menu',
+    'haystack',
 )
 
 

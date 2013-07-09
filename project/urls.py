@@ -19,5 +19,5 @@ urlpatterns = patterns('',
     # url(r'^', include('apps.rate.urls')),
     url(r'^', include('apps.common.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
-
+    url(r'^search/', include('haystack.urls')),
 )
