@@ -1,1 +1,7 @@
 {{object.name}}
+{{object.location}}
+{{object.director}}
+{{object.lead}}
+{{object.tenor}}
+{{object.baritone}}
+{{object.base}}
