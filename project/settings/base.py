@@ -29,7 +29,7 @@ MANAGERS = ADMINS
 
 ALLOWED_HOSTS = []
 
-TIME_ZONE = 'America/Toronto'
+TIME_ZONE = 'America/Los_Angeles'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -41,7 +41,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = PROJECT_ROOT.child("media")
 
 MEDIA_URL = ''
 
@@ -137,6 +136,7 @@ INSTALLED_APPS = (
     'django_localflavor_us',
     'menu',
     'haystack',
+    'csvimport',
 )
 
 

@@ -15,6 +15,7 @@ class Contestant(models.Model):
     )
 
     DISTRICT_CHOICES = (
+        (0, 'Unknown'),
         (1, 'CAR'),
         (2, 'CSD'),
         (3, 'DIX'),
@@ -50,7 +51,7 @@ class Contestant(models.Model):
     baritone = models.CharField(max_length=200, blank=True)
     bass = models.CharField(max_length=200, blank=True)
     contestant_type = models.IntegerField(choices=CONTESTANT_CHOICES)
-    district = models.IntegerField(choices=DISTRICT_CHOICES)
+    district = models.IntegerField(choices=DISTRICT_CHOICES, default=0)
 
     def __unicode__(self):
         return self.name
@@ -98,6 +99,7 @@ class Contest(models.Model):
     slug = models.SlugField(unique=True)
     time_zone = TimeZoneField(default='US/Eastern')
     panel_size = models.IntegerField(default=5)
+    score_sheet = models.FileField(upload_to='bbs', null=True, blank=True)
 
     def __unicode__(self):
         return '{year} {contest_level} {contest_type}'.format(

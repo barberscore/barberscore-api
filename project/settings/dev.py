@@ -43,3 +43,6 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
+
+MEDIA_ROOT = PROJECT_ROOT.ancestor(2).child("media")
+STATIC_ROOT = PROJECT_ROOT.ancestor(2).child("static")
