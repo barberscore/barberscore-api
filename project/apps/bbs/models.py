@@ -1,11 +1,8 @@
 from __future__ import division
 
-import pytz
 from django.core.urlresolvers import reverse
-
 from django.db import models
 
-from django.conf import settings
 from timezone_field import TimeZoneField
 
 
@@ -42,13 +39,18 @@ class Contestant(models.Model):
     )
 
     name = models.CharField(max_length=200)
-    slug = models.SlugField(null=True)
-    location = models.CharField(blank=True, null=True, max_length=200)
-    director = models.CharField(blank=True, null=True, max_length=200)
+    slug = models.SlugField(unique=True)
+    location = models.CharField(max_length=200, blank=True)
     website = models.URLField(blank=True)
     facebook = models.URLField(blank=True)
-    contestant_type = models.IntegerField(blank=True, null=True, choices=CONTESTANT_CHOICES)
-    district = models.IntegerField(blank=True, null=True, choices=DISTRICT_CHOICES)
+    phone = models.CharField(max_length=20, blank=True)
+    director = models.CharField(max_length=200, blank=True)
+    lead = models.CharField(max_length=200, blank=True)
+    tenor = models.CharField(max_length=200, blank=True)
+    baritone = models.CharField(max_length=200, blank=True)
+    bass = models.CharField(max_length=200, blank=True)
+    contestant_type = models.IntegerField(choices=CONTESTANT_CHOICES)
+    district = models.IntegerField(choices=DISTRICT_CHOICES)
 
     def __unicode__(self):
         return self.name
@@ -60,28 +62,28 @@ class Contestant(models.Model):
         ordering = ['name']
 
 
-class Singer(models.Model):
-
-    PART_CHOICES = (
-        ("Lead", "Lead"),
-        ("Tenor", "Tenor"),
-        ("Baritone", "Baritone"),
-        ("Bass", "Bass"),
-    )
-
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(blank=True)
-    part = models.CharField(max_length=20, choices=PART_CHOICES)
-    contestant = models.ForeignKey(Contestant)
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('singer', args=[str(self.slug)])
-
-
 class Contest(models.Model):
+
+    CONTEST_LEVEL_CHOICES = (
+        ('International', 'International'),
+        ('CAR', 'CAR'),
+        ('CSD', 'CSD'),
+        ('DIX', 'DIX'),
+        ('EVG', 'EVG'),
+        ('FWD', 'FWD'),
+        ('ILL', 'ILL'),
+        ('JAD', 'JAD'),
+        ('LOL', 'LOL'),
+        ('MAD', 'MAD'),
+        ('NED', 'NED'),
+        ('NSC', 'NSC'),
+        ('ONT', 'ONT'),
+        ('PIO', 'PIO'),
+        ('RMD', 'RMD'),
+        ('SLD', 'SLD'),
+        ('SUN', 'SUN'),
+        ('SWD', 'SWD'),
+    )
 
     CONTEST_TYPE_CHOICES = (
         ('Quartet', 'Quartet Contest'),
@@ -90,11 +92,27 @@ class Contest(models.Model):
         ('Senior', 'Senior Contest'),
     )
 
-    LEVEL_CHOICES = (
-        ("INT", "International"),
-        ("DIS", "District"),
-        ("DIV", "Division"),
-    )
+    year = models.CharField(max_length=4)
+    contest_level = models.CharField(max_length=20, choices=CONTEST_LEVEL_CHOICES)
+    contest_type = models.CharField(max_length=20, choices=CONTEST_TYPE_CHOICES)
+    slug = models.SlugField(unique=True)
+    time_zone = TimeZoneField(default='US/Eastern')
+    panel_size = models.IntegerField(default=5)
+
+    def __unicode__(self):
+        return '{year} {contest_level} {contest_type}'.format(
+            year=self.year,
+            contest_level=self.contest_level,
+            contest_type=self.contest_type)
+
+    def get_absolute_url(self):
+        return reverse('contest', args=[str(self.slug)])
+
+    class Meta:
+        ordering = ['year', 'contest_level', 'contest_type']
+
+
+class Score(models.Model):
 
     CONTEST_ROUND_CHOICES = (
         ('Quarters', 'Quarter-Finals'),
@@ -102,77 +120,31 @@ class Contest(models.Model):
         ('Finals', 'Finals'),
     )
 
-    name = models.CharField(default="Contest", max_length=200)
-    date = models.DateField(null=True)
-    slug = models.SlugField(null=True)
-    is_complete = models.BooleanField(default=False)
-    year = models.CharField(null=True, blank=True, max_length=4)
-    time_zone = TimeZoneField(null=True, blank=True)
-    contest_type = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_TYPE_CHOICES)
-    contest_round = models.CharField(null=True, blank=True, max_length=20, choices=CONTEST_ROUND_CHOICES)
-    level = models.CharField(max_length=200, blank=True, null=True, choices=LEVEL_CHOICES)
-    panel_size = models.IntegerField(null=True)
+    contest = models.ForeignKey(Contest)
+    contestant = models.ForeignKey(Contestant)
+    contest_round = models.CharField(max_length=20, choices=CONTEST_ROUND_CHOICES)
+    slug = models.SlugField(unique=True)
+
+    song1 = models.CharField(max_length=200)
+    mus1 = models.IntegerField()
+    prs1 = models.IntegerField()
+    sng1 = models.IntegerField()
+
+    song2 = models.CharField(max_length=200)
+    mus2 = models.IntegerField()
+    prs2 = models.IntegerField()
+    sng2 = models.IntegerField()
+
+    men_on_stage = models.IntegerField(null=True, default=4)
 
     def __unicode__(self):
-        return '{year} {level} {contest_type} {contest_round}'.format(
-            year=self.year,
-            level=self.level,
-            contest_type=self.contest_type,
-            contest_round=self.contest_round)
-
-    class Meta:
-        ordering = ['year', 'level', 'contest_type']
-
-
-class Song(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class Performance(models.Model):
-
-    contestant = models.ForeignKey(Contestant, blank=True, null=True)
-    contest = models.ForeignKey(Contest, blank=True, null=True)
-    slug = models.SlugField(blank=True)
-    slot = models.IntegerField(blank=True, null=True)
-    place = models.IntegerField(blank=True, null=True)
-    seed = models.IntegerField(blank=True, null=True)
-    prelim = models.FloatField(blank=True, null=True)
-    is_complete = models.BooleanField(default=False)
-    is_scratch = models.BooleanField(default=False)
-    men_on_stage = models.IntegerField(null=True)
-    stage_time = models.DateTimeField()
-
-    name_one = models.CharField(max_length=200, blank=True)
-    mus_one = models.IntegerField(blank=True, null=True)
-    prs_one = models.IntegerField(blank=True, null=True)
-    sng_one = models.IntegerField(blank=True, null=True)
-    score_one = models.IntegerField(blank=True, null=True)
-    avg_mus_one = models.FloatField(blank=True, null=True)
-    avg_prs_one = models.FloatField(blank=True, null=True)
-    avg_sng_one = models.FloatField(blank=True, null=True)
-    avg_score_one = models.FloatField(blank=True, null=True)
-
-    name_two = models.CharField(max_length=200, blank=True)
-    mus_two = models.IntegerField(blank=True, null=True)
-    prs_two = models.IntegerField(blank=True, null=True)
-    sng_two = models.IntegerField(blank=True, null=True)
-    score_two = models.IntegerField(blank=True, null=True)
-    avg_mus_two = models.FloatField(blank=True, null=True)
-    avg_prs_two = models.FloatField(blank=True, null=True)
-    avg_sng_two = models.FloatField(blank=True, null=True)
-    avg_score_two = models.FloatField(blank=True, null=True)
-
-    total_score = models.IntegerField(blank=True, null=True)
-    avg_total_score = models.FloatField(blank=True, null=True)
-
-    def __unicode__(self):
-        return '{contest} Slot {slot}: {contestant}'.format(
+        return '{contest} {contest_round} {contestant}'.format(
             contest=self.contest,
-            slot=self.slot,
+            contest_round=self.contest_round,
             contestant=self.contestant)
 
+    def get_absolute_url(self):
+        return reverse('score', args=[str(self.slug)])
+
     class Meta:
-        ordering = ['contest', 'slot']
+        ordering = ['contest', 'contest_round', 'contestant']

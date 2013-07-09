@@ -3,18 +3,12 @@ from django.contrib import admin
 from .models import (
     Contest,
     Contestant,
-    Performance,
-    Singer,
-    Song
+    Score,
 )
 
 
 class ContestAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("year", "level", "contest_type", "contest_round")}
-
-
-class SingerAdmin(admin.ModelAdmin):
-    save_on_top = True
+    prepopulated_fields = {"slug": ("year", "contest_level", "contest_type", )}
 
 
 class ContestantAdmin(admin.ModelAdmin):
@@ -24,22 +18,11 @@ class ContestantAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
-class PerformanceAdmin(admin.ModelAdmin):
+class ScoreAdmin(admin.ModelAdmin):
     save_on_top = True
-    fieldsets = [
-        (None, {'fields': ['contest', 'contestant', 'slot', 'stage_time']}),
-        ('Detail', {'fields': [('mus_one', 'prs_one', 'sng_one'), ('mus_two', 'prs_two', 'sng_two')], 'classes':['collapse']})
-    ]
-    list_display = ['__unicode__', 'slug', 'stage_time']
-    list_filter = ['contest']
-
-
-class SongAdmin(admin.ModelAdmin):
-    save_on_top = True
+    list_display = ['__unicode__', 'song1', 'mus1', 'prs1', 'sng1', 'song2', 'mus2', 'prs2', 'sng2']
 
 
 admin.site.register(Contest, ContestAdmin)
 admin.site.register(Contestant, ContestantAdmin)
-admin.site.register(Performance, PerformanceAdmin)
-admin.site.register(Singer, SingerAdmin)
-admin.site.register(Song, SongAdmin)
+admin.site.register(Score, ScoreAdmin)

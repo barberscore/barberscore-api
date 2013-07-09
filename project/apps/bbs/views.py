@@ -8,24 +8,27 @@ from django.shortcuts import (
 from django_tables2 import RequestConfig
 
 from .tables import (
-    PerformanceTable,
     ContestantTable,
-    # ContestTable,
+    ContestTable,
     ScoreTable
 )
 
 from .models import (
     Contest,
     Contestant,
-    Performance,
-    Singer,
+    Score,
 )
 
 
 def home(request):
-    scores = Contest.objects.filter(is_complete=True).order_by('date')
-    schedules = Contest.objects.filter(is_complete=False).order_by('date')
-    return render(request, 'home.html', {'scores': scores, 'schedules': schedules})
+    return render(request, 'home.html', )
+
+
+def contests(request):
+    contests = get_list_or_404(Contest)
+    table = ContestTable(contests)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'contests.html', {'contests': contests, 'table': table})
 
 
 def contestants(request):
@@ -35,58 +38,23 @@ def contestants(request):
     return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
 
 
-def contests(request):
-    scores = Contest.objects.filter(is_complete=True).order_by('date')
-    schedules = Contest.objects.filter(is_complete=False).order_by('date')
-    return render(request, 'contests.html', {'scores': scores, 'schedules': schedules})
+def scores(request):
+    scores = get_list_or_404(Score)
+    table = ScoreTable(scores)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'scores.html', {'scores': scores, 'table': table})
 
 
-def performances(request):
-    performances = Performance.objects.exclude(is_scratch=True)
-    if performances:
-        table = PerformanceTable(performances)
-        RequestConfig(request, paginate={"per_page": 50}).configure(table)
-        return render(request, 'performances.html', {'performances': performances, 'table': table})
-    else:
-        return render(request, 'no_performances.html')
+def contest(request, slug):
+    contest = get_object_or_404(Contest, slug__iexact=slug)
+    return render(request, 'contest.html', {'contest': contest})
 
 
-def contestant(request, contestant):
-    contestant = get_object_or_404(Contestant, slug=contestant)
-    performances = Performance.objects.filter(contestant=contestant).exclude(is_scratch=True).order_by('stage_time')
-    singers = Singer.objects.filter(contestant=contestant)
-    return render(request, 'contestant.html', {'contestant': contestant, 'performances': performances, 'singers': singers})
+def contestant(request, slug):
+    contestant = get_object_or_404(Contestant, slug__iexact=slug)
+    return render(request, 'contestant.html', {'contestant': contestant})
 
 
-def contest(request, contest):
-    contest = get_object_or_404(Contest, slug=contest)
-    performances = Performance.objects.filter(
-        contest=contest).exclude(is_scratch=True).order_by('slot')
-    if performances:
-        table = PerformanceTable(performances)
-        RequestConfig(request, paginate={"per_page": 50}).configure(table)
-        return render(request, 'contest.html', {'contest': contest, 'performances': performances, 'table': table})
-    else:
-        return render(request, 'no_performances.html', {'contest': contest})
-
-
-def performance(request, performance):
-    performance = get_object_or_404(Performance, slug=performance)
-    return render(request, 'performance.html', {'performance': performance})
-
-
-def score(request, contest):
-    contest = get_object_or_404(Contest, slug=contest)
-    performances = Performance.objects.filter(
-        contest=contest).exclude(is_complete=False).exclude(is_scratch=True).order_by('place')
-    if performances:
-        table = ScoreTable(performances)
-        RequestConfig(request, paginate={"per_page": 50}).configure(table)
-        return render(request, 'contest.html', {'contest': contest, 'performances': performances, 'table': table})
-    else:
-        return render(request, 'no_performances.html', {'contest': contest})
-
-
-def singer(request, singer):
-    singer = get_object_or_404(Singer, slug=singer)
-    return render(request, 'singer.html', {'singer': singer})
+def score(request, slug):
+    score = get_object_or_404(Score, slug__iexact=slug)
+    return render(request, 'score.html', {'score': score})
