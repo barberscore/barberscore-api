@@ -1,4 +1,4 @@
-distribute==0.6.45
+distribute
 dj-database-url==0.2.1
 django-floppyforms==1.1
 django-grappelli
