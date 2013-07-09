@@ -11,3 +11,6 @@ twilio==3.5.1
 Unipath==1.0
 Sphinx==1.2b1
 django-timezone-field
+django-haystack
+requests
+pyelasticsearch
