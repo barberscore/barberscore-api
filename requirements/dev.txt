@@ -4,3 +4,4 @@ django-extensions==1.1.1
 ipython==0.13.2
 honcho==0.4.2
 unittest2==0.5.1
+django-nose
