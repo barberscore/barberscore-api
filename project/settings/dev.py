@@ -25,14 +25,22 @@ DEBUG_TOOLBAR_CONFIG = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+        'LOCATION': 'localhost:11211',
+        'TIMEOUT': 500,
+        'BINARY': True,
+        'OPTIONS': {  # Maps to pylibmc "behaviors"
+            'tcp_nodelay': True,
+            'ketama': True
+        }
     }
 }
+
 
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
+        'URL': 'http://localhost:9200/',
         'INDEX_NAME': 'haystack',
     },
 }
@@ -44,3 +52,6 @@ STATIC_ROOT = PROJECT_ROOT.ancestor(2).child("localstorage").child("static")
 STATIC_URL = '/static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+BROKER_URL = "amqp://guest:guest@localhost:5672//"
+CELERY_RESULT_BACKEND = "amqp"

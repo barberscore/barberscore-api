@@ -1,6 +1,10 @@
 # Django settings for project project.
 import os
 
+import djcelery
+djcelery.setup_loader()
+
+
 import dj_database_url
 
 from unipath import Path
@@ -126,6 +130,7 @@ INSTALLED_APPS = (
     'django_localflavor_us',
     'haystack',
     # 'csvimport',
+    'djcelery',
 )
 
 
