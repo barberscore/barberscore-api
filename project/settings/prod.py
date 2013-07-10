@@ -31,7 +31,7 @@ RAVEN_CONFIG = {
 MEDIA_ROOT = "/{0}/".format(DEFAULT_S3_PATH)
 STATIC_ROOT = "/{0}/".format(STATIC_S3_PATH)
 
-STATIC_URL = 'http://' + AWS_STATIC_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/static/'
+STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/static/'
 MEDIA_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/media/'
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
