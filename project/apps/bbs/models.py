@@ -40,7 +40,7 @@ class Contestant(models.Model):
     )
 
     name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(max_length=200, unique=True)
     location = models.CharField(max_length=200, blank=True)
     website = models.URLField(blank=True)
     facebook = models.URLField(blank=True)
@@ -96,7 +96,7 @@ class Contest(models.Model):
     year = models.CharField(max_length=4)
     contest_level = models.CharField(max_length=20, choices=CONTEST_LEVEL_CHOICES)
     contest_type = models.CharField(max_length=20, choices=CONTEST_TYPE_CHOICES)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(max_length=200, unique=True)
     time_zone = TimeZoneField(default='US/Eastern')
     panel_size = models.IntegerField(default=5)
     score_sheet = models.FileField(upload_to='bbs', null=True, blank=True)
@@ -125,7 +125,7 @@ class Score(models.Model):
     contest = models.ForeignKey(Contest)
     contestant = models.ForeignKey(Contestant)
     contest_round = models.CharField(max_length=20, choices=CONTEST_ROUND_CHOICES)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(max_length=200, unique=True)
 
     song1 = models.CharField(max_length=200)
     mus1 = models.IntegerField()
