@@ -4,7 +4,6 @@ dj-database-url==0.2.1
 django-floppyforms==1.1
 django-grappelli==2.4.5
 django-localflavor-us==1.1
-django-simple-menu==1.0.6
 django-tables2==0.13.0
 django-timezone-field==0.4
 docutils==0.10

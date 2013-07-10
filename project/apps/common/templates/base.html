@@ -1,5 +1,4 @@
 {% load static %}
-{% load menu %}{% generate_menu %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,8 +54,9 @@
           <a class="brand" href="{% url 'home' %}">Barberscore</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              {% with menu=menus.main %}{% include "bootstrap-navbar.html" %}{% endwith %}
-              {% with menu=menus.user %}{% include "bootstrap-navbar.html" %}{% endwith %}
+              <li><a class="brand" href="{% url 'contests' %}">Contests</a>
+              <li><a class="brand" href="{% url 'contestants' %}">Contestants</a>
+              <li><a class="brand" href="{% url 'scores' %}">Scores</a>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
