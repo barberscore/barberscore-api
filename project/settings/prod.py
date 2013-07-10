@@ -35,11 +35,6 @@ STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/static/'
 MEDIA_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/media/'
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
-
-MEDIA_URL = '/media/'
-
-STATIC_URL = '/static/'
-
 ALLOWED_HOSTS = [get_env_variable("HEROKU_HOST")]
 
 EMAIL_HOST = 'smtp.mandrillapp.com'
