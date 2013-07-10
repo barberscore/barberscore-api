@@ -21,6 +21,7 @@ class ContestantAdmin(admin.ModelAdmin):
 class ScoreAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ['__unicode__', 'song1', 'mus1', 'prs1', 'sng1', 'song2', 'mus2', 'prs2', 'sng2']
+    list_filter = ['contest']
 
 
 admin.site.register(Contest, ContestAdmin)

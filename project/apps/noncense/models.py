@@ -76,6 +76,12 @@ class MobileUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    @property
+    def is_superuser(self):
+        "Is the user a member of staff?"
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
+
 
 class InboundSMS(models.Model):
     inbound_raw = models.TextField(blank=True)

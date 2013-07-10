@@ -13,4 +13,5 @@ urlpatterns = patterns(
 
     url(r'score/$', 'scores', name='scores'),
     url(r'score/(?P<slug>[\w-]+)/$', 'score', name='score'),
+
 )

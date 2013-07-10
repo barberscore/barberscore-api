@@ -1,45 +1,14 @@
 {% extends 'base.html' %}
 
-{% load humanize %}
-{% load render_table from django_tables2 %}
-
 {% block title %}
-    <title>
-        {{contestant.name}}
-    </title>
+<title>
+{{contestant}}</title>
 {% endblock title %}
 
-
 {% block content %}
+    <div class="container">
 
-<p>
-    <strong>{{contestant.name}}</strong> ({{contestant.get_district_display}})<br>
-    {{contestant.location}}<br>
-    {{contestant.website|urlize}}<br>
-    {{contestant.facebook|urlize}}
-</p>
-
-{% if singers %}
-<p>
-    Singers:<br>
-    <ul>
-        {% for singer in singers %}
-            <li>{{singer.name}}, {{singer.part}}</li>
-        {% endfor %}
-    </ul>
-</p>
-{% endif %}
-{% if contestant.director %}
-Director: {{contestant.director}}
-{% endif %}
-
-<P>
-    Performances:<br>
-    <ul>
-        {% for performance in performances %}
-            <li>{{performance.stage_time}}</li>
-        {% endfor %}
-    </ul>
-</p>
+<p>{{contestant}}</p>
+    </div> <!-- /container -->
 
 {% endblock content %}
