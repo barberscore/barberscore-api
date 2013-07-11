@@ -10,7 +10,9 @@ from django_tables2 import RequestConfig
 from .tables import (
     ContestantTable,
     ContestTable,
-    ScoreTable
+    ScoreTable,
+    QuartetTable,
+    ChorusTable,
 )
 
 from .models import (
@@ -39,17 +41,17 @@ def contestants(request):
 
 
 def quartets(request):
-    contestants = get_list_or_404(Contestant, contestant_type=1)  # need constants
-    table = ContestantTable(contestants)
+    quartets = get_list_or_404(Contestant, contestant_type=1)  # need constants
+    table = QuartetTable(quartets)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
+    return render(request, 'quartets.html', {'quartets': quartets, 'table': table})
 
 
 def choruses(request):
-    contestants = get_list_or_404(Contestant, contestant_type=2)  # need constants
-    table = ContestantTable(contestants)
+    choruses = get_list_or_404(Contestant, contestant_type=2)  # need constants
+    table = ChorusTable(choruses)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
+    return render(request, 'choruses.html', {'choruses': choruses, 'table': table})
 
 
 def scores(request):
