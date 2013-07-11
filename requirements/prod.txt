@@ -6,3 +6,4 @@ raven>=3
 newrelic
 django-pylibmc-sasl==0.2.4
 django-s3-folder-storage
+django-heroku-memcacheify

@@ -1,5 +1,7 @@
 from .base import *
 
+from memcacheify import memcacheify
+
 DEBUG = bool(get_env_variable("DJANGO_DEBUG"))
 TEMPLATE_DEBUG = DEBUG
 
@@ -51,22 +53,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-# os.environ['MEMCACHE_SERVERS'] = os.environ.get('MEMCACHIER_SERVERS', '')
-# os.environ['MEMCACHE_USERNAME'] = os.environ.get('MEMCACHIER_USERNAME', '')
-# os.environ['MEMCACHE_PASSWORD'] = os.environ.get('MEMCACHIER_PASSWORD', '')
-
-MEMCACHE_SERVERS = get_env_variable('MEMCACHIER_SERVERS')
-MEMCACHE_USERNAME = get_env_variable('MEMCACHIER_USERNAME')
-MEMCACHE_PASSWORD = get_env_variable('MEMCACHIER_PASSWORD')
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-        'LOCATION': MEMCACHE_SERVERS,
-        'TIMEOUT': 500,
-        'BINARY': True,
-    }
-}
+CACHES = memcacheify()
 
 BROKER_URL = get_env_variable("CLOUDAMQP_URL")
 CELERY_RESULT_BACKEND = "amqp"
