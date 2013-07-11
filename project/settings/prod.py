@@ -46,7 +46,7 @@ EMAIL_SUBJECT_PREFIX = '[Barberscore] '
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': get_env_variable('BONSAI_URL'),
+        'URL': get_env_variable('SEARCHBOX_URL'),
         'INDEX_NAME': 'haystack',
     },
 }
