@@ -11,7 +11,6 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=200, blank=True)
     nickname = models.CharField(max_length=25, blank=True, unique=True)
     timezone = TimeZoneField(blank=True, null=True)
-    prediction = models.TextField(blank=True)
 
     def __unicode__(self):
         return '{mobile} - {first_name} {last_name}'.format(

@@ -54,15 +54,18 @@
           <a class="brand" href="{% url 'home' %}">Barberscore</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li><a class="brand" href="{% url 'contests' %}">Contests</a>
-              <li><a class="brand" href="{% url 'contestants' %}">Contestants</a>
-              <li><a class="brand" href="{% url 'scores' %}">Scores</a>
+              {% include 'navbar.html' %}
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
     {% endblock navbar %}
+
+    {% block notification %}
+      {% include "notification_center.html" %}
+    {% endblock notification %}
+
     {% block content %}
     <div class="container">
 

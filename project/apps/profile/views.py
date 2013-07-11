@@ -1,5 +1,7 @@
 from __future__ import division
 
+from django.contrib import messages
+
 from django.shortcuts import (
     render,
     redirect,
@@ -24,15 +26,8 @@ def profile(request):
         form = ProfileForm(request.POST, instance=user_profile)
         if form.is_valid():
             form.save()
-            return redirect('success')
+            messages.success(request, 'Profile details updated.')
+            return redirect('profile')
     else:
         form = ProfileForm(instance=user_profile)
     return render(request, 'profile.html', {'form': form})
-
-
-def success(request):
-    return render(request, 'success.html')
-
-
-def about(request):
-    return render(request, 'about.html')

@@ -14,4 +14,8 @@ urlpatterns = patterns(
     url(r'score/$', 'scores', name='scores'),
     url(r'score/(?P<slug>[\w-]+)/$', 'score', name='score'),
 
+    url(r'quartet/$', 'quartets', name='quartets'),
+    url(r'chorus/$', 'choruses', name='choruses'),
+
+
 )

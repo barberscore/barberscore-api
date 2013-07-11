@@ -38,6 +38,20 @@ def contestants(request):
     return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
 
 
+def quartets(request):
+    contestants = get_list_or_404(Contestant, contestant_type=1)  # need constants
+    table = ContestantTable(contestants)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
+
+
+def choruses(request):
+    contestants = get_list_or_404(Contestant, contestant_type=2)  # need constants
+    table = ContestantTable(contestants)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
+
+
 def scores(request):
     scores = get_list_or_404(Score)
     table = ScoreTable(scores)

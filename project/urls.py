@@ -1,27 +1,28 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 
+from django.views.generic import TemplateView
+
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'project.views.home', name='home'),
-    # url(r'^project/', include('project.foo.urls')),
+urlpatterns = patterns(
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    '',
+    url(r'^$', TemplateView.as_view(template_name='home.html')),
+    url(r'^about/', TemplateView.as_view(template_name='about.html')),
 
-    # Uncomment the next line to enable the admin:
+
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('apps.bbs.urls')),
     url(r'^', include('apps.noncense.urls')),
-    # url(r'^', include('apps.rate.urls')),
-    url(r'^', include('apps.common.urls')),
+    url(r'^', include('apps.profile.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^search/', include('haystack.urls')),
+    # url(r'^', include('apps.rate.urls')),
+
 )
 
 
