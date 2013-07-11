@@ -6,4 +6,3 @@ honcho==0.4.2
 unittest2==0.5.1
 django-nose
 django-pylibmc
-heroku
