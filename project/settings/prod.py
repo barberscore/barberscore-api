@@ -46,7 +46,7 @@ EMAIL_SUBJECT_PREFIX = '[Barberscore] '
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
+        'URL': get_env_variable('BONSAI_URL'),
         'INDEX_NAME': 'haystack',
     },
 }
@@ -67,3 +67,7 @@ CACHES = {
         'BINARY': True,
     }
 }
+
+BROKER_URL = get_env_variable("CLOUDAMQP_URL")
+CELERY_RESULT_BACKEND = "amqp"
+BROKER_POOL_LIMIT = 1
