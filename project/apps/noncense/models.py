@@ -4,7 +4,6 @@ from django.contrib.auth.models import (
     BaseUserManager,
     AbstractBaseUser)
 
-from timezone_field import TimeZoneField
 
 class MobileUserManager(BaseUserManager):
     def create_user(self, mobile, password=None):

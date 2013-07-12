@@ -124,27 +124,27 @@ INSTALLED_APPS = (
     'django_tables2',
     'floppyforms',
     'apps.bbs',
-    'apps.noncense',
-    'apps.profile',
+    # 'apps.noncense',
+    # 'apps.profile',
     # 'apps.rate',
-    'django_localflavor_us',
+    # 'django_localflavor_us',
     'haystack',
     # 'csvimport',
-    'djcelery',
+    # 'djcelery',
 )
 
 
-LOGIN_URL = 'noncense_request'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_URL = 'logout'
+# LOGIN_URL = 'noncense_request'
+# LOGIN_REDIRECT_URL = 'home'
+# LOGOUT_URL = 'logout'
 
-AUTHENTICATION_BACKENDS = (
-    'apps.noncense.backends.NonceBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'apps.noncense.backends.NonceBackend',
+#     'django.contrib.auth.backends.ModelBackend',
+# )
 
-AUTH_USER_MODEL = 'noncense.MobileUser'
+# AUTH_USER_MODEL = 'noncense.MobileUser'
 
-TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
-TWILIO_FROM_NUMBER = get_env_variable("TWILIO_FROM_NUMBER")
+# TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
+# TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
+# TWILIO_FROM_NUMBER = get_env_variable("TWILIO_FROM_NUMBER")
