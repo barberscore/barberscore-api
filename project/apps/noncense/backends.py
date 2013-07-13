@@ -17,6 +17,9 @@ class NonceBackend(object):
         if nonce_user.is_authenticated():
             try:
                 user = MobileUser.objects.get(mobile=mobile)
+            # Note that this always creates an account.
+            # Handle permissions accordingly, or raise
+            # an error which this exception is thrown.
             except MobileUser.DoesNotExist:
                 user = MobileUser(mobile=mobile)
                 user.save()

@@ -23,6 +23,7 @@ urlpatterns = patterns(
     # url(r'^', include('apps.profile.urls')),
 
     # url(r'^', include('apps.rate.urls')),
+    url(r'^', include('apps.noncense.urls')),
 
 )
 

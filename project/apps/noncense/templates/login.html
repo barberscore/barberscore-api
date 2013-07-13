@@ -2,18 +2,17 @@
 
 {% block title %}
 <title>
-Enter Code
-</title>
+Login</title>
 {% endblock title %}
 
 {% block content %}
 <p>
-Enter the four-digit code you were texted.  It may take up to 30 seconds to receive the text.
+Enter mobile number
 </P>
 
-    <form action='{% url "noncense_response" %}' method='post'>
+    <form action='{% url "login" %}' method='post'>
         {% csrf_token %}
-        {{response_form.as_p}}
+        {{form.as_p}}
         <input type='submit' value='Submit'>
     </form>
 

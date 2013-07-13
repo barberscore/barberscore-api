@@ -4,4 +4,5 @@ urlpatterns = patterns(
     'apps.profile.views',
 
     url(r'profile/$', 'profile', name='profile'),
+
 )

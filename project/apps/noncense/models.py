@@ -80,23 +80,3 @@ class MobileUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-
-
-class InboundSMS(models.Model):
-    inbound_raw = models.TextField(blank=True)
-    smsmessagesid = models.CharField(max_length=200, blank=True)
-    accountsid = models.TextField(blank=True)
-    body = models.TextField(blank=True)
-    fromzip = models.TextField(blank=True)
-    to = models.TextField(blank=True)
-    tocity = models.TextField(blank=True)
-    smssid = models.TextField(blank=True)
-    fromstate = models.TextField(blank=True)
-    tocountry = models.TextField(blank=True)
-    _from = models.TextField(blank=True)
-    apiversion = models.TextField(blank=True)
-    fromcity = models.TextField(blank=True)
-    tozip = models.TextField(blank=True)
-    smsstatus = models.TextField(blank=True)
-    tostate = models.TextField(blank=True)
-    fromcountry = models.TextField(blank=True)
