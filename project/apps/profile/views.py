@@ -7,11 +7,13 @@ from django.shortcuts import (
     redirect,
 )
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 from django.contrib.auth.decorators import login_required
 
-
 from .models import (
-    UserProfile,
+    Profile,
 )
 
 from .forms import (
@@ -21,9 +23,10 @@ from .forms import (
 
 @login_required
 def profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user = User.objects.get(id=request.user)
+    user_profile = Profile.objects.get(user=user)
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=user_profile)
+        form = ProfileForm(request.POST, instance=user.profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile details updated.')

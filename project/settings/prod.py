@@ -58,3 +58,13 @@ CACHES = memcacheify()
 BROKER_URL = get_env_variable("CLOUDAMQP_URL")
 CELERY_RESULT_BACKEND = "amqp"
 BROKER_POOL_LIMIT = 1
+
+
+NONCENSE_SERVER = {
+    'default': {
+        # 'BACKEND': '',
+        'URL': 'http://noncense.herokuapp.com/',
+        'CONSUMER_ID': get_env_variable("NONCENSE_CONSUMER_ID"),
+        'CONSUMER_SECRET': get_env_variable("NONCENSE_CONSUMER_SECRET"),
+    }
+}

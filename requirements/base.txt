@@ -24,3 +24,4 @@ django-haystack
 requests
 pyelasticsearch
 django-celery
+-e git://github.com/dbinetti/django-noncense.git#egg=django-noncense

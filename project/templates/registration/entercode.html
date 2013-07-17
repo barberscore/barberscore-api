@@ -1,19 +1,18 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<title>
-Login</title>
+    <title>
+        Enter Code
+    </title>
 {% endblock title %}
 
 {% block content %}
-<p>
-Enter mobile number
-</P>
-
-    <form action='{% url "login" %}' method='post'>
+<div class='container'>
+    <form action='{% url "entercode" %}' method='post'>
         {% csrf_token %}
         {{form.as_p}}
         <input type='submit' value='Submit'>
     </form>
-
+</div> {# container #}
+<br><br>
 {% endblock content %}

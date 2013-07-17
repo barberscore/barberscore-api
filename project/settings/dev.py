@@ -36,6 +36,15 @@ DEBUG_TOOLBAR_CONFIG = {
 #     }
 # }
 
+NONCENSE_SERVER = {
+    'default': {
+        # 'BACKEND': '',
+        'URL': 'http://localhost:7000/',
+        'CONSUMER_ID': get_env_variable("NONCENSE_CONSUMER_ID"),
+        'CONSUMER_SECRET': get_env_variable("NONCENSE_CONSUMER_SECRET"),
+    }
+}
+
 
 HAYSTACK_CONNECTIONS = {
     'default': {

@@ -2,11 +2,11 @@ import floppyforms as forms
 
 
 from .models import (
-    UserProfile,
+    Profile,
 )
 
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = UserProfile
+        model = Profile
         fields = ('first_name', 'last_name', 'nickname', )
