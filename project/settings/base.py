@@ -1,8 +1,8 @@
 # Django settings for project project.
 import os
 
-import djcelery
-djcelery.setup_loader()
+# import djcelery
+# djcelery.setup_loader()
 
 
 import dj_database_url
@@ -37,9 +37,6 @@ USE_I18N = False
 USE_L10N = True
 
 USE_TZ = True
-
-STATICFILES_DIRS = (
-)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -114,7 +111,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'grappelli',
+    # 'grappelli',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',

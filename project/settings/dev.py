@@ -7,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',
-    'django_nose',
+    # 'django_nose',
 )
 
 MIDDLEWARE_CLASSES += (
@@ -19,7 +19,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 INTERNAL_IPS = ('127.0.0.1',)
 
 DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
+    'INTERCEPT_REDIRECTS': True,
 }
 
 
@@ -54,10 +54,14 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-MEDIA_ROOT = PROJECT_ROOT.ancestor(2).child("localstorage").child("media")
+STATICFILES_DIRS = (
+    PROJECT_ROOT.ancestor(1).child("project").child("static"),
+)
+
+MEDIA_ROOT = PROJECT_ROOT.ancestor(2).child("localstorage").child("barberscore").child("media")
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = PROJECT_ROOT.ancestor(2).child("localstorage").child("static")
+STATIC_ROOT = PROJECT_ROOT.ancestor(2).child("localstorage").child("barberscore").child("static")
 STATIC_URL = '/static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
