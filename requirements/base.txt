@@ -1,8 +1,8 @@
-https://www.djangoproject.com/download/1.7b3/tarball/
+./wheelhouse/Django-1.7b4-py2.py3-none-any.whl
 dj-database-url==0.3.0
-psycopg2==2.5.2
-nameparser==0.2.9
+psycopg2==2.5.3
+nameparser==0.2.10
 python-dateutil==2.2
-pytz==2014.2
+pytz==2014.3
 Pillow==2.4.0
 
