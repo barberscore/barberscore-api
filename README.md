@@ -1,4 +1,5 @@
-bbs
-===
+Barberscore
+===========
 
-Score tracker for the 2014 Barbershop Harmony Society convention
+Program and score tracker for the Barbershop Harmony Society International Convention.
+
