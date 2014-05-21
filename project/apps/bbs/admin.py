@@ -6,24 +6,19 @@ from .models import (
     Score,
 )
 
-
+@admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("year", "contest_level", "contest_type", )}
+    save_on_top = True
 
 
+@admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("name",)}
-    list_display = ['name', 'slug', 'district', 'location', 'website', 'facebook']
-    list_filter = ['district', 'contestant_type']
-    search_fields = ['name']
+    save_on_top = True
+    list_display = (
+        'slug',
+    )
 
 
+@admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ['__unicode__', 'song1', 'mus1', 'prs1', 'sng1', 'song2', 'mus2', 'prs2', 'sng2']
-    list_filter = ['contest']
-
-
-admin.site.register(Contest, ContestAdmin)
-admin.site.register(Contestant, ContestantAdmin)
-admin.site.register(Score, ScoreAdmin)

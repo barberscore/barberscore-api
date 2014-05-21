@@ -5,16 +5,6 @@ from django.shortcuts import (
     get_object_or_404,
     get_list_or_404)
 
-from django_tables2 import RequestConfig
-
-from .tables import (
-    ContestantTable,
-    ContestTable,
-    ScoreTable,
-    QuartetTable,
-    ChorusTable,
-)
-
 from .models import (
     Contest,
     Contestant,
@@ -23,42 +13,36 @@ from .models import (
 
 
 def home(request):
-    return render(request, 'home.html', )
+    return render(request, 'home.html')
+
+
+def about(request):
+    return render(request, 'about.html')
 
 
 def contests(request):
     contests = get_list_or_404(Contest)
-    table = ContestTable(contests)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contests.html', {'contests': contests, 'table': table})
+    return render(request, 'contests.html', {'contests': contests})
 
 
 def contestants(request):
     contestants = get_list_or_404(Contestant)
-    table = ContestantTable(contestants)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'contestants.html', {'contestants': contestants, 'table': table})
+    return render(request, 'contestants.html', {'contestants': contestants})
 
 
 def quartets(request):
-    quartets = get_list_or_404(Contestant, contestant_type=1)  # need constants
-    table = QuartetTable(quartets)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'quartets.html', {'quartets': quartets, 'table': table})
+    quartets = get_list_or_404(Contestant, contestant_type=1)
+    return render(request, 'quartets.html', {'quartets': quartets})
 
 
 def choruses(request):
     choruses = get_list_or_404(Contestant, contestant_type=2)  # need constants
-    table = ChorusTable(choruses)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'choruses.html', {'choruses': choruses, 'table': table})
+    return render(request, 'choruses.html', {'choruses': choruses})
 
 
 def scores(request):
     scores = get_list_or_404(Score)
-    table = ScoreTable(scores)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    return render(request, 'scores.html', {'scores': scores, 'table': table})
+    return render(request, 'scores.html', {'scores': scores})
 
 
 def contest(request, slug):

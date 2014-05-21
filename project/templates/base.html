@@ -3,115 +3,61 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>{% block title %}Barberscore{% endblock title %}</title>
     <meta charset="utf-8">
-
-    {% block title %}
-    <title>Barberscore - </title>
-    {% endblock title %}
-
-    {% block meta-tags %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    {% endblock meta-tags %}
+    <meta name="description" content="Convention tracker for the Barbershop Harmony Society.">
+    <meta name="author" content="David E. Binetti">
+    <meta name="copyright" content="&copy; 2014, dinadesa llc">
+    {# <meta name="google-site-verification" content="I0Rz6Qg8QFJcal0mdBdRE5pGiXhgJxSnkJ_fOelEzbI" /> #}
 
     {% block style-libraries %}
-    <!-- Le styles -->
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
-    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="{% static 'js/html5shiv.js"></script>
-    <![endif]-->
-
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'ico/apple-touch-icon-144-precomposed.png' %}">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static 'ico/apple-touch-icon-114-precomposed.png' %}">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static 'ico/apple-touch-icon-72-precomposed.png' %}">
-                    <link rel="apple-touch-icon-precomposed" href="{% static 'ico/apple-touch-icon-57-precomposed.png' %}">
-                                   <link rel="shortcut icon" href="{% static 'ico/favicon.png' %}">
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+      <link rel="stylesheet" type="text/css" href="{% static 'barberscore/css/main.css' %}">
     {% endblock style-libraries %}
+
     {% block styles %}
     {% endblock styles %}
   </head>
 
   <body>
     {% block navbar %}
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="{% url 'home' %}">Barberscore</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li><a href="{% url 'scores' %}">Scores</a>
-              <li><a href="{% url 'quartets' %}">Quartets</a>
-              <li><a href="{% url 'choruses' %}">Choruses</a>
-              <li><a href="{% url 'profile' %}">Profile</a>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+      {% include 'nav.html' %}
     {% endblock navbar %}
 
     {% block notification %}
-      {% include "notification.html" %}
+      {% for message in messages %}
+        <div class='container'>
+          <div class="message">
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          </div>
+        </div>
+      {% endfor %}
     {% endblock notification %}
 
+    {% block header %}
+    {% endblock header %}
+
     {% block content %}
-    <div class="container">
-
-      <h1>Bootstrap starter template</h1>
-      <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p>
-
-    </div> <!-- /container -->
     {% endblock content %}
+
+    {% block footer %}
+    {% endblock footer %}
+
+    {% block bottombar %}
+    {% endblock bottombar %}
+
     {% block script-libraries %}
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static 'js/jquery.js' %}"></script>
-    <script src="{% static 'js/bootstrap-transition.js' %}"></script>
-    <script src="{% static 'js/bootstrap-alert.js' %}"></script>
-    <script src="{% static 'js/bootstrap-modal.js' %}"></script>
-    <script src="{% static 'js/bootstrap-dropdown.js' %}"></script>
-    <script src="{% static 'js/bootstrap-scrollspy.js' %}"></script>
-    <script src="{% static 'js/bootstrap-tab.js' %}"></script>
-    <script src="{% static 'js/bootstrap-tooltip.js' %}"></script>
-    <script src="{% static 'js/bootstrap-popover.js' %}"></script>
-    <script src="{% static 'js/bootstrap-button.js' %}"></script>
-    <script src="{% static 'js/bootstrap-collapse.js' %}"></script>
-    <script src="{% static 'js/bootstrap-carousel.js' %}"></script>
-    <script src="{% static 'js/bootstrap-typeahead.js' %}"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+      <script src="{% static 'barberscore/js/main.js' %}"></script>
     {% endblock script-libraries %}
+
     {% block scripts %}
     {% endblock scripts %}
+
     {% block analytics %}
-    <script type="text/javascript">
-      var _gauges = _gauges || [];
-      (function() {
-        var t   = document.createElement('script');
-        t.type  = 'text/javascript';
-        t.async = true;
-        t.id    = 'gauges-tracker';
-        t.setAttribute('data-site-id', '51d86243613f5d6aff000026');
-        t.src = '//secure.gaug.es/track.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(t, s);
-      })();
-    </script>
     {% endblock analytics %}
   </body>
 </html>

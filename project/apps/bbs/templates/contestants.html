@@ -1,19 +1,32 @@
 {% extends 'base.html' %}
 
-{% load render_table from django_tables2 %}
-
 {% block title %}
-    <title>
-        Contestants List
-    </title>
+  Contestant List
 {% endblock title %}
 
-
-
 {% block content %}
-    <div class="container">
-
-    {% render_table table %}
-    </div> <!-- /container -->
+  <div class="container">
+    <div class="table-responsive">
+      <table class='table table-hover table-condensed'>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Prelim</th>
+            <th>Order</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contestant in contestants %}
+            <tr>
+              <td><a href='{% url "contestant" contestant.slug %}'>{{contestant}}</a></td>
+              <td>{{contestant.prelim}}</td>
+              <td>{{contestant.order}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        </thead>
+      </table>
+    </div>
+  </div> <!-- /container -->
 
 {% endblock content %}

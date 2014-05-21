@@ -3,4 +3,8 @@
 *.pyc
 *.DS_Store
 
-celerybeat-schedule
+.coverage
+
+htmlcov/*
+
+project/media/*

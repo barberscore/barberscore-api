@@ -1,4 +1,5 @@
-import os, csv
+import os
+import csv
 
 from optparse import make_option
 
@@ -15,19 +16,19 @@ class Command(BaseCommand):
         make_option(
             "-f",
             "--file",
-            dest = "filename",
-            help = "specify import file",
-            metavar = "FILE"
+            dest="filename",
+            help="specify import file",
+            metavar="FILE"
         ),
     )
 
     def handle(self, *args, **options):
         # make sure file option is present
-        if options['filename'] == None :
+        if options['filename'] is None:
             raise CommandError("Option `--file=...` must be specified.")
 
         # make sure file path resolves
-        if not os.path.isfile(options['filename']) :
+        if not os.path.isfile(options['filename']):
             raise CommandError("File does not exist at the specified path.")
 
         # print file
@@ -38,15 +39,22 @@ class Command(BaseCommand):
             reader = csv.reader(csv_file)
             for row in reader:
 
-                try :
+                try:
                     contestant, created = Contestant.objects.get_or_create(
                         name=unicode(row[0].strip()),
-                        defaults={'slug': slugify(unicode(row[0].strip())), 'contestant_type': 2}
+                        defaults={
+                            'slug': slugify(
+                                unicode(
+                                    row[0].strip()
+                                )
+                            ),
+                            'contestant_type': 2
+                        }
                     )
 
                 except Exception, e:
                     print "Contestant `%s` could not be created." % row[0]
-                    print "Exception: {0} created {1}".format(e,created)
+                    print "Exception: {0} created {1}".format(e, created)
                     break
 
                 row.append(contestant.id)
@@ -68,8 +76,8 @@ class Command(BaseCommand):
                     )
                     new_score.save()
                 except Exception, e:
-                    print "Score {name} could not be created".format(name=row[0])
+                    print "Score {name} could not be created".format(
+                        name=row[0]
+                    )
                     print "Exception: {0}".format(e)
                     break
-
-

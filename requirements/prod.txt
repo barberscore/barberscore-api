@@ -1,6 +1,7 @@
 -r base.txt
 
-boto==2.9.6
+boto==2.27.0
 django-storages==1.1.8
-raven>=3
-django-s3-folder-storage
+gunicorn==18.0
+raven==4.2.1
+djrill==1.0.0

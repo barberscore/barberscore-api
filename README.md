@@ -1,4 +1,4 @@
 bbs
 ===
 
-Score tracker for the 2013 Barbershop Harmony Society convention in Montreal
+Score tracker for the 2014 Barbershop Harmony Society convention

@@ -1,15 +1,8 @@
-Django==1.5.1
-distribute
-dj-database-url==0.2.1
-django-floppyforms==1.1
-django-tables2==0.13.0
-gunicorn==0.17.4
-psycopg2==2.5
-South==0.8.1
-Unipath==1.0
-django-haystack
-pyelasticsearch
-django-timezone-field==0.4
--e git://github.com/dbinetti/django-noncense.git#egg=django-noncense
-ipython
-twilio
+https://www.djangoproject.com/download/1.7b3/tarball/
+dj-database-url==0.3.0
+psycopg2==2.5.2
+nameparser==0.2.9
+python-dateutil==2.2
+pytz==2014.2
+Pillow==2.4.0
+

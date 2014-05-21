@@ -1,0 +1,6 @@
+## Customize deployment commands
+deployment:
+  production:
+    branch: master
+    heroku:
+      appname: barberscore
