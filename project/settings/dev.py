@@ -35,7 +35,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'apps.dinadesa': {
+        'apps.bbs': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
