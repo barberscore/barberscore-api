@@ -5,9 +5,14 @@ from optparse import make_option
 
 from django.utils.text import slugify
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import (
+    BaseCommand,
+    CommandError,
+)
 
-from apps.bbs.models import Score, Contestant, Contest
+from apps.bbs.models import (
+    Contestant,
+)
 
 
 class Command(BaseCommand):
@@ -36,23 +41,21 @@ class Command(BaseCommand):
 
         # open the file
         with open(options['filename']) as csv_file:
-            reader = csv.reader(csv_file, delimiter='\t')
+            reader = csv.reader(csv_file)
             for row in reader:
 
                 try:
                     contestant, created = Contestant.objects.get_or_create(
                         name=unicode(row[0].strip()),
                         defaults={
-                            'slug': slugify(
-                                unicode(
-                                    row[0].strip()
-                                )
-                            ),
-                            'contestant_type': 2
+                            'slug': slugify(unicode(row[0].strip())),
+                            'contestant_type': Contestant.QUARTET,
+                            'district': unicode(row[1].strip()),
+                            'prelim': unicode(row[2]),
                         }
                     )
 
                 except Exception, e:
                     print "Contestant `%s` could not be created." % row[0]
-                    print "Exception: {0} created {1}".format(e, created)
+                    print "Exception: {0} ".format(e)
                     break

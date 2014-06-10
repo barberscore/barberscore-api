@@ -3,8 +3,9 @@ from django.contrib import admin
 from .models import (
     Contest,
     Contestant,
-    Score,
+    Performance,
 )
+
 
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
@@ -14,11 +15,27 @@ class ContestAdmin(admin.ModelAdmin):
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     save_on_top = True
+    search_fields = (
+        'name',
+    )
     list_display = (
+        '__unicode__',
+        'contestant_type',
         'slug',
+        'prelim',
+    )
+    list_filter = (
+        'contestant_type',
     )
 
 
-@admin.register(Score)
-class ScoreAdmin(admin.ModelAdmin):
+@admin.register(Performance)
+class PerforamnceAdmin(admin.ModelAdmin):
     save_on_top = True
+    list_display = (
+        '__unicode__',
+        'appearance',
+    )
+    list_filter = (
+        'contest',
+    )
