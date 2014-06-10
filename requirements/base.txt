@@ -5,4 +5,4 @@ nameparser==0.2.10
 python-dateutil==2.2
 pytz==2014.3
 Pillow==2.4.0
-
+djangorestframework==2.3.13
