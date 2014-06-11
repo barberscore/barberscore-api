@@ -7,12 +7,20 @@ from .models import (
 )
 
 
+class HyperlinkedFileField(serializers.FileField):
+    def to_native(self, value):
+        request = self.context.get('request', None)
+        return request.build_absolute_uri(value.url)
+
+
 class ContestantSerializer(serializers.HyperlinkedModelSerializer):
     performances = serializers.HyperlinkedRelatedField(
         view_name='performance-detail',
         many=True,
         read_only=True,
     )
+
+    picture = HyperlinkedFileField()
 
     class Meta:
         model = Contestant
