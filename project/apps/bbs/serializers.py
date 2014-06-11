@@ -9,8 +9,11 @@ from .models import (
 
 class HyperlinkedFileField(serializers.FileField):
     def to_native(self, value):
-        request = self.context.get('request', None)
-        return request.build_absolute_uri(value.url)
+        try:
+            request = self.context.get('request', None)
+            return request.build_absolute_uri(value.url)
+        except:
+            return None
 
 
 class ContestantSerializer(serializers.HyperlinkedModelSerializer):
