@@ -14,6 +14,12 @@ class Contestant(models.Model):
         (CHORUS, "Chorus"),
     )
 
+    contestant_type = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=CONTESTANT_CHOICES
+    )
+
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
     location = models.CharField(max_length=200, blank=True)
@@ -25,19 +31,15 @@ class Contestant(models.Model):
     tenor = models.CharField(max_length=200, blank=True)
     baritone = models.CharField(max_length=200, blank=True)
     bass = models.CharField(max_length=200, blank=True)
-    contestant_type = models.IntegerField(
-        blank=True,
-        null=True,
-        choices=CONTESTANT_CHOICES
-    )
     district = models.CharField(max_length=200, blank=True)
     prelim = models.FloatField(null=True, blank=True)
+    picture = models.ImageField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.name
+        return self.slug
 
     class Meta:
-        ordering = ['name']
+        ordering = ['contestant_type']
 
 
 class Contest(models.Model):
