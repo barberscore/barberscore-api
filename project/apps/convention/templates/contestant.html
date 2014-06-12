@@ -15,7 +15,17 @@
         No Image Available
       {% endif %}
     </p>
-    <p>{{contestant.name}}</p>
+    <p>{{contestant.name}}, {{contestant.district}}</p>
+    <ul class='list-unstyled list-inline'>
+      <li>{{contestant.tenor}}</li>
+      <li>{{contestant.lead}}</li>
+      <li>{{contestant.baritone}}</li>
+      <li>{{contestant.bass}}</li>
+    </ul>
+    <p>{{contestant.website2}}</p>
+    <p>{{contestant.facebook2}}</p>
+    <p>{{contestant.phone}}</p>
+    <p>Prelim Score: {{contestant.prelim}}</p>
     </div> <!-- /container -->
 
 {% endblock content %}
