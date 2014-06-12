@@ -22,8 +22,8 @@ class ContestantAdmin(admin.ModelAdmin):
             'facebook',
         ),
         'phone', (
-            'lead',
             'tenor',
+            'lead',
             'baritone',
             'bass',
         ),
