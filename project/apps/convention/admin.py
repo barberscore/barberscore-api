@@ -30,6 +30,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'director',
         'district',
         'prelim',
+        'picture',
     )
 
     readonly_fields = (
