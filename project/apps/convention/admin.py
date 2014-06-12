@@ -55,6 +55,10 @@ class ContestantAdmin(admin.ModelAdmin):
         'contestant_type',
     )
 
+    ordering = (
+        'name',
+    )
+
 
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
