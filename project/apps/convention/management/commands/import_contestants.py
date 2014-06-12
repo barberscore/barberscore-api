@@ -46,12 +46,12 @@ class Command(BaseCommand):
 
                 try:
                     contestant, created = Contestant.objects.get_or_create(
-                        name=unicode(row[0].strip()),
+                        name=unicode(row[1].strip()),
                         defaults={
-                            'slug': slugify(unicode(row[0].strip())),
+                            'slug': slugify(unicode(row[1].strip())),
                             'contestant_type': Contestant.QUARTET,
-                            'district': unicode(row[1].strip()),
-                            'prelim': unicode(row[2]),
+                            'district': unicode(row[2].strip()),
+                            'prelim': unicode(row[3]),
                         }
                     )
 

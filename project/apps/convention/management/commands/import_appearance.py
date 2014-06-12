@@ -45,14 +45,14 @@ class Command(BaseCommand):
             for row in reader:
 
                 try:
-                    contest = Contest.objects.get(contest_type=Contest.CHORUS)
+                    contest = Contest.objects.get(contest_type=Contest.COLLEGIATE)
                     contestant = Contestant.objects.get(
                         name=unicode(row[1].strip())
                     )
                     performance, created = Performance.objects.get_or_create(
                         contestant=contestant,
                         contest=contest,
-                        contest_round=3,
+                        contest_round=1,
                         appearance=int(row[0]),
                     )
                     performance.save()
