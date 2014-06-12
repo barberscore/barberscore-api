@@ -25,6 +25,8 @@ class Contestant(models.Model):
     location = models.CharField(max_length=200, blank=True)
     website = models.URLField(blank=True)
     facebook = models.URLField(blank=True)
+    website2 = models.CharField(blank=True, null=True, max_length=200)
+    facebook2 = models.CharField(blank=True, null=True, max_length=200)
     phone = models.CharField(max_length=20, blank=True)
     director = models.CharField(max_length=200, blank=True)
     lead = models.CharField(max_length=200, blank=True)
