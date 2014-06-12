@@ -47,7 +47,9 @@ class ContestViewSet(viewsets.ModelViewSet):
 
 
 def contestants(request):
-    contestants = get_list_or_404(Contestant)
+    contestants = get_list_or_404(
+        Contestant.objects.all().order_by('name')
+    )
     return render(request, 'contestants.html', {'contestants': contestants})
 
 
