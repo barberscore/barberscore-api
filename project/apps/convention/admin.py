@@ -18,8 +18,8 @@ class ContestantAdmin(admin.ModelAdmin):
 
     fields = (
         'name', (
-            'website2',
-            'facebook2',
+            'website',
+            'facebook',
         ),
         'phone', (
             'tenor',
@@ -45,8 +45,8 @@ class ContestantAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'website2',
-        'facebook2',
+        'website',
+        'facebook',
         'phone',
         'prelim',
     )
