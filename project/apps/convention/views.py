@@ -1,5 +1,11 @@
 from rest_framework import viewsets
 
+from django.shortcuts import (
+    get_list_or_404,
+    get_object_or_404,
+    render,
+)
+
 from .models import (
     Contest,
     Contestant,
@@ -38,3 +44,13 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.all()
     serializer_class = ContestSerializer
     lookup_field = 'slug'
+
+
+def contestants(request):
+    contestants = get_list_or_404(Contestant)
+    return render(request, 'contestants.html', {'contestants': contestants})
+
+
+def contestant(request, slug):
+    contestant = get_object_or_404(Contestant, slug=slug)
+    return render(request, 'contestant.html', {'contestant': contestant})

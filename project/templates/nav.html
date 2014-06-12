@@ -14,24 +14,28 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+            {% comment %}
               <li>
                 <a href="{% url 'contests' %}">
                 <span class='fa fa-book fa-lg'></span>
                 Contests
                 </a>
               </li>
+            {% endcomment %}
               <li>
                 <a href="{% url 'contestants' %}">
                 <span class='fa fa-picture-o fa-lg'></span>
                 Contestants
                 </a>
               </li>
+            {% comment %}
               <li>
                 <a href="{% url 'performances' %}">
                 <span class='fa fa-credit-card fa-lg'></span>
                 Performances
                 </a>
               </li>
+            {% endcomment %}
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
