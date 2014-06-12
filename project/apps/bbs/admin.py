@@ -15,27 +15,83 @@ class ContestAdmin(admin.ModelAdmin):
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     save_on_top = True
+
+    fields = (
+        'name', (
+            'website',
+            'facebook',
+        ),
+        'phone', (
+            'lead',
+            'tenor',
+            'baritone',
+            'bass',
+        ),
+        'director',
+        'district',
+        'prelim',
+    )
+
+    readonly_fields = (
+        'name',
+        'district',
+        'prelim',
+    )
+
     search_fields = (
         'name',
     )
+
     list_display = (
-        '__unicode__',
-        'contestant_type',
-        'slug',
-        'prelim',
+        'name',
+        'website',
+        'facebook',
+        'phone',
     )
+
     list_filter = (
         'contestant_type',
     )
 
 
 @admin.register(Performance)
-class PerforamnceAdmin(admin.ModelAdmin):
+class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = (
-        '__unicode__',
+
+    fields = (
+        'contestant',
+        'contest',
+        'contest_round',
+        'appearance',
+        'song1', (
+            'mus1',
+            'prs1',
+            'sng1',
+        ),
+        'song2', (
+            'mus2',
+            'prs2',
+            'sng2',
+        ),
+    )
+
+    readonly_fields = (
+        'contestant',
+        'contest',
+        'contest_round',
         'appearance',
     )
+
+    list_display = (
+        '__unicode__',
+        'song1',
+        'score1',
+        'song2',
+        'score2',
+        'appearance',
+    )
+
     list_filter = (
         'contest',
+        'contest_round',
     )

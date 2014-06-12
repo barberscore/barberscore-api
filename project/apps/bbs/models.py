@@ -36,7 +36,7 @@ class Contestant(models.Model):
     picture = models.ImageField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.slug
+        return self.name
 
     class Meta:
         ordering = ['contestant_type']
@@ -68,7 +68,7 @@ class Contest(models.Model):
     )
 
     def __unicode__(self):
-        return '{0}'.format(self.slug)
+        return '{0}'.format(self.get_contest_type_display())
 
     class Meta:
         ordering = ['contest_type']
@@ -103,7 +103,6 @@ class Performance(models.Model):
     contest_round = models.IntegerField(
         choices=CONTEST_ROUND_CHOICES,
         default=0,
-        editable=False,
     )
 
     slug = models.SlugField(
@@ -122,16 +121,16 @@ class Performance(models.Model):
         max_length=200,
     )
 
-    mus1 = models.IntegerField(
+    mus1 = models.FloatField(
         blank=True,
         null=True,
     )
-    prs1 = models.IntegerField(
+    prs1 = models.FloatField(
         blank=True,
         null=True,
     )
 
-    sng1 = models.IntegerField(
+    sng1 = models.FloatField(
         blank=True,
         null=True,
     )
@@ -142,17 +141,17 @@ class Performance(models.Model):
         max_length=200,
     )
 
-    mus2 = models.IntegerField(
+    mus2 = models.FloatField(
         blank=True,
         null=True,
     )
 
-    prs2 = models.IntegerField(
+    prs2 = models.FloatField(
         blank=True,
         null=True,
     )
 
-    sng2 = models.IntegerField(
+    sng2 = models.FloatField(
         blank=True,
         null=True,
     )
@@ -163,8 +162,22 @@ class Performance(models.Model):
         default=4,
     )
 
+    @property
+    def score1(self):
+        if self.sng1 and self.mus1 and self.prs1:
+            return round((self.sng1 + self.mus1 + self.prs1) / 3, 1)
+        else:
+            return None
+
+    @property
+    def score2(self):
+        if self.sng2 and self.mus2 and self.prs2:
+            return round((self.sng2 + self.mus2 + self.prs2) / 3, 1)
+        else:
+            return None
+
     def __unicode__(self):
-        return '{0}-{1}'.format(
+        return '{0}, {1}'.format(
             self.contestant,
             self.get_contest_round_display(),
         )
