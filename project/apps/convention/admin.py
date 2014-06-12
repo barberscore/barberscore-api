@@ -47,6 +47,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'website',
         'facebook',
         'phone',
+        'prelim',
     )
 
     list_filter = (

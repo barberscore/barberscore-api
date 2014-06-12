@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bbs', '0009_performance_contest_round'),
+        ('convention', '0008_auto_20140521_0601'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='performance',
-            name='appearance',
-            field=models.IntegerField(default=1),
+            name='contest_round',
+            field=models.IntegerField(default=0, choices=[(1, b'Quarter-Finals'), (2, b'Semi-Finals'), (3, b'Finals')]),
             preserve_default=True,
         ),
     ]

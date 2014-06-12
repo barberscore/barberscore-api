@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bbs', '0010_performance_appearance'),
+        ('convention', '0010_performance_appearance'),
     ]
 
     operations = [
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='performance',
             name='contest',
-            field=models.ForeignKey(to_field='id', blank=True, to='bbs.Contest', null=True),
+            field=models.ForeignKey(to_field='id', blank=True, to='convention.Contest', null=True),
         ),
         migrations.AlterField(
             model_name='performance',
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='performance',
             name='contestant',
-            field=models.ForeignKey(to_field='id', blank=True, to='bbs.Contestant', null=True),
+            field=models.ForeignKey(to_field='id', blank=True, to='convention.Contestant', null=True),
         ),
         migrations.AlterField(
             model_name='performance',

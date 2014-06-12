@@ -1,7 +1,7 @@
 import django_tables2 as tables
 from django_tables2.utils import A
 
-from apps.bbs.templatetags.bbstags import score, time_only
+from apps.convention.templatetags.conventiontags import score, time_only
 
 
 class ScoreColumn(tables.Column):

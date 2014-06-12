@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        (b'bbs', b'0001_initial'),
+        (b'convention', b'0001_initial'),
     ]
 
     operations = [
@@ -54,8 +54,8 @@ class Migration(migrations.Migration):
             name=b'Score',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                (b'contest', models.ForeignKey(to=b'bbs.Contest', to_field='id')),
-                (b'contestant', models.ForeignKey(to=b'bbs.Contestant', to_field='id')),
+                (b'contest', models.ForeignKey(to=b'convention.Contest', to_field='id')),
+                (b'contestant', models.ForeignKey(to=b'convention.Contestant', to_field='id')),
                 (b'contest_round', models.CharField(max_length=20, choices=[(b'Quarters', b'Quarter-Finals'), (b'Semis', b'Semi-Finals'), (b'Finals', b'Finals')])),
                 (b'slug', models.SlugField(unique=True, max_length=200)),
                 (b'song1', models.CharField(max_length=200)),

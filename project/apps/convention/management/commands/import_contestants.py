@@ -10,7 +10,7 @@ from django.core.management.base import (
     CommandError,
 )
 
-from apps.bbs.models import (
+from apps.convention.models import (
     Contestant,
 )
 

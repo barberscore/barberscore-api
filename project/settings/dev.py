@@ -15,7 +15,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=apps.bbs',
+    '--cover-package=apps.convention',
     '--cover-erase',
     '--nologcapture',
 ]
@@ -35,7 +35,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'apps.bbs': {
+        'apps.convention': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bbs', '0007_delete_score'),
+        ('convention', '0007_delete_score'),
     ]
 
     operations = [
@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
             name='Performance',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('contest', models.ForeignKey(to='bbs.Contest', to_field='id')),
-                ('contestant', models.ForeignKey(to='bbs.Contestant', to_field='id')),
+                ('contest', models.ForeignKey(to='convention.Contest', to_field='id')),
+                ('contestant', models.ForeignKey(to='convention.Contestant', to_field='id')),
                 ('slug', models.SlugField(unique=True, max_length=200)),
                 ('song1', models.CharField(max_length=200)),
                 ('mus1', models.IntegerField()),
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contest',
             name='performers',
-            field=models.ManyToManyField(to='bbs.Contestant', through='bbs.Performance'),
+            field=models.ManyToManyField(to='convention.Contestant', through='convention.Performance'),
             preserve_default=True,
         ),
     ]

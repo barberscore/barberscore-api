@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 from django_tables2 import RequestConfig
 
-from apps.bbs.models import (
+from apps.convention.models import (
     Performance,
 )
 

@@ -8,7 +8,7 @@ from django.conf import settings
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from apps.bbs.models import (
+from apps.convention.models import (
     Performance,
     Contestant,
 )

@@ -6,7 +6,7 @@ from .models import (
 )
 
 
-from apps.bbs.models import (
+from apps.convention.models import (
     Contestant,
 )
 

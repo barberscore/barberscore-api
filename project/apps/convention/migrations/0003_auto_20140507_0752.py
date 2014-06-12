@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        (b'bbs', b'0002_contest_contestant_score'),
+        (b'convention', b'0002_contest_contestant_score'),
     ]
 
     operations = [

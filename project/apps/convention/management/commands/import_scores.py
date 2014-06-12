@@ -3,16 +3,11 @@ import csv
 
 from optparse import make_option
 
-from django.core.management.base import (
-    BaseCommand,
-    CommandError,
-)
+from django.utils.text import slugify
 
-from apps.bbs.models import (
-    Contestant,
-    Performance,
-    Contest,
-)
+from django.core.management.base import BaseCommand, CommandError
+
+from apps.convention.models import Score, Contestant, Contest
 
 
 class Command(BaseCommand):
@@ -41,23 +36,23 @@ class Command(BaseCommand):
 
         # open the file
         with open(options['filename']) as csv_file:
-            reader = csv.reader(csv_file)
+            reader = csv.reader(csv_file, delimiter='\t')
             for row in reader:
 
                 try:
-                    contest = Contest.objects.get(contest_type=Contest.CHORUS)
-                    contestant = Contestant.objects.get(
-                        name=unicode(row[1].strip())
+                    contestant, created = Contestant.objects.get_or_create(
+                        name=unicode(row[0].strip()),
+                        defaults={
+                            'slug': slugify(
+                                unicode(
+                                    row[0].strip()
+                                )
+                            ),
+                            'contestant_type': 2
+                        }
                     )
-                    performance, created = Performance.objects.get_or_create(
-                        contestant=contestant,
-                        contest=contest,
-                        contest_round=3,
-                        appearance=int(row[0]),
-                    )
-                    performance.save()
-                    print "Contestant {0} saved.".format(contestant.name)
+
                 except Exception, e:
-                    print "Contestant `%s` could not be created." % row[1]
-                    print "Exception: {0} ".format(e)
-                    continue
+                    print "Contestant `%s` could not be created." % row[0]
+                    print "Exception: {0} created {1}".format(e, created)
+                    break

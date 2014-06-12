@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bbs', '0014_performance_slug'),
+        ('convention', '0014_performance_slug'),
     ]
 
     operations = [

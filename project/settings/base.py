@@ -101,7 +101,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'rest_framework',
     'rest_framework.authtoken',
-    'apps.bbs',
+    'apps.convention',
     # 'apps.profile',
     # 'apps.rate',
     # 'django_localflavor_us',
