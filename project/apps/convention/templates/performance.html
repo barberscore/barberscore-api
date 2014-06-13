@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Performance
+{% endblock title %}
+
+
+{% block content %}
+    <div class="container">
+    <p>{{performance.contestant.name}}, {{performance.get_contest_round_display}}</p>
+    <p>Song 1:{{performance.song1}}</p>
+    <p>Song 2:{{performance.song2}}</p>
+    </div> <!-- /container -->
+
+{% endblock content %}

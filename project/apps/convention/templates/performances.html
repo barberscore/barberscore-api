@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Performances
+{% endblock title %}
+
+
+{% block content %}
+    <div class="container">
+    <ul class='list-unstyled'>
+    {% for performance in performances %}
+      <li><a href='{% url "performance" performance.slug %}'>{{performance.contestant.name}}, {{performance.get_contest_round_display}}</a></li>
+    {% endfor %}
+    </ul>
+    </div> <!-- /container -->
+
+{% endblock content %}s

@@ -56,3 +56,19 @@ def contestants(request):
 def contestant(request, slug):
     contestant = get_object_or_404(Contestant, slug=slug)
     return render(request, 'contestant.html', {'contestant': contestant})
+
+
+def performances(request):
+    performances = get_list_or_404(
+        Performance.objects.all().order_by(
+            'contest',
+            'contest_round',
+            'appearance',
+        )
+    )
+    return render(request, 'performances.html', {'performances': performances})
+
+
+def performance(request, slug):
+    performance = get_object_or_404(Performance, slug=slug)
+    return render(request, 'performance.html', {'performance': performance})
