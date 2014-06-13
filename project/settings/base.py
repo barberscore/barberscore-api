@@ -101,6 +101,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'apps.convention',
     # 'apps.profile',
     # 'apps.rate',
@@ -129,3 +130,14 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
 }
+
+MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+)
+
+CORS_ORIGIN_ALLOW_ALL = True
