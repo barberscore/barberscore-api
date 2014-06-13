@@ -17,27 +17,15 @@ class ContestantAdmin(admin.ModelAdmin):
     save_on_top = True
 
     fields = (
-        'name', (
-            'website',
-            'facebook',
-        ),
-        'phone', (
-            'tenor',
-            'lead',
-            'baritone',
-            'bass',
-        ),
+        'name',
+        'contestant_type',
+        ('website', 'facebook'),
+        'phone',
+        ('tenor', 'lead', 'baritone', 'bass'),
         'director',
-        'blurb',
         'district',
         'prelim',
         'picture',
-    )
-
-    readonly_fields = (
-        'name',
-        'district',
-        'prelim',
     )
 
     search_fields = (
@@ -93,9 +81,9 @@ class PerformanceAdmin(admin.ModelAdmin):
     list_display = (
         '__unicode__',
         'song1',
-        'score1',
+        'song1_score',
         'song2',
-        'score2',
+        'song2_score',
         'appearance',
     )
 

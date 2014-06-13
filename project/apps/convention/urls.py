@@ -8,4 +8,8 @@ urlpatterns = patterns(
 
     url(r'performance/$', 'performances', name='performances'),
     url(r'performance/(?P<slug>[\w-]+)/$', 'performance', name='performance'),
+
+    url(r'contest/$', 'contests', name='contests'),
+    url(r'contest/(?P<slug>[\w-]+)/$', 'contest', name='contest'),
+
 )

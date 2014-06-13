@@ -63,6 +63,7 @@ def performances(request):
         Performance.objects.all().order_by(
             'contest',
             'contest_round',
+            '-total_score',
             'appearance',
         )
     )
@@ -72,3 +73,18 @@ def performances(request):
 def performance(request, slug):
     performance = get_object_or_404(Performance, slug=slug)
     return render(request, 'performance.html', {'performance': performance})
+
+
+def contest(request, slug):
+    contest = get_object_or_404(Contest, slug=slug)
+    return render(request, 'contest.html', {'contest': contest})
+
+
+def contests(request):
+    contests = get_list_or_404(Contest.objects.order_by('contest_type'))
+    performances = get_list_or_404(Performance.objects.order_by('appearance'))
+    return render(
+        request,
+        'contests.html',
+        {'contests': contests, 'performances': performances}
+    )

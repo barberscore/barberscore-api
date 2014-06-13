@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Contest
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+    <div class="page-header">
+      <h1>Contest</h1>
+    </div>
+    <p class='lead'>Following is a list of all the contests for the 2014 International Convention.</p>
+    <ul class='list-unstyled'>
+    {% for contest in contests %}
+      <li><a href='{% url "contest" contest.slug %}'>{{contest.get_contest_type_display}}</a></li>
+    {% endfor %}
+    </ul>
+  </div> <!-- /container -->
+
+{% endblock content %}

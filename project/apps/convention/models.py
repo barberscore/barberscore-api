@@ -20,27 +20,83 @@ class Contestant(models.Model):
         choices=CONTESTANT_CHOICES
     )
 
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
-    location = models.CharField(max_length=200, blank=True)
-    website = models.URLField(blank=True)
-    facebook = models.URLField(blank=True)
-    phone = models.CharField(max_length=20, blank=True)
-    director = models.CharField(max_length=200, blank=True)
-    lead = models.CharField(max_length=200, blank=True)
-    tenor = models.CharField(max_length=200, blank=True)
-    baritone = models.CharField(max_length=200, blank=True)
-    bass = models.CharField(max_length=200, blank=True)
-    district = models.CharField(max_length=200, blank=True)
-    prelim = models.FloatField(null=True, blank=True)
-    picture = models.ImageField(blank=True, null=True)
-    blurb = models.TextField(blank=True, null=True, max_length=1000)
+    name = models.CharField(
+        max_length=200,
+    )
+
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+    )
+
+    location = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    website = models.URLField(
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        blank=True,
+    )
+
+    phone = models.CharField(
+        max_length=20,
+        blank=True,
+    )
+
+    director = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    lead = models.CharField(
+        max_length=200, blank=True,
+    )
+
+    tenor = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    baritone = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    bass = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    district = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    picture = models.ImageField(
+        blank=True,
+        null=True,
+    )
+
+    blurb = models.TextField(
+        blank=True,
+        null=True,
+        max_length=1000,
+    )
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        ordering = ['contestant_type']
+        ordering = ['contestant_type', 'name']
 
 
 class Contest(models.Model):
@@ -87,6 +143,14 @@ class Performance(models.Model):
         (FINALS, 'Finals'),
     )
 
+    MORNING = 1
+    EVENING = 2
+
+    SESSION_CHOICES = (
+        (MORNING, "Morning"),
+        (EVENING, "Evening"),
+    )
+
     contest = models.ForeignKey(
         Contest,
         null=True,
@@ -119,6 +183,12 @@ class Performance(models.Model):
     stagetime = models.DateTimeField(
         blank=True,
         null=True,
+    )
+
+    session = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=SESSION_CHOICES,
     )
 
     song1 = models.CharField(
@@ -168,19 +238,31 @@ class Performance(models.Model):
         default=4,
     )
 
-    @property
-    def score1(self):
-        if self.sng1 and self.mus1 and self.prs1:
-            return round((self.sng1 + self.mus1 + self.prs1) / 3, 1)
-        else:
-            return None
+    # Denormalized values, calculated with pre_save signals
+    song1_score = models.FloatField(
+        blank=True,
+        null=True,
+    )
 
-    @property
-    def score2(self):
-        if self.sng2 and self.mus2 and self.prs2:
-            return round((self.sng2 + self.mus2 + self.prs2) / 3, 1)
-        else:
-            return None
+    song2_score = models.FloatField(
+        blank=True,
+        null=True,
+    )
+
+    performance_score = models.FloatField(
+        blank=True,
+        null=True,
+    )
+
+    total_score = models.FloatField(
+        blank=True,
+        null=True,
+    )
+
+    place = models.IntegerField(
+        blank=True,
+        null=True,
+    )
 
     def __unicode__(self):
         return '{0}, {1}'.format(
