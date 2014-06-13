@@ -36,6 +36,7 @@ class Contestant(models.Model):
     district = models.CharField(max_length=200, blank=True)
     prelim = models.FloatField(null=True, blank=True)
     picture = models.ImageField(blank=True, null=True)
+    blurb = models.TextField(blank=True, null=True, max_length=1000)
 
     def __unicode__(self):
         return self.name
@@ -113,6 +114,11 @@ class Performance(models.Model):
     )
 
     appearance = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    stagetime = models.DateTimeField(
         blank=True,
         null=True,
     )

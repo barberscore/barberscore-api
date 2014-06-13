@@ -28,6 +28,7 @@ class ContestantAdmin(admin.ModelAdmin):
             'bass',
         ),
         'director',
+        'blurb',
         'district',
         'prelim',
         'picture',
@@ -69,6 +70,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'contest',
         'contest_round',
         'appearance',
+        'stagetime',
         'song1', (
             'mus1',
             'prs1',
