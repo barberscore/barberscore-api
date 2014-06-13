@@ -26,6 +26,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'district',
         'prelim',
         'picture',
+        'blurb',
     )
 
     search_fields = (
