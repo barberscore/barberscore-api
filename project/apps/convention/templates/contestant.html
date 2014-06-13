@@ -26,7 +26,9 @@
     {% else %}
     <p>Director: {{contestant.director}}</p>
     {% endif %}
+    <div class="well">
     <p>{{contestant.blurb|linebreaks}}</p>
+    </div>
     <p>{{contestant.website|urlize}}</p>
     <p>{{contestant.facebook|urlize}}</p>
     <p>{{contestant.phone}}</p>
