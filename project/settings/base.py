@@ -103,12 +103,9 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'corsheaders',
     'apps.convention',
+    'haystack',
     # 'apps.profile',
     # 'apps.rate',
-    # 'django_localflavor_us',
-    # 'haystack',
-    # 'csvimport',
-    # 'djcelery',
 )
 
 
@@ -141,3 +138,14 @@ MIDDLEWARE_CLASSES = (
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+
+HAYSTACK_URL = get_env_variable("BONSAI_URL")
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': HAYSTACK_URL,
+        'INDEX_NAME': 'haystack',
+    },
+}

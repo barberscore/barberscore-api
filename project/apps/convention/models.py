@@ -1,6 +1,7 @@
 from __future__ import division
 
 from django.db import models
+from django.core.urlresolvers import reverse
 
 
 class Contestant(models.Model):
@@ -99,6 +100,9 @@ class Contestant(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('contestant', args=[str(self.slug)])
 
     class Meta:
         ordering = ['contestant_type', 'name']
