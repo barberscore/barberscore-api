@@ -1,5 +1,7 @@
 from rest_framework import viewsets
 
+from haystack.views import basic_search
+
 from django.shortcuts import (
     get_list_or_404,
     get_object_or_404,
@@ -16,6 +18,10 @@ from .serializers import (
     PerformanceSerializer,
     ContestSerializer,
     ContestantSerializer,
+)
+
+from .forms import (
+    ContestantSearchForm,
 )
 
 
@@ -79,3 +85,13 @@ def contests(request):
         'contests.html',
         {'performances': performances}
     )
+
+
+def search(request):
+    response = basic_search(
+        request,
+        template='search/search.html',
+        form_class=ContestantSearchForm,
+        results_per_page=100,
+    )
+    return response

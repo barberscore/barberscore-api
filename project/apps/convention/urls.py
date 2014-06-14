@@ -9,5 +9,6 @@ urlpatterns = patterns(
     url(r'performance/$', 'performances', name='performances'),
 
     url(r'contest/$', 'contests', name='contests'),
+    url(r'search/$', 'search', name='search'),
 
 )
