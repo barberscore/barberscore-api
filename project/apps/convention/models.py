@@ -42,6 +42,11 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    email = models.EmailField(
+        blank=True,
+        null=True,
+    )
+
     phone = models.CharField(
         max_length=20,
         blank=True,

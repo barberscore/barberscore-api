@@ -68,16 +68,6 @@ def performances(request):
     return render(request, 'performances.html', {'performances': performances})
 
 
-def performance(request, slug):
-    performance = get_object_or_404(Performance, slug=slug)
-    return render(request, 'performance.html', {'performance': performance})
-
-
-def contest(request, slug):
-    contest = get_object_or_404(Contest, slug=slug)
-    return render(request, 'contest.html', {'contest': contest})
-
-
 def contests(request):
     performances = Performance.objects.exclude(place=None).order_by(
         'contest__contest_type',

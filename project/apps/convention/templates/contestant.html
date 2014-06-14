@@ -29,9 +29,11 @@
     {% else %}
     <p>Director: {{contestant.director}}</p>
     {% endif %}
+    {% if contestant.blurb %}
     <div class="well">
     <p>{{contestant.blurb|linebreaks}}</p>
     </div>
+    {% endif %}
     <ul class='list-unstyled list-inline'>
 
     <li>{{contestant.website|urlize}}</li>
