@@ -2,12 +2,15 @@
 
 
 {% block title %}
-    Contestant
+    {{contestant}}
 {% endblock title %}
 
 
 {% block content %}
     <div class="container">
+    <div class="page-header">
+      <h1>{{contestant}}</h1>
+    </div>
     <p>
       {% if contestant.picture %}
         <img src='{{contestant.picture.url}}' class='img-responsive img-thumbnail'>
@@ -15,7 +18,7 @@
         No Image Available
       {% endif %}
     </p>
-    <p>{{contestant.name}}, {{contestant.district}}</p>
+    <p><strong>{{contestant.name}}</strong>, {{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
     {% if contestant.get_contestant_type_display == 'Quartet' %}
     <ul class='list-unstyled list-inline'>
       <li>Tenor: {{contestant.tenor}}</li>
@@ -29,10 +32,32 @@
     <div class="well">
     <p>{{contestant.blurb|linebreaks}}</p>
     </div>
-    <p>{{contestant.website|urlize}}</p>
-    <p>{{contestant.facebook|urlize}}</p>
-    <p>{{contestant.phone}}</p>
-    <p>Prelim Score: {{contestant.prelim}}</p>
+    <ul class='list-unstyled list-inline'>
+
+    <li>{{contestant.website|urlize}}</li>
+    <li>{{contestant.facebook|urlize}}</li>
+    <li>{{contestant.phone}}</li>
+    </ul>
+
+    <br>
+    {% for performance in contestant.performances.all %}
+    {% if performance.song1 %}
+    <p>{{performance.get_contest_round_display}}
+    <table class='table'>
+    <tr>
+    <th>Song</th>
+    </tr>
+    <tr>
+    <td>
+    {{performance.song1}}<br>{{performance.song2}}
+    </td>
+    </tr>
+    </table>
+    {% else %}
+    <h3>Next Performance: </h3>
+    <p>{{performance.stagetime}}</p>
+    {% endif %}
+    {% endfor %}
     </div> <!-- /container -->
 
 {% endblock content %}

@@ -143,12 +143,22 @@ class Performance(models.Model):
         (FINALS, 'Finals'),
     )
 
-    MORNING = 1
-    EVENING = 2
+    GF1 = 1
+    QQ1 = 2
+    QQ2 = 3
+    CF1 = 4
+    CF2 = 5
+    QS1 = 6
+    QF1 = 7
 
     SESSION_CHOICES = (
-        (MORNING, "Morning"),
-        (EVENING, "Evening"),
+        (GF1, "Collegiate Finals"),
+        (QQ1, "Quartet Quarter-Finals Session #1"),
+        (QQ2, "Quartet Quarter-Finals Session #2"),
+        (CF1, "Chorus Finals Session #1"),
+        (CF2, "Chorus Finals Session #2"),
+        (QS1, "Quartet Semi-Finals"),
+        (QF1, "Quartet Finals"),
     )
 
     contest = models.ForeignKey(
@@ -185,6 +195,11 @@ class Performance(models.Model):
         null=True,
     )
 
+    place = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     session = models.IntegerField(
         blank=True,
         null=True,
@@ -197,16 +212,16 @@ class Performance(models.Model):
         max_length=200,
     )
 
-    mus1 = models.FloatField(
+    mus1 = models.IntegerField(
         blank=True,
         null=True,
     )
-    prs1 = models.FloatField(
+    prs1 = models.IntegerField(
         blank=True,
         null=True,
     )
 
-    sng1 = models.FloatField(
+    sng1 = models.IntegerField(
         blank=True,
         null=True,
     )
@@ -217,17 +232,17 @@ class Performance(models.Model):
         max_length=200,
     )
 
-    mus2 = models.FloatField(
+    mus2 = models.IntegerField(
         blank=True,
         null=True,
     )
 
-    prs2 = models.FloatField(
+    prs2 = models.IntegerField(
         blank=True,
         null=True,
     )
 
-    sng2 = models.FloatField(
+    sng2 = models.IntegerField(
         blank=True,
         null=True,
     )

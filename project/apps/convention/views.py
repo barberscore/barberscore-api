@@ -61,9 +61,7 @@ def contestant(request, slug):
 def performances(request):
     performances = get_list_or_404(
         Performance.objects.all().order_by(
-            'contest',
-            'contest_round',
-            '-total_score',
+            'session',
             'appearance',
         )
     )
@@ -81,10 +79,13 @@ def contest(request, slug):
 
 
 def contests(request):
-    contests = get_list_or_404(Contest.objects.order_by('contest_type'))
-    performances = get_list_or_404(Performance.objects.order_by('appearance'))
+    performances = Performance.objects.exclude(place=None).order_by(
+        'contest__contest_type',
+        'place',
+    )
+
     return render(
         request,
         'contests.html',
-        {'contests': contests, 'performances': performances}
+        {'performances': performances}
     )

@@ -8,11 +8,34 @@
 
 {% block content %}
     <div class="container">
-    <ul class='list-unstyled'>
-    {% for performance in performances %}
-      <li><a href='{% url "performance" performance.slug %}'>{{performance.contestant.name}}, {{performance.get_contest_round_display}}</a></li>
-    {% endfor %}
-    </ul>
+    <div class="page-header">
+      <h1>Performance Schedule</h1>
+    </div>
+    <p>
+      {% regroup performances by get_session_display as performance_list %}
+      {% for performance in performance_list %}
+        <h3>{{performance.grouper}}</h3>
+        <div class="table-responsive">
+        <table class='table'>
+        <tr>
+          <th class='col-md-1'>Order</th>
+          <th class='col-md-4'>Contestant</th>
+          <th class='col-md-2'>Stagetime</th>
+          <th class='col-md-5'>Songs</th>
+        </tr>
+
+        {% for item in performance.list %}
+        <tr>
+        <td>{{item.appearance}}</td>
+        <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
+        <td> {{item.stagetime|time:"H:i"}}</td>
+        <td>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
+        </tr>
+        {% endfor %}
+        </table>
+        </div>
+        {% endfor %}
+    </p>
     </div> <!-- /container -->
 
-{% endblock content %}s
+{% endblock content %}

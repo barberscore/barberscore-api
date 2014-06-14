@@ -70,6 +70,10 @@ class PerformanceAdmin(admin.ModelAdmin):
             'prs2',
             'sng2',
         ),
+        'place',
+        'song1_score',
+        'song2_score',
+        'performance_score',
     )
 
     readonly_fields = (
