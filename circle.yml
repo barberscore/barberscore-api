@@ -4,3 +4,6 @@ deployment:
     branch: master
     heroku:
       appname: barberscore
+machine:
+  services:
+    - elasticsearch
