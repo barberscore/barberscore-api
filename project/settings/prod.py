@@ -59,7 +59,9 @@ ADMIN_MEDIA_PREFIX = '{0}{1}'.format(STATIC_URL, 'admin/')
 ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),
     '.barberscore.com',
-    '.barberscore.com.',
+    '.barberscore.com',
+    'heroku.barberscore.com.',
+    'heroku.barberscore.com.',
 ]
 
 EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
