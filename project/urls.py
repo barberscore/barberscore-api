@@ -8,12 +8,11 @@ from django.views.generic import TemplateView
 
 from rest_framework import routers
 
-from apps.convention.views import (
+from apps.convention.viewsets import (
     ContestantViewSet,
     PerformanceViewSet,
     ContestViewSet,
 )
-
 
 router = routers.DefaultRouter()
 router.register(r'contestant', ContestantViewSet)
