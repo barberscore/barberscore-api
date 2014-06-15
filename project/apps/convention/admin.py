@@ -19,7 +19,7 @@ class ContestantAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'contestant_type',
-        ('website', 'facebook',),
+        ('website', 'facebook', 'twitter'),
         ('phone', 'email'),
         ('tenor', 'lead', 'baritone', 'bass'),
         'director',
