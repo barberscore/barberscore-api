@@ -43,6 +43,12 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    twitter = models.CharField(
+        blank=True,
+        null=True,
+        max_length=200,
+    )
+
     email = models.EmailField(
         blank=True,
         null=True,
