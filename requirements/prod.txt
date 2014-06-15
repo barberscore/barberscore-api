@@ -2,6 +2,6 @@
 
 boto==2.27.0
 django-storages==1.1.8
-gunicorn==18.0
-raven==4.2.1
-djrill==1.0.0
+gunicorn==19.0.0
+raven==5.0.0
+djrill==1.1.1
