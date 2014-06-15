@@ -2,9 +2,8 @@
 deployment:
   production:
     branch: master
-    heroku:
-      appname: barberscore
     commands:
+      - git push git@heroku.com:barberscore.git $CIRCLE_SHA1:master
       - heroku run django-admin migrate
 machine:
   services:
