@@ -189,11 +189,6 @@ class Performance(models.Model):
         default=0,
     )
 
-    slug = models.SlugField(
-        null=True,
-        blank=True,
-    )
-
     appearance = models.IntegerField(
         blank=True,
         null=True,

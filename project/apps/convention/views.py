@@ -40,7 +40,6 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     """
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
-    lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -50,13 +49,6 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.all()
     serializer_class = ContestSerializer
     lookup_field = 'slug'
-
-
-def contestants(request):
-    contestants = get_list_or_404(
-        Contestant.objects.all().order_by('name')
-    )
-    return render(request, 'contestants.html', {'contestants': contestants})
 
 
 def contestant(request, slug):
