@@ -22,22 +22,21 @@ router.register(r'contest', ContestViewSet)
 
 urlpatterns = patterns(
     '',
+
     # Website
     url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'), name='about'),
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt'), name='robots'),
     url(r'^sitemap.xml$', TemplateView.as_view(template_name='sitemap.xml'), name='sitemap'),
+
+    # Admin
     url(r'^admin/', include(admin.site.urls)),
+
+    # REST Framework
     url(r'^api/v1/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # Application
     url(r'', include('apps.convention.urls')),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-# s
-#     # Website
-#     url(r'^faq/$', TemplateView.as_view(template_name='website/faq.html'), name='faq'),
-#     url(r'^legal/$', TemplateView.as_view(template_name='website/legal.html'), name='legal'),
-#     url(r'^support/$', TemplateView.as_view(template_name='website/support.html'), name='support'),
-#     url(r'^intro/$', 'intro', name='intro'),
