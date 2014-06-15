@@ -4,6 +4,10 @@ deployment:
     branch: master
     heroku:
       appname: barberscore
+    commands:
+      - heroku run django-admin migrate
 machine:
   services:
     - elasticsearch
+  python:
+    version: 2.7.7
