@@ -9,4 +9,4 @@ machine:
   services:
     - elasticsearch
   python:
-    version: 2.7.7
+    version: 2.7.6
