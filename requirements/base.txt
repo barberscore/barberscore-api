@@ -10,3 +10,4 @@ django-cors-headers==0.12
 django-haystack==2.1.0
 pyelasticsearch==0.6.1
 requests==2.3.0
+s3cmd==1.0.1
