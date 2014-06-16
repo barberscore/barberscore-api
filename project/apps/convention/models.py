@@ -2,6 +2,9 @@ from __future__ import division
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.validators import (
+    RegexValidator,
+)
 
 
 class Contestant(models.Model):
@@ -67,6 +70,15 @@ class Contestant(models.Model):
             The twitter handle (in form @twitter_handle) of the contestant.""",
         blank=True,
         max_length=16,
+        validators=[
+            RegexValidator(
+                regex=r'@([A-Za-z0-9_]+)',
+                message="""
+                    Must be a single Twitter handle
+                    in the form `@twitter_handle`.
+                """,
+            ),
+        ],
     )
 
     email = models.EmailField(
