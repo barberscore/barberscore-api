@@ -8,6 +8,10 @@ from .models import (
 
 
 class HyperlinkedFileField(serializers.FileField):
+    """
+    Overrides the default file field to render the full URL path rather than
+    the instance name.  Enables a direct link to the image source.
+    """
     def to_native(self, value):
         try:
             request = self.context.get('request', None)
@@ -17,6 +21,9 @@ class HyperlinkedFileField(serializers.FileField):
 
 
 class ContestantSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serializes the Contestant model instance.
+    """
     performances = serializers.HyperlinkedRelatedField(
         view_name='performance-detail',
         many=True,
@@ -30,12 +37,17 @@ class ContestantSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
-
+    """
+    Serializes the Performance model instance.
+    """
     class Meta:
         model = Performance
 
 
 class ContestSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serializes the Contest model instance, and nests performance instances.
+    """
     performances = serializers.HyperlinkedRelatedField(
         view_name='performance-detail',
         many=True,

@@ -6,6 +6,10 @@ from .signals import (
 
 
 class ConventionConfig(AppConfig):
+    """
+    Sets the configuration for the convention app.
+    """
+
     name = 'apps.convention'
 
     def ready(self):

@@ -13,4 +13,7 @@ from .models import (
 
 @receiver(pre_save, sender=Contestant)
 def contestant_pre_save(sender, instance, **kwargs):
+    """
+    Builds the slug; required before the contestant model can be saved.
+    """
     instance.slug = slugify(instance.name)

@@ -7,11 +7,13 @@ from django.utils.text import slugify
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.convention.models import Score, Contestant, Contest
+from apps.convention.models import (
+    Contestant,
+)
 
 
 class Command(BaseCommand):
-    help = "Command to import a list of stuff"
+    help = "Command to import scores"
     option_list = BaseCommand.option_list + (
         make_option(
             "-f",

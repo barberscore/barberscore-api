@@ -7,46 +7,45 @@
 
 
 {% block content %}
-    <div class="container">
-        <div class="page-header">
+  <div class="container">
+    <div class="page-header">
       <h1>Contest Results</h1>
     </div>
     {% if performances %}
-    <p>
       {% regroup performances by contest as performance_list %}
       {% for performance in performance_list %}
-        <h3>{{performance.grouper}}</h3>
-        <div class="table-responsive">
-        <table class='table'>
-        <tr>
-          <th>Place</th>
-          <th>Contestant</th>
-          <th>Songs</th>
-          <th>MUS</th>
-          <th>PRS</th>
-          <th>SNG</th>
-          <th>Total</th>
-          <th>Avg</th>
-        </tr>
-
-        {% for item in performance.list %}
-        <tr>
-        <td>{{item.place}}</td>
-        <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
-        <td class='small'>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
-        <td class='small'> {{item.mus1|default_if_none:""}}<br>{{item.mus2|default_if_none:""}}</td>
-        <td class='small'> {{item.prs1|default_if_none:""}}<br>{{item.prs2|default_if_none:""}}</td>
-        <td class='small'> {{item.sng1|default_if_none:""}}<br>{{item.sng2|default_if_none:""}}</td>
-        <td class='small'> {{item.song1_score|default_if_none:""}}<br>{{item.song2_score|default_if_none:""}}</td>
-        <td> {{item.performance_score|default_if_none:""}}</td>
-        </tr>
-        {% endfor %}
-        </table>
+        <div>
+          <h3>{{performance.grouper}}</h3>
         </div>
-        {% endfor %}
-    </p>
-    </div> <!-- /container -->
+        <div class="table-responsive">
+          <table class='table'>
+            <tr>
+              <th>Place</th>
+              <th>Contestant</th>
+              <th>Songs</th>
+              <th>MUS</th>
+              <th>PRS</th>
+              <th>SNG</th>
+              <th>Total</th>
+              <th>Avg</th>
+            </tr>
+            {% for item in performance.list %}
+              <tr>
+                <td>{{item.place}}</td>
+                <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
+                <td class='small'>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
+                <td class='small'> {{item.mus1|default_if_none:""}}<br>{{item.mus2|default_if_none:""}}</td>
+                <td class='small'> {{item.prs1|default_if_none:""}}<br>{{item.prs2|default_if_none:""}}</td>
+                <td class='small'> {{item.sng1|default_if_none:""}}<br>{{item.sng2|default_if_none:""}}</td>
+                <td class='small'> {{item.song1_score|default_if_none:""}}<br>{{item.song2_score|default_if_none:""}}</td>
+                <td> {{item.performance_score|default_if_none:""}}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      {% endfor %}
     {% else %}
       <p class='lead'>There are no results yet.  We'll post them here as soon as they are available.</p>
     {% endif %}
+  </div>
 {% endblock content %}

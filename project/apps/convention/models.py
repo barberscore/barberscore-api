@@ -5,7 +5,14 @@ from django.core.urlresolvers import reverse
 
 
 class Contestant(models.Model):
-    """The name of the contestant"""
+    """
+    Contestants in International Competition.
+
+    This class represents the individual contestants for the
+    competition.  They call into two broad categories: quartets and choruses.
+    We do not differentiate between collegiate, senior, or main competition
+    here; that distinction is left to the `Contest` class.
+    """
 
     QUARTET = 1
     CHORUS = 2
@@ -16,91 +23,126 @@ class Contestant(models.Model):
     )
 
     contestant_type = models.IntegerField(
+        help_text="""
+            The type of contestant, either chorus or quartet.""",
         blank=True,
         null=True,
         choices=CONTESTANT_CHOICES
     )
 
     name = models.CharField(
+        help_text="""
+            The name of the contestant.""",
         max_length=200,
     )
 
     slug = models.SlugField(
+        help_text="""
+            The slug, generated in a signal from the name field.""",
         max_length=200,
         unique=True,
     )
 
     location = models.CharField(
+        help_text="""
+            The geographical location of the contestant.""",
         max_length=200,
         blank=True,
     )
 
     website = models.URLField(
+        help_text="""
+            The website URL of the contestant.""",
         blank=True,
     )
 
     facebook = models.URLField(
+        help_text="""
+            The facebook URL of the contestant.""",
         blank=True,
     )
 
     twitter = models.CharField(
+        help_text="""
+            The twitter handle (in form @twitter_handle) of the contestant.""",
         blank=True,
-        null=True,
-        max_length=200,
+        max_length=16,
     )
 
     email = models.EmailField(
+        help_text="""
+            The contact email of the contestant.""",
         blank=True,
-        null=True,
     )
 
     phone = models.CharField(
+        help_text="""
+            The contact phone number of the contestant.""",
         max_length=20,
         blank=True,
     )
 
     director = models.CharField(
+        help_text="""
+            The name of the director(s) of the chorus.""",
         max_length=200,
         blank=True,
     )
 
     lead = models.CharField(
-        max_length=200, blank=True,
+        help_text="""
+            The name of the quartet lead.""",
+        max_length=50,
+        blank=True,
     )
 
     tenor = models.CharField(
-        max_length=200,
+        help_text="""
+            The name of the quartet tenor.""",
+        max_length=50,
         blank=True,
     )
 
     baritone = models.CharField(
-        max_length=200,
+        help_text="""
+            The name of the quartet baritone.""",
+        max_length=50,
         blank=True,
     )
 
     bass = models.CharField(
-        max_length=200,
+        help_text="""
+            The name of the quartet bass.""",
+        max_length=50,
         blank=True,
     )
 
     district = models.CharField(
-        max_length=200,
+        help_text="""
+            The abbreviation of the district the
+            contestant is representing.""",
+        max_length=50,
         blank=True,
     )
 
     prelim = models.FloatField(
+        help_text="""
+            The prelim score of the contestant.""",
         null=True,
         blank=True,
     )
 
     picture = models.ImageField(
+        help_text="""
+            The 'official' picture of the contestant.""",
         blank=True,
         null=True,
     )
 
     blurb = models.TextField(
+        help_text="""
+            A blurb describing the contestant.  Max 1000 characters.""",
         blank=True,
-        null=True,
         max_length=1000,
     )
 
@@ -115,6 +157,13 @@ class Contestant(models.Model):
 
 
 class Contest(models.Model):
+    """
+    Contests in International Competition.
+
+    This class represents the type of contest itself.  Normal choices
+    are `Quartet`, `Chorus`, `Collegiate` and `Senior`.  Further
+    choices or hierarchical choices are possible, but not supported here.
+    """
 
     QUARTET = 1
     CHORUS = 2
@@ -129,12 +178,16 @@ class Contest(models.Model):
     )
 
     contest_type = models.IntegerField(
+        help_text="""
+            The contest type:  Quartet, Chorus, Collegiate or Senior.""",
         blank=True,
         null=True,
         choices=CONTEST_TYPE_CHOICES,
     )
 
     slug = models.SlugField(
+        help_text="""
+            The slug of the contest type.""",
         max_length=200,
         unique=True,
     )
@@ -147,6 +200,14 @@ class Contest(models.Model):
 
 
 class Performance(models.Model):
+    """
+    Performances in International Competition.
+
+    This class represents the join of a contestant and a contest.
+    Each performance consists of two songs in a contest round.  Rounds
+    are only applicable to the quartet contest in the context, but the
+    field is included for data architecture consistency.
+    """
 
     QUARTERS = 1
     SEMIS = 2
@@ -178,6 +239,8 @@ class Performance(models.Model):
 
     contest = models.ForeignKey(
         Contest,
+        help_text="""
+            The contest for this particular performance.""",
         null=True,
         blank=True,
         related_name='performances',
@@ -185,106 +248,146 @@ class Performance(models.Model):
 
     contestant = models.ForeignKey(
         Contestant,
+        help_text="""
+            The contestant for this particular performance.""",
         null=True,
         blank=True,
         related_name='performances',
     )
 
     contest_round = models.IntegerField(
+        help_text="""
+            The performance contest round.""",
         choices=CONTEST_ROUND_CHOICES,
-        default=0,
+        default=FINALS,
     )
 
     appearance = models.IntegerField(
+        help_text="""
+            The appearance order, within a given round.""",
         blank=True,
         null=True,
     )
 
     stagetime = models.DateTimeField(
-        blank=True,
-        null=True,
-    )
-
-    place = models.IntegerField(
+        help_text="""
+            The approximate stagetime of the performance, in
+            the local time of the venue.""",
         blank=True,
         null=True,
     )
 
     session = models.IntegerField(
+        help_text="""
+            Contest rounds are broken down into sessions, which
+            are tracked here.""",
         blank=True,
         null=True,
         choices=SESSION_CHOICES,
     )
 
     song1 = models.CharField(
+        help_text="""
+            The title of the first song of the performance.""",
         blank=True,
         null=True,
         max_length=200,
     )
 
     mus1 = models.IntegerField(
+        help_text="""
+            The raw music score of the first song.""",
         blank=True,
         null=True,
     )
+
     prs1 = models.IntegerField(
+        help_text="""
+            The raw presentation score of the first song.""",
         blank=True,
         null=True,
     )
 
     sng1 = models.IntegerField(
+        help_text="""
+            The raw singing score of the first song.""",
         blank=True,
         null=True,
     )
 
     song2 = models.CharField(
+        help_text="""
+            The title of the second song of the performance.""",
         blank=True,
         null=True,
         max_length=200,
     )
 
     mus2 = models.IntegerField(
+        help_text="""
+            The raw music score of the second song.""",
         blank=True,
         null=True,
     )
 
     prs2 = models.IntegerField(
+        help_text="""
+            The raw presentation score of the second song.""",
         blank=True,
         null=True,
     )
 
     sng2 = models.IntegerField(
+        help_text="""
+            The raw singing score of the second song.""",
         blank=True,
         null=True,
     )
 
     men_on_stage = models.IntegerField(
+        help_text="""
+            The number of men on stage (relevant for chorus only.)""",
         blank=True,
         null=True,
-        default=4,
     )
 
-    # Denormalized values, calculated with pre_save signals
+    # DENORMALIZED VALUES
+    # The following values are denormalized, and the default population
+    # happens via pre-save signals.  This allows for manual correction
+    # as needed.
     song1_score = models.FloatField(
+        help_text="""
+            The percentile score of the first song.""",
         blank=True,
         null=True,
     )
 
     song2_score = models.FloatField(
+        help_text="""
+            The percentile score of the second song.""",
         blank=True,
         null=True,
     )
 
     performance_score = models.FloatField(
+        help_text="""
+            The percentile score of the performance (both songs).""",
         blank=True,
         null=True,
     )
 
     total_score = models.FloatField(
+        help_text="""
+            The running percentile score of performances to date
+            by this particular contestant.""",
         blank=True,
         null=True,
     )
 
     place = models.IntegerField(
+        help_text="""
+            The ordinal placement of the contestant in this
+            particular contest.""",
         blank=True,
         null=True,
     )

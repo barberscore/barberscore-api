@@ -16,7 +16,7 @@ def score(value):
 
 @register.filter(expects_localtime=True, name='time_only')
 def time_only(value):
-    """Returns the number as percentage with single-digit precision"""
+    """Returns the time localized to the users' timezone"""
     try:
         value = localtime(value)
         value = value.timetz()

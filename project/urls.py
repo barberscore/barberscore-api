@@ -14,6 +14,7 @@ from apps.convention.viewsets import (
     ContestViewSet,
 )
 
+# Routers used by REST Framework
 router = routers.DefaultRouter()
 router.register(r'contestant', ContestantViewSet)
 router.register(r'performance', PerformanceViewSet)

@@ -7,59 +7,53 @@
 
 
 {% block content %}
-    <div class="container">
+  <div class="container">
     <div class="page-header">
       <h1>{{contestant}}</h1>
     </div>
-    <p>
+    <div>
       {% if contestant.picture %}
         <img src='{{contestant.picture.url}}' class='img-responsive img-thumbnail'>
       {% else %}
-        No Image Available
+        <p>No Image Available</p>
       {% endif %}
-    </p>
-    <p><strong>{{contestant.name}}</strong>, {{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
-    {% if contestant.get_contestant_type_display == 'Quartet' %}
-    <ul class='list-unstyled list-inline'>
-      <li>Tenor: {{contestant.tenor}}</li>
-      <li>Lead: {{contestant.lead}}</li>
-      <li>Bari: {{contestant.baritone}}</li>
-      <li>Bass: {{contestant.bass}}</li>
-    </ul>
-    {% else %}
-    <p>Director: {{contestant.director}}</p>
-    {% endif %}
-    {% if contestant.blurb %}
-    <div class="well">
-    <p>{{contestant.blurb|linebreaks}}</p>
+      <p><strong>{{contestant.name}}</strong>, {{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
+      {% if contestant.get_contestant_type_display == 'Quartet' %}
+        <ul class='list-unstyled list-inline'>
+          <li>Tenor: {{contestant.tenor}}</li>
+          <li>Lead: {{contestant.lead}}</li>
+          <li>Bari: {{contestant.baritone}}</li>
+          <li>Bass: {{contestant.bass}}</li>
+        </ul>
+      {% else %}
+        <p>Director: {{contestant.director}}</p>
+      {% endif %}
+      {% if contestant.blurb %}
+        <div class="well">
+          <p>{{contestant.blurb|linebreaks}}</p>
+        </div>
+      {% endif %}
+        <ul class='list-unstyled list-inline'>
+          <li>{{contestant.website|urlize}}</li>
+          <li>{{contestant.facebook|urlize}}</li>
+          <li>{{contestant.phone}}</li>
+        </ul>
+      {% for performance in contestant.performances.all %}
+        {% if performance.song1 %}
+          <p>{{performance.get_contest_round_display}}</p>
+          <table class='table'>
+            <tr>
+              <th>Song</th>
+            </tr>
+            <tr>
+              <td>{{performance.song1}}<br>{{performance.song2}}</td>
+            </tr>
+          </table>
+        {% else %}
+          <h3>Scheduled Performances: </h3>
+          <p>{{performance.stagetime}}</p>
+        {% endif %}
+      {% endfor %}
     </div>
-    {% endif %}
-    <ul class='list-unstyled list-inline'>
-
-    <li>{{contestant.website|urlize}}</li>
-    <li>{{contestant.facebook|urlize}}</li>
-    <li>{{contestant.phone}}</li>
-    </ul>
-
-    <br>
-    {% for performance in contestant.performances.all %}
-    {% if performance.song1 %}
-    <p>{{performance.get_contest_round_display}}
-    <table class='table'>
-    <tr>
-    <th>Song</th>
-    </tr>
-    <tr>
-    <td>
-    {{performance.song1}}<br>{{performance.song2}}
-    </td>
-    </tr>
-    </table>
-    {% else %}
-    <h3>Next Performance: </h3>
-    <p>{{performance.stagetime}}</p>
-    {% endif %}
-    {% endfor %}
-    </div> <!-- /container -->
-
+  </div> <!-- /container -->
 {% endblock content %}

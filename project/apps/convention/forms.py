@@ -4,6 +4,9 @@ from django import forms
 
 
 class ContestantSearchForm(SearchForm):
+    """
+    Overrides the base Haystack search form.
+    """
 
     q = forms.CharField(
         required=False,

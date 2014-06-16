@@ -17,11 +17,17 @@ from .forms import (
 
 
 def contestant(request, slug):
+    """
+    Returns details about a particular contestant.
+    """
     contestant = get_object_or_404(Contestant, slug=slug)
     return render(request, 'contestant.html', {'contestant': contestant})
 
 
 def performances(request):
+    """
+    Returns performances ordered by the program schedule.
+    """
     performances = get_list_or_404(
         Performance.objects.all().order_by(
             'session',
@@ -32,6 +38,9 @@ def performances(request):
 
 
 def contests(request):
+    """
+    Returns performances ordered by contest score.
+    """
     performances = Performance.objects.exclude(place=None).order_by(
         'contest__contest_type',
         'place',
@@ -45,6 +54,9 @@ def contests(request):
 
 
 def search(request):
+    """
+    Extends the default Haystack search view.
+    """
     response = basic_search(
         request,
         template='search/search.html',

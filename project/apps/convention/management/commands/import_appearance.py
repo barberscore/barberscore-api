@@ -16,7 +16,7 @@ from apps.convention.models import (
 
 
 class Command(BaseCommand):
-    help = "Command to import a list of stuff"
+    help = "Command to import appearance order"
     option_list = BaseCommand.option_list + (
         make_option(
             "-f",
@@ -45,7 +45,9 @@ class Command(BaseCommand):
             for row in reader:
 
                 try:
-                    contest = Contest.objects.get(contest_type=Contest.COLLEGIATE)
+                    contest = Contest.objects.get(
+                        contest_type=Contest.COLLEGIATE
+                    )
                     contestant = Contestant.objects.get(
                         name=unicode(row[1].strip())
                     )

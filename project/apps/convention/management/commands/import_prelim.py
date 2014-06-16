@@ -16,7 +16,7 @@ from apps.convention.models import (
 
 
 class Command(BaseCommand):
-    help = "Command to import a list of stuff"
+    help = "Command to import prelim scores"
     option_list = BaseCommand.option_list + (
         make_option(
             "-f",
