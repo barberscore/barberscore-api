@@ -201,26 +201,23 @@ class Contest(models.Model):
 
     CONTEST_LEVEL_CHOICES = (
         (INTERNATIONAL, 'International'),
-        (DISTRICT, 'District'),
-        (DIVISION, 'Division'),
+        # (DISTRICT, 'District'),
+        # (DIVISION, 'Division'),
     )
 
     contest_level = models.IntegerField(
         help_text="""
-            The contest level:  International, District, etc..""",
+            The contest level:  International, District, etc..
+            Currently only International is supported.""",
         choices=CONTEST_LEVEL_CHOICES,
         default=INTERNATIONAL,
     )
 
-    name = models.CharField(
+    year = models.CharField(
         help_text="""
-            The verbose name of the contest.""",
-        max_length=200,
-    )
-
-    startdate = models.DateField(
-        help_text="""
-            The start date of the contest.""",
+            The year of the contest, as a Char.""",
+        default='2014',
+        max_length=4,
     )
 
     slug = models.SlugField(
@@ -230,16 +227,18 @@ class Contest(models.Model):
         unique=True,
     )
 
-    @property
-    def year(self):
-        return self.startdate.year
-
     def __unicode__(self):
-        return '{0}'.format(self.name)
+        return '{0} {1} {2}'.format(
+            self.year,
+            self.get_contest_level_display(),
+            self.get_contest_type_display(),
+        )
 
     class Meta:
         ordering = (
-            'name',
+            '-year',
+            'contest_level',
+            'contest_type',
         )
 
 
