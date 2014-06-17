@@ -158,6 +158,10 @@ class Contestant(models.Model):
         max_length=1000,
     )
 
+    @property
+    def next_performance(self):
+        return self.performances.order_by('stagetime').first()
+
     def __unicode__(self):
         return self.name
 
