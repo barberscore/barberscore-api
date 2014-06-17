@@ -38,22 +38,28 @@
           <li>{{contestant.facebook|urlize}}</li>
           <li>{{contestant.phone}}</li>
         </ul>
-      {% for performance in contestant.performances.all %}
+      {% for performance in performances %}
         {% if performance.song1 %}
-          <p>{{performance.get_contest_round_display}}</p>
           <table class='table'>
             <tr>
-              <th>Song</th>
+              <th>{{performance.get_contest_round_display}}</th>
             </tr>
             <tr>
               <td>{{performance.song1}}<br>{{performance.song2}}</td>
             </tr>
           </table>
-        {% else %}
-          <h3>Scheduled Performances: </h3>
-          <p>{{performance.stagetime}}</p>
         {% endif %}
       {% endfor %}
+
+      <p class='lead'>Next Performance: {{contestant.next_performance.stagetime}}</p>
+      <div class="pull-left">
+        <a class="btn btn-lg btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
+      </div>
+      <div class="pull-right">
+        <a class="btn btn-lg btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next</a>
+      </div>
+      <br><br>
+
     </div>
   </div> <!-- /container -->
 {% endblock content %}

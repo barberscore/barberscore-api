@@ -21,7 +21,17 @@ def contestant(request, slug):
     Returns details about a particular contestant.
     """
     contestant = get_object_or_404(Contestant, slug=slug)
-    return render(request, 'contestant.html', {'contestant': contestant})
+    performances = contestant.performances.all()
+    prev = contestant.next_performance.get_previous_by_stagetime().contestant
+    next = contestant.next_performance.get_next_by_stagetime().contestant
+    return render(
+        request, 'contestant.html', {
+            'contestant': contestant,
+            'performances': performances,
+            'prev': prev,
+            'next': next,
+        },
+    )
 
 
 def performances(request):
