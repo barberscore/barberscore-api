@@ -16,4 +16,4 @@ def contestant_pre_save(sender, instance, **kwargs):
     """
     Builds the slug; required before the contestant model can be saved.
     """
-    instance.slug = slugify(instance.name)
+    instance.slug = slugify(unicode(instance.name))
