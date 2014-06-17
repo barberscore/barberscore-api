@@ -28,9 +28,8 @@ class Contestant(models.Model):
     contestant_type = models.IntegerField(
         help_text="""
             The type of contestant, either chorus or quartet.""",
-        blank=True,
-        null=True,
-        choices=CONTESTANT_CHOICES
+        choices=CONTESTANT_CHOICES,
+        default=QUARTET,
     )
 
     name = models.CharField(
