@@ -285,8 +285,6 @@ class Performance(models.Model):
         help_text="""
             The approximate stagetime of the performance, in
             the local time of the venue.""",
-        blank=True,
-        null=True,
     )
 
     session = models.IntegerField(
