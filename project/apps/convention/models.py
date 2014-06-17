@@ -215,14 +215,12 @@ class Contest(models.Model):
     name = models.CharField(
         help_text="""
             The verbose name of the contest.""",
-        null=True,
         max_length=200,
     )
 
     startdate = models.DateField(
         help_text="""
             The start date of the contest.""",
-        null=True,
     )
 
     slug = models.SlugField(
@@ -287,8 +285,6 @@ class Performance(models.Model):
         Contest,
         help_text="""
             The contest for this particular performance.""",
-        null=True,
-        blank=True,
         related_name='performances',
     )
 
@@ -296,8 +292,6 @@ class Performance(models.Model):
         Contestant,
         help_text="""
             The contestant for this particular performance.""",
-        null=True,
-        blank=True,
         related_name='performances',
     )
 
@@ -335,7 +329,6 @@ class Performance(models.Model):
         help_text="""
             The title of the first song of the performance.""",
         blank=True,
-        null=True,
         max_length=200,
     )
 
@@ -364,7 +357,6 @@ class Performance(models.Model):
         help_text="""
             The title of the second song of the performance.""",
         blank=True,
-        null=True,
         max_length=200,
     )
 
