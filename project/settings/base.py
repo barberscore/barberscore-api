@@ -105,7 +105,6 @@ INSTALLED_APPS = (
     'apps.convention',
     'haystack',
     # 'apps.profile',
-    # 'apps.rate',
 )
 
 
