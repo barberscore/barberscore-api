@@ -1,11 +1,9 @@
 import factory
 
-from django.utils.text import slugify
-
 from .models import (
     Contest,
     Contestant,
-    # Performance,
+    Performance,
 )
 
 
@@ -15,4 +13,9 @@ class ContestFactory(factory.django.DjangoModelFactory):
 
 class ContestantFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Contestant
-    slug = factory.LazyAttribute(lambda a: slugify(a.name))
+
+
+class PerformanceFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = Performance
+    contest = factory.SubFactory(ContestFactory)
+    contestant = factory.SubFactory(ContestantFactory)
