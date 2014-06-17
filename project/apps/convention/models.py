@@ -9,12 +9,10 @@ from django.core.validators import (
 
 class Contestant(models.Model):
     """
-    Contestants in International Competition.
+    Contestants.
 
-    This class represents the individual contestants for the
-    competition.  They call into two broad categories: quartets and choruses.
-    We do not differentiate between collegiate, senior, or main competition
-    here; that distinction is left to the `Contest` class.
+    This class represents a particular contestant.  Historical information
+    is not maintained.
     """
 
     QUARTET = 1
@@ -173,11 +171,9 @@ class Contestant(models.Model):
 
 class Contest(models.Model):
     """
-    Contests in International Competition.
+    Contests.
 
-    This class represents the type of contest itself.  Normal choices
-    are `Quartet`, `Chorus`, `Collegiate` and `Senior`.  Further
-    choices or hierarchical choices are possible, but not supported here.
+    This class represents a particular contest.
     """
 
     QUARTET = 1
@@ -186,18 +182,47 @@ class Contest(models.Model):
     SENIOR = 4
 
     CONTEST_TYPE_CHOICES = (
-        (QUARTET, 'Quartet Contest'),
-        (CHORUS, 'Chorus Contest'),
-        (COLLEGIATE, 'Collegiate Contest'),
-        (SENIOR, 'Senior Contest'),
+        (QUARTET, 'Quartet'),
+        (CHORUS, 'Chorus'),
+        (COLLEGIATE, 'Collegiate'),
+        (SENIOR, 'Senior'),
     )
 
     contest_type = models.IntegerField(
         help_text="""
             The contest type:  Quartet, Chorus, Collegiate or Senior.""",
-        blank=True,
-        null=True,
         choices=CONTEST_TYPE_CHOICES,
+        default=QUARTET,
+    )
+
+    INTERNATIONAL = 1
+    DISTRICT = 2
+    DIVISION = 3
+
+    CONTEST_LEVEL_CHOICES = (
+        (INTERNATIONAL, 'International'),
+        (DISTRICT, 'District'),
+        (DIVISION, 'Division'),
+    )
+
+    contest_level = models.IntegerField(
+        help_text="""
+            The contest level:  International, District, etc..""",
+        choices=CONTEST_LEVEL_CHOICES,
+        default=INTERNATIONAL,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The verbose name of the contest.""",
+        null=True,
+        max_length=200,
+    )
+
+    startdate = models.DateField(
+        help_text="""
+            The start date of the contest.""",
+        null=True,
     )
 
     slug = models.SlugField(
@@ -207,16 +232,22 @@ class Contest(models.Model):
         unique=True,
     )
 
+    @property
+    def year(self):
+        return self.startdate.year
+
     def __unicode__(self):
-        return '{0}'.format(self.get_contest_type_display())
+        return '{0}'.format(self.name)
 
     class Meta:
-        ordering = ['contest_type']
+        ordering = (
+            'name',
+        )
 
 
 class Performance(models.Model):
     """
-    Performances in International Competition.
+    Performances.
 
     This class represents the join of a contestant and a contest.
     Each performance consists of two songs in a contest round.  Rounds
@@ -288,6 +319,7 @@ class Performance(models.Model):
         help_text="""
             The approximate stagetime of the performance, in
             the local time of the venue.""",
+        default='2014-01-01 00:00Z',
     )
 
     session = models.IntegerField(
