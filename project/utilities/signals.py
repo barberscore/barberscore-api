@@ -6,7 +6,7 @@ log = logging.getLogger('apps.convention')
 
 from django.utils.text import slugify
 
-from .models import (
+from apps.convention.models import (
     Contestant,
     Contest,
 )

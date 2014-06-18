@@ -9,6 +9,23 @@ from .models import (
 
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
+    fields = (
+        'year',
+        'contest_level',
+        'contest_type',
+        'slug',
+    )
+
+    readonly_fields = (
+        'slug',
+    )
+
+    list_filter = (
+        'year',
+        'contest_level',
+        'contest_type',
+    )
+
     save_on_top = True
 
 
