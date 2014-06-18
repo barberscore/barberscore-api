@@ -26,6 +26,7 @@ urlpatterns = patterns(
     # Website
     url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'), name='about'),
+    url(r'^faq/$', TemplateView.as_view(template_name='faq.html'), name='faq'),
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt'), name='robots'),
     url(r'^sitemap.xml$', TemplateView.as_view(template_name='sitemap.xml'), name='sitemap'),
 
