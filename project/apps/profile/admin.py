@@ -5,8 +5,6 @@ from .models import (
 )
 
 
+@admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     save_on_top = True
-    search_fields = ['first_name', 'last_name']
-
-admin.site.register(Profile, ProfileAdmin)
