@@ -33,14 +33,14 @@ AWS_MEDIA_FULL_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(AWS_MEDIA_
 
 
 # Django Media Server configuration
-MEDIA_STORAGE = 'backends.MediaS3BotoStorage'
+MEDIA_STORAGE = 'utilities.backends.MediaS3BotoStorage'
 MEDIA_ROOT = '/media/'
 MEDIA_URL = 'https://s3-us-west-1.amazonaws.com/{0}/'.format(
     AWS_MEDIA_BUCKET_NAME,
 )
 
 # Django Static Server configuration
-STATIC_STORAGE = 'backends.StaticS3BotoStorage'
+STATIC_STORAGE = 'utilities.backends.StaticS3BotoStorage'
 STATIC_ROOT = '/static/'
 STATIC_URL = 'https://s3-us-west-1.amazonaws.com/{0}/'.format(
     AWS_STATIC_BUCKET_NAME,
