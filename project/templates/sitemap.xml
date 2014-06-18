@@ -4,4 +4,19 @@
     <url>
         <loc>http://www.barberscore.com/</loc>
     </url>
+    <url>
+        <loc>http://www.barberscore.com/contestant/</loc>
+    </url>
+    <url>
+        <loc>http://www.barberscore.com/contest/</loc>
+    </url>
+    <url>
+        <loc>http://www.barberscore.com/performance/</loc>
+    </url>
+    <url>
+        <loc>http://www.barberscore.com/about/</loc>
+    </url>
+    <url>
+        <loc>http://www.barberscore.com/faq/</loc>
+    </url>
 </urlset>
