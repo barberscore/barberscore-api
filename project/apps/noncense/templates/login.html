@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+
+{% block title %}
+  Login
+{% endblock title %}
+
+{% block navbar %}
+  {% include '_nonav.html' %}
+{% endblock navbar %}
+
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Login</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+
+        <div class="row">
+          <div class='col-sm-8'>
+
+            <form method='POST'>
+              {% csrf_token %}
+              {{form.mobile}}
+              <button class='btn-lg btn-success'>Send</button><br>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+{% endblock content %}
