@@ -12,3 +12,4 @@ pyelasticsearch==0.6.1
 requests==2.3.0
 s3cmd==1.0.1
 factory_boy==2.3.1
+django-timezone-field==1.0

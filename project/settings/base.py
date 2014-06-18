@@ -102,8 +102,9 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'apps.convention',
+    'timezone_field',
     'haystack',
+    'apps.convention',
     # 'apps.profile',
 )
 
