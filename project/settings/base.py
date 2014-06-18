@@ -59,11 +59,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    # 'apps.dinadesa.backends.EmailBackend',
+    'apps.noncense.backends.MobileBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
-# AUTH_USER_MODEL = 'dinadesa.User'
+AUTH_USER_MODEL = 'noncense.User'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'timezone_field',
     'haystack',
     'apps.convention',
+    'apps.noncense',
     # 'apps.profile',
 )
 
