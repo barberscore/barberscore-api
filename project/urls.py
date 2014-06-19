@@ -34,6 +34,7 @@ urlpatterns = patterns(
     # Application
     url(r'', include('apps.convention.urls')),
     url(r'', include('apps.noncense.urls')),
+    url(r'', include('apps.profile.urls')),
 
     # Admin
     url(r'^admin/', include(admin.site.urls)),

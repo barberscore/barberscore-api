@@ -29,7 +29,7 @@
               <tr>
                 <td>{{item.appearance}}</td>
                 <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
-                <td> {{item.stagetime|time:"H:i"}}</td>
+                <td> {{item.stagetime|time:"g:i A e"}}</td>
                 <td>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
               </tr>
             {% endfor %}

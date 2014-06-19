@@ -102,7 +102,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'timezone_field',
     'haystack',
     'apps.convention',
     'apps.noncense',
@@ -135,6 +134,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'utilities.timezone.TimezoneMiddleware',
 )
 
 CORS_ORIGIN_ALLOW_ALL = True

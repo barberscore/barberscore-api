@@ -2,21 +2,25 @@
 
 
 {% block title %}
-<title>
     Update Profile
-</title>
 {% endblock title %}
 
 {% block content %}
-    <div class="container">
-
-    <p>
-    Update your profile to add your name and/or nickname.  While we don't currently do anything with your name, your predictions will be listed under your nickname.</p>
-
-<form action = "{% url 'profile' %}" method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="Submit">
-</form>
-</div>
+  <div class="container">
+    <div class="page-header">
+      <h1>Profile</h1>
+    </div>
+    <div class="row">
+      <div class='col-md-6'>
+        <p class='lead'>Update your profile preferences here.</p>
+        <p>If you choose a timezone, the performance stagetimes will be presented in that timezone.  Otherwise, they will appear in the localtime of the contest (US/Pacific).</p>
+        <form action = "{% url 'profile' %}" method="post">
+          {% csrf_token %}
+          {{form.nickname}}
+          {{form.timezone}}
+          <button class='btn-lg btn-success'>Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
 {% endblock content %}

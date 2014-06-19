@@ -1,4 +1,4 @@
-from timezone_field import TimeZoneField
+import pytz
 
 from django.db import models
 
@@ -14,11 +14,14 @@ class Profile(models.Model):
     nickname = models.CharField(
         max_length=25,
         blank=True,
-        unique=True,
     )
 
-    timezone = TimeZoneField(
-        default='America/Los_Angeles'
+# timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones])
+
+    timezone = models.CharField(
+        max_length=200,
+        default='US/Pacific',
+        choices=[(x, x) for x in pytz.common_timezones],
     )
 
     def __unicode__(self):
