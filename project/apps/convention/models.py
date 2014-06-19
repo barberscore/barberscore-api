@@ -265,19 +265,19 @@ class Performance(models.Model):
     GF1 = 1
     QQ1 = 2
     QQ2 = 3
-    CF1 = 4
-    CF2 = 5
-    QS1 = 6
+    QS1 = 4
+    CF1 = 5
+    CF2 = 6
     QF1 = 7
 
     SESSION_CHOICES = (
-        (GF1, "Collegiate Finals"),
-        (QQ1, "Quartet Quarter-Finals Session #1"),
-        (QQ2, "Quartet Quarter-Finals Session #2"),
-        (CF1, "Chorus Finals Session #1"),
-        (CF2, "Chorus Finals Session #2"),
-        (QS1, "Quartet Semi-Finals"),
-        (QF1, "Quartet Finals"),
+        (GF1, "Collegiate Finals, Tuesday July 1"),
+        (QQ1, "Quartet Quarter-Finals Session #1, Wednesday July 2"),
+        (QQ2, "Quartet Quarter-Finals Session #2, Wednesday July 2"),
+        (QS1, "Quartet Semi-Finals, Thursday July 3"),
+        (CF1, "Chorus Finals Session #1, Friday July 4"),
+        (CF2, "Chorus Finals Session #2, Friday July 4"),
+        (QF1, "Quartet Finals, Saturday July 5"),
     )
 
     contest = models.ForeignKey(

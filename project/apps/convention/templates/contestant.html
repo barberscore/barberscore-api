@@ -51,7 +51,7 @@
         {% endif %}
       {% endfor %}
 
-      <p class='lead'>Next Performance: {{contestant.next_performance.stagetime}}</p>
+      <p class='lead'>Next Performance: {{contestant.next_performance.stagetime|date:'l, F jS, g:i e'}}</p>
       <div class="pull-left">
         <a class="btn btn-lg btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
       </div>
