@@ -149,3 +149,7 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
+
+TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
+TWILIO_FROM_NUMBER = get_env_variable("TWILIO_FROM_NUMBER")
