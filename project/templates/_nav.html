@@ -34,6 +34,27 @@
                 Search
                 </a>
               </li>
+              {% if user.is_authenticated %}
+                <li>
+                  <a href="{% url 'profile' %}">
+                  <span class='fa fa-cog fa-lg'></span>
+                  Profile
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'logout' %}">
+                  <span class='fa fa-sign-out fa-lg'></span>
+                  Logout
+                  </a>
+                </li>
+              {% else %}
+                <li>
+                  <a href="{% url 'login' %}">
+                  <span class='fa fa-sign-in fa-lg'></span>
+                  Login
+                  </a>
+                </li>
+              {% endif %}
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container -->

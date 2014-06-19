@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block navbar %}
-  {% include '_nonav.html' %}
+  {% include '_nav.html' %}
 {% endblock navbar %}
 
 
@@ -20,17 +20,35 @@
     <div class="row">
       <div class="col-md-8">
 
-        <div class="row">
-          <div class='col-sm-8'>
+        <p class="lead">Enter Your Mobile Number to Login with an Access Code</p>
+        <br>
+        <form method='POST'>
+          {% csrf_token %}
+          {{form.mobile}}
+          <button class='btn-lg btn-success'>Text Me an Access Code</button><br>
+        </form><br>
+        <small class='text-muted'><a href="#" data-toggle='modal' data-target='#whymobileModal'>Why do you need my mobile number?</a></small>
 
-            <form method='POST'>
-              {% csrf_token %}
-              {{form.mobile}}
-              <button class='btn-lg btn-success'>Send</button><br>
-            </form>
 
-          </div>
-        </div>
+        <div class="modal fade" id='whymobileModal'>
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Why Mobile?</h4>
+              </div>
+              <div class="modal-body">
+                <p class="lead">We Use a Mobile Number to Keep Things Simple and Secure</p>
+                <br>
+                <p>When you login with your mobile number, we'll send you a four-digit text that you use to access your account.  It's much easier than trying to remember endless username/email/password combinations (particuarly for infrequently accessed sites like this one) and it's actually safer because there's no password to be lost or stolen!</p>
+                <p>We won't share your number or anything like that.  It's just a lot easier to handle than doing password resets, and email switching and all that other stuff that you do when you forget logins (which we all do.)  If you're overseas or otherwise can't receive texts, then send us an email at <a href='mailto:support@barberscore.com'>support@barberscore.com</a> and we'll try to figure something out.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
       </div>
     </div>
 
