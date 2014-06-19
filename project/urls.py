@@ -31,17 +31,18 @@ urlpatterns = patterns(
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt'), name='robots'),
     url(r'^sitemap.xml$', TemplateView.as_view(template_name='sitemap.xml'), name='sitemap'),
 
-    # Application
-    url(r'', include('apps.convention.urls')),
-    url(r'', include('apps.noncense.urls')),
-    url(r'', include('apps.profile.urls')),
-
-    # Admin
+   # Admin
     url(r'^admin/', include(admin.site.urls)),
 
     # REST Framework
     url(r'^api/v1/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+
+    # Application
+    url(r'', include('apps.convention.urls')),
+    url(r'', include('apps.noncense.urls')),
+    url(r'', include('apps.profile.urls')),
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
