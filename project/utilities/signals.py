@@ -1,14 +1,19 @@
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 import logging
 log = logging.getLogger('apps.convention')
 
 from django.utils.text import slugify
+from django.conf import settings
 
 from apps.convention.models import (
     Contestant,
     Contest,
+)
+
+from apps.profile.models import (
+    Profile,
 )
 
 
@@ -32,3 +37,10 @@ def contest_pre_save(sender, instance, **kwargs):
             instance.get_contest_type_display(),
         )
     )
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def user_post_save(sender, instance, created, **kwargs):
+    if created:
+        profile = Profile(user=instance)
+        profile.save()

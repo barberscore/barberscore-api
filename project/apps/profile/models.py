@@ -23,4 +23,4 @@ class Profile(models.Model):
 
     def __unicode__(self):
         # TODO how to access username attr?
-        return self.user.username
+        return self.user.mobile
