@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load bbstags %}
 
 {% block title %}
     Contests
@@ -37,8 +37,8 @@
                 <td class='small'> {{item.mus1|default_if_none:""}}<br>{{item.mus2|default_if_none:""}}</td>
                 <td class='small'> {{item.prs1|default_if_none:""}}<br>{{item.prs2|default_if_none:""}}</td>
                 <td class='small'> {{item.sng1|default_if_none:""}}<br>{{item.sng2|default_if_none:""}}</td>
-                <td class='small'> {{item.song1_score|default_if_none:""}}<br>{{item.song2_score|default_if_none:""}}</td>
-                <td> {{item.performance_score|default_if_none:""}}</td>
+                <td class='small'> {{item.song1_score|score|default_if_none:""}}<br>{{item.song2_score|score|default_if_none:""}}</td>
+                <td> {{item.total_score|score|default_if_none:""}}</td>
               </tr>
             {% endfor %}
           </table>

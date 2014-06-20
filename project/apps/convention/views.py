@@ -53,9 +53,9 @@ def contests(request):
     """
     Returns performances ordered by contest score.
     """
-    performances = Performance.objects.exclude(place=None).order_by(
+    performances = Performance.objects.exclude(sng1=None).order_by(
         'contest__contest_type',
-        'place',
+        '-total_score',
     )
 
     return render(
