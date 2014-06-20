@@ -76,6 +76,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'contestant',
         'contest',
         'contest_round',
+        'session',
         'appearance',
         'stagetime',
         'song1', (
