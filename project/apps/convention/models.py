@@ -1,5 +1,9 @@
 from __future__ import division
 
+from django.core.exceptions import ValidationError
+
+from django.utils import timezone
+
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import (
@@ -312,15 +316,15 @@ class Performance(models.Model):
     appearance = models.IntegerField(
         help_text="""
             The appearance order, within a given round.""",
-        blank=True,
-        null=True,
     )
 
     stagetime = models.DateTimeField(
         help_text="""
             The approximate stagetime of the performance, in
-            the local time of the venue.""",
-        default='2014-01-01 00:00Z',
+            the local time of the venue.  NOTE: for usage purposes,
+            the default is the current time.  However, this must
+            eventually be overwritten with the actual stagetime.""",
+        default=timezone.now,
     )
 
     session = models.IntegerField(
@@ -443,6 +447,27 @@ class Performance(models.Model):
         null=True,
     )
 
+    def clean(self):
+        """
+        Multi-field (ie, model) validation.
+        """
+        if self.contest.contest_type != Contest.QUARTET and self.contest_round != self.FINALS:
+            raise ValidationError(
+                """Only Quartets have Quarter- and Semi-Final Rounds."""
+            )
+        if (self.contest.contest_type != Contest.CHORUS and self.contestant.contestant_type == Contestant.CHORUS) or (self.contest.contest_type == Contest.CHORUS and self.contestant.contestant_type != Contestant.CHORUS):
+            raise ValidationError(
+                    """Contestant and Contest mismatch: {contestant_type} != {contest_type}""".format(
+                        contestant_type=self.contestant.get_contestant_type_display(),
+                        contest_type=self.contest.get_contest_type_display(),
+                    ),
+                code='type_mismatch',
+                params={
+                    'contestant_type': self.contestant.get_contestant_type_display(),
+                    'contest_type': self.contest.get_contest_type_display(),
+                }
+            )
+
     def __unicode__(self):
         return '{0}, {1}'.format(
             self.contestant,
@@ -451,6 +476,11 @@ class Performance(models.Model):
 
     class Meta:
         ordering = (
+            'contest',
+            'contest_round',
+            'appearance',
+        )
+        unique_together = (
             'contest',
             'contest_round',
             'appearance',

@@ -39,8 +39,10 @@ def performances(request):
     Returns performances ordered by the program schedule.
     """
     performances = get_list_or_404(
-        Performance.objects.all().order_by(
-            'session',
+        Performance.objects.select_related('contest', 'contestant').order_by(
+            'contest',
+            'contest_round',
+            'ordinal',
             'appearance',
         )
     )

@@ -94,13 +94,6 @@ class PerformanceAdmin(admin.ModelAdmin):
         'performance_score',
     )
 
-    readonly_fields = (
-        'contestant',
-        'contest',
-        'contest_round',
-        'appearance',
-    )
-
     list_display = (
         '__unicode__',
         'stagetime',
