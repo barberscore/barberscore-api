@@ -280,6 +280,14 @@ class Performance(models.Model):
         (QF1, "Quartet Finals, Saturday July 5"),
     )
 
+    ONE = 1
+    TWO = 2
+
+    ORDINAL_CHOICES = (
+        (ONE, "Session #1"),
+        (TWO, "Session #2"),
+    )
+
     contest = models.ForeignKey(
         Contest,
         help_text="""
@@ -322,6 +330,13 @@ class Performance(models.Model):
         blank=True,
         null=True,
         choices=SESSION_CHOICES,
+    )
+
+    ordinal = models.IntegerField(
+        help_text="""
+            The session number.""",
+        default=ONE,
+        choices=ORDINAL_CHOICES,
     )
 
     song1 = models.CharField(
