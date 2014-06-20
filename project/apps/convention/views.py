@@ -42,7 +42,7 @@ def performances(request):
         Performance.objects.select_related('contest', 'contestant').order_by(
             'contest',
             'contest_round',
-            'ordinal',
+            'session',
             'appearance',
         )
     )

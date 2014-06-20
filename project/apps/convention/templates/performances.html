@@ -18,7 +18,7 @@
         {% regroup contest.list by get_contest_round_display as contest_round_list %}
         {% for contest_round in contest_round_list %}
           <h2>{{contest_round.grouper}}</h2>
-          {% regroup contest_round.list by get_ordinal_display as performance_list %}
+          {% regroup contest_round.list by get_session_display as performance_list %}
           {% for performance in performance_list %}
             <div>
               <h3>{{performance.grouper}}</h3>

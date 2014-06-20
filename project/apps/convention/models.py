@@ -269,7 +269,7 @@ class Performance(models.Model):
     ONE = 1
     TWO = 2
 
-    ORDINAL_CHOICES = (
+    SESSION_CHOICES = (
         (ONE, "Session #1"),
         (TWO, "Session #2"),
     )
@@ -309,11 +309,11 @@ class Performance(models.Model):
         default=timezone.now,
     )
 
-    ordinal = models.IntegerField(
+    session = models.IntegerField(
         help_text="""
             The session number.""",
         default=ONE,
-        choices=ORDINAL_CHOICES,
+        choices=SESSION_CHOICES,
     )
 
     song1 = models.CharField(
