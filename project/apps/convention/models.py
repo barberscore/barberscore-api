@@ -266,24 +266,6 @@ class Performance(models.Model):
         (FINALS, 'Finals'),
     )
 
-    GF1 = 1
-    QQ1 = 2
-    QQ2 = 3
-    QS1 = 4
-    CF1 = 5
-    CF2 = 6
-    QF1 = 7
-
-    SESSION_CHOICES = (
-        (GF1, "Collegiate Finals, Tuesday July 1"),
-        (QQ1, "Quartet Quarter-Finals Session #1, Wednesday July 2"),
-        (QQ2, "Quartet Quarter-Finals Session #2, Wednesday July 2"),
-        (QS1, "Quartet Semi-Finals, Thursday July 3"),
-        (CF1, "Chorus Finals Session #1, Friday July 4"),
-        (CF2, "Chorus Finals Session #2, Friday July 4"),
-        (QF1, "Quartet Finals, Saturday July 5"),
-    )
-
     ONE = 1
     TWO = 2
 
@@ -325,15 +307,6 @@ class Performance(models.Model):
             the default is the current time.  However, this must
             eventually be overwritten with the actual stagetime.""",
         default=timezone.now,
-    )
-
-    session = models.IntegerField(
-        help_text="""
-            Contest rounds are broken down into sessions, which
-            are tracked here.""",
-        blank=True,
-        null=True,
-        choices=SESSION_CHOICES,
     )
 
     ordinal = models.IntegerField(
