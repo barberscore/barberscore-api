@@ -97,12 +97,14 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     list_display = (
         '__unicode__',
-        'stagetime',
-        # 'song1',
-        # 'song1_score',
-        # 'song2',
-        # 'song2_score',
+        # 'stagetime',
+        'song1',
+        'sng1',
+        'song1_raw',
+        'song2',
+        'song2_raw',
         'appearance',
+        'place',
     )
 
     list_filter = (

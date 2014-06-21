@@ -62,12 +62,40 @@ class PerformanceFactory(factory.django.DjangoModelFactory):
     appearance = Sequence(lambda n: n)
 
 
-class ScoreFactory(PerformanceFactory):
+class QuarterFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = Performance
+    FACTORY_DJANGO_GET_OR_CREATE = (
+        'contest',
+        'contestant',
+        'contest_round',
+    )
     song1 = FuzzyText(length=24)
-    mus1 = FuzzyInteger(400, 500)
-    prs1 = FuzzyInteger(400, 500)
-    sng1 = FuzzyInteger(400, 500)
     song2 = FuzzyText(length=24)
-    mus2 = FuzzyInteger(400, 500)
-    prs2 = FuzzyInteger(400, 500)
-    sng2 = FuzzyInteger(400, 500)
+    mus1 = FuzzyInteger(350, 400)
+    prs1 = FuzzyInteger(350, 400)
+    sng1 = FuzzyInteger(350, 400)
+    mus2 = FuzzyInteger(350, 400)
+    prs2 = FuzzyInteger(350, 400)
+    sng2 = FuzzyInteger(350, 400)
+
+
+class SemiFactory(PerformanceFactory):
+    song1 = FuzzyText(length=24)
+    song2 = FuzzyText(length=24)
+    mus1 = FuzzyInteger(400, 450)
+    prs1 = FuzzyInteger(400, 450)
+    sng1 = FuzzyInteger(400, 450)
+    mus2 = FuzzyInteger(400, 450)
+    prs2 = FuzzyInteger(400, 450)
+    sng2 = FuzzyInteger(400, 450)
+
+
+class FinalFactory(PerformanceFactory):
+    song1 = FuzzyText(length=24)
+    song2 = FuzzyText(length=24)
+    mus1 = FuzzyInteger(450, 500)
+    prs1 = FuzzyInteger(450, 500)
+    sng1 = FuzzyInteger(450, 500)
+    mus2 = FuzzyInteger(450, 500)
+    prs2 = FuzzyInteger(450, 500)
+    sng2 = FuzzyInteger(450, 500)

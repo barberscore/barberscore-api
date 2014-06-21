@@ -18,34 +18,6 @@ from factory.fuzzy import (
 )
 
 
-def calculate_scores(performance):
-    if performance.mus1:
-        song1_score = sum([
-            performance.mus1,
-            performance.prs1,
-            performance.sng1,
-        ]) / 1500
-        song2_score = sum([
-            performance.mus2,
-            performance.prs2,
-            performance.sng2,
-        ]) / 1500
-        total_score = sum([
-            performance.mus1,
-            performance.prs1,
-            performance.sng1,
-            performance.mus2,
-            performance.prs2,
-            performance.sng2,
-        ]) / 3000
-        performance.song1_score = song1_score
-        performance.song2_score = song2_score
-        performance.total_score = total_score
-        performance.save()
-    else:
-        return None
-
-
 def create_contest():
     contest = ContestFactory(
         year='2000',
@@ -55,24 +27,119 @@ def create_contest():
     return contest
 
 
-def create_contestants():
+def create_quarters(contest):
     contestants = ContestantFactory.create_batch(size=40)
-    return contestants
+    appearance = 1
+    for contestant in contestants:
+        PerformanceFactory(
+            contest=contest,
+            contestant=contestant,
+            contest_round=Performance.QUARTERS,
+            appearance=appearance,
+        )
+        appearance += 1
+    return
 
 
-def create_performance(contest, contestant, contest_round):
-    performance = PerformanceFactory(
-        contest=contest,
-        contestant=contestant,
-        contest_round=contest_round,
+def place_quarter_cutoff(contest):
+    place = 40
+    performances = Performance.objects.filter(
+        contest=contest).order_by('-appearance')[:20]
+    for p in performances:
+        p.place = place
+        p.save()
+        place -= 1
+    return
+
+
+def score_quarters(contest):
+    score = 400
+    performances = Performance.objects.filter(
+        contest=contest).exclude(place=None).order_by('-appearance')
+    for p in performances:
+        p.mus1, p.prs1, p.sng1 = score, score, score
+        p.mus2, p.prs2, p.sng2 = score, score, score
+        p.save()
+        score += 1
+    return
+
+
+def create_semis(contest):
+    contestants = Contestant.objects.filter(
+        performances__contest=contest,
+        performances__contest_round=Performance.QUARTERS,
+        performances__place=None,
     )
-    return performance
+    appearance = 1
+    for contestant in contestants:
+        PerformanceFactory(
+            contest=contest,
+            contestant=contestant,
+            contest_round=Performance.SEMIS,
+            appearance=appearance,
+        )
+        appearance += 1
+    return
 
 
-def create_cut(contest, cutoff, next_round):
-    PerformanceFactory.reset_sequence()
-    performances = Performance.objects.filter(contest=contest)
-    cut = performances.order_by('-total_score')[:cutoff]
-    for c in cut:
-        create_performance(contest, c.contestant, next_round)
+def place_semi_cutoff(contest):
+    place = 20
+    performances = Performance.objects.filter(
+        contest=contest, contest_round=Performance.SEMIS).order_by('-appearance')[:10]
+    for p in performances:
+        p.place = place
+        p.save()
+        place -= 1
+    return
+
+
+def score_semis(contest):
+    score = 450
+    performances = Performance.objects.filter(
+        contest=contest, ).exclude(place=None).order_by('-appearance')
+    for p in performances:
+        p.mus1, p.prs1, p.sng1 = score, score, score
+        p.mus2, p.prs2, p.sng2 = score, score, score
+        p.save()
+        score += 1
+        q = Performance.objects.get(
+            contestant=p.contestant,
+            contest_round=Performance.QUARTERS)
+        q.mus1 = p.mus1
+        q.prs1 = p.prs1
+        q.sng1 = p.sng1
+        q.mus2 = p.mus2
+        q.prs2 = p.prs2
+        q.sng2 = p.sng2
+        q.save()
+    return
+
+
+def create_finals(contest):
+    contestants = Contestant.objects.filter(
+        performances__contest=contest,
+        performance__contest_round=Performance.SEMIS,
+        performances__place=None,
+    )
+    appearance = 1
+    for contestant in contestants:
+        PerformanceFactory(
+            contest=contest,
+            contestant=contestant,
+            contest_round=Performance.FINALS,
+            appearance=appearance,
+        )
+        appearance += 1
+    return
+
+
+def score_finals(contest):
+    score = 475
+    performances = Performance.objects.filter(
+        contest=contest).order_by('-appearance')
+    for p in performances:
+        p.mus1, p.prs1, p.sng1 = score, score, score
+        p.mus2, p.prs2, p.sng2 = score, score, score
+        p.save()
+        score += 1
     return
