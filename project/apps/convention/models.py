@@ -379,39 +379,6 @@ class Performance(models.Model):
         null=True,
     )
 
-    # DENORMALIZED VALUES
-    # The following values are denormalized, and the default population
-    # happens via pre-save signals.  This allows for manual correction
-    # as needed.
-    song1_score = models.FloatField(
-        help_text="""
-            The percentile score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    song2_score = models.FloatField(
-        help_text="""
-            The percentile score of the second song.""",
-        blank=True,
-        null=True,
-    )
-
-    performance_score = models.FloatField(
-        help_text="""
-            The percentile score of the performance (both songs).""",
-        blank=True,
-        null=True,
-    )
-
-    total_score = models.FloatField(
-        help_text="""
-            The running percentile score of performances to date
-            by this particular contestant.""",
-        blank=True,
-        null=True,
-    )
-
     place = models.IntegerField(
         help_text="""
             The ordinal placement of the contestant in this
@@ -419,6 +386,48 @@ class Performance(models.Model):
         blank=True,
         null=True,
     )
+
+    @property
+    def song1_raw(self):
+        if self.mus1 and self.prs1 and self.sng1:
+            return sum([self.mus1, self.prs1, self.sng1])
+        else:
+            return None
+
+    @property
+    def song2_raw(self):
+        if self.mus2 and self.prs2 and self.sng2:
+            return sum([self.mus2, self.prs2, self.sng2])
+        else:
+            return None
+
+    @property
+    def total_raw(self):
+        if self.song1_raw and self.song2_raw:
+            return sum([self.song1_raw, self.song2_raw])
+        else:
+            return None
+
+    @property
+    def song1_percent(self):
+        if self.song1_raw:
+            return self.song1_raw / 1500
+        else:
+            return None
+
+    @property
+    def song2_percent(self):
+        if self.song2_raw:
+            return self.song2_raw / 1500
+        else:
+            return None
+
+    @property
+    def total_percent(self):
+        if self.song1_raw:
+            return self.total_raw / 3000
+        else:
+            return None
 
     def clean(self):
         """
