@@ -311,9 +311,7 @@ class Performance(models.Model):
     stagetime = models.DateTimeField(
         help_text="""
             The approximate stagetime of the performance, in
-            the local time of the venue.  NOTE: for usage purposes,
-            the default is the current time.  However, this must
-            eventually be overwritten with the actual stagetime.""",
+            the local time of the venue. """,
         default=timezone.now,
     )
 
