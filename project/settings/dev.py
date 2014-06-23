@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 INSTALLED_APPS += (
     'django_nose',
-    'debug_toolbar.apps.DebugToolbarConfig',
+    # 'debug_toolbar.apps.DebugToolbarConfig',
 )
 
 INTERNAL_IPS = ('127.0.0.1',)

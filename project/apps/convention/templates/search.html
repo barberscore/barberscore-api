@@ -7,7 +7,8 @@
     </div>
     <div>
       <div class="row">
-        <div class='col-md-12'>
+        <div class='col-md-8'>
+        <p class='lead'>Search for contestant names, members, locations and more.</p>
           <form role='form' method="get" action="." class='form-search form-inline'>
             <div class="form-group">
               {{ form.q }}
@@ -18,7 +19,10 @@
               <ul class='list-unstyled'>
                 {% for result in page.object_list %}
                   <li>
-                    <h4><a href="{{ result.object.get_absolute_url }}">{{result.object.name}}</a><h4>
+                    <br>
+                    <h4><a href="{{ result.object.get_absolute_url }}">{{result.object.name}}</a></h4>
+                    <small class='text-muted'>{{result.object.district}} {{result.object.location}}</small>
+                    <p>{{result.object.blurb|truncatewords:30}}</p>
                   </li>
                 {% empty %}
                   <p class='lead'>No results found.</p>
@@ -35,7 +39,7 @@
                 </div>
               {% endif %}
             {% else %}
-                {# Show some example queries to run, maybe query syntax, something else? #}
+
             {% endif %}
           </form>
         </div>
