@@ -15,7 +15,56 @@ class ContestantSearchForm(SearchForm):
             attrs={
                 'class': 'input-lg form-control',
                 'type': 'search',
-                'autofocus': 'True'
+                'autofocus': 'True',
+                'size': 30,
             }
         ),
     )
+
+
+from .models import (
+    Profile,
+    Note,
+)
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = (
+            'nickname',
+            'timezone',
+        )
+        widgets = {
+            'nickname': forms.TextInput(
+                attrs={
+                    'class': 'form-control input-lg',
+                    'placeholder': 'name/nickname',
+                }
+            ),
+            'timezone': forms.Select(
+                attrs={
+                    'class': 'form-control input-lg',
+                }
+            ),
+        }
+
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        field = (
+            'note',
+            'profile',
+            'contestant',
+        )
+        widgets = {
+            'note': forms.Textarea(
+                attrs={
+                    'class': 'form-control input-lg',
+                    'placeholder': "Enter your notes here.",
+                }
+            ),
+            'profile': forms.HiddenInput(),
+            'contestant': forms.HiddenInput(),
+        }

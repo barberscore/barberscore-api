@@ -10,34 +10,47 @@
   <div class="container">
     <div class="page-header">
       <h1>{{contestant}}</h1>
+      <p class='lead'>{{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
+      <p>Next Performance: {{contestant.next_performance.stagetime|date:'l, F jS, g:i e'}}</p>
+
     </div>
     <div>
       {% if contestant.picture %}
-        <img src='{{contestant.picture.url}}' class='img-responsive img-thumbnail'>
+        <img src='{{contestant.picture.url}}' class='img-responsive img-thumbnail'><br><br>
       {% else %}
         <p>No Image Available</p>
       {% endif %}
-      <p><strong>{{contestant.name}}</strong>, {{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
-      {% if contestant.get_contestant_type_display == 'Quartet' %}
-        <ul class='list-unstyled list-inline'>
-          <li>Tenor: {{contestant.tenor}}</li>
-          <li>Lead: {{contestant.lead}}</li>
-          <li>Bari: {{contestant.baritone}}</li>
-          <li>Bass: {{contestant.bass}}</li>
-        </ul>
-      {% else %}
-        <p>Director: {{contestant.director}}</p>
-      {% endif %}
-      {% if contestant.blurb %}
-        <div class="well">
-          <p>{{contestant.blurb|linebreaks}}</p>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class='panel-title'>
+            <a data-toggle="collapse" data-parent="#accordion" href="#aboutContestant">
+              About
+            </a>
+          </h4>
         </div>
-      {% endif %}
-        <ul class='list-unstyled list-inline'>
-          <li>{{contestant.website|urlize}}</li>
-          <li>{{contestant.facebook|urlize}}</li>
-          <li>{{contestant.phone}}</li>
-        </ul>
+        <div id="aboutContestant" class="panel-collapse collapse out">
+          <div class="panel-body">
+            {% if contestant.get_contestant_type_display == 'Quartet' %}
+              <ul class='list-unstyled list-inline'>
+                <li>Tenor: {{contestant.tenor}}</li>
+                <li>Lead: {{contestant.lead}}</li>
+                <li>Bari: {{contestant.baritone}}</li>
+                <li>Bass: {{contestant.bass}}</li>
+              </ul>
+            {% else %}
+              <p>Director: {{contestant.director}}</p>
+            {% endif %}
+            <p>{{contestant.blurb|linebreaks}}</p>
+            <ul class='list-unstyled list-inline'>
+              {% if contestant.website %}<li>{{contestant.website|urlize}}</li>{% endif %}
+              {% if contestant.facebook %}<li>{{contestant.facebook|urlize}}</li>{% endif %}
+              {% if contestant.twitter %}<li>{{contestant.twitter}}</li>{% endif %}
+              {% if contestant.phone %}<li>{{contestant.phone}}</li>{% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
       {% for performance in performances %}
         {% if performance.song1 %}
           <table class='table'>
@@ -51,12 +64,33 @@
         {% endif %}
       {% endfor %}
 
-      <p class='lead'>Next Performance: {{contestant.next_performance.stagetime|date:'l, F jS, g:i e'}}</p>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class='panel-title'>
+            <a data-toggle="collapse" data-parent="#accordion" href="#contestantNotes">
+              Notes
+            </a>
+          </h4>
+        </div>
+        <div id="contestantNotes" class="panel-collapse collapse out">
+          <div class="panel-body">
+            <form action='' method='post'>
+              {% csrf_token %}
+              {{form.contestant}}
+              {{form.profile}}
+              {{form.note}}
+              <input role='button' class='btn btn-lg btn-success' type='submit' name='submit' value='submit'>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
       <div class="pull-left">
-        <a class="btn btn-lg btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
+        <a class="btn btn-lg btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous Performer</a>
       </div>
       <div class="pull-right">
-        <a class="btn btn-lg btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next</a>
+        <a class="btn btn-lg btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next Performer</a>
       </div>
       <br><br>
 

@@ -1,8 +1,9 @@
-from __future__ import division
-
 from django.core.exceptions import ValidationError
 
 from django.utils import timezone
+from django.conf import settings
+
+import pytz
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -141,6 +142,13 @@ class Contestant(models.Model):
     prelim = models.FloatField(
         help_text="""
             The prelim score of the contestant.""",
+        null=True,
+        blank=True,
+    )
+
+    rank = models.IntegerField(
+        help_text="""
+            The incoming rank based on prelim score.""",
         null=True,
         blank=True,
     )
@@ -467,3 +475,46 @@ class Performance(models.Model):
             'contest_round',
             'appearance',
         )
+
+
+class Profile(models.Model):
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL
+    )
+
+    nickname = models.CharField(
+        max_length=25,
+        blank=True,
+    )
+
+    timezone = models.CharField(
+        max_length=200,
+        default='US/Pacific',
+        choices=[(x, x) for x in pytz.common_timezones],
+    )
+
+    def __unicode__(self):
+        # TODO how to access username attr?
+        return self.user.mobile
+
+
+class Note(models.Model):
+
+    profile = models.ForeignKey(
+        Profile,
+        related_name='notes',
+    )
+
+    contestant = models.ForeignKey(
+        Contestant,
+        related_name='notes',
+    )
+
+    note = models.TextField(
+        help_text="""
+            Notes on each contestant."""
+    )
+
+    def __unicode__(self):
+        return "{0} - {1}".format(self.profile, self.contestant)

@@ -11,39 +11,47 @@
     <div class="page-header">
       <h1>Performance Schedule</h1>
     </div>
-    <div>
+    {# <div class='panel-group' id='accordian'> #}
       {% regroup performances by contest as contest_list %}
       {% for contest in contest_list %}
-        <h1>{{contest.grouper}}</h1>
-        {% regroup contest.list by get_contest_round_display as contest_round_list %}
-        {% for contest_round in contest_round_list %}
-          <h2>{{contest_round.grouper}}</h2>
-          {% regroup contest_round.list by get_session_display as performance_list %}
-          {% for performance in performance_list %}
-            <div>
-              <h3>{{performance.grouper}}</h3>
-            </div>
-            <div class="table-responsive">
-              <table class='table'>
-                <tr>
-                  <th class='col-md-1'>Order</th>
-                  <th class='col-md-4'>Contestant</th>
-                  <th class='col-md-2'>Stagetime</th>
-                  <th class='col-md-5'>Songs</th>
-                </tr>
-                {% for item in performance.list %}
-                  <tr>
-                    <td>{{item.appearance}}</td>
-                    <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
-                    <td> {{item.stagetime|time:"g:i A e"}}</td>
-                    <td>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
-                  </tr>
+        <div class='panel panel-default'>
+          <div class="panel-heading">
+            <h2 class='panel-title'><a data-toggle='collapse' href='#{{contest.grouper|cut:" "}}'>{{contest.grouper}}</a></h2>
+          </div>
+          <div class="panel-collapse collapse out" id="{{contest.grouper|cut:" "}}">
+            <div class="panel-body">
+              {% regroup contest.list by get_contest_round_display as contest_round_list %}
+              {% for contest_round in contest_round_list %}
+                <h3>{{contest_round.grouper}}</h3>
+                {% regroup contest_round.list by get_session_display as performance_list %}
+                {% for performance in performance_list %}
+                  <div>
+                    <h4>{{performance.grouper}}, {{performance.list.0.stagetime|date:"l F jS"}}</h4>
+                  </div>
+                  <div class="table-responsive">
+                    <table class='table'>
+                      <tr>
+                        <th class='col-md-1'>Order</th>
+                        <th class='col-md-4'>Contestant</th>
+                        <th class='col-md-2'>Stagetime</th>
+                        <th class='col-md-5'>Songs</th>
+                      </tr>
+                      {% for item in performance.list %}
+                        <tr>
+                          <td>{{item.appearance}}</td>
+                          <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
+                          <td> {{item.stagetime|date:"g:i A e"}}</td>
+                          <td>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
+                        </tr>
+                      {% endfor %}
+                    </table>
+                  </div>
                 {% endfor %}
-              </table>
+              {% endfor %}
             </div>
-          {% endfor %}
-        {% endfor %}
+          </div>
+        </div>
       {% endfor %}
-    </div>
+    {# </div> #}
   </div> <!-- /container -->
 {% endblock content %}

@@ -42,7 +42,6 @@ urlpatterns = patterns(
     # Application
     url(r'', include('apps.convention.urls')),
     url(r'', include('apps.noncense.urls')),
-    url(r'', include('apps.profile.urls')),
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

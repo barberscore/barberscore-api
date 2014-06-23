@@ -105,7 +105,7 @@ INSTALLED_APPS = (
     'haystack',
     'apps.convention',
     'apps.noncense',
-    'apps.profile',
+    # 'apps.profile',
 )
 
 

@@ -111,3 +111,19 @@ class PerformanceAdmin(admin.ModelAdmin):
         'contest',
         'contest_round',
     )
+
+
+from .models import (
+    Profile,
+    Note,
+)
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    save_on_top = True
+
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    save_on_top = True
