@@ -30,10 +30,13 @@ def contestant(request, slug):
     performances = contestant.performances.all()
     prev = contestant.next_performance.get_previous_by_stagetime().contestant
     next = contestant.next_performance.get_next_by_stagetime().contestant
-    note, created = Note.objects.get_or_create(
-        contestant=contestant,
-        profile=request.user.profile,
-    )
+    if request.user.is_authenticated():
+        note, created = Note.objects.get_or_create(
+            contestant=contestant,
+            profile=request.user.profile,
+        )
+    else:
+        note = None
 
     if request.method == 'POST':
         form = NoteForm(request.POST, instance=note)

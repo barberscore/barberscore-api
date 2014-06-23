@@ -64,26 +64,30 @@
         {% endif %}
       {% endfor %}
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class='panel-title'>
-            <a data-toggle="collapse" data-parent="#accordion" href="#contestantNotes">
-              Notes
-            </a>
-          </h4>
-        </div>
-        <div id="contestantNotes" class="panel-collapse collapse out">
-          <div class="panel-body">
-            <form action='' method='post'>
-              {% csrf_token %}
-              {{form.contestant}}
-              {{form.profile}}
-              {{form.note}}
-              <input role='button' class='btn btn-lg btn-success' type='submit' name='submit' value='submit'>
-            </form>
+      {% if user.is_authenticated %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class='panel-title'>
+              <a data-toggle="collapse" data-parent="#accordion" href="#contestantNotes">
+                Notes
+              </a>
+            </h4>
+          </div>
+          <div id="contestantNotes" class="panel-collapse collapse out">
+            <div class="panel-body">
+              <form action='' method='post'>
+                {% csrf_token %}
+                {{form.contestant}}
+                {{form.profile}}
+                {{form.note}}
+                <input role='button' class='btn btn-lg btn-success' type='submit' name='submit' value='submit'>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      {% else %}
+        <p>Please <a href='{% url "login" %}'>Login</a> to save notes about this performer.</p>
+      {% endif %}
 
 
       <div class="pull-left">
