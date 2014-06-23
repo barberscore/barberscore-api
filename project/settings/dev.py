@@ -35,7 +35,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'apps.convention': {
+        'apps.noncense': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

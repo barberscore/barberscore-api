@@ -5,6 +5,17 @@ from django.shortcuts import (
 
 import json
 
+
+import logging
+log = logging.getLogger(__name__)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import (
+    HttpResponse,
+    HttpResponseServerError,
+    HttpResponseBadRequest,
+)
+
 from .services import sendcode
 
 from django.contrib import messages
@@ -18,6 +29,7 @@ from django.contrib.auth import (
 from .forms import (
     MobileForm,
     CodeForm,
+    InboundForm,
 )
 
 
@@ -96,3 +108,27 @@ def logout(request):
         """You are now logged out."""
     )
     return redirect('login')
+
+
+@csrf_exempt
+def inbound(request):
+    """Handles inbound texts."""
+    if request.method == 'POST':
+        form = InboundForm(request.POST)
+        # log.critical('{0}'.format(form))
+        # try:
+        #     data = json_data['foo']
+        # except:
+        #     HttpResponseServerError("Malformed data!")
+        # log.critical('Inbound: {0}'.format(data))
+        if form.is_valid():
+            # form.save()
+            log.critical('{0}'.format(form))
+            twiml = """
+                <Response><Message>We have received your message and will
+                respond ASAP!</Message></Response>"""
+            return HttpResponse(twiml, content_type='text/xml')
+        else:
+            return HttpResponseServerError("Malformed data!")
+    else:
+        return HttpResponseBadRequest("Must use POST.")

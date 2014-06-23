@@ -2,7 +2,9 @@ import logging
 log = logging.getLogger(__name__)
 
 from django import forms
-
+from .models import(
+    TwilioMessage
+)
 
 from django.contrib.auth import get_user_model
 
@@ -46,3 +48,8 @@ class CodeForm(forms.Form):
         },
     )
 
+
+class InboundForm(forms.ModelForm):
+    class Meta:
+        model = TwilioMessage
+        fields = ('body',)
