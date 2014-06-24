@@ -49,7 +49,9 @@ class CodeForm(forms.Form):
     )
 
 
+# class InboundForm(forms.Form):
+#     MessageSid = forms.CharField()
+
 class InboundForm(forms.ModelForm):
     class Meta:
         model = TwilioMessage
-        fields = ('body',)

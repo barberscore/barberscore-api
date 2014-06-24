@@ -113,8 +113,29 @@ class User(AbstractBaseUser):
 
 
 class TwilioMessage(models.Model):
-    body = models.CharField(
-        max_length=200,
+    MessageSid = models.CharField(
+        max_length=34,
         null=True,
         blank=True,
     )
+
+    From = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+    )
+
+    To = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+    )
+
+    Body = models.CharField(
+        max_length=1600,
+        null=True,
+        blank=True,
+    )
+
+    # def __unicode__(self):
+    #     return self.MessageSid

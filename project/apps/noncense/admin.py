@@ -4,7 +4,10 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import User
+from .models import (
+    User,
+    TwilioMessage,
+)
 
 
 class UserCreationForm(forms.ModelForm):
@@ -76,9 +79,14 @@ class UserAdmin(UserAdmin):
             'fields': ('mobile', 'full_name', 'password1', 'password2')}
         ),
     )
-    search_fields = ('mobile','full_name',)
+    search_fields = ('mobile', 'full_name',)
     ordering = ('mobile',)
     filter_horizontal = ()
+
+
+@admin.register(TwilioMessage)
+class TwilioMessageAdmin(admin.ModelAdmin):
+    save_on_top = True
 
 
 admin.site.unregister(Group)

@@ -114,19 +114,11 @@ def logout(request):
 def inbound(request):
     """Handles inbound texts."""
     if request.method == 'POST':
-        form = InboundForm(request.POST)
-        # log.critical('{0}'.format(form))
-        # try:
-        #     data = json_data['foo']
-        # except:
-        #     HttpResponseServerError("Malformed data!")
-        # log.critical('Inbound: {0}'.format(data))
+        form = InboundForm(json.loads(request.body))
         if form.is_valid():
-            # form.save()
-            log.critical('{0}'.format(form))
-            twiml = """
-                <Response><Message>We have received your message and will
-                respond ASAP!</Message></Response>"""
+            form.save()
+            log.critical("Inbound Text")
+            twiml = """<Response><Message>We have received your message and will respond ASAP!</Message></Response>"""
             return HttpResponse(twiml, content_type='text/xml')
         else:
             return HttpResponseServerError("Malformed data!")
