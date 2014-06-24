@@ -34,11 +34,12 @@
                 Search
                 </a>
               </li>
+              <div class="visible-xs">
               <li><a href="{% url 'about' %}">About</a></li>
               <li><a href="{% url 'faq' %}">FAQ</a></li>
               <li><a href="{% url 'links' %}">Links</a></li>
               {# <li><a href='http://dbinetti.com'>&copy; 2014 David Binetti</a></li> #}
-
+              </div>
               {% if user.is_authenticated %}
                 <li>
                   <a href="{% url 'profile' %}">
