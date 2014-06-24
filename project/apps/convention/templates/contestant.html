@@ -8,18 +8,18 @@
 
 {% block content %}
   <div class="container">
-    <div class="page-header">
-      <h1>{{contestant}}</h1>
-      <p class='lead'>{{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
-      <p>Next Performance: {{contestant.next_performance.stagetime|date:'l, F jS, g:i e'}}</p>
+    {# <div class="page-header"> #}
 
-    </div>
+    {# </div> #}
     <div>
       {% if contestant.picture %}
         <img src='{{contestant.picture.url}}' class='img-responsive img-thumbnail'><br><br>
       {% else %}
         <p>No Image Available</p>
       {% endif %}
+      <h2>{{contestant}}</h2>
+      <p class='lead'>{{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
+      <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>
 
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -43,8 +43,8 @@
             {% endif %}
             <p>{{contestant.blurb|linebreaks}}</p>
             <ul class='list-unstyled list-inline'>
-              {% if contestant.website %}<li>{{contestant.website|urlize}}</li>{% endif %}
-              {% if contestant.facebook %}<li>{{contestant.facebook|urlize}}</li>{% endif %}
+              {% if contestant.website %}<li><a href='{{contestant.website}}'>Website</a></li>{% endif %}
+              {% if contestant.facebook %}<li><a href='{{contestant.facebook}}'>Facebook</a></li>{% endif %}
               {% if contestant.twitter %}<li>{{contestant.twitter}}</li>{% endif %}
               {% if contestant.phone %}<li>{{contestant.phone}}</li>{% endif %}
             </ul>
@@ -86,15 +86,15 @@
           </div>
         </div>
       {% else %}
-        <p>Please <a href='{% url "login" %}'>Login</a> to save notes about this performer.</p>
+        <p><a href='{% url "login" %}'>Login</a> to save notes about this performer.</p>
       {% endif %}
 
 
       <div class="pull-left">
-        <a class="btn btn-lg btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous Performer</a>
+        <a class="btn btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
       </div>
       <div class="pull-right">
-        <a class="btn btn-lg btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next Performer</a>
+        <a class="btn btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next</a>
       </div>
       <br><br>
 
