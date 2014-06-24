@@ -77,7 +77,10 @@ def entercode(request):
                     # logs them in if they get the right code within that limit
                     user = authenticate(mobile=mobile)
                     auth_login(request, user)
-                    return redirect('home')
+                    messages.success(
+                        request,
+                        """You are now logged in.""")
+                    return redirect('profile')
                     # And redirects them accordingly
 
                 # if the code was wrong, increment the counter,
