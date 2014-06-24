@@ -114,7 +114,7 @@ def logout(request):
 def inbound(request):
     """Handles inbound texts."""
     if request.method == 'POST':
-        form = InboundForm(json.loads(request.body))
+        form = InboundForm(request.body)
         if form.is_valid():
             form.save()
             log.critical("Inbound Text")
