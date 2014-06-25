@@ -169,7 +169,11 @@ class Contestant(models.Model):
 
     @property
     def next_performance(self):
-        return self.performances.order_by('stagetime').first()
+        try:
+            next_performance = self.performances.order_by('stagetime').first()
+        except:
+            next_performance = None
+        return next_performance
 
     def __unicode__(self):
         return self.name
