@@ -498,7 +498,10 @@ class Profile(models.Model):
 
     def __unicode__(self):
         # TODO how to access username attr?
-        return self.user.mobile
+        if self.nickname:
+            return self.nickname
+        else:
+            return self.user.mobile
 
 
 class Note(models.Model):

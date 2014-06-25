@@ -162,6 +162,11 @@ class PerformanceAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        '__unicode__',
+        'timezone',
+    )
+
     save_on_top = True
 
 
