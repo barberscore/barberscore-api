@@ -9,6 +9,10 @@ from django.shortcuts import (
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+# from django.core.exceptions import (
+#     DoesNotExist,
+# )
+
 from .models import (
     Contestant,
     Performance,
@@ -28,8 +32,14 @@ def contestant(request, slug):
     """
     contestant = get_object_or_404(Contestant, slug=slug)
     performances = contestant.performances.all()
-    prev = contestant.next_performance.get_previous_by_stagetime().contestant
-    next = contestant.next_performance.get_next_by_stagetime().contestant
+    try:
+        prev = contestant.next_performance.get_previous_by_stagetime().contestant
+    except Performance.DoesNotExist:
+        prev = None
+    try:
+        next = contestant.next_performance.get_next_by_stagetime().contestant
+    except Performance.DoesNotExist:
+        next = None
     if request.user.is_authenticated():
         note, created = Note.objects.get_or_create(
             contestant=contestant,

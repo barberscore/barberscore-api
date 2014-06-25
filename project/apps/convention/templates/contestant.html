@@ -89,13 +89,16 @@
         <p><a href='{% url "login" %}'>Login</a> to save notes about this performer.</p>
       {% endif %}
 
-
-      <div class="pull-left">
-        <a class="btn btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
-      </div>
-      <div class="pull-right">
-        <a class="btn btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next</a>
-      </div>
+      {% if prev %}
+        <div class="pull-left">
+          <a class="btn btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
+        </div>
+      {% endif %}
+      {% if next %}
+        <div class="pull-right">
+          <a class="btn btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next</a>
+        </div>
+      {% endif %}
       <br><br>
 
     </div>
