@@ -17,8 +17,8 @@
       {% else %}
         <p>No Image Available</p>
       {% endif %}
-      <h2>{{contestant}}</h2>
-      <p class='lead'>{{contestant.district}}, Prelim Score: {{contestant.prelim}}</p>
+      <h2>{{contestant}}  ({{contestant.district}})</h2>
+      <p class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank}}</p>
       <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>
 
       <div class="panel panel-default">
