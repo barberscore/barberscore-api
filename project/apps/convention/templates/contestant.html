@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
+{% load bbstags %}
 
 {% block title %}
     {{contestant}}
@@ -18,7 +19,7 @@
         <p>No Image Available</p>
       {% endif %}
       <h2>{{contestant}}  ({{contestant.district}})</h2>
-      <p class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank}}</p>
+      <p class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}}</p>
       <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>
 
       <div class="panel panel-default">
@@ -69,7 +70,7 @@
           <div class="panel-heading">
             <h4 class='panel-title'>
               <a data-toggle="collapse" data-parent="#accordion" href="#contestantNotes">
-                Notes
+                My Notes
               </a>
             </h4>
           </div>
@@ -80,7 +81,7 @@
                 {{form.contestant}}
                 {{form.profile}}
                 {{form.note}}
-                <input role='button' class='btn btn-lg btn-success' type='submit' name='submit' value='submit'>
+                <input role='button' class='btn btn-success' type='submit' name='submit' value='submit'>
               </form>
             </div>
           </div>
