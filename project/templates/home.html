@@ -5,18 +5,25 @@
     Barberscore
 {% endblock title %}
 
+{% block navbar %}
+<div id="home-lead">
+      {% include '_nav.html' %}
+
+{% endblock navbar %}
+
 {% block content %}
-    <div class="container">
-        <div class="jumbotron">
-        <h1>Welcome!</h1>
-        <p class='lead'>This app was created so you could easily follow the International Contest in Vegas, get stagetimes, write notes, and learn about contestants.</p>
-        <p>Browse from the links above, or login to be able to save notes on each performance and get stagetimes converted to your local timezone.</p>
-        <p>Please send feedback to <a href='mailto:support@barberscore.com'>support@barberscore.com</a> &mdash; we'd love to know how to make this better!</p>
-        </div>
+  <div class="container">
+    <div class="jumbotron" id='foobar'>
+      <h1>Welcome!</h1>
+      <p class='lead'>This app was created so you could easily follow the International Contest in Vegas, get stagetimes, write notes, and learn about contestants.</p>
+      <p>Browse from the links above, or login to be able to save notes on each performance and get stagetimes converted to your local timezone.</p>
+      <p>Please send feedback to <a href='mailto:support@barberscore.com'>support@barberscore.com</a> &mdash; we'd love to know how to make this better!</p>
     </div>
+  </div>
 {% endblock content %}
 
 
 {% block footer %}
   {% include '_footer.html' %}
+</div>
 {% endblock footer%}

@@ -1,2 +1,15 @@
 /*Homepage styles*/
 
+
+#home-lead {
+  background: url(http://barbershop.org/images/gathered.jpg) 50% / cover;
+  overflow: hidden;
+  position: relative;
+}
+
+.jumbotron {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
