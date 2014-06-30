@@ -1,4 +1,4 @@
-./wheelhouse/Django-1.7b4-py2.py3-none-any.whl
+./wheelhouse/Django-1.7c1-py2.py3-none-any.whl
 dj-database-url==0.3.0
 psycopg2==2.5.3
 nameparser==0.2.10
