@@ -79,7 +79,9 @@ def entercode(request):
                     auth_login(request, user)
                     messages.success(
                         request,
-                        """You are now logged in.""")
+                        """Welcome!  You are now logged in.  Update your
+                        personal preferences below, or click on one of
+                        the links above to explore the site.""")
                     return redirect('profile')
                     # And redirects them accordingly
 

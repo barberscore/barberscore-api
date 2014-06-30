@@ -49,8 +49,19 @@ class CodeForm(forms.Form):
     )
 
 
-# class InboundForm(forms.Form):
-#     MessageSid = forms.CharField()
+class NameForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('full_name',)
+        widgets = {
+            'full_name': forms.TextInput(
+                attrs={
+                    'class': 'form-control input-lg',
+                    'placeholder': 'Full Name (private)',
+                }
+            ),
+        }
+
 
 class InboundForm(forms.ModelForm):
     class Meta:

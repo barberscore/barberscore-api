@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 INSTALLED_APPS += (
     'django_nose',
-    'debug_toolbar.apps.DebugToolbarConfig',
+    # 'debug_toolbar.apps.DebugToolbarConfig',
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -15,7 +15,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=apps.convention',
+    '--cover-package=convention',
     '--cover-erase',
     '--nologcapture',
 ]
@@ -35,7 +35,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'apps.noncense': {
+        'noncense': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

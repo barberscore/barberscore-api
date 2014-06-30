@@ -11,7 +11,7 @@ class ConventionConfig(AppConfig):
     Sets the configuration for the convention app.
     """
 
-    name = 'apps.convention'
+    name = 'convention'
 
     def ready(self):
         contestant_pre_save,

@@ -2,12 +2,12 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 import logging
-log = logging.getLogger('apps.convention')
+log = logging.getLogger(__name__)
 
 from django.utils.text import slugify
 from django.conf import settings
 
-from apps.convention.models import (
+from convention.models import (
     Contestant,
     Contest,
     Profile,

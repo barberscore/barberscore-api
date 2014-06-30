@@ -39,7 +39,7 @@ class ProfileForm(forms.ModelForm):
             'nickname': forms.TextInput(
                 attrs={
                     'class': 'form-control input-lg',
-                    'placeholder': 'name/nickname',
+                    'placeholder': 'Nickname (public)',
                 }
             ),
             'timezone': forms.Select(

@@ -3,20 +3,20 @@ import csv
 
 from optparse import make_option
 
-from django.utils.text import slugify
-
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
 
-from apps.convention.models import (
+from convention.models import (
     Contestant,
+    Performance,
+    Contest,
 )
 
 
 class Command(BaseCommand):
-    help = "Command to import contestants"
+    help = "Command to import appearance order"
     option_list = BaseCommand.option_list + (
         make_option(
             "-f",
@@ -45,17 +45,21 @@ class Command(BaseCommand):
             for row in reader:
 
                 try:
-                    contestant, created = Contestant.objects.get_or_create(
-                        name=unicode(row[1].strip()),
-                        defaults={
-                            'slug': slugify(unicode(row[1].strip())),
-                            'contestant_type': Contestant.QUARTET,
-                            'district': unicode(row[2].strip()),
-                            'prelim': unicode(row[3]),
-                        }
+                    contest = Contest.objects.get(
+                        contest_type=Contest.COLLEGIATE
                     )
-
+                    contestant = Contestant.objects.get(
+                        name=unicode(row[1].strip())
+                    )
+                    performance, created = Performance.objects.get_or_create(
+                        contestant=contestant,
+                        contest=contest,
+                        contest_round=1,
+                        appearance=int(row[0]),
+                    )
+                    performance.save()
+                    print "Contestant {0} saved.".format(contestant.name)
                 except Exception, e:
-                    print "Contestant `%s` could not be created." % row[0]
+                    print "Contestant `%s` could not be created." % row[1]
                     print "Exception: {0} ".format(e)
-                    break
+                    continue

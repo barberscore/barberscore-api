@@ -16,8 +16,9 @@
         <p>Add your name/nickname here.  If you choose a timezone, the performance stagetimes will be presented in that timezone.  Otherwise, they will appear in the localtime of the contest (US/Pacific).</p>
         <form action = "{% url 'profile' %}" method="post">
           {% csrf_token %}
-          {{form.nickname}}
-          {{form.timezone}}
+          {{u_form.full_name}}
+          {{p_form.nickname}}
+          {{p_form.timezone}}
           <button class='btn-lg btn-success'>Save</button>
         </form>
       </div>

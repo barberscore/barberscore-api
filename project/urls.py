@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 
 from rest_framework import routers
 
-from apps.convention.viewsets import (
+from convention.viewsets import (
     ContestantViewSet,
     PerformanceViewSet,
     ContestViewSet,
@@ -40,8 +40,8 @@ urlpatterns = patterns(
 
 
     # Application
-    url(r'', include('apps.convention.urls')),
-    url(r'', include('apps.noncense.urls')),
+    url(r'', include('convention.urls')),
+    url(r'', include('noncense.urls')),
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

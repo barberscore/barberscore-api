@@ -1,5 +1,5 @@
 import logging
-log = logging.getLogger('apps.convention')
+log = logging.getLogger(__name__)
 
 from django.contrib.auth import get_user_model
 

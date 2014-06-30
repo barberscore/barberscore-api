@@ -6,7 +6,7 @@ class NoncenseConfig(AppConfig):
     Sets the configuration for the noncense app.
     """
 
-    name = 'apps.noncense'
+    name = 'noncense'
 
     def ready(self):
         pass

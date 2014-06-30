@@ -4,7 +4,7 @@ from twilio.rest import TwilioRestClient
 
 from random import randint
 import logging
-log = logging.getLogger('apps.noncense')
+log = logging.getLogger(__name__)
 
 
 def get_nonce():

@@ -20,6 +20,7 @@ DATABASE_URL = get_env_variable("DATABASE_URL")
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
+PROJECT_HOME = PROJECT_ROOT
 
 PROJECT_NAME = 'barberscore'
 
@@ -59,7 +60,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'apps.noncense.backends.MobileBackend',
+    'noncense.backends.MobileBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -103,8 +104,8 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'corsheaders',
     'haystack',
-    'apps.convention',
-    'apps.noncense',
+    'convention.apps.ConventionConfig',
+    'noncense.apps.NoncenseConfig',
     # 'apps.profile',
 )
 

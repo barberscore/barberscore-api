@@ -12,5 +12,5 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 INTERNAL_IPS = ('127.0.0.1',)
 
 NOSE_ARGS = [
-    '--cover-package=apps.convention',
+    '--cover-package=convention',
 ]
