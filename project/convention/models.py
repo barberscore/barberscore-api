@@ -28,6 +28,54 @@ class Contestant(models.Model):
         (CHORUS, "Chorus"),
     )
 
+    UNK = 0
+    CAR = 1
+    CSD = 2
+    DIX = 3
+    EVG = 4
+    FWD = 5
+    ILL = 6
+    JAD = 7
+    LOL = 8
+    MAD = 9
+    NED = 10
+    NSC = 11
+    ONT = 12
+    PIO = 13
+    RMD = 14
+    SLD = 15
+    SUN = 16
+    SWD = 17
+    BABS = 18
+    BHA = 19
+    NZABS = 20
+    SNOBS = 21
+
+    DISTRICT_CHOICES = (
+        (UNK, 'UNK'),
+        (CAR, 'CAR'),
+        (CSD, 'CSD'),
+        (DIX, 'DIX'),
+        (EVG, 'EVG'),
+        (FWD, 'FWD'),
+        (ILL, 'ILL'),
+        (JAD, 'JAD'),
+        (LOL, 'LOL'),
+        (MAD, 'MAD'),
+        (NED, 'NED'),
+        (NSC, 'NSC'),
+        (ONT, 'ONT'),
+        (PIO, 'PIO'),
+        (RMD, 'RMD'),
+        (SLD, 'SLD'),
+        (SUN, 'SUN'),
+        (SWD, 'SWD'),
+        (BABS, 'BABS'),
+        (BHA, 'BHA'),
+        (NZABS, 'NZABS'),
+        (SNOBS, 'SNOBS'),
+    )
+
     contestant_type = models.IntegerField(
         help_text="""
             The type of contestant, either chorus or quartet.""",
@@ -131,12 +179,12 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    district = models.CharField(
+    district = models.IntegerField(
         help_text="""
-            The abbreviation of the district the
+            The district the
             contestant is representing.""",
-        max_length=50,
-        blank=True,
+        default=UNK,
+        choices=DISTRICT_CHOICES,
     )
 
     prelim = models.FloatField(
