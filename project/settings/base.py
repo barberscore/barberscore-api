@@ -104,8 +104,8 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'corsheaders',
     'haystack',
-    'convention.apps.ConventionConfig',
-    'noncense.apps.NoncenseConfig',
+    'convention',
+    'noncense',
     # 'apps.profile',
 )
 
