@@ -358,6 +358,8 @@ class Performance(models.Model):
     appearance = models.IntegerField(
         help_text="""
             The appearance order, within a given round.""",
+        null=True,
+        blank=True,
     )
 
     stagetime = models.DateTimeField(
