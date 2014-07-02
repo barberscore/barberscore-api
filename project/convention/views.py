@@ -80,7 +80,7 @@ def performances(request):
     Returns performances ordered by the program schedule.
     """
     performances = get_list_or_404(
-        Performance.objects.select_related('contest', 'contestant').order_by(
+        Performance.objects.select_related('contest', 'contestant').filter(place=None).order_by(
             'contest',
             'contest_round',
             'session',
