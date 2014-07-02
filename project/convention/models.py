@@ -471,21 +471,30 @@ class Performance(models.Model):
     @property
     def song1_percent(self):
         if self.song1_raw:
-            return self.song1_raw / 1500
+            if self.contest.contest_type == Contest.COLLEGIATE:
+                return self.song1_raw / 900
+            else:
+                return self.song1_raw / 1500
         else:
             return None
 
     @property
     def song2_percent(self):
         if self.song2_raw:
-            return self.song2_raw / 1500
+            if self.contest.contest_type == Contest.COLLEGIATE:
+                return self.song2_raw / 900
+            else:
+                return self.song2_raw / 1500
         else:
             return None
 
     @property
     def total_percent(self):
         if self.song1_raw:
-            return self.total_raw / 3000
+            if self.contest.contest_type == Contest.COLLEGIATE:
+                return self.total_raw / 1800
+            else:
+                return self.total_raw / 3000
         else:
             return None
 
