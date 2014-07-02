@@ -183,3 +183,9 @@ class NoteAdmin(admin.ModelAdmin):
         '__unicode__',
         'note',
     )
+    search_fields = (
+        'note',
+    )
+    list_filter = (
+        'contestant',
+    )
