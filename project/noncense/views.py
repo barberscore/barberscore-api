@@ -129,3 +129,8 @@ def inbound(request):
             return HttpResponseServerError("Malformed data!")
     else:
         return HttpResponseBadRequest("Must use POST.")
+
+
+def support(request):
+    """support page."""
+    return render(request, 'support.html')

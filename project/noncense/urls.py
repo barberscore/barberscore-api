@@ -7,4 +7,6 @@ urlpatterns = patterns(
     url(r'^login/$', 'login', name='login'),
     url(r'^entercode/$', 'entercode', name='entercode'),
     url(r'^inbound/$', 'inbound', name='inbound'),
+    url(r'^support/$', 'support', name='support'),
+
 )

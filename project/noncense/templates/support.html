@@ -1,0 +1,30 @@
+{% extends 'base.html'%}
+
+{% block title %}
+  Support
+{% endblock title %}
+
+{% block navbar %}
+  {% include '_nav.html' %}
+{% endblock navbar %}
+
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Support</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+
+        <p class="lead">Sorry you're having trouble!</p>
+        <p>Our support is a bit limited, but send us a note at <a href='mailto:support@barberscore.com'>support@barberscore.com</a> and we'll do everything we can to help.  Also, please know that you don't need to login to use the site.  Just click on the links above to see contest results and the performance schedule.</p>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+{% endblock content %}
