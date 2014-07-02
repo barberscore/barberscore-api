@@ -39,7 +39,7 @@
                       {% for item in performance.list %}
                         <tr>
                           <td>{{item.appearance}}</td>
-                          <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}}</a></td>
+                          <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}} ({{item.contestant.get_district_display}})</a></td>
                           <td> {{item.stagetime|date:"g:i A e"}}</td>
                           <td>{{item.song1|truncatechars:30}}<br>{{item.song2|truncatechars:30}}</td>
                         </tr>
