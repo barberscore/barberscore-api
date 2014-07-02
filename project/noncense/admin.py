@@ -87,6 +87,9 @@ class UserAdmin(UserAdmin):
 @admin.register(TwilioMessage)
 class TwilioMessageAdmin(admin.ModelAdmin):
     save_on_top = True
-
+    list_display = (
+        'From',
+        'Body',
+    )
 
 admin.site.unregister(Group)
