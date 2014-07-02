@@ -1,3 +1,5 @@
+from __future__ import division
+
 from haystack.views import basic_search
 
 from django.shortcuts import (
