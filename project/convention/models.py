@@ -1,3 +1,5 @@
+from __future__ import division
+
 from django.core.exceptions import ValidationError
 
 from django.utils import timezone
