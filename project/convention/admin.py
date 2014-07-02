@@ -179,3 +179,7 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
     save_on_top = True
+    list_display = (
+        '__unicode__',
+        'note',
+    )
