@@ -31,6 +31,12 @@ class Command(BaseCommand):
             dest="contest",
             help="specify contest by id number",
         ),
+        make_option(
+            "-r",
+            "--rnd",
+            dest="rnd",
+            help="specify contest round",
+        ),
     )
 
     def handle(self, *args, **options):
@@ -42,6 +48,9 @@ class Command(BaseCommand):
         if options['contest'] is None:
             raise CommandError("Must specify contest with `--contest=1`.")
 
+        if options['rnd'] is None:
+            raise CommandError("Must specify contest round with `--rnd 1`.")
+
         # make sure file path resolves
         if not os.path.isfile(options['filename']):
             raise CommandError("File does not exist at the specified path.")
@@ -52,6 +61,7 @@ class Command(BaseCommand):
         except:
             raise CommandError("Contest does not exist.")
 
+        rnd = options['rnd']
         # print file
         print "Path: `%s`" % options['filename']
 
@@ -62,22 +72,23 @@ class Command(BaseCommand):
 
                 try:
                     contestant = Contestant.objects.get(name=row[0])
-                    performance = Performance(
+                    performance = Performance.objects.get(
                         contest=contest,
                         contestant=contestant,
-                        contest_round=Performance.FINALS,
-                        song1=row[3],
-                        mus1=row[4],
-                        prs1=row[5],
-                        sng1=row[6],
-                        song2=row[7],
-                        mus2=row[8],
-                        prs2=row[9],
-                        sng2=row[10],
+                        contest_round=rnd,
                     )
+                    performance.place = row[1]
+                    performance.song1 = row[3]
+                    performance.mus1 = row[4]
+                    performance.prs1 = row[5]
+                    performance.sng1 = row[6]
+                    performance.song2 = row[7]
+                    performance.mus2 = row[8]
+                    performance.prs2 = row[9]
+                    performance.sng2 = row[10]
                     performance.save()
 
                 except Exception, e:
-                    print "Performance {0} could not be created. {1}".format(
+                    print "Performance {0} could not be updated. {1}".format(
                         row[0], e
                     )
