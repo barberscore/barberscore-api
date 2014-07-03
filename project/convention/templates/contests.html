@@ -12,40 +12,46 @@
       <h1>Contest Results</h1>
     </div>
     {% if performances %}
-      {% regroup performances by contest as performance_list %}
-      {% for performance in performance_list %}
+      {% regroup performances by contest as contest_list %}
+      {% for contest in contest_list %}
         <div class='panel panel-default'>
           <div class="panel-heading">
-            <h2 class='panel-title'><a data-toggle='collapse' href='#{{performance.grouper|cut:" "}}'>{{performance.grouper}}</a></h2>
+            <h2 class='panel-title'><a data-toggle='collapse' href='#{{contest.grouper|cut:" "}}'>{{contest.grouper}}</a></h2>
           </div>
-          <div class="panel-collapse collapse out" id="{{performance.grouper|cut:" "}}">
+          <div class="panel-collapse collapse out" id="{{contest.grouper|cut:" "}}">
             <div class="panel-body">
-              <div class="table-responsive">
-                <table class='table'>
-                  <tr>
-                    <th>Place</th>
-                    <th>Contestant</th>
-                    <th>Songs</th>
-                    <th>MUS</th>
-                    <th>PRS</th>
-                    <th>SNG</th>
-                    <th>Total</th>
-                    <th>Avg</th>
-                  </tr>
-                  {% for item in performance.list %}
+              {% regroup contest.list by get_contest_round_display as performance_list %}
+              {% for performance in performance_list %}
+                <h3>{{performance.grouper}}</h3>
+
+
+                <div class="table-responsive">
+                  <table class='table'>
                     <tr>
-                      <td>{{item.place}}</td>
-                      <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}} ({{item.contestant.get_district_display}})</a></td>
-                      <td class='small'>{{item.song1|truncatechars:25}}<br>{{item.song2|truncatechars:25}}</td>
-                      <td class='small'> {{item.mus1|default_if_none:""}}<br>{{item.mus2|default_if_none:""}}</td>
-                      <td class='small'> {{item.prs1|default_if_none:""}}<br>{{item.prs2|default_if_none:""}}</td>
-                      <td class='small'> {{item.sng1|default_if_none:""}}<br>{{item.sng2|default_if_none:""}}</td>
-                      <td class='small'> {{item.song1_percent|score|default_if_none:""}}<br>{{item.song2_percent|score|default_if_none:""}}</td>
-                      <td> {{item.total_percent|score|default_if_none:""}}</td>
+                      <th>Place</th>
+                      <th>Contestant</th>
+                      <th>Songs</th>
+                      <th>MUS</th>
+                      <th>PRS</th>
+                      <th>SNG</th>
+                      <th>Song</th>
+                      <th>ALL</th>
                     </tr>
-                  {% endfor %}
-                </table>
-              </div>
+                    {% for item in performance.list %}
+                      <tr>
+                        <td>{{item.place}}</td>
+                        <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}} ({{item.contestant.get_district_display}})</a></td>
+                        <td class='small'>{{item.song1|truncatechars:25}}<br>{{item.song2|truncatechars:25}}</td>
+                        <td class='small'> {{item.mus1|default_if_none:""}}<br>{{item.mus2|default_if_none:""}}</td>
+                        <td class='small'> {{item.prs1|default_if_none:""}}<br>{{item.prs2|default_if_none:""}}</td>
+                        <td class='small'> {{item.sng1|default_if_none:""}}<br>{{item.sng2|default_if_none:""}}</td>
+                        <td class='small'> {{item.song1_percent|score|default_if_none:""}}<br>{{item.song2_percent|score|default_if_none:""}}</td>
+                        <td> {{item.contestant.grand|score|default_if_none:""}}</td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>

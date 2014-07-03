@@ -20,7 +20,7 @@
       {% endif %}
       <h2>{{contestant}}  ({{contestant.get_district_display}})</h2>
       {% if contestant.place %}
-        <p>Scored {{contestant.running_total|score}}, {{contestant.place|ordinal}} Place</p>
+        <p>Scored {{contestant.grand|score}}, {{contestant.place|ordinal}} Place</p>
       {% else %}
         <p class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}}</p>
         <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>

@@ -225,6 +225,20 @@ class Contestant(models.Model):
     )
 
     @property
+    def grand(self):
+        performances = self.performances.exclude(place=None)
+        if performances:
+            gt = 0
+            ct = 0
+            for performance in performances:
+                gt += performance.total_percent
+                ct += 1
+                grand = gt / ct
+            return grand
+        else:
+            return None
+
+    @property
     def place(self):
         try:
             place = self.performances.order_by('stagetime').last().place
