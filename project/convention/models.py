@@ -220,7 +220,7 @@ class Contestant(models.Model):
     @property
     def next_performance(self):
         try:
-            next_performance = self.performances.order_by('stagetime').first()
+            next_performance = self.performances.order_by('-stagetime').first()
         except:
             next_performance = None
         return next_performance
