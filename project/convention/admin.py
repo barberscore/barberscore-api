@@ -17,6 +17,7 @@ class PerformanceInline(admin.TabularInline):
         'contest_round',
         'session',
         'appearance',
+        'stagetime',
     )
 
     extra = 10
