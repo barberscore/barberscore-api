@@ -217,6 +217,21 @@ class Contestant(models.Model):
         max_length=1000,
     )
 
+    # Denormalized. TODO
+    running_total = models.FloatField(
+        help_text="""Average score across contests""",
+        blank=True,
+        null=True,
+    )
+
+    @property
+    def place(self):
+        try:
+            place = self.performances.order_by('stagetime').last().place
+        except:
+            place = None
+        return place
+
     @property
     def next_performance(self):
         try:
