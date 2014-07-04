@@ -102,8 +102,8 @@ def contests(request):
     """
     performances = Performance.objects.exclude(place=None).order_by(
         'contest__contest_type',
-        'place',
         '-contest_round',
+        'place',
     )
 
     return render(
