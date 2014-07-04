@@ -322,6 +322,13 @@ class Contest(models.Model):
         unique=True,
     )
 
+    panel = models.IntegerField(
+        help_text="""
+            Size of the judging panel (typically
+            three or five.)""",
+        default=5,
+    )
+
     def __unicode__(self):
         return '{0} {1} {2}'.format(
             self.year,
