@@ -83,9 +83,8 @@ def performances(request):
         Performance.objects.select_related(
             'contest', 'contestant'
         ).filter(
-            place=None
-        ).exclude(
-            contest_round=Performance.QUARTERS,
+            place=None,
+            contest_round=Performance.FINALS,
         ).order_by(
             'contest',
             'contest_round',
