@@ -99,7 +99,11 @@ def contests(request):
     """
     Returns performances ordered by contest score.
     """
-    performances = Performance.objects.exclude(place=None).order_by(
+    performances = Performance.objects.select_related(
+        'contest', 'contestant',
+    ).exclude(
+        place=None,
+    ).order_by(
         'contest__contest_type',
         '-contest_round',
         'place',
