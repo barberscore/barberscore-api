@@ -486,6 +486,47 @@ class Performance(models.Model):
     )
 
     @property
+    def mus1_rata(self):
+        if self.mus1:
+            return self.mus1 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def prs1_rata(self):
+        if self.mus1:
+            return self.prs1 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def sng1_rata(self):
+        if self.mus1:
+            return self.sng1 / self.contest.panel
+        else:
+            return None
+
+    def mus2_rata(self):
+        if self.mus1:
+            return self.mus2 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def prs2_rata(self):
+        if self.mus1:
+            return self.prs2 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def sng2_rata(self):
+        if self.mus1:
+            return self.sng2 / self.contest.panel
+        else:
+            return None
+
+    @property
     def song1_raw(self):
         if self.mus1 and self.prs1 and self.sng1:
             return sum([self.mus1, self.prs1, self.sng1])
@@ -507,32 +548,23 @@ class Performance(models.Model):
             return None
 
     @property
-    def song1_percent(self):
+    def song1_rata(self):
         if self.song1_raw:
-            if self.contest.contest_type == Contest.COLLEGIATE:
-                return self.song1_raw / 900
-            else:
-                return self.song1_raw / 1500
+            return self.song1_raw / (self.contest.panel * 3)
         else:
             return None
 
     @property
-    def song2_percent(self):
+    def song2_rata(self):
         if self.song2_raw:
-            if self.contest.contest_type == Contest.COLLEGIATE:
-                return self.song2_raw / 900
-            else:
-                return self.song2_raw / 1500
+            return self.song2_raw / (self.contest.panel * 3)
         else:
             return None
 
     @property
     def total_percent(self):
         if self.song1_raw:
-            if self.contest.contest_type == Contest.COLLEGIATE:
-                return self.total_raw / 1800
-            else:
-                return self.total_raw / 3000
+            return self.total_raw / (self.contest.panel * 6)
         else:
             return None
 
