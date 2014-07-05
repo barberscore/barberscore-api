@@ -26,6 +26,19 @@
         <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>
       {% endif %}
 
+      {% for performance in performances %}
+        {% if performance.song1 %}
+          <table class='table'>
+            <tr>
+              <th>{{performance.get_contest_round_display}}</th>
+            </tr>
+            <tr>
+              <td>{{performance.song1}}<br>{{performance.song2}}</td>
+            </tr>
+          </table>
+        {% endif %}
+      {% endfor %}
+
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class='panel-title'>
@@ -56,18 +69,7 @@
           </div>
         </div>
       </div>
-      {% for performance in performances %}
-        {% if performance.song1 %}
-          <table class='table'>
-            <tr>
-              <th>{{performance.get_contest_round_display}}</th>
-            </tr>
-            <tr>
-              <td>{{performance.song1}}<br>{{performance.song2}}</td>
-            </tr>
-          </table>
-        {% endif %}
-      {% endfor %}
+
 
       {% if user.is_authenticated %}
         <div class="panel panel-default">
@@ -100,7 +102,7 @@
         </div>
       {% endif %}
       {% if contestant.next_contestant %}
-        <div class="pull-right">
+        <div id='prevnext' class="pull-right">
           <a class="btn btn-primary" href="{% url 'contestant' contestant.next_contestant.slug %}" role="button">Next</a>
         </div>
       {% endif %}
