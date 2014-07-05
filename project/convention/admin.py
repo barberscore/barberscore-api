@@ -116,10 +116,11 @@ class ContestantAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'website',
-        'facebook',
+        # 'website',
+        # 'facebook',
         'phone',
         'prelim',
+        'place',
         'normplace',
     )
 

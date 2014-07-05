@@ -236,15 +236,10 @@ class Contestant(models.Model):
             try:
                 next = Contestant.objects.filter(
                     performances__contest=performance.contest,
-                    normplace=self.normplace + 1,
-                )
-            except self.DoesNotExist:
+                    normplace__gt=self.normplace,
+                ).order_by('normplace')[0]
+            except:
                 next = None
-            if len(next) == 1:
-                next = next[0]
-            # else:
-            #     next = next.filter(performances__appearance)
-
         else:
             try:
                 p = Performance.objects.get(
@@ -253,7 +248,7 @@ class Contestant(models.Model):
                     appearance=performance.appearance + 1,
                 )
                 next = p.contestant
-            except self.DoesNotExist:
+            except:
                 next = None
         return next
 
@@ -262,11 +257,11 @@ class Contestant(models.Model):
         performance = self.performances.latest('contest_round')
         if self.place:
             try:
-                prev = Contestant.objects.get(
+                prev = Contestant.objects.filter(
                     performances__contest=performance.contest,
-                    normplace=self.normplace - 1,
-                )
-            except self.DoesNotExist:
+                    normplace__lt=self.normplace,
+                ).order_by('-normplace')[0]
+            except:
                 prev = None
         else:
             try:
@@ -276,7 +271,7 @@ class Contestant(models.Model):
                     appearance=performance.appearance - 1,
                 )
                 prev = p.contestant
-            except self.DoesNotExist:
+            except:
                 prev = None
         return prev
 

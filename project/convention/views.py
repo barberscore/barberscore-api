@@ -38,14 +38,14 @@ def contestant(request, slug):
     """
     contestant = get_object_or_404(Contestant, slug=slug)
     performances = contestant.performances.all()
-    try:
-        prev = contestant.next_performance.get_previous_by_stagetime().contestant
-    except Performance.DoesNotExist:
-        prev = None
-    try:
-        next = contestant.next_performance.get_next_by_stagetime().contestant
-    except Performance.DoesNotExist:
-        next = None
+    # try:
+    #     prev = contestant.next_performance.get_previous_by_stagetime().contestant
+    # except Performance.DoesNotExist:
+    #     prev = None
+    # try:
+    #     next = contestant.next_performance.get_next_by_stagetime().contestant
+    # except Performance.DoesNotExist:
+    #     next = None
     if request.user.is_authenticated():
         note, created = Note.objects.get_or_create(
             contestant=contestant,
@@ -68,8 +68,8 @@ def contestant(request, slug):
         request, 'contestant.html', {
             'contestant': contestant,
             'performances': performances,
-            'prev': prev,
-            'next': next,
+            # 'prev': prev,
+            # 'next': next,
             'form': form,
         },
     )

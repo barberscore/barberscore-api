@@ -94,12 +94,12 @@
         <p><a href='{% url "login" %}'>Login</a> to save notes about this performer.</p>
       {% endif %}
 
-      {% if prev %}
+      {% if contestant.prev_contestant %}
         <div class="pull-left">
           <a class="btn btn-primary" href="{% url 'contestant' contestant.prev_contestant.slug %}" role="button">Previous</a>
         </div>
       {% endif %}
-      {% if next %}
+      {% if contestant.next_contestant %}
         <div class="pull-right">
           <a class="btn btn-primary" href="{% url 'contestant' contestant.next_contestant.slug %}" role="button">Next</a>
         </div>
