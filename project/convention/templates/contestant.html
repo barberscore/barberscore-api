@@ -96,12 +96,12 @@
 
       {% if prev %}
         <div class="pull-left">
-          <a class="btn btn-primary" href="{% url 'contestant' prev.slug %}" role="button">Previous</a>
+          <a class="btn btn-primary" href="{% url 'contestant' contestant.prev_contestant.slug %}" role="button">Previous</a>
         </div>
       {% endif %}
       {% if next %}
         <div class="pull-right">
-          <a class="btn btn-primary" href="{% url 'contestant' next.slug %}" role="button">Next</a>
+          <a class="btn btn-primary" href="{% url 'contestant' contestant.next_contestant.slug %}" role="button">Next</a>
         </div>
       {% endif %}
       <br><br>

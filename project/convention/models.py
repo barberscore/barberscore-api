@@ -223,6 +223,63 @@ class Contestant(models.Model):
         null=True,
     )
 
+    normplace = models.IntegerField(
+        help_text="""Denormalized placement, for use in ordering. HACK""",
+        blank=True,
+        null=True,
+    )
+
+    @property
+    def next_contestant(self):
+        performance = self.performances.latest('contest_round')
+        if self.place:
+            try:
+                next = Contestant.objects.filter(
+                    performances__contest=performance.contest,
+                    normplace=self.normplace + 1,
+                )
+            except self.DoesNotExist:
+                next = None
+            if len(next) == 1:
+                next = next[0]
+            # else:
+            #     next = next.filter(performances__appearance)
+
+        else:
+            try:
+                p = Performance.objects.get(
+                    contest=performance.contest,
+                    contest_round=performance.contest_round,
+                    appearance=performance.appearance + 1,
+                )
+                next = p.contestant
+            except self.DoesNotExist:
+                next = None
+        return next
+
+    @property
+    def prev_contestant(self):
+        performance = self.performances.latest('contest_round')
+        if self.place:
+            try:
+                prev = Contestant.objects.get(
+                    performances__contest=performance.contest,
+                    normplace=self.normplace - 1,
+                )
+            except self.DoesNotExist:
+                prev = None
+        else:
+            try:
+                p = Performance.objects.get(
+                    contest=performance.contest,
+                    contest_round=performance.contest_round,
+                    appearance=performance.appearance - 1,
+                )
+                prev = p.contestant
+            except self.DoesNotExist:
+                prev = None
+        return prev
+
     @property
     def grand(self):
         performances = self.performances.exclude(place=None)
