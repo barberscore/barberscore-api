@@ -20,24 +20,35 @@
       {% endif %}
       <h2>{{contestant}}  ({{contestant.get_district_display}})</h2>
       {% if contestant.place %}
-        <p>Scored {{contestant.grand|floatformat:1}}, {{contestant.place|ordinal}} Place</p>
+        <p><span class='lead'>Scored {{contestant.grand|floatformat:1}}, {{contestant.place|ordinal}} Place</span>  <span class='text-muted'>(Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}})</span></p>
+
       {% else %}
         <p class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}}</p>
         <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>
       {% endif %}
 
-      {% for performance in performances %}
-        {% if performance.song1 %}
-          <table class='table'>
+      {% if performances %}
+        <table class='table'>
+          <tr>
+            <th>Round</th>
+            <th>Songs</th>
+            <th>MUS</th>
+            <th>PRS</th>
+            <th>SNG</th>
+            <th>Total</th>
+          </tr>
+          {% for performance in performances %}
             <tr>
-              <th>{{performance.get_contest_round_display}}</th>
-            </tr>
-            <tr>
+              <td>{{performance.get_contest_round_display}}</td>
               <td>{{performance.song1}}<br>{{performance.song2}}</td>
+              <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
+              <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
+              <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
+              <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
             </tr>
-          </table>
-        {% endif %}
-      {% endfor %}
+          {% endfor %}
+        </table>
+      {% endif %}
 
       <div class="panel panel-default">
         <div class="panel-heading">
