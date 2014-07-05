@@ -224,6 +224,12 @@ class Contestant(models.Model):
         null=True,
     )
 
+    placement = models.IntegerField(
+        help_text="""Final placement""",
+        blank=True,
+        null=True,
+    )
+
     @property
     def grand(self):
         performances = self.performances.exclude(place=None)
