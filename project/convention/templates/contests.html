@@ -42,9 +42,9 @@
                         <td>{{item.place}}</td>
                         <td> <a href='{% url "contestant" item.contestant.slug %}'>{{item.contestant.name}} ({{item.contestant.get_district_display}})</a></td>
                         <td class='small'>{{item.song1|truncatechars:25}}<br>{{item.song2|truncatechars:25}}</td>
-                        <td class='small'> {{item.mus1_rata}}<br>{{item.mus2_rata}}</td>
-                        <td class='small'> {{item.prs1_rata}}<br>{{item.prs2_rata}}</td>
-                        <td class='small'> {{item.sng1_rata}}<br>{{item.sng2_rata}}</td>
+                        <td class='small'> {{item.mus1_rata|floatformat:1}}<br>{{item.mus2_rata|floatformat:1}}</td>
+                        <td class='small'> {{item.prs1_rata|floatformat:1}}<br>{{item.prs2_rata|floatformat:1}}</td>
+                        <td class='small'> {{item.sng1_rata|floatformat:1}}<br>{{item.sng2_rata|floatformat:1}}</td>
                         <td class='small'> {{item.song1_rata|floatformat:1}}<br>{{item.song2_rata|floatformat:1}}</td>
                         <td> {{item.contestant.grand|floatformat:1}}</td>
                       </tr>
