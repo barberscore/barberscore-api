@@ -217,14 +217,7 @@ class Contestant(models.Model):
         max_length=1000,
     )
 
-    # Denormalized. TODO
-    running_total = models.FloatField(
-        help_text="""Average score across contests""",
-        blank=True,
-        null=True,
-    )
-
-    placement = models.IntegerField(
+    place = models.IntegerField(
         help_text="""Final placement""",
         blank=True,
         null=True,
@@ -243,14 +236,6 @@ class Contestant(models.Model):
             return grand
         else:
             return None
-
-    @property
-    def place(self):
-        try:
-            place = self.performances.order_by('stagetime').last().place
-        except:
-            place = None
-        return place
 
     @property
     def next_performance(self):
@@ -485,8 +470,8 @@ class Performance(models.Model):
 
     place = models.IntegerField(
         help_text="""
-            The ordinal placement of the contestant in this
-            particular contest.""",
+            The ordinal placement of this performance in this
+            particular contest round.""",
         blank=True,
         null=True,
     )

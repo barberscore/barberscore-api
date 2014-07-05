@@ -88,7 +88,7 @@ class ContestantAdmin(admin.ModelAdmin):
             'fields': (
                 'name',
                 'contestant_type',
-                'placement',
+                'place',
             ),
         }),
         ('Details', {
@@ -119,7 +119,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'facebook',
         'phone',
         'prelim',
-        'placement',
+        'place',
     )
 
     list_filter = (
