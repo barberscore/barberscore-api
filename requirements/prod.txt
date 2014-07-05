@@ -5,3 +5,4 @@ django-storages==1.1.8
 gunicorn==19.0.0
 raven==5.0.0
 djrill==1.1.1
+newrelic
