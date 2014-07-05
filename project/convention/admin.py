@@ -88,6 +88,7 @@ class ContestantAdmin(admin.ModelAdmin):
             'fields': (
                 'name',
                 'contestant_type',
+                'placement',
             ),
         }),
         ('Details', {
