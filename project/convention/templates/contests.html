@@ -52,6 +52,9 @@
                   </table>
                 </div>
               {% endfor %}
+              {% if contest.grouper.scoresheet %}
+                <a href='{{contest.grouper.scoresheet.url}}'>Download Official Scoresheet</a>
+              {% endif %}
             </div>
           </div>
         </div>

@@ -61,6 +61,7 @@ class ContestAdmin(admin.ModelAdmin):
                 'year',
                 'contest_level',
                 'contest_type',
+                'scoresheet',
             ),
         }),
     )

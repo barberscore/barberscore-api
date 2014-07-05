@@ -372,6 +372,11 @@ class Contest(models.Model):
         default=5,
     )
 
+    scoresheet = models.FileField(
+        blank=True,
+        null=True,
+    )
+
     def __unicode__(self):
         return '{0} {1} {2}'.format(
             self.year,
