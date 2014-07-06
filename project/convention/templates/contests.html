@@ -18,7 +18,7 @@
           <div class="panel-heading">
             <h2 class='panel-title'><a data-toggle='collapse' href='#{{contest.grouper|cut:" "}}'>{{contest.grouper}}</a></h2>
           </div>
-          <div class="panel-collapse collapse {% ifequal contest.grouper.id 4 %} in {% else %} out {% endifequal%}" id="{{contest.grouper|cut:" "}}">
+          <div class="panel-collapse collapse {% ifequal contest.grouper.id 3 %} in {% else %} out {% endifequal%}" id="{{contest.grouper|cut:" "}}">
             <div class="panel-body">
               {% regroup contest.list by get_contest_round_display as performance_list %}
               {% for performance in performance_list %}
