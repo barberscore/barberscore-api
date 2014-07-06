@@ -66,7 +66,7 @@
     {% endif %}
     {% regroup perfs by perfs.contestant as perf_list %}
     {% for perf in perf_list %}
-      <h3>{{perf.grouper}}</h3>
+      <h3>{{perf.grouper.name}}</h3>
       {% for item in perf.list %}
         {{item.song1}}<br>
       {% endfor %}
