@@ -11,6 +11,16 @@
     <div class="page-header">
       <h1>Contest Results</h1>
     </div>
+
+    {% regroup performances by contestant as clist %}
+    {% for c in clist %}
+      <h3>{{c.grouper}}</h3>
+      {% for item in c.list %}
+        {{item.song1}}
+      {% endfor %}
+    {% endfor %}
+
+
     {% if performances %}
       {% regroup performances by contest as contest_list %}
       {% for contest in contest_list %}

@@ -19,6 +19,7 @@ from .models import (
     Contestant,
     Performance,
     Note,
+    Contest,
 )
 
 from .forms import (
@@ -101,10 +102,19 @@ def contests(request):
         'place',
     )
 
+    contestants = Contestant.objects.filter(
+        performances__contest__contest_type=Contest.QUARTET,
+    ).select_related(
+        'performances',
+    ).order_by(
+        'place',
+        '-performances__contest_round',
+    )
+
     return render(
         request,
         'contests.html',
-        {'performances': performances}
+        {'performances': performances, 'contestants': contestants}
     )
 
 
