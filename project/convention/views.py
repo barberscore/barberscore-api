@@ -103,7 +103,7 @@ def contests(request):
     )
 
     contestants = Contestant.objects.filter(
-        performances__contest__contest_type=Contest.QUARTET,
+        performances__contest=3,
     ).select_related(
         'performances',
     ).order_by(
