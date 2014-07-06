@@ -64,11 +64,11 @@
     {% else %}
       <p class='lead'>There are no results yet.  We'll post them here as soon as they are available.</p>
     {% endif %}
-        {% regroup performances by contestant as clist %}
-    {% for c in clist %}
-      <h3>{{c.grouper}}</h3>
-      {% for item in c.list %}
-        {{item.song1}}
+    {% regroup perfs by perfs.contestant as perf_list %}
+    {% for perf in perf_list %}
+      <h3>{{perf.grouper}}</h3>
+      {% for item in perf.list %}
+        {{item.song1}}<br>
       {% endfor %}
     {% endfor %}
 

@@ -102,19 +102,19 @@ def contests(request):
         'place',
     )
 
-    contestants = Contestant.objects.filter(
-        performances__contest=3,
-    ).select_related(
-        'performances',
+    perfs = Performance.objects.select_related(
+        'contestant',
+    ).filter(
+        contest=3,
     ).order_by(
-        'place',
-        '-performances__contest_round',
+        'contestant__place',
+        '-contest_round',
     )
 
     return render(
         request,
         'contests.html',
-        {'performances': performances, 'contestants': contestants}
+        {'performances': performances, 'perfs': perfs}
     )
 
 
