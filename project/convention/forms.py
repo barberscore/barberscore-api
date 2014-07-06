@@ -62,7 +62,7 @@ class NoteForm(forms.ModelForm):
             'note': forms.Textarea(
                 attrs={
                     'class': 'form-control input-lg',
-                    'placeholder': "Enter your notes here.",
+                    'placeholder': "Enter your notes here.  These will be private and only visible by you.",
                 }
             ),
             'profile': forms.HiddenInput(),

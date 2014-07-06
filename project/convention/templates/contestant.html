@@ -23,31 +23,32 @@
         <p><span class='lead'>Scored {{contestant.grand|floatformat:1}}, {{contestant.place|ordinal}} Place</span>  <span class='text-muted'>(Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}})</span></p>
 
       {% else %}
-        <p class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}}</p>
-        <p>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</p>
+        <p><span class='lead'>Prelim Score: {{contestant.prelim}} Ranked {{contestant.rank|ordinal}}</span>  <span class='text-muted'>Next Performance: {{contestant.next_performance.stagetime|date:'D, F jS, g:i e'}}</span></p>
       {% endif %}
 
       {% if performances %}
-        <table class='table'>
-          <tr>
-            <th>Round</th>
-            <th>Songs</th>
-            <th>MUS</th>
-            <th>PRS</th>
-            <th>SNG</th>
-            <th>Total</th>
-          </tr>
-          {% for performance in performances %}
+        <div class="table-responsive">
+          <table class='table'>
             <tr>
-              <td>{{performance.get_contest_round_display}}</td>
-              <td>{{performance.song1}}<br>{{performance.song2}}</td>
-              <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
-              <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
-              <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
-              <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+              <th>Round</th>
+              <th>Songs</th>
+              <th>MUS</th>
+              <th>PRS</th>
+              <th>SNG</th>
+              <th>Total</th>
             </tr>
-          {% endfor %}
-        </table>
+            {% for performance in performances %}
+              <tr>
+                <td>{{performance.get_contest_round_display}}</td>
+                <td>{{performance.song1}}<br>{{performance.song2}}</td>
+                <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
+                <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
+                <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
+                <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
       {% endif %}
 
       <div class="panel panel-default">
@@ -98,7 +99,7 @@
                 {{form.contestant}}
                 {{form.profile}}
                 {{form.note}}
-                <input role='button' class='btn btn-success' type='submit' name='submit' value='submit'>
+                <input id='savenotes' role='button' class='btn btn-success btn-block' type='submit' name='submit' value='Save Notes'>
               </form>
             </div>
           </div>
