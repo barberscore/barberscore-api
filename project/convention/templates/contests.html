@@ -35,7 +35,7 @@
                       <th>PRS</th>
                       <th>SNG</th>
                       <th>Song</th>
-                      <th>ALL</th>
+                      {# <th>ALL</th> #}
                     </tr>
                     {% for item in performance.list %}
                       <tr>
@@ -46,7 +46,7 @@
                         <td class='small'> {{item.prs1_rata|floatformat:1}}<br>{{item.prs2_rata|floatformat:1}}</td>
                         <td class='small'> {{item.sng1_rata|floatformat:1}}<br>{{item.sng2_rata|floatformat:1}}</td>
                         <td class='small'> {{item.song1_rata|floatformat:1}}<br>{{item.song2_rata|floatformat:1}}</td>
-                        <td> {{item.contestant.grand|floatformat:1}}</td>
+                        {# <td> {{item.contestant.grand|floatformat:1}}</td> #}
                       </tr>
                     {% endfor %}
                   </table>
