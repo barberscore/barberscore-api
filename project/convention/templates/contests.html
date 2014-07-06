@@ -64,6 +64,7 @@
     {% else %}
       <p class='lead'>There are no results yet.  We'll post them here as soon as they are available.</p>
     {% endif %}
+    {% comment %}
     {% regroup perfs by perfs.contestant as perf_list %}
     {% for perf in perf_list %}
       <h3>{{perf.grouper.name}}</h3>
@@ -71,7 +72,7 @@
         {{item.song1}}<br>
       {% endfor %}
     {% endfor %}
-
+    {% endcomment %}
 
   </div>
 {% endblock content %}
