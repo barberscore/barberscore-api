@@ -12,14 +12,6 @@
       <h1>Contest Results</h1>
     </div>
 
-    {% regroup performances by contestant as clist %}
-    {% for c in clist %}
-      <h3>{{c.grouper}}</h3>
-      {% for item in c.list %}
-        {{item.song1}}
-      {% endfor %}
-    {% endfor %}
-
 
     {% if performances %}
       {% regroup performances by contest as contest_list %}
@@ -72,5 +64,14 @@
     {% else %}
       <p class='lead'>There are no results yet.  We'll post them here as soon as they are available.</p>
     {% endif %}
+        {% regroup performances by contestant as clist %}
+    {% for c in clist %}
+      <h3>{{c.grouper}}</h3>
+      {% for item in c.list %}
+        {{item.song1}}
+      {% endfor %}
+    {% endfor %}
+
+
   </div>
 {% endblock content %}
