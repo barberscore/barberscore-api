@@ -82,32 +82,6 @@
         </div>
       </div>
 
-
-      {% if user.is_authenticated %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class='panel-title'>
-              <a data-toggle="collapse" data-parent="#accordion" href="#contestantNotes">
-                Notes (Private)
-              </a>
-            </h4>
-          </div>
-          <div id="contestantNotes" class="panel-collapse collapse out">
-            <div class="panel-body">
-              <form action='' method='post'>
-                {% csrf_token %}
-                {{form.contestant}}
-                {{form.profile}}
-                {{form.note}}
-                <input id='savenotes' role='button' class='btn btn-success btn-block' type='submit' name='submit' value='Save Notes'>
-              </form>
-            </div>
-          </div>
-        </div>
-      {% else %}
-        <p><a href='{% url "login" %}'>Login</a> to save notes about this performer.</p>
-      {% endif %}
-
       {% if contestant.prev_contestant %}
         <div class="pull-left">
           <a class="btn btn-primary" href="{% url 'contestant' contestant.prev_contestant.slug %}" role="button">Previous</a>

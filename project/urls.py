@@ -41,6 +41,7 @@ urlpatterns = patterns(
 
     # Application
     url(r'', include('convention.urls')),
+    url(r'', include('profile.urls')),
     url(r'', include('noncense.urls')),
 
 

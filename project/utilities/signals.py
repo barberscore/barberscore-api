@@ -10,12 +10,11 @@ from django.conf import settings
 from convention.models import (
     Contestant,
     Contest,
-    Profile,
 )
 
-# from apps.profile.models import (
-#     Profile,
-# )
+from profile.models import (
+    Profile,
+)
 
 
 @receiver(pre_save, sender=Contestant)
