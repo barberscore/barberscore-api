@@ -103,7 +103,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'haystack',
+    # 'haystack',
     'convention',
     'noncense',
     'profile',
