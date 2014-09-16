@@ -141,7 +141,7 @@ MIDDLEWARE_CLASSES = (
 CORS_ORIGIN_ALLOW_ALL = True
 
 
-HAYSTACK_URL = get_env_variable("BONSAI_URL")
+# HAYSTACK_URL = get_env_variable("BONSAI_URL")
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -151,6 +151,6 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
-TWILIO_FROM_NUMBER = get_env_variable("TWILIO_FROM_NUMBER")
+# TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
+# TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
+# TWILIO_FROM_NUMBER = get_env_variable("TWILIO_FROM_NUMBER")

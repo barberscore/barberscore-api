@@ -65,7 +65,7 @@ ALLOWED_HOSTS = [
 ]
 
 EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
-MANDRILL_API_KEY = get_env_variable("MANDRILL_APIKEY")
+# MANDRILL_API_KEY = get_env_variable("MANDRILL_APIKEY")
 
 LOGGING = {
     'version': 1,
