@@ -143,13 +143,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # HAYSTACK_URL = get_env_variable("BONSAI_URL")
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': HAYSTACK_URL,
-        'INDEX_NAME': 'haystack',
-    },
-}
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+#         'URL': HAYSTACK_URL,
+#         'INDEX_NAME': 'haystack',
+#     },
+# }
 
 # TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
 # TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
