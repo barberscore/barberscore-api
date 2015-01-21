@@ -8,3 +8,8 @@ BUGSNAG = {
 MIDDLEWARE_CLASSES += (
     "bugsnag.django.middleware.BugsnagMiddleware",
 )
+
+ALLOWED_HOSTS = [
+    get_env_variable("HEROKU_HOST"),
+    '.barberscore.com',
+]
