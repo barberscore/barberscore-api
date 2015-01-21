@@ -1,10 +1,12 @@
+[![Circle CI](https://circleci.com/gh/dbinetti/barberscore.svg?style=svg)](https://circleci.com/gh/dbinetti/barberscore)
+
 # Barberscore
 
 
 Program and score tracker for the Barbershop Harmony Society International Convention.
 
 ## Preface
-The purpose of this project is to provide a simple, mobile-friendly app to track the performances at the International Convention of the BHS.  
+The purpose of this project is to provide a simple, mobile-friendly app to track the performances at the International Convention of the BHS.
 
 ## Contributors
 Big thank you to Alexander Boltenko with the Heralds of Harmony in Tampa, FL, who has hand-entered all the data and is keeping things up to date.  Great Job @russkibass!
@@ -22,7 +24,7 @@ We need three basic services:
 
 First install [virtualenvwrapper] (http://virtualenvwrapper.readthedocs.org/en/latest/) and run `mkvirtualenv barberscore` to create a new, clean development environment.  Virtualenv will install Python, setuptools, and pip automatically.
 
-Then, install [Homebrew] (http://brew.sh) and run `brew install postgres` and `brew install elasticsearch`.  
+Then, install [Homebrew] (http://brew.sh) and run `brew install postgres` and `brew install elasticsearch`.
 
 ~~~
 NOTE:  The above steps are actually quite involved.  There is lots of adjusting PATH variables and initializing databases and what not; I can't go through all the details but just know that even with virtualenv and homebrew the task is not necessarily simple.
@@ -65,7 +67,7 @@ With everything in place you should now simply need to start Django with the fol
 
 run `django-admin migrate` to load the database schema.
 
-once loaded, run `django-admin loaddata project/apps/convention/init.json` to load the most current fixture (based off the production data.) 
+once loaded, run `django-admin loaddata project/apps/convention/init.json` to load the most current fixture (based off the production data.)
 
 <<placeholder; need to find a way to load media gracefully>>
 
