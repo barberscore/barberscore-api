@@ -38,7 +38,7 @@ LOGIN_REDIRECT_URL = 'home'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = [os.path.join(
     PROJECT_ROOT,
-    'apps/api/static',
+    '/static',
 )]
 
 # Database
