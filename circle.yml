@@ -6,7 +6,5 @@ deployment:
       - git push git@heroku.com:barberscore.git $CIRCLE_SHA1:master
       - heroku run django-admin migrate --app barberscore
 machine:
-  services:
-    - elasticsearch
   python:
     version: 2.7.9
