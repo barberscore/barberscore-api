@@ -36,10 +36,7 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 DOMAIN = get_env_variable("DOMAIN")
-STATICFILES_DIRS = [os.path.join(
-    PROJECT_ROOT,
-    '/static',
-)]
+STATICFILES_DIRS = ()
 
 # Database
 DATABASE_URL = get_env_variable("DATABASE_URL")
