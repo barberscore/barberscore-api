@@ -128,7 +128,7 @@ TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
 
 # Applications
 INSTALLED_APPS = (
-    'utilities',
+    'utils',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
