@@ -13,7 +13,7 @@ def get_env_variable(var_name):
         error_msg = "Set the {var_name} env var".format(var_name=var_name)
         raise ImproperlyConfigured(error_msg)
 
-if get_env_variable("DJANGO_DEBUG") == 'true':
+if get_env_variable("DJANGO_DEBUG") == 'True':
     DEBUG = True
 else:
     DEBUG = False
