@@ -4,6 +4,7 @@ from .models import (
     Singer,
     Chorus,
     Quartet,
+    Collegiate,
     District,
     Chapter,
     Contest,
@@ -17,6 +18,11 @@ class QuartetMembershipInline(admin.TabularInline):
     extra = 4
 
 
+class CollegiateMembershipInline(admin.TabularInline):
+    model = Collegiate.members.through
+    extra = 4
+
+
 @admin.register(Singer)
 class SingerAdmin(admin.ModelAdmin):
     search_fields = ('name',)
@@ -27,6 +33,15 @@ class SingerAdmin(admin.ModelAdmin):
 class QuartetAdmin(admin.ModelAdmin):
     inlines = [
         QuartetMembershipInline,
+    ]
+    exclude = ('members',)
+    save_on_top = True
+
+
+@admin.register(Collegiate)
+class CollegiateAdmin(admin.ModelAdmin):
+    inlines = [
+        CollegiateMembershipInline,
     ]
     exclude = ('members',)
     save_on_top = True
