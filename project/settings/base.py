@@ -51,6 +51,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Middleware
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -126,6 +127,16 @@ MESSAGE_TAGS = {
 TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
 
+# Rest Framework
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ]
+}
+
+
 # Applications
 INSTALLED_APPS = (
     'utils',
@@ -138,7 +149,10 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'timezone_field',
+    'corsheaders',
     'noncense',
+    'rest_framework',
     'apps.api',
-    # 'website',
 )
+
+CORS_ORIGIN_ALLOW_ALL = True
