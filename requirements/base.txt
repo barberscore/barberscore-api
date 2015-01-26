@@ -15,3 +15,4 @@ boto==2.35.2
 django-storages==1.1.8
 waitress==0.8.9
 django-autoslug==1.7.2
+Unidecode==0.4.17

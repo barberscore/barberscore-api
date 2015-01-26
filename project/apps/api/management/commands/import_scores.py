@@ -11,8 +11,8 @@ from django.core.management.base import (
 
 from apps.api.models import (
     Contest,
-    Chorus,
-    ChorusPerformance,
+    Quartet,
+    QuartetPerformance,
 )
 
 
@@ -54,23 +54,24 @@ class Command(BaseCommand):
             next(reader)
             for row in reader:
                 try:
-                    chorus = Chorus.objects.get(
+                    quartet = Quartet.objects.get(
                         name=self.c(row[0]),
                     )
-                except Chorus.DoesNotExist:
-                    print "Could not find Chorus {0}".format(row[0])
+                except Quartet.DoesNotExist:
+                    print "Could not find Quartet {0}".format(row[0])
                     break
-                performance = ChorusPerformance(
-                    chorus=chorus,
+                performance = QuartetPerformance(
+                    quartet=quartet,
                     contest=contest,
-                    song1=self.c(row[3]),
-                    mus1=self.c(row[4]),
-                    prs1=self.c(row[5]),
-                    sng1=self.c(row[6]),
-                    song2=self.c(row[7]),
-                    mus2=self.c(row[8]),
-                    prs2=self.c(row[9]),
-                    sng2=self.c(row[10]),
+                    round=self.c(row[9]),
+                    song1=self.c(row[1]),
+                    mus1=self.c(row[2]),
+                    prs1=self.c(row[3]),
+                    sng1=self.c(row[4]),
+                    song2=self.c(row[5]),
+                    mus2=self.c(row[6]),
+                    prs2=self.c(row[7]),
+                    sng2=self.c(row[8]),
                 )
                 performance.save()
                 print "Performance created"

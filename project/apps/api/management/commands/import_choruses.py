@@ -1,5 +1,6 @@
 import os
 import csv
+from unidecode import unidecode
 
 from optparse import make_option
 
@@ -25,6 +26,9 @@ class Command(BaseCommand):
         ),
     )
 
+    def c(self, input):
+        return unidecode(input.strip())
+
     def handle(self, *args, **options):
         # make sure file option is present
         if options['filename'] is None:
@@ -40,14 +44,25 @@ class Command(BaseCommand):
         # open the file
         with open(options['filename']) as csv_file:
             reader = csv.reader(csv_file)
+            next(reader)
             for row in reader:
-
                 try:
-                    chorus, created = Chorus.objects.get_or_create(
-                        name=unicode(row[0].strip()),
+                    chorus = Chorus.objects.get(
+                        name=self.c(row[12]),
                     )
-
-                except Exception as e:
-                    print "District `%s` could not be created." % row[0]
-                    print "Exception: {0} ".format(e)
+                except Chorus.DoesNotExist:
+                    print "Chorus {0} could not be updated.".format(
+                        row[0],
+                    )
                     break
+                chorus.facebook = self.c(row[3])
+                chorus.phone = self.c(row[5])
+                chorus.location = self.c(row[9])
+                chorus.email = self.c(row[10])
+                chorus.name = self.c(row[12])
+                chorus.twitter = self.c(row[20])
+                chorus.website = self.c(row[21])
+                chorus.blurb = self.c(row[22])
+                chorus.save()
+                print chorus
+        return "Done"
