@@ -17,8 +17,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from nameparser import HumanName
 
 
-class Singer(models.Model):
-    """An individual singer."""
+class Common(models.Model):
     id = models.UUIDField(
         default=uuid.uuid4,
         primary_key=True,
@@ -26,13 +25,10 @@ class Singer(models.Model):
         editable=False,
     )
 
-    old_id = models.IntegerField(
-        null=True, blank=True)
     name = models.CharField(
-        verbose_name="Full Name",
         help_text="""
-            The Full Name of the Singer.""",
-        max_length=100,
+            The name of the resource.""",
+        max_length=200,
     )
 
     slug = AutoSlugField(
@@ -41,34 +37,85 @@ class Singer(models.Model):
         unique=True,
     )
 
-    phone = PhoneNumberField(
-        verbose_name='mobile number',
+    location = models.CharField(
         help_text="""
-            The phone of the Singer.""",
+            The geographical location of the resource.""",
+        max_length=200,
         blank=True,
-        null=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+    )
+
+    twitter = models.CharField(
+        help_text="""
+            The twitter handle (in form @twitter_handle) of the resource.""",
+        blank=True,
+        max_length=16,
+        validators=[
+            RegexValidator(
+                regex=r'@([A-Za-z0-9_]+)',
+                message="""
+                    Must be a single Twitter handle
+                    in the form `@twitter_handle`.
+                """,
+            ),
+        ],
     )
 
     email = models.EmailField(
-        verbose_name="Email Address",
         help_text="""
-            The Email Address of the singer.""",
+            The contact email of the resource.""",
         blank=True,
         null=True,
     )
 
-    bio = models.TextField(
+    phone = PhoneNumberField(
+        verbose_name='Phone Number',
         help_text="""
-            A quick biography of the singer.""",
-        null=True,
+            The phone number of the resource.""",
         blank=True,
+        null=True,
+    )
+
+    picture = models.ImageField(
+        help_text="""
+            The picture/logo of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    blurb = models.TextField(
+        help_text="""
+            A description/bio describing the resource.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
     )
 
     notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
         blank=True,
         null=True,
     )
 
+    def __unicode__(self):
+        return "{0}".format(self.name)
+
+    class Meta:
+        abstract = True
+
+
+class Singer(Common):
     timezone = TimeZoneField(
         default='US/Pacific',
     )
@@ -97,12 +144,6 @@ class Singer(models.Model):
         else:
             return None
 
-    def __unicode__(self):
-        if self.name:
-            return "{0}".format(self.name)
-        else:
-            return self.id
-
     def get_absolute_url(self):
         return reverse('singer', args=[str(self.slug)])
 
@@ -110,92 +151,8 @@ class Singer(models.Model):
         ordering = ['name']
 
 
-class Quartet(models.Model):
+class Quartet(Common):
     """An individual quartet."""
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        primary_key=True,
-        coerce_to=str,
-        editable=False,
-    )
-
-    old_id = models.IntegerField(
-        null=True, blank=True)
-    name = models.CharField(
-        help_text="""
-            The name of the quartet.""",
-        max_length=200,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the quartet.""",
-        max_length=200,
-        blank=True,
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the quartet.""",
-        blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the quartet.""",
-        blank=True,
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the quartet.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the quartet.""",
-        blank=True,
-    )
-
-    phone = PhoneNumberField(
-        verbose_name='mobile number',
-        help_text="""
-            The contact number of the quartet.""",
-        blank=True,
-        null=True,
-    )
-
-    picture = models.ImageField(
-        help_text="""
-            The 'official' picture of the contestant.""",
-        blank=True,
-        null=True,
-    )
-
-    blurb = models.TextField(
-        help_text="""
-            A blurb describing the contestant.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
     district = models.ForeignKey(
         'District',
         help_text="""
@@ -239,9 +196,6 @@ class Quartet(models.Model):
         ).last()
         return bass
 
-    def __unicode__(self):
-        return self.name
-
     def get_absolute_url(self):
         return reverse('quartet', args=[str(self.slug)])
 
@@ -249,80 +203,12 @@ class Quartet(models.Model):
         ordering = ['name']
 
 
-class Chorus(models.Model):
+class Chorus(Common):
     """An individual singer."""
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        primary_key=True,
-        coerce_to=str,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the chorus.""",
-        max_length=200,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
     chapter = models.OneToOneField(
         'Chapter',
         null=True,
         blank=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the contestant.""",
-        max_length=200,
-        blank=True,
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the contestant.""",
-        blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the contestant.""",
-        blank=True,
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the contestant.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the contestant.""",
-        blank=True,
-    )
-
-    phone = PhoneNumberField(
-        verbose_name='mobile number',
-        help_text="""
-            The Full Name of the Singer.""",
-        blank=True,
-        null=True,
     )
 
     director = models.CharField(
@@ -341,23 +227,6 @@ class Chorus(models.Model):
         null=True,
     )
 
-    picture = models.ImageField(
-        help_text="""
-            The 'official' picture of the contestant.""",
-        blank=True,
-        null=True,
-    )
-
-    blurb = models.TextField(
-        help_text="""
-            A blurb describing the contestant.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    def __unicode__(self):
-        return self.name
-
     def get_absolute_url(self):
         return reverse('chorus', args=[str(self.slug)])
 
@@ -366,20 +235,7 @@ class Chorus(models.Model):
         verbose_name_plural = "choruses"
 
 
-class Chapter(models.Model):
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        primary_key=True,
-        coerce_to=str,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the chapter.""",
-        max_length=200,
-    )
-
+class Chapter(Common):
     code = models.CharField(
         help_text="""
             The Chapter code""",
@@ -388,24 +244,17 @@ class Chapter(models.Model):
         max_length=20,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
     district = models.ForeignKey(
         'District',
+        null=True,
+        blank=True,
     )
-
-    def __unicode__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse('chapter', args=[str(self.slug)])
 
 
-class District(models.Model):
+class District(Common):
     DISTRICT = 1
     AFFILIATE = 2
 
@@ -414,87 +263,16 @@ class District(models.Model):
         (AFFILIATE, "Affiliate"),
     )
 
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        primary_key=True,
-        coerce_to=str,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the district.""",
-        max_length=200,
-    )
-
     abbreviation = models.CharField(
         null=True,
         blank=True,
         max_length=20,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=1,
     )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the district.""",
-        max_length=200,
-        blank=True,
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the district.""",
-        blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the district.""",
-        blank=True,
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the district.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the district.""",
-        blank=True,
-    )
-
-    phone = PhoneNumberField(
-        verbose_name='mobile number',
-        help_text="""
-            District phone number.""",
-        blank=True,
-        null=True,
-    )
-
-    def __unicode__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse('district', args=[str(self.slug)])
@@ -609,7 +387,7 @@ class QuartetMembership(models.Model):
         )
 
 
-class QuartetPerformance(models.Model):
+class Performance(models.Model):
     FINALS = 1
     SEMIS = 2
     QUARTERS = 3
@@ -620,7 +398,6 @@ class QuartetPerformance(models.Model):
         (QUARTERS, 'Quarter-Finals',),
     )
 
-    quartet = models.ForeignKey(Quartet)
     contest = models.ForeignKey(Contest)
     round = models.IntegerField(
         choices=ROUND_CHOICES,
@@ -688,6 +465,13 @@ class QuartetPerformance(models.Model):
         blank=True,
         null=True,
     )
+
+    class Meta:
+        abstract = True
+
+
+class QuartetPerformance(Performance):
+    quartet = models.ForeignKey(Quartet)
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
@@ -696,81 +480,12 @@ class QuartetPerformance(models.Model):
             self.get_round_display(),
         )
 
+    class Meta:
+        ordering = ['round', 'quartet']
 
-class ChorusPerformance(models.Model):
-    FINALS = 1
 
-    ROUND_CHOICES = (
-        (FINALS, 'Finals',),
-    )
-
+class ChorusPerformance(Performance):
     chorus = models.ForeignKey(Chorus)
-    contest = models.ForeignKey(Contest)
-    round = models.IntegerField(
-        choices=ROUND_CHOICES,
-        default=FINALS
-    )
-
-    appearance = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    song1 = models.CharField(
-        help_text="""
-            The title of the first song of the performance.""",
-        blank=True,
-        max_length=200,
-    )
-
-    mus1 = models.IntegerField(
-        help_text="""
-            The raw music score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    prs1 = models.IntegerField(
-        help_text="""
-            The raw presentation score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    sng1 = models.IntegerField(
-        help_text="""
-            The raw singing score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    song2 = models.CharField(
-        help_text="""
-            The title of the second song of the performance.""",
-        blank=True,
-        max_length=200,
-    )
-
-    mus2 = models.IntegerField(
-        help_text="""
-            The raw music score of the second song.""",
-        blank=True,
-        null=True,
-    )
-
-    prs2 = models.IntegerField(
-        help_text="""
-            The raw presentation score of the second song.""",
-        blank=True,
-        null=True,
-    )
-
-    sng2 = models.IntegerField(
-        help_text="""
-            The raw singing score of the second song.""",
-        blank=True,
-        null=True,
-    )
 
     def __unicode__(self):
         return "{0} {1}".format(
