@@ -5,8 +5,6 @@ from django_pg import models
 
 from autoslug import AutoSlugField
 
-from django.core.urlresolvers import reverse
-
 from django.core.validators import (
     RegexValidator,
 )
@@ -120,6 +118,7 @@ class Common(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ('name',)
 
 
 class Singer(Common):
@@ -151,63 +150,36 @@ class Singer(Common):
         else:
             return None
 
-    def get_absolute_url(self):
-        return reverse('singer', args=[str(self.slug)])
-
-    class Meta:
-        ordering = ['name']
-
 
 class Quartet(Common):
     """An individual quartet."""
-    district = models.ForeignKey(
-        'District',
-        help_text="""
-            The district the quartet is representing.""",
-        blank=True,
-        null=True,
-    )
-
-    members = models.ManyToManyField(
+    lead = models.ForeignKey(
         'Singer',
-        through='QuartetMembership',
-        null=True,
         blank=True,
+        null=True,
+        related_name='quartet_lead',
     )
 
-    @property
-    def lead(self):
-        lead = self.members.filter(
-            quartetmembership__part=QuartetMembership.LEAD,
-        ).last()
-        return lead
+    tenor = models.ForeignKey(
+        'Singer',
+        blank=True,
+        null=True,
+        related_name='quartet_tenor',
+    )
 
-    @property
-    def tenor(self):
-        tenor = self.members.filter(
-            quartetmembership__part=QuartetMembership.TENOR,
-        ).last()
-        return tenor
+    baritone = models.ForeignKey(
+        'Singer',
+        blank=True,
+        null=True,
+        related_name='quartet_baritone',
+    )
 
-    @property
-    def baritone(self):
-        baritone = self.members.filter(
-            quartetmembership__part=QuartetMembership.BARITONE,
-        ).last()
-        return baritone
-
-    @property
-    def bass(self):
-        bass = self.members.filter(
-            quartetmembership__part=QuartetMembership.BASS,
-        ).last()
-        return bass
-
-    def get_absolute_url(self):
-        return reverse('quartet', args=[str(self.slug)])
-
-    class Meta:
-        ordering = ['name']
+    bass = models.ForeignKey(
+        'Singer',
+        blank=True,
+        null=True,
+        related_name='quartet_bass',
+    )
 
 
 class Chorus(Common):
@@ -225,20 +197,15 @@ class Chorus(Common):
         blank=True,
     )
 
-    district = models.ForeignKey(
-        'District',
+    men = models.IntegerField(
         help_text="""
-            The district the
-            contestant is representing.""",
-        blank=True,
+            The number of men on stage.""",
         null=True,
+        blank=True,
     )
 
-    def get_absolute_url(self):
-        return reverse('chorus', args=[str(self.slug)])
-
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name_plural = "choruses"
 
 
@@ -256,9 +223,6 @@ class Chapter(Common):
         null=True,
         blank=True,
     )
-
-    def get_absolute_url(self):
-        return reverse('chapter', args=[str(self.slug)])
 
 
 class District(Common):
@@ -280,9 +244,6 @@ class District(Common):
         choices=KIND_CHOICES,
         default=1,
     )
-
-    def get_absolute_url(self):
-        return reverse('district', args=[str(self.slug)])
 
     class Meta:
         ordering = ['kind', 'name']
@@ -356,58 +317,13 @@ class Contest(models.Model):
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
-            self.get_level_display(),
             self.get_year_display(),
+            self.get_level_display(),
             self.get_kind_display(),
         )
 
-
-class Membership(models.Model):
-    UNKNOWN = 0
-    LEAD = 1
-    TENOR = 2
-    BARITONE = 3
-    BASS = 4
-
-    PART_CHOICES = (
-        (UNKNOWN, "Unknown"),
-        (LEAD, "Lead"),
-        (TENOR, "Tenor"),
-        (BARITONE, "Baritone"),
-        (BASS, "Bass"),
-    )
-
-    singer = models.ForeignKey(Singer)
-    contest = models.ForeignKey(Contest, null=True, blank=True, default=None)
-    part = models.IntegerField(
-        choices=PART_CHOICES,
-        default=UNKNOWN,
-    )
-
-    from_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    to_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
     class Meta:
-        abstract = True
-
-
-class QuartetMembership(Membership):
-    quartet = models.ForeignKey(Quartet)
-
-    def __unicode__(self):
-        return "{0}, {1}, {2}, {3}".format(
-            self.quartet,
-            self.get_part_display(),
-            self.singer,
-            self.contest,
-        )
+        ordering = ['-year', 'level', 'kind']
 
 
 class Performance(models.Model):
@@ -428,7 +344,7 @@ class Performance(models.Model):
         blank=True,
     )
 
-    appearance = models.IntegerField(
+    queue = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -491,6 +407,7 @@ class Performance(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['contest', 'round', 'queue']
 
 
 class QuartetPerformance(Performance):
@@ -498,13 +415,10 @@ class QuartetPerformance(Performance):
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
-            self.quartet,
             self.contest,
             self.get_round_display(),
+            self.quartet,
         )
-
-    class Meta:
-        ordering = ['round', 'quartet']
 
 
 class ChorusPerformance(Performance):
@@ -515,6 +429,3 @@ class ChorusPerformance(Performance):
             self.contest,
             self.chorus,
         )
-
-    class Meta:
-        ordering = ['chorus']
