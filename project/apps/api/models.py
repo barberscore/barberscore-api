@@ -26,6 +26,8 @@ class Singer(models.Model):
         editable=False,
     )
 
+    old_id = models.IntegerField(
+        null=True, blank=True)
     name = models.CharField(
         verbose_name="Full Name",
         help_text="""
@@ -104,6 +106,9 @@ class Singer(models.Model):
     def get_absolute_url(self):
         return reverse('singer', args=[str(self.slug)])
 
+    class Meta:
+        ordering = ['name']
+
 
 class Quartet(models.Model):
     """An individual quartet."""
@@ -114,6 +119,8 @@ class Quartet(models.Model):
         editable=False,
     )
 
+    old_id = models.IntegerField(
+        null=True, blank=True)
     name = models.CharField(
         help_text="""
             The name of the quartet.""",
@@ -237,143 +244,6 @@ class Quartet(models.Model):
 
     def get_absolute_url(self):
         return reverse('quartet', args=[str(self.slug)])
-
-    class Meta:
-        ordering = ['name']
-
-
-class Collegiate(models.Model):
-    """An individual quartet."""
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        primary_key=True,
-        coerce_to=str,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the quartet.""",
-        max_length=200,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the quartet.""",
-        max_length=200,
-        blank=True,
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the quartet.""",
-        blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the quartet.""",
-        blank=True,
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the quartet.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the quartet.""",
-        blank=True,
-    )
-
-    phone = PhoneNumberField(
-        verbose_name='mobile number',
-        help_text="""
-            The contact number of the quartet.""",
-        blank=True,
-        null=True,
-    )
-
-    picture = models.ImageField(
-        help_text="""
-            The 'official' picture of the contestant.""",
-        blank=True,
-        null=True,
-    )
-
-    blurb = models.TextField(
-        help_text="""
-            A blurb describing the contestant.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    district = models.ForeignKey(
-        'District',
-        help_text="""
-            The district the quartet is representing.""",
-        blank=True,
-        null=True,
-    )
-
-    members = models.ManyToManyField(
-        'Singer',
-        through='CollegiateMembership',
-        null=True,
-        blank=True,
-    )
-
-    @property
-    def lead(self):
-        lead = self.members.filter(
-            collegiatemembership__part=CollegiateMembership.LEAD,
-        ).last()
-        return lead
-
-    @property
-    def tenor(self):
-        tenor = self.members.filter(
-            collegiatemembership__part=CollegiateMembership.TENOR,
-        ).last()
-        return tenor
-
-    @property
-    def baritone(self):
-        baritone = self.members.filter(
-            collegiatemembership__part=CollegiateMembership.BARITONE,
-        ).last()
-        return baritone
-
-    @property
-    def bass(self):
-        bass = self.members.filter(
-            collegiatemembership__part=CollegiateMembership.BASS,
-        ).last()
-        return bass
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('collegiate', args=[str(self.slug)])
 
     class Meta:
         ordering = ['name']
@@ -739,38 +609,6 @@ class QuartetMembership(models.Model):
         )
 
 
-class CollegiateMembership(models.Model):
-    UNKNOWN = 0
-    LEAD = 1
-    TENOR = 2
-    BARITONE = 3
-    BASS = 4
-
-    PART_CHOICES = (
-        (UNKNOWN, "Unknown"),
-        (LEAD, "Lead"),
-        (TENOR, "Tenor"),
-        (BARITONE, "Baritone"),
-        (BASS, "Bass"),
-    )
-
-    singer = models.ForeignKey(Singer)
-    collegiate = models.ForeignKey(Collegiate)
-    contest = models.ForeignKey(Contest, null=True, blank=True, default=None)
-    part = models.IntegerField(
-        choices=PART_CHOICES,
-        default=UNKNOWN,
-    )
-
-    def __unicode__(self):
-        return "{0}, {1}, {2}, {3}".format(
-            self.collegiate,
-            self.get_part_display(),
-            self.singer,
-            self.contest,
-        )
-
-
 class QuartetPerformance(models.Model):
     FINALS = 1
     SEMIS = 2
@@ -934,17 +772,11 @@ class ChorusPerformance(models.Model):
         null=True,
     )
 
+    def __unicode__(self):
+        return "{0} {1}".format(
+            self.contest,
+            self.chorus,
+        )
 
-class CollegiatePerformance(models.Model):
-    FINALS = 1
-
-    ROUND_CHOICES = (
-        (FINALS, 'Finals',),
-    )
-
-    collegiate = models.ForeignKey(Collegiate)
-    contest = models.ForeignKey(Contest)
-    round = models.IntegerField(
-        choices=ROUND_CHOICES,
-        default=FINALS
-    )
+    class Meta:
+        ordering = ['chorus']

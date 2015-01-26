@@ -10,9 +10,7 @@ from django.core.management.base import (
 )
 
 from apps.api.models import (
-    Contest,
-    Chorus,
-    ChorusPerformance,
+    Quartet,
 )
 
 
@@ -45,34 +43,25 @@ class Command(BaseCommand):
 
         # open the file
         with open(options['filename']) as csv_file:
-            contest = Contest.objects.get(
-                year=2014,
-                level=Contest.INTERNATIONAL,
-                kind=Contest.QUARTET,
-            )
             reader = csv.reader(csv_file)
             next(reader)
             for row in reader:
                 try:
-                    chorus = Chorus.objects.get(
-                        name=self.c(row[0]),
+                    quartet = Quartet.objects.get_or_create(
+                        old_id=self.c(row[0]),
+                        facebook=self.c(row[3]),
+                        # phone=self.c(row[5]),
+                        location=self.c(row[9]),
+                        email=self.c(row[10]),
+                        name=self.c(row[12]),
+                        twitter=self.c(row[20]),
+                        website=self.c(row[21]),
+                        blurb=self.c(row[22]),
                     )
-                except Chorus.DoesNotExist:
-                    print "Could not find Chorus {0}".format(row[0])
-                    break
-                performance = ChorusPerformance(
-                    chorus=chorus,
-                    contest=contest,
-                    song1=self.c(row[3]),
-                    mus1=self.c(row[4]),
-                    prs1=self.c(row[5]),
-                    sng1=self.c(row[6]),
-                    song2=self.c(row[7]),
-                    mus2=self.c(row[8]),
-                    prs2=self.c(row[9]),
-                    sng2=self.c(row[10]),
-                )
-                performance.save()
-                print "Performance created"
-
+                    print quartet
+                except Exception as e:
+                    print "Quartet {0} could not be created.".format(
+                        row[0],
+                    )
+                    print "Exception: {0} ".format(e)
         return "Done"
