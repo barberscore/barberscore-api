@@ -22,41 +22,41 @@ class QuartetPerformanceInline(admin.TabularInline):
 
 class QuartetMembershipInline(admin.TabularInline):
     model = Quartet.members.through
-    extra = 4
 
 
-@admin.register(Singer)
-class SingerAdmin(admin.ModelAdmin):
-    search_fields = ('name',)
+class CommonAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
+@admin.register(Singer)
+class SingerAdmin(CommonAdmin):
+    pass
+
+
 @admin.register(Quartet)
-class QuartetAdmin(admin.ModelAdmin):
+class QuartetAdmin(CommonAdmin):
     inlines = [
         QuartetMembershipInline,
         QuartetPerformanceInline,
     ]
     exclude = ('members',)
-    save_on_top = True
 
 
 @admin.register(District)
-class DistrictAdmin(admin.ModelAdmin):
-    save_on_top = True
+class DistrictAdmin(CommonAdmin):
+    pass
 
 
 @admin.register(Chapter)
-class ChatperAdmin(admin.ModelAdmin):
-    save_on_top = True
+class ChatperAdmin(CommonAdmin):
+    pass
 
 
 @admin.register(Chorus)
-class ChorusAdmin(admin.ModelAdmin):
+class ChorusAdmin(CommonAdmin):
     inlines = [
         ChorusPerformanceInline,
     ]
-    save_on_top = True
 
 
 @admin.register(Contest)
