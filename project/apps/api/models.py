@@ -355,7 +355,7 @@ class Contest(models.Model):
         )
 
 
-class QuartetMembership(models.Model):
+class Membership(models.Model):
     UNKNOWN = 0
     LEAD = 1
     TENOR = 2
@@ -371,12 +371,28 @@ class QuartetMembership(models.Model):
     )
 
     singer = models.ForeignKey(Singer)
-    quartet = models.ForeignKey(Quartet)
     contest = models.ForeignKey(Contest, null=True, blank=True, default=None)
     part = models.IntegerField(
         choices=PART_CHOICES,
         default=UNKNOWN,
     )
+
+    from_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    to_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        abstract = True
+
+
+class QuartetMembership(Membership):
+    quartet = models.ForeignKey(Quartet)
 
     def __unicode__(self):
         return "{0}, {1}, {2}, {3}".format(
