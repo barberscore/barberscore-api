@@ -1,3 +1,4 @@
+import os
 import datetime
 import uuid
 from django_pg import models
@@ -15,6 +16,11 @@ from timezone_field import TimeZoneField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
+
+
+def generate_image_filename(instance, filename):
+    f, ext = os.path.splitext(filename)
+    return '{0}{1}'.format(instance.id, ext)
 
 
 class Common(models.Model):
@@ -88,6 +94,7 @@ class Common(models.Model):
     )
 
     picture = models.ImageField(
+        upload_to=generate_image_filename,
         help_text="""
             The picture/logo of the resource.""",
         blank=True,
