@@ -136,6 +136,13 @@ REST_FRAMEWORK = {
     ]
 }
 
+# Ajax Selects
+AJAX_LOOKUP_CHANNELS = {
+    #  simple: search Person.objects.filter(name__icontains=q)
+    'singer': {'model': 'api.singer', 'search_field': 'name'},
+    'chorus': {'model': 'api.chorus', 'search_field': 'name'},
+}
+
 
 # Applications
 INSTALLED_APPS = (
@@ -149,6 +156,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'timezone_field',
+    'ajax_select',
     'corsheaders',
     'noncense',
     'rest_framework',
