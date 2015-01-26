@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+# from ajax_select import make_ajax_form
+
 from .models import (
     Singer,
     Chorus,
@@ -14,6 +16,13 @@ from .models import (
 
 class ChorusPerformanceInline(admin.TabularInline):
     model = ChorusPerformance
+    fields = (
+        'chorus',
+        'queue',
+        'song1',
+        'song2',
+    )
+    # form = make_ajax_form(model, {'chorus': 'chorus'})
 
 
 class QuartetPerformanceInline(admin.TabularInline):
@@ -51,6 +60,7 @@ class ChatperAdmin(CommonAdmin):
 class ContestAdmin(admin.ModelAdmin):
     inlines = [
         QuartetPerformanceInline,
+        ChorusPerformanceInline,
     ]
     save_on_top = True
 
