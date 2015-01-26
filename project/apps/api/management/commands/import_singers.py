@@ -12,8 +12,6 @@ from django.core.management.base import (
 from apps.api.models import (
     Singer,
     Quartet,
-    QuartetMembership,
-    Contest,
 )
 
 
@@ -46,59 +44,57 @@ class Command(BaseCommand):
 
         # open the file
         with open(options['filename']) as csv_file:
-            contest = Contest.objects.get(
-                year=2014,
-                level=Contest.INTERNATIONAL,
-                kind=Contest.QUARTET,
-            )
             reader = csv.reader(csv_file)
             next(reader)
             for row in reader:
                 try:
                     quartet = Quartet.objects.get(
-                        old_id=self.c(row[0]),
+                        name=self.c(row[0]),
                     )
                 except Quartet.DoesNotExist:
                     print "Could not find quaret {0}".format(row[0])
                     break
+
                 lead, created = Singer.objects.get_or_create(
-                    name=self.c(row[4]),
+                    name=self.c(row[1]),
                 )
+                quartet.lead = lead
+                print "Added {0} to {1}, created: {2}".format(
+                    lead,
+                    quartet,
+                    created,
+                )
+
                 tenor, created = Singer.objects.get_or_create(
                     name=self.c(row[2]),
                 )
+                quartet.tenor = tenor
+                print "Added {0} to {1}, created: {2}".format(
+                    tenor,
+                    quartet,
+                    created,
+                )
+
                 baritone, created = Singer.objects.get_or_create(
-                    name=self.c(row[6]),
+                    name=self.c(row[3]),
                 )
+                quartet.baritone = baritone
+                print "Added {0} to {1}, created: {2}".format(
+                    baritone,
+                    quartet,
+                    created,
+                )
+
                 bass, created = Singer.objects.get_or_create(
-                    name=self.c(row[13]),
+                    name=self.c(row[4]),
                 )
-                QuartetMembership.objects.create(
-                    singer=lead,
-                    quartet=quartet,
-                    contest=contest,
-                    part=QuartetMembership.LEAD,
+                quartet.bass = bass
+                print "Added {0} to {1}, created: {2}".format(
+                    bass,
+                    quartet,
+                    created,
                 )
-                print "Added {0} to {1}".format(lead, quartet)
-                QuartetMembership.objects.create(
-                    singer=tenor,
-                    quartet=quartet,
-                    contest=contest,
-                    part=QuartetMembership.TENOR,
-                )
-                print "Added {0} to {1}".format(tenor, quartet)
-                QuartetMembership.objects.create(
-                    singer=baritone,
-                    quartet=quartet,
-                    contest=contest,
-                    part=QuartetMembership.BARITONE,
-                )
-                print "Added {0} to {1}".format(baritone, quartet)
-                QuartetMembership.objects.create(
-                    singer=bass,
-                    quartet=quartet,
-                    contest=contest,
-                    part=QuartetMembership.BASS,
-                )
-                print "Added {0} to {1}".format(bass, quartet)
+
+                quartet.save()
+
         return "Done"
