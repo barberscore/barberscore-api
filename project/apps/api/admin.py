@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 from ajax_select.admin import (
     AjaxSelectAdminTabularInline,
@@ -24,6 +25,28 @@ from .models import (
 
 
 class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
+    def chorus_prelim(self, obj):
+        return obj.chorus.prelim
+    # show_num_photos.admin_order_field = 'num_photos'
+
+    def chorus_rank(self, obj):
+        return obj.chorus.rank
+    # show_num_photos.admin_order_field = 'num_photos'
+
+    def chorus_link(self, obj):
+        return mark_safe(
+            '<a href="{0}">{1}</a>'.format(
+                reverse('admin:api_chorus_change', args=[obj.chorus.pk]),
+                obj.chorus.pk,
+            )
+        )
+    chorus_link.allow_tags = True
+
+    readonly_fields = [
+        'chorus_prelim',
+        'chorus_rank',
+        'chorus_link',
+    ]
     model = ChorusPerformance
     form = make_ajax_form(
         ChorusPerformance,
@@ -31,8 +54,12 @@ class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
     )
     fields = (
         'chorus',
+        'chorus_link',
         'queue',
-        'stagetime',
+        'chorus_prelim',
+        'chorus_rank',
+        # 'chorus__rank',
+        # 'stagetime',
         # 'song1',
         # 'mus1',
         # 'prs1',
@@ -45,6 +72,28 @@ class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
 
 
 class QuartetPerformanceInline(AjaxSelectAdminTabularInline):
+    def quartet_prelim(self, obj):
+        return obj.quartet.prelim
+    # show_num_photos.admin_order_field = 'num_photos'
+
+    def quartet_rank(self, obj):
+        return obj.quartet.rank
+    # show_num_photos.admin_order_field = 'num_photos'
+
+    def quartet_link(self, obj):
+        return mark_safe(
+            '<a href="{0}">{1}</a>'.format(
+                reverse('admin:api_quartet_change', args=[obj.quartet.pk]),
+                obj.quartet.pk,
+            )
+        )
+    quartet_link.allow_tags = True
+
+    readonly_fields = [
+        'quartet_prelim',
+        'quartet_rank',
+        'quartet_link',
+    ]
     model = QuartetPerformance
     form = make_ajax_form(
         QuartetPerformance,
@@ -52,9 +101,12 @@ class QuartetPerformanceInline(AjaxSelectAdminTabularInline):
     )
     fields = (
         'quartet',
+        'quartet_link',
         'round',
         'queue',
-        'stagetime',
+        'quartet_prelim',
+        'quartet_rank',
+        # 'stagetime',
         # 'song1',
         # 'mus1',
         # 'prs1',
