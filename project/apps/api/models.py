@@ -363,11 +363,6 @@ class Performance(models.Model):
     )
 
     contest = models.ForeignKey(Contest)
-    round = models.IntegerField(
-        choices=ROUND_CHOICES,
-        null=True,
-        blank=True,
-    )
 
     queue = models.IntegerField(
         null=True,
@@ -445,6 +440,11 @@ class Performance(models.Model):
 class QuartetPerformance(Performance):
     quartet = models.ForeignKey(Quartet)
 
+    round = models.IntegerField(
+        choices=Performance.ROUND_CHOICES,
+        default=Performance.QUARTERS,
+    )
+
     def __unicode__(self):
         return "{0} {1} {2}".format(
             self.contest,
@@ -455,6 +455,11 @@ class QuartetPerformance(Performance):
 
 class ChorusPerformance(Performance):
     chorus = models.ForeignKey(Chorus)
+
+    round = models.IntegerField(
+        choices=Performance.ROUND_CHOICES,
+        default=Performance.FINALS,
+    )
 
     men = models.IntegerField(
         help_text="""
