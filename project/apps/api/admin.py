@@ -58,11 +58,25 @@ class ChatperAdmin(CommonAdmin):
 
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
+
     inlines = [
-        QuartetPerformanceInline,
         ChorusPerformanceInline,
+        QuartetPerformanceInline,
     ]
-    save_on_top = True
+
+    def get_formsets_with_inlines(self, request, obj=None):
+        for inline in self.get_inline_instances(request, obj):
+            if obj.kind == Contest.CHORUS:
+                if isinstance(inline, ChorusPerformanceInline):
+                    yield inline.get_formset(request, obj), inline
+                    break
+                else:
+                    continue
+            else:
+                if isinstance(inline, ChorusPerformanceInline):
+                    continue
+                else:
+                    yield inline.get_formset(request, obj), inline
 
 
 @admin.register(Quartet)
