@@ -2,6 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from ajax_select.admin import (
     AjaxSelectAdminTabularInline,
@@ -31,14 +32,15 @@ class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
     fields = (
         'chorus',
         'queue',
-        'song1',
-        'mus1',
-        'prs1',
-        'sng1',
-        'song2',
-        'mus2',
-        'prs2',
-        'sng2',
+        'stagetime',
+        # 'song1',
+        # 'mus1',
+        # 'prs1',
+        # 'sng1',
+        # 'song2',
+        # 'mus2',
+        # 'prs2',
+        # 'sng2',
     )
 
 
@@ -52,18 +54,44 @@ class QuartetPerformanceInline(AjaxSelectAdminTabularInline):
         'quartet',
         'round',
         'queue',
-        'song1',
-        'mus1',
-        'prs1',
-        'sng1',
-        'song2',
-        'mus2',
-        'prs2',
-        'sng2',
+        'stagetime',
+        # 'song1',
+        # 'mus1',
+        # 'prs1',
+        # 'sng1',
+        # 'song2',
+        # 'mus2',
+        # 'prs2',
+        # 'sng2',
     )
 
 
 class CommonAdmin(admin.ModelAdmin):
+    def show_website(self, obj):
+        url = '<a href="{0}">{1}</a>'.format(obj.website, obj.website)
+        return mark_safe(url)
+    show_website.allow_tags = True
+
+    def show_email(self, obj):
+        url = '<a href="mailto:{0}">{1}</a>'.format(obj.email, obj.email)
+        return mark_safe(url)
+    show_email.allow_tags = True
+
+    def show_facebook(self, obj):
+        url = '<a href="{0}">{1}</a>'.format(obj.facebook, obj.facebook)
+        return mark_safe(url)
+    show_facebook.allow_tags = True
+
+    list_display = [
+        'name',
+        'location',
+        'show_website',
+        'show_email',
+        'show_facebook',
+        'phone',
+        'twitter',
+        'picture',
+    ]
     search_fields = ['name']
     save_on_top = True
 
