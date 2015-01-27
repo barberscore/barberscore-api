@@ -22,6 +22,7 @@ TEMPLATE_DEBUG = DEBUG
 # Globals
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 PROJECT_NAME = 'barberscore'
+USE_TZ = True
 TIME_ZONE = get_env_variable("TZ")
 LANGUAGE_CODE = 'en-us'
 USE_I18N = False

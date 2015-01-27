@@ -1,8 +1,8 @@
 import os
 import datetime
+import arrow
 import uuid
 from django_pg import models
-
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -197,13 +197,6 @@ class Chorus(Common):
         blank=True,
     )
 
-    men = models.IntegerField(
-        help_text="""
-            The number of men on stage.""",
-        null=True,
-        blank=True,
-    )
-
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "choruses"
@@ -315,6 +308,10 @@ class Contest(models.Model):
         blank=True,
     )
 
+    timezone = TimeZoneField(
+        default='US/Pacific',
+    )
+
     def __unicode__(self):
         return "{0} {1} {2}".format(
             self.get_year_display(),
@@ -347,6 +344,13 @@ class Performance(models.Model):
     queue = models.IntegerField(
         null=True,
         blank=True,
+    )
+
+    stagetime = models.DateTimeField(
+        help_text="""
+            The title of the first song of the performance.""",
+        blank=True,
+        null=True,
     )
 
     song1 = models.CharField(
@@ -423,6 +427,13 @@ class QuartetPerformance(Performance):
 
 class ChorusPerformance(Performance):
     chorus = models.ForeignKey(Chorus)
+
+    men = models.IntegerField(
+        help_text="""
+            The number of men on stage.""",
+        null=True,
+        blank=True,
+    )
 
     def __unicode__(self):
         return "{0} {1}".format(
