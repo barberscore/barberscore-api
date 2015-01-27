@@ -114,6 +114,14 @@ class ChatperAdmin(CommonAdmin):
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
 
+    fields = (
+        'year',
+        'kind',
+        'dates',
+        'location',
+        'timezone',
+    )
+
     list_filter = [
         'year',
         'kind',
