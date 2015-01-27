@@ -251,7 +251,7 @@ class District(Common):
 
 class Contest(models.Model):
     YEAR_CHOICES = []
-    for r in range(1939, (datetime.datetime.now().year + 1)):
+    for r in range(2010, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
     INTERNATIONAL = 1

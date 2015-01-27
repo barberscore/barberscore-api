@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-# from ajax_select import make_ajax_form
+from ajax_select.admin import (
+    AjaxSelectAdminTabularInline,
+    AjaxSelectAdmin,
+)
+
+from ajax_select import make_ajax_form
 
 from .models import (
     Singer,
@@ -14,25 +19,44 @@ from .models import (
 )
 
 
-class ChorusPerformanceInline(admin.TabularInline):
+class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
     model = ChorusPerformance
+    form = make_ajax_form(
+        ChorusPerformance,
+        {'chorus': 'chorus'},
+    )
     fields = (
         'chorus',
         'queue',
         'song1',
+        'mus1',
+        'prs1',
+        'sng1',
         'song2',
+        'mus2',
+        'prs2',
+        'sng2',
     )
-    # form = make_ajax_form(model, {'chorus': 'chorus'})
 
 
-class QuartetPerformanceInline(admin.TabularInline):
+class QuartetPerformanceInline(AjaxSelectAdminTabularInline):
     model = QuartetPerformance
+    form = make_ajax_form(
+        QuartetPerformance,
+        {'quartet': 'quartet'},
+    )
     fields = (
         'quartet',
         'round',
         'queue',
         'song1',
+        'mus1',
+        'prs1',
+        'sng1',
         'song2',
+        'mus2',
+        'prs2',
+        'sng2',
     )
 
 
@@ -59,6 +83,12 @@ class ChatperAdmin(CommonAdmin):
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
 
+    list_filter = [
+        'year',
+        'kind',
+        'level',
+    ]
+
     inlines = [
         ChorusPerformanceInline,
         QuartetPerformanceInline,
@@ -80,24 +110,28 @@ class ContestAdmin(admin.ModelAdmin):
 
 
 @admin.register(Quartet)
-class QuartetAdmin(CommonAdmin):
-    inlines = [
-        QuartetPerformanceInline,
-    ]
+class QuartetAdmin(AjaxSelectAdmin, CommonAdmin):
+    form = make_ajax_form(
+        Quartet,
+        {
+            'lead': 'singer',
+            'tenor': 'singer',
+            'baritone': 'singer',
+            'bass': 'singer'
+        },
+    )
 
 
 @admin.register(Chorus)
 class ChorusAdmin(CommonAdmin):
-    inlines = [
-        ChorusPerformanceInline,
-    ]
+    pass
 
 
-@admin.register(QuartetPerformance)
-class QuartetPerformanceAdmin(admin.ModelAdmin):
-    save_on_top = True
+# @admin.register(QuartetPerformance)
+# class QuartetPerformanceAdmin(admin.ModelAdmin):
+#     save_on_top = True
 
 
-@admin.register(ChorusPerformance)
-class ChorusPerformanceAdmin(admin.ModelAdmin):
-    save_on_top = True
+# @admin.register(ChorusPerformance)
+# class ChorusPerformanceAdmin(admin.ModelAdmin):
+#     save_on_top = True
