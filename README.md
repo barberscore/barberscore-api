@@ -1,4 +1,3 @@
-
 [![Circle CI](https://circleci.com/gh/dbinetti/barberscore.svg?style=svg)](https://circleci.com/gh/dbinetti/barberscore)
 
 # Barberscore
