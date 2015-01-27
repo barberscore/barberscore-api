@@ -1,6 +1,6 @@
 import os
 import datetime
-import arrow
+# import arrow
 import uuid
 from django_pg import models
 from autoslug import AutoSlugField
@@ -153,6 +153,20 @@ class Singer(Common):
 
 class Quartet(Common):
     """An individual quartet."""
+    prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    rank = models.IntegerField(
+        help_text="""
+            The incoming rank (based on prelim).""",
+        null=True,
+        blank=True,
+    )
+
     lead = models.ForeignKey(
         'Singer',
         blank=True,
@@ -184,6 +198,20 @@ class Quartet(Common):
 
 class Chorus(Common):
     """An individual singer."""
+    prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    rank = models.IntegerField(
+        help_text="""
+            The incoming rank (based on prelim).""",
+        null=True,
+        blank=True,
+    )
+
     chapter = models.OneToOneField(
         'Chapter',
         null=True,
