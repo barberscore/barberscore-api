@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from django.contrib import admin
 
 from ajax_select.admin import (

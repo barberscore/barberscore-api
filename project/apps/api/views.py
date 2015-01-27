@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from rest_framework import viewsets
 
 from .models import (
