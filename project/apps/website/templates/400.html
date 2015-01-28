@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Bad Request
+{% endblock title %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Security Check</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+
+        <p class="lead">Sorry, but our website is being extra cautious!</p>
+
+        <p>We detected a problem with your request and are showing this page in an abundance of caution.  Sorry!  You can try going back or going to the <a href='{% url "home" %}'>home page</a> to start over.</p>
+
+      </div>
+    </div>
+  </div><!-- /container -->
+
+{% endblock content %}

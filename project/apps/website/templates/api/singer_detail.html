@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    {{singer.name}}
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+    <div class='page-header'>
+      <p>
+        <h2>{{singer.name}}</h2>
+      </p>
+      <p class='lead'>
+        singer detail.
+      </p>
+    </div>
+    <div>
+      <p>
+        <h4>{{singer.name}}</h4>
+      </p>
+    </div>
+  </div> <!-- /container -->
+{% endblock content %}

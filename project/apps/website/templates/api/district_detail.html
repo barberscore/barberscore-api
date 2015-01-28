@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    {{district.name}}
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+    <div class='page-header'>
+      <p>
+        <h2>{{district.name}}</h2>
+      </p>
+      <p class='lead'>
+        Quadistrictrtet detail.
+      </p>
+    </div>
+    <div>
+      <p>
+        <h4>{{district.name}}</h4>
+      </p>
+    </div>
+  </div> <!-- /container -->
+{% endblock content %}

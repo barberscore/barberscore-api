@@ -1,0 +1,189 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}Barberscore{% endblock title %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Score tracker for Barbershop Harmony Society Conventions.">
+    <meta name="author" content="David E. Binetti">
+    <meta name="copyright" content="&copy; 2015, dinadesa llc">
+    <!-- <meta name="google-site-verification" content="I0Rz6Qg8QFJcal0mdBdRE5pGiXhgJxSnkJ_fOelEzbI" /> -->
+
+    {% block style-libraries %}
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+      <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+      <link rel="stylesheet" type="text/css" href="{% static 'css/barberscore.css' %}">
+    {% endblock style-libraries %}
+
+    {% block styles %}
+    {% endblock styles %}
+
+    {% comment %}
+    {% block mixpanel_head %}
+        <script type="text/javascript">
+          (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");
+          for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2.2.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+          mixpanel.init('{{MIXPANEL_PUBLIC_KEY}}', {cookie_name: 'mixpanel'});
+        </script>
+
+        <script type="text/javascript">
+          function getQueryStrings() {
+            var assoc  = {};
+            var decode = function (s) { return decodeURIComponent(s.replace(/\+/g, " ")); };
+            var queryString = location.search.substring(1);
+            var keyValues = queryString.split('&');
+
+            for(var i in keyValues) {
+              var key = keyValues[i].split('=');
+              if (key.length > 1) {
+                assoc[decode(key[0])] = decode(key[1]);
+              }
+            }
+            return assoc;
+          }
+          var params = getQueryStrings();
+          mixpanel.push(['register_once', params]);
+        </script>
+
+    {% endblock mixpanel_head %}
+    {% endcomment %}
+  </head>
+
+  {% block body %}
+    <body>
+  {% endblock body %}
+
+    {% block navbar %}
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a id='nav-home' class="navbar-brand" href="{% url 'website:home' %}">Barberscore</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                {# <li><a id='nav-contests' href="{% url 'website:contest-list' %}"><span class='fa fa-trophy fa-lg'></span> Contests</a></li> #}
+                <li><a id='nav-quartets' href="{% url 'website:quartet-list' %}"><span class='fa fa-group fa-lg'></span> Quartets</a></li>
+                <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-group fa-lg'></span> Choruses</a></li>
+                <li><a id='nav-districts' href="{% url 'website:district-list' %}"><span class='fa fa-bank fa-lg'></span> Districts</a></li>
+                <li><a id='nav-singers' href="{% url 'website:singer-list' %}"><span class='fa fa-user fa-lg'></span> Singers</a></li>
+                {# <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-trophy fa-lg'></span> Choruses</a></li> #}
+                {# <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-trophy fa-lg'></span> Choruses</a></li> #}
+                {# <li><a id='nav-recipients' href="{% url 'recipients' %}"><span class='fa fa-users fa-lg'></span> Recipients</a></li> #}
+                {# <li><a id='nav-sources' href="{% url 'sources' %}"><span class='fa fa-camera fa-lg'></span> Sources</a></li> #}
+                {# <li><a id='nav-account' href="{% url 'account' %}"><span class='fa fa-user fa-lg'></span> Account</a></li> #}
+                {# <li><a id='nav-freebies' href="{% url 'freebies' %}"><span class='fa fa-smile-o fa-lg'></span> Freebies</a></li> #}
+              {% if user.is_authenticated %}
+                <li><a id='nav-logout' href="{% url 'noncense:logout' %}"><span class='fa fa-sign-out fa-lg'></span> Logout</a></li>
+              {% else %}
+                <li><a id='nav-login' href="{% url 'noncense:login' %}"><span class='fa fa-sign-in fa-lg'></span> Login</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+    {% endblock navbar %}
+
+    {% block notification %}
+      {% for message in messages %}
+        <div class='container'>
+          <div class="message">
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endblock notification %}
+
+    {% block header %}
+    {% endblock header %}
+
+    {% block content %}
+    {% endblock content %}
+
+    {% block footer %}
+    {% endblock footer %}
+
+    {% block bottombar %}
+      <div class="container">
+        <div class="dd-footer">
+          <ul class="nav nav-pills">
+            {# <li><a id='footer-about' href="{% url 'about' %}">About</a></li> #}
+            {# <li><a id='footer-faq' href="{% url 'faq' %}">FAQ</a></li> #}
+            {# <li><a id='footer-pricing' href="{% url 'pricing' %}">Pricing</a></li> #}
+            {# <li><a id='footer-legal' href="{% url 'legal' %}">Legal</a></li> #}
+            {# <li><a id='footer-support' href="{% url 'support' %}">Support</a></li> #}
+          </ul>
+        </div>
+      </div>
+    {% endblock bottombar %}
+
+    {% block script-libraries %}
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+      <script src="{% static 'js/dinadesa.js' %}"></script>
+    {% endblock script-libraries %}
+
+    {% block scripts %}
+    {% endblock scripts %}
+
+    {% block intercom %}
+    {% endblock intercom %}
+
+    {% comment %}
+    {% block mixpanel %}
+      <script>
+        {% if user.is_authenticated %}mixpanel.identify('{{request.user.mobile.as_e164}}');{% endif %}
+        mixpanel.track_links(
+          '#nav-photos', 'Nav', {"Name": "Photos", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-recipients', 'Nav', {"Name": "Recipients", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-sources', 'Nav', {"Name": "Sources", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-account', 'Nav', {"Name": "Account", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-logout', 'Nav', {"Name": "Logout", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-login', 'Nav', {"Name": "Login", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-home', 'Nav', {"Name": "Dashboard", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#nav-freebies', 'Nav', {"Name": "Freebies", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#footer-about', "Nav", {"Name": "About", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#footer-faq', "Nav", {"Name": "FAQ", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#footer-pricing', "Nav", {"Name": "Pricing", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#footer-legal', "Nav", {"Name": "Legal", "Action": "Clicked"}
+        );
+        mixpanel.track_links(
+          '#footer-support', "Nav", {"Name": "Support", "Action": "Clicked"}
+        );
+      </script>
+    {% endblock mixpanel %}
+    {% endcomment %}
+
+
+  </body>
+</html>

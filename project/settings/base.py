@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'noncense',
     'rest_framework',
     'apps.api',
+    'apps.website',
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
