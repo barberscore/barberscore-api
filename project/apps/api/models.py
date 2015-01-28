@@ -270,17 +270,90 @@ class District(Common):
         ordering = ['kind', 'name']
 
 
+class Convention(models.Model):
+    YEAR_CHOICES = []
+    for r in range(2010, (datetime.datetime.now().year + 1)):
+        YEAR_CHOICES.append((r, r))
+
+    INTERNATIONAL = 1
+    # DISTRICT = 2
+
+    SUMMER = 1
+    # MIDWINTER = 2
+    # FALL = 3
+    # SPRING = 4
+
+    LEVEL_CHOICES = (
+        (INTERNATIONAL, 'International',),
+        # (DISTRICT, 'District',)
+    )
+
+    KIND_CHOICES = (
+        (SUMMER, 'Summer',),
+        # (MIDWINTER, 'Midwinter',)
+    )
+
+    id = models.UUIDField(
+        default=uuid.uuid4,
+        primary_key=True,
+        coerce_to=str,
+        editable=False,
+    )
+
+    year = models.IntegerField(
+        max_length=4,
+        choices=YEAR_CHOICES,
+        default=datetime.datetime.now().year,
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL_CHOICES,
+        default=INTERNATIONAL,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND_CHOICES,
+        default=SUMMER,
+    )
+
+    dates = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+
+    location = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+
+    timezone = TimeZoneField(
+        default='US/Pacific',
+    )
+
+    def __unicode__(self):
+        return "{0} {1} {2}".format(
+            self.get_year_display(),
+            self.get_level_display(),
+            self.get_kind_display(),
+        )
+
+    class Meta:
+        ordering = ['-year', 'level', 'kind']
+
+
 class Contest(models.Model):
     YEAR_CHOICES = []
     for r in range(2010, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
     INTERNATIONAL = 1
-    DISTRICT = 2
+    # DISTRICT = 2
 
     LEVEL_CHOICES = (
         (INTERNATIONAL, 'International',),
-        (DISTRICT, 'District',)
+        # (DISTRICT, 'District',)
     )
 
     QUARTET = 1
