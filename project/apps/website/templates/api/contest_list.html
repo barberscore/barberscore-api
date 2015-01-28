@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    contest List
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+    <div class='page-header'>
+      <p>
+        <h2>contest List</h2>
+      </p>
+      <p class='lead'>
+        List of contest.
+      </p>
+    </div>
+    <div>
+      <ul>
+        {% for contest in contests %}
+          <li><a href='{% url "website:contest-detail" contest.slug %}'>{{contest.name}}</a></li>
+        {% endfor %}
+      <ul>
+    </div>
+  </div> <!-- /container -->
+{% endblock content %}

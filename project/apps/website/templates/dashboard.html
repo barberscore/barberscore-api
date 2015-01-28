@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Dashboard
+{% endblock title %}
+
+{% block content %}
+  <div class='container'>
+    <div class='page-header'>
+      <h1>Dashboard</h1>
+    </div>
+    <div>
+      <div class='row'>
+        <div class='col-md-6'>
+          {% if request.user.account.is_key %}
+            <p class='lead'>
+              Your photos are loaded and ready to send!
+            </p>
+            <p>
+              We've loaded {{photos.count}} photos from {{sources.count}} cloud providers.  Your next scheduled send time is around Noon Pacific.
+            </p>
+            <p>
+              <strong>Enjoy your Photo-of-the-Day!</strong>
+            </p>
+            {% else %}
+            <p class='lead'>
+              Almost ready!
+            </p>
+            <p>
+              We are currently processing about {{photos.count}} photos and will let you know when this process is complete. If you have any questions in the meantime please don't hesitate to let us know!
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

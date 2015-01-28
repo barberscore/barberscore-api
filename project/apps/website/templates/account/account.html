@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Account
+{% endblock title %}
+
+{% block content %}
+  <div class='container'>
+    <div class='page-header'>
+      <h1>Account</h1>
+    </div>
+    <div class='row'>
+      <div class='col-sm-6'>
+        <div class='account-form'>
+          <form role='form' class='form' action='' method='POST'>
+            {% csrf_token %}
+            <div class='form-group'>
+              {{form.name}}
+            </div>
+            <div class='form-group'>
+              {{form.full_name}}
+            </div>
+            <div class='form-group'>
+              {{form.email}}
+            </div>
+            <div class='form-group'>
+              <input class='form-control input-lg' placeholder='{{account.mobile}}' disabled>
+            </div>
+            <div class='form-group'>
+              {{form.is_preapproval}}  {{form.is_preapproval.label}}
+            </div>
+            <button class='btn btn-lg btn-primary' type='submit'>Save</button>
+            <a href='{% url "account" %}' role='button' class='btn btn-lg btn-default'>Cancel</a>
+          </form>
+        </div>
+        <div class='stripe-form'>
+          <p class='lead add-form'>
+            Subscription Information
+          </p>
+          <ul>
+            {% if subscriptions %}
+              {% for subscription in subscriptions %}
+                <li>{{subscription.status|title}} until {{subscription.trial_end_dt|date:"SHORT_DATE_FORMAT"}}</li>
+              {% endfor %}
+            {% endif %}
+          </ul>
+          <p class='lead add-form'>
+            Payment Information
+          </p>
+          <p>
+            {% if card %}
+              <a href='{% url "stripe-update" %}'>{{card.type}} ending in {{card.last4}}</a>
+            {% else %}
+              <a role='button' class='btn btn-lg btn-primary add-form' href='{% url "stripe-create" %}'><span class='fa fa-credit-card'></span> Add Credit Card</a>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
