@@ -70,17 +70,10 @@
           </div>
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                {# <li><a id='nav-contests' href="{% url 'website:contest-list' %}"><span class='fa fa-trophy fa-lg'></span> Contests</a></li> #}
                 <li><a id='nav-quartets' href="{% url 'website:quartet-list' %}"><span class='fa fa-group fa-lg'></span> Quartets</a></li>
                 <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-group fa-lg'></span> Choruses</a></li>
                 <li><a id='nav-districts' href="{% url 'website:district-list' %}"><span class='fa fa-bank fa-lg'></span> Districts</a></li>
                 <li><a id='nav-singers' href="{% url 'website:singer-list' %}"><span class='fa fa-user fa-lg'></span> Singers</a></li>
-                {# <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-trophy fa-lg'></span> Choruses</a></li> #}
-                {# <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-trophy fa-lg'></span> Choruses</a></li> #}
-                {# <li><a id='nav-recipients' href="{% url 'recipients' %}"><span class='fa fa-users fa-lg'></span> Recipients</a></li> #}
-                {# <li><a id='nav-sources' href="{% url 'sources' %}"><span class='fa fa-camera fa-lg'></span> Sources</a></li> #}
-                {# <li><a id='nav-account' href="{% url 'account' %}"><span class='fa fa-user fa-lg'></span> Account</a></li> #}
-                {# <li><a id='nav-freebies' href="{% url 'freebies' %}"><span class='fa fa-smile-o fa-lg'></span> Freebies</a></li> #}
               {% if user.is_authenticated %}
                 <li><a id='nav-logout' href="{% url 'noncense:logout' %}"><span class='fa fa-sign-out fa-lg'></span> Logout</a></li>
               {% else %}
