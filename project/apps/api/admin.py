@@ -13,6 +13,7 @@ from ajax_select.admin import (
 from ajax_select import make_ajax_form
 
 from .models import (
+    Convention,
     Singer,
     Chorus,
     Quartet,
@@ -22,6 +23,11 @@ from .models import (
     QuartetPerformance,
     ChorusPerformance,
 )
+
+
+@admin.register(Convention)
+class ConventionAdmin(admin.ModelAdmin):
+    pass
 
 
 class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
@@ -167,6 +173,7 @@ class ChatperAdmin(CommonAdmin):
 class ContestAdmin(admin.ModelAdmin):
 
     fields = (
+        'convention',
         'year',
         'kind',
         'dates',
