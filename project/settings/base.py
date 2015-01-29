@@ -137,13 +137,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-# Ajax Selects
-AJAX_LOOKUP_CHANNELS = {
-    'singer': {'model': 'api.singer', 'search_field': 'name'},
-    'chorus': {'model': 'api.chorus', 'search_field': 'name'},
-    'quartet': {'model': 'api.quartet', 'search_field': 'name'},
-}
-
+# Easy Select2
 SELECT2_USE_BUNDLED_JQUERY = False
 
 # Applications
@@ -158,7 +152,6 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'timezone_field',
-    # 'ajax_select',
     'easy_select2',
     'corsheaders',
     'noncense',
