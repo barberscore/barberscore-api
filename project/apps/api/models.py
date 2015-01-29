@@ -307,7 +307,7 @@ class Convention(models.Model):
     # DISTRICT = 2
 
     SUMMER = 1
-    # MIDWINTER = 2
+    MIDWINTER = 2
     # FALL = 3
     # SPRING = 4
 
@@ -318,7 +318,7 @@ class Convention(models.Model):
 
     KIND_CHOICES = (
         (SUMMER, 'Summer',),
-        # (MIDWINTER, 'Midwinter',)
+        (MIDWINTER, 'Midwinter',)
     )
 
     id = models.UUIDField(
@@ -437,22 +437,6 @@ class Contest(models.Model):
         'District',
         null=True,
         blank=True,
-    )
-
-    dates = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-
-    location = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-
-    timezone = TimeZoneField(
-        default='US/Pacific',
     )
 
     def __unicode__(self):

@@ -1,4 +1,4 @@
-Django==1.7.3
+Django==1.7.4
 django-cors-headers==1.0.0
 dj-database-url==0.3.0
 django-timezone-field==1.1
@@ -16,5 +16,5 @@ django-storages==1.1.8
 waitress==0.8.9
 django-autoslug==1.7.2
 Unidecode==0.4.17
-git+git://github.com/dbinetti/django-ajax-selects.git
+django-easy-select2==1.2.12
 arrow==0.5.0

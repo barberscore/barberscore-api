@@ -5,12 +5,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
-from ajax_select.admin import (
-    AjaxSelectAdminTabularInline,
-    AjaxSelectAdmin,
-)
-
-from ajax_select import make_ajax_form
+from easy_select2 import select2_modelform
 
 from .models import (
     Convention,
@@ -22,20 +17,68 @@ from .models import (
     Contest,
     QuartetPerformance,
     ChorusPerformance,
-    # QuartetMembership,
+    QuartetMember,
+)
+
+ConventionForm = select2_modelform(
+    Convention,
+    attrs={'width': '250px'},
+)
+
+DistrictForm = select2_modelform(
+    District,
+    attrs={'width': '250px'},
+)
+
+QuartetMemberForm = select2_modelform(
+    QuartetMember,
+    attrs={'width': '250px'},
+)
+
+ChapterForm = select2_modelform(
+    Chapter,
+    attrs={'width': '250px'},
+)
+
+ChorusForm = select2_modelform(
+    Chorus,
+    attrs={'width': '250px'},
+)
+
+ContestForm = select2_modelform(
+    Contest,
+    attrs={'width': '250px'},
+)
+
+SingerForm = select2_modelform(
+    Singer,
+    attrs={'width': '250px'},
+)
+
+QuartetPerformanceForm = select2_modelform(
+    QuartetPerformance,
+    attrs={'width': '250px'},
+)
+
+ChorusPerformanceForm = select2_modelform(
+    ChorusPerformance,
+    attrs={'width': '250px'},
 )
 
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
-    pass
+    form = ConventionForm
 
 
 class QuartetMembershipInline(admin.TabularInline):
     model = Quartet.members.through
+    form = QuartetMemberForm
 
 
-class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
+class ChorusPerformanceInline(admin.TabularInline):
+    form = ChorusPerformanceForm
+
     def chorus_prelim(self, obj):
         return obj.chorus.prelim
     # show_num_photos.admin_order_field = 'num_photos'
@@ -59,10 +102,6 @@ class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
         'chorus_link',
     ]
     model = ChorusPerformance
-    form = make_ajax_form(
-        ChorusPerformance,
-        {'chorus': 'chorus'},
-    )
     fields = (
         'chorus',
         'chorus_link',
@@ -82,7 +121,9 @@ class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
     )
 
 
-class QuartetPerformanceInline(AjaxSelectAdminTabularInline):
+class QuartetPerformanceInline(admin.TabularInline):
+    form = QuartetPerformanceForm
+
     def quartet_prelim(self, obj):
         return obj.quartet.prelim
     # show_num_photos.admin_order_field = 'num_photos'
@@ -106,10 +147,6 @@ class QuartetPerformanceInline(AjaxSelectAdminTabularInline):
         'quartet_link',
     ]
     model = QuartetPerformance
-    form = make_ajax_form(
-        QuartetPerformance,
-        {'quartet': 'quartet'},
-    )
     fields = (
         'quartet',
         'quartet_link',
@@ -161,35 +198,31 @@ class CommonAdmin(admin.ModelAdmin):
 
 @admin.register(Singer)
 class SingerAdmin(CommonAdmin):
-    pass
+    form = SingerForm
 
 
 @admin.register(District)
 class DistrictAdmin(CommonAdmin):
-    pass
+    form = DistrictForm
 
 
 @admin.register(Chapter)
 class Chapter(admin.ModelAdmin):
-    pass
+    form = ChapterForm
 
 
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
-
+    form = ContestForm
     fields = (
         'convention',
         'year',
         'kind',
-        'dates',
-        'location',
-        'timezone',
     )
 
     list_filter = [
         'year',
         'kind',
-        'level',
     ]
 
     inlines = [
@@ -214,15 +247,6 @@ class ContestAdmin(admin.ModelAdmin):
 
 @admin.register(Quartet)
 class QuartetAdmin(CommonAdmin):
-    # form = make_ajax_form(
-    #     Quartet,
-    #     {
-    #         'lead': 'singer',
-    #         'tenor': 'singer',
-    #         'baritone': 'singer',
-    #         'bass': 'singer'
-    #     },
-    # )
     inlines = [
         QuartetMembershipInline,
     ]
@@ -231,14 +255,4 @@ class QuartetAdmin(CommonAdmin):
 
 @admin.register(Chorus)
 class ChorusAdmin(CommonAdmin):
-    pass
-
-
-# @admin.register(QuartetPerformance)
-# class QuartetPerformanceAdmin(admin.ModelAdmin):
-#     save_on_top = True
-
-
-# @admin.register(ChorusPerformance)
-# class ChorusPerformanceAdmin(admin.ModelAdmin):
-#     save_on_top = True
+    form = ChorusForm

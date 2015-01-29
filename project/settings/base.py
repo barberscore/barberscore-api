@@ -144,6 +144,7 @@ AJAX_LOOKUP_CHANNELS = {
     'quartet': {'model': 'api.quartet', 'search_field': 'name'},
 }
 
+SELECT2_USE_BUNDLED_JQUERY = False
 
 # Applications
 INSTALLED_APPS = (
@@ -157,7 +158,8 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'timezone_field',
-    'ajax_select',
+    # 'ajax_select',
+    'easy_select2',
     'corsheaders',
     'noncense',
     'rest_framework',
