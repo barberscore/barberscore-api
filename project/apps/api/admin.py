@@ -66,9 +66,36 @@ ChorusPerformanceForm = select2_modelform(
 )
 
 
+@admin.register(Chapter)
+class Chapter(admin.ModelAdmin):
+    form = ChapterForm
+    list_display = [
+        'name',
+        'code',
+        'district',
+    ]
+    list_filter = ['district']
+    search_fields = ['name']
+    save_on_top = True
+
+
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     form = ConventionForm
+    list_display = [
+        'year',
+        'level',
+        'kind',
+        'dates',
+        'location',
+    ]
+    list_filter = [
+        'year',
+        'level',
+        'kind',
+    ]
+    search_fields = ['name']
+    save_on_top = True
 
 
 class QuartetMembershipInline(admin.TabularInline):
@@ -226,8 +253,15 @@ class CommonAdmin(admin.ModelAdmin):
         'twitter',
         'picture',
     ]
+
     search_fields = ['name']
     save_on_top = True
+
+
+@admin.register(Chorus)
+class ChorusAdmin(CommonAdmin):
+    form = ChorusForm
+    list_filter = ['chapter__district']
 
 
 @admin.register(Singer)
@@ -238,11 +272,7 @@ class SingerAdmin(CommonAdmin):
 @admin.register(District)
 class DistrictAdmin(CommonAdmin):
     form = DistrictForm
-
-
-@admin.register(Chapter)
-class Chapter(admin.ModelAdmin):
-    form = ChapterForm
+    list_filter = ['kind']
 
 
 @admin.register(Contest)
@@ -256,13 +286,18 @@ class ContestAdmin(admin.ModelAdmin):
 
     list_filter = [
         'year',
+        'level',
         'kind',
+        'convention',
+        'district',
     ]
 
     inlines = [
         ChorusPerformanceInline,
         QuartetPerformanceInline,
     ]
+    search_fields = ['name']
+    save_on_top = True
 
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
@@ -285,8 +320,3 @@ class QuartetAdmin(CommonAdmin):
         QuartetMembershipInline,
     ]
     exclude = ('members',)
-
-
-@admin.register(Chorus)
-class ChorusAdmin(CommonAdmin):
-    form = ChorusForm
