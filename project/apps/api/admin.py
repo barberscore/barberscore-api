@@ -22,12 +22,17 @@ from .models import (
     Contest,
     QuartetPerformance,
     ChorusPerformance,
+    # QuartetMembership,
 )
 
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     pass
+
+
+class QuartetMembershipInline(admin.TabularInline):
+    model = Quartet.members.through
 
 
 class ChorusPerformanceInline(AjaxSelectAdminTabularInline):
@@ -208,16 +213,20 @@ class ContestAdmin(admin.ModelAdmin):
 
 
 @admin.register(Quartet)
-class QuartetAdmin(AjaxSelectAdmin, CommonAdmin):
-    form = make_ajax_form(
-        Quartet,
-        {
-            'lead': 'singer',
-            'tenor': 'singer',
-            'baritone': 'singer',
-            'bass': 'singer'
-        },
-    )
+class QuartetAdmin(CommonAdmin):
+    # form = make_ajax_form(
+    #     Quartet,
+    #     {
+    #         'lead': 'singer',
+    #         'tenor': 'singer',
+    #         'baritone': 'singer',
+    #         'bass': 'singer'
+    #     },
+    # )
+    inlines = [
+        QuartetMembershipInline,
+    ]
+    exclude = ('members',)
 
 
 @admin.register(Chorus)

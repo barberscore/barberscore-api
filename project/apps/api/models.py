@@ -170,6 +170,7 @@ class Quartet(Common):
     members = models.ManyToManyField(
         'Singer',
         through='QuartetMember',
+        related_name='quartets',
     )
 
     lead = models.ForeignKey(
@@ -604,7 +605,12 @@ class QuartetMember(models.Model):
 
     singer = models.ForeignKey(Singer)
     quartet = models.ForeignKey(Quartet)
-    contest = models.ForeignKey(Contest)
+    contest = models.ForeignKey(
+        Contest,
+        default=lambda: Contest.objects.filter(
+            kind=Contest.QUARTET,
+        ).order_by('year').last()
+    )
     part = models.IntegerField(
         choices=PART_CHOICES,
         null=True,
