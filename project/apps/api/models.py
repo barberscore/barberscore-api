@@ -167,6 +167,11 @@ class Quartet(Common):
         blank=True,
     )
 
+    members = models.ManyToManyField(
+        'Singer',
+        through='QuartetMember',
+    )
+
     lead = models.ForeignKey(
         'Singer',
         blank=True,
@@ -582,3 +587,26 @@ class ChorusPerformance(Performance):
             self.contest,
             self.chorus,
         )
+
+
+class QuartetMember(models.Model):
+    LEAD = 1
+    TENOR = 2
+    BARITONE = 3
+    BASS = 4
+
+    PART_CHOICES = (
+        (LEAD, 'Lead'),
+        (TENOR, 'Tenor'),
+        (BARITONE, 'Baritone'),
+        (BASS, 'Bass'),
+    )
+
+    singer = models.ForeignKey(Singer)
+    quartet = models.ForeignKey(Quartet)
+    contest = models.ForeignKey(Contest)
+    part = models.IntegerField(
+        choices=PART_CHOICES,
+        null=True,
+        blank=True,
+    )
