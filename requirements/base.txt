@@ -2,7 +2,7 @@ Django==1.7.4
 django-cors-headers==1.0.0
 dj-database-url==0.3.0
 django-timezone-field==1.1
-djangorestframework==3.0.3
+djangorestframework==3.0.4
 nameparser==0.3.3
 Pillow==2.7.0
 psycopg2==2.5.4
@@ -11,7 +11,7 @@ pytz==2014.10
 requests==2.5.1
 twilio==3.6.15
 git+git://github.com/dbinetti/django-noncense.git
-boto==2.35.2
+boto==2.36.0
 django-storages==1.1.8
 waitress==0.8.9
 django-autoslug==1.7.2
