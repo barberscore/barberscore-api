@@ -316,6 +316,14 @@ class Convention(models.Model):
         default=SUMMER,
     )
 
+    slug = AutoSlugField(
+        populate_from=lambda instance: "{0}-{1}".format(instance.get_year_display(), instance.get_level_display()),
+        always_update=True,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
     dates = models.CharField(
         max_length=200,
         null=True,
@@ -389,6 +397,12 @@ class Contest(models.Model):
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        null=True,
+        blank=True,
     )
 
     district = models.ForeignKey(
