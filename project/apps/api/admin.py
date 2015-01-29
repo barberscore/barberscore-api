@@ -121,6 +121,40 @@ class ChorusPerformanceInline(admin.TabularInline):
     )
 
 
+class ChorusScoreInline(admin.TabularInline):
+    form = ChorusPerformanceForm
+
+    model = ChorusPerformance
+    fields = (
+        'chorus',
+        'song1',
+        'mus1',
+        'prs1',
+        'sng1',
+        'song2',
+        'mus2',
+        'prs2',
+        'sng2',
+    )
+
+
+class QuartetScoreInline(admin.TabularInline):
+    form = QuartetPerformanceForm
+
+    model = QuartetPerformance
+    fields = (
+        'quartet',
+        'song1',
+        'mus1',
+        'prs1',
+        'sng1',
+        'song2',
+        'mus2',
+        'prs2',
+        'sng2',
+    )
+
+
 class QuartetPerformanceInline(admin.TabularInline):
     form = QuartetPerformanceForm
 
