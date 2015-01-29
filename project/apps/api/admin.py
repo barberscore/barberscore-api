@@ -165,7 +165,7 @@ class DistrictAdmin(CommonAdmin):
 
 
 @admin.register(Chapter)
-class ChatperAdmin(CommonAdmin):
+class Chapter(admin.ModelAdmin):
     pass
 
 

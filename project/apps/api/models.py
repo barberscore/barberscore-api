@@ -230,7 +230,26 @@ class Chorus(Common):
         verbose_name_plural = "choruses"
 
 
-class Chapter(Common):
+class Chapter(models.Model):
+    id = models.UUIDField(
+        default=uuid.uuid4,
+        primary_key=True,
+        coerce_to=str,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.""",
+        max_length=200,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+    )
+
     code = models.CharField(
         help_text="""
             The Chapter code""",
@@ -244,6 +263,9 @@ class Chapter(Common):
         null=True,
         blank=True,
     )
+
+    def __unicode__(self):
+        return "{0}".format(self.name)
 
 
 class District(Common):
