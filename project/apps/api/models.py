@@ -33,6 +33,7 @@ class Common(models.Model):
         help_text="""
             The name of the resource.""",
         max_length=200,
+        unique=True,
     )
 
     slug = AutoSlugField(
@@ -173,32 +174,10 @@ class Quartet(Common):
         related_name='quartets',
     )
 
-    lead = models.ForeignKey(
-        'Singer',
+    district = models.ForeignKey(
+        'District',
         blank=True,
         null=True,
-        related_name='quartet_lead',
-    )
-
-    tenor = models.ForeignKey(
-        'Singer',
-        blank=True,
-        null=True,
-        related_name='quartet_tenor',
-    )
-
-    baritone = models.ForeignKey(
-        'Singer',
-        blank=True,
-        null=True,
-        related_name='quartet_baritone',
-    )
-
-    bass = models.ForeignKey(
-        'Singer',
-        blank=True,
-        null=True,
-        related_name='quartet_bass',
     )
 
 
@@ -248,6 +227,7 @@ class Chapter(models.Model):
         help_text="""
             The name of the resource.""",
         max_length=200,
+        unique=True,
     )
 
     slug = AutoSlugField(
@@ -272,6 +252,9 @@ class Chapter(models.Model):
 
     def __unicode__(self):
         return "{0}".format(self.name)
+
+    class Meta:
+        ordering = ['name']
 
 
 class District(Common):
@@ -589,12 +572,7 @@ class QuartetMember(models.Model):
 
     singer = models.ForeignKey(Singer)
     quartet = models.ForeignKey(Quartet)
-    contest = models.ForeignKey(
-        Contest,
-        default=lambda: Contest.objects.filter(
-            kind=Contest.QUARTET,
-        ).order_by('year').last()
-    )
+    contest = models.ForeignKey(Contest)
     part = models.IntegerField(
         choices=PART_CHOICES,
         null=True,
