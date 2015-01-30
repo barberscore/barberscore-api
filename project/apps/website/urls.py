@@ -8,8 +8,8 @@ urlpatterns = [
     url(r'^contests/$', views.ContestList.as_view(), name='contest-list'),
     url(r'^contests/(?P<slug>[a-zA-Z0-9-]+)/$', views.ContestDetail.as_view(), name='contest-detail'),
 
-    url(r'^chapters/$', views.ChapterList.as_view(), name='chapter-list'),
-    url(r'^chapters/(?P<slug>[a-zA-Z0-9-]+)/$', views.ChapterDetail.as_view(), name='chapter-detail'),
+    # url(r'^chapters/$', views.ChapterList.as_view(), name='chapter-list'),
+    # url(r'^chapters/(?P<slug>[a-zA-Z0-9-]+)/$', views.ChapterDetail.as_view(), name='chapter-detail'),
 
     url(r'^districts/$', views.DistrictList.as_view(), name='district-list'),
     url(r'^districts/(?P<slug>[a-zA-Z0-9-]+)/$', views.DistrictDetail.as_view(), name='district-detail'),
