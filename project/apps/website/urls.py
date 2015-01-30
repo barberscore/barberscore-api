@@ -1,10 +1,15 @@
 from django.conf.urls import url
+from django.views.generic import TemplateView
 
 from . import views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^search/$', views.search, name='search'),
+
+    url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt')),
+    url(r'^sitemap.xml$', TemplateView.as_view(template_name='sitemap.xml')),
+
 
     url(r'^contests/$', views.ContestList.as_view(), name='contest-list'),
     url(r'^contests/(?P<slug>[a-zA-Z0-9-]+)/$', views.ContestDetail.as_view(), name='contest-detail'),
@@ -23,5 +28,4 @@ urlpatterns = [
 
     url(r'^quartets/$', views.QuartetList.as_view(), name='quartet-list'),
     url(r'^quartets/(?P<slug>[a-zA-Z0-9-]+)/$', views.QuartetDetail.as_view(), name='quartet-detail'),
-
 ]
