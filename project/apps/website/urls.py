@@ -1,5 +1,7 @@
 from django.conf.urls import url
 from django.views.generic import TemplateView
+from django.conf.urls.static import static
+from django.conf import settings
 
 from . import views
 
@@ -29,3 +31,5 @@ urlpatterns = [
     url(r'^quartets/$', views.QuartetList.as_view(), name='quartet-list'),
     url(r'^quartets/(?P<slug>[a-zA-Z0-9-]+)/$', views.QuartetDetail.as_view(), name='quartet-detail'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
