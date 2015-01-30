@@ -9,6 +9,8 @@ from django.core.validators import (
     RegexValidator,
 )
 
+from django.core.urlresolvers import reverse
+
 from timezone_field import TimeZoneField
 
 from phonenumber_field.modelfields import PhoneNumberField
@@ -31,7 +33,7 @@ class Common(models.Model):
 
     name = models.CharField(
         help_text="""
-            The name of the resource.""",
+            The name of the resource.  Must be unique.  If there are singer name conflicts, please add middle initial, nickname, or other identifying information.""",
         max_length=200,
         unique=True,
     )
@@ -87,7 +89,7 @@ class Common(models.Model):
     phone = PhoneNumberField(
         verbose_name='Phone Number',
         help_text="""
-            The phone number of the resource.""",
+            The phone number of the resource.  Include country code.""",
         blank=True,
         null=True,
     )
@@ -114,26 +116,23 @@ class Common(models.Model):
         null=True,
     )
 
-    def __unicode__(self):
-        return "{0}".format(self.name)
-
     class Meta:
         abstract = True
-        ordering = ('name',)
 
 
 class Singer(Common):
-    timezone = TimeZoneField(
-        default='US/Pacific',
-    )
 
-    # chapter = models.ForeignKey(
-    #     'Chapter',
-    #     help_text="""
-    #         The chapter of the singer.""",
-    #     blank=True,
-    #     null=True,
-    # )
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return "{0}".format(self.name)
+
+    def get_absolute_url(self):
+        return reverse(
+            'website:singer-detail',
+            args=[self.slug],
+        )
 
     @property
     def first_name(self):
@@ -176,13 +175,27 @@ class Quartet(Common):
 
     district = models.ForeignKey(
         'District',
+        help_text="""
+            This is the district the quartet is officially representing in the contest.""",
         blank=True,
         null=True,
     )
 
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return "{0}".format(self.name)
+
+    def get_absolute_url(self):
+        return reverse(
+            'website:quartet-detail',
+            args=[self.slug],
+        )
+
 
 class Chorus(Common):
-    """An individual singer."""
+    """An individual chorus."""
     prelim = models.FloatField(
         help_text="""
             The incoming prelim score.""",
@@ -196,12 +209,6 @@ class Chorus(Common):
         null=True,
         blank=True,
     )
-
-    # chapter = models.OneToOneField(
-    #     'Chapter',
-    #     null=True,
-    #     blank=True,
-    # )
 
     district = models.ForeignKey(
         'District',
@@ -234,12 +241,23 @@ class Chorus(Common):
         ordering = ('name',)
         verbose_name_plural = "choruses"
 
+    def __unicode__(self):
+        return "{0}".format(self.name)
+
+    def get_absolute_url(self):
+        return reverse(
+            'website:chorus-detail',
+            args=[self.slug],
+        )
+
 
 class District(Common):
+    BHS = 0
     DISTRICT = 1
     AFFILIATE = 2
 
     KIND_CHOICES = (
+        (BHS, "BHS"),
         (DISTRICT, "District"),
         (AFFILIATE, "Affiliate"),
     )
@@ -252,11 +270,20 @@ class District(Common):
 
     kind = models.IntegerField(
         choices=KIND_CHOICES,
-        default=1,
+        default=DISTRICT,
     )
 
     class Meta:
         ordering = ['kind', 'name']
+
+    def __unicode__(self):
+        return "{0}".format(self.name)
+
+    def get_absolute_url(self):
+        return reverse(
+            'website:district-detail',
+            args=[self.slug],
+        )
 
 
 class Convention(models.Model):
@@ -264,22 +291,16 @@ class Convention(models.Model):
     for r in range(2010, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
-    INTERNATIONAL = 1
-    # DISTRICT = 2
-
     SUMMER = 1
     MIDWINTER = 2
-    # FALL = 3
-    # SPRING = 4
-
-    LEVEL_CHOICES = (
-        (INTERNATIONAL, 'International',),
-        # (DISTRICT, 'District',)
-    )
+    FALL = 3
+    SPRING = 4
 
     KIND_CHOICES = (
         (SUMMER, 'Summer',),
-        (MIDWINTER, 'Midwinter',)
+        (MIDWINTER, 'Midwinter',),
+        (FALL, 'Fall',),
+        (SPRING, 'Spring',),
     )
 
     id = models.UUIDField(
@@ -289,15 +310,10 @@ class Convention(models.Model):
         editable=False,
     )
 
-    year = models.IntegerField(
-        max_length=4,
-        choices=YEAR_CHOICES,
-        default=datetime.datetime.now().year,
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL_CHOICES,
-        default=INTERNATIONAL,
+    district = models.ForeignKey(
+        'District',
+        null=True,
+        blank=True,
     )
 
     kind = models.IntegerField(
@@ -305,12 +321,20 @@ class Convention(models.Model):
         default=SUMMER,
     )
 
+    year = models.IntegerField(
+        max_length=4,
+        choices=YEAR_CHOICES,
+        default=datetime.datetime.now().year,
+    )
+
     slug = AutoSlugField(
-        populate_from=lambda instance: "{0}-{1}".format(instance.get_year_display(), instance.get_level_display()),
+        populate_from=lambda instance: "{0}-{1}-{2}".format(
+            instance.district.name,
+            instance.get_kind_display(),
+            instance.get_year_display(),
+        ),
         always_update=True,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     dates = models.CharField(
@@ -329,30 +353,28 @@ class Convention(models.Model):
         default='US/Pacific',
     )
 
+    class Meta:
+        ordering = [
+            'district',
+            'kind',
+            'year',
+        ]
+
     def __unicode__(self):
         return "{0} {1} {2}".format(
-            self.get_year_display(),
-            self.get_level_display(),
+            self.district.name,
             self.get_kind_display(),
+            self.get_year_display(),
         )
 
-    class Meta:
-        ordering = ['-year', 'level', 'kind']
+    def get_absolute_url(self):
+        return reverse(
+            'website:convention-detail',
+            args=[self.slug],
+        )
 
 
 class Contest(models.Model):
-    YEAR_CHOICES = []
-    for r in range(2010, (datetime.datetime.now().year + 1)):
-        YEAR_CHOICES.append((r, r))
-
-    INTERNATIONAL = 1
-    # DISTRICT = 2
-
-    LEVEL_CHOICES = (
-        (INTERNATIONAL, 'International',),
-        # (DISTRICT, 'District',)
-    )
-
     QUARTET = 1
     CHORUS = 2
     SENIOR = 3
@@ -372,17 +394,6 @@ class Contest(models.Model):
         editable=False,
     )
 
-    year = models.IntegerField(
-        max_length=4,
-        choices=YEAR_CHOICES,
-        default=datetime.datetime.now().year,
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL_CHOICES,
-        default=INTERNATIONAL,
-    )
-
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
@@ -394,21 +405,37 @@ class Contest(models.Model):
         blank=True,
     )
 
-    district = models.ForeignKey(
-        'District',
+    slug = AutoSlugField(
+        populate_from=lambda instance: "{0}-{1}-{2}".format(
+            instance.convention.district.name,
+            instance.get_kind_display(),
+            instance.convention.year,
+        ),
+        always_update=True,
+        unique=True,
         null=True,
         blank=True,
     )
 
+    class Meta:
+        ordering = [
+            'convention__district',
+            'kind',
+            'convention__year',
+        ]
+
     def __unicode__(self):
         return "{0} {1} {2}".format(
-            self.get_year_display(),
-            self.get_level_display(),
+            self.convention.district.name,
             self.get_kind_display(),
+            self.convention.year,
         )
 
-    class Meta:
-        ordering = ['-year', 'level', 'kind']
+    def get_absolute_url(self):
+        return reverse(
+            'website:contest-detail',
+            args=[self.slug],
+        )
 
 
 class Performance(models.Model):
@@ -494,7 +521,6 @@ class Performance(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['contest', 'round', 'queue']
 
 
 class QuartetPerformance(Performance):
@@ -504,6 +530,13 @@ class QuartetPerformance(Performance):
         choices=Performance.ROUND_CHOICES,
         default=Performance.QUARTERS,
     )
+
+    class Meta:
+        ordering = [
+            'contest',
+            'round',
+            'quartet',
+        ]
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
@@ -528,9 +561,17 @@ class ChorusPerformance(Performance):
         blank=True,
     )
 
+    class Meta:
+        ordering = [
+            'contest',
+            'round',
+            'chorus',
+        ]
+
     def __unicode__(self):
-        return "{0} {1}".format(
+        return "{0} {1} {2}".format(
             self.contest,
+            self.get_round_display(),
             self.chorus,
         )
 
@@ -556,3 +597,19 @@ class QuartetMember(models.Model):
         null=True,
         blank=True,
     )
+
+    class Meta:
+        ordering = [
+            'quartet',
+            'part',
+            'singer',
+            'contest',
+        ]
+
+    def __unicode__(self):
+        return "{0} {1} {2} {3}".format(
+            self.quartet,
+            self.get_part_display(),
+            self.singer,
+            self.contest,
+        )
