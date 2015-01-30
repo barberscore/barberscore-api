@@ -26,10 +26,10 @@ urlpatterns = [
     url(r'^singers/(?P<slug>[a-zA-Z0-9-]+)/$', views.SingerDetail.as_view(), name='singer-detail'),
 
     url(r'^choruses/$', views.ChorusList.as_view(), name='chorus-list'),
-    url(r'^choruses/(?P<slug>[a-zA-Z0-9-]+)/$', views.ChorusDetail.as_view(), name='chorus-detail'),
+    url(r'^choruses/(?P<slug>[a-zA-Z0-9-]+)/$', views.chorus_detail, name='chorus-detail'),
 
     url(r'^quartets/$', views.QuartetList.as_view(), name='quartet-list'),
-    url(r'^quartets/(?P<slug>[a-zA-Z0-9-]+)/$', views.QuartetDetail.as_view(), name='quartet-detail'),
+    url(r'^quartets/(?P<slug>[a-zA-Z0-9-]+)/$', views.quartet_detail, name='quartet-detail'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
