@@ -417,6 +417,18 @@ class Contest(models.Model):
         blank=True,
     )
 
+    panel = models.IntegerField(
+        help_text="""
+            Size of the judging panel (typically
+            three or five.)""",
+        default=5,
+    )
+
+    scoresheet = models.FileField(
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         ordering = [
             'convention__district',
