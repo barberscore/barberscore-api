@@ -44,6 +44,11 @@
           <h1>Tracker for the Barbershop Harmony Society Convention.</h1>
         </p>
       </div>
+      <form action="{% url 'website:search' %}">
+          <input name="q" value="{{request.GET.q}}">
+          <input type="submit" value="Go">
+        </form>
+      </div>
 
       {# Learn More Button  #}
       {% comment %}
