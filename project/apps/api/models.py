@@ -100,9 +100,9 @@ class Common(models.Model):
         null=True,
     )
 
-    blurb = models.TextField(
+    description = models.TextField(
         help_text="""
-            A description/bio describing the resource.  Max 1000 characters.""",
+            A description/bio of the resource.  Max 1000 characters.""",
         blank=True,
         max_length=1000,
     )
