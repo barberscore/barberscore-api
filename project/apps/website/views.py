@@ -1,3 +1,5 @@
+from __future__ import division
+
 import watson
 
 from django.shortcuts import (
@@ -131,6 +133,15 @@ def quartet_detail(request, slug):
     quartet = Quartet.objects.get(slug=slug)
     members = quartet.quartetmember_set.all().prefetch_related('singer')
     performances = quartet.quartetperformance_set.all()
+    # Monkeypatch running total
+    run = 0
+    cnt = 0
+    for performance in performances:
+        run += performance.total_raw
+        cnt += performance.contest.panel * 6
+        performance.running = run / cnt
+        performance.rnd = performance.total_raw / (performance.contest.panel * 6)
+
     return render(
         request,
         'api/quartet_detail.html',
