@@ -31,8 +31,6 @@ USE_TZ = True
 SECRET_KEY = get_env_variable("SECRET_KEY")
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
-PHONENUMBER_DEFAULT_REGION = 'US'
-PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
@@ -128,6 +126,10 @@ MESSAGE_TAGS = {
 TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
 
+# Phonenumber support
+PHONENUMBER_DEFAULT_REGION = 'US'
+PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
+
 # Rest Framework
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -136,6 +138,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny'
     ]
 }
+
+#  CORS Headers
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Easy Select2
 SELECT2_USE_BUNDLED_JQUERY = False
@@ -159,5 +164,3 @@ INSTALLED_APPS = (
     'apps.api',
     'apps.website',
 )
-
-CORS_ORIGIN_ALLOW_ALL = True
