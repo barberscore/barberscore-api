@@ -1,3 +1,5 @@
+from __future__ import division
+
 import os
 import datetime
 # import arrow
@@ -531,6 +533,89 @@ class Performance(models.Model):
         null=True,
     )
 
+    @property
+    def mus1_rata(self):
+        if self.mus1:
+            return self.mus1 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def prs1_rata(self):
+        if self.mus1:
+            return self.prs1 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def sng1_rata(self):
+        if self.mus1:
+            return self.sng1 / self.contest.panel
+        else:
+            return None
+
+    def mus2_rata(self):
+        if self.mus1:
+            return self.mus2 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def prs2_rata(self):
+        if self.mus1:
+            return self.prs2 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def sng2_rata(self):
+        if self.mus1:
+            return self.sng2 / self.contest.panel
+        else:
+            return None
+
+    @property
+    def song1_raw(self):
+        if self.mus1 and self.prs1 and self.sng1:
+            return sum([self.mus1, self.prs1, self.sng1])
+        else:
+            return None
+
+    @property
+    def song2_raw(self):
+        if self.mus2 and self.prs2 and self.sng2:
+            return sum([self.mus2, self.prs2, self.sng2])
+        else:
+            return None
+
+    @property
+    def total_raw(self):
+        if self.song1_raw and self.song2_raw:
+            return sum([self.song1_raw, self.song2_raw])
+        else:
+            return None
+
+    @property
+    def song1_rata(self):
+        if self.song1_raw:
+            return self.song1_raw / (self.contest.panel * 3)
+        else:
+            return None
+
+    @property
+    def song2_rata(self):
+        if self.song2_raw:
+            return self.song2_raw / (self.contest.panel * 3)
+        else:
+            return None
+
+    @property
+    def total_percent(self):
+        if self.song1_raw:
+            return self.total_raw / (self.contest.panel * 6)
+        else:
+            return None
+
     class Meta:
         abstract = True
 
@@ -546,7 +631,7 @@ class QuartetPerformance(Performance):
     class Meta:
         ordering = [
             'contest',
-            'round',
+            '-round',
             'quartet',
         ]
 
