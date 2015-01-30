@@ -24,6 +24,10 @@ LOGGING = {
             'level': 'DEBUG',
             'handlers': ['console'],
         },
+        'apps.website': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
         'noncense': {
             'level': 'DEBUG',
             'handlers': ['console'],
