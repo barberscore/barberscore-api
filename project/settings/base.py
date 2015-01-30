@@ -56,6 +56,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
 )
 
 # Templating
@@ -159,6 +160,7 @@ INSTALLED_APPS = (
     'timezone_field',
     'easy_select2',
     'corsheaders',
+    'watson',
     'noncense',
     'rest_framework',
     'apps.api',
