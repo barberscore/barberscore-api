@@ -25,13 +25,30 @@
         {% endif %}
         Director: {{chorus.director}}
     </div>
-            <ul>
-          {% for performance in performances %}
-            <li>{{performance}}</li>
-          {% empty %}
-            <li>No Performances</li>
-          {% endfor %}
-        </ul>
+
+    <div class="table-responsive">
+      <table class='table'>
+        <tr>
+          <th>Round</th>
+          <th>Songs</th>
+          <th>MUS</th>
+          <th>PRS</th>
+          <th>SNG</th>
+          <th>Total</th>
+        </tr>
+        {% for performance in performances %}
+          {{performance.contest}}
+          <tr>
+            <td>{{performance.get_round_display}}</td>
+            <td>{{performance.song1|truncatechars:20}}<br>{{performance.song2|truncatechars:20}}</td>
+            <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
+            <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
+            <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
+            <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
 
   </div> <!-- /container -->
 {% endblock content %}
