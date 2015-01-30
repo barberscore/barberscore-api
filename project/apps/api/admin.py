@@ -63,16 +63,9 @@ ChorusPerformanceForm = select2_modelform(
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     form = ConventionForm
-    list_display = [
-        'year',
-        'level',
-        'kind',
-        'dates',
-        'location',
-    ]
     list_filter = [
         'year',
-        'level',
+        'district',
         'kind',
     ]
     search_fields = ['name']
@@ -266,11 +259,11 @@ class ContestAdmin(admin.ModelAdmin):
     )
 
     list_filter = [
-        'year',
-        'level',
+        # 'year',
+        # 'level',
         'kind',
         'convention',
-        'district',
+        # 'district',
     ]
 
     inlines = [
