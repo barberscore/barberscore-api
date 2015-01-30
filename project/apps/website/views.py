@@ -1,3 +1,5 @@
+import watson
+
 from django.shortcuts import render
 
 from django.views.generic import (
@@ -6,6 +8,7 @@ from django.views.generic import (
 )
 
 from apps.api.models import (
+    Convention,
     Contest,
     District,
     Singer,
@@ -23,6 +26,19 @@ def home(request):
     )
 
 
+def search(request):
+    term = request.GET.get('q', None)
+    if term:
+        results = watson.search(term)
+    else:
+        results = None
+    return render(
+        request,
+        'search.html',
+        {'results': results}
+    )
+
+
 class ChorusList(ListView):
     model = Chorus
     context_object_name = 'choruses'
@@ -31,6 +47,16 @@ class ChorusList(ListView):
 class ChorusDetail(DetailView):
     model = Chorus
     context_object_name = 'chorus'
+
+
+class ConventionList(ListView):
+    model = Convention
+    context_object_name = 'conventions'
+
+
+class ConventionDetail(DetailView):
+    model = Convention
+    context_object_name = 'convention'
 
 
 class QuartetList(ListView):
