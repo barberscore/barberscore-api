@@ -8,7 +8,6 @@ from django.views.generic import (
 from apps.api.models import (
     Contest,
     District,
-    Chapter,
     Singer,
     Chorus,
     Quartet,
@@ -62,16 +61,6 @@ class DistrictList(ListView):
 class DistrictDetail(DetailView):
     model = District
     context_object_name = 'district'
-
-
-class ChapterList(ListView):
-    model = Chapter
-    context_object_name = 'chapters'
-
-
-class ChapterDetail(DetailView):
-    model = Chapter
-    context_object_name = 'chapter'
 
 
 class SingerList(ListView):

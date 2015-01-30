@@ -13,7 +13,6 @@ from .models import (
     Chorus,
     Quartet,
     District,
-    Chapter,
     Contest,
     QuartetPerformance,
     ChorusPerformance,
@@ -32,11 +31,6 @@ DistrictForm = select2_modelform(
 
 QuartetMemberForm = select2_modelform(
     QuartetMember,
-    attrs={'width': '250px'},
-)
-
-ChapterForm = select2_modelform(
-    Chapter,
     attrs={'width': '250px'},
 )
 
@@ -64,19 +58,6 @@ ChorusPerformanceForm = select2_modelform(
     ChorusPerformance,
     attrs={'width': '250px'},
 )
-
-
-@admin.register(Chapter)
-class Chapter(admin.ModelAdmin):
-    form = ChapterForm
-    list_display = [
-        'name',
-        'code',
-        'district',
-    ]
-    list_filter = ['district']
-    search_fields = ['name']
-    save_on_top = True
 
 
 @admin.register(Convention)
@@ -261,7 +242,7 @@ class CommonAdmin(admin.ModelAdmin):
 @admin.register(Chorus)
 class ChorusAdmin(CommonAdmin):
     form = ChorusForm
-    list_filter = ['chapter__district']
+    list_filter = ['district']
 
 
 @admin.register(Singer)
