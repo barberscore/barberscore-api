@@ -19,7 +19,7 @@
     <div>
       <ul>
         {% for contest in contests %}
-          <li><a href='{% url "website:contest-detail" contest.slug %}'>{{contest.name}}</a></li>
+          <li><a href='{% url "website:contest-detail" contest.slug %}'>{{contest}}</a></li>
         {% endfor %}
       <ul>
     </div>
