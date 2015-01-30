@@ -19,6 +19,20 @@
     <div>
       <p>
         <h4>{{quartet.name}}</h4>
+        <ul>
+          {% for member in members %}
+            <li>{{member.get_part_display}}: {{member.singer.name}}</li>
+          {% empty %}
+            <li>No Members</li>
+          {% endfor %}
+        </ul>
+        <ul>
+          {% for performance in performances %}
+            <li>{{performance}}</li>
+          {% empty %}
+            <li>No Members</li>
+          {% endfor %}
+        </ul>
       </p>
     </div>
   </div> <!-- /container -->

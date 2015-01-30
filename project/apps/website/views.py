@@ -1,6 +1,9 @@
 import watson
 
-from django.shortcuts import render
+from django.shortcuts import (
+    render,
+    get_object_or_404,
+)
 
 from django.views.generic import (
     ListView,
@@ -104,11 +107,6 @@ class ChorusPerformanceList(ListView):
     context_object_name = 'performances'
 
 
-class ChorusPerformanceDetail(DetailView):
-    model = ChorusPerformance
-    context_object_name = 'performance'
-
-
 class QuartetPerformanceList(ListView):
     model = QuartetPerformance
     context_object_name = 'performances'
@@ -117,3 +115,24 @@ class QuartetPerformanceList(ListView):
 class QuartetPerformanceDetail(DetailView):
     model = QuartetPerformance
     context_object_name = 'performance'
+
+
+def chorus_detail(request, slug):
+    chorus = get_object_or_404(Chorus, slug=slug)
+    performances = chorus.chorusperformance_set.all()
+    return render(
+        request,
+        'api/chorus_detail.html',
+        {'chorus': chorus, 'performances': performances},
+    )
+
+
+def quartet_detail(request, slug):
+    quartet = Quartet.objects.get(slug=slug)
+    members = quartet.quartetmember_set.all().prefetch_related('singer')
+    performances = quartet.quartetperformance_set.all()
+    return render(
+        request,
+        'api/quartet_detail.html',
+        {'quartet': quartet, 'members': members, 'performances': performances},
+    )

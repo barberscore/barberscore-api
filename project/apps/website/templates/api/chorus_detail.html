@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% load humanize %}
 
 {% block title %}
@@ -18,10 +19,19 @@
     </div>
     <div>
         {% if chorus.picture %}
-          <img src='{{contestant.picture.url}}' class='img-responsive img-thumbnail'><br><br>
+          <img src='{% static chorus.picture.url %}' class='img-responsive img-thumbnail'><br><br>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
+        Director: {{chorus.director}}
     </div>
+            <ul>
+          {% for performance in performances %}
+            <li>{{performance}}</li>
+          {% empty %}
+            <li>No Performances</li>
+          {% endfor %}
+        </ul>
+
   </div> <!-- /container -->
 {% endblock content %}
