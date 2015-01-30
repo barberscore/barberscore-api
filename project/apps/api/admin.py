@@ -252,18 +252,9 @@ class DistrictAdmin(CommonAdmin):
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
     form = ContestForm
-    fields = (
-        'convention',
-        'year',
-        'kind',
-    )
-
     list_filter = [
-        # 'year',
-        # 'level',
         'kind',
         'convention',
-        # 'district',
     ]
 
     inlines = [
