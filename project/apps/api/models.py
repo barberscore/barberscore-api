@@ -127,13 +127,13 @@ class Singer(Common):
         default='US/Pacific',
     )
 
-    chapter = models.ForeignKey(
-        'Chapter',
-        help_text="""
-            The chapter of the singer.""",
-        blank=True,
-        null=True,
-    )
+    # chapter = models.ForeignKey(
+    #     'Chapter',
+    #     help_text="""
+    #         The chapter of the singer.""",
+    #     blank=True,
+    #     null=True,
+    # )
 
     @property
     def first_name(self):
@@ -197,10 +197,16 @@ class Chorus(Common):
         blank=True,
     )
 
-    chapter = models.OneToOneField(
-        'Chapter',
-        null=True,
+    # chapter = models.OneToOneField(
+    #     'Chapter',
+    #     null=True,
+    #     blank=True,
+    # )
+
+    district = models.ForeignKey(
+        'District',
         blank=True,
+        null=True,
     )
 
     director = models.CharField(
@@ -210,51 +216,23 @@ class Chorus(Common):
         blank=True,
     )
 
+    chapter_name = models.CharField(
+        help_text="""
+            The name of the director(s) of the chorus.""",
+        max_length=200,
+        blank=True,
+    )
+
+    chapter_code = models.CharField(
+        help_text="""
+            The code of the director(s) of the chorus.""",
+        max_length=200,
+        blank=True,
+    )
+
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "choruses"
-
-
-class Chapter(models.Model):
-    id = models.UUIDField(
-        default=uuid.uuid4,
-        primary_key=True,
-        coerce_to=str,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the resource.""",
-        max_length=200,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
-    code = models.CharField(
-        help_text="""
-            The Chapter code""",
-        blank=True,
-        null=True,
-        max_length=20,
-    )
-
-    district = models.ForeignKey(
-        'District',
-        null=True,
-        blank=True,
-    )
-
-    def __unicode__(self):
-        return "{0}".format(self.name)
-
-    class Meta:
-        ordering = ['name']
 
 
 class District(Common):
