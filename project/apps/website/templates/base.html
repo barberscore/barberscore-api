@@ -106,13 +106,11 @@
 
     {% block bottombar %}
       <div class="container">
-        <div class="dd-footer">
+        <div class="footer">
           <ul class="nav nav-pills">
-            {# <li><a id='footer-about' href="{% url 'about' %}">About</a></li> #}
-            {# <li><a id='footer-faq' href="{% url 'faq' %}">FAQ</a></li> #}
-            {# <li><a id='footer-pricing' href="{% url 'pricing' %}">Pricing</a></li> #}
-            {# <li><a id='footer-legal' href="{% url 'legal' %}">Legal</a></li> #}
-            {# <li><a id='footer-support' href="{% url 'support' %}">Support</a></li> #}
+            <li><a id='footer-about' href="{% url 'website:about' %}">About</a></li>
+            <li><a id='footer-faq' href="{% url 'website:faq' %}">FAQ</a></li>
+            <li class='copyright pull-right text-muted'><a href='http://dbinetti.com'>&copy; 2015 David Binetti</a></li>
           </ul>
         </div>
       </div>
