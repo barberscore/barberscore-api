@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% load humanize %}
 
 {% block title %}
@@ -10,16 +11,23 @@
   <div class="container">
     <div class='page-header'>
       <p>
-        <h2>{{district.name}}</h2>
-      </p>
-      <p class='lead'>
-        Quadistrictrtet detail.
+        <h2>{{district.name}} ({{district.abbreviation}})</h2>
+        <small>{{district.description}}</small>
       </p>
     </div>
     <div>
-      <p>
-        <h4>{{district.name}}</h4>
-      </p>
+        {% if district.picture %}
+          <img src='{% static district.picture.url %}' class='img-responsive img-thumbnail'><br><br>
+        {% else %}
+          <p>No Image Available</p>
+        {% endif %}
+        <p>Location: {{district.location}}</p>
+        <p>Website: {{district.website}}</p>
+        <p>Facebook: {{district.facebook}}</p>
+        <p>Twitter: {{district.twitter}}</p>
+        <p>Email: {{district.email}}</p>
+        <p>Phone: {{district.phone}}</p>
     </div>
+
   </div> <!-- /container -->
 {% endblock content %}
