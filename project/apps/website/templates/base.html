@@ -74,11 +74,13 @@
                 <li><a id='nav-choruses' href="{% url 'website:chorus-list' %}"><span class='fa fa-group fa-lg'></span> Choruses</a></li>
                 <li><a id='nav-districts' href="{% url 'website:district-list' %}"><span class='fa fa-bank fa-lg'></span> Districts</a></li>
                 <li><a id='nav-singers' href="{% url 'website:singer-list' %}"><span class='fa fa-user fa-lg'></span> Singers</a></li>
+                {% comment %}
               {% if user.is_authenticated %}
                 <li><a id='nav-logout' href="{% url 'noncense:logout' %}"><span class='fa fa-sign-out fa-lg'></span> Logout</a></li>
               {% else %}
                 <li><a id='nav-login' href="{% url 'noncense:login' %}"><span class='fa fa-sign-in fa-lg'></span> Login</a></li>
               {% endif %}
+              {% endcomment %}
             </ul>
           </div>
         </div>
