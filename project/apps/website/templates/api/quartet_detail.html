@@ -21,7 +21,7 @@
       <p>
         <h4>{{quartet.name}}</h4>
         {% if quartet.picture %}
-          <img src='{% static quartet.picture.url %}' class='img-responsive img-thumbnail'><br><br>
+          <img src='{{quartet.picture.url}}' class='img-responsive img-thumbnail'><br><br>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
