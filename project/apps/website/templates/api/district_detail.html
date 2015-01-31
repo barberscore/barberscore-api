@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
 {% load humanize %}
 
 {% block title %}
@@ -17,7 +16,7 @@
     </div>
     <div>
         {% if district.picture %}
-          <img src='{% static district.picture.url %}' class='img-responsive img-thumbnail'><br><br>
+          <img src='{{district.picture.url}}' class='img-responsive img-thumbnail'><br><br>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
