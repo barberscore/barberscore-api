@@ -122,7 +122,6 @@
 {% endblock content %}
 
 {% block scripts %}
-  <script src="//fast.wistia.com/assets/external/popover-v1.js" charset="ISO-8859-1" ></script>
   <script src="{% static 'js/jquery.caret.js' %}"></script>
   <script src="{% static 'js/jquery.mobilePhoneNumber.js' %}"></script>
   <script>
@@ -132,6 +131,7 @@
   </script>
 {% endblock scripts %}
 
+{% comment %}
 {% block mixpanel %}
   {{block.super}}
   <script>
@@ -153,3 +153,4 @@
 
   </script>
 {% endblock mixpanel %}
+{% endcomment %}
