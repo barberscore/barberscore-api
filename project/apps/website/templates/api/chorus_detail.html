@@ -19,7 +19,7 @@
     </div>
     <div>
         {% if chorus.picture %}
-          <img src='{% static chorus.picture.url %}' class='img-responsive img-thumbnail'><br><br>
+          <img src='{{chorus.picture.url}}' class='img-responsive img-thumbnail'><br><br>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
