@@ -36,7 +36,7 @@ DEFAULT_FILE_STORAGE = MEDIA_STORAGE
 STATICFILES_STORAGE = STATIC_STORAGE
 
 
-EMAIL_BACKEND = 'adjrill.mail.backends.djrill.DjrillBackend'
+EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
 MANDRILL_API_KEY = get_env_variable("MANDRILL_APIKEY")
 
 BUGSNAG = {
