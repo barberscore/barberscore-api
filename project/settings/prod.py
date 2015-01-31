@@ -2,6 +2,9 @@ from .base import *
 
 import sys
 
+EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
+MANDRILL_API_KEY = get_env_variable("MANDRILL_APIKEY")
+
 BUGSNAG = {
     "api_key": get_env_variable("BUGSNAG_API_KEY"),
     "project_root": PROJECT_ROOT,
