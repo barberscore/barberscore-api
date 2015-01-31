@@ -59,3 +59,7 @@ LOGGING = {
         },
     },
 }
+
+INSTALLED_APPS += (
+    'djrill',
+)
