@@ -1,149 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'base.html'%}
 
 {% block title %}
-  FAQ
+  Frequently Asked Questions
 {% endblock title %}
 
 {% block content %}
+
   <div class="container">
+
     <div class="page-header">
       <h1>Frequently Asked Questions</h1>
     </div>
+
     <div class="row">
       <div class="col-md-8">
-        <h4><a id='faq-01-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-01'>How does it work?</a></h4>
-        <p id='faq-01' class='collapse'>
-          First, with your permission, we connect to your photos through your cloud provider.  Then, our system indentifies great family shots (usually including the kids) that would be appropriate to send to the grandparents. Finally, we text a copy of that picture to you (and anyone else you designate) each day, every day.  It will bring a smile to your face every time you see it.
-        </p>
 
-        <h4><a id='faq-13-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-13'>Wait&mdash;this sounds like magic.  How do you find "great family photos"?</a></h4>
-        <p id='faq-13' class='collapse'>
-          It's a two-step process:  first, our system does an automated pre-screen to skip all the photos you wouldn't want us to see.  (For instance, our facial recognition algorithms can spot children and if kids are in the shot then it's assumed to be family-friendly.)  Then, of the pre-screened photos, our team conducts a personalized quality review to ensure that nothing inapporpriate is sent.  (Computers are great for some things, but picking great photos is still a job for a human.)  That's it!
-        </p>
+        <h4><a href='#' data-toggle='collapse' data-target='#faq-01'>Why did you create this?</a></h4>
+        <p id='faq-01' class='collapse'>We just wanted a simple, mobile-optimized site to be able to easily track the contest and write notes on each performance (ie, a replacement for the paper program.)</p>
 
-        <h4><a id='faq-14-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-14'>Do I get to approve what's sent?</a></h4>
-        <p id='faq-14' class='collapse'>
-          Yes, each account is set to enforce pre-approval by default.  "Pre-Approval" means that as the account owner you'll be asked to approve each selected Daily before sending.  It's easy to approve: simply reply with a simple 'Y' to send.  Or, if you prefer, you can  disable pre-approval which means that each daily will be sent automatically without any additional effort.
-        </p>
+        <h4><a href='#' data-toggle='collapse' data-target='#faq-02'>Is there an iOS or Android version?</a></h4>
+        <p id='faq-02' class='collapse'>No, there aren't dedicated apps.  However, you can access it quite easily through a web browser on either platform.  This is backed by a RESTful API, so if you know what that means and want to create an app then let us know and we'll send you a key!</p>
 
-        <h4><a id='faq-10-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-10'>What about work photos and other irrelevant shots?</a></h4>
-        <p id='faq-10' class='collapse'>
-          Our system identifies family photos, typically ones with the kids, and ignores everything else.  Work photos, pictures of food, selfies, and other non-family shots are skipped entirely.  Of those which pass this first test, we conduct an individual quality review to ensure the best possible photos are sent.  (Easy test: if the photo isn't appropriate for grandma, then it is ignored.)
-        </p>
+        <h4><a href='#' data-toggle='collapse' data-target='#faq-03'>Why do you need my mobile number?</a></h4>
+        <p id='faq-03' class='collapse'>Using a mobile code is just much easier than trying to remember endless username/email/password combinations (particuarly for infrequently accessed sites like this one.)  Moreover, it's actually safer because there's no password to be lost or stolen!  We won't share your number or anything like that.  It's just a lot easier to handle than doing password resets, and email switching and all that other stuff that you do when you forget logins (which we all do.)  If you're overseas or otherwise can't receive texts, then send us an email at <a href='mailto:support@barberscore.com'>support@barberscore.com</a> and we'll try to figure something out.</p>
 
-        <h4><a id='faq-09-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-09'>What if I don't have kids?  Can you send other photos?</a></h4>
-        <p id='faq-09' class='collapse'>
-          For the time being we are only set up to identify and send great family photos that include kids.  In the future we may add other preferred subjects such as vacation shots, but for now we're strictly family-only.
-        </p>
+        <h4><a href='#' data-toggle='collapse' data-target='#faq-04'>I have a tablet or desktop; how do I access it without a mobile phone?</a></h4>
+        <p id='faq-04' class='collapse'>You don't need to access the site from a mobile phone, but you do need some way to receive a text message to get your access code.  So just keep your phone nearby, and when the site sends you the code you can read it from your phone, and then enter it on the tablet/desktop and boom &mdash; you're in.</p>
 
-        <h4><a id='faq-08-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-08'>What if I don't backup my photos in the cloud?</a></h4>
-        <p id='faq-08' class='collapse'>
-          Forgive us for being presumptious, but you really should!  Your photos are your most precious memories and can be easily lost to theft, fire, or just plain old computer failure.  But more to the point, if you don't keep your photos online we can't organize them.  We work in the cloud to keep our service affordable.  Some backup services (like Flickr) are free and secure, and most are very easy to set up.  Contact us at 415.659.9863 if you'd like us to help you get your photos backed up through a cloud service and we'll do everything we can to get you started.
-        </p>
 
-        <h4><a id='faq-02-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-02'>How do you get access to my pictures?</a></h4>
-        <p id='faq-02' class='collapse'>
-          You need to grant us permission to do so through your cloud provider (currently Dropbox or Flickr.)  Once granted, our system is able to process your images (copies only &mdash; the originals are not touched.)  It all happens automatically, including all updates, so the service remains current even as new pictures come in with no additional effort required (although you can revoke access at any time.)
-        </p>
+      </div><!--/col-grid-->
+    </div><!-- /row-->
+  </div><!-- /container -->
 
-       <h4><a id='faq-12-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-12'>Which cloud services do you support?</a></h4>
-        <p id='faq-12' class='collapse'>
-          We currently support Dropbox and Flickr.  You can also signup and request a new cloud service; we're working every day to add to our list of supported providers.
-        </p>
-
-        <h4><a id='faq-03-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-03'>Are my pictures safe?</a></h4>
-        <p id='faq-03' class='collapse'>
-          Yes.  We don't touch the original photographs; we only send copies via text.  So your pictures are 100% safe.
-        </p>
-
-        <h4><a id='faq-04-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-04'>What's the cost?</a></h4>
-        <p id='faq-04' class='collapse'>
-          The cost is $19 a month, which includes two recipients (yourself and one other.)  We also provide a free one-month trial, and you can cancel at any time.  Additional recipients are $5 per month.
-        </p>
-
-        <h4><a id='faq-05-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-05'>What about privacy?</a></h4>
-        <p id='faq-05' class='collapse'>
-          We don't copy, keep, or use your photos for any purpose other than this service.  Also, we automatically skip non-family photos, but if you have pictures of a particularly sensitive nature then the best idea is not to keep those shots in the cloud at all.
-        </p>
-
-        <h4><a id='faq-06-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-06'>Do I need to select photos to upload?</a></h4>
-        <p id='faq-06' class='collapse'>
-          No, that's our job!  Choosing between photos is the hardest part about getting organized; that's what we're good at.  This is a "set it and forget it" service.
-        </p>
-
-        <h4><a id='faq-11-toggle' href='javascript://' data-toggle='collapse' data-target='#faq-11'>Where did you come up with the name "Dinadesa"?</a></h4>
-        <p id='faq-11' class='collapse'>
-          I have two young daughters, named Sarina and Alessa, and my pet-names for them are 'Sarina-Dina' and 'Alessa-Desa'.  The company was essentially inspired by them (and their grandparents' insatiable desire for photographs) so Dinadesa was born.  BTW, it's pronounced "DEE-na DEH-sa".
-        </p>
-      </div>
-    </div>
-  </div>
 {% endblock content %}
-
-{% block mixpanel %}
-  {{block.super}}
-  <script>
-    mixpanel.track_links(
-      '#faq-01-toggle',
-      'FAQ',
-      {"Name": "How Works?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-02-toggle',
-      'FAQ',
-      {"Name": "How Access?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-03-toggle',
-      'FAQ',
-      {"Name": "Pictures Safe?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-04-toggle',
-      'FAQ',
-      {"Name": "How Much?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-05-toggle',
-      'FAQ',
-      {"Name": "How Private?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-06-toggle',
-      'FAQ',
-      {"Name": "Upload Photos?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-08-toggle',
-      'FAQ',
-      {"Name": "No Cloud?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-09-toggle',
-      'FAQ',
-      {"Name": "No Kids?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-10-toggle',
-      'FAQ',
-      {"Name": "Work Photos?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-11-toggle',
-      'FAQ',
-      {"Name": "Where Name?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-12-toggle', 'FAQ',
-      {"Name": "Which Clouds?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-13-toggle', 'FAQ',
-      {"Name": "Magic?", "Action": "Clicked"}
-    );
-    mixpanel.track_links(
-      '#faq-14-toggle', 'FAQ',
-      {"Name": "Approval?", "Action": "Clicked"}
-    );
-  </script>
-{% endblock mixpanel %}

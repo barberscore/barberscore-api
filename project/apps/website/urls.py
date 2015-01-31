@@ -9,6 +9,10 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^search/$', views.search, name='search'),
 
+    url(r'^about/$', TemplateView.as_view(template_name='static/about.html'), name='about'),
+    url(r'^faq/$', TemplateView.as_view(template_name='static/faq.html'), name='faq'),
+
+
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt')),
     url(r'^sitemap.xml$', TemplateView.as_view(template_name='sitemap.xml')),
 
