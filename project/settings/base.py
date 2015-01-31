@@ -8,15 +8,18 @@ from django.contrib.messages import constants as message_constants
 def get_env_variable(var_name):
     """Get the environment variable or return exception"""
     try:
-        return os.environ[var_name]
+        var = os.environ[var_name]
+        # Replace unix strings with Python Booleans
+        if var == 'True':
+            var = True
+        if var == 'False':
+            var = False
     except KeyError:
         error_msg = "Set the {var_name} env var".format(var_name=var_name)
         raise ImproperlyConfigured(error_msg)
+    return var
 
-if get_env_variable("DJANGO_DEBUG") == 'True':
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = get_env_variable("DEBUG")
 TEMPLATE_DEBUG = DEBUG
 
 # Globals
@@ -76,52 +79,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
     # "website.context.mixpanel_public_key",
 )
-
-# TODO RUNSERVER WITH CSS!!!
-
-# AWS S3  Settings
-# This was hellaciously confusing to set up.  I'm subclassing storages in
-# 'apps/dinadesa/backends.py' and doing a lot of renaming below for clarity.
-# `Static` means public-read, static resources like CSS, Images, etc.
-# `Media` means private, user or admin-uploaded resources that have ACL
-# by default (most notably, photos).
-
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Configure AWS variables
-# Access credentials (global)
-AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
-AWS_PRELOAD_METADATA = True
-
-# Static Server Config
-AWS_STATIC_BUCKET_NAME = get_env_variable("AWS_STATIC_BUCKET_NAME")
-STATIC_ROOT = '/static/'
-if DEBUG:
-    STATIC_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-    STATIC_URL = '/static/'
-else:
-    STATIC_STORAGE = 'utils.backends.StaticS3BotoStorage'
-    STATIC_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
-        AWS_STATIC_BUCKET_NAME,
-    )
-
-# Media (aka File Upload) Server Config
-AWS_MEDIA_BUCKET_NAME = get_env_variable("AWS_MEDIA_BUCKET_NAME")
-MEDIA_ROOT = '/Users/dbinetti/Repos/barberscore/project/media'
-if DEBUG:
-    MEDIA_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    MEDIA_URL = '/media/'
-else:
-    MEDIA_STORAGE = 'utils.backends.MediaS3BotoStorage'
-    MEDIA_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
-        AWS_MEDIA_BUCKET_NAME,
-    )
-
-# Aliasing Django Defaults
-DEFAULT_FILE_STORAGE = MEDIA_STORAGE
-STATICFILES_STORAGE = STATIC_STORAGE
 
 # Bootstrap overwrite
 MESSAGE_TAGS = {
