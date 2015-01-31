@@ -1,1 +1,1 @@
--r requirements/prod.txt
+-r project/requirements/prod.txt
