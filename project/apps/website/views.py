@@ -39,7 +39,7 @@ def search(request):
         results = None
     return render(
         request,
-        'search.html',
+        'api/search.html',
         {'results': results}
     )
 
