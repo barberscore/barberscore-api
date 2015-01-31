@@ -36,6 +36,10 @@ LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = ()
+ADMINS = (
+    (get_env_variable("FULL_NAME"), get_env_variable("USER_EMAIL"))
+)
+
 
 # Database
 DATABASE_URL = get_env_variable("DATABASE_URL")
