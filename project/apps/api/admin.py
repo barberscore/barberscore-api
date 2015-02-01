@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from easy_select2 import select2_modelform
 
 from .models import (
+    Award,
     Convention,
     Singer,
     Chorus,
@@ -17,6 +18,10 @@ from .models import (
     QuartetPerformance,
     ChorusPerformance,
     QuartetMember,
+    QuartetAward,
+    ChorusAward,
+    QuartetFinish,
+    ChorusFinish,
 )
 
 ConventionForm = select2_modelform(
@@ -59,6 +64,28 @@ ChorusPerformanceForm = select2_modelform(
     attrs={'width': '250px'},
 )
 
+QuartetAwardForm = select2_modelform(
+    QuartetAward,
+    attrs={'width': '250px'},
+)
+
+ChorusAwardForm = select2_modelform(
+    ChorusAward,
+    attrs={'width': '250px'},
+)
+
+
+QuartetFinishForm = select2_modelform(
+    QuartetFinish,
+    attrs={'width': '250px'},
+)
+
+
+ChorusFinishForm = select2_modelform(
+    ChorusFinish,
+    attrs={'width': '250px'},
+)
+
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
@@ -72,6 +99,22 @@ class ConventionAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
+@admin.register(Award)
+class AwardAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+    save_on_top = True
+
+
+# @admin.register(QuartetFinish)
+# class QuartetFinishAdmin(admin.ModelAdmin):
+#     save_on_top = True
+
+
+# @admin.register(ChorusFinish)
+# class ChorusFinishAdmin(admin.ModelAdmin):
+#     save_on_top = True
+
+
 class QuartetMembershipInline(admin.TabularInline):
     model = Quartet.members.through
     form = QuartetMemberForm
@@ -79,47 +122,7 @@ class QuartetMembershipInline(admin.TabularInline):
 
 class ChorusPerformanceInline(admin.TabularInline):
     form = ChorusPerformanceForm
-
-    def chorus_prelim(self, obj):
-        return obj.chorus.prelim
-    # show_num_photos.admin_order_field = 'num_photos'
-
-    def chorus_rank(self, obj):
-        return obj.chorus.rank
-    # show_num_photos.admin_order_field = 'num_photos'
-
-    def chorus_link(self, obj):
-        return mark_safe(
-            '<a href="{0}">{1}</a>'.format(
-                reverse('admin:api_chorus_change', args=[obj.chorus.pk]),
-                obj.chorus.pk,
-            )
-        )
-    chorus_link.allow_tags = True
-
-    readonly_fields = [
-        'chorus_prelim',
-        'chorus_rank',
-        'chorus_link',
-    ]
     model = ChorusPerformance
-    fields = (
-        'chorus',
-        'chorus_link',
-        'queue',
-        'chorus_prelim',
-        'chorus_rank',
-        # 'chorus__rank',
-        # 'stagetime',
-        # 'song1',
-        # 'mus1',
-        # 'prs1',
-        # 'sng1',
-        # 'song2',
-        # 'mus2',
-        # 'prs2',
-        # 'sng2',
-    )
 
 
 class ChorusScoreInline(admin.TabularInline):
@@ -154,6 +157,26 @@ class QuartetScoreInline(admin.TabularInline):
         'prs2',
         'sng2',
     )
+
+
+class QuartetAwardInline(admin.TabularInline):
+    form = QuartetAwardForm
+    model = QuartetAward
+
+
+class ChorusAwardInline(admin.TabularInline):
+    form = ChorusAwardForm
+    model = ChorusAward
+
+
+class QuartetFinishInline(admin.TabularInline):
+    form = QuartetFinishForm
+    model = QuartetFinish
+
+
+class ChorusFinishInline(admin.TabularInline):
+    form = ChorusFinishForm
+    model = ChorusFinish
 
 
 class QuartetPerformanceInline(admin.TabularInline):
@@ -235,6 +258,11 @@ class CommonAdmin(admin.ModelAdmin):
 @admin.register(Chorus)
 class ChorusAdmin(CommonAdmin):
     form = ChorusForm
+    # inlines = [
+    #     ChorusAwardInline,
+    #     ChorusFinishInline,
+    # ]
+
     list_filter = ['district']
 
 
@@ -257,31 +285,35 @@ class ContestAdmin(admin.ModelAdmin):
         'convention',
     ]
 
-    inlines = [
-        ChorusPerformanceInline,
-        QuartetPerformanceInline,
-    ]
+    # inlines = [
+    #     ChorusPerformanceInline,
+    #     QuartetPerformanceInline,
+    #     ChorusFinishInline,
+    #     QuartetFinishInline,
+    # ]
     search_fields = ['name']
     save_on_top = True
 
-    def get_formsets_with_inlines(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            if obj.kind == Contest.CHORUS:
-                if isinstance(inline, ChorusPerformanceInline):
-                    yield inline.get_formset(request, obj), inline
-                    break
-                else:
-                    continue
-            else:
-                if isinstance(inline, ChorusPerformanceInline):
-                    continue
-                else:
-                    yield inline.get_formset(request, obj), inline
+    # def get_formsets_with_inlines(self, request, obj=None):
+    #     for inline in self.get_inline_instances(request, obj):
+    #         if obj.kind == Contest.CHORUS:
+    #             if isinstance(inline, ChorusPerformanceInline):
+    #                 yield inline.get_formset(request, obj), inline
+    #                 break
+    #             else:
+    #                 continue
+    #         else:
+    #             if isinstance(inline, ChorusPerformanceInline):
+    #                 continue
+    #             else:
+    #                 yield inline.get_formset(request, obj), inline
 
 
 @admin.register(Quartet)
 class QuartetAdmin(CommonAdmin):
     inlines = [
         QuartetMembershipInline,
+        # QuartetAwardInline,
+        # QuartetFinishInline,
     ]
     exclude = ('members',)

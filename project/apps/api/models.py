@@ -155,23 +155,15 @@ class Singer(Common):
 
 class Quartet(Common):
     """An individual quartet."""
-    prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    rank = models.IntegerField(
-        help_text="""
-            The incoming rank (based on prelim).""",
-        null=True,
-        blank=True,
-    )
-
     members = models.ManyToManyField(
         'Singer',
         through='QuartetMember',
+        related_name='quartets',
+    )
+
+    awards = models.ManyToManyField(
+        'Award',
+        through='QuartetAward',
         related_name='quartets',
     )
 
@@ -198,20 +190,6 @@ class Quartet(Common):
 
 class Chorus(Common):
     """An individual chorus."""
-    prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    rank = models.IntegerField(
-        help_text="""
-            The incoming rank (based on prelim).""",
-        null=True,
-        blank=True,
-    )
-
     district = models.ForeignKey(
         'District',
         blank=True,
@@ -237,6 +215,12 @@ class Chorus(Common):
             The code of the director(s) of the chorus.""",
         max_length=200,
         blank=True,
+    )
+
+    awards = models.ManyToManyField(
+        'Award',
+        through='ChorusAward',
+        related_name='choruses',
     )
 
     class Meta:
@@ -710,3 +694,114 @@ class QuartetMember(models.Model):
             self.singer,
             self.contest,
         )
+
+
+class Award(models.Model):
+    id = models.UUIDField(
+        default=uuid.uuid4,
+        primary_key=True,
+        coerce_to=str,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the award.  Must be unique.""",
+        max_length=200,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+    )
+
+    description = models.CharField(
+        null=True,
+        blank=True,
+        max_length=200,
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return "{0}".format(self.name)
+
+    def get_absolute_url(self):
+        return reverse(
+            'website:award-detail',
+            args=[self.slug],
+        )
+
+
+class QuartetAward(models.Model):
+    """Awards and placement"""
+    quartet = models.ForeignKey(Quartet)
+    contest = models.ForeignKey(Contest)
+    award = models.ForeignKey(Award)
+
+
+class ChorusAward(models.Model):
+    """Awards and placement"""
+    chorus = models.ForeignKey(Chorus)
+    contest = models.ForeignKey(Contest)
+    award = models.ForeignKey(Award)
+
+
+class Finish(models.Model):
+    """Awards and placement"""
+    RANK_CHOICES = []
+    for r in range(1, 50):
+        RANK_CHOICES.append((r, r))
+
+    contest = models.ForeignKey(
+        Contest,
+        null=True,
+        blank=True,
+    )
+
+    place = models.IntegerField(
+        choices=RANK_CHOICES,
+        null=True,
+        blank=True,
+    )
+    prelim = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    seed = models.IntegerField(
+        choices=RANK_CHOICES,
+        null=True,
+        blank=True,
+    )
+
+    score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+
+class ChorusFinish(Finish):
+    chorus = models.ForeignKey(
+        Chorus,
+        related_name='finishes',
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name_plural = "Chorus Finishes"
+
+
+class QuartetFinish(Finish):
+    quartet = models.ForeignKey(
+        Quartet,
+        related_name='finishes',
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name_plural = "Quartet Finishes"
