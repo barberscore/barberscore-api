@@ -415,6 +415,11 @@ class Contest(models.Model):
         null=True,
     )
 
+    scoresheet_csv = models.FileField(
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         ordering = [
             'convention__district',
