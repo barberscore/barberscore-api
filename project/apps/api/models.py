@@ -248,10 +248,10 @@ class District(Common):
         (AFFILIATE, "Affiliate"),
     )
 
-    abbreviation = models.CharField(
+    long_name = models.CharField(
         null=True,
         blank=True,
-        max_length=20,
+        max_length=200,
     )
 
     kind = models.IntegerField(
