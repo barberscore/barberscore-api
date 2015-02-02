@@ -130,6 +130,7 @@ class ChorusScoreInline(admin.TabularInline):
 
     model = ChorusPerformance
     fields = (
+        'place',
         'chorus',
         'song1',
         'mus1',
@@ -140,6 +141,7 @@ class ChorusScoreInline(admin.TabularInline):
         'prs2',
         'sng2',
     )
+    ordering = ('place',)
 
 
 class QuartetScoreInline(admin.TabularInline):
@@ -147,6 +149,7 @@ class QuartetScoreInline(admin.TabularInline):
 
     model = QuartetPerformance
     fields = (
+        'place',
         'quartet',
         'song1',
         'mus1',
@@ -157,6 +160,7 @@ class QuartetScoreInline(admin.TabularInline):
         'prs2',
         'sng2',
     )
+    ordering = ('place',)
 
 
 class QuartetAwardInline(admin.TabularInline):
@@ -285,12 +289,14 @@ class ContestAdmin(admin.ModelAdmin):
         'convention',
     ]
 
-    # inlines = [
-    #     ChorusPerformanceInline,
-    #     QuartetPerformanceInline,
-    #     ChorusFinishInline,
-    #     QuartetFinishInline,
-    # ]
+    inlines = [
+        ChorusScoreInline,
+        QuartetScoreInline,
+        ChorusPerformanceInline,
+        QuartetPerformanceInline,
+        # ChorusFinishInline,
+        # QuartetFinishInline,
+    ]
     search_fields = ['name']
     save_on_top = True
 
