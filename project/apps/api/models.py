@@ -445,7 +445,7 @@ class Contest(models.Model):
             args=[self.slug],
         )
 
-    def parse_scores(self):
+    def parse_scores(self, round='finals'):
         raw = [row for row in csv.reader(
             self.scoresheet_csv.read().splitlines()
         )]
@@ -468,16 +468,25 @@ class Contest(models.Model):
                     name=row[8].split('(', 1)[0].strip(),
                 )
                 if created:
-                    dis_name = row[8].split('[', 1)[1].split(']', 1)[0].strip().replace('[', '').replace(']', '')
-                    log.debug(dis_name)
-                    chorus.district = District.objects.get(
-                        name=dis_name,
-                    )
-                    chorus.chapter_name = row[0].split(' ', 1)[1].strip()
+                    # TODO refactor
+                    district_name = row[8].split('[', 1)[1].split(']', 1)[0]
+                    try:
+                        district = District.objects.get(
+                            name=district_name,
+                        )
+                    except District.DoesNotExist as e:
+                        # TODO Kludge
+                        if district_name == 'AAMBS':
+                            district = District.objects.get(name='BHA')
+                        else:
+                            raise e
 
+                    chorus.district = district
+                    chorus.chapter_name = row[0].split(' ', 1)[1].strip()
                     chorus.save()
-                    log.debug(chorus)
+                    log.info("Created chorus: {0}".format(chorus))
         else:
+            # elif self.kind == self.COLLEGIATE:
             # Create contestant objects first (if needed)
             for row in data:
 
@@ -485,9 +494,35 @@ class Contest(models.Model):
                     name=row[0].split(' ', 1)[1].strip(),
                 )
                 if created:
-                    quartet.district = District.objects.get(name=row[7].strip().replace('[', '').replace(']', ''))
+                    # TODO refactor
+                    district_name = row[7].split('[', 1)[1].split(']', 1)[0]
+                    try:
+                        district = District.objects.get(
+                            name=district_name,
+                        )
+                    except District.DoesNotExist as e:
+                        # TODO Kludge
+                        if district_name == 'AAMBS':
+                            district = District.objects.get(name='BHA')
+                        else:
+                            raise e
+                    quartet.district = district
                     quartet.save()
-                    log.debug(quartet)
+                    log.info("Created quartet: {0}".format(quartet))
+
+        # elif self.kind == self.QUARTET:
+        #     # Create contestant objects first (if needed)
+        #     for row in data:
+
+        #         quartet, created = Quartet.objects.get_or_create(
+        #             name=row[0].split(' ', 1)[1].strip(),
+        #         )
+        #         if created:
+        #             quartet.district = District.objects.get(
+        #                 name=row[7].split('[', 1)[1].split(']', 1)[0],
+        #             )
+        #             quartet.save()
+        #             log.debug(quartet)
 
         performance = {}
 
@@ -508,8 +543,10 @@ class Contest(models.Model):
                 performance['mus2'] = row[10].strip()
                 performance['prs2'] = row[11].strip()
                 performance['sng2'] = row[12].strip()
+                performance['round'] = Performance.FINALS
                 ChorusPerformance.objects.create(**performance)
-            else:
+
+            elif self.kind == self.COLLEGIATE:
                 performance['quartet'] = Quartet.objects.get(
                     name=row[0].split(' ', 1)[1].strip(),
                 )
@@ -517,6 +554,26 @@ class Contest(models.Model):
                 performance['mus2'] = row[9].strip()
                 performance['prs2'] = row[10].strip()
                 performance['sng2'] = row[11].strip()
+                performance['round'] = Performance.FINALS
+                QuartetPerformance.objects.create(**performance)
+
+            elif self.kind == self.QUARTET:
+                performance['quartet'] = Quartet.objects.get(
+                    name=row[0].split(' ', 1)[1].strip(),
+                )
+                performance['song2'] = row[8].strip()
+                performance['mus2'] = row[9].strip()
+                performance['prs2'] = row[10].strip()
+                performance['sng2'] = row[11].strip()
+                if round == 'finals':
+                    performance['round'] = Performance.FINALS
+                elif round == 'semis':
+                    performance['round'] = Performance.SEMIS
+                elif round == 'quarters':
+                    performance['round'] = Performance.QUARTERS
+                else:
+                    raise RuntimeError("Incorrect contest round.")
+                # log.info("Created performance: {0}".format(performance))
                 QuartetPerformance.objects.create(**performance)
         return "Done"
 
