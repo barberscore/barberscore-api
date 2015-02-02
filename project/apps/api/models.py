@@ -567,8 +567,16 @@ class Contest(models.Model):
                 performance['sng2'] = row[11].strip()
                 if round == 'finals':
                     performance['round'] = Performance.FINALS
+                    performance['song2'] = row[10].strip()
+                    performance['mus2'] = row[11].strip()
+                    performance['prs2'] = row[12].strip()
+                    performance['sng2'] = row[13].strip()
                 elif round == 'semis':
                     performance['round'] = Performance.SEMIS
+                    performance['song2'] = row[10].strip()
+                    performance['mus2'] = row[11].strip()
+                    performance['prs2'] = row[12].strip()
+                    performance['sng2'] = row[13].strip()
                 elif round == 'quarters':
                     performance['round'] = Performance.QUARTERS
                 else:

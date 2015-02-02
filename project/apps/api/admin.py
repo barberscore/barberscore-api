@@ -87,6 +87,11 @@ ChorusFinishForm = select2_modelform(
 )
 
 
+@admin.register(QuartetPerformance)
+class QuartetPerformanceAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     form = ConventionForm
@@ -145,10 +150,11 @@ class ChorusScoreInline(admin.TabularInline):
 
 
 class QuartetScoreInline(admin.TabularInline):
-    form = QuartetPerformanceForm
+    # form = QuartetPerformanceForm
 
     model = QuartetPerformance
     fields = (
+        'round',
         'place',
         'quartet',
         'song1',
@@ -160,7 +166,7 @@ class QuartetScoreInline(admin.TabularInline):
         'prs2',
         'sng2',
     )
-    ordering = ('place',)
+    ordering = ('round', 'place',)
 
 
 class QuartetAwardInline(admin.TabularInline):
@@ -290,10 +296,10 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        ChorusScoreInline,
+        # ChorusScoreInline,
         QuartetScoreInline,
-        ChorusPerformanceInline,
-        QuartetPerformanceInline,
+        # ChorusPerformanceInline,
+        # QuartetPerformanceInline,
         # ChorusFinishInline,
         # QuartetFinishInline,
     ]
