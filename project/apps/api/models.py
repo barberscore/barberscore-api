@@ -1,5 +1,10 @@
 from __future__ import division
 
+import csv
+
+import logging
+log = logging.getLogger(__name__)
+
 import os
 import datetime
 # import arrow
@@ -440,6 +445,81 @@ class Contest(models.Model):
             args=[self.slug],
         )
 
+    def parse_scores(self):
+        raw = [row for row in csv.reader(
+            self.scoresheet_csv.read().splitlines()
+        )]
+        l = len(raw)
+        data = []
+        i = 0
+        #  Deinterlace and build list of dictionaries.
+        while i < l:
+            if (i % 2 == 0):  # zero-indexed rows
+                row = raw[i]
+                row.extend(raw[i + 1])
+                data.append(row)
+            else:  # Skip interlaced row; added supra
+                pass
+            i += 1
+
+        if self.kind == self.CHORUS:
+            for row in data:
+                chorus, created = Chorus.objects.get_or_create(
+                    name=row[8].split('(', 1)[0].strip(),
+                )
+                if created:
+                    dis_name = row[8].split('[', 1)[1].split(']', 1)[0].strip().replace('[', '').replace(']', '')
+                    log.debug(dis_name)
+                    chorus.district = District.objects.get(
+                        name=dis_name,
+                    )
+                    chorus.chapter_name = row[0].split(' ', 1)[1].strip()
+
+                    chorus.save()
+                    log.debug(chorus)
+        else:
+            # Create contestant objects first (if needed)
+            for row in data:
+
+                quartet, created = Quartet.objects.get_or_create(
+                    name=row[0].split(' ', 1)[1].strip(),
+                )
+                if created:
+                    quartet.district = District.objects.get(name=row[7].strip().replace('[', '').replace(']', ''))
+                    quartet.save()
+                    log.debug(quartet)
+
+        performance = {}
+
+        for row in data:
+            performance['contest'] = self
+            performance['place'] = row[0].split(' ', 1)[0]
+            performance['song1'] = row[1].strip()
+            performance['mus1'] = row[2].strip()
+            performance['prs1'] = row[3].strip()
+            performance['sng1'] = row[4].strip()
+
+            if self.kind == self.CHORUS:
+                performance['chorus'] = Chorus.objects.get(
+                    name=row[8].split('(', 1)[0].strip(),
+                )
+                performance['men'] = row[7].strip()
+                performance['song2'] = row[9].strip()
+                performance['mus2'] = row[10].strip()
+                performance['prs2'] = row[11].strip()
+                performance['sng2'] = row[12].strip()
+                ChorusPerformance.objects.create(**performance)
+            else:
+                performance['quartet'] = Quartet.objects.get(
+                    name=row[0].split(' ', 1)[1].strip(),
+                )
+                performance['song2'] = row[8].strip()
+                performance['mus2'] = row[9].strip()
+                performance['prs2'] = row[10].strip()
+                performance['sng2'] = row[11].strip()
+                QuartetPerformance.objects.create(**performance)
+        return "Done"
+
 
 class Performance(models.Model):
     FINALS = 1
@@ -464,6 +544,11 @@ class Performance(models.Model):
             The title of the first song of the performance.""",
         blank=True,
         null=True,
+    )
+
+    place = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     song1 = models.CharField(
