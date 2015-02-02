@@ -5,6 +5,11 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
+from django_object_actions import (
+    DjangoObjectActions,
+    takes_instance_or_queryset,
+)
+
 from easy_select2 import select2_modelform
 
 from .models import (
@@ -288,7 +293,38 @@ class DistrictAdmin(CommonAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(admin.ModelAdmin):
+class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
+
+    @takes_instance_or_queryset
+    def import_finals(self, request, queryset):
+        for obj in queryset:
+            try:
+                obj.parse_scores()
+            except Exception as e:
+                raise e
+    import_finals.label = 'Import Finals'
+    import_finals.short_description = 'Import Finals.'
+
+    @takes_instance_or_queryset
+    def import_semis(self, request, queryset):
+        for obj in queryset:
+            try:
+                obj.parse_scores(round='semis')
+            except Exception as e:
+                raise e
+    import_semis.label = 'Import Semis'
+    import_semis.short_description = 'Import Semis.'
+
+    @takes_instance_or_queryset
+    def import_quarters(self, request, queryset):
+        for obj in queryset:
+            try:
+                obj.parse_scores(round='quarters')
+            except Exception as e:
+                raise e
+    import_quarters.label = 'Import Quarters'
+    import_quarters.short_description = 'Import Quarters.'
+
     form = ContestForm
     list_filter = [
         'kind',
@@ -319,6 +355,18 @@ class ContestAdmin(admin.ModelAdmin):
     #                 continue
     #             else:
     #                 yield inline.get_formset(request, obj), inline
+
+    actions = [
+        import_finals,
+        import_semis,
+        import_quarters,
+    ]
+
+    objectactions = [
+        'import_finals',
+        'import_semis',
+        'import_quarters',
+    ]
 
 
 @admin.register(Quartet)
