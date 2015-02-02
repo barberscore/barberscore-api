@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'timezone_field',
+    'django_object_actions',
     'easy_select2',
     'corsheaders',
     'watson',

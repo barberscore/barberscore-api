@@ -19,3 +19,4 @@ Unidecode==0.4.17
 django-easy-select2==1.2.12
 arrow==0.5.0
 git+git://github.com/etianen/django-watson.git@master
+django-object-actions==0.5.1
