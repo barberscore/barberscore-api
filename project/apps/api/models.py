@@ -420,7 +420,17 @@ class Contest(models.Model):
         null=True,
     )
 
-    scoresheet_csv = models.FileField(
+    csv_quarters = models.FileField(
+        blank=True,
+        null=True,
+    )
+
+    csv_semis = models.FileField(
+        blank=True,
+        null=True,
+    )
+
+    csv_finals = models.FileField(
         blank=True,
         null=True,
     )
