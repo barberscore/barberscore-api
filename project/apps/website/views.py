@@ -131,8 +131,8 @@ def chorus_detail(request, slug):
 
 def quartet_detail(request, slug):
     quartet = Quartet.objects.get(slug=slug)
-    members = quartet.quartetmember_set.all().prefetch_related('singer')
-    performances = quartet.quartetperformance_set.all()
+    members = quartet.members.all().prefetch_related('singer')
+    performances = quartet.performances.all()
     # Monkeypatch running total
     run = 0
     cnt = 0
