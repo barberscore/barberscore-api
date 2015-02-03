@@ -9,31 +9,33 @@
 
 {% block content %}
   <div class="container">
-    <div class='page-header'>
-      <p>
-        <h2>{{chorus.name}}</h2>
-      </p>
-    </div>
-    <div class='row'>
-      <div class='col-sm-6'>
-        {% if chorus.picture %}
-          <img src='{{chorus.picture.url}}' class='img-responsive img-thumbnail'><br><br>
-        {% else %}
-          <p>No Image Available</p>
-        {% endif %}
+      <div class='page-header'>
+        <p>
+          <h2>{{chorus.name}}</h2>
+        </p>
       </div>
-      <div class='col-sm-6'>
-          <ul class='list-unstyled'>
-            <li>Director: {{chorus.director}}</li>
-            {% if chorus.location %}<li>{{chorus.location}}</li>{% endif %}
-            {% if chorus.website %}<li><a href='{{chorus.website}}'>{{chorus.website}}</a></li>{% endif %}
-            {% if chorus.facebook %}<li><a href='{{chorus.facebook}}'>{{chorus.facebook}}</a></li>{% endif %}
-            {% if chorus.twitter %}<li><a href='http://twitter.com/{{chorus.twitter}}'>{{chorus.twitter}}</a></li>{% endif %}
-            {% if chorus.email %}<li><a href='mailto://{{chorus.email}}'>{{chorus.email}}</a></li>{% endif %}
-            {% if chorus.phone %}<li><a href='tel://{{chorus.phone}}'>{{chorus.phone}}</a></li>{% endif %}
-          </ul>
+
+      <div class='row'>
+        <div class='col-sm-6'>
+          {% if chorus.picture %}
+            <img src='{{chorus.picture.url}}' class='img-responsive img-thumbnail'>
+          {% else %}
+            <p>No Image Available</p>
+          {% endif %}
+        </div>
+        <div class='col-sm-6'>
+            <ul class='list-unstyled'>
+              <li>Director: {{chorus.director}}</li>
+              {% if chorus.location %}<li>{{chorus.location}}</li>{% endif %}
+              {% if chorus.website %}<li><a href='{{chorus.website}}'>{{chorus.website}}</a></li>{% endif %}
+              {% if chorus.facebook %}<li><a href='{{chorus.facebook}}'>{{chorus.facebook}}</a></li>{% endif %}
+              {% if chorus.twitter %}<li><a href='http://twitter.com/{{chorus.twitter}}'>{{chorus.twitter}}</a></li>{% endif %}
+              {% if chorus.email %}<li><a href='mailto://{{chorus.email}}'>{{chorus.email}}</a></li>{% endif %}
+              {% if chorus.phone %}<li><a href='tel://{{chorus.phone}}'>{{chorus.phone}}</a></li>{% endif %}
+            </ul>
+        </div>
       </div>
-    </div>
+
     <br><br>
 
     <div class="table-responsive">
