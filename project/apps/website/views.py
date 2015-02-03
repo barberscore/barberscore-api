@@ -121,7 +121,7 @@ class QuartetPerformanceDetail(DetailView):
 
 def chorus_detail(request, slug):
     chorus = get_object_or_404(Chorus, slug=slug)
-    performances = chorus.chorusperformance_set.all()
+    performances = chorus.performances.all()
     return render(
         request,
         'api/chorus_detail.html',

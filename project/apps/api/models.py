@@ -801,7 +801,10 @@ class Performance(models.Model):
 
 
 class QuartetPerformance(Performance):
-    quartet = models.ForeignKey(Quartet)
+    quartet = models.ForeignKey(
+        'Quartet',
+        related_name='performances',
+    )
 
     round = models.IntegerField(
         choices=Performance.ROUND_CHOICES,
@@ -824,7 +827,10 @@ class QuartetPerformance(Performance):
 
 
 class ChorusPerformance(Performance):
-    chorus = models.ForeignKey(Chorus)
+    chorus = models.ForeignKey(
+        'Chorus',
+        related_name='performances',
+    )
 
     round = models.IntegerField(
         choices=Performance.ROUND_CHOICES,
@@ -840,7 +846,7 @@ class ChorusPerformance(Performance):
 
     class Meta:
         ordering = [
-            'contest',
+            '-contest',
             'round',
             'chorus',
         ]

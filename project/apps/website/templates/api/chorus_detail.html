@@ -13,38 +13,49 @@
       <p>
         <h2>{{chorus.name}}</h2>
       </p>
-      <p class='lead'>
-        Chorus detail.
-      </p>
     </div>
-    <div>
+    <div class='row'>
+      <div class='col-sm-6'>
         {% if chorus.picture %}
           <img src='{{chorus.picture.url}}' class='img-responsive img-thumbnail'><br><br>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
-        Director: {{chorus.director}}
+      </div>
+      <div class='col-sm-6'>
+          <ul class='list-unstyled'>
+            <li>Director: {{chorus.director}}</li>
+            {% if chorus.location %}<li>{{chorus.location}}</li>{% endif %}
+            {% if chorus.website %}<li><a href='{{chorus.website}}'>{{chorus.website}}</a></li>{% endif %}
+            {% if chorus.facebook %}<li><a href='{{chorus.facebook}}'>{{chorus.facebook}}</a></li>{% endif %}
+            {% if chorus.twitter %}<li><a href='http://twitter.com/{{chorus.twitter}}'>{{chorus.twitter}}</a></li>{% endif %}
+            {% if chorus.email %}<li><a href='mailto://{{chorus.email}}'>{{chorus.email}}</a></li>{% endif %}
+            {% if chorus.phone %}<li><a href='tel://{{chorus.phone}}'>{{chorus.phone}}</a></li>{% endif %}
+          </ul>
+      </div>
     </div>
+    <br><br>
 
     <div class="table-responsive">
       <table class='table'>
         <tr>
-          <th>Round</th>
+          <th>Contest</th>
           <th>Songs</th>
           <th>MUS</th>
           <th>PRS</th>
           <th>SNG</th>
           <th>Total</th>
+          <th>Men</th>
         </tr>
         {% for performance in performances %}
-          {{performance.contest}}
           <tr>
-            <td>{{performance.get_round_display}}</td>
-            <td>{{performance.song1|truncatechars:20}}<br>{{performance.song2|truncatechars:20}}</td>
+            <td>{{performance.contest.convention.location}}<br>{{performance.contest.convention.year}}</td>
+            <td>{{performance.song1|truncatechars:40}}<br>{{performance.song2|truncatechars:40}}</td>
             <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
             <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
             <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
             <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+            <td>{{performance.men}}</td>
           </tr>
         {% endfor %}
       </table>
