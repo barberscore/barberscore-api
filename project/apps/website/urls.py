@@ -18,7 +18,7 @@ urlpatterns = [
 
 
     url(r'^contests/$', views.ContestList.as_view(), name='contest-list'),
-    url(r'^contests/(?P<slug>[a-zA-Z0-9-]+)/$', views.ContestDetail.as_view(), name='contest-detail'),
+    url(r'^contests/(?P<slug>[a-zA-Z0-9-]+)/$', views.contest_detail, name='contest-detail'),
 
     url(r'^conventions/$', views.ConventionList.as_view(), name='convention-list'),
     url(r'^conventions/(?P<slug>[a-zA-Z0-9-]+)/$', views.ConventionDetail.as_view(), name='convention-detail'),
