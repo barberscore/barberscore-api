@@ -9,23 +9,27 @@
 {% block content %}
   <div class="container">
     <div class='page-header'>
-      <p>
-        <h2>{{district.name}} ({{district.abbreviation}})</h2>
-        <small>{{district.description}}</small>
-      </p>
+        <h2>{{district.long_name}} ({{district.name}})</h2>
+        {# <small>{{district.description}}</small> #}
     </div>
-    <div>
+    <div class='row'>
+      <div class='col-sm-6'>
         {% if district.picture %}
-          <img src='{{district.picture.url}}' class='img-responsive img-thumbnail'><br><br>
+          <img src='{{district.picture.url}}' class='img-responsive img-thumbnail'>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
-        <p>Location: {{district.location}}</p>
-        <p>Website: {{district.website}}</p>
-        <p>Facebook: {{district.facebook}}</p>
-        <p>Twitter: {{district.twitter}}</p>
-        <p>Email: {{district.email}}</p>
-        <p>Phone: {{district.phone}}</p>
+      </div>
+      <div class='col-sm-6'>
+          <ul class='list-unstyled'>
+            {% if district.location %}<li>{{district.location}}</li>{% endif %}
+            {% if district.website %}<li><a href='{{district.website}}'>{{district.website}}</a></li>{% endif %}
+            {% if district.facebook %}<li><a href='{{district.facebook}}'>{{district.facebook}}</a></li>{% endif %}
+            {% if district.twitter %}<li><a href='http://twitter.com/{{district.twitter}}'>{{district.twitter}}</a></li>{% endif %}
+            {% if district.email %}<li><a href='mailto://{{district.email}}'>{{district.email}}</a></li>{% endif %}
+            {% if district.phone %}<li><a href='tel://{{district.phone}}'>{{district.phone}}</a></li>{% endif %}
+          </ul>
+      </div>
     </div>
 
   </div> <!-- /container -->
