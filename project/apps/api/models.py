@@ -542,7 +542,7 @@ class Contest(models.Model):
 
             if self.kind == self.CHORUS:
                 performance['chorus'] = Chorus.objects.get(
-                    name=row[8].strip(),
+                    name=row[8].split('[', 1)[0].strip(),
                 )
                 performance['song2'] = row[9].strip()
                 performance['mus2'] = row[10].strip()
