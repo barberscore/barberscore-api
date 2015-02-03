@@ -79,11 +79,6 @@ class ContestList(ListView):
     context_object_name = 'contests'
 
 
-class ContestDetail(DetailView):
-    model = Contest
-    context_object_name = 'contest'
-
-
 class DistrictList(ListView):
     model = District
     context_object_name = 'districts'
@@ -119,6 +114,16 @@ class QuartetPerformanceDetail(DetailView):
     context_object_name = 'performance'
 
 
+def contest_detail(request, slug):
+    contest = get_object_or_404(Contest, slug=slug)
+    performances = contest.performances.all()
+    return render(
+        request,
+        'api/contest_detail.html',
+        {'contest': contest, 'performances': performances},
+    )
+
+
 def chorus_detail(request, slug):
     chorus = get_object_or_404(Chorus, slug=slug)
     performances = chorus.performances.all()
@@ -133,14 +138,6 @@ def quartet_detail(request, slug):
     quartet = Quartet.objects.get(slug=slug)
     members = quartet.quartetmember_set.all().prefetch_related("singer")
     performances = quartet.performances.all()
-    # # Monkeypatch running total
-    # run = 0
-    # cnt = 0
-    # for performance in performances:
-    #     run += performance.total_raw
-    #     cnt += performance.contest.panel * 6
-    #     performance.running = run / cnt
-    #     performance.rnd = performance.total_raw / (performance.contest.panel * 6)
 
     return render(
         request,
