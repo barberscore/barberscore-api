@@ -94,7 +94,63 @@ ChorusFinishForm = select2_modelform(
 
 @admin.register(QuartetPerformance)
 class QuartetPerformanceAdmin(admin.ModelAdmin):
-    pass
+    fields = (
+        ('place',),
+        ('song1',),
+        ('mus1', 'prs1', 'sng1',),
+        ('song2', 'mus2', 'prs2', 'sng2',),
+    )
+    list_filter = (
+        'contest',
+    )
+
+    list_display = (
+        'round',
+        'place',
+        'quartet',
+        'song1',
+        'mus1',
+        'prs1',
+        'sng1',
+        'song2',
+        'mus2',
+        'prs2',
+        'sng2',
+    )
+
+    ordering = (
+        'round',
+        'place',
+    )
+    save_on_top = True
+
+
+@admin.register(ChorusPerformance)
+class ChorusPerformanceAdmin(admin.ModelAdmin):
+    fields = (
+        ('place',),
+        ('song1',),
+        ('mus1', 'prs1', 'sng1',),
+        ('song2', 'mus2', 'prs2', 'sng2',),
+    )
+    list_filter = (
+        'contest',
+    )
+
+    list_display = (
+        'place',
+        'chorus',
+        'song1',
+        'mus1',
+        'prs1',
+        'sng1',
+        'song2',
+        'mus2',
+        'prs2',
+        'sng2',
+        'men',
+    )
+    save_on_top = True
 
 
 @admin.register(Convention)
