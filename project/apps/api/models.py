@@ -192,6 +192,19 @@ class Quartet(Common):
             args=[self.slug],
         )
 
+    @property
+    def lead(self):
+        return self.members.get(quartetmember__part=QuartetMember.LEAD)
+    @property
+    def tenor(self):
+        return self.members.get(quartetmember__part=QuartetMember.TENOR)
+    @property
+    def baritone(self):
+        return self.members.get(quartetmember__part=QuartetMember.BARITONE)
+    @property
+    def bass(self):
+        return self.members.get(quartetmember__part=QuartetMember.BASS)
+
 
 class Chorus(Common):
     """An individual chorus."""
@@ -813,8 +826,8 @@ class QuartetPerformance(Performance):
 
     class Meta:
         ordering = [
-            'contest',
-            '-round',
+            '-contest',
+            'round',
             'quartet',
         ]
 
@@ -872,8 +885,14 @@ class QuartetMember(models.Model):
         (BASS, 'Bass'),
     )
 
-    singer = models.ForeignKey(Singer)
-    quartet = models.ForeignKey(Quartet)
+    singer = models.ForeignKey(
+        'Singer',
+        # related_name='members',
+    )
+    quartet = models.ForeignKey(
+        'Quartet',
+        # related_name='members',
+    )
     contest = models.ForeignKey(Contest)
     part = models.IntegerField(
         choices=PART_CHOICES,
