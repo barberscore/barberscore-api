@@ -13,59 +13,59 @@
       <p>
         <h2>{{quartet.name}}</h2>
       </p>
-      <p class='lead'>
-        Quartet detail.
-      </p>
     </div>
-    <div>
-      <p>
-        <h4>{{quartet.name}}</h4>
+
+    <div class='row'>
+      <div class='col-sm-6'>
         {% if quartet.picture %}
-          <img src='{{quartet.picture.url}}' class='img-responsive img-thumbnail'><br><br>
+          <img src='{{quartet.picture.url}}' class='img-responsive img-thumbnail'>
         {% else %}
           <p>No Image Available</p>
         {% endif %}
-        <ul>
-          {% for member in members %}
-            <li>{{member.get_part_display}}: {{member.singer.name}}</li>
-          {% empty %}
-            <li>No Members</li>
-          {% endfor %}
-        </ul>
-        <ul>
-          {% for performance in performances %}
-            <li>{{performance}}</li>
-          {% empty %}
-            <li>No Members</li>
-          {% endfor %}
-        </ul>
-            <div class="table-responsive">
-      <table class='table'>
-        <tr>
-          <th>Round</th>
-          <th>Songs</th>
-          <th>MUS</th>
-          <th>PRS</th>
-          <th>SNG</th>
-          <th>Total</th>
-          <th>Running</th>
-        </tr>
-        {# Reorder display from monkeypatched view. #}
-        {% for performance in performances|dictsort:'round' %}
-          {{performance.contest}}
-          <tr>
-            <td>{{performance.get_round_display}}</td>
-            <td>{{performance.song1|truncatechars:30}}<br>{{performance.song2|truncatechars:30}}</td>
-            <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
-            <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
-            <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
-            <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
-            <td>{{performance.running|floatformat:1}}<br>{{performance.rnd|floatformat:1}}</td>
-          </tr>
-        {% endfor %}
-      </table>
+      </div>
+      <div class='col-sm-6'>
+          <ul class='list-unstyled'>
+            {% if members %}<li>{{quartet.lead}}, {{quartet.tenor}}, {{quartet.baritone}}, {{quartet.bass}}</li>{% endif %}
+            {% if quartet.location %}<li>{{quartet.location}}</li>{% endif %}
+            {% if quartet.website %}<li><a href='{{quartet.website}}'>{{quartet.website}}</a></li>{% endif %}
+            {% if quartet.facebook %}<li><a href='{{quartet.facebook}}'>{{quartet.facebook}}</a></li>{% endif %}
+            {% if quartet.twitter %}<li><a href='http://twitter.com/{{quartet.twitter}}'>{{quartet.twitter}}</a></li>{% endif %}
+            {% if quartet.email %}<li><a href='mailto://{{quartet.email}}'>{{quartet.email}}</a></li>{% endif %}
+            {% if quartet.phone %}<li><a href='tel://{{quartet.phone}}'>{{quartet.phone}}</a></li>{% endif %}
+          </ul>
+      </div>
     </div>
 
+    <br><br>
+
+
+
+    {% regroup performances by contest as performance_list %}
+    {% for contest in performance_list %}
+     <p> {{contest.grouper.convention.location}}, {{contest.grouper.convention.year}}</p>
+      <div class="table-responsive">
+        <table class='table'>
+          <tr>
+            <th>Round</th>
+            <th>Songs</th>
+            <th>MUS</th>
+            <th>PRS</th>
+            <th>SNG</th>
+            <th>Total</th>
+          </tr>
+          {% for performance in contest.list %}
+            <tr>
+              <td>{{performance.get_round_display}}<br>{{performance.place|ordinal}} Place</td>
+              <td>{{performance.song1|truncatechars:40}}<br>{{performance.song2|truncatechars:40}}</td>
+              <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
+              <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
+              <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
+              <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% endfor %}
       </p>
     </div>
   </div> <!-- /container -->

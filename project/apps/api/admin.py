@@ -378,8 +378,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
-        ChorusScoreInline,
-        # QuartetScoreInline,
+        # ChorusScoreInline,
+        QuartetScoreInline,
         # ChorusPerformanceInline,
         # QuartetPerformanceInline,
         # ChorusFinishInline,
