@@ -102,6 +102,9 @@ class QuartetPerformanceAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'contest',
+        'contest__kind',
+        'contest__convention__year',
+        'round',
     )
 
     list_display = (
@@ -133,7 +136,11 @@ class ChorusPerformanceAdmin(admin.ModelAdmin):
         ('mus1', 'prs1', 'sng1',),
         ('song2', 'mus2', 'prs2', 'sng2',),
     )
+
     list_filter = (
+        'contest__kind',
+        'contest__convention__year',
+        'contest__convention__district',
         'contest',
     )
 
@@ -149,6 +156,9 @@ class ChorusPerformanceAdmin(admin.ModelAdmin):
         'prs2',
         'sng2',
         'men',
+    )
+    ordering = (
+        'place',
     )
     save_on_top = True
 
