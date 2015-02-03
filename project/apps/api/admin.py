@@ -296,34 +296,14 @@ class DistrictAdmin(CommonAdmin):
 class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     @takes_instance_or_queryset
-    def import_finals(self, request, queryset):
+    def process_csv(self, request, queryset):
         for obj in queryset:
             try:
-                obj.parse_scores()
+                obj.process_csv()
             except Exception as e:
                 raise e
-    import_finals.label = 'Import Finals'
-    import_finals.short_description = 'Import Finals.'
-
-    @takes_instance_or_queryset
-    def import_semis(self, request, queryset):
-        for obj in queryset:
-            try:
-                obj.parse_scores(round='semis')
-            except Exception as e:
-                raise e
-    import_semis.label = 'Import Semis'
-    import_semis.short_description = 'Import Semis.'
-
-    @takes_instance_or_queryset
-    def import_quarters(self, request, queryset):
-        for obj in queryset:
-            try:
-                obj.parse_scores(round='quarters')
-            except Exception as e:
-                raise e
-    import_quarters.label = 'Import Quarters'
-    import_quarters.short_description = 'Import Quarters.'
+    process_csv.label = 'Process CSV'
+    process_csv.short_description = 'Process CSV.'
 
     form = ContestForm
     list_filter = [
@@ -357,15 +337,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     #                 yield inline.get_formset(request, obj), inline
 
     actions = [
-        import_finals,
-        import_semis,
-        import_quarters,
+        process_csv,
     ]
 
     objectactions = [
-        'import_finals',
-        'import_semis',
-        'import_quarters',
+        'process_csv',
     ]
 
 
