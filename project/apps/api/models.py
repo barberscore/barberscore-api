@@ -279,7 +279,7 @@ class District(Common):
 
 class Convention(models.Model):
     YEAR_CHOICES = []
-    for r in range(2010, (datetime.datetime.now().year + 1)):
+    for r in range(2009, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
     SUMMER = 1
@@ -476,9 +476,11 @@ class Contest(models.Model):
     def create_from_scores(self, data):
         if self.kind == self.CHORUS:
             for row in data:
+                log.debug(row)
                 chorus, created = Chorus.objects.get_or_create(
-                    name=row[8].split('(', 1)[0].strip(),
+                    name=row[8].split('[', 1)[0].strip(),
                 )
+                log.debug(chorus)
                 if created:
                     # TODO refactor
                     district_name = row[8].split('[', 1)[1].split(']', 1)[0]
@@ -498,7 +500,6 @@ class Contest(models.Model):
                     chorus.save()
                     log.info("Created chorus: {0}".format(chorus))
         else:
-            # elif self.kind == self.COLLEGIATE:
             # Create contestant objects first (if needed)
             for row in data:
 
@@ -521,11 +522,13 @@ class Contest(models.Model):
                     quartet.district = district
                     quartet.save()
                     log.info("Created quartet: {0}".format(quartet))
-        return
+        return "Finished pre-processing"
 
     def import_finals(self):
         data = self.deinterlace(self.csv_finals.read().splitlines())
-        self.create_from_scores(data)
+        preprocess = self.create_from_scores(data)
+        log.info(preprocess)
+
         performance = {}
 
         for row in data:
@@ -539,7 +542,7 @@ class Contest(models.Model):
 
             if self.kind == self.CHORUS:
                 performance['chorus'] = Chorus.objects.get(
-                    name=row[8].split('(', 1)[0].strip(),
+                    name=row[8].split('[', 1)[0].strip(),
                 )
                 performance['song2'] = row[9].strip()
                 performance['mus2'] = row[10].strip()
@@ -547,7 +550,7 @@ class Contest(models.Model):
                 performance['sng2'] = row[12].strip()
                 performance['men'] = row[7].strip()
                 result = ChorusPerformance.objects.create(**performance)
-                log.info("Created performance: {0}".format(result))
+                log.info("Created performance: {0}".format(performance))
 
             elif self.kind == self.QUARTET:
                 performance['quartet'] = Quartet.objects.get(
@@ -566,7 +569,8 @@ class Contest(models.Model):
 
     def import_semis(self):
         data = self.deinterlace(self.csv_semis.read().splitlines())
-        self.create_from_scores(data)
+        preprocess = self.create_from_scores(data)
+        log.info(preprocess)
         performance = {}
 
         for row in data:
@@ -590,7 +594,8 @@ class Contest(models.Model):
 
     def import_quarters(self):
         data = self.deinterlace(self.csv_quarters.read().splitlines())
-        self.create_from_scores(data)
+        preprocess = self.create_from_scores(data)
+        log.info(preprocess)
         performance = {}
 
         for row in data:
