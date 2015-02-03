@@ -612,6 +612,15 @@ class Contest(models.Model):
             log.info("Created performance: {0}".format(result))
         return "Done"
 
+    def process_csv(self):
+        if self.csv_quarters:
+            self.import_quarters()
+        if self.csv_semis:
+            self.import_semis()
+        if self.csv_finals:
+            self.import_finals()
+        return "Done"
+
 
 class Performance(models.Model):
     FINALS = 1
