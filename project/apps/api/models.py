@@ -4,6 +4,7 @@ import logging
 log = logging.getLogger(__name__)
 
 import uuid
+
 import csv
 import os
 import datetime
@@ -475,176 +476,92 @@ class Contest(models.Model):
             args=[self.slug],
         )
 
-    # def deinterlace(self, csvfile):
-    #     raw = [row for row in csv.reader(
-    #         csvfile,
-    #     )]
-    #     l = len(raw)
-    #     data = []
-    #     i = 0
-    #     #  Deinterlace and build list of dictionaries.
-    #     while i < l:
-    #         if (i % 2 == 0):  # zero-indexed rows
-    #             row = raw[i]
-    #             row.extend(raw[i + 1])
-    #             data.append(row)
-    #         else:  # Skip interlaced row; added supra
-    #             pass
-    #         i += 1
-    #     return data
+    def create_group_from_scores(self, name, district_name, chapter_name):
+        if self.kind == self.CHORUS:
+            if name.startswith("The "):
+                match = name.split("The ", 1)[1]
+            else:
+                match = name
+            try:
+                chorus = Chorus.objects.get(
+                    name__endswith=match,
+                )
+                created = False
+            except Chorus.MultipleObjectsReturned as e:
+                log.error("Duplicate exists for {0}".format(match))
+                raise e
+            except Chorus.DoesNotExist:
+                try:
+                    district = District.objects.get(
+                        name=district_name,
+                    )
+                except District.DoesNotExist as e:
+                    # TODO Kludge
+                    log.debug(district_name)
+                    if district_name == 'AAMBS':
+                        district = District.objects.get(name='BHA')
+                    else:
+                        raise e
 
-    # def create_from_scores(self, data):
-    #     if self.kind == self.CHORUS:
-    #         for row in data:
-    #             log.debug(row)
-    #             chorus, created = Chorus.objects.get_or_create(
-    #                 name=row[8].split('[', 1)[0].strip(),
-    #             )
-    #             log.debug(chorus)
-    #             if created:
-    #                 # TODO refactor
-    #                 district_name = row[8].split('[', 1)[1].split(']', 1)[0]
-    #                 try:
-    #                     district = District.objects.get(
-    #                         name=district_name,
-    #                     )
-    #                 except District.DoesNotExist as e:
-    #                     # TODO Kludge
-    #                     if district_name == 'AAMBS':
-    #                         district = District.objects.get(name='BHA')
-    #                     else:
-    #                         raise e
+                chorus = Chorus.objects.create(
+                    name=name,
+                    district=district,
+                    chapter_name=chapter_name,
+                )
+                created = True
+            log.info("{0} {1}".format(chorus, created))
+            return chorus
+        else:
+            # Create contestant objects first (if needed)
+            for row in data:
 
-    #                 chorus.district = district
-    #                 chorus.chapter_name = row[0].split(' ', 1)[1].strip()
-    #                 chorus.save()
-    #                 log.info("Created chorus: {0}".format(chorus))
-    #     else:
-    #         # Create contestant objects first (if needed)
-    #         for row in data:
+                quartet, created = Quartet.objects.get_or_create(
+                    name=row[0].split(' ', 1)[1].strip(),
+                )
+                if created:
+                    # TODO refactor
+                    district_name = row[7].split('[', 1)[1].split(']', 1)[0]
+                    try:
+                        district = District.objects.get(
+                            name=district_name,
+                        )
+                    except District.DoesNotExist as e:
+                        # TODO Kludge
+                        if district_name == 'AAMBS':
+                            district = District.objects.get(name='BHA')
+                        else:
+                            raise e
+                    quartet.district = district
+                    quartet.save()
+                    log.info("Created quartet: {0}".format(quartet))
 
-    #             quartet, created = Quartet.objects.get_or_create(
-    #                 name=row[0].split(' ', 1)[1].strip(),
-    #             )
-    #             if created:
-    #                 # TODO refactor
-    #                 district_name = row[7].split('[', 1)[1].split(']', 1)[0]
-    #                 try:
-    #                     district = District.objects.get(
-    #                         name=district_name,
-    #                     )
-    #                 except District.DoesNotExist as e:
-    #                     # TODO Kludge
-    #                     if district_name == 'AAMBS':
-    #                         district = District.objects.get(name='BHA')
-    #                     else:
-    #                         raise e
-    #                 quartet.district = district
-    #                 quartet.save()
-    #                 log.info("Created quartet: {0}".format(quartet))
-    #     return "Finished pre-processing"
+    def import_scores(self):
+        reader = csv.reader(self.csv_finals)
+        data = [row for row in reader]
 
-    # def import_finals(self):
-    #     data = self.deinterlace(self.csv_finals.read().splitlines())
-    #     preprocess = self.create_from_scores(data)
-    #     log.info(preprocess)
+        performance = {}
 
-    #     performance = {}
-
-    #     for row in data:
-    #         performance['contest'] = self
-    #         performance['round'] = Performance.FINALS
-    #         performance['place'] = row[0].split(' ', 1)[0]
-    #         performance['song1'] = row[1].strip()
-    #         performance['mus1'] = row[2].strip()
-    #         performance['prs1'] = row[3].strip()
-    #         performance['sng1'] = row[4].strip()
-
-    #         if self.kind == self.CHORUS:
-    #             performance['chorus'] = Chorus.objects.get(
-    #                 name=row[8].split('[', 1)[0].strip(),
-    #             )
-    #             performance['song2'] = row[9].strip()
-    #             performance['mus2'] = row[10].strip()
-    #             performance['prs2'] = row[11].strip()
-    #             performance['sng2'] = row[12].strip()
-    #             performance['men'] = row[7].strip()
-    #             result = ChorusPerformance.objects.create(**performance)
-    #             log.info("Created performance: {0}".format(performance))
-
-    #         elif self.kind == self.QUARTET:
-    #             performance['quartet'] = Quartet.objects.get(
-    #                 name=row[0].split(' ', 1)[1].strip(),
-    #             )
-    #             performance['song2'] = row[10].strip()
-    #             performance['mus2'] = row[11].strip()
-    #             performance['prs2'] = row[12].strip()
-    #             performance['sng2'] = row[13].strip()
-    #             result = QuartetPerformance.objects.create(**performance)
-    #             log.info("Created performance: {0}".format(result))
-
-    #         else:
-    #             raise RuntimeError("Incorrect contest round.")
-    #     return "Done"
-
-    # def import_semis(self):
-    #     data = self.deinterlace(self.csv_semis.read().splitlines())
-    #     preprocess = self.create_from_scores(data)
-    #     log.info(preprocess)
-    #     performance = {}
-
-    #     for row in data:
-    #         performance['contest'] = self
-    #         performance['quartet'] = Quartet.objects.get(
-    #             name=row[0].split(' ', 1)[1].strip(),
-    #         )
-    #         performance['round'] = Performance.SEMIS
-    #         performance['place'] = row[0].split(' ', 1)[0]
-    #         performance['song1'] = row[1].strip()
-    #         performance['mus1'] = row[2].strip()
-    #         performance['prs1'] = row[3].strip()
-    #         performance['sng1'] = row[4].strip()
-    #         performance['song2'] = row[10].strip()
-    #         performance['mus2'] = row[11].strip()
-    #         performance['prs2'] = row[12].strip()
-    #         performance['sng2'] = row[13].strip()
-    #         result = QuartetPerformance.objects.create(**performance)
-    #         log.info("Created performance: {0}".format(result))
-    #     return "Done"
-
-    # def import_quarters(self):
-    #     data = self.deinterlace(self.csv_quarters.read().splitlines())
-    #     preprocess = self.create_from_scores(data)
-    #     log.info(preprocess)
-    #     performance = {}
-
-    #     for row in data:
-    #         performance['contest'] = self
-    #         performance['quartet'] = Quartet.objects.get(
-    #             name=row[0].split(' ', 1)[1].strip(),
-    #         )
-    #         performance['round'] = Performance.QUARTERS
-    #         performance['place'] = row[0].split(' ', 1)[0]
-    #         performance['song1'] = row[1].strip()
-    #         performance['mus1'] = row[2].strip()
-    #         performance['prs1'] = row[3].strip()
-    #         performance['sng1'] = row[4].strip()
-    #         performance['song2'] = row[8].strip()
-    #         performance['mus2'] = row[9].strip()
-    #         performance['prs2'] = row[10].strip()
-    #         performance['sng2'] = row[11].strip()
-    #         result = QuartetPerformance.objects.create(**performance)
-    #         log.info("Created performance: {0}".format(result))
-    #     return "Done"
-
-    # def process_csv(self):
-    #     if self.csv_quarters:
-    #         self.import_quarters()
-    #     if self.csv_semis:
-    #         self.import_semis()
-    #     if self.csv_finals:
-    #         self.import_finals()
-    #     return "Done"
+        for row in data:
+            performance['contest'] = self
+            performance['round'] = row[0]
+            performance['place'] = row[1]
+            performance['group'] = self.create_group_from_scores(
+                name=row[2],
+                chapter_name=row[3],
+                district_name=row[4],
+            )
+            performance['song1'] = row[5]
+            performance['mus1'] = row[6]
+            performance['prs1'] = row[7]
+            performance['sng1'] = row[8]
+            performance['song2'] = row[9]
+            performance['mus2'] = row[10]
+            performance['prs2'] = row[11]
+            performance['sng2'] = row[12]
+            performance['men'] = row[13]
+            result = Performance.objects.create(**performance)
+            log.info("Created performance: {0}".format(result))
+        return "Done"
 
 
 class Performance(models.Model):
@@ -748,6 +665,13 @@ class Performance(models.Model):
     sng2 = models.IntegerField(
         help_text="""
             The raw singing score of the second song.""",
+        blank=True,
+        null=True,
+    )
+
+    men = models.IntegerField(
+        help_text="""
+            Men on stage.""",
         blank=True,
         null=True,
     )
