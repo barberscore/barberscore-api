@@ -10,7 +10,7 @@ from django.core.management.base import (
 )
 
 from apps.api.models import (
-    Chorus,
+    GroupMember,
 )
 
 
@@ -47,24 +47,15 @@ class Command(BaseCommand):
             next(reader)
             for row in reader:
                 try:
-                    chorus = Chorus.objects.get_or_create(
-                        id=self.c(row[0]),
-                        name=self.c(row[1]),
-                        location=self.c(row[3]),
-                        website=self.c(row[4]),
-                        facebook=self.c(row[5]),
-                        twitter=self.c(row[6]),
-                        email=self.c(row[7]),
-                        phone=self.c(row[8]),
-                        director=self.c(row[9]),
-                        description=self.c(row[12]),
-                        chapter_code=self.c(row[13]),
-                        chapter_name=self.c(row[14]),
-                        # district_id=self.c(row[15]),
+                    gm = GroupMember.objects.create(
+                        part=self.c(row[1]),
+                        contest_id=self.c(row[2]),
+                        quartet_id=self.c(row[3]),
+                        singer_id=self.c(row[4]),
                     )
-                    print chorus
+                    print gm
                 except Exception as e:
-                    print "Chorus {0} could not be created.".format(
+                    print "GM {0} could not be created.".format(
                         row[0],
                     )
                     print "Exception: {0} ".format(e)
