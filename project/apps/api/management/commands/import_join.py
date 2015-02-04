@@ -11,6 +11,9 @@ from django.core.management.base import (
 
 from apps.api.models import (
     GroupMember,
+    Contest,
+    Singer,
+    Quartet,
 )
 
 
@@ -47,11 +50,14 @@ class Command(BaseCommand):
             next(reader)
             for row in reader:
                 try:
+                    contest = Contest.objects.get(pk=row[2])
+                    quartet = Quartet.objects.get(pk=row[3])
+                    singer = Singer.objects.get(pk=row[4])
                     gm = GroupMember.objects.create(
-                        part=self.c(row[1]),
-                        contest_id=self.c(row[2]),
-                        quartet_id=self.c(row[3]),
-                        singer_id=self.c(row[4]),
+                        part=row[1],
+                        contest=contest,
+                        quartet_id=quartet,
+                        singer_id=singer,
                     )
                     print gm
                 except Exception as e:
