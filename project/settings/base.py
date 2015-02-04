@@ -50,9 +50,9 @@ DATABASE_URL = get_env_variable("DATABASE_URL")
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 # Auth
-AUTH_USER_MODEL = 'noncense.User'
+# AUTH_USER_MODEL = 'noncense.User'
 AUTHENTICATION_BACKENDS = (
-    'noncense.backends.MobileBackend',
+    # 'noncense.backends.MobileBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -113,6 +113,7 @@ SELECT2_USE_BUNDLED_JQUERY = False
 # Applications
 INSTALLED_APPS = (
     'utils',
+    # 'noncense',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -126,7 +127,6 @@ INSTALLED_APPS = (
     'easy_select2',
     'corsheaders',
     'watson',
-    'noncense',
     'rest_framework',
     'apps.api',
     'apps.website',

@@ -1,4 +1,4 @@
-Django==1.8.a1
+git+git://github.com/django/django.git@1.8a1
 django-cors-headers==1.0.0
 dj-database-url==0.3.0
 django-timezone-field==1.1
@@ -10,7 +10,6 @@ python-dateutil==2.4.0
 pytz==2014.10
 requests==2.5.1
 twilio==3.6.15
-git+git://github.com/dbinetti/django-noncense.git@master
 boto==2.36.0
 django-storages==1.1.8
 waitress==0.8.9

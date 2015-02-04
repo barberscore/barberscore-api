@@ -43,10 +43,10 @@ LOGGING = {
             'level': 'DEBUG',
             'handlers': ['console'],
         },
-        'noncense': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        },
+        # 'noncense': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # },
         'utils': {
             'level': 'DEBUG',
             'handlers': ['console'],
