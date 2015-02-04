@@ -21,3 +21,4 @@ git+git://github.com/etianen/django-watson.git@master
 django-object-actions==0.5.1
 django-model-utils==2.2
 django-phonenumber-field==0.7.1
+s3cmd==1.5.0
