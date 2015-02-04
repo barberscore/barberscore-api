@@ -19,8 +19,8 @@ from apps.api.models import (
     Singer,
     Chorus,
     Quartet,
-    ChorusPerformance,
-    QuartetPerformance,
+    # ChorusPerformance,
+    # QuartetPerformance,
 )
 
 
@@ -99,48 +99,58 @@ class SingerDetail(DetailView):
     context_object_name = 'singer'
 
 
-class ChorusPerformanceList(ListView):
-    model = ChorusPerformance
-    context_object_name = 'performances'
+# class ChorusPerformanceList(ListView):
+#     model = ChorusPerformance
+#     context_object_name = 'performances'
 
 
-class QuartetPerformanceList(ListView):
-    model = QuartetPerformance
-    context_object_name = 'performances'
+# class QuartetPerformanceList(ListView):
+#     model = QuartetPerformance
+#     context_object_name = 'performances'
 
 
-class QuartetPerformanceDetail(DetailView):
-    model = QuartetPerformance
-    context_object_name = 'performance'
+# class QuartetPerformanceDetail(DetailView):
+#     model = QuartetPerformance
+#     context_object_name = 'performance'
 
 
 def contest_detail(request, slug):
     contest = get_object_or_404(Contest, slug=slug)
-    performances = contest.performances.all()
+    # performances = contest.performances.all()
     return render(
         request,
         'api/contest_detail.html',
-        {'contest': contest, 'performances': performances},
+        {
+            'contest': contest,
+            # 'performances': performances
+        },
     )
 
 
 def chorus_detail(request, slug):
     chorus = get_object_or_404(Chorus, slug=slug)
-    performances = chorus.performances.all()
+    # performances = chorus.performances.all()
     return render(
         request,
         'api/chorus_detail.html',
-        {'chorus': chorus, 'performances': performances},
+        {
+            'chorus': chorus,
+            # 'performances': performances
+        },
     )
 
 
 def quartet_detail(request, slug):
     quartet = Quartet.objects.get(slug=slug)
-    members = quartet.quartetmember_set.all().prefetch_related("singer")
-    performances = quartet.performances.all()
+    # members = quartet.quartetmember_set.all().prefetch_related("singer")
+    # performances = quartet.performances.all()
 
     return render(
         request,
         'api/quartet_detail.html',
-        {'quartet': quartet, 'members': members, 'performances': performances},
+        {
+            'quartet': quartet,
+            # 'members': members,
+            # 'performances': performances
+        },
     )
