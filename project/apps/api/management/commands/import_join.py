@@ -56,7 +56,7 @@ class Command(BaseCommand):
                     gm = GroupMember.objects.create(
                         part=row[1],
                         contest=contest,
-                        quartet=quartet,
+                        group=quartet,
                         singer=singer,
                     )
                     print gm
