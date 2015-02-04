@@ -1,15 +1,13 @@
 from __future__ import division
 
-import csv
-
 import logging
 log = logging.getLogger(__name__)
 
+import uuid
+import csv
 import os
 import datetime
-# import arrow
-import uuid
-from django_pg import models
+from django.db import models
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -17,6 +15,8 @@ from django.core.validators import (
 )
 
 from django.core.urlresolvers import reverse
+
+from model_utils.managers import InheritanceManager
 
 from timezone_field import TimeZoneField
 
@@ -32,9 +32,8 @@ def generate_image_filename(instance, filename):
 
 class Common(models.Model):
     id = models.UUIDField(
-        default=uuid.uuid4,
         primary_key=True,
-        coerce_to=str,
+        default=uuid.uuid4,
         editable=False,
     )
 
@@ -158,27 +157,36 @@ class Singer(Common):
             return None
 
 
-class Quartet(Common):
-    """An individual quartet."""
+class Group(Common):
     members = models.ManyToManyField(
         'Singer',
-        through='QuartetMember',
-        related_name='quartets',
+        through='GroupMember',
+        related_name='groups',
     )
 
     awards = models.ManyToManyField(
         'Award',
-        through='QuartetAward',
-        related_name='quartets',
+        through='GroupAward',
+        related_name='groups',
     )
 
     district = models.ForeignKey(
         'District',
         help_text="""
-            This is the district the quartet is officially representing in the contest.""",
+            This is the district the group is officially representing in the contest.""",
         blank=True,
         null=True,
+        related_name='groups',
     )
+
+    objects = InheritanceManager()
+
+    def __unicode__(self):
+        return self.name
+
+
+class Quartet(Group):
+    """An individual quartet."""
 
     class Meta:
         ordering = ['name']
@@ -194,26 +202,23 @@ class Quartet(Common):
 
     @property
     def lead(self):
-        return self.members.get(quartetmember__part=QuartetMember.LEAD)
+        return self.members.filter(groupmember__part=GroupMember.LEAD).last()
+
     @property
     def tenor(self):
-        return self.members.get(quartetmember__part=QuartetMember.TENOR)
+        return self.members.filter(groupmember__part=GroupMember.TENOR).last()
+
     @property
     def baritone(self):
-        return self.members.get(quartetmember__part=QuartetMember.BARITONE)
+        return self.members.filter(groupmember__part=GroupMember.BARITONE).last()
+
     @property
     def bass(self):
-        return self.members.get(quartetmember__part=QuartetMember.BASS)
+        return self.members.filter(groupmember__part=GroupMember.BASS).last()
 
 
-class Chorus(Common):
+class Chorus(Group):
     """An individual chorus."""
-    district = models.ForeignKey(
-        'District',
-        blank=True,
-        null=True,
-    )
-
     director = models.CharField(
         help_text="""
             The name of the director(s) of the chorus.""",
@@ -233,12 +238,6 @@ class Chorus(Common):
             The code of the director(s) of the chorus.""",
         max_length=200,
         blank=True,
-    )
-
-    awards = models.ManyToManyField(
-        'Award',
-        through='ChorusAward',
-        related_name='choruses',
     )
 
     class Meta:
@@ -274,7 +273,7 @@ class District(Common):
 
     kind = models.IntegerField(
         choices=KIND_CHOICES,
-        default=DISTRICT,
+        default=BHS,
     )
 
     class Meta:
@@ -308,16 +307,13 @@ class Convention(models.Model):
     )
 
     id = models.UUIDField(
-        default=uuid.uuid4,
         primary_key=True,
-        coerce_to=str,
+        default=uuid.uuid4,
         editable=False,
     )
 
     district = models.ForeignKey(
         'District',
-        null=True,
-        blank=True,
     )
 
     kind = models.IntegerField(
@@ -326,7 +322,6 @@ class Convention(models.Model):
     )
 
     year = models.IntegerField(
-        max_length=4,
         choices=YEAR_CHOICES,
         default=datetime.datetime.now().year,
     )
@@ -379,6 +374,10 @@ class Convention(models.Model):
 
 
 class Contest(models.Model):
+    YEAR_CHOICES = []
+    for r in range(2009, (datetime.datetime.now().year + 1)):
+        YEAR_CHOICES.append((r, r))
+
     QUARTET = 1
     CHORUS = 2
     SENIOR = 3
@@ -392,9 +391,8 @@ class Contest(models.Model):
     )
 
     id = models.UUIDField(
-        default=uuid.uuid4,
         primary_key=True,
-        coerce_to=str,
+        default=uuid.uuid4,
         editable=False,
     )
 
@@ -409,11 +407,20 @@ class Contest(models.Model):
         blank=True,
     )
 
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        default=datetime.datetime.now().year,
+    )
+
+    district = models.ForeignKey(
+        'District',
+    )
+
     slug = AutoSlugField(
         populate_from=lambda instance: "{0}-{1}-{2}".format(
-            instance.convention.district.name,
+            instance.district.name,
             instance.get_kind_display(),
-            instance.convention.year,
+            instance.year,
         ),
         always_update=True,
         unique=True,
@@ -457,9 +464,9 @@ class Contest(models.Model):
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
-            self.convention.district.name,
+            self.district.name,
             self.get_kind_display(),
-            self.convention.year,
+            self.year,
         )
 
     def get_absolute_url(self):
@@ -468,176 +475,176 @@ class Contest(models.Model):
             args=[self.slug],
         )
 
-    def deinterlace(self, csvfile):
-        raw = [row for row in csv.reader(
-            csvfile,
-        )]
-        l = len(raw)
-        data = []
-        i = 0
-        #  Deinterlace and build list of dictionaries.
-        while i < l:
-            if (i % 2 == 0):  # zero-indexed rows
-                row = raw[i]
-                row.extend(raw[i + 1])
-                data.append(row)
-            else:  # Skip interlaced row; added supra
-                pass
-            i += 1
-        return data
+    # def deinterlace(self, csvfile):
+    #     raw = [row for row in csv.reader(
+    #         csvfile,
+    #     )]
+    #     l = len(raw)
+    #     data = []
+    #     i = 0
+    #     #  Deinterlace and build list of dictionaries.
+    #     while i < l:
+    #         if (i % 2 == 0):  # zero-indexed rows
+    #             row = raw[i]
+    #             row.extend(raw[i + 1])
+    #             data.append(row)
+    #         else:  # Skip interlaced row; added supra
+    #             pass
+    #         i += 1
+    #     return data
 
-    def create_from_scores(self, data):
-        if self.kind == self.CHORUS:
-            for row in data:
-                log.debug(row)
-                chorus, created = Chorus.objects.get_or_create(
-                    name=row[8].split('[', 1)[0].strip(),
-                )
-                log.debug(chorus)
-                if created:
-                    # TODO refactor
-                    district_name = row[8].split('[', 1)[1].split(']', 1)[0]
-                    try:
-                        district = District.objects.get(
-                            name=district_name,
-                        )
-                    except District.DoesNotExist as e:
-                        # TODO Kludge
-                        if district_name == 'AAMBS':
-                            district = District.objects.get(name='BHA')
-                        else:
-                            raise e
+    # def create_from_scores(self, data):
+    #     if self.kind == self.CHORUS:
+    #         for row in data:
+    #             log.debug(row)
+    #             chorus, created = Chorus.objects.get_or_create(
+    #                 name=row[8].split('[', 1)[0].strip(),
+    #             )
+    #             log.debug(chorus)
+    #             if created:
+    #                 # TODO refactor
+    #                 district_name = row[8].split('[', 1)[1].split(']', 1)[0]
+    #                 try:
+    #                     district = District.objects.get(
+    #                         name=district_name,
+    #                     )
+    #                 except District.DoesNotExist as e:
+    #                     # TODO Kludge
+    #                     if district_name == 'AAMBS':
+    #                         district = District.objects.get(name='BHA')
+    #                     else:
+    #                         raise e
 
-                    chorus.district = district
-                    chorus.chapter_name = row[0].split(' ', 1)[1].strip()
-                    chorus.save()
-                    log.info("Created chorus: {0}".format(chorus))
-        else:
-            # Create contestant objects first (if needed)
-            for row in data:
+    #                 chorus.district = district
+    #                 chorus.chapter_name = row[0].split(' ', 1)[1].strip()
+    #                 chorus.save()
+    #                 log.info("Created chorus: {0}".format(chorus))
+    #     else:
+    #         # Create contestant objects first (if needed)
+    #         for row in data:
 
-                quartet, created = Quartet.objects.get_or_create(
-                    name=row[0].split(' ', 1)[1].strip(),
-                )
-                if created:
-                    # TODO refactor
-                    district_name = row[7].split('[', 1)[1].split(']', 1)[0]
-                    try:
-                        district = District.objects.get(
-                            name=district_name,
-                        )
-                    except District.DoesNotExist as e:
-                        # TODO Kludge
-                        if district_name == 'AAMBS':
-                            district = District.objects.get(name='BHA')
-                        else:
-                            raise e
-                    quartet.district = district
-                    quartet.save()
-                    log.info("Created quartet: {0}".format(quartet))
-        return "Finished pre-processing"
+    #             quartet, created = Quartet.objects.get_or_create(
+    #                 name=row[0].split(' ', 1)[1].strip(),
+    #             )
+    #             if created:
+    #                 # TODO refactor
+    #                 district_name = row[7].split('[', 1)[1].split(']', 1)[0]
+    #                 try:
+    #                     district = District.objects.get(
+    #                         name=district_name,
+    #                     )
+    #                 except District.DoesNotExist as e:
+    #                     # TODO Kludge
+    #                     if district_name == 'AAMBS':
+    #                         district = District.objects.get(name='BHA')
+    #                     else:
+    #                         raise e
+    #                 quartet.district = district
+    #                 quartet.save()
+    #                 log.info("Created quartet: {0}".format(quartet))
+    #     return "Finished pre-processing"
 
-    def import_finals(self):
-        data = self.deinterlace(self.csv_finals.read().splitlines())
-        preprocess = self.create_from_scores(data)
-        log.info(preprocess)
+    # def import_finals(self):
+    #     data = self.deinterlace(self.csv_finals.read().splitlines())
+    #     preprocess = self.create_from_scores(data)
+    #     log.info(preprocess)
 
-        performance = {}
+    #     performance = {}
 
-        for row in data:
-            performance['contest'] = self
-            performance['round'] = Performance.FINALS
-            performance['place'] = row[0].split(' ', 1)[0]
-            performance['song1'] = row[1].strip()
-            performance['mus1'] = row[2].strip()
-            performance['prs1'] = row[3].strip()
-            performance['sng1'] = row[4].strip()
+    #     for row in data:
+    #         performance['contest'] = self
+    #         performance['round'] = Performance.FINALS
+    #         performance['place'] = row[0].split(' ', 1)[0]
+    #         performance['song1'] = row[1].strip()
+    #         performance['mus1'] = row[2].strip()
+    #         performance['prs1'] = row[3].strip()
+    #         performance['sng1'] = row[4].strip()
 
-            if self.kind == self.CHORUS:
-                performance['chorus'] = Chorus.objects.get(
-                    name=row[8].split('[', 1)[0].strip(),
-                )
-                performance['song2'] = row[9].strip()
-                performance['mus2'] = row[10].strip()
-                performance['prs2'] = row[11].strip()
-                performance['sng2'] = row[12].strip()
-                performance['men'] = row[7].strip()
-                result = ChorusPerformance.objects.create(**performance)
-                log.info("Created performance: {0}".format(performance))
+    #         if self.kind == self.CHORUS:
+    #             performance['chorus'] = Chorus.objects.get(
+    #                 name=row[8].split('[', 1)[0].strip(),
+    #             )
+    #             performance['song2'] = row[9].strip()
+    #             performance['mus2'] = row[10].strip()
+    #             performance['prs2'] = row[11].strip()
+    #             performance['sng2'] = row[12].strip()
+    #             performance['men'] = row[7].strip()
+    #             result = ChorusPerformance.objects.create(**performance)
+    #             log.info("Created performance: {0}".format(performance))
 
-            elif self.kind == self.QUARTET:
-                performance['quartet'] = Quartet.objects.get(
-                    name=row[0].split(' ', 1)[1].strip(),
-                )
-                performance['song2'] = row[10].strip()
-                performance['mus2'] = row[11].strip()
-                performance['prs2'] = row[12].strip()
-                performance['sng2'] = row[13].strip()
-                result = QuartetPerformance.objects.create(**performance)
-                log.info("Created performance: {0}".format(result))
+    #         elif self.kind == self.QUARTET:
+    #             performance['quartet'] = Quartet.objects.get(
+    #                 name=row[0].split(' ', 1)[1].strip(),
+    #             )
+    #             performance['song2'] = row[10].strip()
+    #             performance['mus2'] = row[11].strip()
+    #             performance['prs2'] = row[12].strip()
+    #             performance['sng2'] = row[13].strip()
+    #             result = QuartetPerformance.objects.create(**performance)
+    #             log.info("Created performance: {0}".format(result))
 
-            else:
-                raise RuntimeError("Incorrect contest round.")
-        return "Done"
+    #         else:
+    #             raise RuntimeError("Incorrect contest round.")
+    #     return "Done"
 
-    def import_semis(self):
-        data = self.deinterlace(self.csv_semis.read().splitlines())
-        preprocess = self.create_from_scores(data)
-        log.info(preprocess)
-        performance = {}
+    # def import_semis(self):
+    #     data = self.deinterlace(self.csv_semis.read().splitlines())
+    #     preprocess = self.create_from_scores(data)
+    #     log.info(preprocess)
+    #     performance = {}
 
-        for row in data:
-            performance['contest'] = self
-            performance['quartet'] = Quartet.objects.get(
-                name=row[0].split(' ', 1)[1].strip(),
-            )
-            performance['round'] = Performance.SEMIS
-            performance['place'] = row[0].split(' ', 1)[0]
-            performance['song1'] = row[1].strip()
-            performance['mus1'] = row[2].strip()
-            performance['prs1'] = row[3].strip()
-            performance['sng1'] = row[4].strip()
-            performance['song2'] = row[10].strip()
-            performance['mus2'] = row[11].strip()
-            performance['prs2'] = row[12].strip()
-            performance['sng2'] = row[13].strip()
-            result = QuartetPerformance.objects.create(**performance)
-            log.info("Created performance: {0}".format(result))
-        return "Done"
+    #     for row in data:
+    #         performance['contest'] = self
+    #         performance['quartet'] = Quartet.objects.get(
+    #             name=row[0].split(' ', 1)[1].strip(),
+    #         )
+    #         performance['round'] = Performance.SEMIS
+    #         performance['place'] = row[0].split(' ', 1)[0]
+    #         performance['song1'] = row[1].strip()
+    #         performance['mus1'] = row[2].strip()
+    #         performance['prs1'] = row[3].strip()
+    #         performance['sng1'] = row[4].strip()
+    #         performance['song2'] = row[10].strip()
+    #         performance['mus2'] = row[11].strip()
+    #         performance['prs2'] = row[12].strip()
+    #         performance['sng2'] = row[13].strip()
+    #         result = QuartetPerformance.objects.create(**performance)
+    #         log.info("Created performance: {0}".format(result))
+    #     return "Done"
 
-    def import_quarters(self):
-        data = self.deinterlace(self.csv_quarters.read().splitlines())
-        preprocess = self.create_from_scores(data)
-        log.info(preprocess)
-        performance = {}
+    # def import_quarters(self):
+    #     data = self.deinterlace(self.csv_quarters.read().splitlines())
+    #     preprocess = self.create_from_scores(data)
+    #     log.info(preprocess)
+    #     performance = {}
 
-        for row in data:
-            performance['contest'] = self
-            performance['quartet'] = Quartet.objects.get(
-                name=row[0].split(' ', 1)[1].strip(),
-            )
-            performance['round'] = Performance.QUARTERS
-            performance['place'] = row[0].split(' ', 1)[0]
-            performance['song1'] = row[1].strip()
-            performance['mus1'] = row[2].strip()
-            performance['prs1'] = row[3].strip()
-            performance['sng1'] = row[4].strip()
-            performance['song2'] = row[8].strip()
-            performance['mus2'] = row[9].strip()
-            performance['prs2'] = row[10].strip()
-            performance['sng2'] = row[11].strip()
-            result = QuartetPerformance.objects.create(**performance)
-            log.info("Created performance: {0}".format(result))
-        return "Done"
+    #     for row in data:
+    #         performance['contest'] = self
+    #         performance['quartet'] = Quartet.objects.get(
+    #             name=row[0].split(' ', 1)[1].strip(),
+    #         )
+    #         performance['round'] = Performance.QUARTERS
+    #         performance['place'] = row[0].split(' ', 1)[0]
+    #         performance['song1'] = row[1].strip()
+    #         performance['mus1'] = row[2].strip()
+    #         performance['prs1'] = row[3].strip()
+    #         performance['sng1'] = row[4].strip()
+    #         performance['song2'] = row[8].strip()
+    #         performance['mus2'] = row[9].strip()
+    #         performance['prs2'] = row[10].strip()
+    #         performance['sng2'] = row[11].strip()
+    #         result = QuartetPerformance.objects.create(**performance)
+    #         log.info("Created performance: {0}".format(result))
+    #     return "Done"
 
-    def process_csv(self):
-        if self.csv_quarters:
-            self.import_quarters()
-        if self.csv_semis:
-            self.import_semis()
-        if self.csv_finals:
-            self.import_finals()
-        return "Done"
+    # def process_csv(self):
+    #     if self.csv_quarters:
+    #         self.import_quarters()
+    #     if self.csv_semis:
+    #         self.import_semis()
+    #     if self.csv_finals:
+    #         self.import_finals()
+    #     return "Done"
 
 
 class Performance(models.Model):
@@ -651,7 +658,26 @@ class Performance(models.Model):
         (QUARTERS, 'Quarter-Finals',),
     )
 
-    contest = models.ForeignKey(Contest)
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='performances',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='performances',
+    )
+
+    round = models.IntegerField(
+        choices=ROUND_CHOICES,
+        default=FINALS,
+    )
 
     queue = models.IntegerField(
         null=True,
@@ -725,6 +751,20 @@ class Performance(models.Model):
         blank=True,
         null=True,
     )
+
+    class Meta:
+        ordering = [
+            '-contest',
+            'round',
+            'group',
+        ]
+
+    def __unicode__(self):
+        return "{0} {1} {2}".format(
+            self.contest,
+            self.get_round_display(),
+            self.group,
+        )
 
     @property
     def mus1_rata(self):
@@ -809,119 +849,11 @@ class Performance(models.Model):
         else:
             return None
 
-    class Meta:
-        abstract = True
-
-
-class QuartetPerformance(Performance):
-    quartet = models.ForeignKey(
-        'Quartet',
-        related_name='performances',
-    )
-
-    round = models.IntegerField(
-        choices=Performance.ROUND_CHOICES,
-        default=Performance.QUARTERS,
-    )
-
-    class Meta:
-        ordering = [
-            '-contest',
-            'round',
-            'quartet',
-        ]
-
-    def __unicode__(self):
-        return "{0} {1} {2}".format(
-            self.contest,
-            self.get_round_display(),
-            self.quartet,
-        )
-
-
-class ChorusPerformance(Performance):
-    chorus = models.ForeignKey(
-        'Chorus',
-        related_name='performances',
-    )
-
-    round = models.IntegerField(
-        choices=Performance.ROUND_CHOICES,
-        default=Performance.FINALS,
-    )
-
-    men = models.IntegerField(
-        help_text="""
-            The number of men on stage.""",
-        null=True,
-        blank=True,
-    )
-
-    class Meta:
-        ordering = [
-            '-contest',
-            'round',
-            'chorus',
-        ]
-
-    def __unicode__(self):
-        return "{0} {1} {2}".format(
-            self.contest,
-            self.get_round_display(),
-            self.chorus,
-        )
-
-
-class QuartetMember(models.Model):
-    LEAD = 1
-    TENOR = 2
-    BARITONE = 3
-    BASS = 4
-
-    PART_CHOICES = (
-        (LEAD, 'Lead'),
-        (TENOR, 'Tenor'),
-        (BARITONE, 'Baritone'),
-        (BASS, 'Bass'),
-    )
-
-    singer = models.ForeignKey(
-        'Singer',
-        # related_name='members',
-    )
-    quartet = models.ForeignKey(
-        'Quartet',
-        # related_name='members',
-    )
-    contest = models.ForeignKey(Contest)
-    part = models.IntegerField(
-        choices=PART_CHOICES,
-        null=True,
-        blank=True,
-    )
-
-    class Meta:
-        ordering = [
-            'quartet',
-            'part',
-            'singer',
-            'contest',
-        ]
-
-    def __unicode__(self):
-        return "{0} {1} {2} {3}".format(
-            self.quartet,
-            self.get_part_display(),
-            self.singer,
-            self.contest,
-        )
-
 
 class Award(models.Model):
     id = models.UUIDField(
-        default=uuid.uuid4,
         primary_key=True,
-        coerce_to=str,
+        default=uuid.uuid4,
         editable=False,
     )
 
@@ -957,28 +889,84 @@ class Award(models.Model):
         )
 
 
-class QuartetAward(models.Model):
-    """Awards and placement"""
-    quartet = models.ForeignKey(Quartet)
-    contest = models.ForeignKey(Contest)
-    award = models.ForeignKey(Award)
+class GroupMember(models.Model):
+    LEAD = 1
+    TENOR = 2
+    BARITONE = 3
+    BASS = 4
+
+    PART_CHOICES = (
+        (LEAD, 'Lead'),
+        (TENOR, 'Tenor'),
+        (BARITONE, 'Baritone'),
+        (BASS, 'Bass'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    singer = models.ForeignKey(
+        'Singer',
+        # related_name='members',
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        # related_name='members',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        # related_name='members',
+    )
+
+    part = models.IntegerField(
+        choices=PART_CHOICES,
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = [
+            'group',
+            'part',
+            'singer',
+            'contest',
+        ]
+
+    def __unicode__(self):
+        return "{0} {1} {2} {3}".format(
+            self.group,
+            self.get_part_display(),
+            self.singer,
+            self.contest,
+        )
 
 
-class ChorusAward(models.Model):
-    """Awards and placement"""
-    chorus = models.ForeignKey(Chorus)
-    contest = models.ForeignKey(Contest)
-    award = models.ForeignKey(Award)
-
-
-class Finish(models.Model):
+class GroupFinish(models.Model):
     """Awards and placement"""
     RANK_CHOICES = []
     for r in range(1, 50):
         RANK_CHOICES.append((r, r))
 
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
     contest = models.ForeignKey(
-        Contest,
+        'Contest',
+        null=True,
+        blank=True,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        # related_name='finishes',
         null=True,
         blank=True,
     )
@@ -988,10 +976,12 @@ class Finish(models.Model):
         null=True,
         blank=True,
     )
+
     prelim = models.FloatField(
         null=True,
         blank=True,
     )
+
     seed = models.IntegerField(
         choices=RANK_CHOICES,
         null=True,
@@ -1004,25 +994,29 @@ class Finish(models.Model):
     )
 
 
-class ChorusFinish(Finish):
-    chorus = models.ForeignKey(
-        Chorus,
-        related_name='finishes',
-        null=True,
-        blank=True,
+class GroupAward(models.Model):
+    """Awards and placement"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
     )
 
-    class Meta:
-        verbose_name_plural = "Chorus Finishes"
-
-
-class QuartetFinish(Finish):
-    quartet = models.ForeignKey(
-        Quartet,
-        related_name='finishes',
-        null=True,
-        blank=True,
+    group = models.ForeignKey(
+        'Group',
     )
 
-    class Meta:
-        verbose_name_plural = "Quartet Finishes"
+    contest = models.ForeignKey(
+        'Contest',
+    )
+
+    award = models.ForeignKey(
+        'Award',
+    )
+
+    def __unicode__(self):
+        return "{0} {1} {2}".format(
+            self.group,
+            self.contest,
+            self.award,
+        )
