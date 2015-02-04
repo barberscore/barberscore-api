@@ -56,8 +56,8 @@ class Command(BaseCommand):
                     gm = GroupMember.objects.create(
                         part=row[1],
                         contest=contest,
-                        quartet_id=quartet,
-                        singer_id=singer,
+                        quartet=quartet,
+                        singer=singer,
                     )
                     print gm
                 except Exception as e:
