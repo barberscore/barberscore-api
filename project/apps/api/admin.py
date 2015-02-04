@@ -306,6 +306,25 @@ class QuartetPerformanceInline(admin.TabularInline):
 
 
 class CommonAdmin(admin.ModelAdmin):
+    def download_csv(modeladmin, request, queryset):
+        if not request.user.is_staff:
+            raise PermissionDenied
+        opts = queryset.model._meta
+        model = queryset.model
+        response = HttpResponse(mimetype='text/csv')
+        # force download.
+        response['Content-Disposition'] = 'attachment;filename=export.csv'
+        # the csv writer
+        writer = csv.writer(response)
+        field_names = [field.name for field in opts.fields]
+        # Write a first row with header information
+        writer.writerow(field_names)
+        # Write data rows
+        for obj in queryset:
+            writer.writerow([getattr(obj, field) for field in field_names])
+        return response
+    download_csv.short_description = "Download selected as csv"
+
     def show_website(self, obj):
         url = '<a href="{0}">{1}</a>'.format(obj.website, obj.website)
         return mark_safe(url)
@@ -330,6 +349,10 @@ class CommonAdmin(admin.ModelAdmin):
         'phone',
         'twitter',
         'picture',
+    ]
+
+    actions = [
+        download_csv,
     ]
 
     search_fields = ['name']
