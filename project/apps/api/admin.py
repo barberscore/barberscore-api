@@ -5,10 +5,10 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
-# from django_object_actions import (
-#     DjangoObjectActions,
-#     takes_instance_or_queryset,
-# )
+from django_object_actions import (
+    DjangoObjectActions,
+    takes_instance_or_queryset,
+)
 
 from easy_select2 import select2_modelform
 
@@ -54,12 +54,20 @@ class ConventionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(admin.ModelAdmin):
+class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
+    @takes_instance_or_queryset
+    def import_scores(self, request, queryset):
+        for obj in queryset:
+            obj.import_scores()
+    import_scores.label = 'Import Scores'
     form = select2_modelform(
         Contest,
         attrs={'width': '250px'},
     )
     save_on_top = True
+    objectactions = [
+        'import_scores',
+    ]
 
 
 @admin.register(District)
