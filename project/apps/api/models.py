@@ -890,7 +890,7 @@ class GroupFinish(models.Model):
 
     group = models.ForeignKey(
         'Group',
-        # related_name='finishes',
+        related_name='finishes',
         null=True,
         blank=True,
     )
