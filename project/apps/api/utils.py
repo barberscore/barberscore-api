@@ -73,6 +73,43 @@ def parse_chorus(path, round):
     return output
 
 
+def parse_quarters(path, round):
+    data = deinterlace(path)
+    output = []
+    # Split first cell and chapter cell
+    for row in data:
+        row.extend([row[0].split(' ', 1)[0]])
+        row.extend([row[7].split('[', 1)[1].split(']', 1)[0]])
+        row[0] = row[0].split(' ', 1)[1]
+        row[7] = row[7].split('[', 1)[0]
+        # Add round
+        row.extend([round])
+        output.append(row)
+    # Strip space
+    for row in output:
+        i = 0
+        l = len(row)
+        while i < l:
+            row[i] = row[i].strip()
+            i += 1
+    # Reorder in list -- SUPER Kludge!
+    # for row in output:
+        row.insert(0, row.pop(-1))
+        row.insert(1, row.pop(-2))
+        row.insert(3, row.pop(-2))
+        row.insert(4, row.pop(-1))
+        row.pop(9)
+        row.pop(9)
+        row.pop(9)
+
+    # Write output
+    with open('output.csv', 'wb') as csvfile:
+        writer = csv.writer(csvfile)
+        for row in output:
+            writer.writerow(row)
+    return output
+
+
 def create_from_scores(self):
     data = [row for row in csv.reader(self.csv_finals.read())]
     if self.kind == self.CHORUS:
@@ -148,6 +185,7 @@ def import_scores(self):
         result = Performance.objects.create(**performance)
         log.info("Created performance: {0}".format(performance))
     return "Done"
+
 
 def process_csv(self):
     if self.csv_quarters:
