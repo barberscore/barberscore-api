@@ -476,7 +476,7 @@ class Contest(models.Model):
             args=[self.slug],
         )
 
-    def create_group_from_scores(self, name, district_name, chapter_name):
+    def create_group_from_scores(self, name, district_name, chapter_name=None):
         if self.kind == self.CHORUS:
             if name.startswith("The "):
                 match = name.split("The ", 1)[1]
@@ -497,10 +497,10 @@ class Contest(models.Model):
                     )
                 except District.DoesNotExist as e:
                     # TODO Kludge
-                    log.debug(district_name)
                     if district_name == 'AAMBS':
                         district = District.objects.get(name='BHA')
                     else:
+                        log.error(e)
                         raise e
 
                 chorus = Chorus.objects.create(
@@ -512,28 +512,41 @@ class Contest(models.Model):
             log.info("{0} {1}".format(chorus, created))
             return chorus
         else:
-            # Create contestant objects first (if needed)
-            for row in data:
-
-                quartet, created = Quartet.objects.get_or_create(
-                    name=row[0].split(' ', 1)[1].strip(),
+            if name.startswith("The "):
+                match = name.split("The ", 1)[1]
+            else:
+                match = name
+            try:
+                quartet = Quartet.objects.get(
+                    name__endswith=match,
                 )
-                if created:
-                    # TODO refactor
-                    district_name = row[7].split('[', 1)[1].split(']', 1)[0]
-                    try:
-                        district = District.objects.get(
-                            name=district_name,
+                created = False
+            except Quartet.MultipleObjectsReturned as e:
+                log.error("Duplicate exists for {0}".format(match))
+                raise e
+            except Quartet.DoesNotExist:
+                try:
+                    district = District.objects.get(
+                        name=district_name,
+                    )
+                except District.DoesNotExist as e:
+                    # TODO Kludge
+                    log.debug(district_name)
+                    if district_name == 'AAMBS':
+                        district = District.objects.get(name='BHA')
+                    else:
+                        log.error("No District match for {0}".format(
+                            district_name)
                         )
-                    except District.DoesNotExist as e:
-                        # TODO Kludge
-                        if district_name == 'AAMBS':
-                            district = District.objects.get(name='BHA')
-                        else:
-                            raise e
-                    quartet.district = district
-                    quartet.save()
-                    log.info("Created quartet: {0}".format(quartet))
+                        raise e
+
+                quartet = Quartet.objects.create(
+                    name=name,
+                    district=district,
+                )
+                created = True
+            log.info("{0} {1}".format(quartet, created))
+            return quartet
 
     def import_scores(self):
         reader = csv.reader(self.csv_finals)
@@ -542,14 +555,23 @@ class Contest(models.Model):
         performance = {}
 
         for row in data:
+            # Probably not the right way.
+            if not row[13]:
+                row[13] = 4
+            if not row[4]:
+                row[4] = None
             performance['contest'] = self
             performance['round'] = row[0]
             performance['place'] = row[1]
-            performance['group'] = self.create_group_from_scores(
-                name=row[2],
-                chapter_name=row[3],
-                district_name=row[4],
-            )
+            try:
+                performance['group'] = self.create_group_from_scores(
+                    name=row[2],
+                    chapter_name=row[3],
+                    district_name=row[4],
+                )
+            except Exception as e:
+                log.error(e)
+                raise e
             performance['song1'] = row[5]
             performance['mus1'] = row[6]
             performance['prs1'] = row[7]
@@ -674,6 +696,7 @@ class Performance(models.Model):
             Men on stage.""",
         blank=True,
         null=True,
+        default=4,
     )
 
     class Meta:
