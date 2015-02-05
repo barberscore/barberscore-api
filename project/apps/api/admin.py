@@ -89,10 +89,32 @@ class QuartetAdmin(admin.ModelAdmin):
 
 @admin.register(Chorus)
 class ChorusAdmin(admin.ModelAdmin):
+    def is_picture(self, obj):
+        return bool(obj.picture)
+
     form = select2_modelform(
         Chorus,
         attrs={'width': '250px'},
     )
+
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'director',
+        'chapter_name',
+        'chapter_code',
+        'is_picture',
+    )
+
+    readonly_fields = (
+        'is_picture',
+    )
+
     # inlines = (
     #     GroupMemberInline,
     #     GroupAwardInline,
