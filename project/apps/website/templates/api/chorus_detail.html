@@ -51,7 +51,7 @@
         </tr>
         {% for performance in performances %}
           <tr>
-            <td>{{performance.contest.convention.location}}, {{performance.contest.convention.year}}<br>{{performance.place|ordinal}} Place</td>
+            <td>{{performance.contest.convention.location}}, {{performance.contest.year}}<br>{{performance.place|ordinal}} Place</td>
             <td>{{performance.song1|truncatechars:40}}<br>{{performance.song2|truncatechars:40}}</td>
             <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
             <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>

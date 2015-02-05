@@ -17,6 +17,7 @@ from apps.api.models import (
     Contest,
     District,
     Singer,
+    Group,
     Chorus,
     Quartet,
     # ChorusPerformance,
@@ -128,14 +129,14 @@ def contest_detail(request, slug):
 
 
 def chorus_detail(request, slug):
-    chorus = get_object_or_404(Chorus, slug=slug)
-    # performances = chorus.performances.all()
+    chorus = get_object_or_404(Group, slug=slug)
+    performances = chorus.performances.all()
     return render(
         request,
         'api/chorus_detail.html',
         {
             'chorus': chorus,
-            # 'performances': performances
+            'performances': performances
         },
     )
 
