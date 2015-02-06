@@ -1,3 +1,4 @@
+import os
 import csv
 
 import logging
@@ -56,11 +57,57 @@ def parse_chorus(path, round):
         row.pop(13)
         row.pop(-1)
 
-    #  Write output
-    with open('output.csv', 'wb') as csvfile:
+    # Write output
+    rename = os.path.splitext(os.path.basename)[0]
+    with open('{0}.csv'.format(rename), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
+    return output
+
+
+def parse_district_chorus(path, district):
+    data = deinterlace(path)
+    output = []
+    # Split first cell and chapter cell
+    for row in data:
+        row.extend([row[0].split(' ', 1)[0]])
+        row.extend([row[9].split('(', 1)[0]])
+        row[0] = row[0].split(' ', 1)[1]
+        row[9] = row[9].split('(', 1)[0]
+        # Add round
+        row.extend(['1'])
+        # Overwrite district
+        row[19] = district
+        output.append(row)
+    # Strip space
+    for row in output:
+        i = 0
+        l = len(row)
+        while i < l:
+            row[i] = row[i].strip()
+            i += 1
+    # Reorder in list -- SUPER Kludge!
+    for row in output:
+        row.insert(0, row.pop(-1))
+        row.insert(1, row.pop(-2))
+        row.insert(2, row.pop(11))
+        row.insert(4, row.pop(-1))
+        row.insert(-1, row.pop(12))
+        row.pop(5)
+        row.pop(9)
+        row.pop(9)
+        row.pop(9)
+        row.pop(13)
+        row.pop(13)
+        row.pop(14)
+
+    # # Write output
+    # rename = os.path.splitext(os.path.basename)[0]
+    # with open('{0}.csv'.format(rename), 'wb') as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     for row in output:
+    #         writer.writerow(row)
     return output
 
 
@@ -94,7 +141,8 @@ def parse_quarters(path):
         row.pop(9)
 
     # Write output
-    with open('output.csv', 'wb') as csvfile:
+    rename = os.path.splitext(os.path.basename)[0]
+    with open('{0}.csv'.format(rename), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
@@ -135,7 +183,8 @@ def parse_semis(path):
         row.pop(-1)
 
     # Write output
-    with open('output.csv', 'wb') as csvfile:
+    rename = os.path.splitext(os.path.basename)[0]
+    with open('{0}.csv'.format(rename), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
@@ -176,7 +225,8 @@ def parse_finals(path):
         row.pop(-1)
 
     # Write output
-    with open('output.csv', 'wb') as csvfile:
+    rename = os.path.splitext(os.path.basename)[0]
+    with open('{0}.csv'.format(rename), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
