@@ -23,6 +23,7 @@ from .models import (
     Singer,
     GroupMember,
     GroupAward,
+    GroupFinish,
 )
 
 
@@ -41,6 +42,15 @@ class GroupAwardInline(admin.TabularInline):
         attrs={'width': '250px'},
     )
     model = GroupAward
+    extra = 0
+
+
+class GroupFinishInline(admin.TabularInline):
+    form = select2_modelform(
+        GroupFinish,
+        attrs={'width': '250px'},
+    )
+    model = GroupFinish
     extra = 0
 
 
@@ -90,6 +100,7 @@ class QuartetAdmin(admin.ModelAdmin):
     form = QuartetForm
     inlines = (
         GroupMemberInline,
+        GroupFinishInline,
         # GroupAwardInline,
     )
     save_on_top = True
