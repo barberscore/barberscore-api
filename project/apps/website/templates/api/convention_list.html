@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    Convention List
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+    <div class='page-header'>
+      <p>
+        <h2>Convention List</h2>
+      </p>
+      <p class='lead'>
+        List of conventions.
+      </p>
+    </div>
+    <div>
+      <ul>
+        {% for convention in conventions %}
+          <li><a href='{% url "website:convention-detail" convention.slug %}'>{{convention}}</a></li>
+        {% endfor %}
+      <ul>
+    </div>
+  </div> <!-- /container -->
+{% endblock content %}
