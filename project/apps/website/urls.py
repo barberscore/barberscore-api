@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^contests/(?P<slug>[a-zA-Z0-9-]+)/$', views.contest_detail, name='contest-detail'),
 
     url(r'^conventions/$', views.ConventionList.as_view(), name='convention-list'),
-    url(r'^conventions/(?P<slug>[a-zA-Z0-9-]+)/$', views.ConventionDetail.as_view(), name='convention-detail'),
+    url(r'^conventions/(?P<slug>[a-zA-Z0-9-]+)/$', views.convention_detail, name='convention-detail'),
 
     url(r'^districts/$', views.DistrictList.as_view(), name='district-list'),
     url(r'^districts/(?P<slug>[a-zA-Z0-9-]+)/$', views.DistrictDetail.as_view(), name='district-detail'),
@@ -34,6 +34,9 @@ urlpatterns = [
 
     url(r'^quartets/$', views.QuartetList.as_view(), name='quartet-list'),
     url(r'^quartets/(?P<slug>[a-zA-Z0-9-]+)/$', views.quartet_detail, name='quartet-detail'),
+
+    url(r'^performances/$', views.PerformanceList.as_view(), name='performance-list'),
+    url(r'^performances/(?P<id>[a-zA-Z0-9-]+)/$', views.performance_detail, name='performance-detail'),
 ]
 
 if settings.DEBUG:

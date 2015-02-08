@@ -20,6 +20,7 @@ from apps.api.models import (
     Group,
     Chorus,
     Quartet,
+    Performance,
     # ChorusPerformance,
     # QuartetPerformance,
 )
@@ -60,11 +61,6 @@ class ConventionList(ListView):
     context_object_name = 'conventions'
 
 
-class ConventionDetail(DetailView):
-    model = Convention
-    context_object_name = 'convention'
-
-
 class QuartetList(ListView):
     model = Quartet
     context_object_name = 'quartets'
@@ -100,36 +96,26 @@ class SingerDetail(DetailView):
     context_object_name = 'singer'
 
 
-# class ChorusPerformanceList(ListView):
-#     model = ChorusPerformance
-#     context_object_name = 'performances'
-
-
-# class QuartetPerformanceList(ListView):
-#     model = QuartetPerformance
-#     context_object_name = 'performances'
-
-
-# class QuartetPerformanceDetail(DetailView):
-#     model = QuartetPerformance
-#     context_object_name = 'performance'
+class PerformanceList(ListView):
+    model = Performance
+    context_object_name = 'performances'
 
 
 def contest_detail(request, slug):
     contest = get_object_or_404(Contest, slug=slug)
-    # performances = contest.performances.all()
+    performances = contest.performances.all().order_by('round', 'place')
     return render(
         request,
         'api/contest_detail.html',
         {
             'contest': contest,
-            # 'performances': performances
+            'performances': performances
         },
     )
 
 
 def chorus_detail(request, slug):
-    chorus = get_object_or_404(Group, slug=slug)
+    chorus = get_object_or_404(Chorus, slug=slug)
     performances = chorus.performances.all()
     return render(
         request,
@@ -141,8 +127,19 @@ def chorus_detail(request, slug):
     )
 
 
+def convention_detail(request, slug):
+    convention = get_object_or_404(Convention, slug=slug)
+    return render(
+        request,
+        'api/convention_detail.html',
+        {
+            'convention': convention,
+        },
+    )
+
+
 def quartet_detail(request, slug):
-    quartet = Quartet.objects.get(slug=slug)
+    quartet = get_object_or_404(Quartet, slug=slug)
     members = quartet.members.all().prefetch_related("singer")
     performances = quartet.performances.all()
 
@@ -153,5 +150,16 @@ def quartet_detail(request, slug):
             'quartet': quartet,
             'members': members,
             'performances': performances
+        },
+    )
+
+
+def performance_detail(request, id):
+    performance = Performance.objects.get(pk=id)
+    return render(
+        request,
+        'api/performance_detail.html',
+        {
+            'performance': performance,
         },
     )
