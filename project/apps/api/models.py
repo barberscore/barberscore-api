@@ -623,6 +623,16 @@ class Performance(models.Model):
         blank=True,
     )
 
+    session = models.IntegerField(
+        choices=(
+            (1, 1),
+            (2, 2)
+        ),
+        default=1,
+        null=True,
+        blank=True,
+    )
+
     stagetime = models.DateTimeField(
         help_text="""
             The title of the first song of the performance.""",
@@ -918,7 +928,7 @@ class GroupFinish(models.Model):
         blank=True,
     )
 
-    place = models.IntegerField(
+    seed = models.IntegerField(
         choices=RANK_CHOICES,
         null=True,
         blank=True,
@@ -929,7 +939,7 @@ class GroupFinish(models.Model):
         blank=True,
     )
 
-    seed = models.IntegerField(
+    place = models.IntegerField(
         choices=RANK_CHOICES,
         null=True,
         blank=True,
@@ -939,6 +949,11 @@ class GroupFinish(models.Model):
         null=True,
         blank=True,
     )
+
+    class Meta:
+        ordering = (
+            'seed',
+        )
 
 
 class GroupAward(models.Model):

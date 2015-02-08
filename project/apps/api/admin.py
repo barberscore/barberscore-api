@@ -79,6 +79,10 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'import_scores',
     ]
 
+    inlines = [
+        GroupFinishInline,
+    ]
+
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
