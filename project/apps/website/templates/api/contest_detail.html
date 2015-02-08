@@ -13,29 +13,35 @@
         <h2>{{contest}}</h2>
       </p>
     </div>
-    <div class="table-responsive">
-      <table class='table'>
-        <tr>
-          <th>Contest</th>
-          <th>Songs</th>
-          <th>MUS</th>
-          <th>PRS</th>
-          <th>SNG</th>
-          <th>Total</th>
-          <th>Men</th>
-        </tr>
-        {% for performance in contest.chorusperformance_set.all %}
+
+    {% regroup performances by get_round_display as performance_list %}
+    {% for round in performance_list %}
+     <p> {{round.grouper}}</p>
+      <div class="table-responsive">
+        <table class='table'>
           <tr>
-            <td>{{performance}}</td>
-            <td>{{performance.song1|truncatechars:40}}<br>{{performance.song2|truncatechars:40}}</td>
-            <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
-            <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
-            <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
-            <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
-            <td>{{performance.men}}</td>
+            <th>Quartet</th>
+            <th>Songs</th>
+            <th>MUS</th>
+            <th>PRS</th>
+            <th>SNG</th>
+            <th>Total</th>
           </tr>
-        {% endfor %}
-      </table>
-    </div>
+          {% for performance in round.list %}
+            <tr>
+              <td>{{performance.group.name}}<br>{{performance.place|ordinal}} Place</td>
+              <td>{{performance.song1|truncatechars:40}}<br>{{performance.song2|truncatechars:40}}</td>
+              <td>{{performance.mus1_rata|floatformat:1}}<br>{{performance.mus2_rata|floatformat:1}}</td>
+              <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
+              <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
+              <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% endfor %}
+      </p>
+
+
   </div> <!-- /container -->
 {% endblock content %}
