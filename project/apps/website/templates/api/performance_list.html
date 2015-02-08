@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    Performance List
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+    <div class='page-header'>
+      <p>
+        <h2>Performance List</h2>
+      </p>
+      <p class='lead'>
+      Performance List
+      </p>
+    </div>
+    <div>
+      <ul>
+        {% for performance in performances %}
+          <li><a href='{% url "website:performance-detail" performance.id %}'>{{performance}}</a></li>
+        {% endfor %}
+      <ul>
+    </div>
+  </div> <!-- /container -->
+{% endblock content %}
