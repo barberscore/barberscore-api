@@ -489,7 +489,7 @@ class Contest(models.Model):
             match = match.replace('.', '')
             try:
                 chorus = Chorus.objects.get(
-                    models.Q(name__iendswith=match),
+                    models.Q(name__iendswith=match) |
                     models.Q(name__istartswith=match)
                 )
                 created = False
