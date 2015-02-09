@@ -486,9 +486,9 @@ class Contest(models.Model):
                 match = match.split(" Chorus", 1)[0]
             else:
                 match = match
-            match = match.replace('.', '')
             try:
                 chorus = Chorus.objects.get(
+                    models.Q(name__iexact=match) |
                     models.Q(name__iendswith=match) |
                     models.Q(name__istartswith=match)
                 )
