@@ -506,8 +506,10 @@ class Contest(models.Model):
                     if district_name == 'AAMBS':
                         district = District.objects.get(name='BHA')
                     else:
-                        log.error(e)
-                        raise e
+                        log.error("No District match for {0}".format(
+                            district_name)
+                        )
+                        break
 
                 chorus = Chorus.objects.create(
                     name=name,
@@ -544,7 +546,7 @@ class Contest(models.Model):
                         log.error("No District match for {0}".format(
                             district_name)
                         )
-                        raise e
+                        break
 
                 quartet = Quartet.objects.create(
                     name=name,
