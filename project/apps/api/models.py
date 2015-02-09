@@ -509,7 +509,7 @@ class Contest(models.Model):
                         log.error("No District match for {0}".format(
                             district_name)
                         )
-                        break
+                        district = District.objects.get(name='BHS')
 
                 chorus = Chorus.objects.create(
                     name=name,
@@ -546,7 +546,7 @@ class Contest(models.Model):
                         log.error("No District match for {0}".format(
                             district_name)
                         )
-                        break
+                        district = District.objects.get(name='BHS')
 
                 quartet = Quartet.objects.create(
                     name=name,
