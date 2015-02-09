@@ -6,8 +6,8 @@ from django.core.management.base import (
 )
 
 from apps.api.models import (
-    Chorus,
-    ChorusPerformance,
+    Group,
+    Performance,
 )
 
 
@@ -40,20 +40,20 @@ class Command(BaseCommand):
 
         # make sure target (new) exists
         try:
-            new_chorus = Chorus.objects.get(pk=options['new'])
-        except Chorus.DoesNotExist:
+            new_group = Group.objects.get(pk=options['new'])
+        except Group.DoesNotExist:
             raise CommandError("Target chorus does not exist.")
 
         try:
-            performances = ChorusPerformance.objects.filter(
-                chorus__pk=options['old'],
+            performances = Performance.objects.filter(
+                group__pk=options['old'],
             )
-        except ChorusPerformance.DoesNotExist:
+        except Performance.DoesNotExist:
             raise CommandError("No performances to migrate.")
 
         # perform de-dup
         for performance in performances:
-            performance.chorus = new_chorus
+            performance.group = new_group
             performance.save()
 
         # do same for awards, etc?
