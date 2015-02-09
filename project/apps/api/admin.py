@@ -161,6 +161,10 @@ class PerformanceAdmin(admin.ModelAdmin):
         Performance,
         attrs={'width': '250px'},
     )
+    list_filter = (
+        'contest',
+    )
+
     save_on_top = True
 
 
