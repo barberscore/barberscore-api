@@ -478,13 +478,19 @@ class Contest(models.Model):
 
     def create_group_from_scores(self, name, district_name, chapter_name=None):
         if self.kind == self.CHORUS:
-            if name.startswith("The "):
+            if name.istartswith("The "):
                 match = name.split("The ", 1)[1]
             else:
                 match = name
+            if match.iendswith(" Chorus"):
+                match = match.split(" Chorus", 1)[0]
+            else:
+                match = match
+            match = match.replace('.', '')
             try:
                 chorus = Chorus.objects.get(
-                    name__endswith=match,
+                    models.Q(name__iendswith=match),
+                    models.Q(name__istartswith=match)
                 )
                 created = False
             except Chorus.MultipleObjectsReturned as e:
