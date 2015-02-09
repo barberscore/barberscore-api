@@ -25,7 +25,7 @@ def deinterlace(path):
         return data
 
 
-def parse_chorus(path, round):
+def parse_chorus(path):
     data = deinterlace(path)
     output = []
     # Split first cell and chapter cell
@@ -35,7 +35,7 @@ def parse_chorus(path, round):
         row[0] = row[0].split(' ', 1)[1]
         row[8] = row[8].split('[', 1)[0]
         # Add round
-        row.extend([round])
+        row.extend(['1'])
         output.append(row)
     # Strip space
     for row in output:
@@ -58,8 +58,8 @@ def parse_chorus(path, round):
         row.pop(-1)
 
     # Write output
-    rename = os.path.splitext(os.path.basename)[0]
-    with open('{0}.csv'.format(rename), 'wb') as csvfile:
+    basepath = os.path.split(path)[0]
+    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
