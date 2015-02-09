@@ -161,8 +161,28 @@ class PerformanceAdmin(admin.ModelAdmin):
         Performance,
         attrs={'width': '250px'},
     )
+    list_display = (
+        'group',
+        'contest',
+        'round',
+        'place',
+        'song1',
+        'mus1',
+        'prs1',
+        'sng1',
+        'song2',
+        'mus2',
+        'prs2',
+        'sng2',
+        'men',
+    )
+
     list_filter = (
         'contest',
+    )
+
+    ordering = (
+        'place',
     )
 
     save_on_top = True
