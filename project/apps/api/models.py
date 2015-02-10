@@ -479,22 +479,16 @@ class Contest(models.Model):
     def create_group_from_scores(self, name, district_name, chapter_name=None):
         if self.kind == self.CHORUS:
             if name.startswith("The "):
-                match = name.split("The ", 1)[1]
-            else:
-                match = name
-            if match.endswith(" Chorus"):
-                match = match.split(" Chorus", 1)[0]
-            else:
-                match = match
+                name = name.split("The ", 1)[1]
+            if name.endswith(" Chorus"):
+                name = name.split(" Chorus", 1)[0]
             try:
                 chorus = Chorus.objects.get(
-                    models.Q(name__iexact=match) |
-                    models.Q(name__iendswith=match) |
-                    models.Q(name__istartswith=match)
+                    name__icontains=name,
                 )
                 created = False
             except Chorus.MultipleObjectsReturned as e:
-                log.error("Duplicate exists for {0}".format(match))
+                log.error("Duplicate exists for {0}".format(name))
                 raise e
             except Chorus.DoesNotExist:
                 try:
