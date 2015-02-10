@@ -482,6 +482,7 @@ class Contest(models.Model):
                 name = name.split("The ", 1)[1]
             if name.endswith(" Chorus"):
                 name = name.split(" Chorus", 1)[0]
+            name = name.strip()
             try:
                 chorus = Chorus.objects.get(
                     name__icontains=name,
