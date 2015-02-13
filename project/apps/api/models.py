@@ -436,22 +436,14 @@ class Contest(models.Model):
         default=5,
     )
 
-    scoresheet = models.FileField(
+    scoresheet_pdf = models.FileField(
+        upload_to=generate_image_filename,
         blank=True,
         null=True,
     )
 
-    csv_quarters = models.FileField(
-        blank=True,
-        null=True,
-    )
-
-    csv_semis = models.FileField(
-        blank=True,
-        null=True,
-    )
-
-    csv_finals = models.FileField(
+    scoresheet_csv = models.FileField(
+        upload_to=generate_image_filename,
         blank=True,
         null=True,
     )
