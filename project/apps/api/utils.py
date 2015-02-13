@@ -38,7 +38,8 @@ def strip_penalties(output):
 
 def write_file(path, output):
     basepath = os.path.split(path)[0]
-    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
+    namepath = os.path.split(path)[1]
+    with open(os.path.join(basepath, namepath,), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
