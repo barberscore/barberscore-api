@@ -155,7 +155,7 @@ def quartet_detail(request, slug):
 
 
 def performance_detail(request, id):
-    performance = Performance.objects.get(pk=id)
+    performance = get_object_or_404(Performance, pk=id)
     return render(
         request,
         'api/performance_detail.html',
