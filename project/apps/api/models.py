@@ -575,6 +575,8 @@ class Contest(models.Model):
             performance['sng2'] = row[12]
             try:
                 performance['men'] = row[13]
+                if not performance['men']:
+                    performance['men'] = 4
             except IndexError:
                 performance['men'] = 4
             result = Performance.objects.create(**performance)
