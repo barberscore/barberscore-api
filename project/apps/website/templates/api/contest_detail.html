@@ -25,6 +25,7 @@
             <th>MUS</th>
             <th>PRS</th>
             <th>SNG</th>
+            <th>Sub</th>
             <th>Total</th>
           </tr>
           {% for performance in round.list %}
@@ -35,6 +36,7 @@
               <td>{{performance.prs1_rata|floatformat:1}}<br>{{performance.prs2_rata|floatformat:1}}</td>
               <td>{{performance.sng1_rata|floatformat:1}}<br>{{performance.sng2_rata|floatformat:1}}</td>
               <td>{{performance.song1_rata|floatformat:1}}<br>{{performance.song2_rata|floatformat:1}}</td>
+              <td>{{performance.total_percent|floatformat:1}}</td>
             </tr>
           {% endfor %}
         </table>
