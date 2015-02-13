@@ -140,7 +140,7 @@ def convention_detail(request, slug):
 
 def quartet_detail(request, slug):
     quartet = get_object_or_404(Quartet, slug=slug)
-    members = quartet.members.all().prefetch_related("singer")
+    members = quartet.members.all()
     performances = quartet.performances.all()
 
     return render(
