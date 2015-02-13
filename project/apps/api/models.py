@@ -544,7 +544,7 @@ class Contest(models.Model):
             return quartet
 
     def import_scores(self):
-        reader = csv.reader(self.csv_finals)
+        reader = csv.reader(self.scoresheet_csv)
         data = [row for row in reader]
 
         performance = {}
@@ -554,7 +554,7 @@ class Contest(models.Model):
             if not row[13]:
                 row[13] = 4
             if not row[4]:
-                row[4] = None
+                row[4] = 'BHS'
             performance['contest'] = self
             performance['round'] = row[0]
             performance['place'] = row[1]
