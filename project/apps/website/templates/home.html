@@ -42,11 +42,12 @@
       <div class='jumbotron'>
         <p>
           <h1>Tracker for the Barbershop Harmony Society Convention.</h1>
+          <h3>Note: This site is being revamped in preparation for the 2015 International Contest.  Some of the information and pages will be incomplete and inaccurate.</h3>
         </p>
       </div>
       <form action="{% url 'website:search' %}">
           <input name="q" value="{{request.GET.q}}">
-          <input type="submit" value="Go">
+          <input type="submit" value="Search">
         </form>
       </div>
 
