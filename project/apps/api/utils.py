@@ -141,8 +141,8 @@ def parse_quarters(path):
         row.pop(9)
 
     # Write output
-    rename = os.path.splitext(os.path.basename)[0]
-    with open('{0}.csv'.format(rename), 'wb') as csvfile:
+    basepath = os.path.split(path)[0]
+    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
@@ -183,8 +183,8 @@ def parse_semis(path):
         row.pop(-1)
 
     # Write output
-    rename = os.path.splitext(os.path.basename)[0]
-    with open('{0}.csv'.format(rename), 'wb') as csvfile:
+    basepath = os.path.split(path)[0]
+    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
@@ -225,8 +225,8 @@ def parse_finals(path):
         row.pop(-1)
 
     # Write output
-    rename = os.path.splitext(os.path.basename)[0]
-    with open('{0}.csv'.format(rename), 'wb') as csvfile:
+    basepath = os.path.split(path)[0]
+    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
         writer = csv.writer(csvfile)
         for row in output:
             writer.writerow(row)
