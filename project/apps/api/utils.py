@@ -25,6 +25,26 @@ def deinterlace(path):
         return data
 
 
+def strip_penalties(output):
+    for row in output:
+        scores = [6, 7, 8, 10, 11, 12]
+        for score in scores:
+            try:
+                int(row[score])
+            except ValueError:
+                row[score] = row[score][:3]
+    return output
+
+
+def write_file(path, output):
+    basepath = os.path.split(path)[0]
+    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
+        writer = csv.writer(csvfile)
+        for row in output:
+            writer.writerow(row)
+    return
+
+
 def parse_chorus(path):
     data = deinterlace(path)
     output = []
@@ -57,13 +77,11 @@ def parse_chorus(path):
         row.pop(13)
         row.pop(-1)
 
-    # Write output
-    basepath = os.path.split(path)[0]
-    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
-        writer = csv.writer(csvfile)
-        for row in output:
-            writer.writerow(row)
-    return output
+    output = strip_penalties(output)
+
+    output = write_file(path, output)
+
+    return
 
 
 def parse_district_chorus(path, district):
@@ -102,13 +120,11 @@ def parse_district_chorus(path, district):
         row.pop(13)
         row.pop(14)
 
-    # # Write output
-    # rename = os.path.splitext(os.path.basename)[0]
-    # with open('{0}.csv'.format(rename), 'wb') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     for row in output:
-    #         writer.writerow(row)
-    return output
+    output = strip_penalties(output)
+
+    output = write_file(path, output)
+
+    return
 
 
 def parse_quarters(path):
@@ -140,13 +156,11 @@ def parse_quarters(path):
         row.pop(9)
         row.pop(9)
 
-    # Write output
-    basepath = os.path.split(path)[0]
-    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
-        writer = csv.writer(csvfile)
-        for row in output:
-            writer.writerow(row)
-    return output
+    output = strip_penalties(output)
+
+    output = write_file(path, output)
+
+    return
 
 
 def parse_semis(path):
@@ -182,13 +196,11 @@ def parse_semis(path):
         row.pop(-1)
         row.pop(-1)
 
-    # Write output
-    basepath = os.path.split(path)[0]
-    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
-        writer = csv.writer(csvfile)
-        for row in output:
-            writer.writerow(row)
-    return output
+    output = strip_penalties(output)
+
+    output = write_file(path, output)
+
+    return
 
 
 def parse_finals(path):
@@ -224,10 +236,8 @@ def parse_finals(path):
         row.pop(-1)
         row.pop(-1)
 
-    # Write output
-    basepath = os.path.split(path)[0]
-    with open(os.path.join(basepath, 'output.csv',), 'wb') as csvfile:
-        writer = csv.writer(csvfile)
-        for row in output:
-            writer.writerow(row)
-    return output
+    output = strip_penalties(output)
+
+    output = write_file(path, output)
+
+    return
