@@ -550,9 +550,6 @@ class Contest(models.Model):
         performance = {}
 
         for row in data:
-            # Probably not the right way.
-            if not row[13]:
-                row[13] = 4
             if not row[4]:
                 row[4] = 'BHS'
             performance['contest'] = self
@@ -567,6 +564,7 @@ class Contest(models.Model):
             except Exception as e:
                 log.error(e)
                 raise e
+
             performance['song1'] = row[5]
             performance['mus1'] = row[6]
             performance['prs1'] = row[7]
@@ -575,7 +573,10 @@ class Contest(models.Model):
             performance['mus2'] = row[10]
             performance['prs2'] = row[11]
             performance['sng2'] = row[12]
-            performance['men'] = row[13]
+            try:
+                performance['men'] = row[13]
+            except IndexError:
+                performance['men'] = 4
             result = Performance.objects.create(**performance)
             log.info("Created performance: {0}".format(result))
         return "Done"
