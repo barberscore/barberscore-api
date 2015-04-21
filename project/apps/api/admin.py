@@ -34,6 +34,7 @@ class GroupMemberInline(admin.TabularInline):
     )
     model = GroupMember
     extra = 0
+    show_change_link = True
 
 
 class GroupAwardInline(admin.TabularInline):
@@ -210,4 +211,9 @@ class SingerAdmin(admin.ModelAdmin):
 
 @admin.register(GroupMember)
 class GroupMemberAdmin(admin.ModelAdmin):
+    save_on_top = True
+
+
+@admin.register(GroupFinish)
+class GroupFinishAdmin(admin.ModelAdmin):
     save_on_top = True
