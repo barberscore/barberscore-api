@@ -208,14 +208,6 @@ class SingerAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-# class CommonAdmin(admin.ModelAdmin):
-#     list_display = [
-#         'name',
-#         'location',
-#         'phone',
-#         'twitter',
-#         'picture',
-#     ]
-
-#     search_fields = ['name']
-#     save_on_top = True
+@admin.register(GroupMember)
+class GroupMemberAdmin(admin.ModelAdmin):
+    save_on_top = True
