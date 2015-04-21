@@ -459,6 +459,10 @@ class Contest(models.Model):
             'convention__year',
         ]
 
+        unique_together = (
+            ('kind', 'convention', 'year', 'district',),
+        )
+
     def __unicode__(self):
         return "{0} {1} {2} {3}".format(
             self.district.name,
