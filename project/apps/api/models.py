@@ -879,7 +879,9 @@ class GroupMember(models.Model):
 
     contest = models.ForeignKey(
         'Contest',
-        # related_name='members',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
     part = models.IntegerField(
