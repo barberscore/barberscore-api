@@ -52,6 +52,7 @@ class GroupFinishInline(admin.TabularInline):
     )
     model = GroupFinish
     extra = 0
+    show_change_link = True
 
 
 @admin.register(Convention)
