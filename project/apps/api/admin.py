@@ -67,6 +67,11 @@ class ConventionAdmin(admin.ModelAdmin):
         'location',
         'dates',
     )
+    list_filter = (
+        'district',
+        'kind',
+        'year',
+    )
 
     save_on_top = True
 
