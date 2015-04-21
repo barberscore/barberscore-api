@@ -460,10 +460,11 @@ class Contest(models.Model):
         ]
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(
+        return "{0} {1} {2} {3}".format(
             self.district.name,
             self.get_kind_display(),
             self.year,
+            self.id.hex[:4],
         )
 
     def get_absolute_url(self):
