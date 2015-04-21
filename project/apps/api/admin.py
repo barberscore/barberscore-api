@@ -102,6 +102,13 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'district',
     )
 
+    list_display = (
+        '__unicode__',
+        'convention',
+        'panel',
+        'scoresheet_pdf',
+    )
+
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
