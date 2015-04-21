@@ -62,6 +62,12 @@ class ConventionAdmin(admin.ModelAdmin):
         Convention,
         attrs={'width': '250px'},
     )
+    list_display = (
+        '__unicode__',
+        'location',
+        'dates',
+    )
+
     save_on_top = True
 
 

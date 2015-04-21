@@ -720,6 +720,9 @@ class Performance(models.Model):
             'round',
             'group',
         ]
+        # unique_together = (
+        #     ('group', 'contest',),
+        # )
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
@@ -900,6 +903,9 @@ class GroupMember(models.Model):
             'singer',
             'contest',
         ]
+        # unique_together = (
+        #     ('group', 'contest',),
+        # )
 
     def __unicode__(self):
         return "{0} {1} {2} {3}".format(
@@ -961,6 +967,9 @@ class GroupFinish(models.Model):
         ordering = (
             'seed',
         )
+        # unique_together = (
+        #     ('group', 'contest',),
+        # )
 
 
 class GroupAward(models.Model):
