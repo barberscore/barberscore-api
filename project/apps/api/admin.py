@@ -83,6 +83,12 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         GroupFinishInline,
     ]
 
+    list_filter = (
+        'kind',
+        'year',
+        'district',
+    )
+
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
