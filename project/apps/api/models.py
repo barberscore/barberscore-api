@@ -360,6 +360,10 @@ class Convention(models.Model):
             'year',
         ]
 
+        unique_together = (
+            ('district', 'kind', 'year',),
+        )
+
     def __unicode__(self):
         return "{0} {1} {2}".format(
             self.district.name,
