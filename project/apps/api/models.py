@@ -189,6 +189,38 @@ class Group(Common):
 class Quartet(Group):
     """An individual quartet."""
 
+    lead = models.ForeignKey(
+        'Singer',
+        help_text="""Lead""",
+        blank=True,
+        null=True,
+        related_name='quartet_leads',
+    )
+
+    tenor = models.ForeignKey(
+        'Singer',
+        help_text="""Tenor""",
+        blank=True,
+        null=True,
+        related_name='quartet_tenors',
+    )
+
+    baritone = models.ForeignKey(
+        'Singer',
+        help_text="""Baritone""",
+        blank=True,
+        null=True,
+        related_name='quartet_baritones',
+    )
+
+    bass = models.ForeignKey(
+        'Singer',
+        help_text="""Bass""",
+        blank=True,
+        null=True,
+        related_name='quartet_basses',
+    )
+
     class Meta:
         ordering = ['name']
 
@@ -201,21 +233,21 @@ class Quartet(Group):
             args=[self.slug],
         )
 
-    @property
-    def lead(self):
-        return self.members.filter(groupmember__part=GroupMember.LEAD).last()
+    # @property
+    # def lead(self):
+    #     return self.members.filter(groupmember__part=GroupMember.LEAD).last()
 
-    @property
-    def tenor(self):
-        return self.members.filter(groupmember__part=GroupMember.TENOR).last()
+    # @property
+    # def tenor(self):
+    #     return self.members.filter(groupmember__part=GroupMember.TENOR).last()
 
-    @property
-    def baritone(self):
-        return self.members.filter(groupmember__part=GroupMember.BARITONE).last()
+    # @property
+    # def baritone(self):
+    #     return self.members.filter(groupmember__part=GroupMember.BARITONE).last()
 
-    @property
-    def bass(self):
-        return self.members.filter(groupmember__part=GroupMember.BASS).last()
+    # @property
+    # def bass(self):
+    #     return self.members.filter(groupmember__part=GroupMember.BASS).last()
 
 
 class Chorus(Group):
