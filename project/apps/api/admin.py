@@ -21,20 +21,20 @@ from .models import (
     Award,
     Performance,
     Singer,
-    GroupMember,
+    # GroupMember,
     GroupAward,
     GroupFinish,
 )
 
 
-class GroupMemberInline(admin.TabularInline):
-    form = select2_modelform(
-        GroupMember,
-        attrs={'width': '250px'},
-    )
-    model = GroupMember
-    extra = 0
-    show_change_link = True
+# class GroupMemberInline(admin.TabularInline):
+#     form = select2_modelform(
+#         GroupMember,
+#         attrs={'width': '250px'},
+#     )
+#     model = GroupMember
+#     extra = 0
+#     show_change_link = True
 
 
 class GroupAwardInline(admin.TabularInline):
@@ -126,11 +126,17 @@ QuartetForm = select2_modelform(
 )
 
 
+# SingerForm = select2_modelform(
+#     Singer,
+#     attrs={'width': '250px'},
+# )
+
+
 @admin.register(Quartet)
 class QuartetAdmin(admin.ModelAdmin):
     form = QuartetForm
     inlines = (
-        GroupMemberInline,
+        # GroupMemberInline,
         GroupFinishInline,
         # GroupAwardInline,
     )
@@ -228,9 +234,9 @@ class SingerAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(GroupMember)
-class GroupMemberAdmin(admin.ModelAdmin):
-    save_on_top = True
+# @admin.register(GroupMember)
+# class GroupMemberAdmin(admin.ModelAdmin):
+#     save_on_top = True
 
 
 @admin.register(GroupFinish)
