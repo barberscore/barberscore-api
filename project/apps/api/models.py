@@ -331,12 +331,14 @@ class Convention(models.Model):
     MIDWINTER = 2
     FALL = 3
     SPRING = 4
+    PACIFIC = 5
 
     KIND_CHOICES = (
         (SUMMER, 'Summer',),
         (MIDWINTER, 'Midwinter',),
         (FALL, 'Fall',),
         (SPRING, 'Spring',),
+        (PACIFIC, 'Pan-Pacific',),
     )
 
     id = models.UUIDField(
