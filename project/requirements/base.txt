@@ -3,12 +3,12 @@ django-cors-headers==1.0.0
 dj-database-url==0.3.0
 django-timezone-field==1.2
 djangorestframework==3.1.1
-nameparser==0.3.3
+nameparser==0.3.4
 Pillow==2.8.1
 psycopg2==2.6
 python-dateutil==2.4.2
 pytz==2015.2
-requests==2.6.0
+requests==2.6.2
 twilio==4.0.0
 boto==2.38.0
 django-storages==1.1.8
@@ -17,7 +17,7 @@ django-autoslug==1.7.2
 Unidecode==0.4.17
 django-easy-select2==1.2.12
 arrow==0.5.4
-django-watson==1.1.7
+django-watson==1.1.8
 django-object-actions==0.5.1
 django-model-utils==2.2
 django-phonenumber-field==0.7.2
