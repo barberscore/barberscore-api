@@ -135,11 +135,11 @@ class Singer(Common):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:singer-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:singer-detail',
+    #         args=[self.slug],
+    #     )
 
     @property
     def first_name(self):
@@ -227,11 +227,11 @@ class Quartet(Group):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:quartet-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:quartet-detail',
+    #         args=[self.slug],
+    #     )
 
     # @property
     # def lead(self):
@@ -280,11 +280,11 @@ class Chorus(Group):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:chorus-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:chorus-detail',
+    #         args=[self.slug],
+    #     )
 
 
 class District(Common):
@@ -315,11 +315,11 @@ class District(Common):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:district-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:district-detail',
+    #         args=[self.slug],
+    #     )
 
 
 class Convention(models.Model):
@@ -405,11 +405,11 @@ class Convention(models.Model):
             self.get_year_display(),
         )
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:convention-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:convention-detail',
+    #         args=[self.slug],
+    #     )
 
 
 class Contest(models.Model):
@@ -442,6 +442,7 @@ class Contest(models.Model):
 
     convention = models.ForeignKey(
         'Convention',
+        related_name='contests',
     )
 
     year = models.IntegerField(
@@ -503,11 +504,11 @@ class Contest(models.Model):
             # self.id.hex[:4],
         )
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:contest-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:contest-detail',
+    #         args=[self.slug],
+    #     )
 
     def create_group_from_scores(self, name, district_name, chapter_name=None):
         if self.kind == self.CHORUS:
@@ -752,6 +753,7 @@ class Performance(models.Model):
         ordering = [
             '-contest',
             'round',
+            'queue',
             'group',
         ]
         # unique_together = (
@@ -881,11 +883,11 @@ class Award(models.Model):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    def get_absolute_url(self):
-        return reverse(
-            'website:award-detail',
-            args=[self.slug],
-        )
+    # def get_absolute_url(self):
+    #     return reverse(
+    #         'website:award-detail',
+    #         args=[self.slug],
+    #     )
 
 
 class GroupMember(models.Model):
@@ -964,15 +966,15 @@ class GroupFinish(models.Model):
 
     contest = models.ForeignKey(
         'Contest',
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
     )
 
     group = models.ForeignKey(
         'Group',
         related_name='finishes',
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
     )
 
     seed = models.IntegerField(
@@ -996,6 +998,12 @@ class GroupFinish(models.Model):
         null=True,
         blank=True,
     )
+
+    # def __unicode__(self):
+    #     return "{0} {1}".format(
+    #         self.contest,
+    #         self.group,
+    #     )
 
     class Meta:
         ordering = (
