@@ -129,11 +129,15 @@ def chorus_detail(request, slug):
 
 def convention_detail(request, slug):
     convention = get_object_or_404(Convention, slug=slug)
+    contests = convention.contests.all()
+    performances = convention.contests.all().performances.all()
     return render(
         request,
         'api/convention_detail.html',
         {
             'convention': convention,
+            'contests': contests,
+            'performances': performances,
         },
     )
 
