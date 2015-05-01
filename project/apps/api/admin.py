@@ -241,6 +241,19 @@ class SingerAdmin(admin.ModelAdmin):
 
 @admin.register(GroupFinish)
 class GroupFinishAdmin(admin.ModelAdmin):
+    list_display = (
+        '__unicode__',
+        'seed',
+        'prelim',
+        'place',
+        'score',
+    )
+
+    list_filter = (
+        'contest',
+        'group',
+    )
+
     save_on_top = True
 
 
