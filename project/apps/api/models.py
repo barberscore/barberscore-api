@@ -999,11 +999,11 @@ class GroupFinish(models.Model):
         blank=True,
     )
 
-    # def __unicode__(self):
-    #     return "{0} {1}".format(
-    #         self.contest,
-    #         self.group,
-    #     )
+    def __unicode__(self):
+        return "{0} {1}".format(
+            self.contest,
+            self.group,
+        )
 
     class Meta:
         ordering = (
