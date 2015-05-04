@@ -795,10 +795,9 @@ class Performance(models.Model):
         )
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(
-            self.contest,
+        return "{0} {1}".format(
+            self.appearance,
             self.get_round_display(),
-            self.group,
         )
 
     @property
