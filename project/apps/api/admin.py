@@ -205,8 +205,8 @@ class PerformanceAdmin(admin.ModelAdmin):
         attrs={'width': '250px'},
     )
     list_display = (
-        'group',
-        'contest',
+        # 'group',
+        # 'contest',
         'round',
         'place',
         'song1',
@@ -220,9 +220,9 @@ class PerformanceAdmin(admin.ModelAdmin):
         'men',
     )
 
-    list_filter = (
-        'contest',
-    )
+    # list_filter = (
+    #     'contest',
+    # )
 
     ordering = (
         'place',
