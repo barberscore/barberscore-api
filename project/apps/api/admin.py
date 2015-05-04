@@ -47,6 +47,16 @@ class GroupAwardInline(admin.TabularInline):
     show_change_link = True
 
 
+class PerformanceInline(admin.TabularInline):
+    form = select2_modelform(
+        Performance,
+        attrs={'width': '250px'},
+    )
+    model = Performance
+    extra = 0
+    show_change_link = True
+
+
 class AppearanceInline(admin.TabularInline):
     form = select2_modelform(
         Appearance,
@@ -253,6 +263,10 @@ class AppearanceAdmin(admin.ModelAdmin):
         'contest',
         'group',
     )
+
+    inlines = [
+        PerformanceInline,
+    ]
 
     save_on_top = True
 
