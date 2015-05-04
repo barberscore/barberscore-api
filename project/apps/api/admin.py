@@ -23,7 +23,7 @@ from .models import (
     Singer,
     # GroupMember,
     GroupAward,
-    GroupFinish,
+    Appearance,
 )
 
 
@@ -47,12 +47,12 @@ class GroupAwardInline(admin.TabularInline):
     show_change_link = True
 
 
-class GroupFinishInline(admin.TabularInline):
+class AppearanceInline(admin.TabularInline):
     form = select2_modelform(
-        GroupFinish,
+        Appearance,
         attrs={'width': '250px'},
     )
-    model = GroupFinish
+    model = Appearance
     extra = 0
     show_change_link = True
 
@@ -94,7 +94,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
-        GroupFinishInline,
+        AppearanceInline,
     ]
 
     list_filter = (
@@ -137,7 +137,7 @@ class QuartetAdmin(admin.ModelAdmin):
     form = QuartetForm
     inlines = (
         # GroupMemberInline,
-        GroupFinishInline,
+        AppearanceInline,
         # GroupAwardInline,
     )
     save_on_top = True
@@ -239,8 +239,8 @@ class SingerAdmin(admin.ModelAdmin):
 #     save_on_top = True
 
 
-@admin.register(GroupFinish)
-class GroupFinishAdmin(admin.ModelAdmin):
+@admin.register(Appearance)
+class AppearanceAdmin(admin.ModelAdmin):
     list_display = (
         '__unicode__',
         'seed',
