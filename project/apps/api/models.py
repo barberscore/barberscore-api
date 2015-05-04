@@ -606,10 +606,6 @@ class Contest(models.Model):
 
 class Appearance(models.Model):
     """Awards and placement"""
-    RANK_CHOICES = []
-    for r in range(1, 50):
-        RANK_CHOICES.append((r, r))
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -627,7 +623,6 @@ class Appearance(models.Model):
     )
 
     seed = models.IntegerField(
-        choices=RANK_CHOICES,
         null=True,
         blank=True,
     )
@@ -638,7 +633,6 @@ class Appearance(models.Model):
     )
 
     place = models.IntegerField(
-        choices=RANK_CHOICES,
         null=True,
         blank=True,
     )
