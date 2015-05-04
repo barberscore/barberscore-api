@@ -12,7 +12,7 @@ from django.core.management.base import (
 from apps.api.models import (
     Chorus,
     Contest,
-    GroupFinish,
+    Appearance,
 )
 
 
@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 except Chorus.DoesNotExist:
                     print('Error importing {0}'.format(row[1]))
                     continue
-                gf = GroupFinish.objects.create(
+                gf = Appearance.objects.create(
                     seed=row[0],
                     group=chorus,
                     contest=contest,

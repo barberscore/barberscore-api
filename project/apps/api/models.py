@@ -604,6 +604,68 @@ class Contest(models.Model):
         return "Done"
 
 
+class Appearance(models.Model):
+    """Awards and placement"""
+    RANK_CHOICES = []
+    for r in range(1, 50):
+        RANK_CHOICES.append((r, r))
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        # null=True,
+        # blank=True,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='finishes',
+        # null=True,
+        # blank=True,
+    )
+
+    seed = models.IntegerField(
+        choices=RANK_CHOICES,
+        null=True,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    place = models.IntegerField(
+        choices=RANK_CHOICES,
+        null=True,
+        blank=True,
+    )
+
+    score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    def __unicode__(self):
+        return "{0} {1}".format(
+            self.contest,
+            self.group,
+        )
+
+    class Meta:
+        ordering = (
+            'seed',
+        )
+        # unique_together = (
+        #     ('group', 'contest',),
+        # )
+
+
 class Performance(models.Model):
     FINALS = 1
     SEMIS = 2
@@ -866,68 +928,6 @@ class Award(models.Model):
     #         'website:award-detail',
     #         args=[self.slug],
     #     )
-
-
-class GroupFinish(models.Model):
-    """Awards and placement"""
-    RANK_CHOICES = []
-    for r in range(1, 50):
-        RANK_CHOICES.append((r, r))
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        # null=True,
-        # blank=True,
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        related_name='finishes',
-        # null=True,
-        # blank=True,
-    )
-
-    seed = models.IntegerField(
-        choices=RANK_CHOICES,
-        null=True,
-        blank=True,
-    )
-
-    prelim = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    place = models.IntegerField(
-        choices=RANK_CHOICES,
-        null=True,
-        blank=True,
-    )
-
-    score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    def __unicode__(self):
-        return "{0} {1}".format(
-            self.contest,
-            self.group,
-        )
-
-    class Meta:
-        ordering = (
-            'seed',
-        )
-        # unique_together = (
-        #     ('group', 'contest',),
-        # )
 
 
 class GroupAward(models.Model):
