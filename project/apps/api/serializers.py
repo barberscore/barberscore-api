@@ -6,7 +6,7 @@ from .models import (
     Quartet,
     Contest,
     Convention,
-    Appearance,
+    Contestant,
     Performance,
 )
 
@@ -73,10 +73,10 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
 
-class AppearanceSerializer(serializers.ModelSerializer):
+class ContestantSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Appearance
+        model = Contestant
         fields = (
             'seed',
             'prelim',
@@ -86,7 +86,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    appearances = AppearanceSerializer(
+    contestants = ContestantSerializer(
         many=True,
         read_only=True,
     )
@@ -104,7 +104,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'panel',
             'kind',
             'year',
-            'appearances',
+            'contestants',
         )
 
 
