@@ -159,12 +159,6 @@ class Singer(Common):
 
 
 class Group(Common):
-    members = models.ManyToManyField(
-        'Singer',
-        through='GroupMember',
-        related_name='groups',
-    )
-
     awards = models.ManyToManyField(
         'Award',
         through='GroupAward',
@@ -232,22 +226,6 @@ class Quartet(Group):
     #         'website:quartet-detail',
     #         args=[self.slug],
     #     )
-
-    # @property
-    # def lead(self):
-    #     return self.members.filter(groupmember__part=GroupMember.LEAD).last()
-
-    # @property
-    # def tenor(self):
-    #     return self.members.filter(groupmember__part=GroupMember.TENOR).last()
-
-    # @property
-    # def baritone(self):
-    #     return self.members.filter(groupmember__part=GroupMember.BARITONE).last()
-
-    # @property
-    # def bass(self):
-    #     return self.members.filter(groupmember__part=GroupMember.BASS).last()
 
 
 class Chorus(Group):
@@ -888,68 +866,6 @@ class Award(models.Model):
     #         'website:award-detail',
     #         args=[self.slug],
     #     )
-
-
-class GroupMember(models.Model):
-    LEAD = 1
-    TENOR = 2
-    BARITONE = 3
-    BASS = 4
-
-    PART_CHOICES = (
-        (LEAD, 'Lead'),
-        (TENOR, 'Tenor'),
-        (BARITONE, 'Baritone'),
-        (BASS, 'Bass'),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    singer = models.ForeignKey(
-        'Singer',
-        # related_name='members',
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        # related_name='members',
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-
-    part = models.IntegerField(
-        choices=PART_CHOICES,
-        null=True,
-        blank=True,
-    )
-
-    class Meta:
-        ordering = [
-            'group',
-            'part',
-            'singer',
-            'contest',
-        ]
-        # unique_together = (
-        #     ('group', 'contest',),
-        # )
-
-    def __unicode__(self):
-        return "{0} {1} {2} {3}".format(
-            self.group,
-            self.get_part_display(),
-            self.singer,
-            self.contest,
-        )
 
 
 class GroupFinish(models.Model):
