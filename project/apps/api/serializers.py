@@ -7,7 +7,7 @@ from .models import (
     Contest,
     Convention,
     Performance,
-    GroupFinish,
+    Appearance,
 )
 
 
@@ -54,10 +54,10 @@ class QuartetSerializer(serializers.ModelSerializer):
         )
 
 
-class GroupFinishSerializer(serializers.ModelSerializer):
+class AppearanceSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = GroupFinish
+        model = Appearance
         fields = (
             'seed',
             'prelim',
@@ -90,7 +90,7 @@ class ContestSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
     )
-    groupfinishes = GroupFinishSerializer(
+    groupfinishes = AppearanceSerializer(
         many=True,
         read_only=True,
     )
