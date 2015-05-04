@@ -37,14 +37,14 @@ from .models import (
 #     show_change_link = True
 
 
-class GroupAwardInline(admin.TabularInline):
-    form = select2_modelform(
-        GroupAward,
-        attrs={'width': '250px'},
-    )
-    model = GroupAward
-    extra = 0
-    show_change_link = True
+# class GroupAwardInline(admin.TabularInline):
+#     form = select2_modelform(
+#         GroupAward,
+#         attrs={'width': '250px'},
+#     )
+#     model = GroupAward
+#     extra = 0
+#     show_change_link = True
 
 
 class PerformanceInline(admin.TabularInline):
@@ -188,14 +188,14 @@ class ChorusAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Award)
-class AwardAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Chorus,
-        attrs={'width': '250px'},
-    )
+# @admin.register(Award)
+# class AwardAdmin(admin.ModelAdmin):
+#     form = select2_modelform(
+#         Chorus,
+#         attrs={'width': '250px'},
+#     )
 
-    save_on_top = True
+#     save_on_top = True
 
 
 @admin.register(Performance)
@@ -271,6 +271,6 @@ class AppearanceAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(GroupAward)
-class GroupAwardAdmin(admin.ModelAdmin):
-    save_on_top = True
+# @admin.register(GroupAward)
+# class GroupAwardAdmin(admin.ModelAdmin):
+#     save_on_top = True
