@@ -683,6 +683,13 @@ class Performance(models.Model):
         editable=False,
     )
 
+    apperance = models.ForeignKey(
+        'Appearance',
+        # related_name='performances',
+        null=True,
+        blank=True,
+    )
+
     group = models.ForeignKey(
         'Group',
         related_name='performances',
