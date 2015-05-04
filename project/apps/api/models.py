@@ -618,15 +618,12 @@ class Appearance(models.Model):
 
     contest = models.ForeignKey(
         'Contest',
-        # null=True,
-        # blank=True,
+        related_name='appearances',
     )
 
     group = models.ForeignKey(
         'Group',
-        related_name='finishes',
-        # null=True,
-        # blank=True,
+        related_name='appearances',
     )
 
     seed = models.IntegerField(
@@ -659,11 +656,14 @@ class Appearance(models.Model):
 
     class Meta:
         ordering = (
+            'contest',
+            'group',
+            'place',
             'seed',
         )
-        # unique_together = (
-        #     ('group', 'contest',),
-        # )
+        unique_together = (
+            ('group', 'contest',),
+        )
 
 
 class Performance(models.Model):
@@ -685,6 +685,7 @@ class Performance(models.Model):
 
     appearance = models.ForeignKey(
         'Appearance',
+        related_name='performances',
     )
 
     round = models.IntegerField(
@@ -785,14 +786,13 @@ class Performance(models.Model):
 
     class Meta:
         ordering = [
-            # '-contest',
+            'appearance',
             'round',
-            # 'queue',
-            # 'group',
+            'queue',
         ]
-        # unique_together = (
-        #     ('group', 'contest',),
-        # )
+        unique_together = (
+            ('appearance', 'round', 'queue',),
+        )
 
     def __unicode__(self):
         return "{0} {1} {2}".format(
