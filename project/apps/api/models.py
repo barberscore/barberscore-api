@@ -685,19 +685,6 @@ class Performance(models.Model):
 
     appearance = models.ForeignKey(
         'Appearance',
-        # related_name='performances',
-        null=True,
-        blank=True,
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        related_name='performances',
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='performances',
     )
 
     round = models.IntegerField(
@@ -798,10 +785,10 @@ class Performance(models.Model):
 
     class Meta:
         ordering = [
-            '-contest',
+            # '-contest',
             'round',
-            'queue',
-            'group',
+            # 'queue',
+            # 'group',
         ]
         # unique_together = (
         #     ('group', 'contest',),
