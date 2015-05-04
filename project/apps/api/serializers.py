@@ -6,8 +6,8 @@ from .models import (
     Quartet,
     Contest,
     Convention,
-    Performance,
     Appearance,
+    Performance,
 )
 
 
@@ -54,18 +54,6 @@ class QuartetSerializer(serializers.ModelSerializer):
         )
 
 
-class AppearanceSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Appearance
-        fields = (
-            'seed',
-            'prelim',
-            'place',
-            'score',
-        )
-
-
 class PerformanceSerializer(serializers.ModelSerializer):
     group = serializers.StringRelatedField(
         read_only=True,
@@ -85,12 +73,20 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
 
+class AppearanceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Appearance
+        fields = (
+            'seed',
+            'prelim',
+            'place',
+            'score',
+        )
+
+
 class ContestSerializer(serializers.ModelSerializer):
-    performances = PerformanceSerializer(
-        many=True,
-        read_only=True,
-    )
-    groupfinishes = AppearanceSerializer(
+    appearances = AppearanceSerializer(
         many=True,
         read_only=True,
     )
@@ -108,8 +104,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'panel',
             'kind',
             'year',
-            'performances',
-            'groupfinishes',
+            'appearances',
         )
 
 
