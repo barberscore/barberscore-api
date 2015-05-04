@@ -604,7 +604,7 @@ class Contest(models.Model):
         return "Done"
 
 
-class Appearance(models.Model):
+class Contestant(models.Model):
     """Awards and placement"""
     id = models.UUIDField(
         primary_key=True,
@@ -614,12 +614,12 @@ class Appearance(models.Model):
 
     contest = models.ForeignKey(
         'Contest',
-        related_name='appearances',
+        related_name='contestants',
     )
 
     group = models.ForeignKey(
         'Group',
-        related_name='appearances',
+        related_name='contestants',
     )
 
     seed = models.IntegerField(
@@ -677,9 +677,11 @@ class Performance(models.Model):
         editable=False,
     )
 
-    appearance = models.ForeignKey(
-        'Appearance',
+    contestant = models.ForeignKey(
+        'Contestant',
         related_name='performances',
+        null=True,
+        blank=True,
     )
 
     round = models.IntegerField(
@@ -780,17 +782,17 @@ class Performance(models.Model):
 
     class Meta:
         ordering = [
-            'appearance',
+            'contestant',
             'round',
             'queue',
         ]
-        unique_together = (
-            ('appearance', 'round', 'queue',),
-        )
+        # unique_together = (
+        #     ('contestant', 'round', 'queue',),
+        # )
 
     def __unicode__(self):
         return "{0} {1}".format(
-            self.appearance,
+            self.contestant,
             self.get_round_display(),
         )
 
