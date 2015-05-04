@@ -207,6 +207,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     list_display = (
         # 'group',
         # 'contest',
+        'appearance',
         'round',
         'place',
         'song1',
@@ -259,10 +260,10 @@ class AppearanceAdmin(admin.ModelAdmin):
         'score',
     )
 
-    list_filter = (
-        'contest',
-        'group',
-    )
+    # list_filter = (
+    #     'contest',
+    #     'group',
+    # )
 
     inlines = [
         PerformanceInline,

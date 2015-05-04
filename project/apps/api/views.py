@@ -9,6 +9,7 @@ from .models import (
     Quartet,
     Convention,
     Contest,
+    Appearance,
     Performance,
 )
 
@@ -18,6 +19,7 @@ from .serializers import (
     QuartetSerializer,
     ConventionSerializer,
     ContestSerializer,
+    AppearanceSerializer,
     PerformanceSerializer,
 )
 
@@ -49,6 +51,12 @@ class ConventionViewSet(viewsets.ModelViewSet):
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.all()
     serializer_class = ContestSerializer
+    lookup_field = 'slug'
+
+
+class AppearanceViewSet(viewsets.ModelViewSet):
+    queryset = Appearance.objects.all()
+    serializer_class = AppearanceSerializer
     lookup_field = 'slug'
 
 
