@@ -683,7 +683,7 @@ class Performance(models.Model):
         editable=False,
     )
 
-    apperance = models.ForeignKey(
+    appearance = models.ForeignKey(
         'Appearance',
         # related_name='performances',
         null=True,
