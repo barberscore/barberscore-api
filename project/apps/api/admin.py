@@ -109,8 +109,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_filter = (
         'kind',
-        'year',
-        'district',
     )
 
     list_display = (
