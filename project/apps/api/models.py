@@ -288,7 +288,10 @@ class District(Common):
     )
 
     class Meta:
-        ordering = ['kind', 'name']
+        ordering = [
+            'kind',
+            'name',
+        ]
 
     def __unicode__(self):
         return "{0}".format(self.name)
@@ -423,27 +426,6 @@ class Contest(models.Model):
         related_name='contests',
     )
 
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-        default=datetime.datetime.now().year,
-    )
-
-    district = models.ForeignKey(
-        'District',
-    )
-
-    slug = AutoSlugField(
-        populate_from=lambda instance: "{0}-{1}-{2}".format(
-            instance.district.name,
-            instance.get_kind_display(),
-            instance.year,
-        ),
-        always_update=True,
-        unique=True,
-        null=True,
-        blank=True,
-    )
-
     panel = models.IntegerField(
         help_text="""
             Size of the judging panel (typically
@@ -464,22 +446,14 @@ class Contest(models.Model):
     )
 
     class Meta:
-        ordering = [
-            'convention__district',
-            'kind',
-            'convention__year',
-        ]
-
         unique_together = (
-            ('kind', 'convention', 'year', 'district',),
+            ('kind', 'convention',),
         )
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(
-            self.district.name,
+        return "{0} {1}".format(
+            self.convention,
             self.get_kind_display(),
-            self.year,
-            # self.id.hex[:4],
         )
 
     # def get_absolute_url(self):
