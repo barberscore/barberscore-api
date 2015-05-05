@@ -5,6 +5,7 @@ from .models import (
     Chorus,
     Quartet,
     Contest,
+    District,
     Convention,
     Contestant,
     Performance,
@@ -12,6 +13,13 @@ from .models import (
 
 
 class SingerSerializer(serializers.ModelSerializer):
+    firstName = serializers.CharField(
+        source='first_name',
+    )
+
+    lastName = serializers.CharField(
+        source='last_name',
+    )
 
     class Meta:
         model = Singer
@@ -21,6 +29,48 @@ class SingerSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'slug',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
+            'firstName',
+            'lastName',
+        )
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    kind = serializers.CharField(
+        source='get_kind_display',
+    )
+
+    longName = serializers.CharField(
+        source='long_name',
+    )
+
+    class Meta:
+        model = District
+        # lookup_field = 'slug'
+        fields = (
+            'id',
+            'url',
+            'name',
+            'slug',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
+            'kind',
+            'longName',
         )
 
 
@@ -48,6 +98,18 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'prs2',
             'sng2',
             'men',
+            'mus1_rata',
+            'prs1_rata',
+            'sng1_rata',
+            'song1_raw',
+            'song1_rata',
+            'mus2_rata',
+            'prs2_rata',
+            'sng2_rata',
+            'song2_raw',
+            'song2_rata',
+            'total_raw',
+            'total_rata',
         )
 
 
@@ -81,6 +143,14 @@ class ChorusSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    chapterName = serializers.CharField(
+        source='chapter_name',
+    )
+
+    chapterCode = serializers.CharField(
+        source='chapter_code',
+    )
+
     class Meta:
         model = Chorus
         # lookup_field = 'slug'
@@ -89,6 +159,18 @@ class ChorusSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'slug',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
+            'director',
+            'chapterName',
+            'chapterCode',
             'contestants',
         )
 
@@ -130,6 +212,15 @@ class QuartetSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'slug',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
             'contests',
         )
 
@@ -140,11 +231,20 @@ class ConventionSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    kind = serializers.CharField(
+        source='get_kind_display',
+    )
+
     class Meta:
         model = Convention
         # lookup_field = 'slug'
         fields = (
             'id',
             'url',
+            'kind',
+            'year',
+            'dates',
+            'location',
+            'timezone',
             'contests',
         )
