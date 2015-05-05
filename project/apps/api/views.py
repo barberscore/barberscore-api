@@ -25,42 +25,42 @@ from .serializers import (
 
 
 class QuartetViewSet(viewsets.ModelViewSet):
-    lookup_field = 'slug'
     queryset = Quartet.objects.all()
     serializer_class = QuartetSerializer
+    # lookup_field = 'slug'
 
 
 class SingerViewSet(viewsets.ModelViewSet):
-    lookup_field = 'slug'
     queryset = Singer.objects.all()
     serializer_class = SingerSerializer
+    # lookup_field = 'slug'
 
 
 class ChorusViewSet(viewsets.ModelViewSet):
     queryset = Chorus.objects.all()
     serializer_class = ChorusSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.all()
     serializer_class = ConventionSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.all()
     serializer_class = ContestSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.all()
     serializer_class = ContestantSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
