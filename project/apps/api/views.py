@@ -10,6 +10,7 @@ from .models import (
     Convention,
     Contest,
     Contestant,
+    District,
     Performance,
 )
 
@@ -17,6 +18,7 @@ from .serializers import (
     SingerSerializer,
     ChorusSerializer,
     QuartetSerializer,
+    DistrictSerializer,
     ConventionSerializer,
     ContestSerializer,
     ContestantSerializer,
@@ -27,6 +29,12 @@ from .serializers import (
 class QuartetViewSet(viewsets.ModelViewSet):
     queryset = Quartet.objects.all()
     serializer_class = QuartetSerializer
+    # lookup_field = 'slug'
+
+
+class DistrictViewSet(viewsets.ModelViewSet):
+    queryset = District.objects.all()
+    serializer_class = DistrictSerializer
     # lookup_field = 'slug'
 
 
