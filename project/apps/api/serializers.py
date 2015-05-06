@@ -52,6 +52,11 @@ class DistrictSerializer(serializers.ModelSerializer):
         source='long_name',
     )
 
+    choruses = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+    )
+
     class Meta:
         model = District
         # lookup_field = 'slug'
@@ -71,6 +76,7 @@ class DistrictSerializer(serializers.ModelSerializer):
             'notes',
             'kind',
             'longName',
+            'choruses',
         )
 
 
@@ -114,7 +120,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    performances = serializers.PrimaryKeyRelatedField(
+    performances = PerformanceSerializer(
         many=True,
         read_only=True,
     )
@@ -176,7 +182,12 @@ class ChorusSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    contestants = serializers.PrimaryKeyRelatedField(
+    # contestants = serializers.PrimaryKeyRelatedField(
+    #     many=True,
+    #     read_only=True,
+    # )
+
+    contestants = ContestantSerializer(
         many=True,
         read_only=True,
     )
@@ -204,6 +215,22 @@ class QuartetSerializer(serializers.ModelSerializer):
         source='contestant.contests'
     )
 
+    lead = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+    )
+
+    tenor = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+    )
+
+    baritone = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+    )
+
+    bass = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+    )
+
     class Meta:
         model = Quartet
         # lookup_field = 'slug'
@@ -221,12 +248,21 @@ class QuartetSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
+            'lead',
+            'tenor',
+            'baritone',
+            'bass',
             'contests',
         )
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    contests = serializers.PrimaryKeyRelatedField(
+    # contests = serializers.PrimaryKeyRelatedField(
+    #     many=True,
+    #     read_only=True,
+    # )
+
+    contests = ContestSerializer(
         many=True,
         read_only=True,
     )
