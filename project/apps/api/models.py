@@ -416,6 +416,17 @@ class Contest(models.Model):
         editable=False,
     )
 
+    slug = AutoSlugField(
+        populate_from=lambda instance: "{0}-{1}".format(
+            instance.convention,
+            instance.get_kind_display(),
+        ),
+        always_update=True,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
