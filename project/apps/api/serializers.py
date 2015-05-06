@@ -87,9 +87,11 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Performance
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
+            'slug',
             'round',
             'queue',
             'session',
@@ -131,9 +133,11 @@ class ContestantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contestant
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
+            'slug',
             'group',
             'seed',
             'prelim',
@@ -182,14 +186,8 @@ class ChorusSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    # contestants = serializers.PrimaryKeyRelatedField(
-    #     many=True,
-    #     read_only=True,
-    # )
-
     contestants = ContestantSerializer(
         many=True,
-        read_only=True,
     )
 
     kind = serializers.CharField(
@@ -262,7 +260,6 @@ class QuartetSerializer(serializers.ModelSerializer):
 class ConventionSerializer(serializers.ModelSerializer):
     contests = ContestSerializer(
         many=True,
-        read_only=True,
     )
 
     kind = serializers.CharField(
