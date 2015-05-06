@@ -51,24 +51,24 @@ class ChorusViewSet(viewsets.ModelViewSet):
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.all()
+    queryset = Convention.objects.all().prefetch_related('contests')
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.all()
+    queryset = Contest.objects.all().prefetch_related('contestants')
     serializer_class = ContestSerializer
     lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.all()
+    queryset = Contestant.objects.all().prefetch_related('performances')
     serializer_class = ContestantSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'

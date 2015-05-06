@@ -177,7 +177,7 @@ class Group(Common):
     objects = InheritanceManager()
 
     def __unicode__(self):
-        return self.name
+        return "{0}".format(self.name)
 
 
 class Quartet(Group):
@@ -380,10 +380,8 @@ class Convention(models.Model):
         )
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(
-            self.district.name,
-            self.get_kind_display(),
-            self.get_year_display(),
+        return "{0}".format(
+            self.slug,
         )
 
     # def get_absolute_url(self):
@@ -460,9 +458,8 @@ class Contest(models.Model):
         )
 
     def __unicode__(self):
-        return "{0} {1}".format(
-            self.convention,
-            self.get_kind_display(),
+        return "{0}".format(
+            self.slug,
         )
 
     # def get_absolute_url(self):
@@ -638,9 +635,8 @@ class Contestant(models.Model):
     )
 
     def __unicode__(self):
-        return "{0} {1}".format(
-            self.contest,
-            self.group,
+        return "{0}".format(
+            self.slug,
         )
 
     class Meta:
@@ -798,9 +794,8 @@ class Performance(models.Model):
         )
 
     def __unicode__(self):
-        return "{0} {1}".format(
-            self.contestant,
-            self.get_round_display(),
+        return "{0}".format(
+            self.slug,
         )
 
     @property
@@ -947,8 +942,6 @@ class GroupAward(models.Model):
     )
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(
-            self.group,
-            self.contest,
-            self.award,
+        return "{0}".format(
+            self.slug,
         )
