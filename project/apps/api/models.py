@@ -422,9 +422,7 @@ class Contest(models.Model):
             instance.get_kind_display(),
         ),
         always_update=True,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     kind = models.IntegerField(
