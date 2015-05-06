@@ -53,13 +53,13 @@ class ChorusViewSet(viewsets.ModelViewSet):
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.all()
     serializer_class = ConventionSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.all()
     serializer_class = ContestSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
