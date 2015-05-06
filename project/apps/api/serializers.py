@@ -159,12 +159,12 @@ class ChorusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chorus
-        # lookup_field = 'slug'
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
-            'name',
             'slug',
+            'name',
             'location',
             'website',
             'facebook',
@@ -198,9 +198,11 @@ class ContestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contest
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
+            'slug',
             'kind',
             'panel',
             'scoresheet_pdf',
@@ -233,10 +235,11 @@ class QuartetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quartet
-        # lookup_field = 'slug'
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
+            'slug',
             'name',
             'slug',
             'location',
@@ -257,11 +260,6 @@ class QuartetSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    # contests = serializers.PrimaryKeyRelatedField(
-    #     many=True,
-    #     read_only=True,
-    # )
-
     contests = ContestSerializer(
         many=True,
         read_only=True,
@@ -273,10 +271,11 @@ class ConventionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Convention
-        # lookup_field = 'slug'
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
+            'slug',
             'kind',
             'year',
             'dates',
