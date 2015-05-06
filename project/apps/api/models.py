@@ -683,6 +683,17 @@ class Performance(models.Model):
         default=FINALS,
     )
 
+    slug = AutoSlugField(
+        populate_from=lambda instance: "{0}-{1}".format(
+            instance.contestant,
+            instance.get_round_display(),
+        ),
+        always_update=True,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
     queue = models.IntegerField(
         null=True,
         blank=True,
