@@ -793,9 +793,9 @@ class Performance(models.Model):
             'round',
             'queue',
         ]
-        # unique_together = (
-        #     ('contestant', 'round',),
-        # )
+        unique_together = (
+            ('contestant', 'round',),
+        )
 
     def __unicode__(self):
         return "{0} {1}".format(
