@@ -611,10 +611,10 @@ class Contestant(models.Model):
             instance.group,
         ),
         always_update=True,
-        # unique=True,
+        unique=True,
         max_length=255,
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
     )
 
     seed = models.IntegerField(
@@ -690,10 +690,10 @@ class Performance(models.Model):
             instance.get_round_display(),
         ),
         always_update=True,
-        # unique=True,
+        unique=True,
         max_length=255,
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
     )
 
     queue = models.IntegerField(
@@ -794,7 +794,7 @@ class Performance(models.Model):
             'queue',
         ]
         # unique_together = (
-        #     ('contestant', 'round', 'queue',),
+        #     ('contestant', 'round',),
         # )
 
     def __unicode__(self):
