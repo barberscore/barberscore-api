@@ -612,6 +612,7 @@ class Contestant(models.Model):
         ),
         always_update=True,
         # unique=True,
+        max_length=255,
         null=True,
         blank=True,
     )
@@ -661,8 +662,8 @@ class Performance(models.Model):
 
     ROUND_CHOICES = (
         (FINALS, 'Finals',),
-        (SEMIS, 'Semi-Finals',),
-        (QUARTERS, 'Quarter-Finals',),
+        (SEMIS, 'Semis',),
+        (QUARTERS, 'Quarters',),
     )
 
     id = models.UUIDField(
@@ -690,6 +691,7 @@ class Performance(models.Model):
         ),
         always_update=True,
         # unique=True,
+        max_length=255,
         null=True,
         blank=True,
     )
