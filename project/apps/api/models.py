@@ -605,6 +605,17 @@ class Contestant(models.Model):
         related_name='contestants',
     )
 
+    slug = AutoSlugField(
+        populate_from=lambda instance: "{0}-{1}".format(
+            instance.contest,
+            instance.group,
+        ),
+        always_update=True,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
     seed = models.IntegerField(
         null=True,
         blank=True,
