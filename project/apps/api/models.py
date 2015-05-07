@@ -392,10 +392,6 @@ class Convention(models.Model):
 
 
 class Contest(models.Model):
-    YEAR_CHOICES = []
-    for r in range(2000, (datetime.datetime.now().year + 1)):
-        YEAR_CHOICES.append((r, r))
-
     QUARTET = 1
     CHORUS = 2
     SENIOR = 3
@@ -641,7 +637,7 @@ class Contestant(models.Model):
 
     class Meta:
         ordering = (
-            'contest',
+            '-contest',
             'group',
             'place',
             'seed',
