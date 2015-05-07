@@ -53,14 +53,9 @@ class DistrictSerializer(serializers.ModelSerializer):
         source='long_name',
     )
 
-    choruses = serializers.PrimaryKeyRelatedField(
-        many=True,
-        read_only=True,
-    )
-
     class Meta:
         model = District
-        # lookup_field = 'slug'
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
@@ -77,7 +72,6 @@ class DistrictSerializer(serializers.ModelSerializer):
             'notes',
             'kind',
             'longName',
-            'choruses',
         )
 
 
@@ -243,10 +237,45 @@ class ConventionSerializer(serializers.ModelSerializer):
         )
 
 
+class QuartetContestSerializer(serializers.ModelSerializer):
+    # performances = PerformanceSerializer(
+    #     many=True,
+    #     read_only=True,
+    # )
+
+    contest = serializers.StringRelatedField(
+        read_only=True,
+    )
+
+    # contest = ContestSerializer(
+    #     read_only=True,
+    # )
+
+    class Meta:
+        model = Contestant
+        lookup_field = 'slug'
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'contest',
+            'place',
+            'score',
+            'seed',
+            'prelim',
+        )
+
+
 class QuartetSerializer(serializers.ModelSerializer):
-    contestants = ContestantSerializer(
+    contestants = QuartetContestSerializer(
         many=True,
         read_only=True,
+        # source='contestants.contest'
+    )
+
+    district = serializers.CharField(
+        read_only=True,
+        source='district.name',
     )
 
     lead = SingerSerializer(
@@ -287,6 +316,6 @@ class QuartetSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
+            'district',
             'contestants',
         )
-
