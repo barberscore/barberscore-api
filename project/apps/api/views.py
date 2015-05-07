@@ -55,7 +55,7 @@ class PerformanceFilter(django_filters.FilterSet):
 class QuartetViewSet(viewsets.ModelViewSet):
     queryset = Quartet.objects.all()
     serializer_class = QuartetSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class DistrictViewSet(viewsets.ModelViewSet):
@@ -67,13 +67,13 @@ class DistrictViewSet(viewsets.ModelViewSet):
 class SingerViewSet(viewsets.ModelViewSet):
     queryset = Singer.objects.all()
     serializer_class = SingerSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class ChorusViewSet(viewsets.ModelViewSet):
     queryset = Chorus.objects.all()
     serializer_class = ChorusSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class ConventionViewSet(viewsets.ModelViewSet):

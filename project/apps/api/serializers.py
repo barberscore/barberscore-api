@@ -9,6 +9,7 @@ from .models import (
     Convention,
     Contestant,
     Performance,
+    Group,
 )
 
 
@@ -23,7 +24,7 @@ class SingerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Singer
-        # lookup_field = 'slug'
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
@@ -121,13 +122,22 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
 
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+
+
 class ContestantSerializer(serializers.ModelSerializer):
     performances = PerformanceSerializer(
         many=True,
         read_only=True,
     )
 
-    group = serializers.StringRelatedField(
+    # group = serializers.StringRelatedField(
+    #     read_only=True,
+    # )
+
+    group = GroupSerializer(
         read_only=True,
     )
 
@@ -208,26 +218,50 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
-class QuartetSerializer(serializers.ModelSerializer):
+class ConventionSerializer(serializers.ModelSerializer):
     contests = ContestSerializer(
         many=True,
-        read_only=True,
-        source='contestant.contests'
     )
 
-    lead = serializers.PrimaryKeyRelatedField(
+    kind = serializers.CharField(
+        source='get_kind_display',
+    )
+
+    class Meta:
+        model = Convention
+        lookup_field = 'slug'
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'kind',
+            'year',
+            'dates',
+            'location',
+            'timezone',
+            'contests',
+        )
+
+
+class QuartetSerializer(serializers.ModelSerializer):
+    contestants = ContestantSerializer(
+        many=True,
         read_only=True,
     )
 
-    tenor = serializers.PrimaryKeyRelatedField(
+    lead = SingerSerializer(
         read_only=True,
     )
 
-    baritone = serializers.PrimaryKeyRelatedField(
+    tenor = SingerSerializer(
         read_only=True,
     )
 
-    bass = serializers.PrimaryKeyRelatedField(
+    baritone = SingerSerializer(
+        read_only=True,
+    )
+
+    bass = SingerSerializer(
         read_only=True,
     )
 
@@ -253,30 +287,6 @@ class QuartetSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
-            'contests',
+            'contestants',
         )
 
-
-class ConventionSerializer(serializers.ModelSerializer):
-    contests = ContestSerializer(
-        many=True,
-    )
-
-    kind = serializers.CharField(
-        source='get_kind_display',
-    )
-
-    class Meta:
-        model = Convention
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'kind',
-            'year',
-            'dates',
-            'location',
-            'timezone',
-            'contests',
-        )

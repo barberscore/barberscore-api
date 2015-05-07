@@ -801,21 +801,21 @@ class Performance(models.Model):
     @property
     def mus1_rata(self):
         try:
-            return self.mus1 / self.contestant.contest.panel
+            return "{0:.1f}".format(self.mus1 / self.contestant.contest.panel)
         except:
             return None
 
     @property
     def prs1_rata(self):
         try:
-            return self.prs1 / self.contestant.contest.panel
+            return "{0:.1f}".format(self.prs1 / self.contestant.contest.panel)
         except:
             return None
 
     @property
     def sng1_rata(self):
         try:
-            return self.sng1 / self.contestant.contest.panel
+            return "{0:.1f}".format(self.sng1 / self.contestant.contest.panel)
         except:
             return None
 
@@ -829,27 +829,29 @@ class Performance(models.Model):
     @property
     def song1_rata(self):
         try:
-            return self.song1_raw / (self.contestant.contest.panel * 3)
+            return "{0:.1f}".format(
+                self.song1_raw / (self.contestant.contest.panel * 3)
+            )
         except:
             return None
 
     def mus2_rata(self):
         try:
-            return self.mus2 / self.contestant.contest.panel
+            return "{0:.1f}".format(self.mus2 / self.contestant.contest.panel)
         except:
             return None
 
     @property
     def prs2_rata(self):
         try:
-            return self.prs2 / self.contestant.contest.panel
+            return "{0:.1f}".format(self.prs2 / self.contestant.contest.panel)
         except:
             return None
 
     @property
     def sng2_rata(self):
         try:
-            return self.sng2 / self.contestant.contest.panel
+            return "{0:.1f}".format(self.sng2 / self.contestant.contest.panel)
         except:
             return None
 
@@ -863,7 +865,9 @@ class Performance(models.Model):
     @property
     def song2_rata(self):
         try:
-            return self.song2_raw / (self.contestant.contest.panel * 3)
+            return "{0:.1f}".format(
+                self.song2_raw / (self.contestant.contest.panel * 3)
+            )
         except:
             return None
 
@@ -877,7 +881,9 @@ class Performance(models.Model):
     @property
     def total_rata(self):
         try:
-            return self.total_raw / (self.contestant.contest.panel * 6)
+            return "{0:.1f}".format(
+                self.total_raw / (self.contestant.contest.panel * 6)
+            )
         except:
             return None
 
