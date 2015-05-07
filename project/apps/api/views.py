@@ -61,7 +61,7 @@ class QuartetViewSet(viewsets.ModelViewSet):
 class DistrictViewSet(viewsets.ModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
 
 class SingerViewSet(viewsets.ModelViewSet):
