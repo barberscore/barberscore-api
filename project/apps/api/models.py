@@ -15,6 +15,10 @@ from django.core.validators import (
     RegexValidator,
 )
 
+from django.core.exceptions import (
+    ValidationError,
+)
+
 # from django.core.urlresolvers import reverse
 
 from model_utils.managers import InheritanceManager
@@ -636,6 +640,14 @@ class Contest(models.Model):
             'year',
             'district',
         )
+
+    def clean(self):
+            # Don't allow draft entries to have a pub_date.
+            if self.level == self.INTERNATIONAL and self.district is not None:
+                raise ValidationError('International does not have a district.')
+            # Set the pub_date for published items if it hasn't been set already.
+            if self.level != self.INTERNATIONAL and self.district is None:
+                raise ValidationError('You must provide a district.')
 
     def __unicode__(self):
         if self.level == self.INTERNATIONAL:
