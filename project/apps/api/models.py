@@ -400,6 +400,15 @@ class Convention(models.Model):
         'District',
     )
 
+    name = models.CharField(
+        help_text="""
+            The name of the convention.""",
+        max_length=200,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=SUMMER,
