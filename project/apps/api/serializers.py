@@ -119,6 +119,19 @@ class PerformanceSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
+        fields = (
+            'id',
+            'name',
+            'slug',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+        )
 
 
 class ContestantSerializer(serializers.ModelSerializer):
@@ -126,10 +139,6 @@ class ContestantSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
     )
-
-    # group = serializers.StringRelatedField(
-    #     read_only=True,
-    # )
 
     group = GroupSerializer(
         read_only=True,
@@ -143,49 +152,12 @@ class ContestantSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'group',
+            'district',
             'seed',
             'prelim',
             'place',
             'score',
             'performances',
-        )
-
-
-class ChorusSerializer(serializers.ModelSerializer):
-    contestants = ContestantSerializer(
-        many=True,
-        read_only=True,
-    )
-
-    chapterName = serializers.CharField(
-        source='chapter_name',
-    )
-
-    chapterCode = serializers.CharField(
-        source='chapter_code',
-    )
-
-    class Meta:
-        model = Chorus
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'director',
-            'chapterName',
-            'chapterCode',
-            'contestants',
         )
 
 
@@ -263,6 +235,44 @@ class QuartetContestSerializer(serializers.ModelSerializer):
             'score',
             'seed',
             'prelim',
+        )
+
+
+class ChorusSerializer(serializers.ModelSerializer):
+    contestants = ContestantSerializer(
+        many=True,
+        read_only=True,
+    )
+
+    chapterName = serializers.CharField(
+        source='chapter_name',
+    )
+
+    chapterCode = serializers.CharField(
+        source='chapter_code',
+    )
+
+    class Meta:
+        model = Chorus
+        lookup_field = 'slug'
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
+            'director',
+            'chapterName',
+            'chapterCode',
+            'contestants',
         )
 
 
