@@ -460,6 +460,10 @@ class Convention(models.Model):
 
 
 class Contest(models.Model):
+    YEAR_CHOICES = []
+    for r in range(2000, (datetime.datetime.now().year + 1)):
+        YEAR_CHOICES.append((r, r))
+
     QUARTET = 1
     CHORUS = 2
     SENIOR = 3
@@ -474,10 +478,12 @@ class Contest(models.Model):
 
     INTERNATIONAL = 1
     DISTRICT = 2
+    REGIONAL = 3
 
     LEVEL_CHOICES = (
         (INTERNATIONAL, "International"),
         (DISTRICT, "District"),
+        (REGIONAL, "Regional"),
     )
 
     id = models.UUIDField(
@@ -503,6 +509,11 @@ class Contest(models.Model):
     level = models.IntegerField(
         choices=LEVEL_CHOICES,
         default=INTERNATIONAL,
+    )
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        default=datetime.datetime.now().year,
     )
 
     convention = models.ForeignKey(
