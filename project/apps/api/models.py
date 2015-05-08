@@ -398,6 +398,8 @@ class Convention(models.Model):
 
     district = models.ForeignKey(
         'District',
+        null=True,
+        blank=True,
     )
 
     name = models.CharField(
@@ -411,12 +413,15 @@ class Convention(models.Model):
 
     kind = models.IntegerField(
         choices=KIND_CHOICES,
-        default=SUMMER,
+        null=True,
+        blank=True,
     )
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
         default=datetime.datetime.now().year,
+        null=True,
+        blank=True,
     )
 
     slug = AutoSlugField(
@@ -454,7 +459,7 @@ class Convention(models.Model):
 
     def __unicode__(self):
         return "{0}".format(
-            self.slug,
+            self.name,
         )
 
     # def get_absolute_url(self):
@@ -576,14 +581,14 @@ class Contest(models.Model):
         unique=True,
     )
 
-    kind = models.IntegerField(
-        choices=KIND_CHOICES,
-        default=QUARTET,
-    )
-
     level = models.IntegerField(
         choices=LEVEL_CHOICES,
         default=INTERNATIONAL,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND_CHOICES,
+        default=QUARTET,
     )
 
     year = models.IntegerField(
@@ -625,11 +630,26 @@ class Contest(models.Model):
         unique_together = (
             ('kind', 'convention',),
         )
+        ordering = (
+            'level',
+            'kind',
+            'year',
+            'district',
+        )
 
     def __unicode__(self):
-        return "{0}".format(
-            self.slug,
-        )
+        if self.level == self.INTERNATIONAL:
+            return "{0} {1} {2}".format(
+                self.get_level_display(),
+                self.get_kind_display(),
+                self.get_year_display(),
+            )
+        else:
+            return "{0} {1} {2}".format(
+                self.get_district_display(),
+                self.get_kind_display(),
+                self.get_year_display(),
+            )
 
     # def get_absolute_url(self):
     #     return reverse(
