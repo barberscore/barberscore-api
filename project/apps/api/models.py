@@ -460,6 +460,69 @@ class Convention(models.Model):
 
 
 class Contest(models.Model):
+
+    BHS = 0
+    CAR = 1
+    CSD = 2
+    DIX = 3
+    EVG = 4
+    FWD = 5
+    ILL = 6
+    JAD = 7
+    LOL = 8
+    MAD = 9
+    NED = 10
+    NSC = 11
+    ONT = 12
+    PIO = 13
+    RMD = 14
+    SLD = 15
+    SUN = 16
+    SWD = 17
+    BABS = 18
+    BHA = 19
+    BHNZ = 20
+    BING = 21
+    DABS = 22
+    FABS = 23
+    IABS = 24
+    NZABS = 25
+    SABS = 26
+    SNOBS = 27
+    SPATS = 28
+
+    DISTRICT_CHOICES = (
+        (BHS, "BHS"),
+        (CAR, "CAR"),
+        (CSD, "CSD"),
+        (DIX, "DIX"),
+        (EVG, "EVG"),
+        (FWD, "FWD"),
+        (ILL, "ILL"),
+        (JAD, "JAD"),
+        (LOL, "LOL"),
+        (MAD, "MAD"),
+        (NED, "NED"),
+        (NSC, "NSC"),
+        (ONT, "ONT"),
+        (PIO, "PIO"),
+        (RMD, "RMD"),
+        (SLD, "SLD"),
+        (SUN, "SUN"),
+        (SWD, "SWD"),
+        (BABS, "BABS"),
+        (BHA, "BHA"),
+        (BHNZ, "BHNZ"),
+        (BING, "BING"),
+        (DABS, "DABS"),
+        (FABS, "FABS"),
+        (IABS, "IABS"),
+        (NZABS, "NZABS"),
+        (SABS, "SABS"),
+        (SNOBS, "SNOBS"),
+        (SPATS, "SPATS"),
+    )
+
     YEAR_CHOICES = []
     for r in range(2000, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
@@ -493,9 +556,16 @@ class Contest(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=lambda instance: "{0}-{1}".format(
-            instance.convention,
+        populate_from=lambda instance:
+        "{0}-{1}-{2}".format(
+            instance.get_level_display(),
             instance.get_kind_display(),
+            instance.get_year_display(),
+        ) if instance.kind == 1 else
+        "{0}-{1}-{2}".format(
+            instance.get_district_display(),
+            instance.get_kind_display(),
+            instance.get_year_display(),
         ),
         always_update=True,
         unique=True,
@@ -514,6 +584,12 @@ class Contest(models.Model):
     year = models.IntegerField(
         choices=YEAR_CHOICES,
         default=datetime.datetime.now().year,
+    )
+
+    district = models.IntegerField(
+        choices=DISTRICT_CHOICES,
+        null=True,
+        blank=True,
     )
 
     convention = models.ForeignKey(
