@@ -159,6 +159,67 @@ class Singer(Common):
 
 
 class Group(Common):
+
+    BHS = 0
+    CAR = 1
+    CSD = 2
+    DIX = 3
+    EVG = 4
+    FWD = 5
+    ILL = 6
+    JAD = 7
+    LOL = 8
+    MAD = 9
+    NED = 10
+    NSC = 11
+    ONT = 12
+    PIO = 13
+    RMD = 14
+    SLD = 15
+    SUN = 16
+    SWD = 17
+    BABS = 18
+    BHA = 19
+    BING = 20
+    DABS = 21
+    FABS = 22
+    IABS = 23
+    NZABS = 24
+    SABS = 25
+    SNOBS = 26
+    SPATS = 27
+
+    DISTRICT_CHOICES = (
+        (BHS, "BHS"),
+        (CAR, "CAR"),
+        (CSD, "CSD"),
+        (DIX, "DIX"),
+        (EVG, "EVG"),
+        (FWD, "FWD"),
+        (ILL, "ILL"),
+        (JAD, "JAD"),
+        (LOL, "LOL"),
+        (MAD, "MAD"),
+        (NED, "NED"),
+        (NSC, "NSC"),
+        (ONT, "ONT"),
+        (PIO, "PIO"),
+        (RMD, "RMD"),
+        (SLD, "SLD"),
+        (SUN, "SUN"),
+        (SWD, "SWD"),
+        (BABS, "BABS"),
+        (BHA, "BHA"),
+        (BING, "BING"),
+        (DABS, "DABS"),
+        (FABS, "FABS"),
+        (IABS, "IABS"),
+        (NZABS, "NZABS"),
+        (SABS, "SABS"),
+        (SNOBS, "SNOBS"),
+        (SPATS, "SPATS"),
+    )
+
     awards = models.ManyToManyField(
         'Award',
         through='GroupAward',
@@ -172,6 +233,11 @@ class Group(Common):
         blank=True,
         null=True,
         related_name='groups',
+    )
+
+    district_tag = models.IntegerField(
+        choices=DISTRICT_CHOICES,
+        default=BHS,
     )
 
     objects = InheritanceManager()
