@@ -77,7 +77,9 @@ class ChorusViewSet(viewsets.ModelViewSet):
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.all().prefetch_related('contests')
+    queryset = Convention.objects.filter(
+        slug__startswith='bhs-summer',
+    )
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
