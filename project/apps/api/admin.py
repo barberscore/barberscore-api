@@ -65,6 +65,14 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     extra = 0
     show_change_link = True
+    fields = (
+        'group',
+        'district',
+        'prelim',
+        'seed',
+        'score',
+        'place',
+    )
 
 
 @admin.register(Convention)
@@ -238,7 +246,9 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     list_display = (
         '__unicode__',
-        'round',
+        'queue',
+        'session',
+        'stagetime',
         'place',
         'song1',
         'mus1',
@@ -257,6 +267,8 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     ordering = (
         'place',
+        'queue',
+        'slug',
     )
 
     save_on_top = True
@@ -284,6 +296,7 @@ class SingerAdmin(admin.ModelAdmin):
 class ContestantAdmin(admin.ModelAdmin):
     list_display = (
         '__unicode__',
+        'district',
         'seed',
         'prelim',
         'place',
