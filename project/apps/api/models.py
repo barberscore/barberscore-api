@@ -15,7 +15,7 @@ from django.core.validators import (
     RegexValidator,
 )
 
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse
 
 from model_utils.managers import InheritanceManager
 
@@ -420,11 +420,7 @@ class Convention(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=lambda instance: "{0}-{1}-{2}".format(
-            instance.district.name,
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        ),
+        populate_from='name',
         always_update=True,
         unique=True,
     )
