@@ -15,7 +15,7 @@ from easy_select2 import select2_modelform
 from .models import (
     Convention,
     Contest,
-    District,
+    # District,
     Quartet,
     Chorus,
     Award,
@@ -74,16 +74,16 @@ class ConventionAdmin(admin.ModelAdmin):
         attrs={'width': '250px'},
     )
     list_display = (
-        '__unicode__',
+        'name',
         'location',
         'dates',
     )
-    list_filter = (
-        'district',
-        'kind',
-        'year',
+    fields = (
+        'name',
+        'location',
+        'dates',
+        'timezone',
     )
-
     save_on_top = True
 
 
@@ -108,24 +108,44 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     list_filter = (
+        'level',
         'kind',
+        'year',
+        'district',
     )
 
     list_display = (
         '__unicode__',
         'convention',
+        'level',
+        'kind',
+        'year',
+        'district',
         'panel',
         'scoresheet_pdf',
+        'scoresheet_csv',
+    )
+
+    fields = (
+        'convention',
+        'level',
+        'kind',
+        'year',
+        'district',
+        'panel',
+        'scoresheet_pdf',
+        'scoresheet_csv',
     )
 
 
-@admin.register(District)
-class DistrictAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        District,
-        attrs={'width': '250px'},
-    )
-    save_on_top = True
+
+# @admin.register(District)
+# class DistrictAdmin(admin.ModelAdmin):
+#     form = select2_modelform(
+#         District,
+#         attrs={'width': '250px'},
+#     )
+#     save_on_top = True
 
 
 QuartetForm = select2_modelform(
@@ -143,6 +163,20 @@ QuartetForm = select2_modelform(
 @admin.register(Quartet)
 class QuartetAdmin(admin.ModelAdmin):
     form = QuartetForm
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'lead',
+        'tenor',
+        'baritone',
+        'bass',
+    )
+
     inlines = (
         # GroupMemberInline,
         ContestantInline,
@@ -172,7 +206,7 @@ class ChorusAdmin(admin.ModelAdmin):
         'director',
         'chapter_name',
         'chapter_code',
-        'is_picture',
+        'picture',
     )
 
     readonly_fields = (
@@ -203,9 +237,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         attrs={'width': '250px'},
     )
     list_display = (
-        # 'group',
-        # 'contest',
-        'contestant',
+        '__unicode__',
         'round',
         'place',
         'song1',
@@ -219,9 +251,9 @@ class PerformanceAdmin(admin.ModelAdmin):
         'men',
     )
 
-    # list_filter = (
-    #     'contest',
-    # )
+    list_filter = (
+        'contestant__contest',
+    )
 
     ordering = (
         'place',
