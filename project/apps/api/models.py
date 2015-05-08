@@ -180,14 +180,15 @@ class Group(Common):
     SWD = 17
     BABS = 18
     BHA = 19
-    BING = 20
-    DABS = 21
-    FABS = 22
-    IABS = 23
-    NZABS = 24
-    SABS = 25
-    SNOBS = 26
-    SPATS = 27
+    BHNZ = 20
+    BING = 21
+    DABS = 22
+    FABS = 23
+    IABS = 24
+    NZABS = 25
+    SABS = 26
+    SNOBS = 27
+    SPATS = 28
 
     DISTRICT_CHOICES = (
         (BHS, "BHS"),
@@ -210,6 +211,7 @@ class Group(Common):
         (SWD, "SWD"),
         (BABS, "BABS"),
         (BHA, "BHA"),
+        (BHNZ, "BHNZ"),
         (BING, "BING"),
         (DABS, "DABS"),
         (FABS, "FABS"),
@@ -470,6 +472,14 @@ class Contest(models.Model):
         (COLLEGIATE, 'Collegiate',),
     )
 
+    INTERNATIONAL = 1
+    DISTRICT = 2
+
+    LEVEL_CHOICES = (
+        (INTERNATIONAL, "International"),
+        (DISTRICT, "District"),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -488,6 +498,11 @@ class Contest(models.Model):
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL_CHOICES,
+        default=INTERNATIONAL,
     )
 
     convention = models.ForeignKey(
