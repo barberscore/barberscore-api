@@ -561,7 +561,7 @@ class Contest(models.Model):
             instance.get_level_display(),
             instance.get_kind_display(),
             instance.get_year_display(),
-        ) if instance.kind == 1 else
+        ) if instance.level == 1 else
         "{0}-{1}-{2}".format(
             instance.get_district_display(),
             instance.get_kind_display(),
