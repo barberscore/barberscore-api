@@ -1,78 +1,14 @@
 from rest_framework import serializers
 
 from .models import (
-    Singer,
     Chorus,
     Quartet,
     Contest,
-    District,
     Convention,
     Contestant,
     Performance,
     Group,
 )
-
-
-class SingerSerializer(serializers.ModelSerializer):
-    firstName = serializers.CharField(
-        source='first_name',
-    )
-
-    lastName = serializers.CharField(
-        source='last_name',
-    )
-
-    class Meta:
-        model = Singer
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'name',
-            'slug',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'firstName',
-            'lastName',
-        )
-
-
-class DistrictSerializer(serializers.ModelSerializer):
-    kind = serializers.CharField(
-        source='get_kind_display',
-    )
-
-    longName = serializers.CharField(
-        source='long_name',
-    )
-
-    class Meta:
-        model = District
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'name',
-            'slug',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'kind',
-            'longName',
-        )
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -82,10 +18,8 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Performance
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
             'slug',
             'round',
             'queue',
@@ -140,7 +74,7 @@ class GroupSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestantGroupSerializer(serializers.ModelSerializer):
+class ContestantContestSerializer(serializers.ModelSerializer):
     performances = PerformanceSerializer(
         many=True,
         read_only=True,
@@ -152,13 +86,10 @@ class ContestantGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contestant
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
-            # 'slug',
+            'slug',
             'group',
-            # 'district',
             'seed',
             'prelim',
             'place',
@@ -168,7 +99,7 @@ class ContestantGroupSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    contestants = ContestantGroupSerializer(
+    contestants = ContestantContestSerializer(
         many=True,
     )
 
@@ -190,10 +121,8 @@ class ContestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contest
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
             'slug',
             'level',
             'kind',
@@ -205,14 +134,34 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
+class ContestantGroupSerializer(serializers.ModelSerializer):
+    performances = PerformanceSerializer(
+        many=True,
+        read_only=True,
+    )
+
+    contest = serializers.StringRelatedField(
+        read_only=True,
+    )
+
+    class Meta:
+        model = Contestant
+        fields = (
+            'id',
+            'slug',
+            'contest',
+            'seed',
+            'prelim',
+            'place',
+            'score',
+            'performances',
+        )
+
+
 class ConventionSerializer(serializers.ModelSerializer):
     contests = ContestSerializer(
         many=True,
     )
-
-    # kind = serializers.CharField(
-    #     source='get_kind_display',
-    # )
 
     class Meta:
         model = Convention
@@ -221,42 +170,10 @@ class ConventionSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'slug',
-            # 'kind',
-            # 'year',
             'name',
-            # 'location',
             'dates',
             'timezone',
             'contests',
-        )
-
-
-class QuartetContestSerializer(serializers.ModelSerializer):
-    # performances = PerformanceSerializer(
-    #     many=True,
-    #     read_only=True,
-    # )
-
-    contest = serializers.StringRelatedField(
-        read_only=True,
-    )
-
-    # contest = ContestSerializer(
-    #     read_only=True,
-    # )
-
-    class Meta:
-        model = Contestant
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'contest',
-            'place',
-            'score',
-            'seed',
-            'prelim',
         )
 
 
@@ -276,7 +193,7 @@ class ChorusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chorus
-        # lookup_field = 'slug'
+        lookup_field = 'slug'
         fields = (
             'id',
             'url',
@@ -299,30 +216,24 @@ class ChorusSerializer(serializers.ModelSerializer):
 
 
 class QuartetSerializer(serializers.ModelSerializer):
-    contestants = QuartetContestSerializer(
+    contestants = ContestantGroupSerializer(
         many=True,
         read_only=True,
-        # source='contestants.contest'
     )
 
-    district = serializers.CharField(
-        read_only=True,
-        source='district.name',
-    )
-
-    lead = SingerSerializer(
+    lead = serializers.StringRelatedField(
         read_only=True,
     )
 
-    tenor = SingerSerializer(
+    tenor = serializers.StringRelatedField(
         read_only=True,
     )
 
-    baritone = SingerSerializer(
+    baritone = serializers.StringRelatedField(
         read_only=True,
     )
 
-    bass = SingerSerializer(
+    bass = serializers.StringRelatedField(
         read_only=True,
     )
 
@@ -348,6 +259,6 @@ class QuartetSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
-            'district',
+            # 'district',
             'contestants',
         )
