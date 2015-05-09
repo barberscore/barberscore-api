@@ -53,7 +53,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
 
     district = serializers.CharField(
-        source='get_district_tag_display',
+        source='get_district_display',
     )
 
     class Meta:
