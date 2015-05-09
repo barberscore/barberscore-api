@@ -2,8 +2,6 @@
 # log = logging.getLogger(__name__)
 
 from django.contrib import admin
-from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
 
 from django_object_actions import (
     DjangoObjectActions,
@@ -15,26 +13,15 @@ from easy_select2 import select2_modelform
 from .models import (
     Convention,
     Contest,
-    # District,
     Quartet,
     Chorus,
-    Award,
     Performance,
     Singer,
-    # GroupMember,
-    GroupAward,
     Contestant,
+    # Award,
+    # District,
+    # GroupAward,
 )
-
-
-# class GroupMemberInline(admin.TabularInline):
-#     form = select2_modelform(
-#         GroupMember,
-#         attrs={'width': '250px'},
-#     )
-#     model = GroupMember
-#     extra = 0
-#     show_change_link = True
 
 
 # class GroupAwardInline(admin.TabularInline):
@@ -67,7 +54,6 @@ class ContestantInline(admin.TabularInline):
     show_change_link = True
     fields = (
         'group',
-        'district',
         'prelim',
         'seed',
         'score',
@@ -146,26 +132,10 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
 
-
-# @admin.register(District)
-# class DistrictAdmin(admin.ModelAdmin):
-#     form = select2_modelform(
-#         District,
-#         attrs={'width': '250px'},
-#     )
-#     save_on_top = True
-
-
 QuartetForm = select2_modelform(
     Quartet,
     attrs={'width': '250px'},
 )
-
-
-# SingerForm = select2_modelform(
-#     Singer,
-#     attrs={'width': '250px'},
-# )
 
 
 @admin.register(Quartet)
@@ -186,7 +156,6 @@ class QuartetAdmin(admin.ModelAdmin):
     )
 
     inlines = (
-        # GroupMemberInline,
         ContestantInline,
         # GroupAwardInline,
     )
@@ -221,10 +190,6 @@ class ChorusAdmin(admin.ModelAdmin):
         'is_picture',
     )
 
-    # inlines = (
-    #     GroupMemberInline,
-    #     GroupAwardInline,
-    # )
     save_on_top = True
 
 
@@ -287,26 +252,15 @@ class SingerAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-# @admin.register(GroupMember)
-# class GroupMemberAdmin(admin.ModelAdmin):
-#     save_on_top = True
-
-
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     list_display = (
         '__unicode__',
-        'district',
         'seed',
         'prelim',
         'place',
         'score',
     )
-
-    # list_filter = (
-    #     'contest',
-    #     'group',
-    # )
 
     inlines = [
         PerformanceInline,
