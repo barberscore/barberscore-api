@@ -786,68 +786,6 @@ class Contest(models.Model):
 
 
 class Contestant(models.Model):
-    BHS = 0
-    CAR = 1
-    CSD = 2
-    DIX = 3
-    EVG = 4
-    FWD = 5
-    ILL = 6
-    JAD = 7
-    LOL = 8
-    MAD = 9
-    NED = 10
-    NSC = 11
-    ONT = 12
-    PIO = 13
-    RMD = 14
-    SLD = 15
-    SUN = 16
-    SWD = 17
-    BABS = 18
-    BHA = 19
-    BHNZ = 20
-    BING = 21
-    DABS = 22
-    FABS = 23
-    IABS = 24
-    NZABS = 25
-    SABS = 26
-    SNOBS = 27
-    SPATS = 28
-
-    DISTRICT_CHOICES = (
-        (BHS, "BHS"),
-        (CAR, "CAR"),
-        (CSD, "CSD"),
-        (DIX, "DIX"),
-        (EVG, "EVG"),
-        (FWD, "FWD"),
-        (ILL, "ILL"),
-        (JAD, "JAD"),
-        (LOL, "LOL"),
-        (MAD, "MAD"),
-        (NED, "NED"),
-        (NSC, "NSC"),
-        (ONT, "ONT"),
-        (PIO, "PIO"),
-        (RMD, "RMD"),
-        (SLD, "SLD"),
-        (SUN, "SUN"),
-        (SWD, "SWD"),
-        (BABS, "BABS"),
-        (BHA, "BHA"),
-        (BHNZ, "BHNZ"),
-        (BING, "BING"),
-        (DABS, "DABS"),
-        (FABS, "FABS"),
-        (IABS, "IABS"),
-        (NZABS, "NZABS"),
-        (SABS, "SABS"),
-        (SNOBS, "SNOBS"),
-        (SPATS, "SPATS"),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -874,12 +812,6 @@ class Contestant(models.Model):
         max_length=255,
         # null=True,
         # blank=True,
-    )
-
-    district = models.IntegerField(
-        choices=DISTRICT_CHOICES,
-        null=True,
-        blank=True,
     )
 
     seed = models.IntegerField(
