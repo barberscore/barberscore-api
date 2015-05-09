@@ -241,7 +241,7 @@ class Group(Common):
         related_name='groups',
     )
 
-    district_tag = models.IntegerField(
+    district = models.IntegerField(
         choices=DISTRICT_CHOICES,
         default=BHS,
     )
