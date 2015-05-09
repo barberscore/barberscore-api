@@ -8,7 +8,7 @@ from .views import (
     ContestViewSet,
     DistrictViewSet,
     PerformanceViewSet,
-    ContestantViewSet,
+    ContestantGroupViewSet,
 )
 
 router = routers.SimpleRouter()
@@ -19,7 +19,7 @@ router.register(r'performances', PerformanceViewSet)
 router.register(r'districts', DistrictViewSet)
 router.register(r'quartets', QuartetViewSet)
 router.register(r'conventions', ConventionViewSet)
-router.register(r'contestants', ContestantViewSet)
+router.register(r'contestants', ContestantGroupViewSet)
 
 
 urlpatterns = router.urls

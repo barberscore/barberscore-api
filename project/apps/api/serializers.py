@@ -117,12 +117,18 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
+
+    district = serializers.CharField(
+        source='get_district_tag_display',
+    )
+
     class Meta:
         model = Group
         fields = (
             'id',
-            'name',
             'slug',
+            'name',
+            'district',
             'location',
             'website',
             'facebook',
@@ -134,7 +140,7 @@ class GroupSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestantSerializer(serializers.ModelSerializer):
+class ContestantGroupSerializer(serializers.ModelSerializer):
     performances = PerformanceSerializer(
         many=True,
         read_only=True,
@@ -150,9 +156,9 @@ class ContestantSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
+            # 'slug',
             'group',
-            'district',
+            # 'district',
             'seed',
             'prelim',
             'place',
@@ -162,12 +168,24 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    contestants = ContestantSerializer(
+    contestants = ContestantGroupSerializer(
         many=True,
+    )
+
+    level = serializers.CharField(
+        source='get_level_display',
     )
 
     kind = serializers.CharField(
         source='get_kind_display',
+    )
+
+    year = serializers.CharField(
+        source='get_year_display',
+    )
+
+    district = serializers.CharField(
+        source='get_district_display',
     )
 
     class Meta:
@@ -177,7 +195,10 @@ class ContestSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'slug',
+            'level',
             'kind',
+            'year',
+            'district',
             'panel',
             'scoresheet_pdf',
             'contestants',
@@ -189,9 +210,9 @@ class ConventionSerializer(serializers.ModelSerializer):
         many=True,
     )
 
-    kind = serializers.CharField(
-        source='get_kind_display',
-    )
+    # kind = serializers.CharField(
+    #     source='get_kind_display',
+    # )
 
     class Meta:
         model = Convention
@@ -200,10 +221,11 @@ class ConventionSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'slug',
-            'kind',
-            'year',
+            # 'kind',
+            # 'year',
+            'name',
+            # 'location',
             'dates',
-            'location',
             'timezone',
             'contests',
         )
@@ -239,7 +261,7 @@ class QuartetContestSerializer(serializers.ModelSerializer):
 
 
 class ChorusSerializer(serializers.ModelSerializer):
-    contestants = ContestantSerializer(
+    contestants = ContestantGroupSerializer(
         many=True,
         read_only=True,
     )
@@ -254,7 +276,7 @@ class ChorusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chorus
-        lookup_field = 'slug'
+        # lookup_field = 'slug'
         fields = (
             'id',
             'url',
