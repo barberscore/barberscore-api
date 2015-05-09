@@ -5,7 +5,7 @@ import django_filters
 
 from rest_framework import (
     viewsets,
-    filters,
+    # filters,
 )
 
 from .models import (
@@ -26,7 +26,7 @@ from .serializers import (
     DistrictSerializer,
     ConventionSerializer,
     ContestSerializer,
-    ContestantSerializer,
+    ContestantGroupSerializer,
     PerformanceSerializer,
 )
 
@@ -90,11 +90,11 @@ class ContestViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class ContestantViewSet(viewsets.ModelViewSet):
+class ContestantGroupViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.all().prefetch_related('performances')
-    serializer_class = ContestantSerializer
+    serializer_class = ContestantGroupSerializer
     lookup_field = 'slug'
-    filter_backends = (filters.OrderingFilter,)
+    # filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('place',)
     ordering = [
         'place',
