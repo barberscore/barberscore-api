@@ -232,7 +232,7 @@ class Group(Common):
         related_name='groups',
     )
 
-    district = models.ForeignKey(
+    district_OLD = models.ForeignKey(
         'District',
         help_text="""
             This is the district the group is officially representing in the contest.""",
