@@ -56,6 +56,30 @@ class GroupSerializer(serializers.ModelSerializer):
         source='get_district_display',
     )
 
+    director = serializers.CharField(
+        source='chorus.director',
+    )
+
+    chapterName = serializers.CharField(
+        source='chorus.chapter_name',
+    )
+
+    lead = serializers.CharField(
+        source='quartet.lead.name',
+    )
+
+    tenor = serializers.CharField(
+        source='quartet.tenor.name',
+    )
+
+    baritone = serializers.CharField(
+        source='quartet.baritone.name',
+    )
+
+    bass = serializers.CharField(
+        source='quartet.bass.name',
+    )
+
     class Meta:
         model = Group
         fields = (
@@ -71,6 +95,12 @@ class GroupSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
+            'director',
+            'chapterName',
+            'lead',
+            'tenor',
+            'baritone',
+            'bass',
         )
 
 
