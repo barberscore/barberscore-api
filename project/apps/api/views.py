@@ -1,79 +1,21 @@
 import logging
 log = logging.getLogger(__name__)
 
-import django_filters
-
 from rest_framework import (
     viewsets,
-    # filters,
 )
 
 from .models import (
-    Singer,
+    Convention,
     Chorus,
     Quartet,
-    Convention,
-    Contest,
-    Contestant,
-    District,
-    Performance,
 )
 
 from .serializers import (
-    SingerSerializer,
+    ConventionSerializer,
     ChorusSerializer,
     QuartetSerializer,
-    DistrictSerializer,
-    ConventionSerializer,
-    ContestSerializer,
-    ContestantGroupSerializer,
-    PerformanceSerializer,
 )
-
-
-class PerformanceFilter(django_filters.FilterSet):
-    convention = django_filters.CharFilter(
-        name="contestant__contest__convention__slug",
-    )
-
-    contest = django_filters.CharFilter(
-        name="contestant__contest__kind",
-    )
-
-    class Meta:
-        model = Performance
-        fields = [
-            'round',
-            'convention',
-            'contest',
-        ]
-        ordering = [
-
-        ]
-
-
-class QuartetViewSet(viewsets.ModelViewSet):
-    queryset = Quartet.objects.all()
-    serializer_class = QuartetSerializer
-    lookup_field = 'slug'
-
-
-class DistrictViewSet(viewsets.ModelViewSet):
-    queryset = District.objects.all()
-    serializer_class = DistrictSerializer
-    lookup_field = 'slug'
-
-
-class SingerViewSet(viewsets.ModelViewSet):
-    queryset = Singer.objects.all()
-    serializer_class = SingerSerializer
-    lookup_field = 'slug'
-
-
-class ChorusViewSet(viewsets.ModelViewSet):
-    queryset = Chorus.objects.all()
-    serializer_class = ChorusSerializer
-    lookup_field = 'slug'
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
@@ -84,25 +26,13 @@ class ConventionViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.all().prefetch_related('contestants')
-    serializer_class = ContestSerializer
+class ChorusViewSet(viewsets.ModelViewSet):
+    queryset = Chorus.objects.all()
+    serializer_class = ChorusSerializer
     lookup_field = 'slug'
 
 
-class ContestantGroupViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.all().prefetch_related('performances')
-    serializer_class = ContestantGroupSerializer
+class QuartetViewSet(viewsets.ModelViewSet):
+    queryset = Quartet.objects.all()
+    serializer_class = QuartetSerializer
     lookup_field = 'slug'
-    # filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ('place',)
-    ordering = [
-        'place',
-    ]
-
-
-class PerformanceViewSet(viewsets.ModelViewSet):
-    queryset = Performance.objects.all()
-    serializer_class = PerformanceSerializer
-    lookup_field = 'slug'
-    filter_class = PerformanceFilter
