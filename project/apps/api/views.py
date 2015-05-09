@@ -20,14 +20,21 @@ from .serializers import (
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.filter(
-        slug__startswith='bhs-summer',
-    )
+        name__in=[
+            'Philadelphia 2010',
+            'Kansas City 2011',
+            'Portland 2012',
+            'Toronto 2013',
+            'Las Vegas 2014',
+            'Pittsburgh 2015',
+        ]
+    ).prefetch_related('contests__contestants__performances')
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
 
 class ChorusViewSet(viewsets.ModelViewSet):
-    queryset = Chorus.objects.all()
+    queryset = Chorus.objects.all().prefetch_related('contestants__performances')
     serializer_class = ChorusSerializer
     lookup_field = 'slug'
 
