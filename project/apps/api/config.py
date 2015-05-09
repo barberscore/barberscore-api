@@ -16,14 +16,5 @@ class ApiConfig(AppConfig):
         quartet = self.get_model("Quartet")
         watson.register(quartet)
 
-        singer = self.get_model("Singer")
-        watson.register(singer)
-
-        contest = self.get_model("Contest")
-        watson.register(contest)
-
         convention = self.get_model("Convention")
         watson.register(convention)
-
-        district = self.get_model("District")
-        watson.register(district)
