@@ -11,6 +11,10 @@ from .models import (
 )
 
 
+class SearchSerializer(serializers.Serializer):
+    title = serializers.CharField()
+
+
 class PerformanceSerializer(serializers.ModelSerializer):
     round = serializers.CharField(
         source='get_round_display',
