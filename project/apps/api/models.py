@@ -19,7 +19,7 @@ from django.core.exceptions import (
     ValidationError,
 )
 
-# from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 
 from model_utils.managers import InheritanceManager
 
@@ -293,11 +293,11 @@ class Quartet(Group):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:quartet-detail',
-    #         args=[self.slug],
-    #     )
+    def get_absolute_url(self):
+        return reverse(
+            'website:quartet-detail',
+            args=[self.slug],
+        )
 
 
 class Chorus(Group):
@@ -330,11 +330,11 @@ class Chorus(Group):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:chorus-detail',
-    #         args=[self.slug],
-    #     )
+    def get_absolute_url(self):
+        return reverse(
+            'chorus-detail',
+            args=[self.slug],
+        )
 
 
 class District(Common):
