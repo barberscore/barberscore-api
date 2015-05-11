@@ -1,10 +1,10 @@
 import logging
 log = logging.getLogger(__name__)
 
-import watson
+# import watson
 
 from rest_framework import (
-    mixins,
+    # mixins,
     viewsets,
     # filters,
 )
@@ -15,26 +15,32 @@ from .models import (
     Quartet,
 )
 
+from .filters import (
+    ChorusFilter,
+    QuartetFilter,
+)
+
+
 from .serializers import (
     ConventionSerializer,
     ChorusSerializer,
     QuartetSerializer,
-    SearchSerializer,
+    # SearchSerializer,
 )
 
 
-class SearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+# class SearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
-    serializer_class = SearchSerializer
+#     serializer_class = SearchSerializer
 
-    def get_queryset(self, *args, **kwargs):
-        request = self.request
-        term = request.GET.get('q', None)
-        if term:
-            queryset = watson.search(term)
-        else:
-            queryset = None
-        return queryset
+#     def get_queryset(self, *args, **kwargs):
+#         request = self.request
+#         term = request.GET.get('q', None)
+#         if term:
+#             queryset = watson.search(term)
+#         else:
+#             queryset = None
+#         return queryset
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
@@ -55,16 +61,12 @@ class ConventionViewSet(viewsets.ModelViewSet):
 class ChorusViewSet(viewsets.ModelViewSet):
     queryset = Chorus.objects.all().prefetch_related('contestants__performances')
     serializer_class = ChorusSerializer
+    filter_class = ChorusFilter
     lookup_field = 'slug'
-    filter_fields = (
-        'name',
-    )
 
 
 class QuartetViewSet(viewsets.ModelViewSet):
     queryset = Quartet.objects.all()
     serializer_class = QuartetSerializer
+    filter_class = QuartetFilter
     lookup_field = 'slug'
-    filter_fields = (
-        'name',
-    )
