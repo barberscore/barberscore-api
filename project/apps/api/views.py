@@ -34,7 +34,6 @@ class SearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             queryset = watson.search(term)
         else:
             queryset = None
-        print queryset
         return queryset
 
 
