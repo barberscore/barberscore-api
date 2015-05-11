@@ -227,6 +227,10 @@ class ChorusSerializer(serializers.ModelSerializer):
         source='chapter_code',
     )
 
+    district = serializers.CharField(
+        source='get_district_display',
+    )
+
     class Meta:
         model = Chorus
         lookup_field = 'slug'
@@ -247,6 +251,7 @@ class ChorusSerializer(serializers.ModelSerializer):
             'director',
             'chapterName',
             'chapterCode',
+            'district',
             'contestants',
         )
 
@@ -273,6 +278,10 @@ class QuartetSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    district = serializers.CharField(
+        source='get_district_display',
+    )
+
     class Meta:
         model = Quartet
         lookup_field = 'slug'
@@ -295,6 +304,6 @@ class QuartetSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
-            # 'district',
+            'district',
             'contestants',
         )
