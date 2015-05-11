@@ -13,6 +13,8 @@ from .models import (
 
 class SearchSerializer(serializers.Serializer):
     title = serializers.CharField()
+    url = serializers.URLField()
+    content = serializers.CharField()
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
