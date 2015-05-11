@@ -7,7 +7,7 @@ from .views import (
     SearchViewSet,
 )
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 
 router.register(r'conventions', ConventionViewSet)
 router.register(r'choruses', ChorusViewSet)
