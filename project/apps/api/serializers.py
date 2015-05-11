@@ -11,10 +11,10 @@ from .models import (
 )
 
 
-class SearchSerializer(serializers.Serializer):
-    title = serializers.CharField()
-    url = serializers.URLField()
-    content = serializers.CharField()
+# class SearchSerializer(serializers.Serializer):
+#     title = serializers.CharField()
+#     url = serializers.URLField()
+#     content = serializers.CharField()
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -170,13 +170,44 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
+class ContestGroupSerializer(serializers.ModelSerializer):
+    level = serializers.CharField(
+        source='get_level_display',
+    )
+
+    kind = serializers.CharField(
+        source='get_kind_display',
+    )
+
+    year = serializers.CharField(
+        source='get_year_display',
+    )
+
+    district = serializers.CharField(
+        source='get_district_display',
+    )
+
+    class Meta:
+        model = Contest
+        fields = (
+            'id',
+            'slug',
+            'level',
+            'kind',
+            'year',
+            'district',
+            'panel',
+            'scoresheet_pdf',
+        )
+
+
 class ContestantGroupSerializer(serializers.ModelSerializer):
     performances = PerformanceSerializer(
         many=True,
         read_only=True,
     )
 
-    contest = serializers.StringRelatedField(
+    contest = ContestGroupSerializer(
         read_only=True,
     )
 
