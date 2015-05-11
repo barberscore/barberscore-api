@@ -26,8 +26,6 @@ from .serializers import (
 class SearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     serializer_class = SearchSerializer
-    # permission_classes = (IsAuthenticated,)
-    # authentication_classes = (SessionAuthentication, BasicAuthentication)
 
     def get_queryset(self, *args, **kwargs):
         request = self.request
