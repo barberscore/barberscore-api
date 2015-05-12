@@ -413,8 +413,7 @@ class Convention(models.Model):
     class Meta:
         ordering = [
             'district',
-            'kind',
-            'year',
+            '-year',
         ]
 
         unique_together = (
@@ -597,7 +596,7 @@ class Contest(models.Model):
         ordering = (
             'level',
             'kind',
-            'year',
+            '-year',
             'district',
         )
 
@@ -800,6 +799,7 @@ class Contestant(models.Model):
     class Meta:
         ordering = (
             '-contest',
+            'place',
             '-score',
             '-prelim',
             'group',
