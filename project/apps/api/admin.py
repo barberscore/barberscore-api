@@ -13,25 +13,10 @@ from easy_select2 import select2_modelform
 from .models import (
     Convention,
     Contest,
-    # Quartet,
-    # Chorus,
-    Performance,
-    Singer,
     Contestant,
-    # Award,
-    # District,
-    # GroupAward,
+    Group,
+    Performance,
 )
-
-
-# class GroupAwardInline(admin.TabularInline):
-#     form = select2_modelform(
-#         GroupAward,
-#         attrs={'width': '250px'},
-#     )
-#     model = GroupAward
-#     extra = 0
-#     show_change_link = True
 
 
 class PerformanceInline(admin.TabularInline):
@@ -132,77 +117,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
 
-# QuartetForm = select2_modelform(
-#     Quartet,
-#     attrs={'width': '250px'},
-# )
-
-
-# @admin.register(Quartet)
-# class QuartetAdmin(admin.ModelAdmin):
-#     form = QuartetForm
-#     list_display = (
-#         'name',
-#         'location',
-#         'website',
-#         'facebook',
-#         'twitter',
-#         'email',
-#         'phone',
-#         'lead',
-#         'tenor',
-#         'baritone',
-#         'bass',
-#     )
-
-#     inlines = (
-#         ContestantInline,
-#         # GroupAwardInline,
-#     )
-#     save_on_top = True
-
-
-# @admin.register(Chorus)
-# class ChorusAdmin(admin.ModelAdmin):
-#     def is_picture(self, obj):
-#         return bool(obj.picture)
-
-#     form = select2_modelform(
-#         Chorus,
-#         attrs={'width': '250px'},
-#     )
-
-#     list_display = (
-#         'name',
-#         'location',
-#         'website',
-#         'facebook',
-#         'twitter',
-#         'email',
-#         'phone',
-#         'director',
-#         'chapter_name',
-#         'chapter_code',
-#         'picture',
-#     )
-
-#     readonly_fields = (
-#         'is_picture',
-#     )
-
-#     save_on_top = True
-
-
-# @admin.register(Award)
-# class AwardAdmin(admin.ModelAdmin):
-#     form = select2_modelform(
-#         Chorus,
-#         attrs={'width': '250px'},
-#     )
-
-#     save_on_top = True
-
-
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
     form = select2_modelform(
@@ -239,16 +153,29 @@ class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Singer)
-class SingerAdmin(admin.ModelAdmin):
-    fields = (
-        'name',
-    )
-
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
     form = select2_modelform(
-        Singer,
+        Group,
         attrs={'width': '250px'},
     )
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'lead',
+        'tenor',
+        'baritone',
+        'bass',
+        'director',
+        'chapter_name',
+        'chapter_code',
+    )
+
     save_on_top = True
 
 
@@ -267,8 +194,3 @@ class ContestantAdmin(admin.ModelAdmin):
     ]
 
     save_on_top = True
-
-
-# @admin.register(GroupAward)
-# class GroupAwardAdmin(admin.ModelAdmin):
-#     save_on_top = True
