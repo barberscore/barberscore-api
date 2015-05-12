@@ -13,8 +13,8 @@ from easy_select2 import select2_modelform
 from .models import (
     Convention,
     Contest,
-    Quartet,
-    Chorus,
+    # Quartet,
+    # Chorus,
     Performance,
     Singer,
     Contestant,
@@ -132,65 +132,65 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
 
-QuartetForm = select2_modelform(
-    Quartet,
-    attrs={'width': '250px'},
-)
+# QuartetForm = select2_modelform(
+#     Quartet,
+#     attrs={'width': '250px'},
+# )
 
 
-@admin.register(Quartet)
-class QuartetAdmin(admin.ModelAdmin):
-    form = QuartetForm
-    list_display = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'lead',
-        'tenor',
-        'baritone',
-        'bass',
-    )
+# @admin.register(Quartet)
+# class QuartetAdmin(admin.ModelAdmin):
+#     form = QuartetForm
+#     list_display = (
+#         'name',
+#         'location',
+#         'website',
+#         'facebook',
+#         'twitter',
+#         'email',
+#         'phone',
+#         'lead',
+#         'tenor',
+#         'baritone',
+#         'bass',
+#     )
 
-    inlines = (
-        ContestantInline,
-        # GroupAwardInline,
-    )
-    save_on_top = True
+#     inlines = (
+#         ContestantInline,
+#         # GroupAwardInline,
+#     )
+#     save_on_top = True
 
 
-@admin.register(Chorus)
-class ChorusAdmin(admin.ModelAdmin):
-    def is_picture(self, obj):
-        return bool(obj.picture)
+# @admin.register(Chorus)
+# class ChorusAdmin(admin.ModelAdmin):
+#     def is_picture(self, obj):
+#         return bool(obj.picture)
 
-    form = select2_modelform(
-        Chorus,
-        attrs={'width': '250px'},
-    )
+#     form = select2_modelform(
+#         Chorus,
+#         attrs={'width': '250px'},
+#     )
 
-    list_display = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'director',
-        'chapter_name',
-        'chapter_code',
-        'picture',
-    )
+#     list_display = (
+#         'name',
+#         'location',
+#         'website',
+#         'facebook',
+#         'twitter',
+#         'email',
+#         'phone',
+#         'director',
+#         'chapter_name',
+#         'chapter_code',
+#         'picture',
+#     )
 
-    readonly_fields = (
-        'is_picture',
-    )
+#     readonly_fields = (
+#         'is_picture',
+#     )
 
-    save_on_top = True
+#     save_on_top = True
 
 
 # @admin.register(Award)

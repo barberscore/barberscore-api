@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from .models import (
-    Chorus,
-    Quartet,
+    # Chorus,
+    # Quartet,
     Contest,
     Convention,
     Contestant,
@@ -62,52 +62,52 @@ class GroupSerializer(serializers.ModelSerializer):
         source='get_district_display',
     )
 
-    director = serializers.CharField(
-        source='chorus.director',
-    )
+    # director = serializers.CharField(
+    #     source='chorus.director',
+    # )
 
-    chapterName = serializers.CharField(
-        source='chorus.chapter_name',
-    )
+    # chapterName = serializers.CharField(
+    #     source='chorus.chapter_name',
+    # )
 
-    lead = serializers.CharField(
-        source='quartet.lead.name',
-    )
+    # lead = serializers.CharField(
+    #     source='quartet.lead.name',
+    # )
 
-    tenor = serializers.CharField(
-        source='quartet.tenor.name',
-    )
+    # tenor = serializers.CharField(
+    #     source='quartet.tenor.name',
+    # )
 
-    baritone = serializers.CharField(
-        source='quartet.baritone.name',
-    )
+    # baritone = serializers.CharField(
+    #     source='quartet.baritone.name',
+    # )
 
-    bass = serializers.CharField(
-        source='quartet.bass.name',
-    )
+    # bass = serializers.CharField(
+    #     source='quartet.bass.name',
+    # )
 
     class Meta:
         model = Group
-        fields = (
-            'id',
-            'slug',
-            'name',
-            'district',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'director',
-            'chapterName',
-            'lead',
-            'tenor',
-            'baritone',
-            'bass',
-        )
+        # fields = (
+        #     'id',
+        #     'slug',
+        #     'name',
+        #     'district',
+        #     'location',
+        #     'website',
+        #     'facebook',
+        #     'twitter',
+        #     'email',
+        #     'phone',
+        #     'picture',
+        #     'description',
+        #     'director',
+        #     'chapterName',
+        #     'lead',
+        #     'tenor',
+        #     'baritone',
+        #     'bass',
+        # )
 
 
 class ContestantContestSerializer(serializers.ModelSerializer):
@@ -244,97 +244,97 @@ class ConventionSerializer(serializers.ModelSerializer):
         )
 
 
-class ChorusSerializer(serializers.ModelSerializer):
-    contestants = ContestantGroupSerializer(
-        many=True,
-        read_only=True,
-    )
+# class ChorusSerializer(serializers.ModelSerializer):
+#     contestants = ContestantGroupSerializer(
+#         many=True,
+#         read_only=True,
+#     )
 
-    chapterName = serializers.CharField(
-        source='chapter_name',
-    )
+#     chapterName = serializers.CharField(
+#         source='chapter_name',
+#     )
 
-    chapterCode = serializers.CharField(
-        source='chapter_code',
-    )
+#     chapterCode = serializers.CharField(
+#         source='chapter_code',
+#     )
 
-    district = serializers.CharField(
-        source='get_district_display',
-    )
+#     district = serializers.CharField(
+#         source='get_district_display',
+#     )
 
-    class Meta:
-        model = Chorus
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'director',
-            'chapterName',
-            'chapterCode',
-            'district',
-            'contestants',
-        )
+#     class Meta:
+#         model = Chorus
+#         lookup_field = 'slug'
+#         fields = (
+#             'id',
+#             'url',
+#             'slug',
+#             'name',
+#             'location',
+#             'website',
+#             'facebook',
+#             'twitter',
+#             'email',
+#             'phone',
+#             'picture',
+#             'description',
+#             'notes',
+#             'director',
+#             'chapterName',
+#             'chapterCode',
+#             'district',
+#             'contestants',
+#         )
 
 
-class QuartetSerializer(serializers.ModelSerializer):
-    contestants = ContestantGroupSerializer(
-        many=True,
-        read_only=True,
-    )
+# class QuartetSerializer(serializers.ModelSerializer):
+#     contestants = ContestantGroupSerializer(
+#         many=True,
+#         read_only=True,
+#     )
 
-    lead = serializers.StringRelatedField(
-        read_only=True,
-    )
+#     lead = serializers.StringRelatedField(
+#         read_only=True,
+#     )
 
-    tenor = serializers.StringRelatedField(
-        read_only=True,
-    )
+#     tenor = serializers.StringRelatedField(
+#         read_only=True,
+#     )
 
-    baritone = serializers.StringRelatedField(
-        read_only=True,
-    )
+#     baritone = serializers.StringRelatedField(
+#         read_only=True,
+#     )
 
-    bass = serializers.StringRelatedField(
-        read_only=True,
-    )
+#     bass = serializers.StringRelatedField(
+#         read_only=True,
+#     )
 
-    district = serializers.CharField(
-        source='get_district_display',
-    )
+#     district = serializers.CharField(
+#         source='get_district_display',
+#     )
 
-    class Meta:
-        model = Quartet
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'slug',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'lead',
-            'tenor',
-            'baritone',
-            'bass',
-            'district',
-            'contestants',
-        )
+#     class Meta:
+#         model = Quartet
+#         lookup_field = 'slug'
+#         fields = (
+#             'id',
+#             'url',
+#             'slug',
+#             'name',
+#             'slug',
+#             'location',
+#             'website',
+#             'facebook',
+#             'twitter',
+#             'email',
+#             'phone',
+#             'picture',
+#             'description',
+#             'notes',
+#             'lead',
+#             'tenor',
+#             'baritone',
+#             'bass',
+#             'district',
+#             'contestants',
+#         )
