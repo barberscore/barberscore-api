@@ -1037,29 +1037,29 @@ class Performance(models.Model):
         ):
             try:
                 panel = self.contestant.contest.panel
-                song1_raw = sum([
+                self.song1_raw = sum([
                     self.mus1,
                     self.prs1,
                     self.sng1,
                 ])
-                song2_raw = sum([
+                self.song2_raw = sum([
                     self.mus2,
                     self.prs2,
                     self.sng2,
                 ])
-                total_raw = sum([
-                    song1_raw,
-                    song2_raw,
+                self.total_raw = sum([
+                    self.song1_raw,
+                    self.song2_raw,
                 ])
                 self.mus1_rata = round(self.mus1 / panel, 1)
                 self.prs1_rata = round(self.prs1 / panel, 1)
                 self.sng1_rata = round(self.sng1 / panel, 1)
-                self.song1_rata = round(song1_raw / (panel * 3), 1)
+                self.song1_rata = round(self.song1_raw / (panel * 3), 1)
                 self.mus2_rata = round(self.mus2 / panel, 1)
                 self.prs2_rata = round(self.prs2 / panel, 1)
                 self.sng2_rata = round(self.sng2 / panel, 1)
-                self.song2_rata = round(song2_raw / (panel * 3), 1)
-                self.total_rata = round(total_raw / (panel * 6), 1)
+                self.song2_rata = round(self.song2_raw / (panel * 3), 1)
+                self.total_rata = round(self.total_raw / (panel * 6), 1)
             except TypeError:
                 log.error("Check scores for performance {0}".format(self))
 
