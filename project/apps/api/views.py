@@ -11,8 +11,10 @@ from rest_framework import (
 
 from .models import (
     Convention,
-    # Chorus,
-    # Quartet,
+    Contest,
+    Group,
+    Contestant,
+    Performance,
 )
 
 # from .filters import (
@@ -23,8 +25,11 @@ from .models import (
 
 from .serializers import (
     ConventionSerializer,
-    # ChorusSerializer,
-    # QuartetSerializer,
+    ContestSerializer,
+    GroupSerializer,
+    ContestantSerializer,
+    PerformanceSerializer,
+
     # SearchSerializer,
 )
 
@@ -53,20 +58,34 @@ class ConventionViewSet(viewsets.ModelViewSet):
             'Las Vegas 2014',
             'Pittsburgh 2015',
         ]
-    ).prefetch_related('contests__contestants__performances')
+    )
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
 
-# class ChorusViewSet(viewsets.ModelViewSet):
-#     queryset = Chorus.objects.all().prefetch_related('contestants__performances')
-#     serializer_class = ChorusSerializer
-#     filter_class = ChorusFilter
-#     lookup_field = 'slug'
+class ContestViewSet(viewsets.ModelViewSet):
+    queryset = Contest.objects.all()
+    serializer_class = ContestSerializer
+    # filter_class = ChorusFilter
+    lookup_field = 'slug'
 
 
-# class QuartetViewSet(viewsets.ModelViewSet):
-#     queryset = Quartet.objects.all()
-#     serializer_class = QuartetSerializer
-#     filter_class = QuartetFilter
-#     lookup_field = 'slug'
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    # filter_class = QuartetFilter
+    lookup_field = 'slug'
+
+
+class ContestantViewSet(viewsets.ModelViewSet):
+    queryset = Contestant.objects.all()
+    serializer_class = ContestantSerializer
+    # filter_class = QuartetFilter
+    lookup_field = 'slug'
+
+
+class PerformanceViewSet(viewsets.ModelViewSet):
+    queryset = Performance.objects.all()
+    serializer_class = PerformanceSerializer
+    # filter_class = QuartetFilter
+    lookup_field = 'slug'
