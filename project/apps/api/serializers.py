@@ -105,9 +105,10 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # group = GroupSerializer(
-    #     read_only=True,
-    # )
+    group = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
 
     class Meta:
         model = Contestant
@@ -115,7 +116,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'slug',
-            # 'group',
+            'group',
             'seed',
             'prelim',
             'place',
