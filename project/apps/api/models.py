@@ -366,9 +366,7 @@ class Convention(models.Model):
         help_text="""
             The name of the convention.""",
         max_length=200,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     kind = models.IntegerField(
@@ -772,8 +770,6 @@ class Contestant(models.Model):
         always_update=True,
         unique=True,
         max_length=255,
-        # null=True,
-        # blank=True,
     )
 
     seed = models.IntegerField(
@@ -850,8 +846,6 @@ class Performance(models.Model):
         always_update=True,
         unique=True,
         max_length=255,
-        # null=True,
-        # blank=True,
     )
 
     queue = models.IntegerField(
