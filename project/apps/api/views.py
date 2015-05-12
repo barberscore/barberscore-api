@@ -78,7 +78,9 @@ class ContestantViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.all()
+    queryset = Group.objects.select_related(
+        'lead', 'tenor', 'baritone', 'bass'
+    ).all().prefetch_related('contestants')
     serializer_class = GroupSerializer
     # filter_class = QuartetFilter
     lookup_field = 'slug'

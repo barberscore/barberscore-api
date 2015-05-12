@@ -51,6 +51,12 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
+    contestants = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     district = serializers.CharField(
         source='get_district_display',
     )
@@ -95,6 +101,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
+            'contestants',
         )
 
 
