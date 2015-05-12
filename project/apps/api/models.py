@@ -939,6 +939,78 @@ class Performance(models.Model):
         default=4,
     )
 
+    mus1_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    prs1_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    sng1_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    song1_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    mus2_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    prs2_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    sng2_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    song2_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    total_rata = models.FloatField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    song1_raw = models.IntegerField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    song2_raw = models.IntegerField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    total_raw = models.IntegerField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
     class Meta:
         ordering = [
             'contestant',
@@ -954,94 +1026,44 @@ class Performance(models.Model):
             self.slug,
         )
 
-    @property
-    def mus1_rata(self):
-        try:
-            return "{0:.1f}".format(self.mus1 / self.contestant.contest.panel)
-        except:
-            return None
+    def save(self, *args, **kwargs):
+        if (
+            self.mus1 and
+            self.prs1 and
+            self.sng1 and
+            self.mus2 and
+            self.prs2 and
+            self.sng2
+        ):
+            try:
+                panel = self.contestant.contest.panel
+                song1_raw = sum([
+                    self.mus1,
+                    self.prs1,
+                    self.sng1,
+                ])
+                song2_raw = sum([
+                    self.mus2,
+                    self.prs2,
+                    self.sng2,
+                ])
+                total_raw = sum([
+                    song1_raw,
+                    song2_raw,
+                ])
+                self.mus1_rata = round(self.mus1 / panel, 1)
+                self.prs1_rata = round(self.prs1 / panel, 1)
+                self.sng1_rata = round(self.sng1 / panel, 1)
+                self.song1_rata = round(song1_raw / (panel * 3), 1)
+                self.mus2_rata = round(self.mus2 / panel, 1)
+                self.prs2_rata = round(self.prs2 / panel, 1)
+                self.sng2_rata = round(self.sng2 / panel, 1)
+                self.song2_rata = round(song2_raw / (panel * 3), 1)
+                self.total_rata = round(total_raw / (panel * 6), 1)
+            except TypeError:
+                log.error("Check scores for performance {0}".format(self))
 
-    @property
-    def prs1_rata(self):
-        try:
-            return "{0:.1f}".format(self.prs1 / self.contestant.contest.panel)
-        except:
-            return None
-
-    @property
-    def sng1_rata(self):
-        try:
-            return "{0:.1f}".format(self.sng1 / self.contestant.contest.panel)
-        except:
-            return None
-
-    @property
-    def song1_raw(self):
-        try:
-            return sum([self.mus1, self.prs1, self.sng1])
-        except:
-            return None
-
-    @property
-    def song1_rata(self):
-        try:
-            return "{0:.1f}".format(
-                self.song1_raw / (self.contestant.contest.panel * 3)
-            )
-        except:
-            return None
-
-    def mus2_rata(self):
-        try:
-            return "{0:.1f}".format(self.mus2 / self.contestant.contest.panel)
-        except:
-            return None
-
-    @property
-    def prs2_rata(self):
-        try:
-            return "{0:.1f}".format(self.prs2 / self.contestant.contest.panel)
-        except:
-            return None
-
-    @property
-    def sng2_rata(self):
-        try:
-            return "{0:.1f}".format(self.sng2 / self.contestant.contest.panel)
-        except:
-            return None
-
-    @property
-    def song2_raw(self):
-        try:
-            return sum([self.mus2, self.prs2, self.sng2])
-        except:
-            return None
-
-    @property
-    def song2_rata(self):
-        try:
-            return "{0:.1f}".format(
-                self.song2_raw / (self.contestant.contest.panel * 3)
-            )
-        except:
-            return None
-
-    @property
-    def total_raw(self):
-        try:
-            return sum([self.song1_raw, self.song2_raw])
-        except:
-            return None
-
-    @property
-    def total_rata(self):
-        try:
-            return "{0:.1f}".format(
-                self.total_raw / (self.contestant.contest.panel * 6)
-            )
-        except:
-            return None
+        super(Performance, self).save(*args, **kwargs)
 
 
 class Award(models.Model):
