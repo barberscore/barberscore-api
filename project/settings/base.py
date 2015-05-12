@@ -130,5 +130,5 @@ INSTALLED_APPS = (
     'watson',
     'rest_framework',
     'apps.api',
-    'apps.website',
+    # 'apps.website',
 )

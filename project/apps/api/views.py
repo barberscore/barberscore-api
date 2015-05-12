@@ -11,20 +11,20 @@ from rest_framework import (
 
 from .models import (
     Convention,
-    Chorus,
-    Quartet,
+    # Chorus,
+    # Quartet,
 )
 
-from .filters import (
-    ChorusFilter,
-    QuartetFilter,
-)
+# from .filters import (
+#     # ChorusFilter,
+#     # QuartetFilter,
+# )
 
 
 from .serializers import (
     ConventionSerializer,
-    ChorusSerializer,
-    QuartetSerializer,
+    # ChorusSerializer,
+    # QuartetSerializer,
     # SearchSerializer,
 )
 
@@ -58,15 +58,15 @@ class ConventionViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class ChorusViewSet(viewsets.ModelViewSet):
-    queryset = Chorus.objects.all().prefetch_related('contestants__performances')
-    serializer_class = ChorusSerializer
-    filter_class = ChorusFilter
-    lookup_field = 'slug'
+# class ChorusViewSet(viewsets.ModelViewSet):
+#     queryset = Chorus.objects.all().prefetch_related('contestants__performances')
+#     serializer_class = ChorusSerializer
+#     filter_class = ChorusFilter
+#     lookup_field = 'slug'
 
 
-class QuartetViewSet(viewsets.ModelViewSet):
-    queryset = Quartet.objects.all()
-    serializer_class = QuartetSerializer
-    filter_class = QuartetFilter
-    lookup_field = 'slug'
+# class QuartetViewSet(viewsets.ModelViewSet):
+#     queryset = Quartet.objects.all()
+#     serializer_class = QuartetSerializer
+#     filter_class = QuartetFilter
+#     lookup_field = 'slug'

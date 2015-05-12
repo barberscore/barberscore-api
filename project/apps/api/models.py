@@ -5,7 +5,7 @@ log = logging.getLogger(__name__)
 
 import uuid
 
-import csv
+# import csv
 import os
 import datetime
 from django.db import models
@@ -19,7 +19,7 @@ from django.core.exceptions import (
     ValidationError,
 )
 
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse
 
 from model_utils.managers import InheritanceManager
 
@@ -263,7 +263,7 @@ class Group(Common):
         help_text="""Tenor""",
         blank=True,
         null=True,
-        related_name='quartet_tenors_2',
+        related_name='tenor_leads_2',
     )
 
     baritone_2 = models.ForeignKey(
@@ -271,7 +271,7 @@ class Group(Common):
         help_text="""Baritone""",
         blank=True,
         null=True,
-        related_name='quartet_baritones_2',
+        related_name='baritone_leads_2',
     )
 
     bass_2 = models.ForeignKey(
@@ -279,45 +279,15 @@ class Group(Common):
         help_text="""Bass""",
         blank=True,
         null=True,
-        related_name='quartet_basses_2',
+        related_name='bass_leads_2',
     )
-
-    director_2 = models.CharField(
-        help_text="""
-            The name of the director(s) of the chorus.""",
-        max_length=200,
-        blank=True,
-    )
-
-    chapter_name_2 = models.CharField(
-        help_text="""
-            The name of the director(s) of the chorus.""",
-        max_length=200,
-        blank=True,
-    )
-
-    chapter_code_2 = models.CharField(
-        help_text="""
-            The code of the director(s) of the chorus.""",
-        max_length=200,
-        blank=True,
-    )
-
-    objects = InheritanceManager()
-
-    def __unicode__(self):
-        return "{0}".format(self.name)
-
-
-class Quartet(Group):
-    """An individual quartet."""
 
     lead = models.ForeignKey(
         'Singer',
         help_text="""Lead""",
         blank=True,
         null=True,
-        related_name='quartet_leads',
+        related_name='lead_groups',
     )
 
     tenor = models.ForeignKey(
@@ -325,7 +295,7 @@ class Quartet(Group):
         help_text="""Tenor""",
         blank=True,
         null=True,
-        related_name='quartet_tenors',
+        related_name='tenor_groups',
     )
 
     baritone = models.ForeignKey(
@@ -333,7 +303,7 @@ class Quartet(Group):
         help_text="""Baritone""",
         blank=True,
         null=True,
-        related_name='quartet_baritones',
+        related_name='baritone_groups',
     )
 
     bass = models.ForeignKey(
@@ -341,24 +311,9 @@ class Quartet(Group):
         help_text="""Bass""",
         blank=True,
         null=True,
-        related_name='quartet_basses',
+        related_name='bass_groups',
     )
 
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return "{0}".format(self.name)
-
-    def get_absolute_url(self):
-        return reverse(
-            'website:quartet-detail',
-            args=[self.slug],
-        )
-
-
-class Chorus(Group):
-    """An individual chorus."""
     director = models.CharField(
         help_text="""
             The name of the director(s) of the chorus.""",
@@ -380,18 +335,95 @@ class Chorus(Group):
         blank=True,
     )
 
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "choruses"
+    objects = InheritanceManager()
 
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    def get_absolute_url(self):
-        return reverse(
-            'chorus-detail',
-            args=[self.slug],
-        )
+
+# class Quartet(Group):
+#     """An individual quartet."""
+
+#     lead = models.ForeignKey(
+#         'Singer',
+#         help_text="""Lead""",
+#         blank=True,
+#         null=True,
+#         related_name='quartet_leads',
+#     )
+
+#     tenor = models.ForeignKey(
+#         'Singer',
+#         help_text="""Tenor""",
+#         blank=True,
+#         null=True,
+#         related_name='quartet_tenors',
+#     )
+
+#     baritone = models.ForeignKey(
+#         'Singer',
+#         help_text="""Baritone""",
+#         blank=True,
+#         null=True,
+#         related_name='quartet_baritones',
+#     )
+
+#     bass = models.ForeignKey(
+#         'Singer',
+#         help_text="""Bass""",
+#         blank=True,
+#         null=True,
+#         related_name='quartet_basses',
+#     )
+
+#     class Meta:
+#         ordering = ['name']
+
+#     def __unicode__(self):
+#         return "{0}".format(self.name)
+
+#     def get_absolute_url(self):
+#         return reverse(
+#             'website:quartet-detail',
+#             args=[self.slug],
+#         )
+
+
+# class Chorus(Group):
+#     """An individual chorus."""
+#     director = models.CharField(
+#         help_text="""
+#             The name of the director(s) of the chorus.""",
+#         max_length=200,
+#         blank=True,
+#     )
+
+#     chapter_name = models.CharField(
+#         help_text="""
+#             The name of the director(s) of the chorus.""",
+#         max_length=200,
+#         blank=True,
+#     )
+
+#     chapter_code = models.CharField(
+#         help_text="""
+#             The code of the director(s) of the chorus.""",
+#         max_length=200,
+#         blank=True,
+#     )
+
+#     class Meta:
+#         ordering = ('name',)
+#         verbose_name_plural = "choruses"
+
+#     def __unicode__(self):
+#         return "{0}".format(self.name)
+
+#     def get_absolute_url(self):
+#         return reverse(
+#             'chorus-detail',
+#             args=[self.slug],
+#         )
 
 
 class District(Common):
@@ -726,120 +758,120 @@ class Contest(models.Model):
     #         args=[self.slug],
     #     )
 
-    def create_group_from_scores(self, name, district_name, chapter_name=None):
-        if self.kind == self.CHORUS:
-            if name.startswith("The "):
-                name = name.split("The ", 1)[1]
-            if name.endswith(" Chorus"):
-                name = name.split(" Chorus", 1)[0]
-            name = name.strip()
-            try:
-                chorus = Chorus.objects.get(
-                    name__icontains=name,
-                )
-                created = False
-            except Chorus.MultipleObjectsReturned as e:
-                log.error("Duplicate exists for {0}".format(name))
-                raise e
-            except Chorus.DoesNotExist:
-                try:
-                    district = District.objects.get(
-                        name=district_name,
-                    )
-                except District.DoesNotExist as e:
-                    # TODO Kludge
-                    if district_name == 'AAMBS':
-                        district = District.objects.get(name='BHA')
-                    else:
-                        log.error("No District match for {0}".format(
-                            district_name)
-                        )
-                        district = District.objects.get(name='BHS')
+    # def create_group_from_scores(self, name, district_name, chapter_name=None):
+    #     if self.kind == self.CHORUS:
+    #         if name.startswith("The "):
+    #             name = name.split("The ", 1)[1]
+    #         if name.endswith(" Chorus"):
+    #             name = name.split(" Chorus", 1)[0]
+    #         name = name.strip()
+    #         try:
+    #             chorus = Chorus.objects.get(
+    #                 name__icontains=name,
+    #             )
+    #             created = False
+    #         except Chorus.MultipleObjectsReturned as e:
+    #             log.error("Duplicate exists for {0}".format(name))
+    #             raise e
+    #         except Chorus.DoesNotExist:
+    #             try:
+    #                 district = District.objects.get(
+    #                     name=district_name,
+    #                 )
+    #             except District.DoesNotExist as e:
+    #                 # TODO Kludge
+    #                 if district_name == 'AAMBS':
+    #                     district = District.objects.get(name='BHA')
+    #                 else:
+    #                     log.error("No District match for {0}".format(
+    #                         district_name)
+    #                     )
+    #                     district = District.objects.get(name='BHS')
 
-                chorus = Chorus.objects.create(
-                    name=name,
-                    district=district,
-                    chapter_name=chapter_name,
-                )
-                created = True
-            log.info("{0} {1}".format(chorus, created))
-            return chorus
-        else:
-            if name.startswith("The "):
-                match = name.split("The ", 1)[1]
-            else:
-                match = name
-            try:
-                quartet = Quartet.objects.get(
-                    name__endswith=match,
-                )
-                created = False
-            except Quartet.MultipleObjectsReturned as e:
-                log.error("Duplicate exists for {0}".format(match))
-                raise e
-            except Quartet.DoesNotExist:
-                try:
-                    district = District.objects.get(
-                        name=district_name,
-                    )
-                except District.DoesNotExist as e:
-                    # TODO Kludge
-                    log.debug(district_name)
-                    if district_name == 'AAMBS':
-                        district = District.objects.get(name='BHA')
-                    else:
-                        log.error("No District match for {0}".format(
-                            district_name)
-                        )
-                        district = District.objects.get(name='BHS')
+    #             chorus = Chorus.objects.create(
+    #                 name=name,
+    #                 district=district,
+    #                 chapter_name=chapter_name,
+    #             )
+    #             created = True
+    #         log.info("{0} {1}".format(chorus, created))
+    #         return chorus
+    #     else:
+    #         if name.startswith("The "):
+    #             match = name.split("The ", 1)[1]
+    #         else:
+    #             match = name
+    #         try:
+    #             quartet = Quartet.objects.get(
+    #                 name__endswith=match,
+    #             )
+    #             created = False
+    #         except Quartet.MultipleObjectsReturned as e:
+    #             log.error("Duplicate exists for {0}".format(match))
+    #             raise e
+    #         except Quartet.DoesNotExist:
+    #             try:
+    #                 district = District.objects.get(
+    #                     name=district_name,
+    #                 )
+    #             except District.DoesNotExist as e:
+    #                 # TODO Kludge
+    #                 log.debug(district_name)
+    #                 if district_name == 'AAMBS':
+    #                     district = District.objects.get(name='BHA')
+    #                 else:
+    #                     log.error("No District match for {0}".format(
+    #                         district_name)
+    #                     )
+    #                     district = District.objects.get(name='BHS')
 
-                quartet = Quartet.objects.create(
-                    name=name,
-                    district=district,
-                )
-                created = True
-            log.info("{0} {1}".format(quartet, created))
-            return quartet
+    #             quartet = Quartet.objects.create(
+    #                 name=name,
+    #                 district=district,
+    #             )
+    #             created = True
+    #         log.info("{0} {1}".format(quartet, created))
+    #         return quartet
 
-    def import_scores(self):
-        reader = csv.reader(self.scoresheet_csv)
-        data = [row for row in reader]
+    # def import_scores(self):
+    #     reader = csv.reader(self.scoresheet_csv)
+    #     data = [row for row in reader]
 
-        performance = {}
+    #     performance = {}
 
-        for row in data:
-            if not row[4]:
-                row[4] = 'BHS'
-            performance['contest'] = self
-            performance['round'] = row[0]
-            performance['place'] = row[1]
-            try:
-                performance['group'] = self.create_group_from_scores(
-                    name=row[2],
-                    chapter_name=row[3],
-                    district_name=row[4],
-                )
-            except Exception as e:
-                log.error(e)
-                raise e
+    #     for row in data:
+    #         if not row[4]:
+    #             row[4] = 'BHS'
+    #         performance['contest'] = self
+    #         performance['round'] = row[0]
+    #         performance['place'] = row[1]
+    #         try:
+    #             performance['group'] = self.create_group_from_scores(
+    #                 name=row[2],
+    #                 chapter_name=row[3],
+    #                 district_name=row[4],
+    #             )
+    #         except Exception as e:
+    #             log.error(e)
+    #             raise e
 
-            performance['song1'] = row[5]
-            performance['mus1'] = row[6]
-            performance['prs1'] = row[7]
-            performance['sng1'] = row[8]
-            performance['song2'] = row[9]
-            performance['mus2'] = row[10]
-            performance['prs2'] = row[11]
-            performance['sng2'] = row[12]
-            try:
-                performance['men'] = row[13]
-                if not performance['men']:
-                    performance['men'] = 4
-            except IndexError:
-                performance['men'] = 4
-            result = Performance.objects.create(**performance)
-            log.info("Created performance: {0}".format(result))
-        return "Done"
+    #         performance['song1'] = row[5]
+    #         performance['mus1'] = row[6]
+    #         performance['prs1'] = row[7]
+    #         performance['sng1'] = row[8]
+    #         performance['song2'] = row[9]
+    #         performance['mus2'] = row[10]
+    #         performance['prs2'] = row[11]
+    #         performance['sng2'] = row[12]
+    #         try:
+    #             performance['men'] = row[13]
+    #             if not performance['men']:
+    #                 performance['men'] = 4
+    #         except IndexError:
+    #             performance['men'] = 4
+    #         result = Performance.objects.create(**performance)
+    #         log.info("Created performance: {0}".format(result))
+    #     return "Done"
 
 
 class Contestant(models.Model):
