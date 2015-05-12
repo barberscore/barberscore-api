@@ -1,20 +1,12 @@
 from rest_framework import serializers
 
 from .models import (
-    # Chorus,
-    # Quartet,
-    Contest,
     Convention,
+    Contest,
     Contestant,
-    Performance,
     Group,
+    Performance,
 )
-
-
-# class SearchSerializer(serializers.Serializer):
-#     title = serializers.CharField()
-#     url = serializers.URLField()
-#     content = serializers.CharField()
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -62,20 +54,12 @@ class GroupSerializer(serializers.ModelSerializer):
         source='get_district_display',
     )
 
-    # director = serializers.CharField(
-    #     source='chorus.director',
-    # )
-
-    # chapterName = serializers.CharField(
-    #     source='chorus.chapter_name',
-    # )
-
     # lead = serializers.CharField(
-    #     source='quartet.lead.name',
+    #     source='singer.name',
     # )
 
     # tenor = serializers.CharField(
-    #     source='quartet.tenor.name',
+    #     source='.name',
     # )
 
     # baritone = serializers.CharField(
@@ -88,26 +72,26 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        # fields = (
-        #     'id',
-        #     'slug',
-        #     'name',
-        #     'district',
-        #     'location',
-        #     'website',
-        #     'facebook',
-        #     'twitter',
-        #     'email',
-        #     'phone',
-        #     'picture',
-        #     'description',
-        #     'director',
-        #     'chapterName',
-        #     'lead',
-        #     'tenor',
-        #     'baritone',
-        #     'bass',
-        # )
+        fields = (
+            'id',
+            'slug',
+            'name',
+            'district',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            # 'director',
+            # 'chapterName',
+            # 'lead',
+            # 'tenor',
+            # 'baritone',
+            # 'bass',
+        )
 
 
 class ContestantContestSerializer(serializers.ModelSerializer):
@@ -242,99 +226,3 @@ class ConventionSerializer(serializers.ModelSerializer):
             'timezone',
             'contests',
         )
-
-
-# class ChorusSerializer(serializers.ModelSerializer):
-#     contestants = ContestantGroupSerializer(
-#         many=True,
-#         read_only=True,
-#     )
-
-#     chapterName = serializers.CharField(
-#         source='chapter_name',
-#     )
-
-#     chapterCode = serializers.CharField(
-#         source='chapter_code',
-#     )
-
-#     district = serializers.CharField(
-#         source='get_district_display',
-#     )
-
-#     class Meta:
-#         model = Chorus
-#         lookup_field = 'slug'
-#         fields = (
-#             'id',
-#             'url',
-#             'slug',
-#             'name',
-#             'location',
-#             'website',
-#             'facebook',
-#             'twitter',
-#             'email',
-#             'phone',
-#             'picture',
-#             'description',
-#             'notes',
-#             'director',
-#             'chapterName',
-#             'chapterCode',
-#             'district',
-#             'contestants',
-#         )
-
-
-# class QuartetSerializer(serializers.ModelSerializer):
-#     contestants = ContestantGroupSerializer(
-#         many=True,
-#         read_only=True,
-#     )
-
-#     lead = serializers.StringRelatedField(
-#         read_only=True,
-#     )
-
-#     tenor = serializers.StringRelatedField(
-#         read_only=True,
-#     )
-
-#     baritone = serializers.StringRelatedField(
-#         read_only=True,
-#     )
-
-#     bass = serializers.StringRelatedField(
-#         read_only=True,
-#     )
-
-#     district = serializers.CharField(
-#         source='get_district_display',
-#     )
-
-#     class Meta:
-#         model = Quartet
-#         lookup_field = 'slug'
-#         fields = (
-#             'id',
-#             'url',
-#             'slug',
-#             'name',
-#             'slug',
-#             'location',
-#             'website',
-#             'facebook',
-#             'twitter',
-#             'email',
-#             'phone',
-#             'picture',
-#             'description',
-#             'notes',
-#             'lead',
-#             'tenor',
-#             'baritone',
-#             'bass',
-#             'district',
-#             'contestants',
-#         )
