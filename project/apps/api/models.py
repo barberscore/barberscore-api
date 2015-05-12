@@ -226,24 +226,81 @@ class Group(Common):
         (SPATS, "SPATS"),
     )
 
+    QUARTET = 1
+    CHORUS = 2
+
+    KIND_CHOICES = (
+        (QUARTET, "Quartet"),
+        (CHORUS, "Chorus"),
+    )
+
     awards = models.ManyToManyField(
         'Award',
         through='GroupAward',
         related_name='groups',
     )
 
-    district_OLD = models.ForeignKey(
-        'District',
-        help_text="""
-            This is the district the group is officially representing in the contest.""",
-        blank=True,
-        null=True,
-        related_name='groups',
-    )
-
     district = models.IntegerField(
         choices=DISTRICT_CHOICES,
         default=BHS,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND_CHOICES,
+        default=QUARTET,
+    )
+
+    lead_2 = models.ForeignKey(
+        'Singer',
+        help_text="""Lead""",
+        blank=True,
+        null=True,
+        related_name='quartet_leads_2',
+    )
+
+    tenor_2 = models.ForeignKey(
+        'Singer',
+        help_text="""Tenor""",
+        blank=True,
+        null=True,
+        related_name='quartet_tenors_2',
+    )
+
+    baritone_2 = models.ForeignKey(
+        'Singer',
+        help_text="""Baritone""",
+        blank=True,
+        null=True,
+        related_name='quartet_baritones_2',
+    )
+
+    bass_2 = models.ForeignKey(
+        'Singer',
+        help_text="""Bass""",
+        blank=True,
+        null=True,
+        related_name='quartet_basses_2',
+    )
+
+    director_2 = models.CharField(
+        help_text="""
+            The name of the director(s) of the chorus.""",
+        max_length=200,
+        blank=True,
+    )
+
+    chapter_name_2 = models.CharField(
+        help_text="""
+            The name of the director(s) of the chorus.""",
+        max_length=200,
+        blank=True,
+    )
+
+    chapter_code_2 = models.CharField(
+        help_text="""
+            The code of the director(s) of the chorus.""",
+        max_length=200,
+        blank=True,
     )
 
     objects = InheritanceManager()
