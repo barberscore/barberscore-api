@@ -21,8 +21,6 @@ from django.core.exceptions import (
 
 # from django.core.urlresolvers import reverse
 
-from model_utils.managers import InheritanceManager
-
 from timezone_field import TimeZoneField
 
 from phonenumber_field.modelfields import PhoneNumberField
@@ -250,38 +248,6 @@ class Group(Common):
         default=QUARTET,
     )
 
-    lead_2 = models.ForeignKey(
-        'Singer',
-        help_text="""Lead""",
-        blank=True,
-        null=True,
-        related_name='quartet_leads_2',
-    )
-
-    tenor_2 = models.ForeignKey(
-        'Singer',
-        help_text="""Tenor""",
-        blank=True,
-        null=True,
-        related_name='tenor_leads_2',
-    )
-
-    baritone_2 = models.ForeignKey(
-        'Singer',
-        help_text="""Baritone""",
-        blank=True,
-        null=True,
-        related_name='baritone_leads_2',
-    )
-
-    bass_2 = models.ForeignKey(
-        'Singer',
-        help_text="""Bass""",
-        blank=True,
-        null=True,
-        related_name='bass_leads_2',
-    )
-
     lead = models.ForeignKey(
         'Singer',
         help_text="""Lead""",
@@ -335,95 +301,8 @@ class Group(Common):
         blank=True,
     )
 
-    objects = InheritanceManager()
-
     def __unicode__(self):
         return "{0}".format(self.name)
-
-
-# class Quartet(Group):
-#     """An individual quartet."""
-
-#     lead = models.ForeignKey(
-#         'Singer',
-#         help_text="""Lead""",
-#         blank=True,
-#         null=True,
-#         related_name='quartet_leads',
-#     )
-
-#     tenor = models.ForeignKey(
-#         'Singer',
-#         help_text="""Tenor""",
-#         blank=True,
-#         null=True,
-#         related_name='quartet_tenors',
-#     )
-
-#     baritone = models.ForeignKey(
-#         'Singer',
-#         help_text="""Baritone""",
-#         blank=True,
-#         null=True,
-#         related_name='quartet_baritones',
-#     )
-
-#     bass = models.ForeignKey(
-#         'Singer',
-#         help_text="""Bass""",
-#         blank=True,
-#         null=True,
-#         related_name='quartet_basses',
-#     )
-
-#     class Meta:
-#         ordering = ['name']
-
-#     def __unicode__(self):
-#         return "{0}".format(self.name)
-
-#     def get_absolute_url(self):
-#         return reverse(
-#             'website:quartet-detail',
-#             args=[self.slug],
-#         )
-
-
-# class Chorus(Group):
-#     """An individual chorus."""
-#     director = models.CharField(
-#         help_text="""
-#             The name of the director(s) of the chorus.""",
-#         max_length=200,
-#         blank=True,
-#     )
-
-#     chapter_name = models.CharField(
-#         help_text="""
-#             The name of the director(s) of the chorus.""",
-#         max_length=200,
-#         blank=True,
-#     )
-
-#     chapter_code = models.CharField(
-#         help_text="""
-#             The code of the director(s) of the chorus.""",
-#         max_length=200,
-#         blank=True,
-#     )
-
-#     class Meta:
-#         ordering = ('name',)
-#         verbose_name_plural = "choruses"
-
-#     def __unicode__(self):
-#         return "{0}".format(self.name)
-
-#     def get_absolute_url(self):
-#         return reverse(
-#             'chorus-detail',
-#             args=[self.slug],
-#         )
 
 
 class District(Common):
@@ -457,12 +336,6 @@ class District(Common):
     def __unicode__(self):
         return "{0}".format(self.name)
 
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:district-detail',
-    #         args=[self.slug],
-    #     )
-
 
 class Convention(models.Model):
     YEAR_CHOICES = []
@@ -489,12 +362,6 @@ class Convention(models.Model):
         editable=False,
     )
 
-    district = models.ForeignKey(
-        'District',
-        null=True,
-        blank=True,
-    )
-
     name = models.CharField(
         help_text="""
             The name of the convention.""",
@@ -513,6 +380,12 @@ class Convention(models.Model):
     year = models.IntegerField(
         choices=YEAR_CHOICES,
         default=datetime.datetime.now().year,
+        null=True,
+        blank=True,
+    )
+
+    district = models.ForeignKey(
+        'District',
         null=True,
         blank=True,
     )
