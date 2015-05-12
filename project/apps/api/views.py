@@ -64,14 +64,18 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 
 class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.all().prefetch_related('contestants')
+    queryset = Contest.objects.select_related(
+        'convention',
+    ).all().prefetch_related('contestants')
     serializer_class = ContestSerializer
     # filter_class = ChorusFilter
     lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.all().prefetch_related('performances', 'group')
+    queryset = Contestant.objects.select_related(
+        'contest', 'group',
+    ).all().prefetch_related('performances')
     serializer_class = ContestantSerializer
     # filter_class = QuartetFilter
     lookup_field = 'slug'
