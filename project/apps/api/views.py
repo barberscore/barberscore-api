@@ -58,28 +58,28 @@ class ConventionViewSet(viewsets.ModelViewSet):
             'Las Vegas 2014',
             'Pittsburgh 2015',
         ]
-    )
+    ).prefetch_related('contests')
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.all()
+    queryset = Contest.objects.all().prefetch_related('contestants')
     serializer_class = ContestSerializer
     # filter_class = ChorusFilter
+    lookup_field = 'slug'
+
+
+class ContestantViewSet(viewsets.ModelViewSet):
+    queryset = Contestant.objects.all().prefetch_related('performances', 'group')
+    serializer_class = ContestantSerializer
+    # filter_class = QuartetFilter
     lookup_field = 'slug'
 
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    # filter_class = QuartetFilter
-    lookup_field = 'slug'
-
-
-class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.all()
-    serializer_class = ContestantSerializer
     # filter_class = QuartetFilter
     lookup_field = 'slug'
 
