@@ -10,21 +10,29 @@ class ApiConfig(AppConfig):
     name = 'apps.api'
 
     def ready(self):
-        chorus = self.get_model("Chorus")
+        group = self.get_model("Group")
         watson.register(
-            chorus,
+            group,
             fields=(
                 "name",
             ),
         )
 
-        quartet = self.get_model("Quartet")
-        watson.register(
-            quartet,
-            fields=(
-                "name",
-            )
-        )
+        # chorus = self.get_model("Chorus")
+        # watson.register(
+        #     chorus,
+        #     fields=(
+        #         "name",
+        #     ),
+        # )
+
+        # quartet = self.get_model("Quartet")
+        # watson.register(
+        #     quartet,
+        #     fields=(
+        #         "name",
+        #     )
+        # )
 
         # convention = self.get_model("Convention")
         # watson.register(convention)
