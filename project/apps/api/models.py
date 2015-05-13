@@ -304,6 +304,11 @@ class Group(Common):
     def __unicode__(self):
         return "{0}".format(self.name)
 
+    class Meta:
+        ordering = (
+            'name',
+        )
+
 
 class District(Common):
     BHS = 0
