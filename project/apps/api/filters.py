@@ -21,7 +21,7 @@ class GroupFilter(django_filters.FilterSet):
 class ScheduleFilter(django_filters.FilterSet):
     day = django_filters.CharFilter(
         name='stagetime',
-        lookup_type='startswith',
+        lookup_type='week_day',
     )
 
     class Meta:
