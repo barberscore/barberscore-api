@@ -19,6 +19,7 @@ from .models import (
 
 from .filters import (
     ScheduleFilter,
+    GroupFilter,
 )
 
 
@@ -86,7 +87,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         'lead', 'tenor', 'baritone', 'bass'
     ).all().prefetch_related('contestants')
     serializer_class = GroupSerializer
-    # filter_class = QuartetFilter
+    filter_class = GroupFilter
     lookup_field = 'slug'
 
 
