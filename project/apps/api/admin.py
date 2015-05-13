@@ -191,6 +191,16 @@ class ContestantAdmin(admin.ModelAdmin):
         'score',
     )
 
+    search_fields = (
+        'group__name',
+    )
+
+    list_filter = (
+        'contest__level',
+        'contest__kind',
+        'contest__year',
+    )
+
     inlines = [
         PerformanceInline,
     ]
