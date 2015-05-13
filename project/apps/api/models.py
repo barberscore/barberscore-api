@@ -858,7 +858,6 @@ class Performance(models.Model):
             (1, 1),
             (2, 2)
         ),
-        default=1,
         null=True,
         blank=True,
     )
