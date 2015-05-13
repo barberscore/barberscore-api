@@ -17,10 +17,9 @@ from .models import (
     Performance,
 )
 
-# from .filters import (
-#     # ChorusFilter,
-#     # QuartetFilter,
-# )
+from .filters import (
+    ScheduleFilter,
+)
 
 
 from .serializers import (
@@ -29,6 +28,7 @@ from .serializers import (
     GroupSerializer,
     ContestantSerializer,
     PerformanceSerializer,
+    ScheduleSerializer,
 
     # SearchSerializer,
 )
@@ -56,7 +56,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
             'Portland 2012',
             'Toronto 2013',
             'Las Vegas 2014',
-            'Pittsburgh 2015',
+            # 'Pittsburgh 2015',
         ]
     ).prefetch_related('contests')
     serializer_class = ConventionSerializer
@@ -93,5 +93,16 @@ class GroupViewSet(viewsets.ModelViewSet):
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
-    # filter_class = QuartetFilter
+    # filter_class = PerformanceFilter
     lookup_field = 'slug'
+
+
+class ScheduleViewSet(viewsets.ModelViewSet):
+    queryset = Performance.objects.select_related(
+        'contestant__contest',
+        'contestant__group',
+    ).filter(
+        contestant__contest__convention__name='Pittsburgh 2015'
+    )
+    serializer_class = ScheduleSerializer
+    filter_class = ScheduleFilter

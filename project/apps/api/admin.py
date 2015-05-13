@@ -143,6 +143,7 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     list_filter = (
         'contestant__contest',
+        'stagetime',
     )
 
     ordering = (

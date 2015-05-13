@@ -6,6 +6,7 @@ from .views import (
     GroupViewSet,
     ContestantViewSet,
     PerformanceViewSet,
+    ScheduleViewSet,
     # SearchViewSet,
 )
 
@@ -16,6 +17,7 @@ router.register(r'contests', ContestViewSet)
 router.register(r'groups', GroupViewSet)
 router.register(r'contestants', ContestantViewSet)
 router.register(r'performances', PerformanceViewSet)
+router.register(r'schedule', ScheduleViewSet)
 # router.register(r'search', SearchViewSet, base_name='search')
 
 urlpatterns = router.urls

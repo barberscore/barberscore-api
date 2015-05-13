@@ -196,3 +196,41 @@ class ConventionSerializer(serializers.ModelSerializer):
             'timezone',
             'contests',
         )
+
+
+class ScheduleSerializer(serializers.ModelSerializer):
+    round = serializers.CharField(
+        source='get_round_display',
+    )
+
+    kind = serializers.CharField(
+        source='contestant.contest.get_kind_display',
+    )
+
+    prelim = serializers.FloatField(
+        source='contestant.prelim',
+    )
+
+    group = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+        source='contestant.group',
+    )
+
+    class Meta:
+        model = Performance
+        lookup_field = 'slug'
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'round',
+            'kind',
+            'group',
+            'prelim',
+            'session',
+            'queue',
+            'stagetime',
+            'song1',
+            'song2',
+        )
