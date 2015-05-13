@@ -225,6 +225,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'round',
+            # 'day',
             'kind',
             'group',
             'prelim',

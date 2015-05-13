@@ -1010,6 +1010,10 @@ class Performance(models.Model):
         editable=False,
     )
 
+    # @property
+    # def day(self):
+    #     return self.stagetime.strftime("%A")
+
     class Meta:
         ordering = [
             'contestant',
