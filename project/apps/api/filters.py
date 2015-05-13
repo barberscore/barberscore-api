@@ -2,6 +2,7 @@ import django_filters
 
 from .models import (
     Group,
+    Performance,
 )
 
 
@@ -14,4 +15,20 @@ class GroupFilter(django_filters.FilterSet):
         model = Group
         fields = [
             'name',
+        ]
+
+
+class ScheduleFilter(django_filters.FilterSet):
+    day = django_filters.CharFilter(
+        name='stagetime',
+        lookup_type='startswith',
+    )
+
+    class Meta:
+        model = Performance
+        fields = [
+            'day',
+        ]
+        order_by = [
+            'stagetime',
         ]
