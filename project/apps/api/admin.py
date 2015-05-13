@@ -16,6 +16,7 @@ from .models import (
     Contestant,
     Group,
     Performance,
+    Singer,
 )
 
 
@@ -194,3 +195,11 @@ class ContestantAdmin(admin.ModelAdmin):
     ]
 
     save_on_top = True
+
+
+@admin.register(Singer)
+class SingerAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'name',
+    )
