@@ -14,6 +14,20 @@ class PerformanceSerializer(serializers.ModelSerializer):
         source='get_round_display',
     )
 
+    kind = serializers.CharField(
+        source='contestant.contest.get_kind_display',
+    )
+
+    prelim = serializers.FloatField(
+        source='contestant.prelim',
+    )
+
+    group = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+        source='contestant.group',
+    )
+
     class Meta:
         model = Performance
         lookup_field = 'slug'
@@ -21,6 +35,9 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'id',
             'slug',
             'round',
+            'kind',
+            'prelim',
+            'group',
             'queue',
             'session',
             'stagetime',
@@ -106,20 +123,29 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
+    # contest = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # performances = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # group = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    group = GroupSerializer(
         read_only=True,
-        slug_field='slug',
     )
 
-    performances = serializers.SlugRelatedField(
+    performances = PerformanceSerializer(
+        read_only=True,
         many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    group = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
     )
 
     class Meta:
@@ -128,21 +154,28 @@ class ContestantSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'slug',
-            'contest',
+            # 'contest',
             'group',
             'seed',
             'prelim',
             'place',
             'score',
+            'queue',
+            'stagetime',
             'performances',
         )
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    contestants = serializers.SlugRelatedField(
+    # contestants = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    contestants = ContestantSerializer(
         many=True,
         read_only=True,
-        slug_field='slug',
     )
 
     level = serializers.CharField(
@@ -178,10 +211,15 @@ class ContestSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    contests = serializers.SlugRelatedField(
-        many=True,
+    # contests = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    contests = ContestSerializer(
         read_only=True,
-        slug_field='slug',
+        many=True,
     )
 
     class Meta:
@@ -235,3 +273,42 @@ class ScheduleSerializer(serializers.ModelSerializer):
             'song1',
             'song2',
         )
+
+
+class ScoreSerializer(serializers.Serializer):
+    round = serializers.CharField(
+        source='get_round_display',
+    )
+
+    kind = serializers.CharField(
+        source='contestant.contest.get_kind_display',
+    )
+
+    prelim = serializers.FloatField(
+        source='contestant.prelim',
+    )
+
+    group = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+        source='contestant.group',
+    )
+
+    # class Meta:
+    #     model = Performance
+    #     lookup_field = 'slug'
+    #     fields = (
+    #         'id',
+    #         'url',
+    #         'slug',
+    #         'round',
+    #         # 'day',
+    #         'kind',
+    #         'group',
+    #         'prelim',
+    #         'session',
+    #         'queue',
+    #         'stagetime',
+    #         'song1',
+    #         'song2',
+    #     )
