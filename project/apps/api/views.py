@@ -19,7 +19,9 @@ from .models import (
 
 from .filters import (
     ScheduleFilter,
+    PerformanceFilter,
     GroupFilter,
+    ScoreFilter,
 )
 
 
@@ -30,7 +32,7 @@ from .serializers import (
     ContestantSerializer,
     PerformanceSerializer,
     ScheduleSerializer,
-
+    ScoreSerializer,
     # SearchSerializer,
 )
 
@@ -57,9 +59,17 @@ class ConventionViewSet(viewsets.ModelViewSet):
             'Portland 2012',
             'Toronto 2013',
             'Las Vegas 2014',
-            # 'Pittsburgh 2015',
+            'Pittsburgh 2015',
         ]
-    ).prefetch_related('contests')
+    ).prefetch_related(
+        'contests__contestants__group',
+        'contests__contestants__group__contestants',
+        'contests__contestants__performances',
+        'contests__contestants__group__lead',
+        'contests__contestants__group__tenor',
+        'contests__contestants__group__baritone',
+        'contests__contestants__group__bass',
+    )
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
@@ -92,9 +102,15 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
-    queryset = Performance.objects.all()
+    # queryset = Performance.objects.all()
+    queryset = Performance.objects.select_related(
+        'contestant__contest',
+        'contestant__group',
+    ).filter(
+        contestant__contest__convention__name='Pittsburgh 2015'
+    )
     serializer_class = PerformanceSerializer
-    # filter_class = PerformanceFilter
+    filter_class = PerformanceFilter
     lookup_field = 'slug'
 
 
@@ -107,3 +123,14 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ScheduleSerializer
     filter_class = ScheduleFilter
+
+
+class ScoreViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Performance.objects.select_related(
+        'contestant__contest',
+        'contestant__group',
+    ).filter(
+        contestant__contest__convention__name='Las Vegas 2014'
+    )
+    serializer_class = ScoreSerializer
+    filter_class = ScoreFilter

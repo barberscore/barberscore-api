@@ -864,6 +864,18 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    @property
+    def stagetime(self):
+        return self.performances.latest(
+            'stagetime'
+        ).stagetime
+
+    @property
+    def queue(self):
+        return self.performances.latest(
+            'stagetime'
+        ).queue
+
     def __unicode__(self):
         return "{0}".format(
             self.slug,
@@ -874,8 +886,6 @@ class Contestant(models.Model):
             '-contest',
             'place',
             '-score',
-            '-prelim',
-            'group',
         )
         unique_together = (
             ('group', 'contest',),
@@ -1092,6 +1102,7 @@ class Performance(models.Model):
             'contestant',
             'round',
             'queue',
+            'stagetime',
         ]
         unique_together = (
             ('contestant', 'round',),
