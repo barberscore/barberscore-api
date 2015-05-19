@@ -135,7 +135,7 @@ class Singer(Common):
         ordering = ['name']
 
     def __unicode__(self):
-        return "{0}".format(self.name)
+        return u"{0}".format(self.name)
 
     # def get_absolute_url(self):
     #     return reverse(
