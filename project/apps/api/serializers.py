@@ -162,6 +162,12 @@ class ContestantSerializer(serializers.ModelSerializer):
             'score',
             'queue',
             'stagetime',
+            'quarters_place',
+            'quarters_score',
+            'semis_place',
+            'semis_score',
+            'finals_place',
+            'finals_score',
             'performances',
         )
 

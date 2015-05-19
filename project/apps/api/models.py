@@ -876,6 +876,36 @@ class Contestant(models.Model):
             'stagetime'
         ).queue
 
+    @property
+    def quarters_place(self):
+        return self.performances.get(
+            round=3).place
+
+    @property
+    def quarters_score(self):
+        return self.performances.get(
+            round=3).total_rata
+
+    @property
+    def semis_place(self):
+        return self.performances.get(
+            round=2).place
+
+    @property
+    def semis_score(self):
+        return self.performances.get(
+            round=2).total_rata
+
+    @property
+    def finals_place(self):
+        return self.performances.get(
+            round=1).place
+
+    @property
+    def finals_score(self):
+        return self.performances.get(
+            round=1).total_rata
+
     def __unicode__(self):
         return "{0}".format(
             self.slug,

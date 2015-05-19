@@ -130,6 +130,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'session',
         'stagetime',
         'place',
+        'total_raw',
         'song1',
         'mus1',
         'prs1',
@@ -142,6 +143,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        'round',
         'contestant__contest',
         'stagetime',
     )
