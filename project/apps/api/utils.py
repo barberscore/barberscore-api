@@ -4,6 +4,10 @@ import csv
 import logging
 log = logging.getLogger(__name__)
 
+from .models import (
+    Performance,
+)
+
 
 def deinterlace(path):
     with open(path) as csvfile:
@@ -241,4 +245,56 @@ def parse_finals(path):
 
     output = write_file(path, output)
 
+    return
+
+
+def place_round(performances):
+    queue = []
+    i = 1
+    for performance in performances:
+        try:
+            match = performance.total_raw == queue[0].total_raw
+        except IndexError:
+            performance.place = i
+            performance.save()
+            queue.append(performance)
+            continue
+        if match:
+            performance.place = i
+            i += len(queue)
+            performance.save()
+            queue.append(performance)
+            continue
+        else:
+            i += 1
+            performance.place = i
+            performance.save()
+            queue = [performance]
+    return
+
+
+def place_performances(contest):
+    if contest.get_kind_display() != 'Quartet':
+        raise RuntimeError("Only run on multi-round contsts.")
+    performances = Performance.objects.filter(
+        contestant__contest=contest,
+    )
+    quarters = performances.filter(
+        round=3
+    ).order_by(
+        '-total_raw',
+    )
+    place_round(quarters)
+    semis = performances.filter(
+        round=2
+    ).order_by(
+        '-total_raw',
+    )
+    place_round(semis)
+    finals = performances.filter(
+        round=1
+    ).order_by(
+        '-total_raw',
+    )
+    place_round(finals)
     return
