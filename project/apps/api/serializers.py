@@ -62,7 +62,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'song2_raw',
             'song2_rata',
             'total_raw',
-            'total_rata',
+            'score',
         )
 
 
