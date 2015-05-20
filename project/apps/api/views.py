@@ -62,13 +62,14 @@ class ConventionViewSet(viewsets.ModelViewSet):
             'Pittsburgh 2015',
         ]
     ).prefetch_related(
-        'contests__contestants__group',
-        'contests__contestants__group__contestants',
-        'contests__contestants__performances',
-        'contests__contestants__group__lead',
-        'contests__contestants__group__tenor',
-        'contests__contestants__group__baritone',
-        'contests__contestants__group__bass',
+        'contests',
+        # 'contests__contestants__group',
+        # 'contests__contestants__group__contestants',
+        # 'contests__contestants__performances',
+        # 'contests__contestants__group__lead',
+        # 'contests__contestants__group__tenor',
+        # 'contests__contestants__group__baritone',
+        # 'contests__contestants__group__bass',
     )
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
@@ -84,9 +85,7 @@ class ContestViewSet(viewsets.ModelViewSet):
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.select_related(
-        'contest', 'group',
-    ).all().prefetch_related('performances')
+    queryset = Contestant.objects.prefetch_related('performances')
     serializer_class = ContestantSerializer
     # filter_class = QuartetFilter
     lookup_field = 'slug'
