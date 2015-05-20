@@ -18,10 +18,8 @@ from .models import (
 )
 
 from .filters import (
-    ScheduleFilter,
     PerformanceFilter,
     GroupFilter,
-    ScoreFilter,
 )
 
 
@@ -31,8 +29,6 @@ from .serializers import (
     GroupSerializer,
     ContestantSerializer,
     PerformanceSerializer,
-    ScheduleSerializer,
-    ScoreSerializer,
     # SearchSerializer,
 )
 
@@ -76,16 +72,33 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 
 class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.select_related(
-        'convention',
-    ).all().prefetch_related('contestants')
+    queryset = Contest.objects.prefetch_related(
+        'contestants',
+        'contestants__group',
+        'contestants__performances',
+        # 'contestants__group__contestants',
+        'contestants__group__lead',
+        'contestants__group__tenor',
+        'contestants__group__baritone',
+        'contestants__group__bass',
+    )
     serializer_class = ContestSerializer
     # filter_class = ChorusFilter
     lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.prefetch_related('performances')
+    queryset = Contestant.objects.select_related(
+        'group',
+        # 'group__contestants',
+        'group__lead',
+        'group__tenor',
+        'group__baritone',
+        'group__bass',
+    ).prefetch_related(
+        'performances',
+        # 'group__contestants',
+    )
     serializer_class = ContestantSerializer
     # filter_class = QuartetFilter
     lookup_field = 'slug'
@@ -105,31 +118,10 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.select_related(
         'contestant__contest',
         'contestant__group',
-    ).filter(
-        contestant__contest__convention__name='Pittsburgh 2015'
     )
+    # .filter(
+    #     contestant__contest__convention__name='Pittsburgh 2015'
+    # )
     serializer_class = PerformanceSerializer
     filter_class = PerformanceFilter
     lookup_field = 'slug'
-
-
-class ScheduleViewSet(viewsets.ModelViewSet):
-    queryset = Performance.objects.select_related(
-        'contestant__contest',
-        'contestant__group',
-    ).filter(
-        contestant__contest__convention__name='Pittsburgh 2015'
-    )
-    serializer_class = ScheduleSerializer
-    filter_class = ScheduleFilter
-
-
-class ScoreViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Performance.objects.select_related(
-        'contestant__contest',
-        'contestant__group',
-    ).filter(
-        contestant__contest__convention__name='Las Vegas 2014'
-    )
-    serializer_class = ScoreSerializer
-    filter_class = ScoreFilter
