@@ -50,10 +50,10 @@ from .serializers import (
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.filter(
         name__in=[
-            'Philadelphia 2010',
-            'Kansas City 2011',
-            'Portland 2012',
-            'Toronto 2013',
+            # 'Philadelphia 2010',
+            # 'Kansas City 2011',
+            # 'Portland 2012',
+            # 'Toronto 2013',
             'Las Vegas 2014',
             'Pittsburgh 2015',
         ]
