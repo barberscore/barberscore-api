@@ -922,7 +922,7 @@ class Contestant(models.Model):
         except Performance.DoesNotExist:
             self.quarters_place = None
         try:
-            self.quarters_score = self.performances.get(round=3).total_rata
+            self.quarters_score = self.performances.get(round=3).score
         except Performance.DoesNotExist:
             self.quarters_score = None
         try:
@@ -930,7 +930,7 @@ class Contestant(models.Model):
         except Performance.DoesNotExist:
             self.semis_place = None
         try:
-            self.semis_score = self.performances.get(round=2).total_rata
+            self.semis_score = self.performances.get(round=2).score
         except Performance.DoesNotExist:
             self.semis_score = None
         try:
@@ -938,7 +938,7 @@ class Contestant(models.Model):
         except Performance.DoesNotExist:
             self.finals_place = None
         try:
-            self.finals_score = self.performances.get(round=1).total_rata
+            self.finals_score = self.performances.get(round=1).score
         except Performance.DoesNotExist:
             self.finals_score = None
 
@@ -1137,7 +1137,7 @@ class Performance(models.Model):
         editable=False,
     )
 
-    total_rata = models.FloatField(
+    score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
@@ -1214,7 +1214,7 @@ class Performance(models.Model):
                 self.prs2_rata = round(self.prs2 / panel, 1)
                 self.sng2_rata = round(self.sng2 / panel, 1)
                 self.song2_rata = round(self.song2_raw / (panel * 3), 1)
-                self.total_rata = round(self.total_raw / (panel * 6), 1)
+                self.score = round(self.total_raw / (panel * 6), 1)
             except TypeError:
                 log.error("Check scores for performance {0}".format(self))
 
