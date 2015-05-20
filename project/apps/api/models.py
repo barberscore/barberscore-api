@@ -864,47 +864,85 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    @property
-    def stagetime(self):
-        return self.performances.latest(
-            'stagetime'
-        ).stagetime
+    stagetime = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def queue(self):
-        return self.performances.latest(
-            'stagetime'
-        ).queue
+    queue = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def quarters_place(self):
-        return self.performances.get(
-            round=3).place
+    quarters_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def quarters_score(self):
-        return self.performances.get(
-            round=3).total_rata
+    quarters_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def semis_place(self):
-        return self.performances.get(
-            round=2).place
+    semis_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def semis_score(self):
-        return self.performances.get(
-            round=2).total_rata
+    semis_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def finals_place(self):
-        return self.performances.get(
-            round=1).place
+    finals_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    @property
-    def finals_score(self):
-        return self.performances.get(
-            round=1).total_rata
+    finals_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    def save(self, *args, **kwargs):
+        try:
+            self.stagetime = self.performances.latest(
+                'stagetime'
+            ).stagetime
+        except Performance.DoesNotExist:
+            self.stagetime = None
+        try:
+            self.queue = self.performances.latest(
+                'stagetime'
+            ).queue
+        except Performance.DoesNotExist:
+            self.queue = None
+        try:
+            self.quarters_place = self.performances.get(round=3).place
+        except Performance.DoesNotExist:
+            self.quarters_place = None
+        try:
+            self.quarters_score = self.performances.get(round=3).total_rata
+        except Performance.DoesNotExist:
+            self.quarters_score = None
+        try:
+            self.semis_place = self.performances.get(round=2).place
+        except Performance.DoesNotExist:
+            self.semis_place = None
+        try:
+            self.semis_score = self.performances.get(round=2).total_rata
+        except Performance.DoesNotExist:
+            self.semis_score = None
+        try:
+            self.finals_place = self.performances.get(round=1).place
+        except Performance.DoesNotExist:
+            self.finals_place = None
+        try:
+            self.finals_score = self.performances.get(round=1).total_rata
+        except Performance.DoesNotExist:
+            self.finals_score = None
+
+        super(Contestant, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "{0}".format(
