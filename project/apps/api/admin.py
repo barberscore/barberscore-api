@@ -163,6 +163,11 @@ class GroupAdmin(admin.ModelAdmin):
         Group,
         attrs={'width': '250px'},
     )
+
+    search_fields = (
+        'name',
+    )
+
     list_display = (
         'name',
         'location',
