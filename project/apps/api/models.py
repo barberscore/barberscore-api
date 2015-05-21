@@ -240,7 +240,8 @@ class Group(Common):
 
     district = models.IntegerField(
         choices=DISTRICT_CHOICES,
-        default=BHS,
+        null=True,
+        blank=True,
     )
 
     kind = models.IntegerField(
