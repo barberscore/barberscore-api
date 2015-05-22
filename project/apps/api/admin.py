@@ -212,6 +212,16 @@ class ContestantAdmin(admin.ModelAdmin):
         PerformanceInline,
     ]
 
+    fields = (
+        'contest',
+        'group',
+        'seed',
+        'prelim',
+        'place',
+        'score',
+    )
+
+
     save_on_top = True
 
 
