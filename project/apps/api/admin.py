@@ -79,9 +79,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         attrs={'width': '250px'},
     )
     save_on_top = True
-    objectactions = [
-        'import_scores',
-    ]
+    # objectactions = [
+    #     'import_scores',
+    # ]
 
     inlines = [
         ContestantInline,
@@ -195,6 +195,10 @@ class ContestantAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.save()
     update_contestants.label = 'Update Contestants'
+
+    objectactions = [
+        'update_contestants',
+    ]
 
     list_display = (
         '__unicode__',
