@@ -69,11 +69,11 @@ class ConventionAdmin(admin.ModelAdmin):
 
 @admin.register(Contest)
 class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
-    @takes_instance_or_queryset
-    def import_scores(self, request, queryset):
-        for obj in queryset:
-            obj.import_scores()
-    import_scores.label = 'Import Scores'
+    # @takes_instance_or_queryset
+    # def import_scores(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.import_scores()
+    # import_scores.label = 'Import Scores'
     form = select2_modelform(
         Contest,
         attrs={'width': '250px'},
@@ -190,6 +190,12 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
+    @takes_instance_or_queryset
+    def update_contestants(self, request, queryset):
+        for obj in queryset:
+            obj.save()
+    update_contestants.label = 'Update Contestants'
+
     list_display = (
         '__unicode__',
         'seed',
@@ -220,7 +226,6 @@ class ContestantAdmin(admin.ModelAdmin):
         'place',
         'score',
     )
-
 
     save_on_top = True
 
