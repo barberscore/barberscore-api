@@ -1,9 +1,0 @@
-{{object.name}}
-{{object.lead}}
-{{object.tenor}}
-{{object.baritone}}
-{{object.bass}}
-{{object.get_contestant_type_display}}
-{{object.location}}
-{{object.director}}
-{{object.district}}
