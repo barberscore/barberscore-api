@@ -18,6 +18,10 @@ MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = MEDIA_STORAGE
 STATICFILES_STORAGE = STATIC_STORAGE
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = [
+    '--nologcapture',
+]
 
 LOGGING = {
     'version': 1,
@@ -56,4 +60,5 @@ LOGGING = {
 
 INSTALLED_APPS += (
     'debug_toolbar',
+    'django_nose',
 )
