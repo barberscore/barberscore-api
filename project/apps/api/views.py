@@ -1,8 +1,6 @@
 import logging
 log = logging.getLogger(__name__)
 
-# import watson
-
 from rest_framework import (
     # mixins,
     viewsets,
@@ -29,22 +27,7 @@ from .serializers import (
     GroupSerializer,
     ContestantSerializer,
     PerformanceSerializer,
-    # SearchSerializer,
 )
-
-
-# class SearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-
-#     serializer_class = SearchSerializer
-
-#     def get_queryset(self, *args, **kwargs):
-#         request = self.request
-#         term = request.GET.get('q', None)
-#         if term:
-#             queryset = watson.search(term)
-#         else:
-#             queryset = None
-#         return queryset
 
 
 class ConventionViewSet(viewsets.ModelViewSet):

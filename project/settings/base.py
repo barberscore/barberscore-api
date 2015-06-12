@@ -127,8 +127,6 @@ INSTALLED_APPS = (
     'django_object_actions',
     'easy_select2',
     'corsheaders',
-    'watson',
     'rest_framework',
     'apps.api',
-    # 'apps.website',
 )
