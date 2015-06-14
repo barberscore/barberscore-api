@@ -50,9 +50,7 @@ DATABASE_URL = get_env_variable("DATABASE_URL")
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 # Auth
-# AUTH_USER_MODEL = 'noncense.User'
 AUTHENTICATION_BACKENDS = (
-    # 'noncense.backends.MobileBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -79,17 +77,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request",
-    # "website.context.mixpanel_public_key",
 )
 
 # Bootstrap overwrite
 MESSAGE_TAGS = {
     message_constants.ERROR: 'danger',
 }
-
-# Twilio for Noncense
-TWILIO_ACCOUNT_SID = get_env_variable("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = get_env_variable("TWILIO_AUTH_TOKEN")
 
 # Phonenumber support
 PHONENUMBER_DEFAULT_REGION = 'US'
@@ -117,7 +110,6 @@ SELECT2_USE_BUNDLED_JQUERY = False
 # Applications
 INSTALLED_APPS = (
     'utils',
-    # 'noncense',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
