@@ -506,6 +506,21 @@ class Convention(models.Model):
     #     )
 
 
+def populate_contest(instance):
+    if instance == 1:
+        return "{0}-{1}-{2}".format(
+            instance.get_level_display(),
+            instance.get_kind_display(),
+            instance.get_year_display(),
+        )
+    else:
+        return "{0}-{1}-{2}".format(
+            instance.get_district_display(),
+            instance.get_kind_display(),
+            instance.get_year_display(),
+        ),
+
+
 class Contest(models.Model):
 
     BHS = 0
@@ -603,17 +618,7 @@ class Contest(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=lambda instance:
-        "{0}-{1}-{2}".format(
-            instance.get_level_display(),
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        ) if instance.level == 1 else
-        "{0}-{1}-{2}".format(
-            instance.get_district_display(),
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        ),
+        populate_from=populate_contest,
         always_update=True,
         unique=True,
     )
@@ -818,6 +823,13 @@ class Contest(models.Model):
     #     return "Done"
 
 
+def populate_contestant(instance):
+    return "{0}-{1}".format(
+        instance.contest,
+        instance.group,
+    )
+
+
 class Contestant(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -836,10 +848,7 @@ class Contestant(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=lambda instance: "{0}-{1}".format(
-            instance.contest,
-            instance.group,
-        ),
+        populate_from=populate_contestant,
         always_update=True,
         unique=True,
         max_length=255,
@@ -961,6 +970,13 @@ class Contestant(models.Model):
         )
 
 
+def populate_performance(instance):
+    return "{0}-{1}".format(
+        instance.contestant,
+        instance.get_round_display(),
+    ),
+
+
 class Performance(models.Model):
     FINALS = 1
     SEMIS = 2
@@ -991,10 +1007,7 @@ class Performance(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=lambda instance: "{0}-{1}".format(
-            instance.contestant,
-            instance.get_round_display(),
-        ),
+        populate_from=populate_performance,
         always_update=True,
         unique=True,
         max_length=255,
