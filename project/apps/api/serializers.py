@@ -128,25 +128,25 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # performances = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # group = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    group = GroupSerializer(
-        read_only=True,
-    )
-
-    performances = PerformanceSerializer(
-        read_only=True,
+    performances = serializers.SlugRelatedField(
         many=True,
+        read_only=True,
+        slug_field='slug',
     )
+
+    group = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    # group = GroupSerializer(
+    #     read_only=True,
+    # )
+
+    # performances = PerformanceSerializer(
+    #     read_only=True,
+    #     many=True,
+    # )
 
     class Meta:
         model = Contestant
@@ -173,16 +173,16 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    # contestants = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    contestants = ContestantSerializer(
+    contestants = serializers.SlugRelatedField(
         many=True,
         read_only=True,
+        slug_field='slug',
     )
+
+    # contestants = ContestantSerializer(
+    #     many=True,
+    #     read_only=True,
+    # )
 
     level = serializers.CharField(
         source='get_level_display',
