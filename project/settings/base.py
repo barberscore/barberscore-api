@@ -107,6 +107,16 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Easy Select2
 SELECT2_USE_BUNDLED_JQUERY = False
 
+# Djoser
+DJOSER = {
+    # 'DOMAIN': 'frontend.com',
+    # 'SITE_NAME': 'Frontend',
+    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'LOGIN_AFTER_ACTIVATION': True,
+    # 'SEND_ACTIVATION_EMAIL': True,
+}
+
 # Applications
 INSTALLED_APPS = (
     'utils',
