@@ -17,6 +17,7 @@ from .models import (
     Group,
     Performance,
     Singer,
+    Note,
 )
 
 
@@ -239,4 +240,14 @@ class SingerAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',
+    )
+
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'user',
+        'performance',
+        'text',
     )
