@@ -13,6 +13,7 @@ from .models import (
     Group,
     Contestant,
     Performance,
+    # Note,
 )
 
 from .filters import (
@@ -27,6 +28,7 @@ from .serializers import (
     GroupSerializer,
     ContestantSerializer,
     PerformanceSerializer,
+    NoteSerializer,
 )
 
 
@@ -108,3 +110,11 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     serializer_class = PerformanceSerializer
     filter_class = PerformanceFilter
     lookup_field = 'slug'
+
+
+class NoteViewSet(viewsets.ModelViewSet):
+    # queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        return self.request.user.notes

@@ -6,7 +6,11 @@ from .models import (
     Contestant,
     Group,
     Performance,
+    Note,
 )
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -239,4 +243,26 @@ class ConventionSerializer(serializers.ModelSerializer):
             'dates',
             'timezone',
             'contests',
+        )
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    performance = serializers.SlugRelatedField(
+        # read_only=True,
+        queryset=Performance.objects.all(),
+        slug_field='slug',
+    )
+
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        # read_only=True,
+    )
+
+    class Meta:
+        model = Note
+        fields = (
+            'id',
+            'text',
+            'performance',
+            'user',
         )
