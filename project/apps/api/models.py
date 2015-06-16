@@ -9,6 +9,8 @@ import uuid
 import os
 import datetime
 from django.db import models
+
+from django.conf import settings
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -1297,4 +1299,35 @@ class GroupAward(models.Model):
     def __unicode__(self):
         return "{0}".format(
             self.slug,
+        )
+
+
+class Note(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    performance = models.ForeignKey(
+        'Performance',
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='notes',
+    )
+
+    text = models.TextField(
+    )
+
+    def __unicode__(self):
+        return "{0}: {1}".format(
+            self.user,
+            self.performance,
+        )
+
+    class Meta:
+        unique_together = (
+            ('performance', 'user'),
         )
