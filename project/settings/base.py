@@ -109,12 +109,8 @@ SELECT2_USE_BUNDLED_JQUERY = False
 
 # Djoser
 DJOSER = {
-    # 'DOMAIN': 'frontend.com',
-    # 'SITE_NAME': 'Frontend',
-    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'LOGIN_AFTER_ACTIVATION': True,
-    # 'SEND_ACTIVATION_EMAIL': True,
+    'LOGIN_AFTER_REGISTRATION': True,
+    'APPEND_USER_DATA': True,
 }
 
 # Applications
