@@ -16,4 +16,3 @@ s3cmd==1.5.2
 django-filter==0.10.0
 phonenumbers==7.0.6
 Pillow==2.8.2
-djoser==0.3.0

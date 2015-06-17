@@ -7,6 +7,8 @@ from rest_framework import (
     # filters,
 )
 
+from django.contrib.auth import get_user_model
+
 from .models import (
     Convention,
     Contest,
@@ -29,7 +31,10 @@ from .serializers import (
     ContestantSerializer,
     PerformanceSerializer,
     NoteSerializer,
+    UserSerializer,
 )
+
+User = get_user_model()
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
@@ -118,3 +123,8 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.request.user.notes
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
