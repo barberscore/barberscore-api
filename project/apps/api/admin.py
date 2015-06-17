@@ -184,6 +184,7 @@ class GroupAdmin(admin.ModelAdmin):
         'director',
         'chapter_name',
         'chapter_code',
+        'bsmdb_id',
     )
 
     save_on_top = True
