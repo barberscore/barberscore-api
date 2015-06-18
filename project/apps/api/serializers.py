@@ -122,6 +122,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
+            'bsmdb',
             # 'contestants',
         )
 
