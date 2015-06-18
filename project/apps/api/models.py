@@ -529,7 +529,7 @@ class Convention(models.Model):
 
 
 def populate_contest(instance):
-    if instance == 1:
+    if instance.kind == 1:
         return "{0}-{1}-{2}".format(
             instance.get_level_display(),
             instance.get_kind_display(),
