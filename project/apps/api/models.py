@@ -313,6 +313,20 @@ class Group(Common):
     def __unicode__(self):
         return "{0}".format(self.name)
 
+    @property
+    def bsmdb(self):
+        if self.bsmdb_id:
+            if self.kind == self.CHORUS:
+                return 'http://www.bsmdb.com/Chorus.php?ChorusID={0}'.format(
+                    self.bsmdb_id,
+                )
+            else:
+                return 'http://www.bsmdb.com/Quartet.php?QuartetID={0}'.format(
+                    self.bsmdb_id,
+                )
+        else:
+            return None
+
     class Meta:
         ordering = (
             'name',
