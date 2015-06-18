@@ -435,7 +435,7 @@ class District(Common):
 
 class Convention(models.Model):
     YEAR_CHOICES = []
-    for r in range(2000, (datetime.datetime.now().year + 1)):
+    for r in range(1994, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
     SUMMER = 1
@@ -608,7 +608,7 @@ class Contest(models.Model):
     )
 
     YEAR_CHOICES = []
-    for r in range(2000, (datetime.datetime.now().year + 1)):
+    for r in range(1994, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
     QUARTET = 1
