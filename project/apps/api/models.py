@@ -139,12 +139,6 @@ class Singer(Common):
     def __unicode__(self):
         return self.name
 
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:singer-detail',
-    #         args=[self.slug],
-    #     )
-
     @property
     def first_name(self):
         if self.name:
@@ -644,8 +638,7 @@ class Contest(models.Model):
 
     name = models.CharField(
         max_length=200,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     level = models.IntegerField(
@@ -852,13 +845,6 @@ class Contest(models.Model):
     #     return "Done"
 
 
-# def populate_contestant(instance):
-#     return "{0}-{1}".format(
-#         instance.contest,
-#         instance.group,
-#     )
-
-
 class Contestant(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -878,8 +864,7 @@ class Contestant(models.Model):
 
     name = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     slug = AutoSlugField(
@@ -1006,13 +991,6 @@ class Contestant(models.Model):
         )
 
 
-# def populate_performance(instance):
-#     return "{0}-{1}".format(
-#         instance.contestant,
-#         instance.get_round_display(),
-#     ),
-
-
 class Performance(models.Model):
     FINALS = 1
     SEMIS = 2
@@ -1044,8 +1022,7 @@ class Performance(models.Model):
 
     name = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     slug = AutoSlugField(
