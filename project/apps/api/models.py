@@ -1042,6 +1042,12 @@ class Performance(models.Model):
         default=FINALS,
     )
 
+    name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
