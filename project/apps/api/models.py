@@ -546,7 +546,7 @@ def populate_contest(instance):
             instance.get_district_display(),
             instance.get_kind_display(),
             instance.get_year_display(),
-        ),
+        )
 
 
 class Contest(models.Model):
