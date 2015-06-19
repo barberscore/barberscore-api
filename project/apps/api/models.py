@@ -137,7 +137,7 @@ class Singer(Common):
         ordering = ['name']
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.name
 
     # def get_absolute_url(self):
     #     return reverse(
@@ -317,7 +317,7 @@ class Group(Common):
     )
 
     def __unicode__(self):
-        return "{0}".format(self.name)
+        return self.name
 
     @property
     def bsmdb(self):
@@ -436,7 +436,7 @@ class District(Common):
         ]
 
     def __unicode__(self):
-        return "{0}".format(self.name)
+        return self.name
 
 
 class Convention(models.Model):
@@ -523,9 +523,7 @@ class Convention(models.Model):
         )
 
     def __unicode__(self):
-        return "{0}".format(
-            self.name,
-        )
+        return self.name
 
     def save(self, *args, **kwargs):
         if self.kind == self.SUMMER:
@@ -854,11 +852,11 @@ class Contest(models.Model):
     #     return "Done"
 
 
-def populate_contestant(instance):
-    return "{0}-{1}".format(
-        instance.contest,
-        instance.group,
-    )
+# def populate_contestant(instance):
+#     return "{0}-{1}".format(
+#         instance.contest,
+#         instance.group,
+#     )
 
 
 class Contestant(models.Model):
@@ -878,8 +876,14 @@ class Contestant(models.Model):
         related_name='contestants',
     )
 
+    name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     slug = AutoSlugField(
-        populate_from=populate_contestant,
+        populate_from='name',
         always_update=True,
         unique=True,
         max_length=255,
@@ -946,6 +950,10 @@ class Contestant(models.Model):
     )
 
     def save(self, *args, **kwargs):
+        self.name = "{0} {1}".format(
+            self.contest,
+            self.group,
+        )
         try:
             self.stagetime = self.performances.latest(
                 'stagetime'
@@ -985,9 +993,7 @@ class Contestant(models.Model):
         super(Contestant, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "{0}".format(
-            self.slug,
-        )
+        return self.name
 
     class Meta:
         ordering = (
@@ -1000,11 +1006,11 @@ class Contestant(models.Model):
         )
 
 
-def populate_performance(instance):
-    return "{0}-{1}".format(
-        instance.contestant,
-        instance.get_round_display(),
-    ),
+# def populate_performance(instance):
+#     return "{0}-{1}".format(
+#         instance.contestant,
+#         instance.get_round_display(),
+#     ),
 
 
 class Performance(models.Model):
@@ -1037,7 +1043,7 @@ class Performance(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=populate_performance,
+        populate_from='name',
         always_update=True,
         unique=True,
         max_length=255,
@@ -1221,11 +1227,13 @@ class Performance(models.Model):
         )
 
     def __unicode__(self):
-        return "{0}".format(
-            self.slug,
-        )
+        return self.name
 
     def save(self, *args, **kwargs):
+        self.name = "{0} {1}".format(
+            self.contestant,
+            self.get_round_display(),
+        )
         if (
             self.mus1 and
             self.prs1 and
@@ -1295,7 +1303,7 @@ class Award(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return "{0}".format(self.name)
+        return self.name
 
     # def get_absolute_url(self):
     #     return reverse(
@@ -1325,9 +1333,7 @@ class GroupAward(models.Model):
     )
 
     def __unicode__(self):
-        return "{0}".format(
-            self.slug,
-        )
+        return self.name
 
 
 class Note(models.Model):
@@ -1350,10 +1356,7 @@ class Note(models.Model):
     )
 
     def __unicode__(self):
-        return "{0}: {1}".format(
-            self.user,
-            self.performance,
-        )
+        return self.id
 
     class Meta:
         unique_together = (
