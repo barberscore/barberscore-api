@@ -655,7 +655,7 @@ class Contest(models.Model):
             )
         else:
             self.name = "{0} {1} {2}".format(
-                self.get_district_display(),
+                self.district,
                 self.get_kind_display(),
                 self.get_year_display(),
             )
