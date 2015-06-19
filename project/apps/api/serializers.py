@@ -78,9 +78,7 @@ class GroupSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    district = serializers.CharField(
-        source='get_district_display',
-    )
+    district_fk = serializers.StringRelatedField()
 
     kind = serializers.CharField(
         source='get_kind_display',
@@ -107,7 +105,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'kind',
-            'district',
+            'district_fk',
             'location',
             'website',
             'facebook',
