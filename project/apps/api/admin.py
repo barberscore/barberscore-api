@@ -59,6 +59,9 @@ class ConventionAdmin(admin.ModelAdmin):
         'name',
         'location',
         'dates',
+        'kind',
+        'year',
+        'district',
     )
 
     fields = (
