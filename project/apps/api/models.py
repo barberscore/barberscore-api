@@ -699,9 +699,9 @@ class Contest(models.Model):
     )
 
     class Meta:
-        unique_together = (
-            ('kind', 'convention',),
-        )
+        # unique_together = (
+        #     ('kind', 'convention',),
+        # )
         ordering = (
             'level',
             'kind',
