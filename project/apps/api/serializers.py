@@ -199,9 +199,7 @@ class ContestSerializer(serializers.ModelSerializer):
         source='get_year_display',
     )
 
-    district = serializers.CharField(
-        source='get_district_display',
-    )
+    district_fk = serializers.StringRelatedField()
 
     class Meta:
         model = Contest
@@ -212,7 +210,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'level',
             'kind',
             'year',
-            'district',
+            'district_fk',
             'panel',
             'scoresheet_pdf',
             'contestants',
