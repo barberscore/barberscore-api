@@ -62,7 +62,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'dates',
         'kind',
         'year',
-        # 'district',
+        'district',
     )
 
     fields = (
@@ -70,7 +70,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'location',
         'dates',
         'timezone',
-        # 'district',
+        'district',
         'kind',
         'year',
     )
@@ -78,7 +78,7 @@ class ConventionAdmin(admin.ModelAdmin):
     list_filter = (
         'kind',
         'year',
-        # 'district',
+        'district',
     )
 
     readonly_fields = (
