@@ -72,13 +72,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
-    # contestants = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    district_fk = serializers.StringRelatedField()
+    district = serializers.StringRelatedField()
 
     kind = serializers.CharField(
         source='get_kind_display',
@@ -105,7 +99,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'kind',
-            'district_fk',
+            'district',
             'location',
             'website',
             'facebook',
@@ -182,11 +176,6 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # contestants = ContestantSerializer(
-    #     many=True,
-    #     read_only=True,
-    # )
-
     level = serializers.CharField(
         source='get_level_display',
     )
@@ -199,7 +188,7 @@ class ContestSerializer(serializers.ModelSerializer):
         source='get_year_display',
     )
 
-    district_fk = serializers.StringRelatedField()
+    district = serializers.StringRelatedField()
 
     class Meta:
         model = Contest
@@ -210,7 +199,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'level',
             'kind',
             'year',
-            'district_fk',
+            'district',
             'panel',
             'scoresheet_pdf',
             'contestants',
