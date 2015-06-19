@@ -14,7 +14,6 @@ from apps.api.factories import (
 
 from apps.api.models import (
     Group,
-    District,
 )
 
 
@@ -25,10 +24,6 @@ def test_quartet():
     ok_(
         quartet.name == "The Buffalo Bills",
         "Name should be 'The Buffalo Bills', is {0}".format(quartet.name),
-    )
-
-    ok_(
-        quartet.district == District.FWD
     )
 
     ok_(
