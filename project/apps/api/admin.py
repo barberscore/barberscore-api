@@ -66,12 +66,19 @@ class ConventionAdmin(admin.ModelAdmin):
         'location',
         'dates',
         'timezone',
+        'level',
+        'kind',
+        'year',
     )
 
     list_filter = (
         'kind',
         'year',
         'district',
+    )
+
+    readonly_fields = (
+        'name',
     )
 
     save_on_top = True
