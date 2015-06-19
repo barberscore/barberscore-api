@@ -246,6 +246,12 @@ class Group(Common):
         blank=True,
     )
 
+    district_fk = models.ForeignKey(
+        'District',
+        null=True,
+        blank=True,
+    )
+
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
