@@ -133,6 +133,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'kind',
         'year',
         'district',
+        'district_fk',
         'panel',
         'scoresheet_pdf',
         'scoresheet_csv',
