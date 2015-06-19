@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='contest',
             name='slug',
-            field=autoslug.fields.AutoSlugField(editable=False, populate_from=apps.api.models.populate_contest, always_update=True, unique=True),
+            field=autoslug.fields.AutoSlugField(editable=False, populate_from='name', always_update=True, unique=True),
         ),
         migrations.AlterField(
             model_name='contestant',
