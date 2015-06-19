@@ -117,11 +117,12 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_display = (
         '__unicode__',
+        'district',
+        'district_fk',
         'convention',
         'level',
         'kind',
         'year',
-        'district',
         'panel',
         'scoresheet_pdf',
         'scoresheet_csv',
@@ -192,6 +193,8 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'district',
+        'district_fk',
         'location',
         'website',
         'facebook',
