@@ -69,7 +69,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'location',
         'dates',
         'timezone',
-        'level',
+        'district',
         'kind',
         'year',
     )
