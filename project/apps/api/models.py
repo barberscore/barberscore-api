@@ -542,22 +542,6 @@ class Convention(models.Model):
         super(Convention, self).save(*args, **kwargs)
 
 
-def populate_contest(instance):
-    pass
-    # if instance.level == 1:
-    #     return "{0}-{1}-{2}".format(
-    #         instance.get_level_display(),
-    #         instance.get_kind_display(),
-    #         instance.get_year_display(),
-    #     )
-    # else:
-    #     return "{0}-{1}-{2}".format(
-    #         instance.get_district_display(),
-    #         instance.get_kind_display(),
-    #         instance.get_year_display(),
-    #     )
-
-
 class Contest(models.Model):
 
     BHS = 0
