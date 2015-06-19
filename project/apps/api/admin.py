@@ -18,6 +18,7 @@ from .models import (
     Performance,
     Singer,
     Note,
+    District,
 )
 
 
@@ -271,3 +272,8 @@ class NoteAdmin(admin.ModelAdmin):
         'performance',
         'text',
     )
+
+
+@admin.register(District)
+class DistrictAdmin(admin.ModelAdmin):
+    save_on_top = True
