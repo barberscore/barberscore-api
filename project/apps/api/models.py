@@ -542,6 +542,21 @@ class Convention(models.Model):
         super(Convention, self).save(*args, **kwargs)
 
 
+def populate_contest(instance):
+    if instance.level == 1:
+        return "{0}-{1}-{2}".format(
+            instance.get_level_display(),
+            instance.get_kind_display(),
+            instance.get_year_display(),
+        )
+    else:
+        return "{0}-{1}-{2}".format(
+            instance.get_district_display(),
+            instance.get_kind_display(),
+            instance.get_year_display(),
+        )
+
+
 class Contest(models.Model):
 
     BHS = 0
@@ -639,7 +654,7 @@ class Contest(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from='name',
+        populate_from=populate_contest,
         always_update=True,
         unique=True,
     )
@@ -713,8 +728,10 @@ class Contest(models.Model):
         )
 
     def clean(self):
+            # Don't allow draft entries to have a pub_date.
             if self.level == self.INTERNATIONAL and self.district is not None:
                 raise ValidationError('International does not have a district.')
+            # Set the pub_date for published items if it hasn't been set already.
             if self.level != self.INTERNATIONAL and self.district is None:
                 raise ValidationError('You must provide a district.')
 
