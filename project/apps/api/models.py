@@ -593,6 +593,12 @@ class Contest(models.Model):
                 self.get_kind_display(),
                 self.get_year_display(),
             )
+        elif self.level == self.PRELIMS:
+            self.name = "{0} {1} {2}".format(
+                self.district,
+                self.get_level_display(),
+                self.get_year_display(),
+            )
         else:
             self.name = "{0} {1} {2}".format(
                 self.district,
