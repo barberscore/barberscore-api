@@ -672,6 +672,12 @@ class Contest(models.Model):
         blank=True,
     )
 
+    district_fk = models.ForeignKey(
+        'District',
+        null=True,
+        blank=True,
+    )
+
     convention = models.ForeignKey(
         'Convention',
         related_name='contests',
