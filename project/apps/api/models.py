@@ -543,18 +543,19 @@ class Convention(models.Model):
 
 
 def populate_contest(instance):
-    if instance.level == 1:
-        return "{0}-{1}-{2}".format(
-            instance.get_level_display(),
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        )
-    else:
-        return "{0}-{1}-{2}".format(
-            instance.get_district_display(),
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        )
+    pass
+    # if instance.level == 1:
+    #     return "{0}-{1}-{2}".format(
+    #         instance.get_level_display(),
+    #         instance.get_kind_display(),
+    #         instance.get_year_display(),
+    #     )
+    # else:
+    #     return "{0}-{1}-{2}".format(
+    #         instance.get_district_display(),
+    #         instance.get_kind_display(),
+    #         instance.get_year_display(),
+    #     )
 
 
 class Contest(models.Model):
@@ -654,7 +655,7 @@ class Contest(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=populate_contest,
+        populate_from='name',
         always_update=True,
         unique=True,
     )
