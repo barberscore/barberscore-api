@@ -973,7 +973,6 @@ class Contestant(models.Model):
             self.finals_score = self.performances.get(round=1).score
         except Performance.DoesNotExist:
             self.finals_score = None
-
         super(Contestant, self).save(*args, **kwargs)
 
     def __unicode__(self):
