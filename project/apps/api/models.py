@@ -438,14 +438,14 @@ class Convention(models.Model):
     for r in range(1994, (datetime.datetime.now().year + 1)):
         YEAR_CHOICES.append((r, r))
 
-    SUMMER = 1
+    INTERNATIONAL = 1
     MIDWINTER = 2
     FALL = 3
     SPRING = 4
     PACIFIC = 5
 
     KIND_CHOICES = (
-        (SUMMER, 'Summer',),
+        (INTERNATIONAL, 'International',),
         (MIDWINTER, 'Midwinter',),
         (FALL, 'Fall',),
         (SPRING, 'Spring',),
@@ -520,9 +520,13 @@ class Convention(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.kind == self.SUMMER:
+        if self.kind in [
+            self.INTERNATIONAL,
+            self.MIDWINTER,
+            self.PACIFIC,
+        ]:
             self.name = "{0} {1}".format(
-                self.location,
+                self.get_kind_display(),
                 self.get_year_display(),
             )
         else:
