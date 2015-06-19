@@ -527,26 +527,19 @@ class Convention(models.Model):
             self.name,
         )
 
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:convention-detail',
-    #         args=[self.slug],
-    #     )
-
-
-def populate_contest(instance):
-    if instance.level == 1:
-        return "{0}-{1}-{2}".format(
-            instance.get_level_display(),
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        )
-    else:
-        return "{0}-{1}-{2}".format(
-            instance.get_district_display(),
-            instance.get_kind_display(),
-            instance.get_year_display(),
-        )
+    def save(self, *args, **kwargs):
+        if self.kind == self.SUMMER:
+            self.name = "{0} {1}".format(
+                self.location,
+                self.get_year_display(),
+            )
+        else:
+            self.name = "{0} {1} {2}".format(
+                self.district,
+                self.get_kind_display(),
+                self.get_year_display(),
+            )
+        super(Convention, self).save(*args, **kwargs)
 
 
 class Contest(models.Model):
@@ -646,9 +639,15 @@ class Contest(models.Model):
     )
 
     slug = AutoSlugField(
-        populate_from=populate_contest,
+        populate_from='name',
         always_update=True,
         unique=True,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
     )
 
     level = models.IntegerField(
@@ -714,32 +713,28 @@ class Contest(models.Model):
         )
 
     def clean(self):
-            # Don't allow draft entries to have a pub_date.
             if self.level == self.INTERNATIONAL and self.district is not None:
                 raise ValidationError('International does not have a district.')
-            # Set the pub_date for published items if it hasn't been set already.
             if self.level != self.INTERNATIONAL and self.district is None:
                 raise ValidationError('You must provide a district.')
 
     def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
         if self.level == self.INTERNATIONAL:
-            return "{0} {1} {2}".format(
+            self.name = "{0} {1} {2}".format(
                 self.get_level_display(),
                 self.get_kind_display(),
                 self.get_year_display(),
             )
         else:
-            return "{0} {1} {2}".format(
+            self.name = "{0} {1} {2}".format(
                 self.get_district_display(),
                 self.get_kind_display(),
                 self.get_year_display(),
             )
-
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:contest-detail',
-    #         args=[self.slug],
-    #     )
+        super(Contest, self).save(*args, **kwargs)
 
     # def create_group_from_scores(self, name, district_name, chapter_name=None):
     #     if self.kind == self.CHORUS:
