@@ -706,12 +706,12 @@ class Contest(models.Model):
         )
 
     def clean(self):
-            # Don't allow draft entries to have a pub_date.
             if self.level == self.INTERNATIONAL and self.district is not None:
                 raise ValidationError('International does not have a district.')
-            # Set the pub_date for published items if it hasn't been set already.
             if self.level != self.INTERNATIONAL and self.district is None:
                 raise ValidationError('You must provide a district.')
+            if self.year != self.convention.year:
+                raise ValidationError("The contest should be the same year as the convention.")
 
     def __unicode__(self):
         return self.name
