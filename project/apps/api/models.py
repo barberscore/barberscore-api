@@ -671,6 +671,8 @@ class Contest(models.Model):
     convention = models.ForeignKey(
         'Convention',
         related_name='contests',
+        null=True,
+        blank=True,
     )
 
     panel = models.IntegerField(
