@@ -491,11 +491,13 @@ class Contest(models.Model):
     INTERNATIONAL = 1
     DISTRICT = 2
     REGIONAL = 3
+    PRELIMS = 4
 
     LEVEL_CHOICES = (
         (INTERNATIONAL, "International"),
         (DISTRICT, "District"),
         (REGIONAL, "Regional"),
+        (PRELIMS, "Prelims"),
     )
 
     id = models.UUIDField(
