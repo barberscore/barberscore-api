@@ -62,7 +62,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'dates',
         'kind',
         'year',
-        'district',
+        # 'district',
     )
 
     fields = (
@@ -70,7 +70,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'location',
         'dates',
         'timezone',
-        'district',
+        # 'district',
         'kind',
         'year',
     )
@@ -78,7 +78,7 @@ class ConventionAdmin(admin.ModelAdmin):
     list_filter = (
         'kind',
         'year',
-        'district',
+        # 'district',
     )
 
     readonly_fields = (
@@ -112,12 +112,12 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'level',
         'kind',
         'year',
-        'district',
+        # 'district',
     )
 
     list_display = (
         '__unicode__',
-        'district',
+        # 'district',
         'district_fk',
         'convention',
         'level',
@@ -133,7 +133,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'level',
         'kind',
         'year',
-        'district',
+        # 'district',
         'district_fk',
         'panel',
         'scoresheet_pdf',
@@ -193,7 +193,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'district',
+        # 'district',
         'district_fk',
         'location',
         'website',
