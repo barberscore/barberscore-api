@@ -54,17 +54,26 @@ class ConventionAdmin(admin.ModelAdmin):
         Convention,
         attrs={'width': '250px'},
     )
+
     list_display = (
         'name',
         'location',
         'dates',
     )
+
     fields = (
         'name',
         'location',
         'dates',
         'timezone',
     )
+
+    list_filter = (
+        'kind',
+        'year',
+        'district',
+    )
+
     save_on_top = True
 
 
