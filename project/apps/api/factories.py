@@ -23,7 +23,7 @@ class DistrictFactory(DjangoModelFactory):
 class QuartetFactory(DjangoModelFactory):
     name = "The Buffalo Bills"
     kind = Group.QUARTET
-    district_fk = SubFactory(DistrictFactory)
+    district = SubFactory(DistrictFactory)
 
     class Meta:
         model = Group
