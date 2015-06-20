@@ -63,9 +63,11 @@ class ConventionAdmin(admin.ModelAdmin):
         'kind',
         'year',
         'district',
+        'is_active',
     )
 
     fields = (
+        'is_active',
         'name',
         'location',
         'dates',
