@@ -118,26 +118,33 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     list_display = (
-        '__unicode__',
+        'name',
         'district',
         'convention',
         'level',
         'kind',
         'year',
+        'panel',
+        'scoresheet_pdf',
+        'scoresheet_csv',
+        'is_active',
+    )
+
+    fields = (
+        'is_active',
+        'name',
+        'convention',
+        'level',
+        'kind',
+        'year',
+        'district',
         'panel',
         'scoresheet_pdf',
         'scoresheet_csv',
     )
 
-    fields = (
-        'convention',
-        'level',
-        'kind',
-        'year',
-        'district',
-        'panel',
-        'scoresheet_pdf',
-        'scoresheet_csv',
+    readonly_fields = (
+        'name',
     )
 
 
