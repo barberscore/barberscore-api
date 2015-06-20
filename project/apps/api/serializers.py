@@ -219,6 +219,10 @@ class ConventionSerializer(serializers.ModelSerializer):
     #     many=True,
     # )
 
+    year = serializers.CharField(
+        source='get_year_display',
+    )
+
     class Meta:
         model = Convention
         lookup_field = 'slug'
@@ -228,6 +232,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'dates',
+            'year',
             'timezone',
             'contests',
             'is_active',
