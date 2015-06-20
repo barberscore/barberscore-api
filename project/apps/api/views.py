@@ -63,6 +63,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.prefetch_related(
+        'district',
         'contestants',
         'contestants__group',
         'contestants__performances',
@@ -87,6 +88,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'group__bass',
     ).prefetch_related(
         'performances',
+        'contest',
         # 'group__contestants',
     )
     serializer_class = ContestantSerializer
@@ -97,7 +99,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
         'lead', 'tenor', 'baritone', 'bass'
-    ).all().prefetch_related('contestants')
+    ).all().prefetch_related('contestants', 'district')
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     lookup_field = 'slug'
