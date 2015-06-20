@@ -438,6 +438,10 @@ class Convention(models.Model):
         default='US/Pacific',
     )
 
+    is_active = models.BooleanField(
+        default=False,
+    )
+
     class Meta:
         ordering = [
             'district',

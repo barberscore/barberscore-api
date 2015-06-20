@@ -39,14 +39,7 @@ User = get_user_model()
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.filter(
-        name__in=[
-            # 'Philadelphia 2010',
-            # 'Kansas City 2011',
-            # 'Portland 2012',
-            # 'Toronto 2013',
-            'International 2014',
-            'International 2015',
-        ]
+        is_active=True,
     ).prefetch_related(
         'contests',
         # 'contests__contestants__group',
