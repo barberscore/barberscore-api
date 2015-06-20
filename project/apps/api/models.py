@@ -568,6 +568,10 @@ class Contest(models.Model):
         null=True,
     )
 
+    is_active = models.BooleanField(
+        default=False,
+    )
+
     class Meta:
         # unique_together = (
         #     ('kind', 'convention',),
@@ -1095,10 +1099,15 @@ class Performance(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1}".format(
-            self.contestant,
-            self.get_round_display(),
-        )
+        if self.contestant.contest == Contest.CHORUS:
+            self.name = "{0}".format(
+                self.contestant,
+            )
+        else:
+            self.name = "{0} {1}".format(
+                self.contestant,
+                self.get_round_display(),
+            )
         if (
             self.mus1 and
             self.prs1 and
