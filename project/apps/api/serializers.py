@@ -166,7 +166,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'finals_place',
             'finals_score',
             'performances',
-            'is_active',
         )
 
 
@@ -231,6 +230,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'dates',
             'timezone',
             'contests',
+            'is_active',
         )
 
 
