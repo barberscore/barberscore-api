@@ -166,6 +166,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'finals_place',
             'finals_score',
             'performances',
+            'is_active',
         )
 
 
@@ -203,6 +204,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'panel',
             'scoresheet_pdf',
             'contestants',
+            'is_active',
         )
 
 
