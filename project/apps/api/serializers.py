@@ -204,6 +204,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'scoresheet_pdf',
             'contestants',
             'is_active',
+            'is_complete',
         )
 
 
