@@ -44,8 +44,8 @@ class ConventionViewSet(viewsets.ModelViewSet):
             # 'Kansas City 2011',
             # 'Portland 2012',
             # 'Toronto 2013',
-            'Las Vegas 2014',
-            'Pittsburgh 2015',
+            'International 2014',
+            'International 2015',
         ]
     ).prefetch_related(
         'contests',
