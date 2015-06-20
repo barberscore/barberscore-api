@@ -55,8 +55,8 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 
 class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.filter(
-        is_active=True,
+    queryset = Contest.objects.all(
+        # is_active=True,
     ).prefetch_related(
         'district',
         'contestants',
