@@ -572,6 +572,10 @@ class Contest(models.Model):
         default=False,
     )
 
+    is_complete = models.BooleanField(
+        default=False,
+    )
+
     class Meta:
         # unique_together = (
         #     ('kind', 'convention',),
