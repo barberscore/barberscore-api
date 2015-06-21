@@ -1084,9 +1084,19 @@ class Performance(models.Model):
         editable=False,
     )
 
-    # @property
-    # def day(self):
-    #     return self.stagetime.strftime("%A")
+    title1 = models.ForeignKey(
+        'Song',
+        related_name='performances_song1',
+        null=True,
+        blank=True,
+    )
+
+    title2 = models.ForeignKey(
+        'Song',
+        related_name='performances_song2',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = [
@@ -1240,3 +1250,32 @@ class Note(models.Model):
         unique_together = (
             ('performance', 'user'),
         )
+
+
+class Song(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    arrangement = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
+    )
+
+    def __unicode__(self):
+        return self.name
