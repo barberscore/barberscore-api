@@ -1264,11 +1264,6 @@ class Song(models.Model):
         unique=True,
     )
 
-    arrangement = models.CharField(
-        max_length=200,
-        unique=True,
-    )
-
     is_medley = models.BooleanField(
         default=False,
     )
