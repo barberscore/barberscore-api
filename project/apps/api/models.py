@@ -647,6 +647,7 @@ class Contest(models.Model):
         return group
 
     def create_group_from_historical(self, name, chapter_name=None, district_name=None):
+        # TODO  This probably belongs on the manager.
         if district_name:
             if district_name == 'AAMBS':
                 district_name = 'BHA'
@@ -659,15 +660,14 @@ class Contest(models.Model):
             kind = 2
         else:
             kind = 1
-        group, created = Group.objects.get_or_create(
+        group = Group.objects.create(
             name=name,
             district=district,
             chapter_name=chapter_name,
             kind=kind,
         )
-        if created:
-            log.info("Created: {0}".format(group))
-        return group
+        log.info("Created: {0}".format(group))
+        return
 
     def import_historical(self):
         reader = csv.reader(self.scoresheet_csv)
@@ -676,11 +676,14 @@ class Contest(models.Model):
 
         # Create Group if non-existant
         for row in data:
-            self.create_group_from_historical(
-                name=row[2],
-                chapter_name=row[3],
-                district_name=row[4],
-            )
+            try:
+                Group.objects.get(name=row[2])
+            except Group.DoesNotExist:
+                self.create_group_from_historical(
+                    name=row[2],
+                    chapter_name=row[3],
+                    district_name=row[4],
+                )
 
         performance = {}
 
