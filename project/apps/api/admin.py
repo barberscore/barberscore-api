@@ -201,7 +201,6 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'district',
         'location',
         'website',
         'facebook',
@@ -234,7 +233,7 @@ class ContestantAdmin(admin.ModelAdmin):
     ]
 
     list_display = (
-        '__unicode__',
+        'name',
         'seed',
         'prelim',
         'place',
@@ -242,7 +241,7 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        'group__name',
+        'name',
     )
 
     list_filter = (
@@ -258,6 +257,7 @@ class ContestantAdmin(admin.ModelAdmin):
     fields = (
         'contest',
         'group',
+        'district',
         'seed',
         'prelim',
         'place',
