@@ -810,6 +810,13 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    district = models.ForeignKey(
+        'District',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
     lead = models.ForeignKey(
         'Singer',
         related_name='contestants_lead',
