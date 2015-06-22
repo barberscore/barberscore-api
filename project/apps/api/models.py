@@ -709,29 +709,28 @@ class Contest(models.Model):
                 Performance.objects.create(**performance)
 
     def rank(self):
-        if self.get_kind_display() != 'Quartet':
-            raise RuntimeError("Only run on multi-round contsts.")
-        performances = Performance.objects.filter(
-            contestant__contest=self,
-        )
-        quarters = performances.filter(
-            round=3
-        ).order_by(
-            '-total_raw',
-        )
-        place_round(quarters)
-        semis = performances.filter(
-            round=2
-        ).order_by(
-            '-total_raw',
-        )
-        place_round(semis)
-        finals = performances.filter(
-            round=1
-        ).order_by(
-            '-total_raw',
-        )
-        place_round(finals)
+        if self.kind == self.QUARTET:
+            performances = Performance.objects.filter(
+                contestant__contest=self,
+            )
+            quarters = performances.filter(
+                round=3
+            ).order_by(
+                '-total_raw',
+            )
+            place_round(quarters)
+            semis = performances.filter(
+                round=2
+            ).order_by(
+                '-total_raw',
+            )
+            place_round(semis)
+            finals = performances.filter(
+                round=1
+            ).order_by(
+                '-total_raw',
+            )
+            place_round(finals)
         contestants = self.contestants.all()
         place_round(contestants)
         return
