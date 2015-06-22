@@ -803,6 +803,41 @@ class Contestant(models.Model):
         related_name='contestants',
     )
 
+    director = models.ForeignKey(
+        'Director',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
+    lead = models.ForeignKey(
+        'Singer',
+        related_name='contestants_lead',
+        null=True,
+        blank=True,
+    )
+
+    tenor = models.ForeignKey(
+        'Singer',
+        related_name='contestants_tenor',
+        null=True,
+        blank=True,
+    )
+
+    baritone = models.ForeignKey(
+        'Singer',
+        related_name='contestants_baritone',
+        null=True,
+        blank=True,
+    )
+
+    bass = models.ForeignKey(
+        'Singer',
+        related_name='contestants_bass',
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -939,6 +974,17 @@ class Contestant(models.Model):
         except TypeError:
             self.score = None
         super(Contestant, self).save(*args, **kwargs)
+
+    def clean(self):
+            if self.group.kind == Group.QUARTET and self.director is not None:
+                raise ValidationError('Quartets do not have directors.')
+            if self.group.kind == Group.CHORUS and (
+                self.lead is not None or
+                self.tenor is not None or
+                self.baritone is not None or
+                self.bass is not None
+            ):
+                raise ValidationError('Choruses do not have parts.')
 
     def __unicode__(self):
         return self.name
