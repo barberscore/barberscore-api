@@ -128,10 +128,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'scoresheet_pdf',
         'scoresheet_csv',
         'is_active',
+        'is_complete',
     )
 
     fields = (
-        'is_active',
+        ('is_active', 'is_complete',),
         'name',
         'convention',
         'level',
@@ -155,7 +156,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         attrs={'width': '250px'},
     )
     list_display = (
-        '__unicode__',
+        'id',
         'queue',
         'session',
         'stagetime',
@@ -181,7 +182,6 @@ class PerformanceAdmin(admin.ModelAdmin):
     ordering = (
         'place',
         'queue',
-        'slug',
     )
 
     save_on_top = True
