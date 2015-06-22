@@ -71,8 +71,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
-    district = serializers.StringRelatedField()
-
     kind = serializers.CharField(
         source='get_kind_display',
     )
@@ -98,7 +96,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'kind',
-            'district',
             'location',
             'website',
             'facebook',
@@ -129,6 +126,8 @@ class ContestantSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    district = serializers.StringRelatedField()
+
     group = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -151,6 +150,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'slug',
             'contest',
             'group',
+            'district',
             'seed',
             'prelim',
             'place',
