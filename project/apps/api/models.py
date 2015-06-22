@@ -1121,7 +1121,7 @@ class Performance(models.Model):
         )
 
     def __unicode__(self):
-        return self.id
+        return "{0}".format(self.id)
 
     def save(self, *args, **kwargs):
         if (
