@@ -19,6 +19,8 @@ from .models import (
     Singer,
     Note,
     District,
+    Director,
+    Judge,
 )
 
 
@@ -267,6 +269,22 @@ class ContestantAdmin(admin.ModelAdmin):
 
 @admin.register(Singer)
 class SingerAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'name',
+    )
+
+
+@admin.register(Director)
+class DirectorAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'name',
+    )
+
+
+@admin.register(Judge)
+class JudgeAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',
