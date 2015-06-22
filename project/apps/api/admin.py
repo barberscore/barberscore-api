@@ -217,6 +217,10 @@ class GroupAdmin(admin.ModelAdmin):
         'bsmdb_id',
     )
 
+    list_filter = (
+        'kind',
+    )
+
     save_on_top = True
 
 
