@@ -226,11 +226,11 @@ class Group(Common):
         related_name='groups',
     )
 
-    district = models.ForeignKey(
-        'District',
-        null=True,
-        blank=True,
-    )
+    # district = models.ForeignKey(
+    #     'District',
+    #     null=True,
+    #     blank=True,
+    # )
 
     kind = models.IntegerField(
         choices=KIND_CHOICES,
