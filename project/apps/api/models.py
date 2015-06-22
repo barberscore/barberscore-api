@@ -886,6 +886,9 @@ class Contestant(models.Model):
             )
         except Performance.DoesNotExist:
             self.score = None
+        # TODO Need to think about the race condition here.
+        except TypeError:
+            self.score = None
         super(Contestant, self).save(*args, **kwargs)
 
     def __unicode__(self):
