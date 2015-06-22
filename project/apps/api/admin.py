@@ -234,6 +234,8 @@ class ContestantAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'district',
+        'director',
         'seed',
         'prelim',
         'place',
@@ -258,6 +260,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'contest',
         'group',
         'district',
+        'director',
         'seed',
         'prelim',
         'place',
