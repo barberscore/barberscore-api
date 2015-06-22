@@ -94,7 +94,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
         'lead', 'tenor', 'baritone', 'bass'
-    ).all().prefetch_related('contestants', 'district')
+    ).all().prefetch_related('contestants')
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     lookup_field = 'slug'
