@@ -128,7 +128,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'scoresheet_pdf',
         'scoresheet_csv',
         'is_active',
-        'is_complete',
     )
 
     fields = (
