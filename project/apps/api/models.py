@@ -650,7 +650,7 @@ class Contest(models.Model):
         if district_name:
             if district_name == 'AAMBS':
                 district_name = 'BHA'
-            elif district_name == 'NZOBS':
+            elif district_name == 'NZABS':
                 district_name = 'BHNZ'
             district = District.objects.get(name=district_name)
         else:
