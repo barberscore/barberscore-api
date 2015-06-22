@@ -26,4 +26,6 @@ class Command(BaseCommand):
         ps = Performance.objects.all()
         for p in ps:
             p.save()
+        for t in ts:
+            t.rank()
         return "Done"
