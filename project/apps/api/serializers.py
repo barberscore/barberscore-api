@@ -37,7 +37,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'slug',
             'round',
             'kind',
             'prelim',
@@ -125,10 +124,9 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    performances = serializers.SlugRelatedField(
+    performances = serializers.PrimaryKeyRelatedField(
         many=True,
         read_only=True,
-        slug_field='slug',
     )
 
     group = serializers.SlugRelatedField(

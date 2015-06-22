@@ -5,10 +5,13 @@ log = logging.getLogger(__name__)
 
 import uuid
 
-# import csv
+import csv
 import os
 import datetime
-from django.db import models
+from django.db import (
+    models,
+    transaction,
+)
 
 from django.conf import settings
 from autoslug import AutoSlugField
@@ -28,6 +31,8 @@ from timezone_field import TimeZoneField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
+
+from .utils import place_round
 
 
 def generate_image_filename(instance, filename):
@@ -98,7 +103,6 @@ class Common(models.Model):
     )
 
     phone = PhoneNumberField(
-        verbose_name='Phone Number',
         help_text="""
             The phone number of the resource.  Include country code.""",
         blank=True,
@@ -619,120 +623,115 @@ class Contest(models.Model):
             )
         super(Contest, self).save(*args, **kwargs)
 
-    # def create_group_from_scores(self, name, district_name, chapter_name=None):
-    #     if self.kind == self.CHORUS:
-    #         if name.startswith("The "):
-    #             name = name.split("The ", 1)[1]
-    #         if name.endswith(" Chorus"):
-    #             name = name.split(" Chorus", 1)[0]
-    #         name = name.strip()
-    #         try:
-    #             chorus = Chorus.objects.get(
-    #                 name__icontains=name,
-    #             )
-    #             created = False
-    #         except Chorus.MultipleObjectsReturned as e:
-    #             log.error("Duplicate exists for {0}".format(name))
-    #             raise e
-    #         except Chorus.DoesNotExist:
-    #             try:
-    #                 district = District.objects.get(
-    #                     name=district_name,
-    #                 )
-    #             except District.DoesNotExist as e:
-    #                 # TODO Kludge
-    #                 if district_name == 'AAMBS':
-    #                     district = District.objects.get(name='BHA')
-    #                 else:
-    #                     log.error("No District match for {0}".format(
-    #                         district_name)
-    #                     )
-    #                     district = District.objects.get(name='BHS')
+    def create_group_from_scores(self, name, chapter_name=None, district_name=None):
+        if district_name:
+            if district_name == 'AAMBS':
+                district_name = 'BHA'
+            elif district_name == 'NZOBS':
+                district_name = 'BHNZ'
+            district = District.objects.get(name=district_name)
+        else:
+            district = None
+        if self.kind == self.CHORUS:
+            kind = 2
+        else:
+            kind = 1
+        group, created = Group.objects.get_or_create(
+            name=name,
+            district=district,
+            chapter_name=chapter_name,
+            kind=kind,
+        )
+        if created:
+            log.info("Created: {0}".format(group))
+        return group
 
-    #             chorus = Chorus.objects.create(
-    #                 name=name,
-    #                 district=district,
-    #                 chapter_name=chapter_name,
-    #             )
-    #             created = True
-    #         log.info("{0} {1}".format(chorus, created))
-    #         return chorus
-    #     else:
-    #         if name.startswith("The "):
-    #             match = name.split("The ", 1)[1]
-    #         else:
-    #             match = name
-    #         try:
-    #             quartet = Quartet.objects.get(
-    #                 name__endswith=match,
-    #             )
-    #             created = False
-    #         except Quartet.MultipleObjectsReturned as e:
-    #             log.error("Duplicate exists for {0}".format(match))
-    #             raise e
-    #         except Quartet.DoesNotExist:
-    #             try:
-    #                 district = District.objects.get(
-    #                     name=district_name,
-    #                 )
-    #             except District.DoesNotExist as e:
-    #                 # TODO Kludge
-    #                 log.debug(district_name)
-    #                 if district_name == 'AAMBS':
-    #                     district = District.objects.get(name='BHA')
-    #                 else:
-    #                     log.error("No District match for {0}".format(
-    #                         district_name)
-    #                     )
-    #                     district = District.objects.get(name='BHS')
+    def create_group_from_historical(self, name, chapter_name=None, district_name=None):
+        if district_name:
+            if district_name == 'AAMBS':
+                district_name = 'BHA'
+            elif district_name == 'NZOBS':
+                district_name = 'BHNZ'
+            district = District.objects.get(name=district_name)
+        else:
+            district = None
+        if self.kind == self.CHORUS:
+            kind = 2
+        else:
+            kind = 1
+        group, created = Group.objects.get_or_create(
+            name=name,
+            district=district,
+            chapter_name=chapter_name,
+            kind=kind,
+        )
+        if created:
+            log.info("Created: {0}".format(group))
+        return group
 
-    #             quartet = Quartet.objects.create(
-    #                 name=name,
-    #                 district=district,
-    #             )
-    #             created = True
-    #         log.info("{0} {1}".format(quartet, created))
-    #         return quartet
+    def import_historical(self):
+        reader = csv.reader(self.scoresheet_csv)
+        next(reader)
+        data = [row for row in reader]
 
-    # def import_scores(self):
-    #     reader = csv.reader(self.scoresheet_csv)
-    #     data = [row for row in reader]
+        # Create Group if non-existant
+        for row in data:
+            self.create_group_from_historical(
+                name=row[2],
+                chapter_name=row[3],
+                district_name=row[4],
+            )
 
-    #     performance = {}
+        performance = {}
 
-    #     for row in data:
-    #         if not row[4]:
-    #             row[4] = 'BHS'
-    #         performance['contest'] = self
-    #         performance['round'] = row[0]
-    #         performance['place'] = row[1]
-    #         try:
-    #             performance['group'] = self.create_group_from_scores(
-    #                 name=row[2],
-    #                 chapter_name=row[3],
-    #                 district_name=row[4],
-    #             )
-    #         except Exception as e:
-    #             log.error(e)
-    #             raise e
+        with transaction.atomic():
+            for row in data:
+                performance['contestant'], created = Contestant.objects.get_or_create(
+                    contest=self,
+                    group=Group.objects.get(
+                        name=row[2],
+                    ),
+                )
+                performance['round'] = row[0]
+                performance['place'] = row[1]
+                performance['song1'] = row[5]
+                performance['mus1'] = int(row[6])
+                performance['prs1'] = int(row[7])
+                performance['sng1'] = int(row[8])
+                performance['song2'] = row[9]
+                performance['mus2'] = int(row[10])
+                performance['prs2'] = int(row[11])
+                performance['sng2'] = int(row[12])
+                performance['men'] = row[13]
+                Performance.objects.create(**performance)
 
-    #         performance['song1'] = row[5]
-    #         performance['mus1'] = row[6]
-    #         performance['prs1'] = row[7]
-    #         performance['sng1'] = row[8]
-    #         performance['song2'] = row[9]
-    #         performance['mus2'] = row[10]
-    #         performance['prs2'] = row[11]
-    #         performance['sng2'] = row[12]
-    #         try:
-    #             performance['men'] = row[13]
-    #             if not performance['men']:
-    #                 performance['men'] = 4
-    #         except IndexError:
-    #             performance['men'] = 4
-    #         result = Performance.objects.create(**performance)
-    #         log.info("Created performance: {0}".format(result))
-    #     return "Done"
+    def rank(self):
+        if self.get_kind_display() != 'Quartet':
+            raise RuntimeError("Only run on multi-round contsts.")
+        performances = Performance.objects.filter(
+            contestant__contest=self,
+        )
+        quarters = performances.filter(
+            round=3
+        ).order_by(
+            '-total_raw',
+        )
+        place_round(quarters)
+        semis = performances.filter(
+            round=2
+        ).order_by(
+            '-total_raw',
+        )
+        place_round(semis)
+        finals = performances.filter(
+            round=1
+        ).order_by(
+            '-total_raw',
+        )
+        place_round(finals)
+        contestants = self.contestants.all()
+        place_round(contestants)
+        return
 
 
 class Contestant(models.Model):
@@ -824,6 +823,11 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    total_raw = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     def save(self, *args, **kwargs):
         self.name = "{0} {1}".format(
             self.contest,
@@ -865,6 +869,20 @@ class Contestant(models.Model):
             self.finals_score = self.performances.get(round=1).score
         except Performance.DoesNotExist:
             self.finals_score = None
+        try:
+            self.total_raw = self.performances.aggregate(
+                sum=models.Sum('total_raw')
+            )['sum']
+        except Performance.DoesNotExist:
+            self.total_raw = None
+        try:
+            cnt = self.performances.count()
+            self.score = round(
+                self.total_raw / (cnt * self.contest.panel * 6),
+                1
+            )
+        except Performance.DoesNotExist:
+            self.score = None
         super(Contestant, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -908,18 +926,6 @@ class Performance(models.Model):
     round = models.IntegerField(
         choices=ROUND_CHOICES,
         default=FINALS,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     queue = models.IntegerField(
@@ -1110,18 +1116,9 @@ class Performance(models.Model):
         )
 
     def __unicode__(self):
-        return self.name
+        return self.id
 
     def save(self, *args, **kwargs):
-        if self.contestant.contest == Contest.CHORUS:
-            self.name = "{0}".format(
-                self.contestant,
-            )
-        else:
-            self.name = "{0} {1}".format(
-                self.contestant,
-                self.get_round_display(),
-            )
         if (
             self.mus1 and
             self.prs1 and
@@ -1157,7 +1154,6 @@ class Performance(models.Model):
                 self.score = round(self.total_raw / (panel * 6), 1)
             except TypeError:
                 log.error("Check scores for performance {0}".format(self))
-
         super(Performance, self).save(*args, **kwargs)
 
 

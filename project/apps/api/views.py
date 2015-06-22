@@ -111,7 +111,6 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     # )
     serializer_class = PerformanceSerializer
     filter_class = PerformanceFilter
-    lookup_field = 'slug'
 
 
 class NoteViewSet(viewsets.ModelViewSet):
