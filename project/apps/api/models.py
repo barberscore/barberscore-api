@@ -633,19 +633,19 @@ class Contest(models.Model):
             quarters = performances.filter(
                 round=3
             ).order_by(
-                '-total_raw',
+                '-points',
             )
             place_round(quarters)
             semis = performances.filter(
                 round=2
             ).order_by(
-                '-total_raw',
+                '-points',
             )
             place_round(semis)
             finals = performances.filter(
                 round=1
             ).order_by(
-                '-total_raw',
+                '-points',
             )
             place_round(finals)
         contestants = self.contestants.all()
@@ -789,7 +789,7 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    total_raw = models.IntegerField(
+    points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -836,15 +836,15 @@ class Contestant(models.Model):
         except Performance.DoesNotExist:
             self.finals_score = None
         # try:
-        #     self.total_raw = self.performances.aggregate(
-        #         sum=models.Sum('total_raw')
+        #     self.points = self.performances.aggregate(
+        #         sum=models.Sum('points')
         #     )['sum']
         # except Performance.DoesNotExist:
-        #     self.total_raw = None
+        #     self.points = None
         # try:
         #     cnt = self.performances.count()
         #     self.score = round(
-        #         self.total_raw / (cnt * self.contest.panel * 6),
+        #         self.points / (cnt * self.contest.panel * 6),
         #         1
         #     )
         # except Performance.DoesNotExist:
@@ -1064,7 +1064,7 @@ class Performance(models.Model):
         editable=False,
     )
 
-    total_raw = models.IntegerField(
+    points = models.IntegerField(
         blank=True,
         null=True,
         editable=False,
@@ -1119,7 +1119,7 @@ class Performance(models.Model):
                     self.prs2,
                     self.sng2,
                 ])
-                self.total_raw = sum([
+                self.points = sum([
                     self.song1_raw,
                     self.song2_raw,
                 ])
@@ -1131,7 +1131,7 @@ class Performance(models.Model):
                 self.prs2_rata = round(self.prs2 / panel, 1)
                 self.sng2_rata = round(self.sng2 / panel, 1)
                 self.song2_rata = round(self.song2_raw / (panel * 3), 1)
-                self.score = round(self.total_raw / (panel * 6), 1)
+                self.score = round(self.points / (panel * 6), 1)
             except TypeError:
                 log.error("Check scores for performance {0}".format(self))
         super(Performance, self).save(*args, **kwargs)
