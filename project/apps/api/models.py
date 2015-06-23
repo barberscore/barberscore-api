@@ -635,14 +635,13 @@ class Contest(models.Model):
     )
 
     class Meta:
-        # unique_together = (
-        #     ('kind', 'convention',),
-        # )
+        unique_together = (
+            ('level', 'kind', 'year', 'district',),
+        )
         ordering = (
             'level',
             'kind',
             '-year',
-            # 'district',
         )
 
     def clean(self):
