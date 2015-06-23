@@ -249,7 +249,7 @@ def place_round(performances):
     i = 1
     for performance in performances:
         try:
-            match = performance.total_raw == queue[0].total_raw
+            match = performance.points == queue[0].points
         except IndexError:
             performance.place = i
             performance.save()
