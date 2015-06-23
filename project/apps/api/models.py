@@ -242,6 +242,7 @@ class Group(Common):
         help_text="""Lead""",
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         related_name='lead_groups',
     )
 
@@ -250,6 +251,7 @@ class Group(Common):
         help_text="""Tenor""",
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         related_name='tenor_groups',
     )
 
@@ -258,6 +260,7 @@ class Group(Common):
         help_text="""Baritone""",
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         related_name='baritone_groups',
     )
 
@@ -266,6 +269,7 @@ class Group(Common):
         help_text="""Bass""",
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         related_name='bass_groups',
     )
 
@@ -808,6 +812,7 @@ class Contestant(models.Model):
         related_name='contestants',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     district = models.ForeignKey(
@@ -822,6 +827,7 @@ class Contestant(models.Model):
         related_name='contestants_lead',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     tenor = models.ForeignKey(
@@ -829,6 +835,7 @@ class Contestant(models.Model):
         related_name='contestants_tenor',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     baritone = models.ForeignKey(
@@ -836,6 +843,7 @@ class Contestant(models.Model):
         related_name='contestants_baritone',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     bass = models.ForeignKey(
@@ -843,6 +851,7 @@ class Contestant(models.Model):
         related_name='contestants_bass',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     name = models.CharField(
