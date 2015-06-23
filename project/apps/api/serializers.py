@@ -79,13 +79,13 @@ class GroupSerializer(serializers.ModelSerializer):
         source='chapter_name',
     )
 
-    lead = serializers.StringRelatedField()
+    # lead = serializers.StringRelatedField()
 
-    tenor = serializers.StringRelatedField()
+    # tenor = serializers.StringRelatedField()
 
-    baritone = serializers.StringRelatedField()
+    # baritone = serializers.StringRelatedField()
 
-    bass = serializers.StringRelatedField()
+    # bass = serializers.StringRelatedField()
 
     class Meta:
         model = Group
@@ -106,10 +106,10 @@ class GroupSerializer(serializers.ModelSerializer):
             'description',
             'director',
             'chapterName',
-            'lead',
-            'tenor',
-            'baritone',
-            'bass',
+            # 'lead',
+            # 'tenor',
+            # 'baritone',
+            # 'bass',
             'bsmdb',
             # 'contestants',
         )
