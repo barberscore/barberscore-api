@@ -310,4 +310,30 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        District,
+        attrs={'width': '250px'},
+    )
+
+    search_fields = (
+        'name',
+    )
+
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'long_name',
+        'kind',
+    )
+
+    list_filter = (
+        'kind',
+    )
+
     save_on_top = True
