@@ -104,7 +104,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            'director',
             'chapterName',
             # 'lead',
             # 'tenor',
@@ -132,6 +131,16 @@ class ContestantSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='slug',
     )
+
+    lead = serializers.StringRelatedField()
+
+    tenor = serializers.StringRelatedField()
+
+    baritone = serializers.StringRelatedField()
+
+    bass = serializers.StringRelatedField()
+
+    director = serializers.StringRelatedField()
 
     # group = GroupSerializer(
     #     read_only=True,
@@ -163,6 +172,11 @@ class ContestantSerializer(serializers.ModelSerializer):
             'semis_score',
             'finals_place',
             'finals_score',
+            'director',
+            'lead',
+            'tenor',
+            'baritone',
+            'bass',
             'performances',
         )
 
