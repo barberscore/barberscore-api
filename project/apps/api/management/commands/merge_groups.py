@@ -1,5 +1,7 @@
 from optparse import make_option
 
+from django.db import IntegrityError
+
 from django.core.management.base import (
     BaseCommand,
     CommandError,
@@ -48,13 +50,19 @@ class Command(BaseCommand):
             raise CommandError("Subject group does not exist.")
 
         # perform de-dup
-        try:
-            contestants = old_group.contestants.all()
-            for contestant in contestants:
-                contestant.group = new_group
+        contestants = old_group.contestants.all()
+        if not contestants:
+            old_group.delete()
+            return 'No contesants to move.'
+
+        for contestant in contestants:
+            contestant.group = new_group
+            try:
                 contestant.save()
-        except Exception as e:
-            raise CommandError("Error moving contestants: {0}".format(e))
+            except IntegrityError:
+                raise CommandError(
+                    "Contestant {0} already exists.  Merge manually".format(contestant.id)
+                )
 
         # remove redundant group
         try:
