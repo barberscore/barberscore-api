@@ -325,68 +325,6 @@ class Group(Common):
 
 class District(Common):
     BHS = 0
-    CAR = 1
-    CSD = 2
-    DIX = 3
-    EVG = 4
-    FWD = 5
-    ILL = 6
-    JAD = 7
-    LOL = 8
-    MAD = 9
-    NED = 10
-    NSC = 11
-    ONT = 12
-    PIO = 13
-    RMD = 14
-    SLD = 15
-    SUN = 16
-    SWD = 17
-    BABS = 18
-    BHA = 19
-    BHNZ = 20
-    BING = 21
-    DABS = 22
-    FABS = 23
-    IABS = 24
-    NZABS = 25
-    SABS = 26
-    SNOBS = 27
-    SPATS = 28
-
-    DISTRICT_CHOICES = (
-        (BHS, "BHS"),
-        (CAR, "CAR"),
-        (CSD, "CSD"),
-        (DIX, "DIX"),
-        (EVG, "EVG"),
-        (FWD, "FWD"),
-        (ILL, "ILL"),
-        (JAD, "JAD"),
-        (LOL, "LOL"),
-        (MAD, "MAD"),
-        (NED, "NED"),
-        (NSC, "NSC"),
-        (ONT, "ONT"),
-        (PIO, "PIO"),
-        (RMD, "RMD"),
-        (SLD, "SLD"),
-        (SUN, "SUN"),
-        (SWD, "SWD"),
-        (BABS, "BABS"),
-        (BHA, "BHA"),
-        (BHNZ, "BHNZ"),
-        (BING, "BING"),
-        (DABS, "DABS"),
-        (FABS, "FABS"),
-        (IABS, "IABS"),
-        (NZABS, "NZABS"),
-        (SABS, "SABS"),
-        (SNOBS, "SNOBS"),
-        (SPATS, "SPATS"),
-    )
-
-    BHS = 0
     DISTRICT = 1
     AFFILIATE = 2
 
@@ -400,12 +338,6 @@ class District(Common):
         null=True,
         blank=True,
         max_length=200,
-    )
-
-    abbr = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DISTRICT_CHOICES,
     )
 
     kind = models.IntegerField(
@@ -675,29 +607,6 @@ class Contest(models.Model):
                 self.get_year_display(),
             )
         super(Contest, self).save(*args, **kwargs)
-
-    def create_group_from_scores(self, name, chapter_name=None, district_name=None):
-        if district_name:
-            if district_name == 'AAMBS':
-                district_name = 'BHA'
-            elif district_name == 'NZOBS':
-                district_name = 'BHNZ'
-            district = District.objects.get(name=district_name)
-        else:
-            district = None
-        if self.kind == self.CHORUS:
-            kind = 2
-        else:
-            kind = 1
-        group, created = Group.objects.get_or_create(
-            name=name,
-            district=district,
-            chapter_name=chapter_name,
-            kind=kind,
-        )
-        if created:
-            log.info("Created: {0}".format(group))
-        return group
 
     def create_group_from_historical(self, name, chapter_name=None, district_name=None):
         # TODO  This probably belongs on the manager.
