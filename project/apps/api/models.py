@@ -995,14 +995,6 @@ class Performance(models.Model):
         null=True,
     )
 
-    men = models.IntegerField(
-        help_text="""
-            Men on stage.""",
-        blank=True,
-        null=True,
-        default=4,
-    )
-
     mus1_score = models.FloatField(
         blank=True,
         null=True,
