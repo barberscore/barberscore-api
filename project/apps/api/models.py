@@ -226,54 +226,9 @@ class Group(Common):
         related_name='groups',
     )
 
-    # district = models.ForeignKey(
-    #     'District',
-    #     null=True,
-    #     blank=True,
-    # )
-
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
-    )
-
-    # lead = models.ForeignKey(
-    #     'Singer',
-    #     help_text="""Lead""",
-    #     blank=True,
-    #     null=True,
-    #     related_name='lead_groups',
-    # )
-
-    # tenor = models.ForeignKey(
-    #     'Singer',
-    #     help_text="""Tenor""",
-    #     blank=True,
-    #     null=True,
-    #     related_name='tenor_groups',
-    # )
-
-    # baritone = models.ForeignKey(
-    #     'Singer',
-    #     help_text="""Baritone""",
-    #     blank=True,
-    #     null=True,
-    #     related_name='baritone_groups',
-    # )
-
-    # bass = models.ForeignKey(
-    #     'Singer',
-    #     help_text="""Bass""",
-    #     blank=True,
-    #     null=True,
-    #     related_name='bass_groups',
-    # )
-
-    director = models.CharField(
-        help_text="""
-            The name of the director(s) of the chorus.""",
-        max_length=200,
-        blank=True,
     )
 
     chapter_name = models.CharField(
@@ -715,19 +670,31 @@ class Contestant(models.Model):
         related_name='contestants',
     )
 
+    district = models.ForeignKey(
+        'District',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
     director = models.ForeignKey(
         'Director',
         related_name='contestants',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    district = models.ForeignKey(
-        'District',
-        related_name='contestants',
-        null=True,
-        blank=True,
     )
 
     lead = models.ForeignKey(
@@ -760,18 +727,6 @@ class Contestant(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     seed = models.IntegerField(
