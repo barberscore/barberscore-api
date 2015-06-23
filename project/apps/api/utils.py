@@ -267,3 +267,12 @@ def place_round(performances):
             performance.save()
             queue = [performance]
     return
+
+
+def merge_groups(from_group, to_group):
+    cs = from_group.contestants.all()
+    for c in cs:
+        c.group = to_group
+        c.save()
+    from_group.delete()
+
