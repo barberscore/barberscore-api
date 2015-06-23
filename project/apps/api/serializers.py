@@ -47,7 +47,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'sng2_rata',
             'song2_raw',
             'song2_rata',
-            'total_raw',
+            'points',
             'score',
         )
 

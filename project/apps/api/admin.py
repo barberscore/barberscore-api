@@ -162,7 +162,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'session',
         'stagetime',
         'place',
-        'total_raw',
+        'points',
         'song1',
         'mus1',
         'prs1',
