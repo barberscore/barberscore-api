@@ -38,35 +38,24 @@ User = get_user_model()
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.filter(
+    queryset = Convention.objects.select_related(
+        'district',
+    ).filter(
         is_active=True,
     ).prefetch_related(
         'contests',
-        # 'contests__contestants__group',
-        # 'contests__contestants__group__contestants',
-        # 'contests__contestants__performances',
-        # 'contests__contestants__group__lead',
-        # 'contests__contestants__group__tenor',
-        # 'contests__contestants__group__baritone',
-        # 'contests__contestants__group__bass',
     )
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.all(
-        # is_active=True,
+    queryset = Contest.objects.select_related(
+        'district',
+        'convention',
     ).prefetch_related(
         'district',
         'contestants',
-        'contestants__group',
-        'contestants__performances',
-        # 'contestants__group__contestants',
-        # 'contestants__group__lead',
-        # 'contestants__group__tenor',
-        # 'contestants__group__baritone',
-        # 'contestants__group__bass',
     )
     serializer_class = ContestSerializer
     # filter_class = ChorusFilter
@@ -76,37 +65,33 @@ class ContestViewSet(viewsets.ModelViewSet):
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'group',
-        # 'group__contestants',
-        # 'group__lead',
-        # 'group__tenor',
-        # 'group__baritone',
-        # 'group__bass',
+        'contest',
+        'director',
+        'district',
+        'lead',
+        'tenor',
+        'baritone',
+        'bass',
     ).prefetch_related(
         'performances',
-        'contest',
-        # 'group__contestants',
     )
     serializer_class = ContestantSerializer
-    # filter_class = QuartetFilter
     lookup_field = 'slug'
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.all().prefetch_related('contestants')
+    queryset = Group.objects.all()
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     lookup_field = 'slug'
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
-    # queryset = Performance.objects.all()
     queryset = Performance.objects.select_related(
+        'contestant',
         'contestant__contest',
         'contestant__group',
     )
-    # .filter(
-    #     contestant__contest__convention__name='Pittsburgh 2015'
-    # )
     serializer_class = PerformanceSerializer
     filter_class = PerformanceFilter
 
