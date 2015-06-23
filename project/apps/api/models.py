@@ -300,6 +300,10 @@ class Group(Common):
         null=True,
     )
 
+    is_active = models.BooleanField(
+        default=False,
+    )
+
     def __unicode__(self):
         return self.name
 
