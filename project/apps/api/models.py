@@ -998,73 +998,73 @@ class Performance(models.Model):
         default=4,
     )
 
-    mus1_rata = models.FloatField(
+    mus1_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    prs1_rata = models.FloatField(
+    prs1_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    sng1_rata = models.FloatField(
+    sng1_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    song1_rata = models.FloatField(
+    song1_points = models.IntegerField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    mus2_rata = models.FloatField(
+    song1_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    prs2_rata = models.FloatField(
+    mus2_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    sng2_rata = models.FloatField(
+    prs2_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    song2_rata = models.FloatField(
+    sng2_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    score = models.FloatField(
+    song2_points = models.IntegerField(
         blank=True,
         null=True,
         editable=False,
     )
 
-    song1_raw = models.IntegerField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    song2_raw = models.IntegerField(
+    song2_score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
     )
 
     points = models.IntegerField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    score = models.FloatField(
         blank=True,
         null=True,
         editable=False,
@@ -1109,28 +1109,28 @@ class Performance(models.Model):
         ):
             try:
                 panel = self.contestant.contest.panel
-                self.song1_raw = sum([
+                self.song1_points = sum([
                     self.mus1,
                     self.prs1,
                     self.sng1,
                 ])
-                self.song2_raw = sum([
+                self.song2_points = sum([
                     self.mus2,
                     self.prs2,
                     self.sng2,
                 ])
                 self.points = sum([
-                    self.song1_raw,
-                    self.song2_raw,
+                    self.song1_points,
+                    self.song2_points,
                 ])
-                self.mus1_rata = round(self.mus1 / panel, 1)
-                self.prs1_rata = round(self.prs1 / panel, 1)
-                self.sng1_rata = round(self.sng1 / panel, 1)
-                self.song1_rata = round(self.song1_raw / (panel * 3), 1)
-                self.mus2_rata = round(self.mus2 / panel, 1)
-                self.prs2_rata = round(self.prs2 / panel, 1)
-                self.sng2_rata = round(self.sng2 / panel, 1)
-                self.song2_rata = round(self.song2_raw / (panel * 3), 1)
+                self.mus1_score = round(self.mus1 / panel, 1)
+                self.prs1_score = round(self.prs1 / panel, 1)
+                self.sng1_score = round(self.sng1 / panel, 1)
+                self.song1_score = round(self.song1_points / (panel * 3), 1)
+                self.mus2_score = round(self.mus2 / panel, 1)
+                self.prs2_score = round(self.prs2 / panel, 1)
+                self.sng2_score = round(self.sng2 / panel, 1)
+                self.song2_score = round(self.song2_points / (panel * 3), 1)
                 self.score = round(self.points / (panel * 6), 1)
             except TypeError:
                 log.error("Check scores for performance {0}".format(self))
