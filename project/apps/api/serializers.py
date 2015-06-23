@@ -36,7 +36,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'mus2',
             'prs2',
             'sng2',
-            'men',
             'mus1_score',
             'prs1_score',
             'sng1_score',
@@ -87,6 +86,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
+            'notes',
             'chapterName',
             # 'lead',
             # 'tenor',
@@ -139,6 +139,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
+            'url',
             'slug',
             'contest',
             'group',
@@ -160,6 +161,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'tenor',
             'baritone',
             'bass',
+            'men',
             'performances',
         )
 
@@ -171,15 +173,15 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    level = serializers.CharField(
+    level_display = serializers.CharField(
         source='get_level_display',
     )
 
-    kind = serializers.CharField(
+    kind_display = serializers.CharField(
         source='get_kind_display',
     )
 
-    year = serializers.CharField(
+    year_display = serializers.CharField(
         source='get_year_display',
     )
 
@@ -190,10 +192,11 @@ class ContestSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
+            'url',
             'slug',
-            'level',
-            'kind',
-            'year',
+            'level_display',
+            'kind_display',
+            'year_display',
             'district',
             'panel',
             'scoresheet_pdf',
