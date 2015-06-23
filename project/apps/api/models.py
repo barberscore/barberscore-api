@@ -237,41 +237,37 @@ class Group(Common):
         default=QUARTET,
     )
 
-    lead = models.ForeignKey(
-        'Singer',
-        help_text="""Lead""",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='lead_groups',
-    )
+    # lead = models.ForeignKey(
+    #     'Singer',
+    #     help_text="""Lead""",
+    #     blank=True,
+    #     null=True,
+    #     related_name='lead_groups',
+    # )
 
-    tenor = models.ForeignKey(
-        'Singer',
-        help_text="""Tenor""",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='tenor_groups',
-    )
+    # tenor = models.ForeignKey(
+    #     'Singer',
+    #     help_text="""Tenor""",
+    #     blank=True,
+    #     null=True,
+    #     related_name='tenor_groups',
+    # )
 
-    baritone = models.ForeignKey(
-        'Singer',
-        help_text="""Baritone""",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='baritone_groups',
-    )
+    # baritone = models.ForeignKey(
+    #     'Singer',
+    #     help_text="""Baritone""",
+    #     blank=True,
+    #     null=True,
+    #     related_name='baritone_groups',
+    # )
 
-    bass = models.ForeignKey(
-        'Singer',
-        help_text="""Bass""",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='bass_groups',
-    )
+    # bass = models.ForeignKey(
+    #     'Singer',
+    #     help_text="""Bass""",
+    #     blank=True,
+    #     null=True,
+    #     related_name='bass_groups',
+    # )
 
     director = models.CharField(
         help_text="""
