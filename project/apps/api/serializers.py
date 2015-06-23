@@ -18,29 +18,12 @@ class PerformanceSerializer(serializers.ModelSerializer):
         source='get_round_display',
     )
 
-    kind = serializers.CharField(
-        source='contestant.contest.get_kind_display',
-    )
-
-    prelim = serializers.FloatField(
-        source='contestant.prelim',
-    )
-
-    group = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-        source='contestant.group',
-    )
-
     class Meta:
         model = Performance
         lookup_field = 'slug'
         fields = (
             'id',
             'round',
-            'kind',
-            'prelim',
-            'group',
             'queue',
             'session',
             'stagetime',
