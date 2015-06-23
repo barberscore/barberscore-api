@@ -63,10 +63,10 @@ class ContestViewSet(viewsets.ModelViewSet):
         'contestants__group',
         'contestants__performances',
         # 'contestants__group__contestants',
-        'contestants__group__lead',
-        'contestants__group__tenor',
-        'contestants__group__baritone',
-        'contestants__group__bass',
+        # 'contestants__group__lead',
+        # 'contestants__group__tenor',
+        # 'contestants__group__baritone',
+        # 'contestants__group__bass',
     )
     serializer_class = ContestSerializer
     # filter_class = ChorusFilter
@@ -77,10 +77,10 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'group',
         # 'group__contestants',
-        'group__lead',
-        'group__tenor',
-        'group__baritone',
-        'group__bass',
+        # 'group__lead',
+        # 'group__tenor',
+        # 'group__baritone',
+        # 'group__bass',
     ).prefetch_related(
         'performances',
         'contest',
@@ -92,9 +92,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.select_related(
-        'lead', 'tenor', 'baritone', 'bass'
-    ).all().prefetch_related('contestants')
+    queryset = Group.objects.all().prefetch_related('contestants')
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     lookup_field = 'slug'
