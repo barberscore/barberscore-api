@@ -173,6 +173,8 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    # TODO - Weird!
+
     level_display = serializers.CharField(
         source='get_level_display',
     )
