@@ -207,14 +207,10 @@ class GroupAdmin(admin.ModelAdmin):
         'twitter',
         'email',
         'phone',
-        'lead',
-        'tenor',
-        'baritone',
-        'bass',
-        'director',
         'chapter_name',
         'chapter_code',
-        'bsmdb_id',
+        # 'bsmdb_id',
+        'picture',
     )
 
     list_filter = (
