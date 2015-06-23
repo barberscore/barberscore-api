@@ -171,7 +171,6 @@ class PerformanceAdmin(admin.ModelAdmin):
         'mus2',
         'prs2',
         'sng2',
-        'men',
     )
 
     list_filter = (
@@ -244,6 +243,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'prelim',
         'place',
         'score',
+        'men',
     )
 
     search_fields = (
