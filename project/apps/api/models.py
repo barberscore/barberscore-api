@@ -236,6 +236,7 @@ class Group(Common):
             The name of the director(s) of the chorus.""",
         max_length=200,
         blank=True,
+        null=True,
     )
 
     chapter_code = models.CharField(
