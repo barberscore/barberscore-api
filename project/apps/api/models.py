@@ -963,23 +963,23 @@ class Contestant(models.Model):
             self.finals_score = self.performances.get(round=1).score
         except Performance.DoesNotExist:
             self.finals_score = None
-        try:
-            self.total_raw = self.performances.aggregate(
-                sum=models.Sum('total_raw')
-            )['sum']
-        except Performance.DoesNotExist:
-            self.total_raw = None
-        try:
-            cnt = self.performances.count()
-            self.score = round(
-                self.total_raw / (cnt * self.contest.panel * 6),
-                1
-            )
-        except Performance.DoesNotExist:
-            self.score = None
-        # TODO Need to think about the race condition here.
-        except TypeError:
-            self.score = None
+        # try:
+        #     self.total_raw = self.performances.aggregate(
+        #         sum=models.Sum('total_raw')
+        #     )['sum']
+        # except Performance.DoesNotExist:
+        #     self.total_raw = None
+        # try:
+        #     cnt = self.performances.count()
+        #     self.score = round(
+        #         self.total_raw / (cnt * self.contest.panel * 6),
+        #         1
+        #     )
+        # except Performance.DoesNotExist:
+        #     self.score = None
+        # # TODO Need to think about the race condition here.
+        # except TypeError:
+        #     self.score = None
         super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
