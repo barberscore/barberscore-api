@@ -794,6 +794,11 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    men = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     def save(self, *args, **kwargs):
         self.name = "{0} {1}".format(
             self.contest,
