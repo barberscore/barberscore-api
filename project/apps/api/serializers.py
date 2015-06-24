@@ -14,10 +14,6 @@ User = get_user_model()
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    round = serializers.CharField(
-        source='get_round_display',
-    )
-
     class Meta:
         model = Performance
         lookup_field = 'slug'
@@ -53,12 +49,16 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
-    kind = serializers.CharField(
-        source='get_kind_display',
-    )
-
     chapterName = serializers.CharField(
         source='chapter_name',
+    )
+
+    contestants = serializers.SlugRelatedField(
+        many=True,
+        slug_field='slug',
+        queryset=Contestant.objects.filter(
+            contest__level=Contest.INTERNATIONAL,
+        ).order_by('-contest__year'),
     )
 
     # lead = serializers.StringRelatedField()
@@ -93,13 +93,15 @@ class GroupSerializer(serializers.ModelSerializer):
             # 'baritone',
             # 'bass',
             'bsmdb',
-            # 'contestants',
+            'contestants',
         )
 
 
 class ContestantSerializer(serializers.ModelSerializer):
     contest = serializers.SlugRelatedField(
-        read_only=True,
+        queryset=Contest.objects.filter(
+            level=Contest.INTERNATIONAL,
+        ).order_by('-contest__year'),
         slug_field='slug',
     )
 
@@ -173,20 +175,6 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # TODO - Weird!
-
-    level_display = serializers.CharField(
-        source='get_level_display',
-    )
-
-    kind_display = serializers.CharField(
-        source='get_kind_display',
-    )
-
-    year_display = serializers.CharField(
-        source='get_year_display',
-    )
-
     district = serializers.StringRelatedField()
 
     class Meta:
@@ -196,15 +184,15 @@ class ContestSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'slug',
-            'level_display',
-            'kind_display',
-            'year_display',
+            'year',
+            'level',
+            'kind',
             'district',
             'panel',
-            'scoresheet_pdf',
-            'contestants',
             'is_active',
             'is_complete',
+            'scoresheet_pdf',
+            'contestants',
         )
 
 
@@ -213,15 +201,6 @@ class ConventionSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
         slug_field='slug',
-    )
-
-    # contests = ContestSerializer(
-    #     read_only=True,
-    #     many=True,
-    # )
-
-    year = serializers.CharField(
-        source='get_year_display',
     )
 
     class Meta:
@@ -242,7 +221,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     performance = serializers.SlugRelatedField(
-        # read_only=True,
         queryset=Performance.objects.all(),
         slug_field='slug',
     )
