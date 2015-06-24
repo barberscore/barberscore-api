@@ -9,7 +9,7 @@ boto==2.38.0
 django-storages==1.1.8
 waitress==0.8.9
 django-autoslug==1.8.0
-django-easy-select2==1.2.12
+django-easy-select2==1.3
 django-object-actions==0.5.1
 django-phonenumber-field==0.7.2
 s3cmd==1.5.2
