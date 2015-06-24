@@ -1097,7 +1097,7 @@ class Performance(models.Model):
         return "{0}".format(self.id)
 
     def save(self, *args, **kwargs):
-        if (
+        if bool(
             self.mus1 and
             self.prs1 and
             self.sng1 and
