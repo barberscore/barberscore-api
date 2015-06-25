@@ -43,11 +43,14 @@ class ContestantInline(admin.TabularInline):
     extra = 0
     show_change_link = True
     fields = (
+        'contest',
         'group',
-        'prelim',
-        'seed',
-        'score',
-        'place',
+        'director',
+        'district',
+        # 'prelim',
+        # 'seed',
+        # 'score',
+        # 'place',
     )
 
 
@@ -211,6 +214,10 @@ class GroupAdmin(admin.ModelAdmin):
         # 'bsmdb_id',
         'picture',
     )
+
+    inlines = [
+        ContestantInline,
+    ]
 
     list_filter = (
         'kind',
