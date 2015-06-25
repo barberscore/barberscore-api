@@ -876,7 +876,7 @@ class Contestant(models.Model):
 
     class Meta:
         ordering = (
-            '-contest',
+            '-contest__year',
             'place',
             '-score',
         )

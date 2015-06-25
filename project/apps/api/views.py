@@ -2,9 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from rest_framework import (
-    # mixins,
     viewsets,
-    # filters,
 )
 
 from django.contrib.auth import get_user_model
@@ -15,7 +13,8 @@ from .models import (
     Group,
     Contestant,
     Performance,
-    # Note,
+    Singer,
+    Director,
 )
 
 from .filters import (
@@ -32,6 +31,8 @@ from .serializers import (
     PerformanceSerializer,
     NoteSerializer,
     UserSerializer,
+    SingerSerializer,
+    DirectorSerializer,
 )
 
 User = get_user_model()
@@ -58,7 +59,6 @@ class ContestViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = ContestSerializer
-    # filter_class = ChorusFilter
     lookup_field = 'slug'
 
 
@@ -80,7 +80,9 @@ class ContestantViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.all()
+    queryset = Group.objects.all().prefetch_related(
+        'contestants',
+    )
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     lookup_field = 'slug'
@@ -107,3 +109,22 @@ class NoteViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class SingerViewSet(viewsets.ModelViewSet):
+    queryset = Singer.objects.prefetch_related(
+        'contestants_lead',
+        'contestants_tenor',
+        'contestants_baritone',
+        'contestants_bass',
+    )
+    serializer_class = SingerSerializer
+    lookup_field = 'slug'
+
+
+class DirectorViewSet(viewsets.ModelViewSet):
+    queryset = Director.objects.prefetch_related(
+        'contestants',
+    )
+    serializer_class = DirectorSerializer
+    lookup_field = 'slug'
