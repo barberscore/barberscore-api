@@ -870,6 +870,10 @@ class Contestant(models.Model):
                 self.bass is not None
             ):
                 raise ValidationError('Choruses do not have parts.')
+            if self.group.kind == Group.QUARTET and self.contest.kind == Contest.CHORUS:
+                raise ValidationError("Group and Contest types must match.")
+            if self.group.kind == Group.CHORUS and self.contest.kind != Contest.CHORUS:
+                raise ValidationError("Group and Contest types must match.")
 
     def __unicode__(self):
         return self.name
