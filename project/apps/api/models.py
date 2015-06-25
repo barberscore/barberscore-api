@@ -231,6 +231,46 @@ class Group(Common):
         default=QUARTET,
     )
 
+    director = models.ForeignKey(
+        'Director',
+        related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    lead = models.ForeignKey(
+        'Singer',
+        related_name='groups_lead',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    tenor = models.ForeignKey(
+        'Singer',
+        related_name='groups_tenor',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    baritone = models.ForeignKey(
+        'Singer',
+        related_name='groups_baritone',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    bass = models.ForeignKey(
+        'Singer',
+        related_name='groups_bass',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     chapter_name = models.CharField(
         help_text="""
             The name of the director(s) of the chorus.""",
@@ -258,6 +298,29 @@ class Group(Common):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        try:
+            self.director = self.contestants.order_by('contest__year').last().director
+        except AttributeError:
+            self.director = None
+        try:
+            self.tenor = self.contestants.order_by('contest__year').last().tenor
+        except AttributeError:
+            self.tenor = None
+        try:
+            self.lead = self.contestants.order_by('contest__year').last().lead
+        except AttributeError:
+            self.lead = None
+        try:
+            self.baritone = self.contestants.order_by('contest__year').last().baritone
+        except AttributeError:
+            self.baritone = None
+        try:
+            self.bass = self.contestants.order_by('contest__year').last().bass
+        except AttributeError:
+            self.bass = None
+        super(Group, self).save(*args, **kwargs)
 
     @property
     def bsmdb(self):
