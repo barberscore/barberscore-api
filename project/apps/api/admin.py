@@ -234,6 +234,11 @@ class ContestantAdmin(admin.ModelAdmin):
             obj.save()
     update_contestants.label = 'Update Contestants'
 
+    form = select2_modelform(
+        Contestant,
+        attrs={'width': '250px'},
+    )
+
     objectactions = [
         'update_contestants',
     ]
@@ -283,6 +288,11 @@ class ContestantAdmin(admin.ModelAdmin):
 
 @admin.register(Singer)
 class SingerAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        Singer,
+        attrs={'width': '250px'},
+    )
+
     save_on_top = True
     fields = (
         'name',
@@ -291,6 +301,11 @@ class SingerAdmin(admin.ModelAdmin):
 
 @admin.register(Director)
 class DirectorAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        Director,
+        attrs={'width': '250px'},
+    )
+
     save_on_top = True
     fields = (
         'name',
@@ -299,6 +314,11 @@ class DirectorAdmin(admin.ModelAdmin):
 
 @admin.register(Judge)
 class JudgeAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        Judge,
+        attrs={'width': '250px'},
+    )
+
     save_on_top = True
     fields = (
         'name',
@@ -307,6 +327,11 @@ class JudgeAdmin(admin.ModelAdmin):
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        Note,
+        attrs={'width': '250px'},
+    )
+
     save_on_top = True
     fields = (
         'user',
