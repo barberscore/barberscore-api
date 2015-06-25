@@ -13,13 +13,13 @@ from apps.api.models import (
 
 
 class Command(BaseCommand):
-    help = "Merge selected gorups"
+    help = "Merge selected groups by name"
     option_list = BaseCommand.option_list + (
         make_option(
             "-o",
             "--old",
             dest="old",
-            help="specify old pk",
+            help="specify old name",
         ),
     )
     option_list = option_list + (
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             "-n",
             "--new",
             dest="new",
-            help="specify new pk",
+            help="specify new name",
         ),
     )
 
@@ -41,11 +41,15 @@ class Command(BaseCommand):
 
         # make sure both groups exist
         try:
-            new_group = Group.objects.get(pk=options['new'])
+            new_group = Group.objects.get(
+                name__iexact=options['new'],
+            )
         except Group.DoesNotExist:
             raise CommandError("Target group does not exist.")
         try:
-            old_group = Group.objects.get(pk=options['old'])
+            old_group = Group.objects.get(
+                name__iexact=options['old'],
+            )
         except Group.DoesNotExist:
             raise CommandError("Subject group does not exist.")
 
@@ -61,7 +65,7 @@ class Command(BaseCommand):
                 contestant.save()
             except IntegrityError:
                 raise CommandError(
-                    "Contestant {0} already exists.  Merge manually".format(contestant.id)
+                    "Contestant {0} already exists.  Merge manually".format(contestant)
                 )
 
         # remove redundant group
