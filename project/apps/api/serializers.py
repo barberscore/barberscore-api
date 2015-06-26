@@ -9,6 +9,7 @@ from .models import (
     Note,
     Singer,
     Director,
+    District,
 )
 
 from django.contrib.auth import get_user_model
@@ -128,6 +129,11 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    district = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
     lead = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -183,6 +189,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'baritone',
             'bass',
             'men',
+            'district',
             'performances',
         )
 
@@ -327,4 +334,43 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'email',
             'username',
+        )
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    contestants = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    # groups = serializers.SlugRelatedField(
+    #     queryset=
+    # )
+
+    class Meta:
+        model = District
+        lookup_field = 'slug'
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'kind',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
+            # 'chapterName',
+            # 'lead',
+            # 'tenor',
+            # 'baritone',
+            # 'bass',
+            # 'bsmdb',
+            'contestants',
         )
