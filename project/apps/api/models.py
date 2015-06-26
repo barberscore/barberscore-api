@@ -1233,166 +1233,110 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    # def save(self, *args, **kwargs):
-    #     self.name = "{0} {1}".format(
-    #         self.contest,
-    #         self.group,
-    #     )
-    #     self.quarters_song1_points = sum([
-    #         self.quarters_mus1_points,
-    #         self.quarters_prs1_points,
-    #         self.quarters_sng1_points,
-    #     ])
-    #     self.quarters_song2_points = sum([
-    #         self.quarters_mus2_points,
-    #         self.quarters_prs2_points,
-    #         self.quarters_sng2_points,
-    #     ])
-    #     self.quarters_points = sum([
-    #         self.quarters_song1_points,
-    #         self.quarters_song2_points,
-    #     ])
-    #     if self.contest.scoresheet_csv:
-    #         self.points = sum([
-    #             self.quarters_points,
-    #         ])
-    #     if self.semis_mus1_points:
-    #         self.semis_song1_points = sum([
-    #             self.semis_mus1_points,
-    #             self.semis_prs1_points,
-    #             self.semis_sng1_points,
-    #         ])
-    #         self.semis_song2_points = sum([
-    #             self.semis_mus2_points,
-    #             self.semis_prs2_points,
-    #             self.semis_sng2_points,
-    #         ])
-    #         self.semis_points = sum([
-    #             self.semis_song1_points,
-    #             self.semis_song2_points,
-    #         ])
-    #         if self.contest.scoresheet_csv:
-    #             self.points = sum([
-    #                 self.quarters_points,
-    #                 self.semis_points,
-    #             ])
+    def save(self, *args, **kwargs):
+        self.name = "{0} {1}".format(
+            self.contest,
+            self.group,
+        )
+        self.quarters_song1_points = sum([
+            self.quarters_mus1_points,
+            self.quarters_prs1_points,
+            self.quarters_sng1_points,
+        ])
+        self.quarters_song2_points = sum([
+            self.quarters_mus2_points,
+            self.quarters_prs2_points,
+            self.quarters_sng2_points,
+        ])
+        self.quarters_points = sum([
+            self.quarters_song1_points,
+            self.quarters_song2_points,
+        ])
+        if self.contest.scoresheet_csv:
+            self.points = sum([
+                self.quarters_points,
+            ])
+        if self.semis_mus1_points:
+            self.semis_song1_points = sum([
+                self.semis_mus1_points,
+                self.semis_prs1_points,
+                self.semis_sng1_points,
+            ])
+            self.semis_song2_points = sum([
+                self.semis_mus2_points,
+                self.semis_prs2_points,
+                self.semis_sng2_points,
+            ])
+            self.semis_points = sum([
+                self.semis_song1_points,
+                self.semis_song2_points,
+            ])
+            if self.contest.scoresheet_csv:
+                self.points = sum([
+                    self.quarters_points,
+                    self.semis_points,
+                ])
 
-    #     if self.finals_mus1_points:
-    #         self.finals_song1_points = sum([
-    #             self.finals_mus1_points,
-    #             self.finals_prs1_points,
-    #             self.finals_sng1_points,
-    #         ])
-    #         self.finals_song2_points = sum([
-    #             self.finals_mus2_points,
-    #             self.finals_prs2_points,
-    #             self.finals_sng2_points,
-    #         ])
-    #         self.finals_points = sum([
-    #             self.finals_song1_points,
-    #             self.finals_song2_points,
-    #         ])
-    #         if self.contest.scoresheet_csv:
-    #             self.points = sum([
-    #                 self.quarters_points,
-    #                 self.semis_points,
-    #                 self.finals_points,
-    #             ])
-
-    #     panel = self.contest.panel
-    #     self.quarters_mus1_score = round(self.quarters_mus1_points / panel, 1)
-    #     self.quarters_prs1_score = round(self.quarters_prs1_points / panel, 1)
-    #     self.quarters_sng1_score = round(self.quarters_sng1_points / panel, 1)
-    #     self.quarters_song1_score = round(self.quarters_song1_points / (panel * 3), 1)
-    #     self.quarters_mus2_score = round(self.quarters_mus2_points / panel, 1)
-    #     self.quarters_prs2_score = round(self.quarters_prs2_points / panel, 1)
-    #     self.quarters_sng2_score = round(self.quarters_sng2_points / panel, 1)
-    #     self.quarters_song2_score = round(self.quarters_song2_points / (panel * 3), 1)
-    #     self.quarters_score = round(self.quarters_points / (panel * 6), 1)
-    #     if self.semis_points:
-    #         self.semis_mus1_score = round(self.semis_mus1_points / panel, 1)
-    #         self.semis_prs1_score = round(self.semis_prs1_points / panel, 1)
-    #         self.semis_sng1_score = round(self.semis_sng1_points / panel, 1)
-    #         self.semis_song1_score = round(self.semis_song1_points / (panel * 3), 1)
-    #         self.semis_mus2_score = round(self.semis_mus2_points / panel, 1)
-    #         self.semis_prs2_score = round(self.semis_prs2_points / panel, 1)
-    #         self.semis_sng2_score = round(self.semis_sng2_points / panel, 1)
-    #         self.semis_song2_score = round(self.semis_song2_points / (panel * 3), 1)
-    #         self.semis_score = round(self.semis_points / (panel * 6), 1)
-    #     if self.finals_points:
-    #         self.finals_mus1_score = round(self.finals_mus1_points / panel, 1)
-    #         self.finals_prs1_score = round(self.finals_prs1_points / panel, 1)
-    #         self.finals_sng1_score = round(self.finals_sng1_points / panel, 1)
-    #         self.finals_song1_score = round(self.finals_song1_points / (panel * 3), 1)
-    #         self.finals_mus2_score = round(self.finals_mus2_points / panel, 1)
-    #         self.finals_prs2_score = round(self.finals_prs2_points / panel, 1)
-    #         self.finals_sng2_score = round(self.finals_sng2_points / panel, 1)
-    #         self.finals_song2_score = round(self.finals_song2_points / (panel * 3), 1)
-    #         self.finals_score = round(self.finals_points / (panel * 6), 1)
-
-    #     if self.contest.kind == 1:
-    #         if self.quarters_points and not self.semis_points:
-    #             self.score = round(self.points / (panel * 6 * 1), 1)
-    #         elif self.semis_points and not self.finals_points:
-    #             self.score = round(self.points / (panel * 6 * 2), 1)
-    #         elif self.finals_points:
-    #             self.score = round(self.points / (panel * 6 * 3), 1)
-    #         else:
-    #             raise RuntimeError("Something is wrong!")
-
-        # try:
-        #     self.stagetime = self.performances.latest(
-        #         'stagetime'
-        #     ).stagetime
-        # except Performance.DoesNotExist:
-        #     self.stagetime = None
-        # try:
-        #     self.draw = self.performances.latest(
-        #         'stagetime'
-        #     ).draw
-        # except Performance.DoesNotExist:
-        #     self.draw = None
-        # try:
-        #     self.quarters_place = self.performances.get(round=3).place
-        # except Performance.DoesNotExist:
-        #     self.quarters_place = None
-        # try:
-        #     self.quarters_score = self.performances.get(round=3).score
-        # except Performance.DoesNotExist:
-        #     self.quarters_score = None
-        # try:
-        #     self.semis_place = self.performances.get(round=2).place
-        # except Performance.DoesNotExist:
-        #     self.semis_place = None
-        # try:
-        #     self.semis_score = self.performances.get(round=2).score
-        # except Performance.DoesNotExist:
-        #     self.semis_score = None
-        # try:
-        #     self.finals_place = self.performances.get(round=1).place
-        # except Performance.DoesNotExist:
-        #     self.finals_place = None
-        # try:
-        #     self.finals_score = self.performances.get(round=1).score
-        # except Performance.DoesNotExist:
-        #     self.finals_score = None
-        # try:
-        #     self.points = self.performances.aggregate(
-        #         sum=models.Sum('points')
-        #     )['sum']
-        # except Performance.DoesNotExist:
-        #     self.points = None
-        # try:
-        #     cnt = self.performances.count()
-        #     self.score = round(
-        #         self.points / (cnt * self.contest.panel * 6),
-        #         1
-        #     )
-        # except Performance.DoesNotExist:
-        #     self.score = None
-        # # TODO Need to think about the race condition here.
-        # except TypeError:
-        #     self.score = None
+        if self.finals_mus1_points:
+            self.finals_song1_points = sum([
+                self.finals_mus1_points,
+                self.finals_prs1_points,
+                self.finals_sng1_points,
+            ])
+            self.finals_song2_points = sum([
+                self.finals_mus2_points,
+                self.finals_prs2_points,
+                self.finals_sng2_points,
+            ])
+            self.finals_points = sum([
+                self.finals_song1_points,
+                self.finals_song2_points,
+            ])
+            if self.contest.scoresheet_csv:
+                self.points = sum([
+                    self.quarters_points,
+                    self.semis_points,
+                    self.finals_points,
+                ])
+        panel = self.contest.panel
+        self.quarters_mus1_score = round(self.quarters_mus1_points / panel, 1)
+        self.quarters_prs1_score = round(self.quarters_prs1_points / panel, 1)
+        self.quarters_sng1_score = round(self.quarters_sng1_points / panel, 1)
+        self.quarters_song1_score = round(self.quarters_song1_points / (panel * 3), 1)
+        self.quarters_mus2_score = round(self.quarters_mus2_points / panel, 1)
+        self.quarters_prs2_score = round(self.quarters_prs2_points / panel, 1)
+        self.quarters_sng2_score = round(self.quarters_sng2_points / panel, 1)
+        self.quarters_song2_score = round(self.quarters_song2_points / (panel * 3), 1)
+        self.quarters_score = round(self.quarters_points / (panel * 6), 1)
+        if self.semis_points:
+            self.semis_mus1_score = round(self.semis_mus1_points / panel, 1)
+            self.semis_prs1_score = round(self.semis_prs1_points / panel, 1)
+            self.semis_sng1_score = round(self.semis_sng1_points / panel, 1)
+            self.semis_song1_score = round(self.semis_song1_points / (panel * 3), 1)
+            self.semis_mus2_score = round(self.semis_mus2_points / panel, 1)
+            self.semis_prs2_score = round(self.semis_prs2_points / panel, 1)
+            self.semis_sng2_score = round(self.semis_sng2_points / panel, 1)
+            self.semis_song2_score = round(self.semis_song2_points / (panel * 3), 1)
+            self.semis_score = round(self.semis_points / (panel * 6), 1)
+        if self.finals_points:
+            self.finals_mus1_score = round(self.finals_mus1_points / panel, 1)
+            self.finals_prs1_score = round(self.finals_prs1_points / panel, 1)
+            self.finals_sng1_score = round(self.finals_sng1_points / panel, 1)
+            self.finals_song1_score = round(self.finals_song1_points / (panel * 3), 1)
+            self.finals_mus2_score = round(self.finals_mus2_points / panel, 1)
+            self.finals_prs2_score = round(self.finals_prs2_points / panel, 1)
+            self.finals_sng2_score = round(self.finals_sng2_points / panel, 1)
+            self.finals_song2_score = round(self.finals_song2_points / (panel * 3), 1)
+            self.finals_score = round(self.finals_points / (panel * 6), 1)
+        if self.contest.kind == 1:
+            if self.quarters_points and not self.semis_points:
+                self.score = round(self.points / (panel * 6 * 1), 1)
+            elif self.semis_points and not self.finals_points:
+                self.score = round(self.points / (panel * 6 * 2), 1)
+            elif self.finals_points:
+                self.score = round(self.points / (panel * 6 * 3), 1)
+            else:
+                raise RuntimeError("Something is wrong!")
         super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
