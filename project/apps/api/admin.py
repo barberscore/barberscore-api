@@ -21,6 +21,7 @@ from .models import (
     District,
     Director,
     Judge,
+    Song,
 )
 
 
@@ -341,6 +342,19 @@ class NoteAdmin(admin.ModelAdmin):
         'user',
         'performance',
         'text',
+    )
+
+
+@admin.register(Song)
+class SongAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        Song,
+        attrs={'width': '250px'},
+    )
+
+    save_on_top = True
+    fields = (
+        'name',
     )
 
 
