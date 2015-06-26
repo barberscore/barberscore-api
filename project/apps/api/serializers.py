@@ -23,7 +23,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'round',
-            'queue',
+            'draw',
             'session',
             'stagetime',
             'place',
@@ -175,7 +175,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'prelim',
             'place',
             'score',
-            'queue',
+            'draw',
             'stagetime',
             'quarters_place',
             'quarters_score',

@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 cp = ChorusPerformance.objects.create(
                     chorus=chorus,
                     contest=contest,
-                    queue=row[1],
+                    draw=row[1],
                 )
                 print "{0}".format(cp)
         return "Done"

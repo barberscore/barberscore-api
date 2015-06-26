@@ -650,6 +650,73 @@ class Contest(models.Model):
         log.info("Created: {0}".format(group))
         return
 
+    def import_legacy(self):
+        reader = csv.reader(self.scoresheet_csv)
+        next(reader)
+        data = [row for row in reader]
+
+        for row in data:
+            try:
+                contestant = Contestant.objects.get(
+                    contest=self,
+                    group__name__iexact=row[2],
+                )
+            except Contestant.DoesNotExist:
+                log.error("Missing: {0}".format(row[2]))
+                continue
+            if int(row[0]) == 3:
+                contestant.quarters_song1, created = Song.objects.get_or_create(
+                    name=row[5],
+                )
+                contestant.quarters_mus1_points = int(row[6])
+                contestant.quarters_prs1_points = int(row[7])
+                contestant.quarters_sng1_points = int(row[8])
+
+                contestant.quarters_song2, created = Song.objects.get_or_create(
+                    name=row[9],
+                )
+                contestant.quarters_mus2_points = int(row[10])
+                contestant.quarters_prs2_points = int(row[11])
+                contestant.quarters_sng2_points = int(row[12])
+
+                contestant.quarters_place = int(row[1])
+
+            elif int(row[0]) == 2:
+                contestant.semis_song1, created = Song.objects.get_or_create(
+                    name=row[5],
+                )
+                contestant.semis_mus1_points = int(row[6])
+                contestant.semis_prs1_points = int(row[7])
+                contestant.semis_sng1_points = int(row[8])
+
+                contestant.semis_song2, created = Song.objects.get_or_create(
+                    name=row[9],
+                )
+                contestant.semis_mus2_points = int(row[10])
+                contestant.semis_prs2_points = int(row[11])
+                contestant.semis_sng2_points = int(row[12])
+
+                contestant.semis_place = int(row[1])
+            elif int(row[0]) == 1:
+                contestant.finals_song1, created = Song.objects.get_or_create(
+                    name=row[5],
+                )
+                contestant.finals_mus1_points = int(row[6])
+                contestant.finals_prs1_points = int(row[7])
+                contestant.finals_sng1_points = int(row[8])
+
+                contestant.finals_song2, created = Song.objects.get_or_create(
+                    name=row[9],
+                )
+                contestant.finals_mus2_points = int(row[10])
+                contestant.finals_prs2_points = int(row[11])
+                contestant.finals_sng2_points = int(row[12])
+
+                contestant.finals_place = int(row[1])
+            else:
+                log.error("Missing round")
+            contestant.save()
+
     def import_historical(self):
         reader = csv.reader(self.scoresheet_csv)
         next(reader)
@@ -818,37 +885,7 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    queue = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_score = models.FloatField(
+    draw = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -863,47 +900,478 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    quarters_song1 = models.ForeignKey(
+        'Song',
+        related_name='contestants_q1',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    quarters_mus1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_prs1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_sng1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_song1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_mus1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_prs1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_sng1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_song1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_song2 = models.ForeignKey(
+        'Song',
+        related_name='contestants_q2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    quarters_mus2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_prs2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_sng2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_song2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_mus2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_prs2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_sng2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_song2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_song1 = models.ForeignKey(
+        'Song',
+        related_name='contestants_s1',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    semis_mus1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_prs1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_sng1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_song1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_mus1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_prs1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_sng1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_song1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_song2 = models.ForeignKey(
+        'Song',
+        related_name='contestants_s2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    semis_mus2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_prs2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_sng2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_song2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_mus2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_prs2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_sng2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_song2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_song1 = models.ForeignKey(
+        'Song',
+        related_name='contestants_f1',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    finals_mus1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_prs1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_sng1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_song1_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_mus1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_prs1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_sng1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_song1_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_song2 = models.ForeignKey(
+        'Song',
+        related_name='contestants_f2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    finals_mus2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_prs2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_sng2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_song2_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_mus2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_prs2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_sng2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_song2_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     def save(self, *args, **kwargs):
         self.name = "{0} {1}".format(
             self.contest,
             self.group,
         )
-        try:
-            self.stagetime = self.performances.latest(
-                'stagetime'
-            ).stagetime
-        except Performance.DoesNotExist:
-            self.stagetime = None
-        try:
-            self.queue = self.performances.latest(
-                'stagetime'
-            ).queue
-        except Performance.DoesNotExist:
-            self.queue = None
-        try:
-            self.quarters_place = self.performances.get(round=3).place
-        except Performance.DoesNotExist:
-            self.quarters_place = None
-        try:
-            self.quarters_score = self.performances.get(round=3).score
-        except Performance.DoesNotExist:
-            self.quarters_score = None
-        try:
-            self.semis_place = self.performances.get(round=2).place
-        except Performance.DoesNotExist:
-            self.semis_place = None
-        try:
-            self.semis_score = self.performances.get(round=2).score
-        except Performance.DoesNotExist:
-            self.semis_score = None
-        try:
-            self.finals_place = self.performances.get(round=1).place
-        except Performance.DoesNotExist:
-            self.finals_place = None
-        try:
-            self.finals_score = self.performances.get(round=1).score
-        except Performance.DoesNotExist:
-            self.finals_score = None
+        self.quarters_song1_points = sum([
+            self.quarters_mus1_points,
+            self.quarters_prs1_points,
+            self.quarters_sng1_points,
+        ])
+        self.quarters_song2_points = sum([
+            self.quarters_mus2_points,
+            self.quarters_prs2_points,
+            self.quarters_sng2_points,
+        ])
+        self.quarters_points = sum([
+            self.quarters_song1_points,
+            self.quarters_song2_points,
+        ])
+        self.points = sum([
+            self.quarters_points,
+        ])
+        if self.semis_mus1_points:
+            self.semis_song1_points = sum([
+                self.semis_mus1_points,
+                self.semis_prs1_points,
+                self.semis_sng1_points,
+            ])
+            self.semis_song2_points = sum([
+                self.semis_mus2_points,
+                self.semis_prs2_points,
+                self.semis_sng2_points,
+            ])
+            self.semis_points = sum([
+                self.semis_song1_points,
+                self.semis_song2_points,
+            ])
+            self.points = sum([
+                self.quarters_points,
+                self.semis_points,
+            ])
+
+        if self.finals_mus1_points:
+            self.finals_song1_points = sum([
+                self.finals_mus1_points,
+                self.finals_prs1_points,
+                self.finals_sng1_points,
+            ])
+            self.finals_song2_points = sum([
+                self.finals_mus2_points,
+                self.finals_prs2_points,
+                self.finals_sng2_points,
+            ])
+            self.finals_points = sum([
+                self.finals_song1_points,
+                self.finals_song2_points,
+            ])
+            self.points = sum([
+                self.quarters_points,
+                self.semis_points,
+                self.finals_points,
+            ])
+
+        panel = self.contest.panel
+        self.quarters_mus1_score = round(self.quarters_mus1_points / panel, 1)
+        self.quarters_prs1_score = round(self.quarters_prs1_points / panel, 1)
+        self.quarters_sng1_score = round(self.quarters_sng1_points / panel, 1)
+        self.quarters_song1_score = round(self.quarters_song1_points / (panel * 3), 1)
+        self.quarters_mus2_score = round(self.quarters_mus2_points / panel, 1)
+        self.quarters_prs2_score = round(self.quarters_prs2_points / panel, 1)
+        self.quarters_sng2_score = round(self.quarters_sng2_points / panel, 1)
+        self.quarters_song2_score = round(self.quarters_song2_points / (panel * 3), 1)
+        self.quarters_score = round(self.quarters_points / (panel * 6), 1)
+        if self.semis_points:
+            self.semis_mus1_score = round(self.semis_mus1_points / panel, 1)
+            self.semis_prs1_score = round(self.semis_prs1_points / panel, 1)
+            self.semis_sng1_score = round(self.semis_sng1_points / panel, 1)
+            self.semis_song1_score = round(self.semis_song1_points / (panel * 3), 1)
+            self.semis_mus2_score = round(self.semis_mus2_points / panel, 1)
+            self.semis_prs2_score = round(self.semis_prs2_points / panel, 1)
+            self.semis_sng2_score = round(self.semis_sng2_points / panel, 1)
+            self.semis_song2_score = round(self.semis_song2_points / (panel * 3), 1)
+            self.semis_score = round(self.semis_points / (panel * 6), 1)
+        if self.finals_points:
+            self.finals_mus1_score = round(self.finals_mus1_points / panel, 1)
+            self.finals_prs1_score = round(self.finals_prs1_points / panel, 1)
+            self.finals_sng1_score = round(self.finals_sng1_points / panel, 1)
+            self.finals_song1_score = round(self.finals_song1_points / (panel * 3), 1)
+            self.finals_mus2_score = round(self.finals_mus2_points / panel, 1)
+            self.finals_prs2_score = round(self.finals_prs2_points / panel, 1)
+            self.finals_sng2_score = round(self.finals_sng2_points / panel, 1)
+            self.finals_song2_score = round(self.finals_song2_points / (panel * 3), 1)
+            self.finals_score = round(self.finals_points / (panel * 6), 1)
+
+        if self.quarters_points:
+            self.score = round(self.points / (panel * 6 * 1), 1)
+        elif self.semis_points:
+            self.score = round(self.points / (panel * 6 * 2), 1)
+        elif self.finals_points:
+            self.score = round(self.points / (panel * 6 * 3), 1)
+        else:
+            raise RuntimeError("Something is wrong!")
+
+        # try:
+        #     self.stagetime = self.performances.latest(
+        #         'stagetime'
+        #     ).stagetime
+        # except Performance.DoesNotExist:
+        #     self.stagetime = None
+        # try:
+        #     self.draw = self.performances.latest(
+        #         'stagetime'
+        #     ).draw
+        # except Performance.DoesNotExist:
+        #     self.draw = None
+        # try:
+        #     self.quarters_place = self.performances.get(round=3).place
+        # except Performance.DoesNotExist:
+        #     self.quarters_place = None
+        # try:
+        #     self.quarters_score = self.performances.get(round=3).score
+        # except Performance.DoesNotExist:
+        #     self.quarters_score = None
+        # try:
+        #     self.semis_place = self.performances.get(round=2).place
+        # except Performance.DoesNotExist:
+        #     self.semis_place = None
+        # try:
+        #     self.semis_score = self.performances.get(round=2).score
+        # except Performance.DoesNotExist:
+        #     self.semis_score = None
+        # try:
+        #     self.finals_place = self.performances.get(round=1).place
+        # except Performance.DoesNotExist:
+        #     self.finals_place = None
+        # try:
+        #     self.finals_score = self.performances.get(round=1).score
+        # except Performance.DoesNotExist:
+        #     self.finals_score = None
         # try:
         #     self.points = self.performances.aggregate(
         #         sum=models.Sum('points')
@@ -981,7 +1449,7 @@ class Performance(models.Model):
         default=FINALS,
     )
 
-    queue = models.IntegerField(
+    draw = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1155,7 +1623,7 @@ class Performance(models.Model):
         ordering = [
             'contestant',
             'round',
-            'queue',
+            'draw',
             'stagetime',
         ]
         unique_together = (
@@ -1164,44 +1632,6 @@ class Performance(models.Model):
 
     def __unicode__(self):
         return "{0}".format(self.id)
-
-    def save(self, *args, **kwargs):
-        if bool(
-            self.mus1 and
-            self.prs1 and
-            self.sng1 and
-            self.mus2 and
-            self.prs2 and
-            self.sng2
-        ):
-            try:
-                panel = self.contestant.contest.panel
-                self.song1_points = sum([
-                    self.mus1,
-                    self.prs1,
-                    self.sng1,
-                ])
-                self.song2_points = sum([
-                    self.mus2,
-                    self.prs2,
-                    self.sng2,
-                ])
-                self.points = sum([
-                    self.song1_points,
-                    self.song2_points,
-                ])
-                self.mus1_score = round(self.mus1 / panel, 1)
-                self.prs1_score = round(self.prs1 / panel, 1)
-                self.sng1_score = round(self.sng1 / panel, 1)
-                self.song1_score = round(self.song1_points / (panel * 3), 1)
-                self.mus2_score = round(self.mus2 / panel, 1)
-                self.prs2_score = round(self.prs2 / panel, 1)
-                self.sng2_score = round(self.sng2 / panel, 1)
-                self.song2_score = round(self.song2_points / (panel * 3), 1)
-                self.score = round(self.points / (panel * 6), 1)
-            except TypeError:
-                log.error("Check scores for performance {0}".format(self))
-        super(Performance, self).save(*args, **kwargs)
 
 
 class Award(models.Model):
