@@ -16,6 +16,7 @@ from .models import (
     Singer,
     Director,
     District,
+    Song,
 )
 
 from .filters import (
@@ -35,6 +36,7 @@ from .serializers import (
     SingerSerializer,
     DirectorSerializer,
     DistrictSerializer,
+    SongSerializer,
 )
 
 User = get_user_model()
@@ -137,4 +139,10 @@ class DistrictViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = DistrictSerializer
+    lookup_field = 'slug'
+
+
+class SongViewSet(viewsets.ModelViewSet):
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
     lookup_field = 'slug'
