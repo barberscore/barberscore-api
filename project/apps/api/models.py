@@ -1245,12 +1245,12 @@ class Contestant(models.Model):
                 self.quarters_sng1_points,
             ])
         except TypeError:
-            log.error("{0} {1} {2} {3}").format(
+            log.error("{0} {1} {2} {3}".format(
                 self,
                 self.quarters_mus1_points,
                 self.quarters_prs1_points,
                 self.quarters_sng1_points,
-            )
+            ))
         self.quarters_song2_points = sum([
             self.quarters_mus2_points,
             self.quarters_prs2_points,
