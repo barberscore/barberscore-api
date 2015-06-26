@@ -116,9 +116,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     #     'import_scores',
     # ]
 
-    inlines = [
-        ContestantInline,
-    ]
+    # inlines = [
+    #     ContestantInline,
+    # ]
 
     list_filter = (
         'level',
@@ -166,7 +166,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     list_display = (
         'id',
-        'queue',
+        'draw',
         'session',
         'stagetime',
         'place',
@@ -190,7 +190,7 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     ordering = (
         'place',
-        'queue',
+        'draw',
     )
 
     save_on_top = True
@@ -274,20 +274,20 @@ class ContestantAdmin(admin.ModelAdmin):
         'contest__year',
     )
 
-    inlines = [
-        PerformanceInline,
-    ]
+    # inlines = [
+    #     PerformanceInline,
+    # ]
 
-    fields = (
-        'contest',
-        'group',
-        'district',
-        'director',
-        'seed',
-        'prelim',
-        'place',
-        'score',
-    )
+    # fields = (
+    #     'contest',
+    #     'group',
+    #     'district',
+    #     'director',
+    #     'seed',
+    #     'prelim',
+    #     'place',
+    #     'score',
+    # )
 
     save_on_top = True
 
