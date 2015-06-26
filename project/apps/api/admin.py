@@ -182,9 +182,10 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        'contestant__contest__level',
+        'contestant__contest__kind',
         'round',
-        'contestant__contest',
-        'stagetime',
+        'contestant__contest__year',
     )
 
     ordering = (
