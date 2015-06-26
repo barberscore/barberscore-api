@@ -10,6 +10,7 @@ from .models import (
     Singer,
     Director,
     District,
+    Song,
 )
 
 from django.contrib.auth import get_user_model
@@ -160,6 +161,36 @@ class ContestantSerializer(serializers.ModelSerializer):
     #     many=True,
     # )
 
+    quarters_song1 = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    quarters_song2 = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    semis_song1 = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    semis_song2 = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    finals_song1 = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    finals_song2 = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
     class Meta:
         model = Contestant
         lookup_field = 'slug'
@@ -173,16 +204,41 @@ class ContestantSerializer(serializers.ModelSerializer):
             'district',
             'seed',
             'prelim',
-            'place',
-            'score',
             'draw',
             'stagetime',
+            'place',
+            'points',
+            'score',
             'quarters_place',
             'quarters_score',
             'semis_place',
             'semis_score',
             'finals_place',
             'finals_score',
+            'finals_mus1_score',
+            'finals_mus2_score',
+            'semis_mus1_score',
+            'semis_mus2_score',
+            'quarters_mus1_score',
+            'quarters_mus2_score',
+            'finals_prs1_score',
+            'finals_prs2_score',
+            'semis_prs1_score',
+            'semis_prs2_score',
+            'quarters_prs1_score',
+            'quarters_prs2_score',
+            'finals_sng1_score',
+            'finals_sng2_score',
+            'semis_sng1_score',
+            'semis_sng2_score',
+            'quarters_sng1_score',
+            'quarters_sng2_score',
+            'quarters_song1',
+            'quarters_song2',
+            'semis_song1',
+            'semis_song2',
+            'finals_song1',
+            'finals_song2',
             'director',
             'lead',
             'tenor',
@@ -335,6 +391,19 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'username',
         )
+
+
+class SongSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Song
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+        )
+        lookup_field = 'slug'
 
 
 class DistrictSerializer(serializers.ModelSerializer):
