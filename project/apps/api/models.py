@@ -1339,7 +1339,61 @@ class Contestant(models.Model):
     #             self.score = round(self.points / (panel * 6 * 3), 1)
     #         else:
     #             raise RuntimeError("Something is wrong!")
-    #     super(Contestant, self).save(*args, **kwargs)
+
+        # try:
+        #     self.stagetime = self.performances.latest(
+        #         'stagetime'
+        #     ).stagetime
+        # except Performance.DoesNotExist:
+        #     self.stagetime = None
+        # try:
+        #     self.draw = self.performances.latest(
+        #         'stagetime'
+        #     ).draw
+        # except Performance.DoesNotExist:
+        #     self.draw = None
+        # try:
+        #     self.quarters_place = self.performances.get(round=3).place
+        # except Performance.DoesNotExist:
+        #     self.quarters_place = None
+        # try:
+        #     self.quarters_score = self.performances.get(round=3).score
+        # except Performance.DoesNotExist:
+        #     self.quarters_score = None
+        # try:
+        #     self.semis_place = self.performances.get(round=2).place
+        # except Performance.DoesNotExist:
+        #     self.semis_place = None
+        # try:
+        #     self.semis_score = self.performances.get(round=2).score
+        # except Performance.DoesNotExist:
+        #     self.semis_score = None
+        # try:
+        #     self.finals_place = self.performances.get(round=1).place
+        # except Performance.DoesNotExist:
+        #     self.finals_place = None
+        # try:
+        #     self.finals_score = self.performances.get(round=1).score
+        # except Performance.DoesNotExist:
+        #     self.finals_score = None
+        # try:
+        #     self.points = self.performances.aggregate(
+        #         sum=models.Sum('points')
+        #     )['sum']
+        # except Performance.DoesNotExist:
+        #     self.points = None
+        # try:
+        #     cnt = self.performances.count()
+        #     self.score = round(
+        #         self.points / (cnt * self.contest.panel * 6),
+        #         1
+        #     )
+        # except Performance.DoesNotExist:
+        #     self.score = None
+        # # TODO Need to think about the race condition here.
+        # except TypeError:
+        #     self.score = None
+        super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
             if self.group.kind == Group.QUARTET and self.director is not None:
