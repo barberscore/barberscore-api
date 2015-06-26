@@ -1140,6 +1140,7 @@ class Performance(models.Model):
         related_name='performances_song1',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     title2 = models.ForeignKey(
@@ -1147,6 +1148,7 @@ class Performance(models.Model):
         related_name='performances_song2',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
