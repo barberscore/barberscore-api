@@ -1313,5 +1313,14 @@ class Song(models.Model):
         default=False,
     )
 
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        # unique=True,
+        null=True,
+        blank=True,
+        max_length=255,
+    )
+
     def __unicode__(self):
         return self.name
