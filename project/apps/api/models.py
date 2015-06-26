@@ -1316,9 +1316,7 @@ class Song(models.Model):
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
         max_length=255,
     )
 
