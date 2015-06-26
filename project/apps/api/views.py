@@ -15,6 +15,7 @@ from .models import (
     Performance,
     Singer,
     Director,
+    District,
 )
 
 from .filters import (
@@ -33,6 +34,7 @@ from .serializers import (
     UserSerializer,
     SingerSerializer,
     DirectorSerializer,
+    DistrictSerializer,
 )
 
 User = get_user_model()
@@ -127,4 +129,12 @@ class DirectorViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = DirectorSerializer
+    lookup_field = 'slug'
+
+
+class DistrictViewSet(viewsets.ModelViewSet):
+    queryset = District.objects.prefetch_related(
+        'contestants',
+    )
+    serializer_class = DistrictSerializer
     lookup_field = 'slug'
