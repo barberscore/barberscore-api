@@ -11,6 +11,7 @@ from .views import (
     NoteViewSet,
     UserViewSet,
     DistrictViewSet,
+    SongViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -25,5 +26,6 @@ router.register(r'directors', DirectorViewSet)
 router.register(r'notes', NoteViewSet, 'note')
 router.register(r'accounts', UserViewSet)
 router.register(r'districts', DistrictViewSet)
+router.register(r'songs', SongViewSet)
 
 urlpatterns = router.urls
