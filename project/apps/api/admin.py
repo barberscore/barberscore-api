@@ -250,7 +250,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
     form = select2_modelform(
         Contestant,
-        attrs={'width': '250px'},
+        attrs={'width': '150px'},
     )
 
     objectactions = [
@@ -261,8 +261,8 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
         'district',
         'director',
-        'lead',
         'tenor',
+        'lead',
         'baritone',
         'bass',
         'seed',
@@ -286,16 +286,62 @@ class ContestantAdmin(admin.ModelAdmin):
     #     PerformanceInline,
     # ]
 
-    # fields = (
-    #     'contest',
-    #     'group',
-    #     'district',
-    #     'director',
-    #     'seed',
-    #     'prelim',
-    #     'place',
-    #     'score',
-    # )
+    fields = (
+        (
+            'contest',
+            'group',
+            'district',
+        ), (
+            'director', 'men',
+        ), (
+            'tenor',
+            'lead',
+            'baritone',
+            'bass',
+        ), (
+            'seed',
+            'prelim',
+            'draw',
+            'stagetime',
+        ), (
+            'place',
+            'score',
+        ), (
+            'quarters_song1',
+            'quarters_mus1_points',
+            'quarters_prs1_points',
+            'quarters_sng1_points',
+        ), (
+            'quarters_song2',
+            'quarters_mus2_points',
+            'quarters_prs2_points',
+            'quarters_sng2_points',
+        ), (
+            'semis_song1',
+            'semis_mus1_points',
+            'semis_prs1_points',
+            'semis_sng1_points',
+        ), (
+            'semis_song2',
+            'semis_mus2_points',
+            'semis_prs2_points',
+            'semis_sng2_points',
+        ), (
+            'finals_song1',
+            'finals_mus1_points',
+            'finals_prs1_points',
+            'finals_sng1_points',
+        ), (
+            'finals_song2',
+            'finals_mus2_points',
+            'finals_prs2_points',
+            'finals_sng2_points',
+        ),
+    )
+
+    readonly_fields = (
+        'name',
+    )
 
     save_on_top = True
 
@@ -304,7 +350,7 @@ class ContestantAdmin(admin.ModelAdmin):
 class SingerAdmin(admin.ModelAdmin):
     form = select2_modelform(
         Singer,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
 
     save_on_top = True
