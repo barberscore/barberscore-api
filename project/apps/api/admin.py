@@ -229,6 +229,14 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
     )
 
+    readonly_fields = (
+        'director',
+        'lead',
+        'tenor',
+        'baritone',
+        'bass',
+    )
+
     save_on_top = True
 
 
