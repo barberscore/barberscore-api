@@ -1238,84 +1238,71 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
-        try:
-            self.quarters_song1_points = sum([
-                self.quarters_mus1_points,
-                self.quarters_prs1_points,
-                self.quarters_sng1_points,
-            ])
-        except TypeError:
-            log.error("{0} {1} {2} {3}".format(
-                self,
-                self.quarters_mus1_points,
-                self.quarters_prs1_points,
-                self.quarters_sng1_points,
-            ))
-        self.quarters_song2_points = sum([
+        self.quarters_song1_points = sum(filter(None, [
+            self.quarters_mus1_points,
+            self.quarters_prs1_points,
+            self.quarters_sng1_points,
+        ])) or None
+        self.quarters_song2_points = sum(filter(None, [
             self.quarters_mus2_points,
             self.quarters_prs2_points,
             self.quarters_sng2_points,
-        ])
-        self.quarters_points = sum([
+        ])) or None
+        self.quarters_points = sum(filter(None, [
             self.quarters_song1_points,
             self.quarters_song2_points,
-        ])
-        if self.contest.scoresheet_csv:
-            self.points = sum([
-                self.quarters_points,
-            ])
-        if self.semis_mus1_points:
-            self.semis_song1_points = sum([
-                self.semis_mus1_points,
-                self.semis_prs1_points,
-                self.semis_sng1_points,
-            ])
-            self.semis_song2_points = sum([
-                self.semis_mus2_points,
-                self.semis_prs2_points,
-                self.semis_sng2_points,
-            ])
-            self.semis_points = sum([
-                self.semis_song1_points,
-                self.semis_song2_points,
-            ])
-            if self.contest.scoresheet_csv:
-                self.points = sum([
-                    self.quarters_points,
-                    self.semis_points,
-                ])
-
-        if self.finals_mus1_points:
-            self.finals_song1_points = sum([
-                self.finals_mus1_points,
-                self.finals_prs1_points,
-                self.finals_sng1_points,
-            ])
-            self.finals_song2_points = sum([
-                self.finals_mus2_points,
-                self.finals_prs2_points,
-                self.finals_sng2_points,
-            ])
-            self.finals_points = sum([
-                self.finals_song1_points,
-                self.finals_song2_points,
-            ])
-            if self.contest.scoresheet_csv:
-                self.points = sum([
-                    self.quarters_points,
-                    self.semis_points,
-                    self.finals_points,
-                ])
+        ])) or None
+        self.points = sum(filter(None, [
+            self.quarters_points,
+        ])) or None
+        self.semis_song1_points = sum(filter(None, [
+            self.semis_mus1_points,
+            self.semis_prs1_points,
+            self.semis_sng1_points,
+        ])) or None
+        self.semis_song2_points = sum(filter(None, [
+            self.semis_mus2_points,
+            self.semis_prs2_points,
+            self.semis_sng2_points,
+        ])) or None
+        self.semis_points = sum(filter(None, [
+            self.semis_song1_points,
+            self.semis_song2_points,
+        ])) or None
+        self.points = sum(filter(None, [
+            self.quarters_points,
+            self.semis_points,
+        ])) or None
+        self.finals_song1_points = sum(filter(None, [
+            self.finals_mus1_points,
+            self.finals_prs1_points,
+            self.finals_sng1_points,
+        ])) or None
+        self.finals_song2_points = sum(filter(None, [
+            self.finals_mus2_points,
+            self.finals_prs2_points,
+            self.finals_sng2_points,
+        ])) or None
+        self.finals_points = sum(filter(None, [
+            self.finals_song1_points,
+            self.finals_song2_points,
+        ])) or None
+        self.points = sum(filter(None, [
+            self.quarters_points,
+            self.semis_points,
+            self.finals_points,
+        ])) or None
         panel = self.contest.panel
-        self.quarters_mus1_score = round(self.quarters_mus1_points / panel, 1)
-        self.quarters_prs1_score = round(self.quarters_prs1_points / panel, 1)
-        self.quarters_sng1_score = round(self.quarters_sng1_points / panel, 1)
-        self.quarters_song1_score = round(self.quarters_song1_points / (panel * 3), 1)
-        self.quarters_mus2_score = round(self.quarters_mus2_points / panel, 1)
-        self.quarters_prs2_score = round(self.quarters_prs2_points / panel, 1)
-        self.quarters_sng2_score = round(self.quarters_sng2_points / panel, 1)
-        self.quarters_song2_score = round(self.quarters_song2_points / (panel * 3), 1)
-        self.quarters_score = round(self.quarters_points / (panel * 6), 1)
+        if self.quarters_points:
+            self.quarters_mus1_score = round(self.quarters_mus1_points / panel, 1)
+            self.quarters_prs1_score = round(self.quarters_prs1_points / panel, 1)
+            self.quarters_sng1_score = round(self.quarters_sng1_points / panel, 1)
+            self.quarters_song1_score = round(self.quarters_song1_points / (panel * 3), 1)
+            self.quarters_mus2_score = round(self.quarters_mus2_points / panel, 1)
+            self.quarters_prs2_score = round(self.quarters_prs2_points / panel, 1)
+            self.quarters_sng2_score = round(self.quarters_sng2_points / panel, 1)
+            self.quarters_song2_score = round(self.quarters_song2_points / (panel * 3), 1)
+            self.quarters_score = round(self.quarters_points / (panel * 6), 1)
         if self.semis_points:
             self.semis_mus1_score = round(self.semis_mus1_points / panel, 1)
             self.semis_prs1_score = round(self.semis_prs1_points / panel, 1)
@@ -1344,7 +1331,7 @@ class Contestant(models.Model):
             elif self.finals_points:
                 self.score = round(self.points / (panel * 6 * 3), 1)
             else:
-                raise RuntimeError("Something is wrong!")
+                self.score = None
         super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
