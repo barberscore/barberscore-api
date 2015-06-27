@@ -353,6 +353,10 @@ class SingerAdmin(admin.ModelAdmin):
         attrs={'width': '100px'},
     )
 
+    search_fields = (
+        'name',
+    )
+
     save_on_top = True
     fields = (
         'name',
@@ -364,6 +368,10 @@ class DirectorAdmin(admin.ModelAdmin):
     form = select2_modelform(
         Director,
         attrs={'width': '250px'},
+    )
+
+    search_fields = (
+        'name',
     )
 
     save_on_top = True
