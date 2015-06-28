@@ -17,40 +17,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class PerformanceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Performance
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'round',
-            'draw',
-            'session',
-            'stagetime',
-            'place',
-            'song1',
-            'mus1',
-            'prs1',
-            'sng1',
-            'song2',
-            'mus2',
-            'prs2',
-            'sng2',
-            'mus1_score',
-            'prs1_score',
-            'sng1_score',
-            'song1_points',
-            'song1_score',
-            'mus2_score',
-            'prs2_score',
-            'sng2_score',
-            'song2_points',
-            'song2_score',
-            'points',
-            'score',
-        )
-
-
 class GroupSerializer(serializers.ModelSerializer):
 
     chapterName = serializers.CharField(

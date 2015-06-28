@@ -15,7 +15,6 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    Performance,
     Singer,
     Note,
     District,
@@ -23,16 +22,6 @@ from .models import (
     Judge,
     Song,
 )
-
-
-class PerformanceInline(admin.TabularInline):
-    form = select2_modelform(
-        Performance,
-        attrs={'width': '250px'},
-    )
-    model = Performance
-    extra = 0
-    show_change_link = True
 
 
 class ContestantInline(admin.TabularInline):
@@ -156,44 +145,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     readonly_fields = (
         'name',
     )
-
-
-@admin.register(Performance)
-class PerformanceAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Performance,
-        attrs={'width': '250px'},
-    )
-    list_display = (
-        'id',
-        'draw',
-        'session',
-        'stagetime',
-        'place',
-        'points',
-        'song1',
-        'mus1',
-        'prs1',
-        'sng1',
-        'song2',
-        'mus2',
-        'prs2',
-        'sng2',
-    )
-
-    list_filter = (
-        'contestant__contest__level',
-        'contestant__contest__kind',
-        'round',
-        'contestant__contest__year',
-    )
-
-    ordering = (
-        'place',
-        'draw',
-    )
-
-    save_on_top = True
 
 
 @admin.register(Group)
