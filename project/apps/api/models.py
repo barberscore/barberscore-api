@@ -1695,5 +1695,8 @@ class Song(models.Model):
         max_length=255,
     )
 
+    class Meta:
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
