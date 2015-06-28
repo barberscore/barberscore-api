@@ -7,6 +7,7 @@ from apps.api.models import (
     Contest,
     Contestant,
     Performance,
+    Group,
 )
 
 
@@ -26,4 +27,7 @@ class Command(BaseCommand):
         vs = Convention.objects.all()
         for v in vs:
             v.save()
+        gs = Group.objects.all()
+        for g in gs:
+            g.save()
         return "Done"
