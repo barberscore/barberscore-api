@@ -394,6 +394,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
+    # contestants = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Song
@@ -402,6 +407,7 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            # 'contestants',
         )
         lookup_field = 'slug'
 

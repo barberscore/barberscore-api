@@ -591,8 +591,8 @@ class Contest(models.Model):
         )
         ordering = (
             'level',
-            'kind',
             '-year',
+            'kind',
         )
 
     def clean(self):
