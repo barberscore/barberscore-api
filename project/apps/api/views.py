@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from rest_framework import (
     viewsets,
+    pagination,
 )
 
 from django.contrib.auth import get_user_model
@@ -18,12 +19,6 @@ from .models import (
     District,
     Song,
 )
-
-from .filters import (
-    PerformanceFilter,
-    GroupFilter,
-)
-
 
 from .serializers import (
     ConventionSerializer,
@@ -58,6 +53,8 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'district',
         'convention',
+    ).filter(
+        level=Contest.INTERNATIONAL,
     ).prefetch_related(
         'district',
         'contestants',
@@ -80,6 +77,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'performances',
     )
     serializer_class = ContestantSerializer
+    pagination_class = pagination.LimitOffsetPagination
     lookup_field = 'slug'
 
 
@@ -88,7 +86,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = GroupSerializer
-    filter_class = GroupFilter
     lookup_field = 'slug'
 
 
@@ -99,7 +96,6 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         'contestant__group',
     )
     serializer_class = PerformanceSerializer
-    filter_class = PerformanceFilter
 
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -139,6 +135,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = DistrictSerializer
+    pagination_class = pagination.LimitOffsetPagination
     lookup_field = 'slug'
 
 
