@@ -309,8 +309,27 @@ class SingerAdmin(admin.ModelAdmin):
     )
 
     save_on_top = True
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+    )
+
     fields = (
         'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
     )
 
 
@@ -326,8 +345,27 @@ class DirectorAdmin(admin.ModelAdmin):
     )
 
     save_on_top = True
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+    )
+
     fields = (
         'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
     )
 
 
