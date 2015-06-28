@@ -305,6 +305,15 @@ class SingerSerializer(serializers.ModelSerializer):
             'contestants_tenor',
             'contestants_baritone',
             'contestants_bass',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
         )
 
 
@@ -323,6 +332,15 @@ class DirectorSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'notes',
             'contestants',
         )
 
