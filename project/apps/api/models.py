@@ -1332,6 +1332,7 @@ class Contestant(models.Model):
                 self.score = round(self.points / (panel * 6 * 3), 1)
             else:
                 self.score = None
+        self.group.save()
         super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
