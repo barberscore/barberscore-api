@@ -13,7 +13,6 @@ from .models import (
     Contest,
     Group,
     Contestant,
-    Performance,
     Singer,
     Director,
     District,
@@ -25,7 +24,6 @@ from .serializers import (
     ContestSerializer,
     GroupSerializer,
     ContestantSerializer,
-    PerformanceSerializer,
     NoteSerializer,
     UserSerializer,
     SingerSerializer,
@@ -87,15 +85,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     )
     serializer_class = GroupSerializer
     lookup_field = 'slug'
-
-
-class PerformanceViewSet(viewsets.ModelViewSet):
-    queryset = Performance.objects.select_related(
-        'contestant',
-        'contestant__contest',
-        'contestant__group',
-    )
-    serializer_class = PerformanceSerializer
 
 
 class NoteViewSet(viewsets.ModelViewSet):
