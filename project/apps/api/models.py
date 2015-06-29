@@ -670,14 +670,14 @@ class Contest(models.Model):
                 continue
             if int(row[0]) == 3:
                 contestant.quarters_song1, created = Song.objects.get_or_create(
-                    name=row[5],
+                    name=u"{0}".format(row[5]).strip(),
                 )
                 contestant.quarters_mus1_points = int(row[6])
                 contestant.quarters_prs1_points = int(row[7])
                 contestant.quarters_sng1_points = int(row[8])
 
                 contestant.quarters_song2, created = Song.objects.get_or_create(
-                    name=row[9],
+                    name=u"{0}".format(row[9]).strip(),
                 )
                 contestant.quarters_mus2_points = int(row[10])
                 contestant.quarters_prs2_points = int(row[11])
@@ -687,14 +687,14 @@ class Contest(models.Model):
 
             elif int(row[0]) == 2:
                 contestant.semis_song1, created = Song.objects.get_or_create(
-                    name=row[5],
+                    name=u"{0}".format(row[5]).strip(),
                 )
                 contestant.semis_mus1_points = int(row[6])
                 contestant.semis_prs1_points = int(row[7])
                 contestant.semis_sng1_points = int(row[8])
 
                 contestant.semis_song2, created = Song.objects.get_or_create(
-                    name=row[9],
+                    name=u"{0}".format(row[9]).strip(),
                 )
                 contestant.semis_mus2_points = int(row[10])
                 contestant.semis_prs2_points = int(row[11])
@@ -703,14 +703,14 @@ class Contest(models.Model):
                 contestant.semis_place = int(row[1])
             elif int(row[0]) == 1:
                 contestant.finals_song1, created = Song.objects.get_or_create(
-                    name=row[5],
+                    name=u"{0}".format(row[5]).strip(),
                 )
                 contestant.finals_mus1_points = int(row[6])
                 contestant.finals_prs1_points = int(row[7])
                 contestant.finals_sng1_points = int(row[8])
 
                 contestant.finals_song2, created = Song.objects.get_or_create(
-                    name=row[9],
+                    name=u"{0}".format(row[9]).strip(),
                 )
                 contestant.finals_mus2_points = int(row[10])
                 contestant.finals_prs2_points = int(row[11])
