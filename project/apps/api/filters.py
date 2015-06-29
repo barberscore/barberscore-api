@@ -1,17 +1,13 @@
-import django_filters
-
-from .models import (
-    Group,
-)
+from rest_framework import filters
 
 
-class GroupFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(
-        lookup_type='icontains',
-    )
+class CoalesceFilterBackend(filters.BaseFilterBackend):
+    """
+    Support Ember Data coalesceFindRequests.
 
-    class Meta:
-        model = Group
-        fields = [
-            'name',
-        ]
+    """
+    def filter_queryset(self, request, queryset, view):
+        id_list = request.QUERY_PARAMS.getlist('ids[]')
+        if id_list:
+            queryset = queryset.filter(slug__in=id_list)
+        return queryset
