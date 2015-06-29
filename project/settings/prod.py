@@ -51,7 +51,7 @@ es = urlparse(get_env_variable("SEARCHBOX_URL"))
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': es.scheme + '://' + es.hostname + ':' + str(es.port),
+        'URL': es.scheme + '://' + es.hostname,
         'INDEX_NAME': 'haystack',
         'KWARGS': {"http_auth": es.username + ':' + es.password},
     },
