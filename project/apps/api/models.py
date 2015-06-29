@@ -666,7 +666,7 @@ class Contest(models.Model):
                     group__name__iexact=row[2],
                 )
             except Contestant.DoesNotExist:
-                log.error("Missing: {0}".format(row[2]))
+                log.error(u"Missing: {0}".format(row[2]))
                 continue
             if int(row[0]) == 3:
                 contestant.quarters_song1, created = Song.objects.get_or_create(
@@ -717,6 +717,8 @@ class Contest(models.Model):
                 contestant.finals_sng2_points = int(row[12])
 
                 contestant.finals_place = int(row[1])
+                if contestant.group.kind == 2:
+                    contestant.men = int(row[13])
             else:
                 log.error("Missing round")
             contestant.save()
