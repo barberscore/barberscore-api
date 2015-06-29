@@ -1,4 +1,5 @@
 from __future__ import division
+from django.core.urlresolvers import reverse
 
 import logging
 log = logging.getLogger(__name__)
@@ -183,6 +184,9 @@ class Director(Common):
             return name.last
         else:
             return None
+
+    def get_absolute_url(self):
+        return reverse('director-detail', args=[str(self.slug)])
 
 
 class Judge(Common):
