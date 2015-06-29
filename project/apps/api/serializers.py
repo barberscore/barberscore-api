@@ -446,6 +446,10 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 
 class SearchSerializer(HaystackSerializer):
+    kind = serializers.CharField(
+        source='model_name',
+    )
+
     class Meta:
         index_classes = [
             GroupIndex,
@@ -459,4 +463,5 @@ class SearchSerializer(HaystackSerializer):
             "name",
             "slug",
             "description",
+            "kind",
         ]
