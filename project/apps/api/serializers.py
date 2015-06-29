@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from drf_haystack.serializers import HaystackSerializer
+
 from .models import (
     Convention,
     Contest,
@@ -11,6 +13,14 @@ from .models import (
     Director,
     District,
     Song,
+)
+
+from .search_indexes import (
+    GroupIndex,
+    SongIndex,
+    SingerIndex,
+    DirectorIndex,
+    ContestIndex,
 )
 
 from django.contrib.auth import get_user_model
@@ -433,3 +443,20 @@ class DistrictSerializer(serializers.ModelSerializer):
             # 'bsmdb',
             'contestants',
         )
+
+
+class SearchSerializer(HaystackSerializer):
+    class Meta:
+        index_classes = [
+            GroupIndex,
+            SongIndex,
+            SingerIndex,
+            DirectorIndex,
+            ContestIndex,
+        ]
+        fields = [
+            "text",
+            "name",
+            "slug",
+            "description",
+        ]

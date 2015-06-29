@@ -14,6 +14,8 @@ class GroupIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Group
         fields = [
             'name',
+            'slug',
+            'description',
         ]
 
 
@@ -22,6 +24,8 @@ class ContestIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Contest
         fields = [
             'name',
+            'slug',
+            'description',
         ]
 
 
@@ -30,6 +34,8 @@ class SingerIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Singer
         fields = [
             'name',
+            'slug',
+            'description',
         ]
 
 
@@ -38,6 +44,8 @@ class SongIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Song
         fields = [
             'name',
+            'slug',
+            'description',
         ]
 
 
@@ -46,4 +54,6 @@ class DirectorIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Director
         fields = [
             'name',
+            'slug',
+            'description',
         ]
