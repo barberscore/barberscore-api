@@ -5,10 +5,11 @@ from rest_framework import (
     viewsets,
 )
 
+from drf_haystack.viewsets import HaystackViewSet
+
 # from rest_framework.pagination import (
 #     PageNumberPagination,
 # )
-
 
 from django.contrib.auth import get_user_model
 
@@ -34,6 +35,7 @@ from .serializers import (
     DirectorSerializer,
     DistrictSerializer,
     SongSerializer,
+    SearchSerializer,
 )
 
 User = get_user_model()
@@ -137,3 +139,7 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
     lookup_field = 'slug'
+
+
+class SearchViewSet(HaystackViewSet):
+    serializer_class = SearchSerializer
