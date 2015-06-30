@@ -589,6 +589,14 @@ class Contest(models.Model):
         default=False,
     )
 
+    is_place = models.BooleanField(
+        default=False,
+    )
+
+    is_score = models.BooleanField(
+        default=False,
+    )
+
     class Meta:
         unique_together = (
             ('level', 'kind', 'year', 'district',),
