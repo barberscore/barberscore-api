@@ -661,13 +661,38 @@ class Contest(models.Model):
 
         for row in data:
             try:
+                group = Group.objects.get(
+                    name__iexact=row[2],
+                )
+            except Group.DoesNotExist:
+                if self.kind == self.COLLEGIATE:
+                    group = Group.objects.create(
+                        name=row[2],
+                    )
+                else:
+                    log.error(u"Missing Group: {0}".format(row[2]))
+                    continue
+            try:
                 contestant = Contestant.objects.get(
                     contest=self,
-                    group__name__iexact=row[2],
+                    group=group,
                 )
             except Contestant.DoesNotExist:
-                log.error(u"Missing: {0}".format(row[2]))
-                continue
+                if self.kind == self.COLLEGIATE:
+                    try:
+                        district = District.objects.get(
+                            name=row[4],
+                        )
+                    except District.DoesNotExist:
+                        district = None
+                    contestant = Contestant.objects.create(
+                        contest=self,
+                        group=group,
+                        district=district,
+                    )
+                else:
+                    log.error(u"Missing Contestant: {0}".format(row[2]))
+                    continue
             if int(row[0]) == 3:
                 contestant.quarters_song1, created = Song.objects.get_or_create(
                     name=u"{0}".format(row[5]).strip(),
