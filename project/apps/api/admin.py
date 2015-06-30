@@ -45,6 +45,17 @@ class ContestantInline(admin.TabularInline):
         # 'seed',
         # 'score',
         # 'place',
+        'place',
+        'score',
+        'finals_song1',
+        'finals_mus1_points',
+        'finals_prs1_points',
+        'finals_sng1_points',
+        'finals_song2',
+        'finals_mus2_points',
+        'finals_prs2_points',
+        'finals_sng2_points',
+        'men',
     )
 
 
@@ -105,9 +116,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'import_legacy',
     ]
 
-    # inlines = [
-    #     ContestantInline,
-    # ]
+    inlines = [
+        ContestantInline,
+    ]
 
     list_filter = (
         'level',
