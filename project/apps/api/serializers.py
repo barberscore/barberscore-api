@@ -256,6 +256,8 @@ class ContestSerializer(serializers.ModelSerializer):
             'panel',
             'is_active',
             'is_complete',
+            'is_place',
+            'is_score',
             'scoresheet_pdf',
             'contestants',
         )
