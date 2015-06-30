@@ -744,6 +744,8 @@ class Contest(models.Model):
                 contestant.finals_place = int(row[1])
                 if contestant.group.kind == 2:
                     contestant.men = int(row[13])
+                if self.kind == self.COLLEGIATE:
+                    contestant.place = int(row[1])
             else:
                 log.error("Missing round")
             contestant.save()
@@ -810,7 +812,7 @@ class Contest(models.Model):
                 '-points',
             )
             place_round(finals)
-        contestants = self.contestants.all()
+        contestants = self.contestants.order_by('-points')
         place_round(contestants)
         return
 

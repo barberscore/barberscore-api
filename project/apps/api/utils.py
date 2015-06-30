@@ -244,28 +244,28 @@ def parse_finals(path):
     return
 
 
-def place_round(performances):
+def place_round(contestants):
     draw = []
     i = 1
-    for performance in performances:
+    for contestant in contestants:
         try:
-            match = performance.points == draw[0].points
+            match = contestant.points == draw[0].points
         except IndexError:
-            performance.place = i
-            performance.save()
-            draw.append(performance)
+            contestant.place = i
+            contestant.save()
+            draw.append(contestant)
             continue
         if match:
-            performance.place = i
+            contestant.place = i
             i += len(draw)
-            performance.save()
-            draw.append(performance)
+            contestant.save()
+            draw.append(contestant)
             continue
         else:
             i += 1
-            performance.place = i
-            performance.save()
-            draw = [performance]
+            contestant.place = i
+            contestant.save()
+            draw = [contestant]
     return
 
 
