@@ -178,6 +178,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'contest',
             'group',
             'district',
+            'picture',
             'seed',
             'prelim',
             'draw',
