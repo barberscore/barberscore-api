@@ -210,9 +210,6 @@ class Director(Common):
         else:
             return None
 
-    def get_absolute_url(self):
-        return reverse('director-detail', args=[str(self.slug)])
-
 
 class Judge(Common):
 
@@ -370,25 +367,25 @@ class Group(Common):
 
     def save(self, *args, **kwargs):
         try:
-            self.director = self.contestants.order_by('contest__year').last().director
+            self.P_director = self.contestants.order_by('contest__year').last().P_director
         except AttributeError:
-            self.director = None
+            self.P_director = None
         try:
-            self.tenor = self.contestants.order_by('contest__year').last().tenor
+            self.P_tenor = self.contestants.order_by('contest__year').last().P_tenor
         except AttributeError:
-            self.tenor = None
+            self.P_tenor = None
         try:
-            self.lead = self.contestants.order_by('contest__year').last().lead
+            self.P_lead = self.contestants.order_by('contest__year').last().P_lead
         except AttributeError:
-            self.lead = None
+            self.P_lead = None
         try:
-            self.baritone = self.contestants.order_by('contest__year').last().baritone
+            self.P_baritone = self.contestants.order_by('contest__year').last().P_baritone
         except AttributeError:
-            self.baritone = None
+            self.P_baritone = None
         try:
-            self.bass = self.contestants.order_by('contest__year').last().bass
+            self.P_bass = self.contestants.order_by('contest__year').last().P_bass
         except AttributeError:
-            self.bass = None
+            self.P_bass = None
         super(Group, self).save(*args, **kwargs)
 
     @property
@@ -976,7 +973,7 @@ class Contestant(models.Model):
 
     P_director = models.ForeignKey(
         'Person',
-        related_name='P_contestants',
+        related_name='contestants_P_director',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -984,7 +981,7 @@ class Contestant(models.Model):
 
     P_lead = models.ForeignKey(
         'Person',
-        related_name='P_contestants_lead',
+        related_name='contestants_P_lead',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -992,7 +989,7 @@ class Contestant(models.Model):
 
     P_tenor = models.ForeignKey(
         'Person',
-        related_name='P_contestants_tenor',
+        related_name='contestants_P_tenor',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1000,7 +997,7 @@ class Contestant(models.Model):
 
     P_baritone = models.ForeignKey(
         'Person',
-        related_name='P_contestants_baritone',
+        related_name='contestants_P_baritone',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1008,7 +1005,7 @@ class Contestant(models.Model):
 
     P_bass = models.ForeignKey(
         'Person',
-        related_name='P_contestants_bass',
+        related_name='contestants_P_bass',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1490,13 +1487,13 @@ class Contestant(models.Model):
         super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
-            if self.group.kind == Group.QUARTET and self.director is not None:
+            if self.group.kind == Group.QUARTET and self.P_director is not None:
                 raise ValidationError('Quartets do not have directors.')
             if self.group.kind == Group.CHORUS and (
-                self.lead is not None or
-                self.tenor is not None or
-                self.baritone is not None or
-                self.bass is not None
+                self.P_lead is not None or
+                self.P_tenor is not None or
+                self.P_baritone is not None or
+                self.P_bass is not None
             ):
                 raise ValidationError('Choruses do not have parts.')
             if self.group.kind == Group.QUARTET and self.contest.kind == Contest.CHORUS:
