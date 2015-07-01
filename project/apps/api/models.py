@@ -258,7 +258,7 @@ class Group(Common):
     )
 
     director = models.ForeignKey(
-        'Director',
+        'Person',
         related_name='groups',
         null=True,
         blank=True,
@@ -266,7 +266,7 @@ class Group(Common):
     )
 
     lead = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='groups_lead',
         null=True,
         blank=True,
@@ -274,7 +274,7 @@ class Group(Common):
     )
 
     tenor = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='groups_tenor',
         null=True,
         blank=True,
@@ -282,7 +282,7 @@ class Group(Common):
     )
 
     baritone = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='groups_baritone',
         null=True,
         blank=True,
@@ -290,48 +290,8 @@ class Group(Common):
     )
 
     bass = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='groups_bass',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_director = models.ForeignKey(
-        'Person',
-        related_name='P_groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_lead = models.ForeignKey(
-        'Person',
-        related_name='P_groups_lead',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_tenor = models.ForeignKey(
-        'Person',
-        related_name='P_groups_tenor',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_baritone = models.ForeignKey(
-        'Person',
-        related_name='P_groups_baritone',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_bass = models.ForeignKey(
-        'Person',
-        related_name='P_groups_bass',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -367,25 +327,25 @@ class Group(Common):
 
     def save(self, *args, **kwargs):
         try:
-            self.P_director = self.contestants.order_by('contest__year').last().P_director
+            self.director = self.contestants.order_by('contest__year').last().director
         except AttributeError:
-            self.P_director = None
+            self.director = None
         try:
-            self.P_tenor = self.contestants.order_by('contest__year').last().P_tenor
+            self.tenor = self.contestants.order_by('contest__year').last().tenor
         except AttributeError:
-            self.P_tenor = None
+            self.tenor = None
         try:
-            self.P_lead = self.contestants.order_by('contest__year').last().P_lead
+            self.lead = self.contestants.order_by('contest__year').last().lead
         except AttributeError:
-            self.P_lead = None
+            self.lead = None
         try:
-            self.P_baritone = self.contestants.order_by('contest__year').last().P_baritone
+            self.baritone = self.contestants.order_by('contest__year').last().baritone
         except AttributeError:
-            self.P_baritone = None
+            self.baritone = None
         try:
-            self.P_bass = self.contestants.order_by('contest__year').last().P_bass
+            self.bass = self.contestants.order_by('contest__year').last().bass
         except AttributeError:
-            self.P_bass = None
+            self.bass = None
         super(Group, self).save(*args, **kwargs)
 
     @property
@@ -932,15 +892,15 @@ class Contestant(models.Model):
     )
 
     director = models.ForeignKey(
-        'Director',
-        related_name='contestants',
+        'Person',
+        related_name='contestants_director',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
 
     lead = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='contestants_lead',
         null=True,
         blank=True,
@@ -948,7 +908,7 @@ class Contestant(models.Model):
     )
 
     tenor = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='contestants_tenor',
         null=True,
         blank=True,
@@ -956,7 +916,7 @@ class Contestant(models.Model):
     )
 
     baritone = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='contestants_baritone',
         null=True,
         blank=True,
@@ -964,48 +924,8 @@ class Contestant(models.Model):
     )
 
     bass = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='contestants_bass',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_director = models.ForeignKey(
-        'Person',
-        related_name='contestants_P_director',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_lead = models.ForeignKey(
-        'Person',
-        related_name='contestants_P_lead',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_tenor = models.ForeignKey(
-        'Person',
-        related_name='contestants_P_tenor',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_baritone = models.ForeignKey(
-        'Person',
-        related_name='contestants_P_baritone',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    P_bass = models.ForeignKey(
-        'Person',
-        related_name='contestants_P_bass',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1487,13 +1407,13 @@ class Contestant(models.Model):
         super(Contestant, self).save(*args, **kwargs)
 
     def clean(self):
-            if self.group.kind == Group.QUARTET and self.P_director is not None:
+            if self.group.kind == Group.QUARTET and self.director is not None:
                 raise ValidationError('Quartets do not have directors.')
             if self.group.kind == Group.CHORUS and (
-                self.P_lead is not None or
-                self.P_tenor is not None or
-                self.P_baritone is not None or
-                self.P_bass is not None
+                self.lead is not None or
+                self.tenor is not None or
+                self.baritone is not None or
+                self.bass is not None
             ):
                 raise ValidationError('Choruses do not have parts.')
             if self.group.kind == Group.QUARTET and self.contest.kind == Contest.CHORUS:
