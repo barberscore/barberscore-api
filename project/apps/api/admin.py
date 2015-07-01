@@ -129,15 +129,13 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_display = (
         'name',
-        'district',
-        'convention',
-        'level',
-        'kind',
-        'year',
         'panel',
         'scoresheet_pdf',
         'scoresheet_csv',
         'is_active',
+        'is_complete',
+        'is_place',
+        'is_score',
     )
 
     fields = (
