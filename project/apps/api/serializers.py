@@ -19,8 +19,7 @@ from .models import (
 from .search_indexes import (
     GroupIndex,
     SongIndex,
-    SingerIndex,
-    DirectorIndex,
+    PersonIndex,
     ContestIndex,
 )
 
@@ -520,8 +519,7 @@ class SearchSerializer(HaystackSerializer):
         index_classes = [
             GroupIndex,
             SongIndex,
-            SingerIndex,
-            DirectorIndex,
+            PersonIndex,
             ContestIndex,
         ]
         fields = [
