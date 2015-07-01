@@ -926,6 +926,14 @@ class Contestant(models.Model):
         max_length=255,
     )
 
+    picture = models.ImageField(
+        upload_to=generate_image_filename,
+        help_text="""
+            The picture/logo of the resource.""",
+        blank=True,
+        null=True,
+    )
+
     director = models.ForeignKey(
         'Director',
         related_name='contestants',
