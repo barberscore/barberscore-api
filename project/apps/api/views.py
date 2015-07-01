@@ -74,12 +74,12 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'group',
         'contest',
-        'P_director',
-        'P_district',
-        'P_lead',
-        'P_tenor',
-        'P_baritone',
-        'P_bass',
+        'director',
+        'district',
+        'lead',
+        'tenor',
+        'baritone',
+        'bass',
     ).prefetch_related(
         'performances',
     )
@@ -130,11 +130,11 @@ class DirectorViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.prefetch_related(
-        'contestants_P_director',
-        'contestants_P_lead',
-        'contestants_P_tenor',
-        'contestants_P_baritone',
-        'contestants_P_bass',
+        'contestants_director',
+        'contestants_lead',
+        'contestants_tenor',
+        'contestants_baritone',
+        'contestants_bass',
     )
     serializer_class = PersonSerializer
     lookup_field = 'slug'
