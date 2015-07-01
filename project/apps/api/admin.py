@@ -21,6 +21,7 @@ from .models import (
     Director,
     Judge,
     Song,
+    Person,
 )
 
 
@@ -190,11 +191,11 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
-        'P_director',
-        'P_lead',
-        'P_tenor',
-        'P_baritone',
-        'P_bass',
+        'director',
+        'lead',
+        'tenor',
+        'baritone',
+        'bass',
     )
 
     save_on_top = True
@@ -260,12 +261,12 @@ class ContestantAdmin(admin.ModelAdmin):
             'group',
             'district',
         ), (
-            'P_director', 'men',
+            'director', 'men',
         ), (
-            'P_tenor',
-            'P_lead',
-            'P_baritone',
-            'P_bass',
+            'tenor',
+            'lead',
+            'baritone',
+            'bass',
         ), (
             'seed',
             'prelim',
@@ -457,3 +458,39 @@ class DistrictAdmin(admin.ModelAdmin):
     )
 
     save_on_top = True
+
+
+@admin.register(Person)
+class PersonAdmin(admin.ModelAdmin):
+    form = select2_modelform(
+        Person,
+        attrs={'width': '250px'},
+    )
+
+    search_fields = (
+        'name',
+    )
+
+    save_on_top = True
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+    )
+
+    fields = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+    )
