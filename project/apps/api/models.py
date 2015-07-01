@@ -300,6 +300,46 @@ class Group(Common):
         on_delete=models.SET_NULL,
     )
 
+    P_director = models.ForeignKey(
+        'Director',
+        related_name='P_groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_lead = models.ForeignKey(
+        'Singer',
+        related_name='P_groups_lead',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_tenor = models.ForeignKey(
+        'Singer',
+        related_name='P_groups_tenor',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_baritone = models.ForeignKey(
+        'Singer',
+        related_name='P_groups_baritone',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_bass = models.ForeignKey(
+        'Singer',
+        related_name='P_groups_bass',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     chapter_name = models.CharField(
         help_text="""
             The name of the director(s) of the chorus.""",
@@ -921,6 +961,46 @@ class Contestant(models.Model):
     bass = models.ForeignKey(
         'Singer',
         related_name='contestants_bass',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_director = models.ForeignKey(
+        'Director',
+        related_name='P_contestants',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_lead = models.ForeignKey(
+        'Singer',
+        related_name='P_contestants_lead',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_tenor = models.ForeignKey(
+        'Singer',
+        related_name='P_contestants_tenor',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_baritone = models.ForeignKey(
+        'Singer',
+        related_name='P_contestants_baritone',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    P_bass = models.ForeignKey(
+        'Singer',
+        related_name='P_contestants_bass',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
