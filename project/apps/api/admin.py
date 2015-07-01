@@ -305,6 +305,7 @@ class ContestantAdmin(admin.ModelAdmin):
             'finals_prs2_points',
             'finals_sng2_points',
         ),
+        'picture',
     )
 
     readonly_fields = (
