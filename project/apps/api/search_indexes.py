@@ -3,9 +3,8 @@ from haystack import indexes
 from .models import (
     Group,
     Contest,
-    Singer,
     Song,
-    Director,
+    Person,
 )
 
 
@@ -29,9 +28,9 @@ class ContestIndex(indexes.ModelSearchIndex, indexes.Indexable):
         ]
 
 
-class SingerIndex(indexes.ModelSearchIndex, indexes.Indexable):
+class PersonIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
-        model = Singer
+        model = Person
         fields = [
             'name',
             'slug',
@@ -42,16 +41,6 @@ class SingerIndex(indexes.ModelSearchIndex, indexes.Indexable):
 class SongIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
         model = Song
-        fields = [
-            'name',
-            'slug',
-            'description',
-        ]
-
-
-class DirectorIndex(indexes.ModelSearchIndex, indexes.Indexable):
-    class Meta:
-        model = Director
         fields = [
             'name',
             'slug',
