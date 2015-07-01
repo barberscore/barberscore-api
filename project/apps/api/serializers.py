@@ -500,6 +500,7 @@ class DistrictSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
+            'long_name',
             # 'chapterName',
             # 'lead',
             # 'tenor',
