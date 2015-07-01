@@ -161,6 +161,31 @@ class Singer(Common):
             return None
 
 
+class Person(Common):
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def first_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            return name.first
+        else:
+            return None
+
+    @property
+    def last_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            return name.last
+        else:
+            return None
+
+
 class Director(Common):
 
     class Meta:
