@@ -301,7 +301,7 @@ class Group(Common):
     )
 
     P_director = models.ForeignKey(
-        'Director',
+        'Person',
         related_name='P_groups',
         null=True,
         blank=True,
@@ -309,7 +309,7 @@ class Group(Common):
     )
 
     P_lead = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_groups_lead',
         null=True,
         blank=True,
@@ -317,7 +317,7 @@ class Group(Common):
     )
 
     P_tenor = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_groups_tenor',
         null=True,
         blank=True,
@@ -325,7 +325,7 @@ class Group(Common):
     )
 
     P_baritone = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_groups_baritone',
         null=True,
         blank=True,
@@ -333,7 +333,7 @@ class Group(Common):
     )
 
     P_bass = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_groups_bass',
         null=True,
         blank=True,
@@ -975,7 +975,7 @@ class Contestant(models.Model):
     )
 
     P_director = models.ForeignKey(
-        'Director',
+        'Person',
         related_name='P_contestants',
         null=True,
         blank=True,
@@ -983,7 +983,7 @@ class Contestant(models.Model):
     )
 
     P_lead = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_contestants_lead',
         null=True,
         blank=True,
@@ -991,7 +991,7 @@ class Contestant(models.Model):
     )
 
     P_tenor = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_contestants_tenor',
         null=True,
         blank=True,
@@ -999,7 +999,7 @@ class Contestant(models.Model):
     )
 
     P_baritone = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_contestants_baritone',
         null=True,
         blank=True,
@@ -1007,7 +1007,7 @@ class Contestant(models.Model):
     )
 
     P_bass = models.ForeignKey(
-        'Singer',
+        'Person',
         related_name='P_contestants_bass',
         null=True,
         blank=True,
