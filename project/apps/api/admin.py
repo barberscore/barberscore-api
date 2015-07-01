@@ -190,11 +190,11 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
-        'director',
-        'lead',
-        'tenor',
-        'baritone',
-        'bass',
+        'P_director',
+        'P_lead',
+        'P_tenor',
+        'P_baritone',
+        'P_bass',
     )
 
     save_on_top = True
@@ -260,12 +260,12 @@ class ContestantAdmin(admin.ModelAdmin):
             'group',
             'district',
         ), (
-            'director', 'men',
+            'P_director', 'men',
         ), (
-            'tenor',
-            'lead',
-            'baritone',
-            'bass',
+            'P_tenor',
+            'P_lead',
+            'P_baritone',
+            'P_bass',
         ), (
             'seed',
             'prelim',
