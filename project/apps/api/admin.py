@@ -117,9 +117,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'import_legacy',
     ]
 
-    inlines = [
-        ContestantInline,
-    ]
+    # inlines = [
+    #     ContestantInline,
+    # ]
 
     list_filter = (
         'level',
@@ -142,12 +142,12 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     fields = (
         # ('is_active', 'is_complete', 'is_place', 'is_score',),
         'name',
-        # 'convention',
-        # 'level',
-        # 'kind',
-        # 'year',
-        # 'district',
-        # 'panel',
+        'convention',
+        'level',
+        'kind',
+        'year',
+        'district',
+        'panel',
         'scoresheet_pdf',
         'scoresheet_csv',
     )
