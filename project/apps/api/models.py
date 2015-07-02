@@ -1,5 +1,4 @@
 from __future__ import division
-from django.core.urlresolvers import reverse
 
 import logging
 log = logging.getLogger(__name__)
@@ -1497,15 +1496,6 @@ class Contestant(models.Model):
             self.finals_sng2_score = round(self.finals_sng2_points / panel, 1)
             self.finals_song2_score = round(self.finals_song2_points / (panel * 3), 1)
             self.finals_score = round(self.finals_points / (panel * 6), 1)
-        if self.contest.kind == 1:
-            if self.quarters_points and not self.semis_points:
-                self.score = round(self.points / (panel * 6 * 1), 1)
-            elif self.semis_points and not self.finals_points:
-                self.score = round(self.points / (panel * 6 * 2), 1)
-            elif self.finals_points:
-                self.score = round(self.points / (panel * 6 * 3), 1)
-            else:
-                self.score = None
         self.group.save()
         super(Contestant, self).save(*args, **kwargs)
 
