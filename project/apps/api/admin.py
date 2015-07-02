@@ -15,11 +15,7 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    Singer,
-    Note,
     District,
-    Director,
-    Judge,
     Song,
     Person,
 )
@@ -46,17 +42,24 @@ class ContestantInline(admin.TabularInline):
         # 'seed',
         # 'score',
         # 'place',
+        'semis_draw',
+        'semis_stagetime',
         'place',
         'score',
-        'finals_song1',
-        'finals_mus1_points',
-        'finals_prs1_points',
-        'finals_sng1_points',
-        'finals_song2',
-        'finals_mus2_points',
-        'finals_prs2_points',
-        'finals_sng2_points',
+        'quarters_song1',
+        'quarters_mus1_points',
+        'quarters_prs1_points',
+        'quarters_sng1_points',
+        'quarters_song2',
+        'quarters_mus2_points',
+        'quarters_prs2_points',
+        'quarters_sng2_points',
         'men',
+    )
+    readonly_fields = (
+        'quarters_song1',
+        'quarters_song2',
+        'group',
     )
 
 
@@ -117,9 +120,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'import_legacy',
     ]
 
-    # inlines = [
-    #     ContestantInline,
-    # ]
+    inlines = [
+        ContestantInline,
+    ]
 
     list_filter = (
         'level',
@@ -140,7 +143,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     fields = (
-        # ('is_active', 'is_complete', 'is_place', 'is_score',),
+        ('is_active', 'is_complete', 'is_place', 'is_score',),
         'name',
         'convention',
         'level',
@@ -314,106 +317,6 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
     save_on_top = True
-
-
-@admin.register(Singer)
-class SingerAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Singer,
-        attrs={'width': '100px'},
-    )
-
-    search_fields = (
-        'name',
-    )
-
-    save_on_top = True
-    list_display = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-    )
-
-    fields = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-    )
-
-
-@admin.register(Director)
-class DirectorAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Director,
-        attrs={'width': '250px'},
-    )
-
-    search_fields = (
-        'name',
-    )
-
-    save_on_top = True
-    list_display = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-    )
-
-    fields = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-    )
-
-
-@admin.register(Judge)
-class JudgeAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Judge,
-        attrs={'width': '250px'},
-    )
-
-    save_on_top = True
-    fields = (
-        'name',
-    )
-
-
-@admin.register(Note)
-class NoteAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Note,
-        attrs={'width': '250px'},
-    )
-
-    save_on_top = True
-    fields = (
-        'user',
-        'performance',
-        'text',
-    )
 
 
 @admin.register(Song)
