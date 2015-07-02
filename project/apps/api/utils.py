@@ -272,5 +272,7 @@ def score_contestant(contestant):
             contestant.score = round(contestant.points / (panel * 6 * 3), 1)
         else:
             contestant.score = None
-        contestant.save()
+    else:
+        contestant.score = round(contestant.points / (panel * 6 * 1), 1)
+    contestant.save()
     return
