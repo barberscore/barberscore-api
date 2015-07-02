@@ -7,10 +7,6 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    Performance,
-    Note,
-    Singer,
-    Director,
     District,
     Person,
     Song,
@@ -287,55 +283,6 @@ class ConventionSerializer(serializers.ModelSerializer):
         )
 
 
-class SingerSerializer(serializers.ModelSerializer):
-    contestants_lead = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    contestants_tenor = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    contestants_baritone = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    contestants_bass = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = Singer
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'contestants_lead',
-            'contestants_tenor',
-            'contestants_baritone',
-            'contestants_bass',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-        )
-
-
 class PersonSerializer(serializers.ModelSerializer):
     contestants_director = serializers.SlugRelatedField(
         many=True,
@@ -389,55 +336,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
-        )
-
-
-class DirectorSerializer(serializers.ModelSerializer):
-    contestants = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = Director
-        lookup_field = 'slug'
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'contestants',
-        )
-
-
-class NoteSerializer(serializers.ModelSerializer):
-    performance = serializers.SlugRelatedField(
-        queryset=Performance.objects.all(),
-        slug_field='slug',
-    )
-
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        # read_only=True,
-    )
-
-    class Meta:
-        model = Note
-        fields = (
-            'id',
-            'text',
-            'performance',
-            'user',
         )
 
 
