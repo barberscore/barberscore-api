@@ -723,60 +723,60 @@ class Contest(models.Model):
                 else:
                     log.error(u"Missing Contestant: {0}".format(row[0]))
                     continue
-            if int(row[0]) == 3:
-                contestant.quarters_song1, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[1]).strip(),
-                )
-                contestant.quarters_mus1_points = int(row[2])
-                contestant.quarters_prs1_points = int(row[3])
-                contestant.quarters_sng1_points = int(row[4])
+            # if int(row[0]) == 3:
+            contestant.quarters_song1, created = Song.objects.get_or_create(
+                name=u"{0}".format(row[1]).strip(),
+            )
+            contestant.quarters_mus1_points = int(row[2])
+            contestant.quarters_prs1_points = int(row[3])
+            contestant.quarters_sng1_points = int(row[4])
 
-                contestant.quarters_song2, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[8]).strip(),
-                )
-                contestant.quarters_mus2_points = int(row[9])
-                contestant.quarters_prs2_points = int(row[10])
-                contestant.quarters_sng2_points = int(row[11])
+            contestant.quarters_song2, created = Song.objects.get_or_create(
+                name=u"{0}".format(row[8]).strip(),
+            )
+            contestant.quarters_mus2_points = int(row[9])
+            contestant.quarters_prs2_points = int(row[10])
+            contestant.quarters_sng2_points = int(row[11])
 
-                contestant.quarters_place = int(row[14])
-                contestant.quarters_score = float(row[6])
+            contestant.quarters_place = int(row[14])
+            contestant.quarters_score = float(row[6])
 
-            elif int(row[0]) == 2:
-                contestant.semis_song1, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[5]).strip(),
-                )
-                contestant.semis_mus1_points = int(row[6])
-                contestant.semis_prs1_points = int(row[7])
-                contestant.semis_sng1_points = int(row[8])
+            # elif int(row[0]) == 2:
+            #     contestant.semis_song1, created = Song.objects.get_or_create(
+            #         name=u"{0}".format(row[5]).strip(),
+            #     )
+            #     contestant.semis_mus1_points = int(row[6])
+            #     contestant.semis_prs1_points = int(row[7])
+            #     contestant.semis_sng1_points = int(row[8])
 
-                contestant.semis_song2, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[9]).strip(),
-                )
-                contestant.semis_mus2_points = int(row[10])
-                contestant.semis_prs2_points = int(row[11])
-                contestant.semis_sng2_points = int(row[12])
+            #     contestant.semis_song2, created = Song.objects.get_or_create(
+            #         name=u"{0}".format(row[9]).strip(),
+            #     )
+            #     contestant.semis_mus2_points = int(row[10])
+            #     contestant.semis_prs2_points = int(row[11])
+            #     contestant.semis_sng2_points = int(row[12])
 
-                contestant.semis_place = int(row[1])
-            elif int(row[0]) == 1:
-                contestant.finals_song1, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[5]).strip(),
-                )
-                contestant.finals_mus1_points = int(row[6])
-                contestant.finals_prs1_points = int(row[7])
-                contestant.finals_sng1_points = int(row[8])
+            #     contestant.semis_place = int(row[1])
+            # elif int(row[0]) == 1:
+            #     contestant.finals_song1, created = Song.objects.get_or_create(
+            #         name=u"{0}".format(row[5]).strip(),
+            #     )
+            #     contestant.finals_mus1_points = int(row[6])
+            #     contestant.finals_prs1_points = int(row[7])
+            #     contestant.finals_sng1_points = int(row[8])
 
-                contestant.finals_song2, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[9]).strip(),
-                )
-                contestant.finals_mus2_points = int(row[10])
-                contestant.finals_prs2_points = int(row[11])
-                contestant.finals_sng2_points = int(row[12])
+            #     contestant.finals_song2, created = Song.objects.get_or_create(
+            #         name=u"{0}".format(row[9]).strip(),
+            #     )
+            #     contestant.finals_mus2_points = int(row[10])
+            #     contestant.finals_prs2_points = int(row[11])
+            #     contestant.finals_sng2_points = int(row[12])
 
-                contestant.finals_place = int(row[1])
-                if contestant.group.kind == 2:
-                    contestant.men = int(row[13])
-                if self.kind == self.COLLEGIATE:
-                    contestant.place = int(row[1])
+            #     contestant.finals_place = int(row[1])
+            #     if contestant.group.kind == 2:
+            #         contestant.men = int(row[13])
+            #     if self.kind == self.COLLEGIATE:
+            #         contestant.place = int(row[1])
             else:
                 log.error("Missing round")
             contestant.save()
