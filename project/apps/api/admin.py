@@ -195,11 +195,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'is_active',
         'is_complete',
         'is_place',
-        'is_score',
+        # 'is_score',
     )
 
     fields = (
-        ('is_active', 'is_complete', 'is_place', 'is_score',),
+        ('is_active', 'is_complete', 'is_place',),
         'name',
         'convention',
         'level',

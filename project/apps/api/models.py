@@ -615,9 +615,9 @@ class Contest(models.Model):
         default=False,
     )
 
-    is_score = models.BooleanField(
-        default=False,
-    )
+    # is_score = models.BooleanField(
+    #     default=False,
+    # )
 
     class Meta:
         unique_together = (
@@ -628,6 +628,13 @@ class Contest(models.Model):
             '-year',
             'kind',
         )
+
+    @property
+    def is_score(self):
+        if self.year > 1993:
+            return True
+        else:
+            return False
 
     def clean(self):
             if self.level == self.INTERNATIONAL and self.district is not None:
