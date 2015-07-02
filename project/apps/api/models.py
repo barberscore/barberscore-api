@@ -1066,6 +1066,16 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    quarters_stagetime = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_draw = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     quarters_song1 = models.ForeignKey(
         'Song',
         related_name='contestants_q1',
@@ -1177,6 +1187,16 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    semis_stagetime = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    semis_draw = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     semis_song1 = models.ForeignKey(
         'Song',
         related_name='contestants_s1',
@@ -1284,6 +1304,16 @@ class Contestant(models.Model):
     )
 
     semis_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    finals_stagetime = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    finals_draw = models.IntegerField(
         null=True,
         blank=True,
     )
