@@ -25,9 +25,9 @@ def deinterlace(path):
         return data
 
 
-def strip_penalties(output):
+def strip_penalties_badorder(output):
     for row in output:
-        scores = [6, 7, 8, 10, 11, 12]
+        scores = [2,3,4,9,10,11]
         for score in scores:
             try:
                 int(row[score])
@@ -148,16 +148,16 @@ def parse_quarters(path):
             row[i] = row[i].strip()
             i += 1
     # Reorder in list -- SUPER Kludge!
-    for row in output:
-        row.insert(0, row.pop(-1))
-        row.insert(1, row.pop(-2))
-        row.insert(3, row.pop(-2))
-        row.insert(4, row.pop(-1))
-        row.pop(9)
-        row.pop(9)
-        row.pop(9)
+    # for row in output:
+    #     row.insert(0, row.pop(-1))
+    #     row.insert(1, row.pop(-2))
+    #     row.insert(3, row.pop(-2))
+    #     row.insert(4, row.pop(-1))
+        # row.pop(9)
+    #     row.pop(9)
+    #     row.pop(9)
 
-    output = strip_penalties(output)
+    output = strip_penalties_badorder(output)
 
     output = write_file(path, output)
 
