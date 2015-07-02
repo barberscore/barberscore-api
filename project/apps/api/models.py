@@ -788,7 +788,7 @@ class Contest(models.Model):
 
     def import_legacy(self):
         reader = csv.reader(self.scoresheet_csv)
-        next(reader)
+        # next(reader)
         data = [row for row in reader]
 
         for row in data:
@@ -880,6 +880,7 @@ class Contest(models.Model):
                     contestant.place = int(row[1])
             else:
                 log.error("Missing round")
+            contestant.score = float(row[13])
             contestant.save()
 
     def import_historical(self):
