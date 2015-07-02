@@ -684,6 +684,103 @@ class Contest(models.Model):
         log.info("Created: {0}".format(group))
         return
 
+    def import_badorder(self):
+        reader = csv.reader(self.scoresheet_csv)
+        next(reader)
+        data = [row for row in reader]
+
+        for row in data:
+            try:
+                group = Group.objects.get(
+                    name__iexact=row[0],
+                )
+            except Group.DoesNotExist:
+                if self.kind == self.COLLEGIATE:
+                    group = Group.objects.create(
+                        name=row[0],
+                    )
+                else:
+                    log.error(u"Missing Group: {0}".format(row[0]))
+                    continue
+            try:
+                contestant = Contestant.objects.get(
+                    contest=self,
+                    group=group,
+                )
+            except Contestant.DoesNotExist:
+                if self.kind == self.COLLEGIATE:
+                    try:
+                        district = District.objects.get(
+                            name=row[15],
+                        )
+                    except District.DoesNotExist:
+                        district = None
+                    contestant = Contestant.objects.create(
+                        contest=self,
+                        group=group,
+                        district=district,
+                    )
+                else:
+                    log.error(u"Missing Contestant: {0}".format(row[0]))
+                    continue
+            if int(row[0]) == 3:
+                contestant.quarters_song1, created = Song.objects.get_or_create(
+                    name=u"{0}".format(row[1]).strip(),
+                )
+                contestant.quarters_mus1_points = int(row[2])
+                contestant.quarters_prs1_points = int(row[3])
+                contestant.quarters_sng1_points = int(row[4])
+
+                contestant.quarters_song2, created = Song.objects.get_or_create(
+                    name=u"{0}".format(row[8]).strip(),
+                )
+                contestant.quarters_mus2_points = int(row[9])
+                contestant.quarters_prs2_points = int(row[10])
+                contestant.quarters_sng2_points = int(row[11])
+
+                contestant.quarters_place = int(row[14])
+                contestant.quarters_score = float(row[6])
+
+            elif int(row[0]) == 2:
+                contestant.semis_song1, created = Song.objects.get_or_create(
+                    name=u"{0}".format(row[5]).strip(),
+                )
+                contestant.semis_mus1_points = int(row[6])
+                contestant.semis_prs1_points = int(row[7])
+                contestant.semis_sng1_points = int(row[8])
+
+                contestant.semis_song2, created = Song.objects.get_or_create(
+                    name=u"{0}".format(row[9]).strip(),
+                )
+                contestant.semis_mus2_points = int(row[10])
+                contestant.semis_prs2_points = int(row[11])
+                contestant.semis_sng2_points = int(row[12])
+
+                contestant.semis_place = int(row[1])
+            elif int(row[0]) == 1:
+                contestant.finals_song1, created = Song.objects.get_or_create(
+                    name=u"{0}".format(row[5]).strip(),
+                )
+                contestant.finals_mus1_points = int(row[6])
+                contestant.finals_prs1_points = int(row[7])
+                contestant.finals_sng1_points = int(row[8])
+
+                contestant.finals_song2, created = Song.objects.get_or_create(
+                    name=u"{0}".format(row[9]).strip(),
+                )
+                contestant.finals_mus2_points = int(row[10])
+                contestant.finals_prs2_points = int(row[11])
+                contestant.finals_sng2_points = int(row[12])
+
+                contestant.finals_place = int(row[1])
+                if contestant.group.kind == 2:
+                    contestant.men = int(row[13])
+                if self.kind == self.COLLEGIATE:
+                    contestant.place = int(row[1])
+            else:
+                log.error("Missing round")
+            contestant.save()
+
     def import_legacy(self):
         reader = csv.reader(self.scoresheet_csv)
         next(reader)
