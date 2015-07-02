@@ -777,8 +777,6 @@ class Contest(models.Model):
             #         contestant.men = int(row[13])
             #     if self.kind == self.COLLEGIATE:
             #         contestant.place = int(row[1])
-            else:
-                log.error("Missing round")
             contestant.save()
 
     def import_legacy(self):
