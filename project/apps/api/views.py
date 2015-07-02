@@ -18,8 +18,6 @@ from .models import (
     Contest,
     Group,
     Contestant,
-    Singer,
-    Director,
     District,
     Song,
     Person,
@@ -30,10 +28,7 @@ from .serializers import (
     ContestSerializer,
     GroupSerializer,
     ContestantSerializer,
-    NoteSerializer,
     UserSerializer,
-    SingerSerializer,
-    DirectorSerializer,
     DistrictSerializer,
     SongSerializer,
     PersonSerializer,
@@ -96,36 +91,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class NoteViewSet(viewsets.ModelViewSet):
-    # queryset = Note.objects.all()
-    serializer_class = NoteSerializer
-
-    def get_queryset(self):
-        return self.request.user.notes
-
-
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-
-class SingerViewSet(viewsets.ModelViewSet):
-    queryset = Singer.objects.prefetch_related(
-        'contestants_lead',
-        'contestants_tenor',
-        'contestants_baritone',
-        'contestants_bass',
-    )
-    serializer_class = SingerSerializer
-    lookup_field = 'slug'
-
-
-class DirectorViewSet(viewsets.ModelViewSet):
-    queryset = Director.objects.prefetch_related(
-        'contestants',
-    )
-    serializer_class = DirectorSerializer
-    lookup_field = 'slug'
 
 
 class PersonViewSet(viewsets.ModelViewSet):
