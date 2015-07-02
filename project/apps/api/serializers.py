@@ -182,6 +182,8 @@ class ContestantSerializer(serializers.ModelSerializer):
             'place',
             'points',
             'score',
+            'delta_score',
+            'delta_place',
             'quarters_place',
             'quarters_score',
             'semis_place',

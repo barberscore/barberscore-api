@@ -1516,6 +1516,20 @@ class Contestant(models.Model):
             if self.group.kind == Group.CHORUS and self.contest.kind != Contest.CHORUS:
                 raise ValidationError("Group and Contest types must match.")
 
+    @property
+    def delta_score(self):
+        try:
+            return self.score - self.prelim
+        except TypeError:
+            return None
+
+    @property
+    def delta_place(self):
+        try:
+            return self.seed - self.place
+        except TypeError:
+            return None
+
     def __unicode__(self):
         return self.name
 
