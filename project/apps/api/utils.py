@@ -260,3 +260,17 @@ def merge_groups(from_group, to_group):
         c.save()
     from_group.delete()
 
+
+def score_contestant(contestant):
+    panel = contestant.contest.panel
+    if contestant.contest.kind == 1:
+        if contestant.quarters_points and not contestant.semis_points:
+            contestant.score = round(contestant.points / (panel * 6 * 1), 1)
+        elif contestant.semis_points and not contestant.finals_points:
+            contestant.score = round(contestant.points / (panel * 6 * 2), 1)
+        elif contestant.finals_points:
+            contestant.score = round(contestant.points / (panel * 6 * 3), 1)
+        else:
+            contestant.score = None
+        contestant.save()
+    return
