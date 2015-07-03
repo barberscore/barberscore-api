@@ -102,6 +102,16 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    finals_song1_arranger = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    finals_song2_arranger = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
     district = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -212,6 +222,8 @@ class ContestantSerializer(serializers.ModelSerializer):
             'quarters_song2',
             'semis_song1',
             'semis_song2',
+            'finals_song1_arranger',
+            'finals_song2_arranger',
             'finals_song1',
             'finals_song2',
             'quarters_song1_score',
