@@ -143,8 +143,8 @@ class ChorusInline(admin.TabularInline):
         'stagetime',
     )
     readonly_fields = (
-        # 'finals_song1',
-        # 'finals_song2',
+        'finals_song1',
+        'finals_song2',
         'group',
     )
 
