@@ -76,6 +76,36 @@ def parse_chorus(path):
     return
 
 
+def parse_chorus_nd(path):
+    data = deinterlace(path)
+    output = []
+    # Split first cell and chapter cell
+    for row in data:
+        row.extend([row[0].split(' ', 1)[0]])
+        row.extend([row[8].split('(', 1)[1].split(')', 1)[0]])
+        row[0] = row[0].split(' ', 1)[1]
+        row[8] = row[8].split('(', 1)[0]
+        # Add round
+        row.extend(['1'])
+        output.append(row)
+    # Strip space
+    for row in output:
+        i = 0
+        l = len(row)
+        while i < l:
+            row[i] = row[i].strip()
+            i += 1
+    new_list = [[row[ci] for ci in (
+        18, 16, 8, 0, 15, 1, 2, 3, 4, 9, 10, 11, 12, 6, 7
+    )] for row in output]
+
+    new_list = strip_penalties(new_list)
+
+    output = write_file(path, new_list)
+
+    return
+
+
 def parse_district_chorus(path, district):
     data = deinterlace(path)
     output = []

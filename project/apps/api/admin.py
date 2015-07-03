@@ -110,6 +110,11 @@ class FinalsInline(admin.TabularInline):
         'draw',
         'stagetime',
     )
+    readonly_fields = (
+        'finals_song1',
+        'finals_song2',
+        'group',
+    )
 
 
 class MembersInline(admin.TabularInline):
