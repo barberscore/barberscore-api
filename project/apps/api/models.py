@@ -1338,6 +1338,14 @@ class Contestant(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    finals_song1_arranger = models.ForeignKey(
+        'Person',
+        related_name='contestants_f1_arranger',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     finals_mus1_points = models.IntegerField(
         null=True,
         blank=True,
@@ -1381,6 +1389,14 @@ class Contestant(models.Model):
     finals_song2 = models.ForeignKey(
         'Song',
         related_name='contestants_f2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    finals_song2_arranger = models.ForeignKey(
+        'Person',
+        related_name='contestants_f2_arranger',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

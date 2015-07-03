@@ -423,11 +423,13 @@ class ContestantAdmin(admin.ModelAdmin):
             'semis_sng2_points',
         ), (
             'finals_song1',
+            'finals_song1_arranger',
             'finals_mus1_points',
             'finals_prs1_points',
             'finals_sng1_points',
         ), (
             'finals_song2',
+            'finals_song2_arranger',
             'finals_mus2_points',
             'finals_prs2_points',
             'finals_sng2_points',
