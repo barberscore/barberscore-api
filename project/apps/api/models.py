@@ -874,7 +874,7 @@ class Contest(models.Model):
 
                 contestant.finals_place = int(row[1])
                 if contestant.group.kind == 2:
-                    contestant.men = int(row[13])
+                    contestant.men = int(row[14])
                 if self.kind == self.COLLEGIATE:
                     contestant.place = int(row[1])
             else:

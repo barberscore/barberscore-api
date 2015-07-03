@@ -96,8 +96,6 @@ class FinalsInline(admin.TabularInline):
     fields = (
         'contest',
         'group',
-        'draw',
-        'stagetime',
         'place',
         'score',
         'finals_song1',
@@ -109,11 +107,36 @@ class FinalsInline(admin.TabularInline):
         'finals_prs2_points',
         'finals_sng2_points',
         'men',
+        'draw',
+        'stagetime',
     )
-    readonly_fields = (
-        'finals_song1',
-        'finals_song2',
+
+
+class MembersInline(admin.TabularInline):
+    form = select2_modelform(
+        Contestant,
+        attrs={'width': '250px'},
+    )
+    model = Contestant
+    extra = 0
+    show_change_link = True
+    fields = (
+        'contest',
         'group',
+        'director',
+        'tenor',
+        'lead',
+        'baritone',
+        'bass',
+    )
+
+    readonly_fields = (
+        'group',
+        'director',
+        'tenor',
+        'lead',
+        'baritone',
+        'bass',
     )
 
 
@@ -175,8 +198,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
-        # FinalsInline,
-        SemisInline,
+        # MembersInline,
+        FinalsInline,
+        # SemisInline,
         # QuartersInline,
     ]
 

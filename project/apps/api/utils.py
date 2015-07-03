@@ -27,7 +27,7 @@ def deinterlace(path):
 
 def strip_penalties(output):
     for row in output:
-        scores = [6, 7 ,8, 10,11,12]
+        scores = [6, 7, 8, 10, 11, 12]
         for score in scores:
             try:
                 int(row[score])
@@ -65,22 +65,13 @@ def parse_chorus(path):
         while i < l:
             row[i] = row[i].strip()
             i += 1
-    # Reorder in list -- SUPER Kludge!
-    for row in output:
-        row.insert(0, row.pop(-1))
-        row.insert(1, row.pop(-2))
-        row.insert(2, row.pop(10))
-        row.insert(4, row.pop(-1))
-        row.pop(10)
-        row.pop(9)
-        row.insert(-1, row.pop(9))
-        row.pop(13)
-        row.pop(13)
-        row.pop(-1)
+    new_list = [[row[ci] for ci in (
+        18, 16, 8, 0, 17, 1, 2, 3, 4, 9, 10, 11, 12, 6, 7
+    )] for row in output]
 
-    output = strip_penalties(output)
+    new_list = strip_penalties(new_list)
 
-    output = write_file(path, output)
+    output = write_file(path, new_list)
 
     return
 
