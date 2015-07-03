@@ -948,6 +948,30 @@ class Contest(models.Model):
         place_round(contestants)
         return
 
+    def seed(self):
+        marker = []
+        i = 1
+        for contestant in self.contestants.order_by('-prelim'):
+            try:
+                match = contestant.prelim == marker[0].prelim
+            except IndexError:
+                contestant.seed = i
+                contestant.save()
+                marker.append(contestant)
+                continue
+            if match:
+                contestant.seed = i
+                i += len(marker)
+                contestant.save()
+                marker.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.seed = i
+                contestant.save()
+                marker = [contestant]
+        return
+
 
 class Contestant(models.Model):
     id = models.UUIDField(
