@@ -365,11 +365,41 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    # contestants = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
+    contestants_finals_song1 = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestants_finals_song2 = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestants_semis_song1 = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestants_semis_song2 = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestants_quarters_song1 = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestants_quarters_song2 = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
 
     class Meta:
         model = Song
@@ -378,7 +408,12 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            # 'contestants',
+            'contestants_finals_song1',
+            'contestants_finals_song2',
+            'contestants_semis_song1',
+            'contestants_semis_song2',
+            'contestants_quarters_song1',
+            'contestants_quarters_song2',
         )
         lookup_field = 'slug'
 

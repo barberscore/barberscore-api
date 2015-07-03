@@ -1110,7 +1110,7 @@ class Contestant(models.Model):
 
     quarters_song1 = models.ForeignKey(
         'Song',
-        related_name='contestants_q1',
+        related_name='contestants_quarters_song1',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1158,7 +1158,7 @@ class Contestant(models.Model):
 
     quarters_song2 = models.ForeignKey(
         'Song',
-        related_name='contestants_q2',
+        related_name='contestants_quarters_song2',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1221,7 +1221,7 @@ class Contestant(models.Model):
 
     semis_song1 = models.ForeignKey(
         'Song',
-        related_name='contestants_s1',
+        related_name='contestants_semis_song1',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1269,7 +1269,7 @@ class Contestant(models.Model):
 
     semis_song2 = models.ForeignKey(
         'Song',
-        related_name='contestants_s2',
+        related_name='contestants_semis_song2',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1332,7 +1332,7 @@ class Contestant(models.Model):
 
     finals_song1 = models.ForeignKey(
         'Song',
-        related_name='contestants_f1',
+        related_name='contestants_finals_song1',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1388,7 +1388,7 @@ class Contestant(models.Model):
 
     finals_song2 = models.ForeignKey(
         'Song',
-        related_name='contestants_f2',
+        related_name='contestants_finals_song2',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
