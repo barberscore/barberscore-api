@@ -117,6 +117,42 @@ class FinalsInline(admin.TabularInline):
     )
 
 
+class ChorusInline(admin.TabularInline):
+    form = select2_modelform(
+        Contestant,
+        attrs={'width': '250px'},
+    )
+    model = Contestant
+    extra = 0
+    show_change_link = True
+    fields = (
+        'contest',
+        'group',
+        'draw',
+        # 'place',
+        # 'score',
+        'finals_song1',
+        # 'finals_mus1_points',
+        # 'finals_prs1_points',
+        # 'finals_sng1_points',
+        'finals_song2',
+        # 'finals_mus2_points',
+        # 'finals_prs2_points',
+        # 'finals_sng2_points',
+        'men',
+        'stagetime',
+    )
+    readonly_fields = (
+        # 'finals_song1',
+        # 'finals_song2',
+        'group',
+    )
+
+    ordering = (
+        'draw',
+    )
+
+
 class MembersInline(admin.TabularInline):
     form = select2_modelform(
         Contestant,
@@ -204,9 +240,10 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     inlines = [
         # MembersInline,
-        FinalsInline,
+        # FinalsInline,
         # SemisInline,
         # QuartersInline,
+        ChorusInline,
     ]
 
     list_filter = (
