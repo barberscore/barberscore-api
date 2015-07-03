@@ -118,7 +118,20 @@ class DistrictViewSet(viewsets.ModelViewSet):
 
 
 class SongViewSet(viewsets.ModelViewSet):
-    queryset = Song.objects.all()
+    queryset = Song.objects.prefetch_related(
+        'contestants_finals_song1',
+        'contestants_finals_song2',
+        'contestants_semis_song1',
+        'contestants_semis_song2',
+        'contestants_quarters_song1',
+        'contestants_quarters_song2',
+        'contestants_finals_song1',
+        'contestants_finals_song2',
+        'contestants_semis_song1',
+        'contestants_semis_song2',
+        'contestants_quarters_song1',
+        'contestants_quarters_song2',
+    )
     serializer_class = SongSerializer
     lookup_field = 'slug'
 
