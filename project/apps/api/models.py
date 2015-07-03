@@ -790,7 +790,18 @@ class Contest(models.Model):
         # next(reader)
         data = [row for row in reader]
 
+        mappings = {
+            'The Westminster Chorus': 'Westminster',
+            'Southern Gateway': 'Southern Gateway Chorus',
+            'Chorus of Chesapeake': 'Chorus of the Chesapeake',
+            'The Big Orange': 'The Big Orange Chorus',
+            'The Pathfinder Chorus': 'Pathfinder Chorus',
+            'The Big Apple Chorus': 'Big Apple Chorus',
+            'Downeasters': 'The Downeasters',
+        }
+
         for row in data:
+            row[2] = reduce(lambda a, kv: a.replace(*kv), mappings.iteritems(), row[2])
             try:
                 group = Group.objects.get(
                     name__iexact=row[2],
