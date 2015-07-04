@@ -297,3 +297,36 @@ def score_contestant(contestant):
         contestant.score = round(contestant.points / (panel * 6 * 1), 1)
     contestant.save()
     return
+
+
+def parse_arrangers(data):
+    names = [
+        ['quarters_song1', 'quarters_song1_arranger'],
+        ['quarters_song2', 'quarters_song2_arranger'],
+        ['semis_song1', 'semis_song1_arranger'],
+        ['semis_song2', 'semis_song2_arranger'],
+        ['finals_song1', 'finals_song1_arranger'],
+        ['finals_song2', 'finals_song2_arranger'],
+    ]
+
+    for row in data:
+        try:
+            c = Contestant.objects.get(
+                contest__name='International Quartet 2015',
+                group__name__iexact=row[0],
+            )
+        except c.DoesNotExist:
+            print row
+        for n in names:
+            song = getattr(c, n[0])
+            try:
+                match = (song.name == row[1])
+            except AttributeError:
+                continue
+            if match:
+                try:
+                    arranger = Person.objects.get(name__iexact=row[2])
+                except Person.DoesNotExist:
+                    continue
+                setattr(c, n[1], arranger)
+                c.save()
