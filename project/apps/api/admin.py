@@ -403,21 +403,25 @@ class ContestantAdmin(admin.ModelAdmin):
             'score',
         ), (
             'quarters_song1',
+            'quarters_song1_arranger',
             'quarters_mus1_points',
             'quarters_prs1_points',
             'quarters_sng1_points',
         ), (
             'quarters_song2',
+            'quarters_song2_arranger',
             'quarters_mus2_points',
             'quarters_prs2_points',
             'quarters_sng2_points',
         ), (
             'semis_song1',
+            'semis_song1_arranger',
             'semis_mus1_points',
             'semis_prs1_points',
             'semis_sng1_points',
         ), (
             'semis_song2',
+            'semis_song2_arranger',
             'semis_mus2_points',
             'semis_prs2_points',
             'semis_sng2_points',

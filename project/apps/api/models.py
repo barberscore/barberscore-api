@@ -1116,6 +1116,14 @@ class Contestant(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    quarters_song1_arranger = models.ForeignKey(
+        'Person',
+        related_name='contestants_quarters_song1_arranger',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     quarters_mus1_points = models.IntegerField(
         null=True,
         blank=True,
@@ -1159,6 +1167,14 @@ class Contestant(models.Model):
     quarters_song2 = models.ForeignKey(
         'Song',
         related_name='contestants_quarters_song2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    quarters_song2_arranger = models.ForeignKey(
+        'Person',
+        related_name='contestants_quarters_song2_arranger',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1227,6 +1243,14 @@ class Contestant(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    semis_song1_arranger = models.ForeignKey(
+        'Person',
+        related_name='contestants_semis_song1_arranger',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     semis_mus1_points = models.IntegerField(
         null=True,
         blank=True,
@@ -1270,6 +1294,14 @@ class Contestant(models.Model):
     semis_song2 = models.ForeignKey(
         'Song',
         related_name='contestants_semis_song2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    semis_song2_arranger = models.ForeignKey(
+        'Person',
+        related_name='contestants_semis_song2_arranger',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
