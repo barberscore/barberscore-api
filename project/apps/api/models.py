@@ -932,31 +932,82 @@ class Contest(models.Model):
                 performance['men'] = row[13]
                 Performance.objects.create(**performance)
 
-    def rank(self):
-        if self.kind == self.QUARTET:
-            performances = Performance.objects.filter(
-                contestant__contest=self,
-            )
-            quarters = performances.filter(
-                round=3
-            ).order_by(
-                '-points',
-            )
-            place_round(quarters)
-            semis = performances.filter(
-                round=2
-            ).order_by(
-                '-points',
-            )
-            place_round(semis)
-            finals = performances.filter(
-                round=1
-            ).order_by(
-                '-points',
-            )
-            place_round(finals)
-        contestants = self.contestants.order_by('-points')
-        place_round(contestants)
+    def place_quarters(self):
+        if self.kind != self.QUARTET:
+            return
+        marker = []
+        i = 1
+        for contestant in self.contestants.order_by('-quarters_points'):
+            try:
+                match = contestant.quarters_points == marker[0].quarters_points
+            except IndexError:
+                contestant.quarters_place = i
+                contestant.save()
+                marker.append(contestant)
+                continue
+            if match:
+                contestant.quarters_place = i
+                i += len(marker)
+                contestant.save()
+                marker.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.quarters_place = i
+                contestant.save()
+                marker = [contestant]
+        return
+
+    def place_semis(self):
+        if self.kind != self.QUARTET:
+            return
+        marker = []
+        i = 1
+        for contestant in self.contestants.order_by('-semis_points'):
+            try:
+                match = contestant.semis_points == marker[0].semis_points
+            except IndexError:
+                contestant.semis_place = i
+                contestant.save()
+                marker.append(contestant)
+                continue
+            if match:
+                contestant.semis_place = i
+                i += len(marker)
+                contestant.save()
+                marker.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.semis_place = i
+                contestant.save()
+                marker = [contestant]
+        return
+
+    def place_finals(self):
+        if self.kind != self.QUARTET:
+            return
+        marker = []
+        i = 1
+        for contestant in self.contestants.order_by('-finals_points'):
+            try:
+                match = contestant.finals_points == marker[0].finals_points
+            except IndexError:
+                contestant.finals_place = i
+                contestant.save()
+                marker.append(contestant)
+                continue
+            if match:
+                contestant.finals_place = i
+                i += len(marker)
+                contestant.save()
+                marker.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.finals_place = i
+                contestant.save()
+                marker = [contestant]
         return
 
     def seed(self):
