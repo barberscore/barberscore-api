@@ -5,7 +5,6 @@ from .views import (
     ContestViewSet,
     GroupViewSet,
     ContestantViewSet,
-    # UserViewSet,
     DistrictViewSet,
     SongViewSet,
     PersonViewSet,
@@ -18,8 +17,6 @@ router.register(r'conventions', ConventionViewSet)
 router.register(r'contests', ContestViewSet)
 router.register(r'groups', GroupViewSet)
 router.register(r'contestants', ContestantViewSet)
-# router.register(r'singers', SingerViewSet)
-# router.register(r'directors', DirectorViewSet)
 router.register(r'districts', DistrictViewSet)
 router.register(r'persons', PersonViewSet)
 router.register(r'songs', SongViewSet)

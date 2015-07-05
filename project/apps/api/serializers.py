@@ -16,11 +16,7 @@ from .search_indexes import (
     GroupIndex,
     SongIndex,
     PersonIndex,
-    # ContestIndex,
 )
-
-from django.contrib.auth import get_user_model
-User = get_user_model()
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -66,7 +62,6 @@ class GroupSerializer(serializers.ModelSerializer):
             # 'tenor',
             # 'baritone',
             # 'bass',
-            'bsmdb',
             'contestants',
         )
 
@@ -75,11 +70,6 @@ class ContestantSerializer(serializers.ModelSerializer):
     contest = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
-    )
-
-    performances = serializers.PrimaryKeyRelatedField(
-        many=True,
-        read_only=True,
     )
 
     district = serializers.StringRelatedField()
@@ -153,15 +143,6 @@ class ContestantSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='slug',
     )
-
-    # group = GroupSerializer(
-    #     read_only=True,
-    # )
-
-    # performances = PerformanceSerializer(
-    #     read_only=True,
-    #     many=True,
-    # )
 
     quarters_song1 = serializers.SlugRelatedField(
         read_only=True,
@@ -266,7 +247,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'bass',
             'men',
             'district',
-            'performances',
         )
 
 
@@ -380,17 +360,6 @@ class PersonSerializer(serializers.ModelSerializer):
         )
 
 
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = (
-            'id',
-            'email',
-            'username',
-        )
-
-
 class SongSerializer(serializers.ModelSerializer):
     contestants_finals_song1 = serializers.SlugRelatedField(
         many=True,
@@ -452,10 +421,6 @@ class DistrictSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # groups = serializers.SlugRelatedField(
-    #     queryset=
-    # )
-
     class Meta:
         model = District
         lookup_field = 'slug'
@@ -480,7 +445,6 @@ class DistrictSerializer(serializers.ModelSerializer):
             # 'tenor',
             # 'baritone',
             # 'bass',
-            # 'bsmdb',
             'contestants',
         )
 
@@ -495,7 +459,6 @@ class SearchSerializer(HaystackSerializer):
             GroupIndex,
             SongIndex,
             PersonIndex,
-            # ContestIndex,
         ]
         fields = [
             "text",

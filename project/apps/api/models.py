@@ -10,10 +10,8 @@ import os
 import datetime
 from django.db import (
     models,
-    transaction,
 )
 
-from django.conf import settings
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -24,15 +22,11 @@ from django.core.exceptions import (
     ValidationError,
 )
 
-# from django.core.urlresolvers import reverse
-
 from timezone_field import TimeZoneField
 
 from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
-
-# from .utils import place_round
 
 
 def generate_image_filename(instance, filename):
@@ -135,82 +129,7 @@ class Common(models.Model):
         abstract = True
 
 
-class Singer(Common):
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-    @property
-    def first_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.first
-        else:
-            return None
-
-    @property
-    def last_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.last
-        else:
-            return None
-
-
 class Person(Common):
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-    @property
-    def first_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.first
-        else:
-            return None
-
-    @property
-    def last_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.last
-        else:
-            return None
-
-
-class Director(Common):
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-    @property
-    def first_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.first
-        else:
-            return None
-
-    @property
-    def last_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.last
-        else:
-            return None
-
-
-class Judge(Common):
 
     class Meta:
         ordering = ['name']
@@ -311,12 +230,6 @@ class Group(Common):
         blank=True,
     )
 
-    bsmdb_id = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-    )
-
     is_active = models.BooleanField(
         default=False,
     )
@@ -346,20 +259,6 @@ class Group(Common):
         except AttributeError:
             self.bass = None
         super(Group, self).save(*args, **kwargs)
-
-    @property
-    def bsmdb(self):
-        if self.bsmdb_id:
-            if self.kind == self.CHORUS:
-                return 'http://www.bsmdb.com/Chorus.php?ChorusID={0}'.format(
-                    self.bsmdb_id,
-                )
-            else:
-                return 'http://www.bsmdb.com/Quartet.php?QuartetID={0}'.format(
-                    self.bsmdb_id,
-                )
-        else:
-            return None
 
     class Meta:
         ordering = (
@@ -667,124 +566,6 @@ class Contest(models.Model):
             )
         super(Contest, self).save(*args, **kwargs)
 
-    def create_group_from_historical(self, name, chapter_name=None, district_name=None):
-        # TODO  This probably belongs on the manager.
-        if district_name:
-            if district_name == 'AAMBS':
-                district_name = 'BHA'
-            elif district_name == 'NZABS':
-                district_name = 'BHNZ'
-            district = District.objects.get(name=district_name)
-        else:
-            district = None
-        if self.kind == self.CHORUS:
-            kind = 2
-        else:
-            kind = 1
-        group = Group.objects.create(
-            name=name,
-            district=district,
-            chapter_name=chapter_name,
-            kind=kind,
-        )
-        log.info("Created: {0}".format(group))
-        return
-
-    def import_badorder(self):
-        reader = csv.reader(self.scoresheet_csv)
-        next(reader)
-        data = [row for row in reader]
-
-        for row in data:
-            try:
-                group = Group.objects.get(
-                    name__iexact=row[0],
-                )
-            except Group.DoesNotExist:
-                if self.kind == self.COLLEGIATE:
-                    group = Group.objects.create(
-                        name=row[0],
-                    )
-                else:
-                    log.error(u"Missing Group: {0}".format(row[0]))
-                    continue
-            try:
-                contestant = Contestant.objects.get(
-                    contest=self,
-                    group=group,
-                )
-            except Contestant.DoesNotExist:
-                if self.kind == self.COLLEGIATE:
-                    try:
-                        district = District.objects.get(
-                            name=row[15],
-                        )
-                    except District.DoesNotExist:
-                        district = None
-                    contestant = Contestant.objects.create(
-                        contest=self,
-                        group=group,
-                        district=district,
-                    )
-                else:
-                    log.error(u"Missing Contestant: {0}".format(row[0]))
-                    continue
-            # if int(row[0]) == 3:
-            contestant.quarters_song1, created = Song.objects.get_or_create(
-                name=u"{0}".format(row[1]).strip(),
-            )
-            contestant.quarters_mus1_points = int(row[2])
-            contestant.quarters_prs1_points = int(row[3])
-            contestant.quarters_sng1_points = int(row[4])
-
-            contestant.quarters_song2, created = Song.objects.get_or_create(
-                name=u"{0}".format(row[8]).strip(),
-            )
-            contestant.quarters_mus2_points = int(row[9])
-            contestant.quarters_prs2_points = int(row[10])
-            contestant.quarters_sng2_points = int(row[11])
-
-            contestant.quarters_place = int(row[14])
-            contestant.quarters_score = float(row[6])
-
-            # elif int(row[0]) == 2:
-            #     contestant.semis_song1, created = Song.objects.get_or_create(
-            #         name=u"{0}".format(row[5]).strip(),
-            #     )
-            #     contestant.semis_mus1_points = int(row[6])
-            #     contestant.semis_prs1_points = int(row[7])
-            #     contestant.semis_sng1_points = int(row[8])
-
-            #     contestant.semis_song2, created = Song.objects.get_or_create(
-            #         name=u"{0}".format(row[9]).strip(),
-            #     )
-            #     contestant.semis_mus2_points = int(row[10])
-            #     contestant.semis_prs2_points = int(row[11])
-            #     contestant.semis_sng2_points = int(row[12])
-
-            #     contestant.semis_place = int(row[1])
-            # elif int(row[0]) == 1:
-            #     contestant.finals_song1, created = Song.objects.get_or_create(
-            #         name=u"{0}".format(row[5]).strip(),
-            #     )
-            #     contestant.finals_mus1_points = int(row[6])
-            #     contestant.finals_prs1_points = int(row[7])
-            #     contestant.finals_sng1_points = int(row[8])
-
-            #     contestant.finals_song2, created = Song.objects.get_or_create(
-            #         name=u"{0}".format(row[9]).strip(),
-            #     )
-            #     contestant.finals_mus2_points = int(row[10])
-            #     contestant.finals_prs2_points = int(row[11])
-            #     contestant.finals_sng2_points = int(row[12])
-
-            #     contestant.finals_place = int(row[1])
-            #     if contestant.group.kind == 2:
-            #         contestant.men = int(row[13])
-            #     if self.kind == self.COLLEGIATE:
-            #         contestant.place = int(row[1])
-            contestant.save()
-
     def import_legacy(self):
         reader = csv.reader(self.scoresheet_csv)
         # next(reader)
@@ -892,45 +673,6 @@ class Contest(models.Model):
                 log.error("Missing round")
             contestant.score = float(row[13])
             contestant.save()
-
-    def import_historical(self):
-        reader = csv.reader(self.scoresheet_csv)
-        next(reader)
-        data = [row for row in reader]
-
-        # Create Group if non-existant
-        for row in data:
-            try:
-                Group.objects.get(name=row[2])
-            except Group.DoesNotExist:
-                self.create_group_from_historical(
-                    name=row[2],
-                    chapter_name=row[3],
-                    district_name=row[4],
-                )
-
-        performance = {}
-
-        with transaction.atomic():
-            for row in data:
-                performance['contestant'], created = Contestant.objects.get_or_create(
-                    contest=self,
-                    group=Group.objects.get(
-                        name=row[2],
-                    ),
-                )
-                performance['round'] = row[0]
-                performance['place'] = row[1]
-                performance['song1'] = row[5]
-                performance['mus1'] = int(row[6])
-                performance['prs1'] = int(row[7])
-                performance['sng1'] = int(row[8])
-                performance['song2'] = row[9]
-                performance['mus2'] = int(row[10])
-                performance['prs2'] = int(row[11])
-                performance['sng2'] = int(row[12])
-                performance['men'] = row[13]
-                Performance.objects.create(**performance)
 
     def place_quarters(self):
         if self.kind != self.QUARTET:
@@ -1676,220 +1418,6 @@ class Contestant(models.Model):
         )
 
 
-class Performance(models.Model):
-    FINALS = 1
-    SEMIS = 2
-    QUARTERS = 3
-
-    ROUND_CHOICES = (
-        (FINALS, 'Finals',),
-        (SEMIS, 'Semis',),
-        (QUARTERS, 'Quarters',),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='performances',
-        null=True,
-        blank=True,
-    )
-
-    round = models.IntegerField(
-        choices=ROUND_CHOICES,
-        default=FINALS,
-    )
-
-    draw = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    session = models.IntegerField(
-        choices=(
-            (1, 1),
-            (2, 2)
-        ),
-        null=True,
-        blank=True,
-    )
-
-    stagetime = models.DateTimeField(
-        help_text="""
-            The title of the first song of the performance.""",
-        blank=True,
-        null=True,
-    )
-
-    place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    song1 = models.CharField(
-        help_text="""
-            The title of the first song of the performance.""",
-        blank=True,
-        max_length=200,
-    )
-
-    mus1 = models.IntegerField(
-        help_text="""
-            The raw music score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    prs1 = models.IntegerField(
-        help_text="""
-            The raw presentation score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    sng1 = models.IntegerField(
-        help_text="""
-            The raw singing score of the first song.""",
-        blank=True,
-        null=True,
-    )
-
-    song2 = models.CharField(
-        help_text="""
-            The title of the second song of the performance.""",
-        blank=True,
-        max_length=200,
-    )
-
-    mus2 = models.IntegerField(
-        help_text="""
-            The raw music score of the second song.""",
-        blank=True,
-        null=True,
-    )
-
-    prs2 = models.IntegerField(
-        help_text="""
-            The raw presentation score of the second song.""",
-        blank=True,
-        null=True,
-    )
-
-    sng2 = models.IntegerField(
-        help_text="""
-            The raw singing score of the second song.""",
-        blank=True,
-        null=True,
-    )
-
-    mus1_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    prs1_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    sng1_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    song1_points = models.IntegerField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    song1_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    mus2_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    prs2_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    sng2_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    song2_points = models.IntegerField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    song2_score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    points = models.IntegerField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    score = models.FloatField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    title1 = models.ForeignKey(
-        'Song',
-        related_name='performances_song1',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    title2 = models.ForeignKey(
-        'Song',
-        related_name='performances_song2',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    class Meta:
-        ordering = [
-            'contestant',
-            'round',
-            'draw',
-            'stagetime',
-        ]
-        unique_together = (
-            ('contestant', 'round',),
-        )
-
-    def __unicode__(self):
-        return "{0}".format(self.id)
-
-
 class Award(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1951,34 +1479,6 @@ class GroupAward(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class Note(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    performance = models.ForeignKey(
-        'Performance',
-    )
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name='notes',
-    )
-
-    text = models.TextField(
-    )
-
-    def __unicode__(self):
-        return self.id
-
-    class Meta:
-        unique_together = (
-            ('performance', 'user'),
-        )
 
 
 class Song(models.Model):

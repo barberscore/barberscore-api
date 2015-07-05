@@ -11,8 +11,6 @@ from drf_haystack.viewsets import HaystackViewSet
 #     PageNumberPagination,
 # )
 
-from django.contrib.auth import get_user_model
-
 from .models import (
     Convention,
     Contest,
@@ -28,14 +26,11 @@ from .serializers import (
     ContestSerializer,
     GroupSerializer,
     ContestantSerializer,
-    UserSerializer,
     DistrictSerializer,
     SongSerializer,
     PersonSerializer,
     SearchSerializer,
 )
-
-User = get_user_model()
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
@@ -75,8 +70,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'tenor',
         'baritone',
         'bass',
-    ).prefetch_related(
-        'performances',
     )
     serializer_class = ContestantSerializer
     # pagination_class = LimitOffsetPagination
@@ -89,11 +82,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     )
     serializer_class = GroupSerializer
     lookup_field = 'slug'
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 
 class PersonViewSet(viewsets.ModelViewSet):
