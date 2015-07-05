@@ -265,11 +265,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     inlines = [
         # MembersInline,
-        # FinalsInline,
-        # SemisInline,
-        # QuartersInline,
+        FinalsInline,
+        SemisInline,
+        QuartersInline,
         # ChorusInline,
-        LastInline,
+        # LastInline,
     ]
 
     list_filter = (
