@@ -32,7 +32,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
 
-from .utils import place_round
+# from .utils import place_round
 
 
 def generate_image_filename(instance, filename):
@@ -963,7 +963,7 @@ class Contest(models.Model):
             return
         marker = []
         i = 1
-        for contestant in self.contestants.exclude('semis_points'=None).order_by('-semis_points'):
+        for contestant in self.contestants.order_by('-semis_points'):
             try:
                 match = contestant.semis_points == marker[0].semis_points
             except IndexError:
