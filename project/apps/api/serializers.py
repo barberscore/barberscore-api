@@ -16,7 +16,7 @@ from .search_indexes import (
     GroupIndex,
     SongIndex,
     PersonIndex,
-    ContestIndex,
+    # ContestIndex,
 )
 
 from django.contrib.auth import get_user_model
@@ -495,7 +495,7 @@ class SearchSerializer(HaystackSerializer):
             GroupIndex,
             SongIndex,
             PersonIndex,
-            ContestIndex,
+            # ContestIndex,
         ]
         fields = [
             "text",
