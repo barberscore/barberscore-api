@@ -3,7 +3,6 @@ from nose.tools import (
 )
 
 from rest_framework.test import (
-    # APIRequestFactory,
     APIClient,
 )
 

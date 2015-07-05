@@ -329,7 +329,6 @@ class GroupAdmin(admin.ModelAdmin):
         'phone',
         'chapter_name',
         'chapter_code',
-        # 'bsmdb_id',
         'picture',
     )
 
@@ -402,10 +401,6 @@ class ContestantAdmin(admin.ModelAdmin):
         'contest__kind',
         'contest__year',
     )
-
-    # inlines = [
-    #     PerformanceInline,
-    # ]
 
     fields = (
         (
