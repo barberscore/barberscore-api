@@ -6,7 +6,6 @@ from apps.api.models import (
     Convention,
     Contest,
     Contestant,
-    Performance,
     Group,
 )
 
@@ -15,9 +14,6 @@ class Command(BaseCommand):
     help = "Command to denormailze data."
 
     def handle(self, *args, **options):
-        ps = Performance.objects.all()
-        for p in ps:
-            p.save()
         cs = Contestant.objects.all()
         for c in cs:
             c.save()
