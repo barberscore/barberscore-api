@@ -18,6 +18,7 @@ from .models import (
     District,
     Song,
     Person,
+    Performance,
 )
 
 
@@ -547,3 +548,30 @@ class PersonAdmin(admin.ModelAdmin):
         'picture',
         'description',
     )
+
+
+# @admin.register(Performance)
+# class PerformanceAdmin(admin.ModelAdmin):
+#     save_on_top = True
+#     list_display = (
+#         'name',
+#         'mus_points',
+#         'prs_points',
+#         'sng_points',
+#         'mus_score',
+#         'prs_score',
+#         'sng_score',
+#         'total_points',
+#         'total_score',
+#     )
+
+#     list_filter = (
+#         'round',
+#         'contestant__contest__level',
+#         'contestant__contest__kind',
+#         'contestant__contest__year',
+#     )
+
+#     readonly_fields = (
+#         'name',
+#     )

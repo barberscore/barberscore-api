@@ -1513,3 +1513,157 @@ class Song(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Performance(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    FINALS = 1
+    SEMIS = 2
+    QUARTERS = 3
+
+    ROUND_CHOICES = (
+        (FINALS, "Finals"),
+        (SEMIS, "Semis"),
+        (QUARTERS, "Quarters"),
+    )
+
+    FIRST = 1
+    SECOND = 2
+
+    ORDER_CHOICES = (
+        (FIRST, '1'),
+        (SECOND, '2'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        # null=True,
+        # blank=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+        # null=True,
+        # blank=True,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    round = models.IntegerField(
+        null=True,
+        blank=True,
+        default=QUARTERS,
+        choices=ROUND_CHOICES,
+    )
+
+    order = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=ORDER_CHOICES,
+    )
+
+    song = models.ForeignKey(
+        'Song',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    arranger = models.ForeignKey(
+        'Person',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    penalty = models.TextField(
+        null=True,
+        blank=True,
+    )
+
+    unique_together = (
+        ('contestant', 'round', 'order',),
+    )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = "{0} {1} {2} {3}".format(
+            self.contestant,
+            self.get_round_display(),
+            "Song",
+            self.get_order_display(),
+        )
+        self.total_points = sum(filter(None, [
+            self.mus_points,
+            self.prs_points,
+            self.sng_points,
+        ])) or None
+        panel = self.contestant.contest.panel
+        if self.mus_points:
+            self.mus_score = round(self.mus_points / panel, 1)
+        if self.prs_points:
+            self.prs_score = round(self.prs_points / panel, 1)
+        if self.sng_points:
+            self.sng_score = round(self.sng_points / panel, 1)
+        if self.total_points:
+            self.total_score = round(self.total_points / (panel * 3), 1)
+        super(Performance, self).save(*args, **kwargs)
