@@ -1287,51 +1287,38 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
-        self.quarters_song1_points = sum(filter(None, [
-            self.quarters_mus1_points,
-            self.quarters_prs1_points,
-            self.quarters_sng1_points,
-        ])) or None
-        self.quarters_song2_points = sum(filter(None, [
-            self.quarters_mus2_points,
-            self.quarters_prs2_points,
-            self.quarters_sng2_points,
-        ])) or None
+        self.quarters_song1_points = self.performances.get(
+            round=3,
+            order=1,
+        ).total_points
+        self.quarters_song2_points = self.performances.get(
+            round=3,
+            order=2,
+        ).total_points
         self.quarters_points = sum(filter(None, [
             self.quarters_song1_points,
             self.quarters_song2_points,
         ])) or None
-        self.points = sum(filter(None, [
-            self.quarters_points,
-        ])) or None
-        self.semis_song1_points = sum(filter(None, [
-            self.semis_mus1_points,
-            self.semis_prs1_points,
-            self.semis_sng1_points,
-        ])) or None
-        self.semis_song2_points = sum(filter(None, [
-            self.semis_mus2_points,
-            self.semis_prs2_points,
-            self.semis_sng2_points,
-        ])) or None
+        self.semis_song1_points = self.performances.get(
+            round=2,
+            order=1,
+        ).total_points
+        self.semis_song2_points = self.performances.get(
+            round=2,
+            order=2,
+        ).total_points
         self.semis_points = sum(filter(None, [
             self.semis_song1_points,
             self.semis_song2_points,
         ])) or None
-        self.points = sum(filter(None, [
-            self.quarters_points,
-            self.semis_points,
-        ])) or None
-        self.finals_song1_points = sum(filter(None, [
-            self.finals_mus1_points,
-            self.finals_prs1_points,
-            self.finals_sng1_points,
-        ])) or None
-        self.finals_song2_points = sum(filter(None, [
-            self.finals_mus2_points,
-            self.finals_prs2_points,
-            self.finals_sng2_points,
-        ])) or None
+        self.finals_song1_points = self.performances.get(
+            round=1,
+            order=1,
+        ).total_points
+        self.finals_song2_points = self.performances.get(
+            round=1,
+            order=2,
+        ).total_points
         self.finals_points = sum(filter(None, [
             self.finals_song1_points,
             self.finals_song2_points,
@@ -1542,18 +1529,18 @@ class Performance(models.Model):
 
     name = models.CharField(
         max_length=255,
-        unique=True,
-        # null=True,
-        # blank=True,
+        # unique=True,
+        null=True,
+        blank=True,
     )
 
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
-        unique=True,
+        # unique=True,
         max_length=255,
-        # null=True,
-        # blank=True,
+        null=True,
+        blank=True,
     )
 
     contestant = models.ForeignKey(
@@ -1641,6 +1628,13 @@ class Performance(models.Model):
     unique_together = (
         ('contestant', 'round', 'order',),
     )
+
+    class Meta:
+        ordering = [
+            'contestant',
+            'round',
+            'order',
+        ]
 
     def __unicode__(self):
         return self.name
