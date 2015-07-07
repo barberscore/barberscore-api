@@ -70,19 +70,13 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'group',
         'contest',
-        # 'performances',
         'district',
-        # 'lead',
-        # 'tenor',
-        # 'baritone',
-        # 'bass',
     ).prefetch_related(
         'performances',
         'directors',
         'singers',
     )
     serializer_class = ContestantSerializer
-    # pagination_class = LimitOffsetPagination
     lookup_field = 'slug'
 
 
@@ -96,11 +90,9 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.prefetch_related(
-        'contestants_director',
-        'contestants_lead',
-        'contestants_tenor',
-        'contestants_baritone',
-        'contestants_bass',
+        'performances',
+        'choruses',
+        'quartets',
     )
     serializer_class = PersonSerializer
     lookup_field = 'slug'
@@ -111,46 +103,39 @@ class DistrictViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = DistrictSerializer
-    # pagination_class = PageNumberPagination
     lookup_field = 'slug'
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.select_related(
         'song',
-        'arranger',
+        'contestant',
     )
     serializer_class = PerformanceSerializer
     lookup_field = 'slug'
 
 
 class SingerViewSet(viewsets.ModelViewSet):
-    queryset = Singer.objects.all()
+    queryset = Singer.objects.select_related(
+        'person',
+        'contestant',
+    )
     serializer_class = SingerSerializer
     lookup_field = 'slug'
 
 
 class DirectorViewSet(viewsets.ModelViewSet):
-    queryset = Director.objects.all()
+    queryset = Director.objects.select_related(
+        'person',
+        'contestant',
+    )
+
     serializer_class = DirectorSerializer
     lookup_field = 'slug'
 
 
 class SongViewSet(viewsets.ModelViewSet):
-    queryset = Song.objects.prefetch_related(
-        'contestants_finals_song1',
-        'contestants_finals_song2',
-        'contestants_semis_song1',
-        'contestants_semis_song2',
-        'contestants_quarters_song1',
-        'contestants_quarters_song2',
-        'contestants_finals_song1',
-        'contestants_finals_song2',
-        'contestants_semis_song1',
-        'contestants_semis_song2',
-        'contestants_quarters_song1',
-        'contestants_quarters_song2',
-    )
+    queryset = Song.objects.all()
     serializer_class = SongSerializer
     lookup_field = 'slug'
 
