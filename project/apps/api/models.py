@@ -177,7 +177,7 @@ class Group(Common):
 
     director = models.ForeignKey(
         'Person',
-        related_name='groups',
+        related_name='groups_director',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -827,6 +827,11 @@ class Contestant(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+    )
+
+    directors = models.ManyToManyField(
+        'Person',
+        related_name='contestants_d',
     )
 
     lead = models.ForeignKey(

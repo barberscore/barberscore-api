@@ -72,7 +72,10 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'tenor',
         'baritone',
         'bass',
-    ).prefetch_related('performances')
+    ).prefetch_related(
+        'performances',
+        'directors',
+    )
     serializer_class = ContestantSerializer
     # pagination_class = LimitOffsetPagination
     lookup_field = 'slug'
