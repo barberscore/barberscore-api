@@ -10,6 +10,8 @@ from .views import (
     PersonViewSet,
     SearchViewSet,
     PerformanceViewSet,
+    SingerViewSet,
+    DirectorViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -22,5 +24,7 @@ router.register(r'districts', DistrictViewSet)
 router.register(r'persons', PersonViewSet)
 router.register(r'songs', SongViewSet)
 router.register(r'performances', PerformanceViewSet)
+router.register(r'singers', SingerViewSet)
+router.register(r'directors', DirectorViewSet)
 router.register(r'searches', SearchViewSet, base_name='search')
 urlpatterns = router.urls
