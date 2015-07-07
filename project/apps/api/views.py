@@ -19,6 +19,7 @@ from .models import (
     District,
     Song,
     Person,
+    Performance,
 )
 
 from .serializers import (
@@ -30,6 +31,7 @@ from .serializers import (
     SongSerializer,
     PersonSerializer,
     SearchSerializer,
+    PerformanceSerializer,
 )
 
 
@@ -64,13 +66,13 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'group',
         'contest',
-        'director',
+        # 'performances',
         'district',
         'lead',
         'tenor',
         'baritone',
         'bass',
-    )
+    ).prefetch_related('performances')
     serializer_class = ContestantSerializer
     # pagination_class = LimitOffsetPagination
     lookup_field = 'slug'
@@ -102,6 +104,15 @@ class DistrictViewSet(viewsets.ModelViewSet):
     )
     serializer_class = DistrictSerializer
     # pagination_class = PageNumberPagination
+    lookup_field = 'slug'
+
+
+class PerformanceViewSet(viewsets.ModelViewSet):
+    queryset = Performance.objects.select_related(
+        'song',
+        'arranger',
+    )
+    serializer_class = PerformanceSerializer
     lookup_field = 'slug'
 
 
