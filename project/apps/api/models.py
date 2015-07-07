@@ -1636,6 +1636,72 @@ class Director(models.Model):
         super(Director, self).save(*args, **kwargs)
 
 
+# class Arranger(models.Model):
+#     """Awards and placement"""
+#     ARRANGER = 1
+
+#     PART_CHOICES = (
+#         (ARRANGER, 'Arranger'),
+#     )
+
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
+
+#     name = models.CharField(
+#         max_length=255,
+#         # unique=True,
+#         null=True,
+#         blank=True,
+#     )
+
+#     slug = AutoSlugField(
+#         populate_from='name',
+#         always_update=True,
+#         # unique=True,
+#         max_length=255,
+#         null=True,
+#         blank=True,
+#     )
+
+#     contestant = models.ForeignKey(
+#         'Contestant',
+#         related_name='arrangers',
+#         blank=True,
+#         null=True,
+#     )
+
+#     person = models.ForeignKey(
+#         'Person',
+#         related_name='arrangers',
+#         blank=True,
+#         null=True,
+#     )
+
+#     part = models.IntegerField(
+#         null=True,
+#         blank=True,
+#         choices=PART_CHOICES,
+#         default=ARRANGER,
+#     )
+
+#     unique_together = (
+#         ('contestant', 'person',),
+#     )
+
+#     def __unicode__(self):
+#         return self.name
+
+#     def save(self, *args, **kwargs):
+#         self.name = "{0} {1}".format(
+#             self.contestant,
+#             self.person,
+#         )
+#         super(Arranger, self).save(*args, **kwargs)
+
+
 class Song(models.Model):
     id = models.UUIDField(
         primary_key=True,
