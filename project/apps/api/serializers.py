@@ -13,6 +13,7 @@ from .models import (
     Performance,
     Singer,
     Director,
+    # Arranger,
 )
 
 from .search_indexes import (
@@ -597,7 +598,7 @@ class DirectorSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Singer
+        model = Director
         fields = (
             'id',
             'url',
@@ -608,3 +609,27 @@ class DirectorSerializer(serializers.ModelSerializer):
             'part',
         )
         lookup_field = 'slug'
+
+
+# class ArrangerSerializer(serializers.ModelSerializer):
+#     contestant = serializers.SlugRelatedField(
+#         read_only=True,
+#         slug_field='slug',
+#     )
+#     person = serializers.SlugRelatedField(
+#         read_only=True,
+#         slug_field='slug',
+#     )
+
+#     class Meta:
+#         model = Director
+#         fields = (
+#             'id',
+#             'url',
+#             'slug',
+#             'contestant',
+#             'person',
+#             'name',
+#             'part',
+#         )
+#         lookup_field = 'slug'
