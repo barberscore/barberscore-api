@@ -376,20 +376,21 @@ class ContestantAdmin(admin.ModelAdmin):
         # 'lead',
         # 'baritone',
         # 'bass',
-        'draw',
-        'stagetime',
+        # 'draw',
+        # 'stagetime',
         # 'seed',
         # 'prelim',
-        'place',
+        # 'place',
         'score',
-        # 'finals_song1',
-        # 'finals_mus1_points',
-        # 'finals_prs1_points',
-        # 'finals_sng1_points',
-        # 'finals_song2',
-        # 'finals_mus2_points',
-        # 'finals_prs2_points',
-        # 'finals_sng2_points',
+        'points',
+        'finals_song1',
+        'finals_mus1_points',
+        'finals_prs1_points',
+        'finals_sng1_points',
+        'finals_song2',
+        'finals_mus2_points',
+        'finals_prs2_points',
+        'finals_sng2_points',
         # 'men',
     )
 
@@ -550,28 +551,30 @@ class PersonAdmin(admin.ModelAdmin):
     )
 
 
-# @admin.register(Performance)
-# class PerformanceAdmin(admin.ModelAdmin):
-#     save_on_top = True
-#     list_display = (
-#         'name',
-#         'mus_points',
-#         'prs_points',
-#         'sng_points',
-#         'mus_score',
-#         'prs_score',
-#         'sng_score',
-#         'total_points',
-#         'total_score',
-#     )
+@admin.register(Performance)
+class PerformanceAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'name',
+        'song',
+        'arranger',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_points',
+        'total_score',
+    )
 
-#     list_filter = (
-#         'round',
-#         'contestant__contest__level',
-#         'contestant__contest__kind',
-#         'contestant__contest__year',
-#     )
+    list_filter = (
+        'round',
+        'contestant__contest__level',
+        'contestant__contest__kind',
+        'contestant__contest__year',
+    )
 
-#     readonly_fields = (
-#         'name',
-#     )
+    readonly_fields = (
+        'name',
+    )

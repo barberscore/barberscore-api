@@ -1287,38 +1287,56 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
-        self.quarters_song1_points = self.performances.get(
-            round=3,
-            order=1,
-        ).total_points
-        self.quarters_song2_points = self.performances.get(
-            round=3,
-            order=2,
-        ).total_points
+        try:
+            self.quarters_song1_points = self.performances.get(
+                round=3,
+                order=1,
+            ).total_points
+        except Performance.DoesNotExist:
+            self.quarters_song1_points = None
+        try:
+            self.quarters_song2_points = self.performances.get(
+                round=3,
+                order=2,
+            ).total_points
+        except Performance.DoesNotExist:
+            self.quarters_song2_points = None
         self.quarters_points = sum(filter(None, [
             self.quarters_song1_points,
             self.quarters_song2_points,
         ])) or None
-        self.semis_song1_points = self.performances.get(
-            round=2,
-            order=1,
-        ).total_points
-        self.semis_song2_points = self.performances.get(
-            round=2,
-            order=2,
-        ).total_points
+        try:
+            self.semis_song1_points = self.performances.get(
+                round=2,
+                order=1,
+            ).total_points
+        except Performance.DoesNotExist:
+            self.semis_song1_points = None
+        try:
+            self.semis_song2_points = self.performances.get(
+                round=2,
+                order=2,
+            ).total_points
+        except Performance.DoesNotExist:
+            self.semis_song2_points = None
         self.semis_points = sum(filter(None, [
             self.semis_song1_points,
             self.semis_song2_points,
         ])) or None
-        self.finals_song1_points = self.performances.get(
-            round=1,
-            order=1,
-        ).total_points
-        self.finals_song2_points = self.performances.get(
-            round=1,
-            order=2,
-        ).total_points
+        try:
+            self.finals_song1_points = self.performances.get(
+                round=1,
+                order=1,
+            ).total_points
+        except Performance.DoesNotExist:
+            self.finals_song1_points = None
+        try:
+            self.finals_song2_points = self.performances.get(
+                round=1,
+                order=2,
+            ).total_points
+        except Performance.DoesNotExist:
+            self.finals_song2_points = None
         self.finals_points = sum(filter(None, [
             self.finals_song1_points,
             self.finals_song2_points,

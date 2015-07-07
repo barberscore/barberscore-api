@@ -10,6 +10,7 @@ from .models import (
     District,
     Person,
     Song,
+    Performance,
 )
 
 from .search_indexes import (
@@ -72,7 +73,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    district = serializers.StringRelatedField()
+    # district = serializers.StringRelatedField()
 
     group = serializers.SlugRelatedField(
         read_only=True,
@@ -92,35 +93,35 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    finals_song1_arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # finals_song1_arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    finals_song2_arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # finals_song2_arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    semis_song1_arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # semis_song1_arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    semis_song2_arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # semis_song2_arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    quarters_song1_arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # quarters_song1_arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    quarters_song2_arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # quarters_song2_arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     district = serializers.SlugRelatedField(
         read_only=True,
@@ -144,32 +145,38 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    quarters_song1 = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # quarters_song1 = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    quarters_song2 = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # quarters_song2 = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    semis_song1 = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # semis_song1 = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    semis_song2 = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # semis_song2 = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    finals_song1 = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # finals_song1 = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    finals_song2 = serializers.SlugRelatedField(
+    # finals_song2 = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    performances = serializers.SlugRelatedField(
+        many=True,
         read_only=True,
         slug_field='slug',
     )
@@ -204,42 +211,42 @@ class ContestantSerializer(serializers.ModelSerializer):
             'finals_points',
             'semis_points',
             'quarters_points',
-            'finals_mus1_score',
-            'finals_mus2_score',
-            'semis_mus1_score',
-            'semis_mus2_score',
-            'quarters_mus1_score',
-            'quarters_mus2_score',
-            'finals_prs1_score',
-            'finals_prs2_score',
-            'semis_prs1_score',
-            'semis_prs2_score',
-            'quarters_prs1_score',
-            'quarters_prs2_score',
-            'finals_sng1_score',
-            'finals_sng2_score',
-            'semis_sng1_score',
-            'semis_sng2_score',
-            'quarters_sng1_score',
-            'quarters_sng2_score',
-            'quarters_song1',
-            'quarters_song2',
-            'semis_song1',
-            'semis_song2',
-            'finals_song1_arranger',
-            'finals_song2_arranger',
-            'semis_song1_arranger',
-            'semis_song2_arranger',
-            'quarters_song1_arranger',
-            'quarters_song2_arranger',
-            'finals_song1',
-            'finals_song2',
-            'quarters_song1_score',
-            'quarters_song2_score',
-            'semis_song1_score',
-            'semis_song2_score',
-            'finals_song1_score',
-            'finals_song2_score',
+            # 'finals_mus1_score',
+            # 'finals_mus2_score',
+            # 'semis_mus1_score',
+            # 'semis_mus2_score',
+            # 'quarters_mus1_score',
+            # 'quarters_mus2_score',
+            # 'finals_prs1_score',
+            # 'finals_prs2_score',
+            # 'semis_prs1_score',
+            # 'semis_prs2_score',
+            # 'quarters_prs1_score',
+            # 'quarters_prs2_score',
+            # 'finals_sng1_score',
+            # 'finals_sng2_score',
+            # 'semis_sng1_score',
+            # 'semis_sng2_score',
+            # 'quarters_sng1_score',
+            # 'quarters_sng2_score',
+            # 'quarters_song1',
+            # 'quarters_song2',
+            # 'semis_song1',
+            # 'semis_song2',
+            # 'finals_song1_arranger',
+            # 'finals_song2_arranger',
+            # 'semis_song1_arranger',
+            # 'semis_song2_arranger',
+            # 'quarters_song1_arranger',
+            # 'quarters_song2_arranger',
+            # 'finals_song1',
+            # 'finals_song2',
+            # 'quarters_song1_score',
+            # 'quarters_song2_score',
+            # 'semis_song1_score',
+            # 'semis_song2_score',
+            # 'finals_song1_score',
+            # 'finals_song2_score',
             'director',
             'lead',
             'tenor',
@@ -247,6 +254,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'bass',
             'men',
             'district',
+            'performances',
         )
 
 
@@ -335,6 +343,12 @@ class PersonSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    performances = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     class Meta:
         model = Person
         lookup_field = 'slug'
@@ -357,41 +371,47 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
+            'performances',
         )
 
 
 class SongSerializer(serializers.ModelSerializer):
-    contestants_finals_song1 = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_finals_song1 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_finals_song2 = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_finals_song2 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_semis_song1 = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_semis_song1 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_semis_song2 = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_semis_song2 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_quarters_song1 = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_quarters_song1 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_quarters_song2 = serializers.SlugRelatedField(
+    # contestants_quarters_song2 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    performances = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -404,12 +424,13 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            'contestants_finals_song1',
-            'contestants_finals_song2',
-            'contestants_semis_song1',
-            'contestants_semis_song2',
-            'contestants_quarters_song1',
-            'contestants_quarters_song2',
+            # 'contestants_finals_song1',
+            # 'contestants_finals_song2',
+            # 'contestants_semis_song1',
+            # 'contestants_semis_song2',
+            # 'contestants_quarters_song1',
+            # 'contestants_quarters_song2',
+            'performances',
         )
         lookup_field = 'slug'
 
@@ -467,3 +488,44 @@ class SearchSerializer(HaystackSerializer):
             "description",
             "kind",
         ]
+
+
+class PerformanceSerializer(serializers.ModelSerializer):
+    song = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    arranger = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Performance
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'round',
+            'order',
+            'song',
+            'arranger',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'penalty',
+            'contestant',
+        )
+        lookup_field = 'slug'
