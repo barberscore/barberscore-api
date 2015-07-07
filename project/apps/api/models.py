@@ -175,46 +175,6 @@ class Group(Common):
         default=QUARTET,
     )
 
-    director = models.ForeignKey(
-        'Person',
-        related_name='groups_director',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    lead = models.ForeignKey(
-        'Person',
-        related_name='groups_lead',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    tenor = models.ForeignKey(
-        'Person',
-        related_name='groups_tenor',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    baritone = models.ForeignKey(
-        'Person',
-        related_name='groups_baritone',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    bass = models.ForeignKey(
-        'Person',
-        related_name='groups_bass',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     chapter_name = models.CharField(
         help_text="""
             The name of the director(s) of the chorus.""",
@@ -821,57 +781,6 @@ class Contestant(models.Model):
         null=True,
     )
 
-    director = models.ForeignKey(
-        'Person',
-        related_name='contestants_director',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # directors = models.ManyToManyField(
-    #     'Person',
-    #     related_name='contesants_d',
-    # )
-
-    # singers = models.ManyToManyField(
-    #     'Person',
-    #     related_name='contestants_s',
-    #     through='ContestantSinger',
-    # )
-
-    lead = models.ForeignKey(
-        'Person',
-        related_name='contestants_lead',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    tenor = models.ForeignKey(
-        'Person',
-        related_name='contestants_tenor',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    baritone = models.ForeignKey(
-        'Person',
-        related_name='contestants_baritone',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    bass = models.ForeignKey(
-        'Person',
-        related_name='contestants_bass',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     seed = models.IntegerField(
         null=True,
         blank=True,
@@ -882,12 +791,17 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    place = models.IntegerField(
+    points = models.IntegerField(
         null=True,
         blank=True,
     )
 
     score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    place = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -902,129 +816,7 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     men = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_song1 = models.ForeignKey(
-        'Song',
-        related_name='contestants_quarters_song1',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    quarters_song1_arranger = models.ForeignKey(
-        'Person',
-        related_name='contestants_quarters_song1_arranger',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    quarters_mus1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_prs1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_sng1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_song1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_mus1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_prs1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_sng1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_song1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_song2 = models.ForeignKey(
-        'Song',
-        related_name='contestants_quarters_song2',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    quarters_song2_arranger = models.ForeignKey(
-        'Person',
-        related_name='contestants_quarters_song2_arranger',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    quarters_mus2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_prs2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_sng2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_song2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_mus2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_prs2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_sng2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_song2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    quarters_place = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1034,251 +826,7 @@ class Contestant(models.Model):
         blank=True,
     )
 
-    quarters_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_song1 = models.ForeignKey(
-        'Song',
-        related_name='contestants_semis_song1',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    semis_song1_arranger = models.ForeignKey(
-        'Person',
-        related_name='contestants_semis_song1_arranger',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    semis_mus1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_prs1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_sng1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_song1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_mus1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_prs1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_sng1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_song1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_song2 = models.ForeignKey(
-        'Song',
-        related_name='contestants_semis_song2',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    semis_song2_arranger = models.ForeignKey(
-        'Person',
-        related_name='contestants_semis_song2_arranger',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    semis_mus2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_prs2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_sng2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_song2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_mus2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_prs2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_sng2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_song2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    semis_place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     semis_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    semis_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_song1 = models.ForeignKey(
-        'Song',
-        related_name='contestants_finals_song1',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    finals_song1_arranger = models.ForeignKey(
-        'Person',
-        related_name='contestants_f1_arranger',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    finals_mus1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_prs1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_sng1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_song1_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_mus1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_prs1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_sng1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_song1_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_song2 = models.ForeignKey(
-        'Song',
-        related_name='contestants_finals_song2',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    finals_song2_arranger = models.ForeignKey(
-        'Person',
-        related_name='contestants_f2_arranger',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    finals_mus2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_prs2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_sng2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_song2_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    finals_mus2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_prs2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_sng2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_song2_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    finals_place = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1288,7 +836,32 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    quarters_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    semis_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     finals_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    quarters_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    semis_place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    finals_place = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1298,60 +871,18 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
-        try:
-            self.quarters_song1_points = self.performances.get(
-                round=3,
-                order=1,
-            ).total_points
-        except Performance.DoesNotExist:
-            self.quarters_song1_points = None
-        try:
-            self.quarters_song2_points = self.performances.get(
-                round=3,
-                order=2,
-            ).total_points
-        except Performance.DoesNotExist:
-            self.quarters_song2_points = None
-        self.quarters_points = sum(filter(None, [
-            self.quarters_song1_points,
-            self.quarters_song2_points,
-        ])) or None
-        try:
-            self.semis_song1_points = self.performances.get(
-                round=2,
-                order=1,
-            ).total_points
-        except Performance.DoesNotExist:
-            self.semis_song1_points = None
-        try:
-            self.semis_song2_points = self.performances.get(
-                round=2,
-                order=2,
-            ).total_points
-        except Performance.DoesNotExist:
-            self.semis_song2_points = None
-        self.semis_points = sum(filter(None, [
-            self.semis_song1_points,
-            self.semis_song2_points,
-        ])) or None
-        try:
-            self.finals_song1_points = self.performances.get(
-                round=1,
-                order=1,
-            ).total_points
-        except Performance.DoesNotExist:
-            self.finals_song1_points = None
-        try:
-            self.finals_song2_points = self.performances.get(
-                round=1,
-                order=2,
-            ).total_points
-        except Performance.DoesNotExist:
-            self.finals_song2_points = None
-        self.finals_points = sum(filter(None, [
-            self.finals_song1_points,
-            self.finals_song2_points,
-        ])) or None
+        # self.quarters_points = sum(filter(None, [
+        #     self.quarters_song1_points,
+        #     self.quarters_song2_points,
+        # ])) or None
+        # self.semis_points = sum(filter(None, [
+        #     self.semis_song1_points,
+        #     self.semis_song2_points,
+        # ])) or None
+        # self.finals_points = sum(filter(None, [
+        #     self.finals_song1_points,
+        #     self.finals_song2_points,
+        # ])) or None
         self.points = sum(filter(None, [
             self.quarters_points,
             self.semis_points,
@@ -1359,52 +890,13 @@ class Contestant(models.Model):
         ])) or None
         panel = self.contest.panel
         if self.quarters_points:
-            self.quarters_mus1_score = round(self.quarters_mus1_points / panel, 1)
-            self.quarters_prs1_score = round(self.quarters_prs1_points / panel, 1)
-            self.quarters_sng1_score = round(self.quarters_sng1_points / panel, 1)
-            self.quarters_song1_score = round(self.quarters_song1_points / (panel * 3), 1)
-            self.quarters_mus2_score = round(self.quarters_mus2_points / panel, 1)
-            self.quarters_prs2_score = round(self.quarters_prs2_points / panel, 1)
-            self.quarters_sng2_score = round(self.quarters_sng2_points / panel, 1)
-            self.quarters_song2_score = round(self.quarters_song2_points / (panel * 3), 1)
             self.quarters_score = round(self.quarters_points / (panel * 6), 1)
         if self.semis_points:
-            self.semis_mus1_score = round(self.semis_mus1_points / panel, 1)
-            self.semis_prs1_score = round(self.semis_prs1_points / panel, 1)
-            self.semis_sng1_score = round(self.semis_sng1_points / panel, 1)
-            self.semis_song1_score = round(self.semis_song1_points / (panel * 3), 1)
-            self.semis_mus2_score = round(self.semis_mus2_points / panel, 1)
-            self.semis_prs2_score = round(self.semis_prs2_points / panel, 1)
-            self.semis_sng2_score = round(self.semis_sng2_points / panel, 1)
-            self.semis_song2_score = round(self.semis_song2_points / (panel * 3), 1)
             self.semis_score = round(self.semis_points / (panel * 6), 1)
         if self.finals_points:
-            self.finals_mus1_score = round(self.finals_mus1_points / panel, 1)
-            self.finals_prs1_score = round(self.finals_prs1_points / panel, 1)
-            self.finals_sng1_score = round(self.finals_sng1_points / panel, 1)
-            self.finals_song1_score = round(self.finals_song1_points / (panel * 3), 1)
-            self.finals_mus2_score = round(self.finals_mus2_points / panel, 1)
-            self.finals_prs2_score = round(self.finals_prs2_points / panel, 1)
-            self.finals_sng2_score = round(self.finals_sng2_points / panel, 1)
-            self.finals_song2_score = round(self.finals_song2_points / (panel * 3), 1)
             self.finals_score = round(self.finals_points / (panel * 6), 1)
         self.group.save()
         super(Contestant, self).save(*args, **kwargs)
-
-    def clean(self):
-            if self.group.kind == Group.QUARTET and self.director is not None:
-                raise ValidationError('Quartets do not have directors.')
-            if self.group.kind == Group.CHORUS and (
-                self.lead is not None or
-                self.tenor is not None or
-                self.baritone is not None or
-                self.bass is not None
-            ):
-                raise ValidationError('Choruses do not have parts.')
-            if self.group.kind == Group.QUARTET and self.contest.kind == Contest.CHORUS:
-                raise ValidationError("Group and Contest types must match.")
-            if self.group.kind == Group.CHORUS and self.contest.kind != Contest.CHORUS:
-                raise ValidationError("Group and Contest types must match.")
 
     @property
     def delta_score(self):
@@ -1519,32 +1011,24 @@ class Singer(models.Model):
 
     name = models.CharField(
         max_length=255,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
-        # unique=True,
+        unique=True,
         max_length=255,
-        null=True,
-        blank=True,
     )
 
     contestant = models.ForeignKey(
         'Contestant',
         related_name='singers',
-        blank=True,
-        null=True,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='quartets',
-        blank=True,
-        null=True,
     )
 
     part = models.IntegerField(
@@ -1590,37 +1074,29 @@ class Director(models.Model):
 
     name = models.CharField(
         max_length=255,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
-        # unique=True,
+        unique=True,
         max_length=255,
-        null=True,
-        blank=True,
     )
 
     contestant = models.ForeignKey(
         'Contestant',
         related_name='directors',
         blank=True,
-        null=True,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='choruses',
         blank=True,
-        null=True,
     )
 
     part = models.IntegerField(
-        null=True,
-        blank=True,
         choices=PART_CHOICES,
         default=DIRECTOR,
     )
@@ -1705,38 +1181,26 @@ class Performance(models.Model):
 
     name = models.CharField(
         max_length=255,
-        # unique=True,
-        null=True,
-        blank=True,
+        unique=True,
     )
 
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
-        # unique=True,
+        unique=True,
         max_length=255,
-        null=True,
-        blank=True,
     )
 
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     round = models.IntegerField(
-        null=True,
-        blank=True,
-        default=QUARTERS,
         choices=ROUND_CHOICES,
     )
 
     order = models.IntegerField(
-        null=True,
-        blank=True,
         choices=ORDER_CHOICES,
     )
 
