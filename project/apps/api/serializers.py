@@ -88,10 +88,10 @@ class ContestantSerializer(serializers.ModelSerializer):
 
     # bass = serializers.StringRelatedField()
 
-    director = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # director = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     # finals_song1_arranger = serializers.SlugRelatedField(
     #     read_only=True,
@@ -181,6 +181,12 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    directors = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     class Meta:
         model = Contestant
         lookup_field = 'slug'
@@ -255,6 +261,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'men',
             'district',
             'performances',
+            'directors',
         )
 
 
@@ -313,11 +320,11 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    contestants_director = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_director = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     contestants_lead = serializers.SlugRelatedField(
         many=True,
@@ -349,6 +356,12 @@ class PersonSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    contestants_d = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     class Meta:
         model = Person
         lookup_field = 'slug'
@@ -357,7 +370,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            'contestants_director',
+            # 'contestants_director',
             'contestants_lead',
             'contestants_tenor',
             'contestants_baritone',
@@ -372,6 +385,8 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'performances',
+            # 'directors',
+            'contestants_d',
         )
 
 
