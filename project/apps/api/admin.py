@@ -24,189 +24,110 @@ from .models import (
 )
 
 
-# class QuartersInline(admin.TabularInline):
-#     form = select2_modelform(
-#         Contestant,
-#         attrs={'width': '250px'},
-#     )
-#     model = Contestant
-#     extra = 0
-#     show_change_link = True
-#     fields = (
-#         'contest',
-#         'group',
-#         'draw',
-#         'stagetime',
-#         'place',
-#         'score',
-#         'quarters_song1',
-#         'quarters_mus1_points',
-#         'quarters_prs1_points',
-#         'quarters_sng1_points',
-#         'quarters_song2',
-#         'quarters_mus2_points',
-#         'quarters_prs2_points',
-#         'quarters_sng2_points',
-#         'men',
-#     )
-#     readonly_fields = (
-#         'quarters_song1',
-#         'quarters_song2',
-#         'group',
-#     )
+class PerformancesInline(admin.TabularInline):
+    form = select2_modelform(
+        Performance,
+        attrs={'width': '250px'},
+    )
+    fields = (
+        'contestant',
+        'song',
+        'arranger',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+    )
+    ordering = (
+        'round',
+        'order',
+    )
+    model = Performance
+    extra = 0
+    raw_id_fields = (
+        'contestant',
+        'song',
+        'arranger',
+    )
+    can_delete = False
 
 
-# class SemisInline(admin.TabularInline):
-#     form = select2_modelform(
-#         Contestant,
-#         attrs={'width': '250px'},
-#     )
-#     model = Contestant
-#     extra = 0
-#     show_change_link = True
-#     fields = (
-#         'contest',
-#         'group',
-#         'draw',
-#         'stagetime',
-#         'place',
-#         'score',
-#         'semis_song1',
-#         'semis_mus1_points',
-#         'semis_prs1_points',
-#         'semis_sng1_points',
-#         'semis_song2',
-#         'semis_mus2_points',
-#         'semis_prs2_points',
-#         'semis_sng2_points',
-#         'men',
-#     )
-#     readonly_fields = (
-#         'semis_song1',
-#         'semis_song2',
-#         'group',
-#     )
+class SingersInline(admin.TabularInline):
+    form = select2_modelform(
+        Singer,
+        attrs={'width': '250px'},
+    )
+    fields = (
+        'contestant',
+        'person',
+        'part',
+    )
+    ordering = (
+        'part',
+        'contestant',
+    )
+    model = Singer
+    extra = 0
+    raw_id_fields = (
+        'person',
+        'contestant',
+    )
+    can_delete = False
 
 
-# class FinalsInline(admin.TabularInline):
-#     form = select2_modelform(
-#         Contestant,
-#         attrs={'width': '250px'},
-#     )
-#     model = Contestant
-#     extra = 0
-#     show_change_link = True
-#     fields = (
-#         'contest',
-#         'group',
-#         'place',
-#         'score',
-#         'finals_song1',
-#         'finals_mus1_points',
-#         'finals_prs1_points',
-#         'finals_sng1_points',
-#         'finals_song2',
-#         'finals_mus2_points',
-#         'finals_prs2_points',
-#         'finals_sng2_points',
-#         'men',
-#         'draw',
-#         'stagetime',
-#     )
-#     readonly_fields = (
-#         'finals_song1',
-#         'finals_song2',
-#         'group',
-#     )
+class DirectorsInline(admin.TabularInline):
+    form = select2_modelform(
+        Director,
+        attrs={'width': '250px'},
+    )
+    fields = (
+        'contestant',
+        'person',
+        'part',
+    )
+    ordering = (
+        'part',
+        'contestant',
+    )
+    model = Director
+    extra = 0
+    raw_id_fields = (
+        'person',
+        'contestant',
+    )
+    can_delete = False
 
 
-# class LastInline(admin.TabularInline):
-#     form = select2_modelform(
-#         Contestant,
-#         attrs={'width': '250px'},
-#     )
-#     model = Contestant
-#     extra = 0
-#     show_change_link = True
-#     fields = (
-#         'contest',
-#         'group',
-#         'place',
-#         'score',
-#         'finals_place',
-#         'semis_place',
-#         'quarters_place',
-#         'finals_points',
-#         'semis_points',
-#         'quarters_points',
-#     )
-#     readonly_fields = (
-#         'group',
-#     )
+class ContestantsInline(admin.TabularInline):
+    form = select2_modelform(
+        Contestant,
+        attrs={'width': '250px'},
+    )
+    fields = (
+        'contest',
+        'group',
+        'district',
+        'draw',
+        'stagetime',
+        'place',
+        'score',
+        'men',
+    )
+    ordering = (
+        'draw',
+        'place',
+    )
+    show_change_link = True
 
-
-# class ChorusInline(admin.TabularInline):
-#     form = select2_modelform(
-#         Contestant,
-#         attrs={'width': '250px'},
-#     )
-#     model = Contestant
-#     extra = 0
-#     show_change_link = True
-#     fields = (
-#         'contest',
-#         'group',
-#         'draw',
-#         'place',
-#         'score',
-#         'finals_song1',
-#         'finals_mus1_points',
-#         'finals_prs1_points',
-#         'finals_sng1_points',
-#         'finals_song2',
-#         'finals_mus2_points',
-#         'finals_prs2_points',
-#         'finals_sng2_points',
-#         'men',
-#         'stagetime',
-#     )
-#     readonly_fields = (
-#         'finals_song1',
-#         'finals_song2',
-#         'group',
-#     )
-
-#     ordering = (
-#         'draw',
-#     )
-
-
-# class MembersInline(admin.TabularInline):
-#     form = select2_modelform(
-#         Contestant,
-#         attrs={'width': '250px'},
-#     )
-#     model = Contestant
-#     extra = 0
-#     show_change_link = True
-#     fields = (
-#         'contest',
-#         'group',
-#         'director',
-#         'tenor',
-#         'lead',
-#         'baritone',
-#         'bass',
-#     )
-
-#     readonly_fields = (
-#         'group',
-#         'director',
-#         'tenor',
-#         'lead',
-#         'baritone',
-#         'bass',
-#     )
+    model = Contestant
+    extra = 0
+    raw_id_fields = (
+        'contest',
+        'group',
+    )
+    can_delete = False
+    readonly_fields = (
+        'group',
+    )
 
 
 @admin.register(Convention)
@@ -266,14 +187,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'import_legacy',
     ]
 
-    # inlines = [
-    #     # MembersInline,
-    #     # FinalsInline,
-    #     # SemisInline,
-    #     # QuartersInline,
-    #     # ChorusInline,
-    #     LastInline,
-    # ]
+    inlines = [
+        ContestantsInline,
+    ]
 
     list_filter = (
         'level',
@@ -306,6 +222,10 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'scoresheet_csv',
     )
 
+    raw_id_fields = (
+        'convention',
+    )
+
     readonly_fields = (
         'name',
     )
@@ -335,9 +255,20 @@ class GroupAdmin(admin.ModelAdmin):
         'picture',
     )
 
-    # inlines = [
-    #     ContestantInline,
-    # ]
+    fields = (
+        'name',
+        ('kind', 'is_active',),
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        ('chapter_name', 'chapter_code',),
+        'notes',
+    )
 
     list_filter = (
         'kind',
@@ -371,29 +302,18 @@ class ContestantAdmin(admin.ModelAdmin):
         'update_contestants',
     ]
 
+    inlines = [
+        SingersInline,
+        DirectorsInline,
+        PerformancesInline,
+    ]
+
     list_display = (
         'name',
-        # 'director',
-        # 'tenor',
-        # 'lead',
-        # 'baritone',
-        # 'bass',
-        # 'draw',
-        # 'stagetime',
-        # 'seed',
-        # 'prelim',
-        # 'place',
+        'place',
         'score',
         'points',
-        'finals_song1',
-        'finals_mus1_points',
-        'finals_prs1_points',
-        'finals_sng1_points',
-        'finals_song2',
-        'finals_mus2_points',
-        'finals_prs2_points',
-        'finals_sng2_points',
-        # 'men',
+        'men',
     )
 
     search_fields = (
@@ -406,18 +326,18 @@ class ContestantAdmin(admin.ModelAdmin):
         'contest__year',
     )
 
+    raw_id_fields = (
+        'contest',
+        'group',
+    )
+
     fields = (
         (
             'contest',
+        ), (
             'group',
+        ), (
             'district',
-        ), (
-            'director', 'men',
-        ), (
-            'tenor',
-            'lead',
-            'baritone',
-            'bass',
         ), (
             'seed',
             'prelim',
@@ -426,42 +346,6 @@ class ContestantAdmin(admin.ModelAdmin):
         ), (
             'place',
             'score',
-        ), (
-            'quarters_song1',
-            'quarters_song1_arranger',
-            'quarters_mus1_points',
-            'quarters_prs1_points',
-            'quarters_sng1_points',
-        ), (
-            'quarters_song2',
-            'quarters_song2_arranger',
-            'quarters_mus2_points',
-            'quarters_prs2_points',
-            'quarters_sng2_points',
-        ), (
-            'semis_song1',
-            'semis_song1_arranger',
-            'semis_mus1_points',
-            'semis_prs1_points',
-            'semis_sng1_points',
-        ), (
-            'semis_song2',
-            'semis_song2_arranger',
-            'semis_mus2_points',
-            'semis_prs2_points',
-            'semis_sng2_points',
-        ), (
-            'finals_song1',
-            'finals_song1_arranger',
-            'finals_mus1_points',
-            'finals_prs1_points',
-            'finals_sng1_points',
-        ), (
-            'finals_song2',
-            'finals_song2_arranger',
-            'finals_mus2_points',
-            'finals_prs2_points',
-            'finals_sng2_points',
         ),
         'picture',
     )
@@ -550,7 +434,13 @@ class PersonAdmin(admin.ModelAdmin):
         'phone',
         'picture',
         'description',
+        'notes',
     )
+
+    inlines = [
+        DirectorsInline,
+        SingersInline,
+    ]
 
 
 @admin.register(Performance)
@@ -563,30 +453,56 @@ class PerformanceAdmin(admin.ModelAdmin):
         'mus_points',
         'prs_points',
         'sng_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_points',
-        'total_score',
+    )
+
+    fields = (
+        (
+            'name',
+        ),
+        (
+            'contestant',
+        ),
+        (
+            'round',
+            'order',
+        ),
+        (
+            'song',
+        ),
+        (
+            'arranger',
+        ),
+        (
+            'mus_points',
+            'prs_points',
+            'sng_points',
+        ),
+        (
+            'penalty',
+        ),
     )
 
     list_filter = (
-        'round',
         'contestant__contest__level',
         'contestant__contest__kind',
+        'round',
         'contestant__contest__year',
     )
 
     readonly_fields = (
         'name',
     )
+    raw_id_fields = (
+        'contestant',
+        'song',
+        'arranger',
+    )
+
+# @admin.register(Singer)
+# class SingerAdmin(admin.ModelAdmin):
+#     save_on_top = True
 
 
-@admin.register(Singer)
-class SingerAdmin(admin.ModelAdmin):
-    save_on_top = True
-
-
-@admin.register(Director)
-class DirectorAdmin(admin.ModelAdmin):
-    save_on_top = True
+# @admin.register(Director)
+# class DirectorAdmin(admin.ModelAdmin):
+#     save_on_top = True
