@@ -829,10 +829,16 @@ class Contestant(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    directors = models.ManyToManyField(
-        'Person',
-        related_name='contestants_d',
-    )
+    # directors = models.ManyToManyField(
+    #     'Person',
+    #     related_name='contesants_d',
+    # )
+
+    # singers = models.ManyToManyField(
+    #     'Person',
+    #     related_name='contestants_s',
+    #     through='ContestantSinger',
+    # )
 
     lead = models.ForeignKey(
         'Person',
@@ -1489,6 +1495,145 @@ class GroupAward(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Singer(models.Model):
+    """Awards and placement"""
+    TENOR = 1
+    LEAD = 2
+    BARITONE = 3
+    BASS = 4
+
+    PART_CHOICES = (
+        (TENOR, 'Tenor'),
+        (LEAD, 'Lead'),
+        (BARITONE, 'Baritone'),
+        (BASS, 'Bass'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        # unique=True,
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='singers',
+        blank=True,
+        null=True,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='quartets',
+        blank=True,
+        null=True,
+    )
+
+    part = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=PART_CHOICES,
+    )
+
+    unique_together = (
+        ('contestant', 'person',),
+    )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = "{0} {1}".format(
+            self.contestant,
+            self.person,
+        )
+        super(Singer, self).save(*args, **kwargs)
+
+
+class Director(models.Model):
+    """Awards and placement"""
+    DIRECTOR = 1
+    CODIRECTOR = 2
+
+    PART_CHOICES = (
+        (DIRECTOR, 'Director'),
+        (CODIRECTOR, 'Co-Director'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        # unique=True,
+        null=True,
+        blank=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        # unique=True,
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='directors',
+        blank=True,
+        null=True,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='choruses',
+        blank=True,
+        null=True,
+    )
+
+    part = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=PART_CHOICES,
+        default=DIRECTOR,
+    )
+
+    unique_together = (
+        ('contestant', 'person',),
+    )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = "{0} {1}".format(
+            self.contestant,
+            self.person,
+        )
+        super(Director, self).save(*args, **kwargs)
 
 
 class Song(models.Model):

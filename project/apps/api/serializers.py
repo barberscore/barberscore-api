@@ -11,6 +11,8 @@ from .models import (
     Person,
     Song,
     Performance,
+    Singer,
+    Director,
 )
 
 from .search_indexes import (
@@ -128,22 +130,22 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    lead = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    tenor = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    baritone = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    bass = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # lead = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # tenor = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # baritone = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # bass = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     # quarters_song1 = serializers.SlugRelatedField(
     #     read_only=True,
@@ -182,6 +184,12 @@ class ContestantSerializer(serializers.ModelSerializer):
     )
 
     directors = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    singers = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -253,15 +261,17 @@ class ContestantSerializer(serializers.ModelSerializer):
             # 'semis_song2_score',
             # 'finals_song1_score',
             # 'finals_song2_score',
-            'director',
-            'lead',
-            'tenor',
-            'baritone',
-            'bass',
+            # 'director',
+
+            # 'lead',
+            # 'tenor',
+            # 'baritone',
+            # 'bass',
             'men',
             'district',
             'performances',
             'directors',
+            'singers',
         )
 
 
@@ -326,29 +336,29 @@ class PersonSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    contestants_lead = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_lead = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_tenor = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_tenor = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_baritone = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_baritone = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants_bass = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants_bass = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     performances = serializers.SlugRelatedField(
         many=True,
@@ -356,7 +366,12 @@ class PersonSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contestants_d = serializers.SlugRelatedField(
+    choruses = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+    quartets = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -371,10 +386,10 @@ class PersonSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             # 'contestants_director',
-            'contestants_lead',
-            'contestants_tenor',
-            'contestants_baritone',
-            'contestants_bass',
+            # 'contestants_lead',
+            # 'contestants_tenor',
+            # 'contestants_baritone',
+            # 'contestants_bass',
             'location',
             'website',
             'facebook',
@@ -386,7 +401,8 @@ class PersonSerializer(serializers.ModelSerializer):
             'notes',
             'performances',
             # 'directors',
-            'contestants_d',
+            'choruses',
+            'quartets',
         )
 
 
@@ -542,5 +558,53 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'total_score',
             'penalty',
             'contestant',
+        )
+        lookup_field = 'slug'
+
+
+class SingerSerializer(serializers.ModelSerializer):
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+    person = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Singer
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'contestant',
+            'person',
+            'name',
+            'part',
+        )
+        lookup_field = 'slug'
+
+
+class DirectorSerializer(serializers.ModelSerializer):
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+    person = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Singer
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'contestant',
+            'person',
+            'name',
+            'part',
         )
         lookup_field = 'slug'
