@@ -73,7 +73,6 @@ class SingersInline(admin.TabularInline):
         'contestant',
     )
     can_delete = True
-    show_change_link = True
 
 
 class DirectorsInline(admin.TabularInline):
@@ -97,7 +96,6 @@ class DirectorsInline(admin.TabularInline):
         'contestant',
     )
     can_delete = False
-    show_change_link = True
 
 
 class ContestantsInline(admin.TabularInline):
