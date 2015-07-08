@@ -307,6 +307,7 @@ class Convention(models.Model):
         'District',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     slug = AutoSlugField(
@@ -433,6 +434,7 @@ class Contest(models.Model):
         'District',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     convention = models.ForeignKey(
@@ -440,6 +442,7 @@ class Contest(models.Model):
         related_name='contests',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     panel = models.IntegerField(
@@ -747,11 +750,13 @@ class Contestant(models.Model):
     contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
+        on_delete=models.SET_NULL,
     )
 
     group = models.ForeignKey(
         'Group',
         related_name='contestants',
+        on_delete=models.SET_NULL,
     )
 
     district = models.ForeignKey(
@@ -759,6 +764,7 @@ class Contestant(models.Model):
         related_name='contestants',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     name = models.CharField(
@@ -972,14 +978,17 @@ class GroupAward(models.Model):
 
     group = models.ForeignKey(
         'Group',
+        on_delete=models.SET_NULL,
     )
 
     contest = models.ForeignKey(
         'Contest',
+        on_delete=models.SET_NULL,
     )
 
     award = models.ForeignKey(
         'Award',
+        on_delete=models.SET_NULL,
     )
 
     def __unicode__(self):
@@ -1021,11 +1030,13 @@ class Singer(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='singers',
+        on_delete=models.SET_NULL,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='quartets',
+        on_delete=models.SET_NULL,
     )
 
     part = models.IntegerField(
@@ -1085,12 +1096,14 @@ class Director(models.Model):
         'Contestant',
         related_name='directors',
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='choruses',
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     part = models.IntegerField(
@@ -1191,6 +1204,7 @@ class Performance(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
+        on_delete=models.SET_NULL,
     )
 
     round = models.IntegerField(
