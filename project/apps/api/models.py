@@ -164,12 +164,6 @@ class Group(Common):
         (CHORUS, "Chorus"),
     )
 
-    awards = models.ManyToManyField(
-        'Award',
-        through='GroupAward',
-        related_name='groups',
-    )
-
     kind = models.IntegerField(
         choices=KIND_CHOICES,
         default=QUARTET,
@@ -196,29 +190,6 @@ class Group(Common):
 
     def __unicode__(self):
         return self.name
-
-    # def save(self, *args, **kwargs):
-    #     try:
-    #         self.director = self.contestants.order_by('contest__year').last().director
-    #     except AttributeError:
-    #         self.director = None
-    #     try:
-    #         self.tenor = self.contestants.order_by('contest__year').last().tenor
-    #     except AttributeError:
-    #         self.tenor = None
-    #     try:
-    #         self.lead = self.contestants.order_by('contest__year').last().lead
-    #     except AttributeError:
-    #         self.lead = None
-    #     try:
-    #         self.baritone = self.contestants.order_by('contest__year').last().baritone
-    #     except AttributeError:
-    #         self.baritone = None
-    #     try:
-    #         self.bass = self.contestants.order_by('contest__year').last().bass
-    #     except AttributeError:
-    #         self.bass = None
-    #     super(Group, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
@@ -750,13 +721,11 @@ class Contestant(models.Model):
     contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
-        on_delete=models.SET_NULL,
     )
 
     group = models.ForeignKey(
         'Group',
         related_name='contestants',
-        on_delete=models.SET_NULL,
     )
 
     district = models.ForeignKey(
@@ -929,74 +898,8 @@ class Contestant(models.Model):
         )
 
 
-class Award(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the award.  Must be unique.""",
-        max_length=200,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-    )
-
-    description = models.CharField(
-        null=True,
-        blank=True,
-        max_length=200,
-    )
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'website:award-detail',
-    #         args=[self.slug],
-    #     )
-
-
-class GroupAward(models.Model):
-    """Awards and placement"""
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        on_delete=models.SET_NULL,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        on_delete=models.SET_NULL,
-    )
-
-    award = models.ForeignKey(
-        'Award',
-        on_delete=models.SET_NULL,
-    )
-
-    def __unicode__(self):
-        return self.name
-
-
 class Singer(models.Model):
-    """Awards and placement"""
+    """Quartet Relation"""
     TENOR = 1
     LEAD = 2
     BARITONE = 3
@@ -1030,13 +933,11 @@ class Singer(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='singers',
-        on_delete=models.SET_NULL,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='quartets',
-        on_delete=models.SET_NULL,
     )
 
     part = models.IntegerField(
@@ -1065,7 +966,7 @@ class Singer(models.Model):
 
 
 class Director(models.Model):
-    """Awards and placement"""
+    """Chorus relation"""
     DIRECTOR = 1
     CODIRECTOR = 2
 
@@ -1095,15 +996,11 @@ class Director(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='directors',
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='choruses',
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     part = models.IntegerField(
@@ -1204,7 +1101,6 @@ class Performance(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
-        on_delete=models.SET_NULL,
     )
 
     round = models.IntegerField(
