@@ -347,7 +347,7 @@ class ContestantAdmin(admin.ModelAdmin):
             'place',
             'score',
         ),
-        'picture',
+        # 'picture',
     )
 
     readonly_fields = (
