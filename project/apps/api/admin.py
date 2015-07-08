@@ -48,7 +48,8 @@ class PerformancesInline(admin.TabularInline):
         'song',
         'arranger',
     )
-    can_delete = False
+    can_delete = True
+    show_change_link = True
 
 
 class SingersInline(admin.TabularInline):
@@ -71,7 +72,8 @@ class SingersInline(admin.TabularInline):
         'person',
         'contestant',
     )
-    can_delete = False
+    can_delete = True
+    show_change_link = True
 
 
 class DirectorsInline(admin.TabularInline):
@@ -95,6 +97,7 @@ class DirectorsInline(admin.TabularInline):
         'contestant',
     )
     can_delete = False
+    show_change_link = True
 
 
 class ContestantsInline(admin.TabularInline):
@@ -124,7 +127,7 @@ class ContestantsInline(admin.TabularInline):
         'contest',
         'group',
     )
-    can_delete = False
+    can_delete = True
     readonly_fields = (
         'group',
     )
