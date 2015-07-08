@@ -137,6 +137,10 @@ class ConventionAdmin(admin.ModelAdmin):
         attrs={'width': '250px'},
     )
 
+    search_fields = (
+        'name',
+    )
+
     list_display = (
         'name',
         'location',
@@ -190,6 +194,10 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         ContestantsInline,
     ]
+
+    search_fields = (
+        'name',
+    )
 
     list_filter = (
         'level',
@@ -361,6 +369,10 @@ class SongAdmin(admin.ModelAdmin):
         'name',
     )
 
+    search_fields = (
+        'name',
+    )
+
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
@@ -445,6 +457,10 @@ class PerformanceAdmin(admin.ModelAdmin):
         'mus_points',
         'prs_points',
         'sng_points',
+    )
+
+    search_fields = (
+        'name',
     )
 
     fields = (
