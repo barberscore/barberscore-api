@@ -40,7 +40,7 @@ LOGIN_REDIRECT_URL = 'home'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = ()
 ADMINS = (
-    (get_env_variable("FULL_NAME"), get_env_variable("USER_EMAIL"))
+    (get_env_variable("FULL_NAME"), get_env_variable("USER_EMAIL")),
 )
 SERVER_EMAIL = get_env_variable('SERVER_EMAIL')
 
