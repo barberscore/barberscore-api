@@ -392,9 +392,9 @@ class Contest(models.Model):
 
     LEVEL_CHOICES = (
         (INTERNATIONAL, "International"),
-        (DISTRICT, "District"),
-        (REGIONAL, "Regional"),
-        (PRELIMS, "Prelims"),
+        # (DISTRICT, "District"),
+        # (REGIONAL, "Regional"),
+        # (PRELIMS, "Prelims"),
     )
 
     id = models.UUIDField(
