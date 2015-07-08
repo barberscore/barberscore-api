@@ -197,28 +197,28 @@ class Group(Common):
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        try:
-            self.director = self.contestants.order_by('contest__year').last().director
-        except AttributeError:
-            self.director = None
-        try:
-            self.tenor = self.contestants.order_by('contest__year').last().tenor
-        except AttributeError:
-            self.tenor = None
-        try:
-            self.lead = self.contestants.order_by('contest__year').last().lead
-        except AttributeError:
-            self.lead = None
-        try:
-            self.baritone = self.contestants.order_by('contest__year').last().baritone
-        except AttributeError:
-            self.baritone = None
-        try:
-            self.bass = self.contestants.order_by('contest__year').last().bass
-        except AttributeError:
-            self.bass = None
-        super(Group, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     try:
+    #         self.director = self.contestants.order_by('contest__year').last().director
+    #     except AttributeError:
+    #         self.director = None
+    #     try:
+    #         self.tenor = self.contestants.order_by('contest__year').last().tenor
+    #     except AttributeError:
+    #         self.tenor = None
+    #     try:
+    #         self.lead = self.contestants.order_by('contest__year').last().lead
+    #     except AttributeError:
+    #         self.lead = None
+    #     try:
+    #         self.baritone = self.contestants.order_by('contest__year').last().baritone
+    #     except AttributeError:
+    #         self.baritone = None
+    #     try:
+    #         self.bass = self.contestants.order_by('contest__year').last().bass
+    #     except AttributeError:
+    #         self.bass = None
+    #     super(Group, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
@@ -871,18 +871,15 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
-        # self.quarters_points = sum(filter(None, [
-        #     self.quarters_song1_points,
-        #     self.quarters_song2_points,
-        # ])) or None
-        # self.semis_points = sum(filter(None, [
-        #     self.semis_song1_points,
-        #     self.semis_song2_points,
-        # ])) or None
-        # self.finals_points = sum(filter(None, [
-        #     self.finals_song1_points,
-        #     self.finals_song2_points,
-        # ])) or None
+        self.finals_points = self.performances.filter(
+            round=1,
+        ).aggregate(sum=models.Sum('total_points'))['sum']
+        self.semis_points = self.performances.filter(
+            round=2,
+        ).aggregate(sum=models.Sum('total_points'))['sum']
+        self.quarters_points = self.performances.filter(
+            round=3,
+        ).aggregate(sum=models.Sum('total_points'))['sum']
         self.points = sum(filter(None, [
             self.quarters_points,
             self.semis_points,
@@ -895,7 +892,7 @@ class Contestant(models.Model):
             self.semis_score = round(self.semis_points / (panel * 6), 1)
         if self.finals_points:
             self.finals_score = round(self.finals_points / (panel * 6), 1)
-        self.group.save()
+        # self.group.save()
         super(Contestant, self).save(*args, **kwargs)
 
     @property
