@@ -31,8 +31,8 @@ class PerformancesInline(admin.TabularInline):
     )
     fields = (
         'contestant',
-        # 'round',
-        # 'order',
+        'round',
+        'order',
         'song',
         'arranger',
         'mus_points',
