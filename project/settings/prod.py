@@ -38,6 +38,7 @@ STATICFILES_STORAGE = STATIC_STORAGE
 
 EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
 MANDRILL_API_KEY = get_env_variable("MANDRILL_APIKEY")
+DEFAULT_FROM_EMAIL = 'noreply@barberscore.com'
 
 # Haystack
 from urlparse import urlparse
