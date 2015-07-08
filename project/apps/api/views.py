@@ -22,7 +22,6 @@ from .models import (
     Performance,
     Singer,
     Director,
-    # Arranger,
 )
 
 from .serializers import (
@@ -37,7 +36,6 @@ from .serializers import (
     PerformanceSerializer,
     SingerSerializer,
     DirectorSerializer,
-    # ArrangerSerializer,
 )
 
 
@@ -58,7 +56,6 @@ class ContestViewSet(viewsets.ModelViewSet):
         'district',
         'convention',
     ).filter(
-        level=Contest.INTERNATIONAL,
         is_active=True,
     ).prefetch_related(
         'district',
@@ -131,19 +128,8 @@ class DirectorViewSet(viewsets.ModelViewSet):
         'person',
         'contestant',
     )
-
     serializer_class = DirectorSerializer
     lookup_field = 'slug'
-
-
-# class ArrangerViewSet(viewsets.ModelViewSet):
-#     queryset = Arranger.objects.select_related(
-#         'person',
-#         'contestant',
-#     )
-
-#     serializer_class = ArrangerSerializer
-#     lookup_field = 'slug'
 
 
 class SongViewSet(viewsets.ModelViewSet):
