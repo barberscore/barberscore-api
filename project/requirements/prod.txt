@@ -2,4 +2,3 @@
 
 bugsnag==2.2.0
 djrill==1.2.0
-git+git://github.com/dbinetti/djoser.git
