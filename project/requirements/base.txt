@@ -1,4 +1,4 @@
-django==1.8.2
+django==1.8.3
 django-cors-headers==1.1.0
 dj-database-url==0.3.0
 django-timezone-field==1.2
