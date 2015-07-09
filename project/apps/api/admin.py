@@ -27,7 +27,7 @@ from .models import (
 class PerformancesInline(admin.TabularInline):
     form = select2_modelform(
         Performance,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
     fields = (
         'contestant',
@@ -57,7 +57,7 @@ class PerformancesInline(admin.TabularInline):
 class SingersInline(admin.TabularInline):
     form = select2_modelform(
         Singer,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
     fields = (
         'contestant',
@@ -80,7 +80,7 @@ class SingersInline(admin.TabularInline):
 class DirectorsInline(admin.TabularInline):
     form = select2_modelform(
         Director,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
     fields = (
         'contestant',
@@ -103,7 +103,7 @@ class DirectorsInline(admin.TabularInline):
 class ContestantsInline(admin.TabularInline):
     form = select2_modelform(
         Contestant,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
     fields = (
         'contest',
@@ -137,7 +137,7 @@ class ContestantsInline(admin.TabularInline):
 class ConventionAdmin(admin.ModelAdmin):
     form = select2_modelform(
         Convention,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
 
     search_fields = (
@@ -187,7 +187,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     import_legacy.label = 'Import Legacy'
     form = select2_modelform(
         Contest,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
     save_on_top = True
     objectactions = [
@@ -246,7 +246,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     form = select2_modelform(
         Group,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
 
     search_fields = (
@@ -364,7 +364,7 @@ class ContestantAdmin(admin.ModelAdmin):
 class SongAdmin(admin.ModelAdmin):
     form = select2_modelform(
         Song,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
 
     save_on_top = True
@@ -381,7 +381,7 @@ class SongAdmin(admin.ModelAdmin):
 class DistrictAdmin(admin.ModelAdmin):
     form = select2_modelform(
         District,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
 
     search_fields = (
@@ -412,7 +412,7 @@ class DistrictAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     form = select2_modelform(
         Person,
-        attrs={'width': '250px'},
+        attrs={'width': '100px'},
     )
 
     search_fields = (
