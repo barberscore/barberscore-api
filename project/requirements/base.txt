@@ -8,7 +8,6 @@ psycopg2==2.6.1
 boto==2.38.0
 django-storages==1.1.8
 waitress==0.8.9
-django-autoslug==1.8.0
 django-easy-select2==1.3
 django-object-actions==0.5.1
 django-phonenumber-field==0.7.2
@@ -19,3 +18,5 @@ Pillow==2.9.0
 elasticsearch==1.6.0
 django-haystack==2.4.0
 drf-haystack==1.5.0
+django-model-utils==2.2
+https://github.com/dbinetti/django-autoslug/zipball/master
