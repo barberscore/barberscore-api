@@ -372,15 +372,9 @@ class Contest(StatusModel):
     )
 
     INTERNATIONAL = 1
-    DISTRICT = 2
-    REGIONAL = 3
-    PRELIMS = 4
 
     LEVEL_CHOICES = (
         (INTERNATIONAL, "International"),
-        # (DISTRICT, "District"),
-        # (REGIONAL, "Regional"),
-        # (PRELIMS, "Prelims"),
     )
 
     id = models.UUIDField(
@@ -461,10 +455,6 @@ class Contest(StatusModel):
         default=False,
     )
 
-    # is_score = models.BooleanField(
-    #     default=False,
-    # )
-
     class Meta:
         unique_together = (
             ('level', 'kind', 'year', 'district',),
@@ -514,113 +504,113 @@ class Contest(StatusModel):
             )
         super(Contest, self).save(*args, **kwargs)
 
-    def import_legacy(self):
-        reader = csv.reader(self.scoresheet_csv)
-        # next(reader)
-        data = [row for row in reader]
+    # def import_legacy(self):
+    #     reader = csv.reader(self.scoresheet_csv)
+    #     # next(reader)
+    #     data = [row for row in reader]
 
-        mappings = {
-            'The Westminster Chorus': 'Westminster',
-            'Southern Gateway': 'Southern Gateway Chorus',
-            'Chorus of Chesapeake': 'Chorus of the Chesapeake',
-            'The Big Orange': 'The Big Orange Chorus',
-            'The Pathfinder Chorus': 'Pathfinder Chorus',
-            'The Big Apple Chorus': 'Big Apple Chorus',
-            'Downeasters': 'The Downeasters',
-        }
+    #     mappings = {
+    #         'The Westminster Chorus': 'Westminster',
+    #         'Southern Gateway': 'Southern Gateway Chorus',
+    #         'Chorus of Chesapeake': 'Chorus of the Chesapeake',
+    #         'The Big Orange': 'The Big Orange Chorus',
+    #         'The Pathfinder Chorus': 'Pathfinder Chorus',
+    #         'The Big Apple Chorus': 'Big Apple Chorus',
+    #         'Downeasters': 'The Downeasters',
+    #     }
 
-        for row in data:
-            row[2] = reduce(lambda a, kv: a.replace(*kv), mappings.iteritems(), row[2])
-            try:
-                group = Group.objects.get(
-                    name__iexact=row[2],
-                )
-            except Group.DoesNotExist:
-                if self.kind == self.COLLEGIATE:
-                    group = Group.objects.create(
-                        name=row[2],
-                    )
-                else:
-                    log.error(u"Missing Group: {0}".format(row[2]))
-                    continue
-            try:
-                contestant = Contestant.objects.get(
-                    contest=self,
-                    group=group,
-                )
-            except Contestant.DoesNotExist:
-                if self.kind == self.COLLEGIATE:
-                    try:
-                        district = District.objects.get(
-                            name=row[4],
-                        )
-                    except District.DoesNotExist:
-                        district = None
-                    contestant = Contestant.objects.create(
-                        contest=self,
-                        group=group,
-                        district=district,
-                    )
-                else:
-                    log.error(u"Missing Contestant: {0}".format(row[2]))
-                    continue
-            if int(row[0]) == 3:
-                contestant.quarters_song1, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[5]).strip(),
-                )
-                contestant.quarters_mus1_points = int(row[6])
-                contestant.quarters_prs1_points = int(row[7])
-                contestant.quarters_sng1_points = int(row[8])
+    #     for row in data:
+    #         row[2] = reduce(lambda a, kv: a.replace(*kv), mappings.iteritems(), row[2])
+    #         try:
+    #             group = Group.objects.get(
+    #                 name__iexact=row[2],
+    #             )
+    #         except Group.DoesNotExist:
+    #             if self.kind == self.COLLEGIATE:
+    #                 group = Group.objects.create(
+    #                     name=row[2],
+    #                 )
+    #             else:
+    #                 log.error(u"Missing Group: {0}".format(row[2]))
+    #                 continue
+    #         try:
+    #             contestant = Contestant.objects.get(
+    #                 contest=self,
+    #                 group=group,
+    #             )
+    #         except Contestant.DoesNotExist:
+    #             if self.kind == self.COLLEGIATE:
+    #                 try:
+    #                     district = District.objects.get(
+    #                         name=row[4],
+    #                     )
+    #                 except District.DoesNotExist:
+    #                     district = None
+    #                 contestant = Contestant.objects.create(
+    #                     contest=self,
+    #                     group=group,
+    #                     district=district,
+    #                 )
+    #             else:
+    #                 log.error(u"Missing Contestant: {0}".format(row[2]))
+    #                 continue
+    #         if int(row[0]) == 3:
+    #             contestant.quarters_song1, created = Song.objects.get_or_create(
+    #                 name=u"{0}".format(row[5]).strip(),
+    #             )
+    #             contestant.quarters_mus1_points = int(row[6])
+    #             contestant.quarters_prs1_points = int(row[7])
+    #             contestant.quarters_sng1_points = int(row[8])
 
-                contestant.quarters_song2, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[9]).strip(),
-                )
-                contestant.quarters_mus2_points = int(row[10])
-                contestant.quarters_prs2_points = int(row[11])
-                contestant.quarters_sng2_points = int(row[12])
+    #             contestant.quarters_song2, created = Song.objects.get_or_create(
+    #                 name=u"{0}".format(row[9]).strip(),
+    #             )
+    #             contestant.quarters_mus2_points = int(row[10])
+    #             contestant.quarters_prs2_points = int(row[11])
+    #             contestant.quarters_sng2_points = int(row[12])
 
-                contestant.quarters_place = int(row[1])
+    #             contestant.quarters_place = int(row[1])
 
-            elif int(row[0]) == 2:
-                contestant.semis_song1, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[5]).strip(),
-                )
-                contestant.semis_mus1_points = int(row[6])
-                contestant.semis_prs1_points = int(row[7])
-                contestant.semis_sng1_points = int(row[8])
+    #         elif int(row[0]) == 2:
+    #             contestant.semis_song1, created = Song.objects.get_or_create(
+    #                 name=u"{0}".format(row[5]).strip(),
+    #             )
+    #             contestant.semis_mus1_points = int(row[6])
+    #             contestant.semis_prs1_points = int(row[7])
+    #             contestant.semis_sng1_points = int(row[8])
 
-                contestant.semis_song2, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[9]).strip(),
-                )
-                contestant.semis_mus2_points = int(row[10])
-                contestant.semis_prs2_points = int(row[11])
-                contestant.semis_sng2_points = int(row[12])
+    #             contestant.semis_song2, created = Song.objects.get_or_create(
+    #                 name=u"{0}".format(row[9]).strip(),
+    #             )
+    #             contestant.semis_mus2_points = int(row[10])
+    #             contestant.semis_prs2_points = int(row[11])
+    #             contestant.semis_sng2_points = int(row[12])
 
-                contestant.semis_place = int(row[1])
-            elif int(row[0]) == 1:
-                contestant.finals_song1, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[5]).strip(),
-                )
-                contestant.finals_mus1_points = int(row[6])
-                contestant.finals_prs1_points = int(row[7])
-                contestant.finals_sng1_points = int(row[8])
+    #             contestant.semis_place = int(row[1])
+    #         elif int(row[0]) == 1:
+    #             contestant.finals_song1, created = Song.objects.get_or_create(
+    #                 name=u"{0}".format(row[5]).strip(),
+    #             )
+    #             contestant.finals_mus1_points = int(row[6])
+    #             contestant.finals_prs1_points = int(row[7])
+    #             contestant.finals_sng1_points = int(row[8])
 
-                contestant.finals_song2, created = Song.objects.get_or_create(
-                    name=u"{0}".format(row[9]).strip(),
-                )
-                contestant.finals_mus2_points = int(row[10])
-                contestant.finals_prs2_points = int(row[11])
-                contestant.finals_sng2_points = int(row[12])
+    #             contestant.finals_song2, created = Song.objects.get_or_create(
+    #                 name=u"{0}".format(row[9]).strip(),
+    #             )
+    #             contestant.finals_mus2_points = int(row[10])
+    #             contestant.finals_prs2_points = int(row[11])
+    #             contestant.finals_sng2_points = int(row[12])
 
-                contestant.finals_place = int(row[1])
-                if contestant.group.kind == 2:
-                    contestant.men = int(row[14])
-                if self.kind == self.COLLEGIATE:
-                    contestant.place = int(row[1])
-            else:
-                log.error("Missing round")
-            contestant.score = float(row[13])
-            contestant.save()
+    #             contestant.finals_place = int(row[1])
+    #             if contestant.group.kind == 2:
+    #                 contestant.men = int(row[14])
+    #             if self.kind == self.COLLEGIATE:
+    #                 contestant.place = int(row[1])
+    #         else:
+    #             log.error("Missing round")
+    #         contestant.score = float(row[13])
+    #         contestant.save()
 
     def place_quarters(self):
         if self.kind != self.QUARTET:
@@ -881,7 +871,6 @@ class Contestant(TimeFramedModel):
             self.semis_score = round(self.semis_points / (panel * 6), 1)
         if self.finals_points:
             self.finals_score = round(self.finals_points / (panel * 6), 1)
-        # self.group.save()
         super(Contestant, self).save(*args, **kwargs)
 
     @property
@@ -1129,22 +1118,6 @@ class Performance(models.Model):
 
     order = models.IntegerField(
         choices=ORDER_CHOICES,
-    )
-
-    song = models.ForeignKey(
-        'Song',
-        related_name='performances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    arranger = models.ForeignKey(
-        'Person',
-        related_name='performances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     chart = models.ForeignKey(

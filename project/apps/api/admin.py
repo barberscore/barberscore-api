@@ -1,6 +1,3 @@
-# import logging
-# log = logging.getLogger(__name__)
-
 from django.contrib import admin
 
 from django_object_actions import (
@@ -35,7 +32,6 @@ class PerformancesInline(admin.TabularInline):
         'round',
         'order',
         'chart',
-        # 'arranger',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -49,7 +45,6 @@ class PerformancesInline(admin.TabularInline):
     raw_id_fields = (
         'contestant',
         'chart',
-        # 'arranger',
     )
     can_delete = True
     show_change_link = True
@@ -220,7 +215,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'is_active',
         'is_complete',
         'is_place',
-        # 'is_score',
     )
 
     fields = (
@@ -354,7 +348,6 @@ class ContestantAdmin(admin.ModelAdmin):
             'place',
             'score',
         ),
-        # 'picture',
     )
 
     readonly_fields = (
@@ -460,7 +453,6 @@ class PerformanceAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'chart',
-        # 'arranger',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -484,9 +476,6 @@ class PerformanceAdmin(admin.ModelAdmin):
         (
             'chart',
         ),
-        # (
-        #     'arranger',
-        # ),
         (
             'mus_points',
             'prs_points',
@@ -510,15 +499,9 @@ class PerformanceAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'contestant',
         'chart',
-        # 'arranger',
     )
 
 
 @admin.register(Chart)
 class ChartAdmin(admin.ModelAdmin):
     save_on_top = True
-
-
-# @admin.register(Director)
-# class DirectorAdmin(admin.ModelAdmin):
-#     save_on_top = True
