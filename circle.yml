@@ -7,6 +7,6 @@ deployment:
       - heroku run django-admin migrate --app barberscore --noinput
 machine:
   python:
-    version: 2.7.9
+    version: 2.7.10
   services:
     - elasticsearch
