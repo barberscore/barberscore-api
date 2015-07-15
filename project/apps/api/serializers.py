@@ -13,6 +13,7 @@ from .models import (
     Performance,
     Singer,
     Director,
+    Chart,
     # Arranger,
 )
 
@@ -361,7 +362,7 @@ class PersonSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    performances = serializers.SlugRelatedField(
+    charts = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -400,7 +401,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
-            'performances',
+            'charts',
             # 'directors',
             'choruses',
             'quartets',
@@ -443,7 +444,7 @@ class SongSerializer(serializers.ModelSerializer):
     #     read_only=True,
     #     slug_field='slug',
     # )
-    performances = serializers.SlugRelatedField(
+    charts = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -462,7 +463,7 @@ class SongSerializer(serializers.ModelSerializer):
             # 'contestants_semis_song2',
             # 'contestants_quarters_song1',
             # 'contestants_quarters_song2',
-            'performances',
+            'charts',
         )
         lookup_field = 'slug'
 
@@ -523,15 +524,20 @@ class SearchSerializer(HaystackSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    song = serializers.SlugRelatedField(
+    chart = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
-    arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # song = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     contestant = serializers.SlugRelatedField(
         read_only=True,
@@ -547,8 +553,9 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'round',
             'order',
-            'song',
-            'arranger',
+            # 'song',
+            # 'arranger',
+            'chart',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -611,25 +618,67 @@ class DirectorSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-# class ArrangerSerializer(serializers.ModelSerializer):
-#     contestant = serializers.SlugRelatedField(
-#         read_only=True,
-#         slug_field='slug',
-#     )
-#     person = serializers.SlugRelatedField(
-#         read_only=True,
-#         slug_field='slug',
-#     )
+class ChartSerializer(serializers.ModelSerializer):
+    song = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
 
-#     class Meta:
-#         model = Director
-#         fields = (
-#             'id',
-#             'url',
-#             'slug',
-#             'contestant',
-#             'person',
-#             'name',
-#             'part',
-#         )
-#         lookup_field = 'slug'
+    arranger = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    # contestants_finals_song2 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # contestants_semis_song1 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # contestants_semis_song2 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # contestants_quarters_song1 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # contestants_quarters_song2 = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    performances = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Chart
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'song',
+            'arranger',
+            # 'contestants_finals_song1',
+            # 'contestants_finals_song2',
+            # 'contestants_semis_song1',
+            # 'contestants_semis_song2',
+            # 'contestants_quarters_song1',
+            # 'contestants_quarters_song2',
+            'performances',
+        )
+        lookup_field = 'slug'
