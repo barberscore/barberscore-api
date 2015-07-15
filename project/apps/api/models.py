@@ -1147,6 +1147,14 @@ class Performance(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    chart = models.ForeignKey(
+        'Chart',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     mus_points = models.IntegerField(
         null=True,
         blank=True,
@@ -1228,3 +1236,54 @@ class Performance(models.Model):
         if self.total_points:
             self.total_score = round(self.total_points / (panel * 3), 1)
         super(Performance, self).save(*args, **kwargs)
+
+
+class Chart(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    song = models.ForeignKey(
+        'Song',
+        related_name='charts',
+    )
+
+    arranger = models.ForeignKey(
+        'Person',
+        related_name='charts',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.arranger:
+            self.name = "{0} ({1})".format(
+                self.song,
+                self.arranger,
+            )
+        else:
+            self.name = "{0} (Unknown)".format(
+                self.song,
+            )
+        super(Chart, self).save(*args, **kwargs)
