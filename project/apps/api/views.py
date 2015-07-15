@@ -7,10 +7,6 @@ from rest_framework import (
 
 from drf_haystack.viewsets import HaystackViewSet
 
-# from rest_framework.pagination import (
-#     PageNumberPagination,
-# )
-
 from .models import (
     Convention,
     Contest,
