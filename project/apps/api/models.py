@@ -22,6 +22,13 @@ from django.core.exceptions import (
     ValidationError,
 )
 
+from model_utils.models import (
+    TimeFramedModel,
+    StatusModel,
+)
+
+from model_utils import Choices
+
 from timezone_field import TimeZoneField
 
 from phonenumber_field.modelfields import PhoneNumberField
@@ -229,7 +236,7 @@ class District(Common):
         return self.name
 
 
-class Convention(models.Model):
+class Convention(TimeFramedModel):
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 1))):
         YEAR_CHOICES.append((r, r))
@@ -339,7 +346,14 @@ class Convention(models.Model):
         super(Convention, self).save(*args, **kwargs)
 
 
-class Contest(models.Model):
+class Contest(StatusModel):
+
+    STATUS = Choices(
+        'Upcoming',
+        'Current',
+        'Pending',
+        'Complete',
+    )
 
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 1))):
@@ -711,7 +725,7 @@ class Contest(models.Model):
         return
 
 
-class Contestant(models.Model):
+class Contestant(TimeFramedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1078,6 +1092,12 @@ class Performance(models.Model):
         (QUARTERS, "Quarters"),
     )
 
+    ROUND = Choices(
+        (1, "Finals"),
+        (2, "Semis"),
+        (3, "Quarters"),
+    )
+
     FIRST = 1
     SECOND = 2
 
@@ -1104,7 +1124,7 @@ class Performance(models.Model):
     )
 
     round = models.IntegerField(
-        choices=ROUND_CHOICES,
+        choices=ROUND,
     )
 
     order = models.IntegerField(
