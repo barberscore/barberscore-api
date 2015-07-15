@@ -21,6 +21,7 @@ from .models import (
     Performance,
     Singer,
     Director,
+    Chart,
 )
 
 
@@ -33,8 +34,8 @@ class PerformancesInline(admin.TabularInline):
         'contestant',
         'round',
         'order',
-        'song',
-        'arranger',
+        'chart',
+        # 'arranger',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -47,8 +48,8 @@ class PerformancesInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'contestant',
-        'song',
-        'arranger',
+        'chart',
+        # 'arranger',
     )
     can_delete = True
     show_change_link = True
@@ -458,8 +459,8 @@ class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'name',
-        'song',
-        'arranger',
+        'chart',
+        # 'arranger',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -481,11 +482,11 @@ class PerformanceAdmin(admin.ModelAdmin):
             'order',
         ),
         (
-            'song',
+            'chart',
         ),
-        (
-            'arranger',
-        ),
+        # (
+        #     'arranger',
+        # ),
         (
             'mus_points',
             'prs_points',
@@ -508,13 +509,14 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'contestant',
-        'song',
-        'arranger',
+        'chart',
+        # 'arranger',
     )
 
-# @admin.register(Singer)
-# class SingerAdmin(admin.ModelAdmin):
-#     save_on_top = True
+
+@admin.register(Chart)
+class ChartAdmin(admin.ModelAdmin):
+    save_on_top = True
 
 
 # @admin.register(Director)
