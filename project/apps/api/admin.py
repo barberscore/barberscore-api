@@ -159,6 +159,8 @@ class ConventionAdmin(admin.ModelAdmin):
         'name',
         'location',
         'dates',
+        'start',
+        'end',
         'timezone',
         'district',
         'kind',
@@ -221,6 +223,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     fields = (
+        'status',
         ('is_active', 'is_complete', 'is_place',),
         'name',
         'convention',
