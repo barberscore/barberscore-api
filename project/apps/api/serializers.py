@@ -14,7 +14,6 @@ from .models import (
     Singer,
     Director,
     Chart,
-    # Arranger,
 )
 
 from .search_indexes import (
@@ -36,14 +35,6 @@ class GroupSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # lead = serializers.StringRelatedField()
-
-    # tenor = serializers.StringRelatedField()
-
-    # baritone = serializers.StringRelatedField()
-
-    # bass = serializers.StringRelatedField()
-
     class Meta:
         model = Group
         lookup_field = 'slug'
@@ -63,10 +54,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'chapterName',
-            # 'lead',
-            # 'tenor',
-            # 'baritone',
-            # 'bass',
             'contestants',
         )
 
@@ -77,107 +64,15 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # district = serializers.StringRelatedField()
-
     group = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
-    # lead = serializers.StringRelatedField()
-
-    # tenor = serializers.StringRelatedField()
-
-    # baritone = serializers.StringRelatedField()
-
-    # bass = serializers.StringRelatedField()
-
-    # director = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # finals_song1_arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # finals_song2_arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # semis_song1_arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # semis_song2_arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # quarters_song1_arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # quarters_song2_arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     district = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
-
-    # lead = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # tenor = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # baritone = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # bass = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # quarters_song1 = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # quarters_song2 = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # semis_song1 = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # semis_song2 = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # finals_song1 = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # finals_song2 = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
 
     performances = serializers.SlugRelatedField(
         many=True,
@@ -227,48 +122,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'finals_points',
             'semis_points',
             'quarters_points',
-            # 'finals_mus1_score',
-            # 'finals_mus2_score',
-            # 'semis_mus1_score',
-            # 'semis_mus2_score',
-            # 'quarters_mus1_score',
-            # 'quarters_mus2_score',
-            # 'finals_prs1_score',
-            # 'finals_prs2_score',
-            # 'semis_prs1_score',
-            # 'semis_prs2_score',
-            # 'quarters_prs1_score',
-            # 'quarters_prs2_score',
-            # 'finals_sng1_score',
-            # 'finals_sng2_score',
-            # 'semis_sng1_score',
-            # 'semis_sng2_score',
-            # 'quarters_sng1_score',
-            # 'quarters_sng2_score',
-            # 'quarters_song1',
-            # 'quarters_song2',
-            # 'semis_song1',
-            # 'semis_song2',
-            # 'finals_song1_arranger',
-            # 'finals_song2_arranger',
-            # 'semis_song1_arranger',
-            # 'semis_song2_arranger',
-            # 'quarters_song1_arranger',
-            # 'quarters_song2_arranger',
-            # 'finals_song1',
-            # 'finals_song2',
-            # 'quarters_song1_score',
-            # 'quarters_song2_score',
-            # 'semis_song1_score',
-            # 'semis_song2_score',
-            # 'finals_song1_score',
-            # 'finals_song2_score',
-            # 'director',
-
-            # 'lead',
-            # 'tenor',
-            # 'baritone',
-            # 'bass',
             'men',
             'district',
             'performances',
@@ -332,36 +185,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    # contestants_director = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_lead = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_tenor = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_baritone = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_bass = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     charts = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -387,11 +210,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            # 'contestants_director',
-            # 'contestants_lead',
-            # 'contestants_tenor',
-            # 'contestants_baritone',
-            # 'contestants_bass',
             'location',
             'website',
             'facebook',
@@ -402,48 +220,12 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'charts',
-            # 'directors',
             'choruses',
             'quartets',
         )
 
 
 class SongSerializer(serializers.ModelSerializer):
-    # contestants_finals_song1 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_finals_song2 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_semis_song1 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_semis_song2 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_quarters_song1 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_quarters_song2 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
     charts = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -457,12 +239,6 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            # 'contestants_finals_song1',
-            # 'contestants_finals_song2',
-            # 'contestants_semis_song1',
-            # 'contestants_semis_song2',
-            # 'contestants_quarters_song1',
-            # 'contestants_quarters_song2',
             'charts',
         )
         lookup_field = 'slug'
@@ -494,11 +270,6 @@ class DistrictSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'long_name',
-            # 'chapterName',
-            # 'lead',
-            # 'tenor',
-            # 'baritone',
-            # 'bass',
             'contestants',
         )
 
@@ -529,16 +300,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # song = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     contestant = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -553,8 +314,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'round',
             'order',
-            # 'song',
-            # 'arranger',
             'chart',
             'mus_points',
             'prs_points',
@@ -629,35 +388,6 @@ class ChartSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # contestants_finals_song2 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_semis_song1 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_semis_song2 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_quarters_song1 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants_quarters_song2 = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
     performances = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -673,12 +403,6 @@ class ChartSerializer(serializers.ModelSerializer):
             'name',
             'song',
             'arranger',
-            # 'contestants_finals_song1',
-            # 'contestants_finals_song2',
-            # 'contestants_semis_song1',
-            # 'contestants_semis_song2',
-            # 'contestants_quarters_song1',
-            # 'contestants_quarters_song2',
             'performances',
         )
         lookup_field = 'slug'
