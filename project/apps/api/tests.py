@@ -32,7 +32,7 @@ def test_quartet():
     client = APIClient(
     )
 
-    response = client.get('/api/groups/{0}/'.format(quartet.slug))
+    response = client.get('/api/group/{0}/'.format(quartet.slug))
 
     ok_(
         response.status_code == 200,
