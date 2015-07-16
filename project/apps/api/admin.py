@@ -505,3 +505,16 @@ class PerformanceAdmin(admin.ModelAdmin):
 @admin.register(Chart)
 class ChartAdmin(admin.ModelAdmin):
     save_on_top = True
+    fields = (
+        'name',
+        'song',
+        'arranger',
+    )
+    raw_id_fields = (
+        'song',
+        'arranger',
+    )
+    search_fields = (
+        'name',
+    )
+
