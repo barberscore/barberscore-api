@@ -93,7 +93,7 @@ class DirectorsInline(admin.TabularInline):
         'person',
         'contestant',
     )
-    can_delete = False
+    can_delete = True
 
 
 class ContestantsInline(admin.TabularInline):
