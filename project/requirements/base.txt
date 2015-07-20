@@ -22,3 +22,4 @@ django-model-utils==2.2
 https://github.com/dbinetti/django-autoslug/zipball/master
 numpy==1.9.2
 dedupe==0.8.0.1.7
+jsonfield==1.0.3
