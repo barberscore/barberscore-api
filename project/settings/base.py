@@ -162,4 +162,5 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'apps.api',
+    'apps.website',
 )

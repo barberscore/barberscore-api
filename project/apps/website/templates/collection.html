@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  Dedupe Group
+{% endblock title %}
+
+{% block content %}
+  <div class='container'>
+    <a href='{% url "website:collection" collection.get_next.id %}'>Next</a>
+    <table class='table'>
+      <thead>
+        <tr>
+        {% for d in dups %}
+          <th>
+            <a href='{% url "website:merge" d.id.hex %}'>{{d.name}}</a>
+          </th>
+        {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in dups %}
+          <td>
+            {{d.get_kind_display}}<br>
+            {{d.location}}<br>
+            {{d.website}}<br>
+            {{d.facebook}}<br>
+            {{d.twitter}}<br>
+            {{d.description}}<br>
+            {% if d.picture %}}<img src='{{d.picture.url}}'>{% endif%}
+          </td>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
