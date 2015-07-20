@@ -8,5 +8,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include('apps.api.urls')),
-    url(r'^website/', include('website.urls')),
+    url(r'^website/', include('apps.website.urls', namespace='website')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
