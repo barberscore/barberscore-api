@@ -1258,13 +1258,16 @@ class Chart(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.arranger:
-            self.name = "{0} ({1})".format(
-                self.song,
-                self.arranger,
-            )
-        else:
-            self.name = "{0} (Unknown)".format(
-                self.song,
-            )
+        name = self.id.hex
+        # if self.arranger:
+        #     self.name = "{0} ({1})".format(
+        #         self.song,
+        #         self.arranger,
+        #     )
+        # else:
+        #     self.name = "{0} (Unknown)".format(
+        #         self.song,
+        #     )
+        # if self.is_parody:
+        #     self.name = "{0} (Parody)".format(self.name)
         super(Chart, self).save(*args, **kwargs)
