@@ -948,10 +948,6 @@ class Singer(models.Model):
         choices=PART_CHOICES,
     )
 
-    unique_together = (
-        ('contestant', 'person',),
-    )
-
     def __unicode__(self):
         return self.name
 
@@ -965,6 +961,11 @@ class Singer(models.Model):
     def clean(self):
         if self.contestant.group.kind == Group.CHORUS:
             raise ValidationError('Choruses do not have quartet singers.')
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'person',),
+        )
 
 
 class Director(models.Model):
@@ -1010,10 +1011,6 @@ class Director(models.Model):
         default=DIRECTOR,
     )
 
-    unique_together = (
-        ('contestant', 'person',),
-    )
-
     def __unicode__(self):
         return self.name
 
@@ -1027,6 +1024,11 @@ class Director(models.Model):
     def clean(self):
             if self.contestant.group.kind == Group.QUARTET:
                 raise ValidationError('Quartets do not have directors.')
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'person',),
+        )
 
 
 class Song(models.Model):
@@ -1164,16 +1166,15 @@ class Performance(models.Model):
         blank=True,
     )
 
-    unique_together = (
-        ('contestant', 'round', 'order',),
-    )
-
     class Meta:
         ordering = [
             'contestant',
             'round',
             'order',
         ]
+        unique_together = (
+            ('contestant', 'round', 'order',),
+        )
 
     def __unicode__(self):
         return self.name
@@ -1252,6 +1253,9 @@ class Chart(models.Model):
 
     class Meta:
         ordering = ['name']
+        unique_together = (
+            ('song', 'arranger', 'is_parody', 'is_medley',),
+        )
 
     def __unicode__(self):
         return self.name
