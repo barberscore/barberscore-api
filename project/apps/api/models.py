@@ -1236,6 +1236,14 @@ class Chart(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    songs = models.ManyToManyField(
+        'Song',
+    )
+
+    arrangers = models.ManyToManyField(
+        'Person',
+    )
+
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
