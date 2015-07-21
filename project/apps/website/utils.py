@@ -1,37 +1,37 @@
 import dedupe
 
-from apps.api.models import (
-    Group,
-)
+# from apps.api.models import (
+#     Group,
+# )
 
 from .models import (
     Collection,
     Duplicate,
 )
 
-variables = [
-    {
-        'field': 'name',
-        'type': 'String',
-        'has missing': False,
-    },
-    {
-        'field': 'kind',
-        'type': 'String',
-        'has missing': False,
-    }
-]
+# variables = [
+#     {
+#         'field': 'name',
+#         'type': 'String',
+#         'has missing': False,
+#     },
+#     {
+#         'field': 'kind',
+#         'type': 'String',
+#         'has missing': False,
+#     }
+# ]
 
 
-def get_data():
-    qs = Group.objects.all()
-    data = {}
-    for q in qs:
-        data[q.id.hex] = {
-            'name': q.name,
-            'kind': q.get_kind_display(),
-        }
-    return data
+# def get_data():
+#     qs = Group.objects.all()
+#     data = {}
+#     for q in qs:
+#         data[q.id.hex] = {
+#             'name': q.name,
+#             'kind': q.get_kind_display(),
+#         }
+#     return data
 
 
 def build_sample(data):

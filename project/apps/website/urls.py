@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^collection/$', views.collections, name='collections'),
     url(r'^collection/(?P<id>[a-zA-Z0-9-]+)/$', views.collection, name='collection'),
     url(r'^merge/(?P<id>[a-zA-Z0-9-]+)/$', views.merge, name='merge'),
+    url(r'^skip/(?P<id>[a-zA-Z0-9-]+)/$', views.skip, name='skip'),
+    url(r'^flag/(?P<id>[a-zA-Z0-9-]+)/$', views.flag, name='flag'),
 ]
 
 if settings.DEBUG:

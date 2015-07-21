@@ -7,10 +7,14 @@
 
 {% block content %}
   <div class='container'>
-    <ul class='list-unstyled'>
-    {% for collection in collections %}
-      <li><a href="{% url 'website:collection' collection.id %}">{{collection.id}}</a></li>
-    {% endfor %}
-    </ul>
+    {% if collections %}
+      <ul class='list-unstyled'>
+      {% for collection in collections %}
+        <li><a href="{% url 'website:collection' collection.id %}">{{collection.id}}</a></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <h1>No Duplicates!</h1>
+    {% endif %}
   </div>
 {% endblock content %}
