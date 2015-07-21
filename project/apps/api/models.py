@@ -5,7 +5,6 @@ log = logging.getLogger(__name__)
 
 import uuid
 
-import csv
 import os
 import datetime
 from django.db import (
@@ -1258,7 +1257,7 @@ class Chart(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        name = self.id.hex
+        self.name = self.id.hex
         # if self.arranger:
         #     self.name = "{0} ({1})".format(
         #         self.song,
