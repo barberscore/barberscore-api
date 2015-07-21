@@ -2,3 +2,4 @@
 
 bugsnag==2.2.0
 djrill==1.2.0
+dedupe==0.8.0.1.7
