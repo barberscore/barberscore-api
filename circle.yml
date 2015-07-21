@@ -7,7 +7,7 @@ deployment:
     branch: master
     commands:
       - git push git@heroku.com:barberscore.git $CIRCLE_SHA1:master
-      - heroku run pip install dedupe
+      - heroku run pip install dedupe --app barberscore
       - heroku run django-admin migrate --app barberscore --noinput
 machine:
   python:
