@@ -1042,14 +1042,6 @@ class Song(models.Model):
         unique=True,
     )
 
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
@@ -1226,6 +1218,14 @@ class Chart(models.Model):
     song = models.ForeignKey(
         'Song',
         related_name='charts',
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
     )
 
     arranger = models.ForeignKey(

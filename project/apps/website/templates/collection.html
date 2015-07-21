@@ -74,7 +74,7 @@
     <p>
       {% if collection.get_next %}<a class='btn btn-warning btn-lg pull-left' role='button'  href='{% url "website:collection" collection.get_next.id %}'>Unsure, Skip for Now</a>{% else %}<a class='btn btn-warning btn-lg' role='button'  href='{% url "website:collections" %}'>Unsure, Skip for Now</a>{% endif %}
       <a class='btn btn-primary btn-lg centerhack' role='button' href='{% url "website:flag" collection.id %}'>Flag for Later Review</a>
-      <a class='btn btn-danger btn-lg pull-right' role='button' href='{% url "website:skip" collection.id %}'>Remove, Not a Duplicate</a>
+      <a class='btn btn-danger btn-lg pull-right' role='button' href='{% url "website:skip" collection.id %}'>These are NOT the Same</a>
     </p>
   </div>
 {% endblock content %}
