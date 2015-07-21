@@ -1,12 +1,13 @@
 ## Customize deployment commands
 dependencies:
-    pre:
-        - pip install numpy
+    post:
+        - pip install dedupe
 deployment:
   production:
     branch: master
     commands:
       - git push git@heroku.com:barberscore.git $CIRCLE_SHA1:master
+      - heroku run pip install dedupe
       - heroku run django-admin migrate --app barberscore --noinput
 machine:
   python:
