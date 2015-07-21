@@ -20,5 +20,4 @@ django-haystack==2.4.0
 drf-haystack==1.5.0
 django-model-utils==2.2
 https://github.com/dbinetti/django-autoslug/zipball/master
-numpy==1.9.2
 jsonfield==1.0.3
