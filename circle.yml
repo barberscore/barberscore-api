@@ -1,4 +1,7 @@
 ## Customize deployment commands
+dependencies:
+    pre:
+        - pip install numpy
 deployment:
   production:
     branch: master
