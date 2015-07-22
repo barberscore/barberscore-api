@@ -1301,24 +1301,24 @@ class Chart(models.Model):
 
     class Meta:
         ordering = ['name']
-        # unique_together = (
-        #     ('song', 'is_parody', 'is_medley',),
-        # )
 
     def __unicode__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.name = self.id.hex
-        # if self.arranger:
-        #     self.name = "{0} ({1})".format(
-        #         self.song,
-        #         self.arranger,
-        #     )
-        # else:
-        #     self.name = "{0} (Unknown)".format(
-        #         self.song,
-        #     )
-        # if self.is_parody:
-        #     self.name = "{0} (Parody)".format(self.name)
+        build = []
+        for s in self.songs.all():
+            build.append(s.name)
+        if self.arrangers.count():
+            sublist = []
+            for a in self.arrangers.all():
+                sublist.append(a.person.name)
+            sub = ", ".join(sublist)
+            sub = "[" + sub + "]"
+            build.append(sub)
+        if self.is_parody:
+            build.append('(Parody)')
+        if self.is_medley:
+            build.append('(Medley)')
+        self.name = " ".join(build)
         super(Chart, self).save(*args, **kwargs)
