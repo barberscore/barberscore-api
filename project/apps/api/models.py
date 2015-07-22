@@ -1278,11 +1278,6 @@ class Chart(models.Model):
         unique=True,
     )
 
-    # song = models.ForeignKey(
-    #     'Song',
-    #     # related_name='charts',
-    # )
-
     is_medley = models.BooleanField(
         default=False,
     )
