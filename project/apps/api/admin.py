@@ -509,6 +509,8 @@ class ChartAdmin(admin.ModelAdmin):
         'name',
         'song',
         'arranger',
+        'songs',
+        'arrangers',
     )
     raw_id_fields = (
         'song',
@@ -516,5 +518,9 @@ class ChartAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'name',
+    )
+    filter_vertical = (
+        'songs',
+        'arrangers',
     )
 
