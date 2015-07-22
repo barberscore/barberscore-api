@@ -1066,7 +1066,7 @@ class Arranger(models.Model):
 
     person = models.ForeignKey(
         'Person',
-        related_name='charts',
+        related_name='arrangements',
     )
 
     part = models.IntegerField(
