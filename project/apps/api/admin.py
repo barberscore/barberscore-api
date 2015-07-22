@@ -19,6 +19,7 @@ from .models import (
     Singer,
     Director,
     Chart,
+    Arranger,
 )
 
 
@@ -96,27 +97,27 @@ class DirectorsInline(admin.TabularInline):
     can_delete = True
 
 
-# class ArrangersInline(admin.TabularInline):
-#     model = Chart.arrangers.through
-    # form = select2_modelform(
-    #     Director,
-    #     attrs={'width': '100px'},
-    # )
-    # fields = (
-    #     'contestant',
-    #     'person',
-    #     'part',
-    # )
-    # ordering = (
-    #     'part',
-    #     'contestant',
-    # )
-    # extra = 0
-    # raw_id_fields = (
-    #     'person',
-    #     'contestant',
-    # )
-    # can_delete = True
+class ArrangersInline(admin.TabularInline):
+    model = Arranger
+    form = select2_modelform(
+        Arranger,
+        attrs={'width': '100px'},
+    )
+    fields = (
+        'chart',
+        'person',
+        'part',
+    )
+    ordering = (
+        'part',
+        # 'contestant',
+    )
+    extra = 0
+    raw_id_fields = (
+        'person',
+        'chart',
+    )
+    can_delete = True
 
 
 class ContestantsInline(admin.TabularInline):
@@ -468,7 +469,7 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         DirectorsInline,
         SingersInline,
-        # ArrangersInline,
+        ArrangersInline,
     ]
 
     # filter_horizontal = (
@@ -554,7 +555,7 @@ class ChartAdmin(admin.ModelAdmin):
     )
     inlines = [
         PerformancesInline,
-        # ArrangersInline,
+        ArrangersInline,
     ]
     # exclude = (
     #     'arrangers',
