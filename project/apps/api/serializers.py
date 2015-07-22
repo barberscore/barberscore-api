@@ -14,6 +14,7 @@ from .models import (
     Singer,
     Director,
     Chart,
+    Arranger,
 )
 
 from .search_indexes import (
@@ -185,7 +186,7 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    charts = serializers.SlugRelatedField(
+    arrangements = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -219,7 +220,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
-            'charts',
+            'arrangements',
             'choruses',
             'quartets',
         )
@@ -377,18 +378,48 @@ class DirectorSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class ChartSerializer(serializers.ModelSerializer):
-    song = serializers.SlugRelatedField(
+class ArrangerSerializer(serializers.ModelSerializer):
+    chart = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+    person = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
-    arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    class Meta:
+        model = Arranger
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'chart',
+            'person',
+            'name',
+            'part',
+        )
+        lookup_field = 'slug'
+
+
+class ChartSerializer(serializers.ModelSerializer):
+    # song = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # arranger = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     performances = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    arrangers = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -401,8 +432,9 @@ class ChartSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            'song',
-            'arranger',
+            # 'song',
+            # 'arranger',
+            'arrangers',
             'performances',
         )
         lookup_field = 'slug'
