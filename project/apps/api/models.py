@@ -1238,10 +1238,12 @@ class Chart(models.Model):
 
     songs = models.ManyToManyField(
         'Song',
+        blank=True,
     )
 
     arrangers = models.ManyToManyField(
         'Person',
+        blank=True,
     )
 
     slug = AutoSlugField(
