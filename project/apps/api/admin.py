@@ -548,6 +548,7 @@ class ChartAdmin(admin.ModelAdmin):
     # )
     search_fields = (
         'name',
+        'songs__name',
     )
     filter_vertical = (
         'songs',
