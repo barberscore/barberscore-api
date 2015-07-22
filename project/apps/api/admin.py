@@ -558,6 +558,9 @@ class ChartAdmin(admin.ModelAdmin):
         PerformancesInline,
         ArrangersInline,
     ]
+    readonly_fields = (
+        'name',
+    )
     # exclude = (
     #     'arrangers',
     # )

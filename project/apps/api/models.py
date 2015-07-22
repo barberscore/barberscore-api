@@ -1306,19 +1306,20 @@ class Chart(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        build = []
-        for s in self.songs.all():
-            build.append(s.name)
-        if self.arrangers.count():
-            sublist = []
-            for a in self.arrangers.all():
-                sublist.append(a.person.name)
-            sub = ", ".join(sublist)
-            sub = "[" + sub + "]"
-            build.append(sub)
-        if self.is_parody:
-            build.append('(Parody)')
-        if self.is_medley:
-            build.append('(Medley)')
-        self.name = " ".join(build)
+        # build = []
+        # for s in self.songs.all():
+        #     build.append(s.name)
+        # if self.arrangers.count():
+        #     sublist = []
+        #     for a in self.arrangers.all():
+        #         sublist.append(a.person.name)
+        #     sub = ", ".join(sublist)
+        #     sub = "[" + sub + "]"
+        #     build.append(sub)
+        # if self.is_parody:
+        #     build.append('(Parody)')
+        # if self.is_medley:
+        #     build.append('(Medley)')
+        # self.name = " ".join(build)
+        self.name = self.id.hex
         super(Chart, self).save(*args, **kwargs)
