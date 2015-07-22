@@ -150,10 +150,8 @@ class SongViewSet(viewsets.ModelViewSet):
 
 
 class ChartViewSet(viewsets.ModelViewSet):
-    queryset = Chart.objects.select_related(
-        'song',
-        # 'arranger',
-    ).prefetch_related(
+    queryset = Chart.objects.prefetch_related(
+        'songs',
         'arrangers',
         'performances',
     )
