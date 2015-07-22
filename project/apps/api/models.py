@@ -1031,6 +1031,69 @@ class Director(models.Model):
         )
 
 
+class Arranger(models.Model):
+    """Chorus relation"""
+    ARRANGER = 1
+    COARRANGER = 2
+
+    PART_CHOICES = (
+        (ARRANGER, 'Arranger'),
+        (COARRANGER, 'Co-Arranger'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    chart = models.ForeignKey(
+        'Chart',
+        related_name='arrangers',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='charts',
+    )
+
+    part = models.IntegerField(
+        choices=PART_CHOICES,
+        default=ARRANGER,
+    )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = "{0} {1}".format(
+            self.chart,
+            self.person,
+        )
+        super(Arranger, self).save(*args, **kwargs)
+
+    # def clean(self):
+    #         if self.contestant.group.kind == Group.QUARTET:
+    #             raise ValidationError('Quartets do not have directors.')
+
+    class Meta:
+        unique_together = (
+            ('chart', 'person',),
+        )
+
+
 class Song(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1217,7 +1280,7 @@ class Chart(models.Model):
 
     song = models.ForeignKey(
         'Song',
-        related_name='charts',
+        # related_name='charts',
     )
 
     is_medley = models.BooleanField(
@@ -1228,9 +1291,9 @@ class Chart(models.Model):
         default=False,
     )
 
-    arranger = models.ForeignKey(
+    arranger_OLD = models.ForeignKey(
         'Person',
-        related_name='charts',
+        # related_name='charts',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1239,11 +1302,13 @@ class Chart(models.Model):
     songs = models.ManyToManyField(
         'Song',
         blank=True,
+        related_name='charts',
     )
 
-    arrangers = models.ManyToManyField(
+    arrangers_OLD = models.ManyToManyField(
         'Person',
         blank=True,
+        related_name='charts_OLD',
     )
 
     slug = AutoSlugField(
@@ -1256,7 +1321,7 @@ class Chart(models.Model):
     class Meta:
         ordering = ['name']
         unique_together = (
-            ('song', 'arranger', 'is_parody', 'is_medley',),
+            ('song', 'arranger_OLD', 'is_parody', 'is_medley',),
         )
 
     def __unicode__(self):
