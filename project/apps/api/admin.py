@@ -96,6 +96,29 @@ class DirectorsInline(admin.TabularInline):
     can_delete = True
 
 
+# class ArrangersInline(admin.TabularInline):
+#     model = Chart.arrangers.through
+    # form = select2_modelform(
+    #     Director,
+    #     attrs={'width': '100px'},
+    # )
+    # fields = (
+    #     'contestant',
+    #     'person',
+    #     'part',
+    # )
+    # ordering = (
+    #     'part',
+    #     'contestant',
+    # )
+    # extra = 0
+    # raw_id_fields = (
+    #     'person',
+    #     'contestant',
+    # )
+    # can_delete = True
+
+
 class ContestantsInline(admin.TabularInline):
     form = select2_modelform(
         Contestant,
@@ -439,12 +462,18 @@ class PersonAdmin(admin.ModelAdmin):
         'picture',
         'description',
         'notes',
+        # 'charts',
     )
 
     inlines = [
         DirectorsInline,
         SingersInline,
+        # ArrangersInline,
     ]
+
+    # filter_horizontal = (
+    #     'charts',
+    # )
 
 
 @admin.register(Performance)
@@ -508,19 +537,25 @@ class ChartAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'song',
-        'arranger',
+        # 'arranger',
         'songs',
-        'arrangers',
+        # 'arrangers',
     )
     raw_id_fields = (
         'song',
-        'arranger',
+        # 'arranger',
     )
     search_fields = (
         'name',
     )
     filter_vertical = (
         'songs',
-        'arrangers',
+        # 'arrangers',
     )
-
+    inlines = [
+        PerformancesInline,
+        # ArrangersInline,
+    ]
+    # exclude = (
+    #     'arrangers',
+    # )
