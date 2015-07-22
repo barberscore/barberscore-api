@@ -413,6 +413,12 @@ class ChartSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
+    songs = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     performances = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -436,5 +442,6 @@ class ChartSerializer(serializers.ModelSerializer):
             # 'arranger',
             'arrangers',
             'performances',
+            'songs',
         )
         lookup_field = 'slug'

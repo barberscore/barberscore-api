@@ -537,15 +537,15 @@ class ChartAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',
-        'song',
+        # 'song',
         # 'arranger',
         'songs',
         # 'arrangers',
     )
-    raw_id_fields = (
-        'song',
-        # 'arranger',
-    )
+    # raw_id_fields = (
+    #     'song',
+    #     'arranger',
+    # )
     search_fields = (
         'name',
     )
