@@ -1291,24 +1291,10 @@ class Chart(models.Model):
         default=False,
     )
 
-    arranger_OLD = models.ForeignKey(
-        'Person',
-        # related_name='charts',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     songs = models.ManyToManyField(
         'Song',
         blank=True,
         related_name='charts',
-    )
-
-    arrangers_OLD = models.ManyToManyField(
-        'Person',
-        blank=True,
-        related_name='charts_OLD',
     )
 
     slug = AutoSlugField(
@@ -1320,9 +1306,9 @@ class Chart(models.Model):
 
     class Meta:
         ordering = ['name']
-        unique_together = (
-            ('song', 'arranger_OLD', 'is_parody', 'is_medley',),
-        )
+        # unique_together = (
+        #     ('song', 'is_parody', 'is_medley',),
+        # )
 
     def __unicode__(self):
         return self.name
