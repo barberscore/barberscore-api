@@ -19,6 +19,7 @@ from .models import (
     Singer,
     Director,
     Chart,
+    Arranger,
 )
 
 from .serializers import (
@@ -33,6 +34,7 @@ from .serializers import (
     PerformanceSerializer,
     SingerSerializer,
     DirectorSerializer,
+    ArrangerSerializer,
     ChartSerializer,
 )
 
@@ -87,7 +89,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.prefetch_related(
-        'charts',
+        'arrangements',
         'choruses',
         'quartets',
     )
@@ -130,6 +132,15 @@ class DirectorViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
+class ArrangerViewSet(viewsets.ModelViewSet):
+    queryset = Arranger.objects.select_related(
+        'person',
+        'chart',
+    )
+    serializer_class = ArrangerSerializer
+    lookup_field = 'slug'
+
+
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.prefetch_related(
         'charts',
@@ -141,8 +152,9 @@ class SongViewSet(viewsets.ModelViewSet):
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
         'song',
-        'arranger',
+        # 'arranger',
     ).prefetch_related(
+        'arrangers',
         'performances',
     )
     serializer_class = ChartSerializer

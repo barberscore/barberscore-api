@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from django.shortcuts import (
     render,
     redirect,
@@ -75,17 +78,26 @@ def merge(request, id):
         elif collection.primitive.name == 'Song':
             drop = Song.objects.get(id=orphan.source_id)
             for chart in drop.charts.all():
-                chart.group = parent
-                chart.save()
-            drop.delete()
+                chart.songs.add(parent)
+                chart.songs.remove(drop)
+                if parent.charts.count() == 1:
+                    for performance in chart.performances.all():
+                        performance.chart = parent.charts.first()
+                        performance.save()
+                    drop.delete()
+                else:
+                    log.error("Chart doubled")
         elif collection.primitive.name == 'Person':
             drop = Person.objects.get(id=orphan.source_id)
             for director in drop.choruses.all():
-                director.group = parent
+                director.person = parent
                 director.save()
             for singer in drop.quartets.all():
-                singer.group = parent
+                singer.person = parent
                 singer.save()
+            for chart in drop.charts.all():
+                chart.arrangers.add(parent)
+                chart.arrangers.remove(drop)
             drop.delete()
         else:
             raise RuntimeError("How did i get here?")
