@@ -120,6 +120,20 @@ class ArrangersInline(admin.TabularInline):
     can_delete = True
 
 
+class CompositionsInline(admin.TabularInline):
+    model = Chart.songs.through
+    fields = (
+        'chart',
+        'song',
+    )
+    extra = 0
+    raw_id_fields = (
+        'song',
+        'chart',
+    )
+    can_delete = True
+
+
 class ContestantsInline(admin.TabularInline):
     form = select2_modelform(
         Contestant,
@@ -396,6 +410,10 @@ class SongAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
     )
+
+    inlines = [
+        CompositionsInline,
+    ]
 
 
 @admin.register(District)
