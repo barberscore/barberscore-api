@@ -80,13 +80,7 @@ def merge(request, id):
             for chart in drop.charts.all():
                 chart.songs.add(parent)
                 chart.songs.remove(drop)
-                if parent.charts.count() == 1:
-                    for performance in chart.performances.all():
-                        performance.chart = parent.charts.first()
-                        performance.save()
-                    drop.delete()
-                else:
-                    log.error("Chart doubled")
+            drop.delete()
         elif collection.primitive.name == 'Person':
             drop = Person.objects.get(id=orphan.source_id)
             for director in drop.choruses.all():
@@ -95,9 +89,9 @@ def merge(request, id):
             for singer in drop.quartets.all():
                 singer.person = parent
                 singer.save()
-            for chart in drop.charts.all():
-                chart.arrangers.add(parent)
-                chart.arrangers.remove(drop)
+            for arrangement in drop.arrangements.all():
+                arrangement.person = parent
+                arrangement.save()
             drop.delete()
         else:
             raise RuntimeError("How did i get here?")
