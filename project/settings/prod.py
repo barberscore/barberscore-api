@@ -19,14 +19,14 @@ AWS_PRELOAD_METADATA = True
 
 # Static Server Config
 AWS_STATIC_BUCKET_NAME = "{0}-static".format(PROJECT_NAME)
-STATIC_STORAGE = 'utils.backends.StaticS3BotoStorage'
+STATIC_STORAGE = 'backends.StaticS3BotoStorage'
 STATIC_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
     AWS_STATIC_BUCKET_NAME,
 )
 
 # Media (aka File Upload) Server Config
 AWS_MEDIA_BUCKET_NAME = "{0}-files".format(PROJECT_NAME)
-MEDIA_STORAGE = 'utils.backends.MediaS3BotoStorage'
+MEDIA_STORAGE = 'backends.MediaS3BotoStorage'
 MEDIA_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
     AWS_MEDIA_BUCKET_NAME,
 )
