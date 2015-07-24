@@ -18,7 +18,7 @@ AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
 AWS_PRELOAD_METADATA = True
 
 # Static Server Config
-AWS_STATIC_BUCKET_NAME = "{0}-static".format(PROJECT_NAME)
+AWS_STATIC_BUCKET_NAME = "{0}".format(PROJECT_NAME)
 STATIC_STORAGE = 'backends.StaticS3BotoStorage'
 STATIC_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
     AWS_STATIC_BUCKET_NAME,
