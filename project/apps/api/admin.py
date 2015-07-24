@@ -20,7 +20,7 @@ from .models import (
     Director,
     Chart,
     Arranger,
-    Catalog,
+    Spot,
 )
 
 
@@ -585,8 +585,8 @@ class ChartAdmin(admin.ModelAdmin):
     # )
 
 
-@admin.register(Catalog)
-class CatalogAdmin(admin.ModelAdmin):
+@admin.register(Spot)
+class SpotAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'song',
