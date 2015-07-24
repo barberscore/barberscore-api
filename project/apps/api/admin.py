@@ -20,6 +20,7 @@ from .models import (
     Director,
     Chart,
     Arranger,
+    Catalog,
 )
 
 
@@ -582,3 +583,41 @@ class ChartAdmin(admin.ModelAdmin):
     # exclude = (
     #     'arrangers',
     # )
+
+
+@admin.register(Catalog)
+class CatalogAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'song',
+        'bhs_songname',
+        'bhs_arranger',
+        'bhs_id',
+        'bhs_published',
+        'bhs_fee',
+        'bhs_difficulty',
+        'bhs_tempo',
+        'bhs_medley',
+        'is_parody',
+        'is_medley',
+    )
+    raw_id_fields = (
+        'song',
+    )
+    search_fields = (
+        'song__name',
+    )
+    inlines = [
+        PerformancesInline,
+        ArrangersInline,
+    ]
+    list_display = [
+        'bhs_songname',
+        'bhs_arranger',
+        'bhs_id',
+        'bhs_published',
+        'bhs_fee',
+        'bhs_difficulty',
+        'bhs_tempo',
+        'bhs_medley',
+    ]
