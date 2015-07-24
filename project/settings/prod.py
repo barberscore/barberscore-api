@@ -25,7 +25,7 @@ STATIC_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
 )
 
 # Media (aka File Upload) Server Config
-AWS_MEDIA_BUCKET_NAME = "{0}-files".format(PROJECT_NAME)
+AWS_MEDIA_BUCKET_NAME = "{0}".format(PROJECT_NAME)
 MEDIA_STORAGE = 'backends.MediaS3BotoStorage'
 MEDIA_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
     AWS_MEDIA_BUCKET_NAME,

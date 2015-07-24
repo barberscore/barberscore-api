@@ -22,7 +22,7 @@ class MediaS3BotoStorage(FixedS3BotoStorage):
             bucket=settings.AWS_MEDIA_BUCKET_NAME,
             acl='public-read',
             querystring_auth=False,
-            # location="files",
+            location="files",
             *args, **kwargs
         )
 
