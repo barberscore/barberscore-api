@@ -26,7 +26,7 @@ def home(request):
 
 
 def collections(request):
-    collections = Collection.objects.exclude(is_flag=True)
+    collections = Collection.objects.exclude(is_flag=True).order_by('id')
     return render(
         request,
         'collections.html',
