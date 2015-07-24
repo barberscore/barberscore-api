@@ -591,6 +591,7 @@ class CatalogAdmin(admin.ModelAdmin):
     fields = (
         'song',
         'bhs_songname',
+        'person',
         'bhs_arranger',
         'bhs_id',
         'bhs_published',
@@ -603,6 +604,7 @@ class CatalogAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'song',
+        'person',
     )
     search_fields = (
         'song__name',
