@@ -1061,11 +1061,23 @@ class Arranger(models.Model):
 
     chart = models.ForeignKey(
         'Chart',
+        null=True,
+        blank=True,
         related_name='arrangers',
+    )
+
+    catalog = models.ForeignKey(
+        'Catalog',
+        related_name='arrangers',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     person = models.ForeignKey(
         'Person',
+        null=True,
+        blank=True,
         related_name='arrangements',
     )
 
@@ -1178,6 +1190,14 @@ class Performance(models.Model):
 
     chart = models.ForeignKey(
         'Chart',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    catalog = models.ForeignKey(
+        'Catalog',
         related_name='performances',
         null=True,
         blank=True,
@@ -1319,3 +1339,77 @@ class Chart(models.Model):
             name = name + " (Medley)"
         self.name = name
         super(Chart, self).save(*args, **kwargs)
+
+
+class Catalog(models.Model):
+    TEMPO = Choices(
+        (1, "Ballad"),
+        (2, "Uptune"),
+        (3, "Mixed"),
+    )
+
+    DIFFICULTY = Choices(
+        (1, "Very Easy"),
+        (2, "Easy"),
+        (3, "Medium"),
+        (4, "Hard"),
+        (5, "Very Hard"),
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_published = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_songname = models.CharField(
+        null=True,
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_arranger = models.CharField(
+        null=True,
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_fee = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_difficulty = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=DIFFICULTY
+    )
+
+    bhs_tempo = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=TEMPO,
+    )
+
+    bhs_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    song = models.ForeignKey(
+        'Song',
+        null=True,
+        blank=True,
+        related_name='catalogs',
+    )
