@@ -1,6 +1,6 @@
 -r base.txt
 
-numpy==1.9.2
+numpy==1.9.1
 djrill==1.4.0
 dedupe==0.8.0.1.7
 django-storages-redux==1.2.3
