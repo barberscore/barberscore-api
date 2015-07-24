@@ -145,7 +145,6 @@ LOGGING = {
 
 # Applications
 INSTALLED_APPS = (
-    # 'utils',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
