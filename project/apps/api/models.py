@@ -1413,3 +1413,10 @@ class Catalog(models.Model):
         blank=True,
         related_name='catalogs',
     )
+
+    person = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='catalogs',
+    )
