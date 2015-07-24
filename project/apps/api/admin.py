@@ -614,8 +614,11 @@ class CatalogAdmin(admin.ModelAdmin):
         ArrangersInline,
     ]
     list_display = [
+        'id',
         'bhs_songname',
+        'song',
         'bhs_arranger',
+        'person',
         'bhs_id',
         'bhs_published',
         'bhs_fee',
