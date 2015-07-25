@@ -159,6 +159,11 @@ class Person(Common):
         else:
             return None
 
+    fuzzy = models.TextField(
+        null=True,
+        blank=True,
+    )
+
 
 class Group(Common):
 
@@ -201,6 +206,11 @@ class Group(Common):
         ordering = (
             'name',
         )
+
+    fuzzy = models.TextField(
+        null=True,
+        blank=True,
+    )
 
 
 class District(Common):
@@ -1130,6 +1140,11 @@ class Song(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    fuzzy = models.TextField(
+        null=True,
+        blank=True,
+    )
 
 
 class Performance(models.Model):
