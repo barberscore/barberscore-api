@@ -1204,6 +1204,14 @@ class Performance(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    spot = models.ForeignKey(
+        'Spot',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     mus_points = models.IntegerField(
         null=True,
         blank=True,
@@ -1506,4 +1514,9 @@ class Spot(models.Model):
         null=True,
         blank=True,
         related_name='spots',
+    )
+
+    fuzzy = models.TextField(
+        null=True,
+        blank=True,
     )
