@@ -12,6 +12,36 @@ from apps.api.models import (
 )
 
 
+class PersonF(models.Model):
+    parent = models.ForeignKey(
+        Person,
+        related_name='parent_duplicates',
+    )
+    child = models.CharField(
+        max_length=200,
+    )
+
+
+class SongF(models.Model):
+    parent = models.ForeignKey(
+        Song,
+        related_name='parent_duplicates',
+    )
+    child = models.CharField(
+        max_length=200,
+    )
+
+
+class GroupF(models.Model):
+    parent = models.ForeignKey(
+        Group,
+        related_name='parent_duplicates',
+    )
+    child = models.CharField(
+        max_length=200,
+    )
+
+
 class Collection(models.Model):
     kind = models.CharField(
         max_length=200,
