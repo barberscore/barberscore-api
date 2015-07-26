@@ -16,6 +16,7 @@ from apps.api.models import (
     Collection,
     Duplicate,
     GroupF,
+    SongF,
 )
 
 
@@ -161,6 +162,40 @@ def merge_group(request, parent, child):
         "Merged {0} into {1}.".format(child, parent)
     )
     return r
+
+
+def merge_song(request, parent, child):
+    parent = Song.objects.get(id=parent)
+    child = Song.objects.get(id=child)
+    charts = child.charts.all()
+    if not charts:
+        child.delete()
+        messages.warning(
+            request,
+            "Merged {0} into {1}.".format(child, parent)
+        )
+        return redirect('website:songs')
+    # move related records
+    for chart in charts:
+        chart.song = parent
+        try:
+            chart.save()
+        except IntegrityError:
+            raise RuntimeError(
+                "Chart {0} already exists.  Merge manually".format(chart)
+            )
+    # remove redundant group
+    try:
+        child.delete()
+    except Exception as e:
+        raise RuntimeError("Error deleting old song: {0}".format(e))
+    duplicates = SongF.objects.filter(parent=parent)
+    duplicates.delete()
+    messages.success(
+        request,
+        "Merged {0} into {1}.".format(child, parent)
+    )
+    return redirect('website:songs')
 
 
 def choruses(request):
