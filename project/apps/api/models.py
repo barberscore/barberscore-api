@@ -1548,10 +1548,12 @@ class PersonF(models.Model):
         Person,
         related_name='person_duplicates',
     )
-    # child = models.ForeignKey(
-    #     Group,
-    #     related_name='person_children',
-    # )
+    child = models.ForeignKey(
+        Group,
+        related_name='person_children',
+        null=True,
+        blank=True,
+    )
     score = models.IntegerField(
         null=True,
         blank=True,
@@ -1563,10 +1565,12 @@ class SongF(models.Model):
         Song,
         related_name='song_duplicates',
     )
-    # child = models.ForeignKey(
-    #     Group,
-    #     related_name='song_children',
-    # )
+    child = models.ForeignKey(
+        Group,
+        related_name='song_children',
+        null=True,
+        blank=True,
+    )
     score = models.IntegerField(
         null=True,
         blank=True,
@@ -1578,10 +1582,12 @@ class GroupF(models.Model):
         Group,
         related_name='group_duplicates',
     )
-    # child = models.ForeignKey(
-    #     Group,
-    #     related_name='group_children',
-    # )
+    child = models.ForeignKey(
+        Group,
+        related_name='group_children',
+        null=True,
+        blank=True,
+    )
     score = models.IntegerField(
         null=True,
         blank=True,
