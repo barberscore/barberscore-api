@@ -7,7 +7,8 @@ from . import views
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^collection/$', views.collections, name='collections'),
-    url(r'^group/$', views.groups, name='groups'),
+    url(r'^chorus/$', views.choruses, name='choruses'),
+    url(r'^quartet/$', views.quartets, name='quartets'),
     url(r'^song/$', views.songs, name='songs'),
     url(r'^collection/(?P<id>[a-zA-Z0-9-]+)/$', views.collection, name='collection'),
     url(r'^merge/(?P<id>[a-zA-Z0-9-]+)/$', views.merge, name='merge'),
