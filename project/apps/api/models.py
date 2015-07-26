@@ -1537,6 +1537,18 @@ class Spot(models.Model):
         related_name='spots',
     )
 
+    song_match = models.CharField(
+        null=True,
+        blank=True,
+        max_length=200,
+    )
+
+    person_match = models.CharField(
+        null=True,
+        blank=True,
+        max_length=200,
+    )
+
     fuzzy = models.TextField(
         null=True,
         blank=True,
