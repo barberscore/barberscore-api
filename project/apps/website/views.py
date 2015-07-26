@@ -201,7 +201,8 @@ def merge_song(request, parent, child):
         return redirect('website:songs')
     # move related records
     for chart in charts:
-        chart.song = parent
+        chart.songs.add(parent)
+        chart.songs.remove(child)
         try:
             chart.save()
         except IntegrityError:
