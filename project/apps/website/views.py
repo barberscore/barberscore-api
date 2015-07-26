@@ -167,7 +167,7 @@ def merge_group(request, parent, child):
 def remove_group(request, parent):
     duplicates = GroupF.objects.filter(parent__id=parent)
     duplicates.delete()
-    messages.danger(
+    messages.error(
         request,
         "Removed {0} from duplicates.".format(parent)
     )
@@ -211,7 +211,7 @@ def merge_song(request, parent, child):
 def remove_song(request, parent):
     duplicates = SongF.objects.filter(parent__id=parent)
     duplicates.delete()
-    messages.danger(
+    messages.error(
         request,
         "Removed {0} from duplicates.".format(parent)
     )
