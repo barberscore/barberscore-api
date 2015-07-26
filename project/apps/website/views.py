@@ -119,3 +119,21 @@ def flag(request, id):
     collection.is_flag = True
     collection.save()
     return r
+
+
+def groups(request):
+    groups = Group.objects.order_by('name')
+    return render(
+        request,
+        'groups.html',
+        {'groups': groups},
+    )
+
+
+def songs(request):
+    songs = Song.objects.order_by('name')
+    return render(
+        request,
+        'songs.html',
+        {'songs': songs},
+    )
