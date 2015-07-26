@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  Groups
+{% endblock title %}
+
+{% block content %}
+
+  <table class='table table-hover '>
+    <tbody>
+      {% for person in persons %}
+        <tr>
+          <td>{{person.name}}</td>
+          {% for item in person.person_duplicates.all %}
+            <td>{{item.child}} ({{item.score}})</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock content %}

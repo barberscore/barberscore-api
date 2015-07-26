@@ -122,7 +122,9 @@ def flag(request, id):
 
 
 def choruses(request):
-    groups = Group.objects.filter(kind=2).order_by('name')
+    groups = Group.objects.filter(
+        group_duplicates__isnull=False,
+    ).filter(kind=2).order_by('name')
     return render(
         request,
         'groups.html',
@@ -131,7 +133,9 @@ def choruses(request):
 
 
 def quartets(request):
-    groups = Group.objects.filter(kind=1).order_by('name')
+    groups = Group.objects.filter(
+        group_duplicates__isnull=False,
+    ).filter(kind=1).order_by('name')
     return render(
         request,
         'groups.html',
@@ -140,9 +144,22 @@ def quartets(request):
 
 
 def songs(request):
-    songs = Song.objects.order_by('name')
+    songs = Song.objects.filter(
+        song_duplicates__isnull=False,
+    ).order_by('name')
     return render(
         request,
         'songs.html',
         {'songs': songs},
+    )
+
+
+def persons(request):
+    persons = Person.objects.filter(
+        person_duplicates__isnull=False,
+    ).order_by('name')
+    return render(
+        request,
+        'persons.html',
+        {'persons': persons},
     )
