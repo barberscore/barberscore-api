@@ -7,6 +7,7 @@
 
 {% block content %}
 
+  {% if groups %}
   <table class='table table-hover '>
     <tbody>
       {% for group in groups %}
@@ -19,4 +20,7 @@
       {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <h1>No Duplicates!</h1>
+  {% endif %}
 {% endblock content %}

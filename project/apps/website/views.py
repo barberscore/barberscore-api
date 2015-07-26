@@ -174,7 +174,7 @@ def remove_group(request, parent):
     duplicates.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent)
+        "Removed {0} from duplicates.".format(parent.name)
     )
     return r
 
@@ -218,7 +218,7 @@ def remove_song(request, parent):
     duplicates.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent)
+        "Removed {0} from duplicates.".format(parent.song)
     )
     return redirect('website:songs')
 
