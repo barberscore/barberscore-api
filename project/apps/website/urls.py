@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^chorus/$', views.choruses, name='choruses'),
     url(r'^quartet/$', views.quartets, name='quartets'),
     url(r'^song/$', views.songs, name='songs'),
+    url(r'^merge-group/(?P<parent>[a-zA-Z0-9-]+)/(?P<child>[a-zA-Z0-9-]+)/$', views.merge_group, name='merge_group'),
     url(r'^collection/(?P<id>[a-zA-Z0-9-]+)/$', views.collection, name='collection'),
     url(r'^merge/(?P<id>[a-zA-Z0-9-]+)/$', views.merge, name='merge'),
     url(r'^skip/(?P<id>[a-zA-Z0-9-]+)/$', views.skip, name='skip'),
