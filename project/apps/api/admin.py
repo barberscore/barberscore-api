@@ -349,6 +349,10 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
     )
 
+    inlines = [
+        ContestantsInline,
+    ]
+
     save_on_top = True
 
 
