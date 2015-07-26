@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  Songs
+{% endblock title %}
+
+{% block content %}
+  <table class='table table-hover '>
+    <tbody>
+      {% for song in songs %}
+      <tr>
+        <td>{{song.name}}</td>
+        {% for item in song.song_duplicates.all %}
+          <td>{{item.child}} ({{item.score}})</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock content %}
