@@ -164,6 +164,16 @@ def merge_group(request, parent, child):
     return r
 
 
+def remove_group(request, parent):
+    duplicates = GroupF.objects.filter(parent__id=parent)
+    duplicates.delete()
+    messages.danger(
+        request,
+        "Removed {0} from duplicates.".format(parent)
+    )
+    return redirect('website:groups')
+
+
 def merge_song(request, parent, child):
     parent = Song.objects.get(id=parent)
     child = Song.objects.get(id=child)
