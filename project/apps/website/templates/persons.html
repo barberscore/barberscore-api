@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  Groups
+  Persons
 {% endblock title %}
 
 {% block content %}
@@ -10,12 +10,12 @@
   <table class='table table-hover '>
     <tbody>
       {% for person in persons %}
-        <tr>
-          <td>{{person.name}}</td>
-          {% for item in person.person_duplicates.all %}
-            <td>{{item.child}}</td>
-          {% endfor %}
-        </tr>
+      <tr>
+        <td><a href="{% url 'website:remove_person' person.id.hex %}"><span class='fa fa-trash-o' style="color:red"></span></a>&nbsp;{{person.name}}&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' person.id.hex %}"><span class='fa fa-external-link'></span></a></td>
+        {% for item in person.person_duplicates.all %}
+        <td><a href="{% url 'website:merge_persons' item.parent.id.hex item.child.id.hex %}">{{item.child}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' item.child.id.hex %}"><span class='fa fa-external-link'></span></a></td>
+        {% endfor %}
+      </tr>
       {% endfor %}
     </tbody>
   </table>
