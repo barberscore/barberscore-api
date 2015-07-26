@@ -1546,30 +1546,42 @@ class Spot(models.Model):
 class PersonF(models.Model):
     parent = models.ForeignKey(
         Person,
-        # related_name='parent_duplicates',
+        related_name='person_duplicates',
     )
     child = models.CharField(
         max_length=200,
+    )
+    score = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
 
 class SongF(models.Model):
     parent = models.ForeignKey(
         Song,
-        # related_name='parent_duplicates',
+        related_name='song_duplicates',
     )
     child = models.CharField(
         max_length=200,
+    )
+    score = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
 
 class GroupF(models.Model):
     parent = models.ForeignKey(
         Group,
-        # related_name='parent_duplicates',
+        related_name='group_duplicates',
     )
     child = models.CharField(
         max_length=200,
+    )
+    score = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
 
