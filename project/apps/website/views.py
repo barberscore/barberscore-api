@@ -157,7 +157,7 @@ def songs(request):
 def persons(request):
     persons = Person.objects.filter(
         person_duplicates__isnull=False,
-    ).order_by('name')
+    ).order_by('name')[:100]
     return render(
         request,
         'persons.html',
