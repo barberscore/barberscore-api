@@ -6,6 +6,7 @@
 {% endblock title %}
 
 {% block content %}
+  {% if songs %}
   <table class='table table-hover '>
     <tbody>
       {% for song in songs %}
@@ -18,4 +19,7 @@
       {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <h1>No Duplicates!</h1>
+  {% endif %}
 {% endblock content %}
