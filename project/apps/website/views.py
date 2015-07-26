@@ -259,7 +259,7 @@ def songs(request):
 def persons(request):
     persons = Person.objects.filter(
         person_duplicates__isnull=False,
-    ).distinct().order_by('name')[:1000]
+    ).distinct().order_by('name')
     return render(
         request,
         'persons.html',
