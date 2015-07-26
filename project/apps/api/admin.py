@@ -133,6 +133,7 @@ class CompositionsInline(admin.TabularInline):
         'chart',
     )
     can_delete = True
+    show_change_link = True
 
 
 class ContestantsInline(admin.TabularInline):
