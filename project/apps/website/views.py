@@ -208,10 +208,20 @@ def merge_song(request, parent, child):
     return redirect('website:songs')
 
 
+def remove_song(request, parent):
+    duplicates = SongF.objects.filter(parent__id=parent)
+    duplicates.delete()
+    messages.danger(
+        request,
+        "Removed {0} from duplicates.".format(parent)
+    )
+    return redirect('website:songs')
+
+
 def choruses(request):
     groups = Group.objects.filter(
         group_duplicates__isnull=False,
-    ).filter(kind=2).order_by('name')
+    ).filter(kind=2).distinct().order_by('name')
     return render(
         request,
         'groups.html',
@@ -222,7 +232,7 @@ def choruses(request):
 def quartets(request):
     groups = Group.objects.filter(
         group_duplicates__isnull=False,
-    ).filter(kind=1).order_by('name')
+    ).filter(kind=1).distinct().order_by('name')
     return render(
         request,
         'groups.html',
@@ -233,7 +243,7 @@ def quartets(request):
 def songs(request):
     songs = Song.objects.filter(
         song_duplicates__isnull=False,
-    ).order_by('name')
+    ).distinct().order_by('name')
     return render(
         request,
         'songs.html',
@@ -244,7 +254,7 @@ def songs(request):
 def persons(request):
     persons = Person.objects.filter(
         person_duplicates__isnull=False,
-    ).order_by('name')[:100]
+    ).distinct().order_by('name')[:100]
     return render(
         request,
         'persons.html',
