@@ -1549,7 +1549,7 @@ class PersonF(models.Model):
         related_name='person_duplicates',
     )
     child = models.ForeignKey(
-        Group,
+        Person,
         related_name='person_children',
         null=True,
         blank=True,
@@ -1566,7 +1566,7 @@ class SongF(models.Model):
         related_name='song_duplicates',
     )
     child = models.ForeignKey(
-        Group,
+        Song,
         related_name='song_children',
         null=True,
         blank=True,
