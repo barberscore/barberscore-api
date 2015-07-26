@@ -169,33 +169,6 @@ class ContestantsInline(admin.TabularInline):
     )
 
 
-class ArrangersInline(admin.TabularInline):
-    model = Arranger
-    form = select2_modelform(
-        Arranger,
-        attrs={'width': '100px'},
-    )
-    fields = (
-        'chart',
-        'person',
-        'part',
-    )
-    ordering = (
-        'part',
-        # 'contestant',
-    )
-    extra = 0
-    raw_id_fields = (
-        'person',
-        'chart',
-    )
-    can_delete = True
-
-
-
-
-
-
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     form = select2_modelform(
