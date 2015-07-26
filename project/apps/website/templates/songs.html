@@ -10,7 +10,7 @@
     <tbody>
       {% for song in songs %}
       <tr>
-        <td>{{song.name}}</td>
+          <td>{{song.name}} (<a href="{% url 'website:remove_song' song.id.hex %}">X</a>)</td>
         {% for item in song.song_duplicates.all %}
           <td><a href="{% url 'website:merge_song' item.parent.id.hex item.child.id.hex %}">{{item.child}} ({{item.score}})</a></td>
         {% endfor %}
