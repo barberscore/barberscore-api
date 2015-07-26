@@ -1548,9 +1548,10 @@ class PersonF(models.Model):
         Person,
         related_name='person_duplicates',
     )
-    child = models.CharField(
-        max_length=200,
-    )
+    # child = models.ForeignKey(
+    #     Group,
+    #     related_name='person_children',
+    # )
     score = models.IntegerField(
         null=True,
         blank=True,
@@ -1562,9 +1563,10 @@ class SongF(models.Model):
         Song,
         related_name='song_duplicates',
     )
-    child = models.CharField(
-        max_length=200,
-    )
+    # child = models.ForeignKey(
+    #     Group,
+    #     related_name='song_children',
+    # )
     score = models.IntegerField(
         null=True,
         blank=True,
@@ -1576,9 +1578,10 @@ class GroupF(models.Model):
         Group,
         related_name='group_duplicates',
     )
-    child = models.CharField(
-        max_length=200,
-    )
+    # child = models.ForeignKey(
+    #     Group,
+    #     related_name='group_children',
+    # )
     score = models.IntegerField(
         null=True,
         blank=True,
