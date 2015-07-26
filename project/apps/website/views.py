@@ -6,15 +6,12 @@ from django.shortcuts import (
     redirect,
 )
 
-from .models import (
-    Collection,
-    Duplicate,
-)
-
 from apps.api.models import (
     Group,
     Song,
     Person,
+    Collection,
+    Duplicate,
 )
 
 
