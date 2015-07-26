@@ -6,12 +6,16 @@ from django.shortcuts import (
     redirect,
 )
 
+from django.db import IntegrityError
+from django.contrib import messages
+
 from apps.api.models import (
     Group,
     Song,
     Person,
     Collection,
     Duplicate,
+    GroupF,
 )
 
 
@@ -118,6 +122,44 @@ def flag(request, id):
         r = redirect('website:collections')
     collection.is_flag = True
     collection.save()
+    return r
+
+
+def merge_group(request, parent, child):
+    parent = Group.objects.get(id=parent)
+    child = Group.objects.get(id=child)
+    if parent.kind == 1:
+        r = redirect('website:quartets')
+    else:
+        r = redirect('website:choruses')
+    contestants = child.contestants.all()
+    if not contestants:
+        child.delete()
+        messages.warning(
+            request,
+            "Merged {0} into {1}.".format(child, parent)
+        )
+        return r
+    # move related records
+    for contestant in contestants:
+        contestant.group = parent
+        try:
+            contestant.save()
+        except IntegrityError:
+            raise RuntimeError(
+                "Contestant {0} already exists.  Merge manually".format(contestant)
+            )
+    # remove redundant group
+    try:
+        child.delete()
+    except Exception as e:
+        raise RuntimeError("Error deleting old group: {0}".format(e))
+    duplicates = GroupF.objects.filter(parent=parent)
+    duplicates.delete()
+    messages.success(
+        request,
+        "Merged {0} into {1}.".format(child, parent)
+    )
     return r
 
 
