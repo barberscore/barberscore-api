@@ -12,9 +12,9 @@
     <tbody>
       {% for group in groups %}
         <tr>
-          <td>{{group.name}} (<a href="{% url 'website:remove_group' group.id.hex %}">X</a>)</td>
+          <td><a href="{% url 'website:remove_group' group.id.hex %}"><span class='fa fa-trash-o' style="color:red"></span></a>&nbsp;{{group.name}}&nbsp;<a target='_blank' href="{% url 'admin:api_group_change' group.id.hex %}"><span class='fa fa-external-link'></span></a></td>
           {% for item in group.group_duplicates.all %}
-          <td><a href="{% url 'website:merge_group' item.parent.id.hex item.child.id.hex %}">{{item.child}} ({{item.score}})</a></td>
+          <td><a href="{% url 'website:merge_group' item.parent.id.hex item.child.id.hex %}">{{item.child}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_group_change' item.child.id.hex %}"><span class='fa fa-external-link'></span></a></td>
           {% endfor %}
         </tr>
       {% endfor %}

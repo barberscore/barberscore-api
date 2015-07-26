@@ -13,7 +13,7 @@
         <tr>
           <td>{{person.name}}</td>
           {% for item in person.person_duplicates.all %}
-            <td>{{item.child}} ({{item.score}})</td>
+            <td>{{item.child}}</td>
           {% endfor %}
         </tr>
       {% endfor %}

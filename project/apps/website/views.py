@@ -166,15 +166,24 @@ def merge_group(request, parent, child):
 
 def remove_group(request, parent):
     duplicates = GroupF.objects.filter(parent__id=parent)
-    p = Group.objects.get(id=parent)
-    if p.kind == 1:
+    group = Group.objects.get(id=parent)
+    children = [d.child for d in duplicates]
+    records = []
+    for c in children:
+        try:
+            records.append(GroupF.objects.get(parent=c))
+        except GroupF.DoesNotExist:
+            pass
+    if group.kind == 1:
         r = redirect('website:quartets')
     else:
         r = redirect('website:choruses')
     duplicates.delete()
+    for record in records:
+        record.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent.name)
+        "Removed {0} from duplicates.".format(group.name)
     )
     return r
 
@@ -215,10 +224,20 @@ def merge_song(request, parent, child):
 
 def remove_song(request, parent):
     duplicates = SongF.objects.filter(parent__id=parent)
+    song = Song.objects.get(id=parent)
+    children = [d.child for d in duplicates]
+    records = []
+    for c in children:
+        try:
+            records.append(SongF.objects.get(parent=c))
+        except SongF.DoesNotExist:
+            pass
     duplicates.delete()
+    for record in records:
+        record.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent.song)
+        "Removed {0} from duplicates.".format(song.name)
     )
     return redirect('website:songs')
 
