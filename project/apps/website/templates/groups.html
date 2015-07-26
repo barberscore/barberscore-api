@@ -13,7 +13,7 @@
         <tr>
           <td>{{group.name}}</td>
           {% for item in group.group_duplicates.all %}
-            <td>{{item.child}} ({{item.score}})</td>
+          <td><a href="{% url 'website:merge_group' item.parent.id.hex item.child.id.hex %}">{{item.child}} ({{item.score}})</a></td>
           {% endfor %}
         </tr>
       {% endfor %}
