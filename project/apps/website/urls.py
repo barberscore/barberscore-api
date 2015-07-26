@@ -6,19 +6,16 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    # url(r'^collection/$', views.collections, name='collections'),
     url(r'^person/$', views.persons, name='persons'),
     url(r'^chorus/$', views.choruses, name='choruses'),
     url(r'^quartet/$', views.quartets, name='quartets'),
     url(r'^song/$', views.songs, name='songs'),
-    url(r'^merge-group/(?P<parent>[a-zA-Z0-9-]+)/(?P<child>[a-zA-Z0-9-]+)/$', views.merge_group, name='merge_group'),
+    url(r'^merge-groups/(?P<parent>[a-zA-Z0-9-]+)/(?P<child>[a-zA-Z0-9-]+)/$', views.merge_groups, name='merge_groups'),
     url(r'^remove-group/(?P<parent>[a-zA-Z0-9-]+)/$', views.remove_group, name='remove_group'),
-    url(r'^merge-song/(?P<parent>[a-zA-Z0-9-]+)/(?P<child>[a-zA-Z0-9-]+)/$', views.merge_song, name='merge_song'),
+    url(r'^merge-songs/(?P<parent>[a-zA-Z0-9-]+)/(?P<child>[a-zA-Z0-9-]+)/$', views.merge_songs, name='merge_songs'),
     url(r'^remove-song/(?P<parent>[a-zA-Z0-9-]+)/$', views.remove_song, name='remove_song'),
-    # url(r'^collection/(?P<id>[a-zA-Z0-9-]+)/$', views.collection, name='collection'),
-    # url(r'^merge/(?P<id>[a-zA-Z0-9-]+)/$', views.merge, name='merge'),
-    # url(r'^skip/(?P<id>[a-zA-Z0-9-]+)/$', views.skip, name='skip'),
-    # url(r'^flag/(?P<id>[a-zA-Z0-9-]+)/$', views.flag, name='flag'),
+    url(r'^merge-persons/(?P<parent>[a-zA-Z0-9-]+)/(?P<child>[a-zA-Z0-9-]+)/$', views.merge_persons, name='merge_persons'),
+    url(r'^remove-person/(?P<parent>[a-zA-Z0-9-]+)/$', views.remove_person, name='remove_person'),
 ]
 
 if settings.DEBUG:
