@@ -11,7 +11,7 @@
     <tbody>
       {% for group in groups %}
         <tr>
-          <td>{{group.name}}</td>
+          <td>{{group.name}} (<a href="{% url 'website:remove_group' item.parent.id.hex %}">X</a>)</td>
           {% for item in group.group_duplicates.all %}
           <td><a href="{% url 'website:merge_group' item.parent.id.hex item.child.id.hex %}">{{item.child}} ({{item.score}})</a></td>
           {% endfor %}
