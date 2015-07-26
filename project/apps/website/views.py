@@ -121,8 +121,17 @@ def flag(request, id):
     return r
 
 
-def groups(request):
-    groups = Group.objects.order_by('name')
+def choruses(request):
+    groups = Group.objects.filter(kind=2).order_by('name')
+    return render(
+        request,
+        'groups.html',
+        {'groups': groups},
+    )
+
+
+def quartets(request):
+    groups = Group.objects.filter(kind=1).order_by('name')
     return render(
         request,
         'groups.html',
