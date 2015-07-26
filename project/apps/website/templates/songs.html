@@ -11,9 +11,9 @@
     <tbody>
       {% for song in songs %}
       <tr>
-          <td>{{song.name}} (<a href="{% url 'website:remove_song' song.id.hex %}">X</a>)</td>
+        <td><a href="{% url 'website:remove_song' song.id.hex %}"><span class='fa fa-trash-o' style="color:red"></span></a>&nbsp;{{song.name}}&nbsp;<a target='_blank' href="{% url 'admin:api_song_change' song.id.hex %}"><span class='fa fa-external-link'></span></a></td>
         {% for item in song.song_duplicates.all %}
-          <td><a href="{% url 'website:merge_song' item.parent.id.hex item.child.id.hex %}">{{item.child}}</a></td>
+        <td><a href="{% url 'website:merge_song' item.parent.id.hex item.child.id.hex %}">{{item.child}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_song_change' item.child.id.hex %}"><span class='fa fa-external-link'></span></a></td>
         {% endfor %}
       </tr>
       {% endfor %}
@@ -23,3 +23,6 @@
   <h1>No Duplicates!</h1>
   {% endif %}
 {% endblock content %}
+
+
+
