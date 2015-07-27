@@ -1563,17 +1563,15 @@ class Spot(models.Model):
             ('bhs_arranger', 'bhs_songname')
         )
 
-    # def __unicode__(self):
-    #     return self.name
+    def __unicode__(self):
+        return self.name
 
-    # def save(self, *args, **kwargs):
-    #     self.name = "{0} [{1}]".format(
-    #         if self.song:d
-    #             self.song
-    #         else:self.get_kind_display(),
-    #         self.get_year_display(),
-    #     )
-    #     super(Spot, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.name = "{0} [{1}]".format(
+            self.song,
+            self.person,
+        )
+        super(Spot, self).save(*args, **kwargs)
 
 
 class PersonF(models.Model):
