@@ -1211,6 +1211,10 @@ class Performance(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    is_parody = models.BooleanField(
+        default=False,
+    )
+
     catalog = models.ForeignKey(
         'Catalog',
         related_name='performances',
@@ -1537,6 +1541,12 @@ class Spot(models.Model):
         max_length=200,
     )
 
+    name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=200,
+    )
+
     person_match = models.CharField(
         null=True,
         blank=True,
@@ -1552,6 +1562,18 @@ class Spot(models.Model):
         unique_together = (
             ('bhs_arranger', 'bhs_songname', 'is_parody')
         )
+
+    # def __unicode__(self):
+    #     return self.name
+
+    # def save(self, *args, **kwargs):
+    #     self.name = "{0} [{1}]".format(
+    #         if self.song:d
+    #             self.song
+    #         else:self.get_kind_display(),
+    #         self.get_year_display(),
+    #     )
+    #     super(Spot, self).save(*args, **kwargs)
 
 
 class PersonF(models.Model):
