@@ -58,6 +58,7 @@ class Common(models.Model):
         populate_from='name',
         always_update=True,
         unique=True,
+        max_length=255,
     )
 
     location = models.CharField(
@@ -301,6 +302,7 @@ class Convention(TimeFramedModel):
         populate_from='name',
         always_update=True,
         unique=True,
+        max_length=255,
     )
 
     dates = models.CharField(
@@ -396,6 +398,7 @@ class Contest(StatusModel):
         populate_from='name',
         always_update=True,
         unique=True,
+        max_length=255,
     )
 
     name = models.CharField(
@@ -1560,7 +1563,8 @@ class Spot(models.Model):
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
-        unique=False,
+        unique=True,
+        max_length=255,
     )
 
     class Meta:
