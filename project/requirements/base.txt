@@ -20,3 +20,4 @@ https://github.com/dbinetti/django-autoslug/zipball/master
 fuzzywuzzy==0.6.0
 python-Levenshtein==0.12.0
 jsonfield==1.0.3
+titlecase==0.7.2
