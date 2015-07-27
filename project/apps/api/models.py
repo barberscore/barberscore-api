@@ -1542,9 +1542,8 @@ class Spot(models.Model):
     )
 
     name = models.CharField(
-        null=True,
-        blank=True,
         max_length=200,
+        unique=True,
     )
 
     person_match = models.CharField(
@@ -1556,6 +1555,12 @@ class Spot(models.Model):
     fuzzy = models.TextField(
         null=True,
         blank=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
     )
 
     class Meta:
