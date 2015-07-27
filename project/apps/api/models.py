@@ -1548,6 +1548,11 @@ class Spot(models.Model):
         blank=True,
     )
 
+    class Meta:
+        unique_together = (
+            ('bhs_arranger', 'bhs_songname', 'is_parody')
+        )
+
 
 class PersonF(models.Model):
     parent = models.ForeignKey(
