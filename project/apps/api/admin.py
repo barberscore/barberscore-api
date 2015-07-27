@@ -637,7 +637,7 @@ class SpotAdmin(admin.ModelAdmin):
         # ArrangersInline,
     ]
     list_display = [
-        'id',
+        'name',
         'song_match',
         'bhs_songname',
         'song',
