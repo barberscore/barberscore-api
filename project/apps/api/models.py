@@ -1560,7 +1560,7 @@ class Spot(models.Model):
 
     class Meta:
         unique_together = (
-            ('bhs_arranger', 'bhs_songname', 'is_parody')
+            ('bhs_arranger', 'bhs_songname')
         )
 
     # def __unicode__(self):
