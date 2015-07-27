@@ -594,8 +594,10 @@ class ChartAdmin(admin.ModelAdmin):
 class SpotAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
+        'song_match',
         'song',
         'bhs_songname',
+        'person_match',
         'person',
         'bhs_arranger',
         'bhs_id',
@@ -620,8 +622,10 @@ class SpotAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'id',
+        'song_match',
         'bhs_songname',
         'song',
+        'person_match',
         'bhs_arranger',
         'person',
         'bhs_id',
