@@ -1557,11 +1557,11 @@ class Spot(models.Model):
         blank=True,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        # unique=True,
-    )
+    # slug = AutoSlugField(
+    #     populate_from='name',
+    #     always_update=True,
+    #     unique=True,
+    # )
 
     class Meta:
         unique_together = (
