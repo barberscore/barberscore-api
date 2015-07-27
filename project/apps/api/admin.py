@@ -136,6 +136,21 @@ class CompositionsInline(admin.TabularInline):
     show_change_link = True
 
 
+class SpotsInline(admin.TabularInline):
+    model = Spot
+    fields = (
+        'person',
+        'song',
+    )
+    extra = 0
+    raw_id_fields = (
+        'song',
+        'person',
+    )
+    can_delete = True
+    show_change_link = True
+
+
 class ContestantsInline(admin.TabularInline):
     form = select2_modelform(
         Contestant,
@@ -419,6 +434,7 @@ class SongAdmin(admin.ModelAdmin):
 
     inlines = [
         CompositionsInline,
+        SpotsInline,
     ]
 
 
