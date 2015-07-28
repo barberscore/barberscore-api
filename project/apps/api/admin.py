@@ -530,20 +530,14 @@ class PerformanceAdmin(admin.ModelAdmin):
 class ArrangementAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
-        'song_match',
         'song',
-        'bhs_songname',
-        'person_match',
         'arranger',
-        'bhs_arranger',
         'bhs_id',
         'bhs_published',
         'bhs_fee',
         'bhs_difficulty',
         'bhs_tempo',
         'bhs_medley',
-        'is_parody',
-        'is_medley',
     )
     raw_id_fields = (
         'song',
@@ -557,11 +551,7 @@ class ArrangementAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'name',
-        'song_match',
-        'bhs_songname',
         'song',
-        'person_match',
-        'bhs_arranger',
         'arranger',
         'bhs_id',
         'bhs_published',
