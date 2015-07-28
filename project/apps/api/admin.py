@@ -18,9 +18,7 @@ from .models import (
     Performance,
     Singer,
     Director,
-    Chart,
-    Arranger,
-    Spot,
+    Arrangement,
 )
 
 
@@ -33,7 +31,7 @@ class PerformancesInline(admin.TabularInline):
         'contestant',
         'round',
         'order',
-        'chart',
+        'arrangement',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -46,7 +44,7 @@ class PerformancesInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'contestant',
-        'chart',
+        'arrangement',
     )
     can_delete = True
     show_change_link = True
@@ -98,54 +96,16 @@ class DirectorsInline(admin.TabularInline):
     can_delete = True
 
 
-class ArrangersInline(admin.TabularInline):
-    model = Arranger
-    form = select2_modelform(
-        Arranger,
-        attrs={'width': '100px'},
-    )
+class ArrangementsInline(admin.TabularInline):
+    model = Arrangement
     fields = (
-        'chart',
-        'person',
-        'part',
-    )
-    ordering = (
-        'part',
-        # 'contestant',
-    )
-    extra = 0
-    raw_id_fields = (
-        'person',
-        'chart',
-    )
-    can_delete = True
-
-
-class CompositionsInline(admin.TabularInline):
-    model = Chart.songs.through
-    fields = (
-        'chart',
+        'arranger',
         'song',
     )
     extra = 0
     raw_id_fields = (
         'song',
-        'chart',
-    )
-    can_delete = True
-    show_change_link = True
-
-
-class SpotsInline(admin.TabularInline):
-    model = Spot
-    fields = (
-        'person',
-        'song',
-    )
-    extra = 0
-    raw_id_fields = (
-        'song',
-        'person',
+        'arranger',
     )
     can_delete = True
     show_change_link = True
@@ -433,8 +393,7 @@ class SongAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        CompositionsInline,
-        SpotsInline,
+        ArrangementsInline,
     ]
 
 
@@ -503,18 +462,13 @@ class PersonAdmin(admin.ModelAdmin):
         'picture',
         'description',
         'notes',
-        # 'charts',
     )
 
     inlines = [
         DirectorsInline,
         SingersInline,
-        ArrangersInline,
+        ArrangementsInline,
     ]
-
-    # filter_horizontal = (
-    #     'charts',
-    # )
 
 
 @admin.register(Performance)
@@ -522,7 +476,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'name',
-        'chart',
+        'arrangement',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -544,7 +498,7 @@ class PerformanceAdmin(admin.ModelAdmin):
             'order',
         ),
         (
-            'chart',
+            'arrangement',
         ),
         (
             'mus_points',
@@ -568,53 +522,19 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'contestant',
-        'chart',
+        'arrangement',
     )
 
 
-@admin.register(Chart)
-class ChartAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = (
-        'name',
-        # 'song',
-        # 'arranger',
-        'songs',
-        # 'arrangers',
-    )
-    # raw_id_fields = (
-    #     'song',
-    #     'arranger',
-    # )
-    search_fields = (
-        'name',
-        'songs__name',
-    )
-    filter_vertical = (
-        'songs',
-        # 'arrangers',
-    )
-    inlines = [
-        PerformancesInline,
-        ArrangersInline,
-    ]
-    readonly_fields = (
-        'name',
-    )
-    # exclude = (
-    #     'arrangers',
-    # )
-
-
-@admin.register(Spot)
-class SpotAdmin(admin.ModelAdmin):
+@admin.register(Arrangement)
+class ArrangementAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'song_match',
         'song',
         'bhs_songname',
         'person_match',
-        'person',
+        'arranger',
         'bhs_arranger',
         'bhs_id',
         'bhs_published',
@@ -627,14 +547,13 @@ class SpotAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'song',
-        'person',
+        'arranger',
     )
     search_fields = (
         'song__name',
     )
     inlines = [
         PerformancesInline,
-        # ArrangersInline,
     ]
     list_display = [
         'name',
@@ -643,7 +562,7 @@ class SpotAdmin(admin.ModelAdmin):
         'song',
         'person_match',
         'bhs_arranger',
-        'person',
+        'arranger',
         'bhs_id',
         'bhs_published',
         'bhs_fee',
