@@ -6,6 +6,7 @@ from django.shortcuts import (
     redirect,
 )
 
+from fuzzywuzzy import process
 from django.db import IntegrityError
 from django.contrib import messages
 from django.db.models import Q
@@ -29,8 +30,8 @@ def home(request):
 
 def choruses(request):
     groups = Group.objects.filter(
-        group_duplicates__isnull=False,
-    ).filter(kind=2).distinct().order_by('name')
+        duplicates__isnull=False,
+    ).filter(kind=Group.CHORUS).distinct().order_by('name')
     return render(
         request,
         'groups.html',
@@ -40,8 +41,8 @@ def choruses(request):
 
 def quartets(request):
     groups = Group.objects.filter(
-        group_duplicates__isnull=False,
-    ).filter(kind=1).distinct().order_by('name')
+        duplicates__isnull=False,
+    ).filter(kind=Group.QUARTET).distinct().order_by('name')
     return render(
         request,
         'groups.html',
@@ -51,7 +52,7 @@ def quartets(request):
 
 def songs(request):
     songs = Song.objects.filter(
-        song_duplicates__isnull=False,
+        duplicates__isnull=False,
     ).distinct().order_by('name')
     return render(
         request,
@@ -62,7 +63,7 @@ def songs(request):
 
 def persons(request):
     persons = Person.objects.filter(
-        person_duplicates__isnull=False,
+        duplicates__isnull=False,
     ).distinct().order_by('name')
     return render(
         request,
@@ -228,5 +229,89 @@ def merge_persons(request, parent_id, child_id):
     messages.success(
         request,
         "Merged {0} into {1}.".format(child, parent)
+    )
+    return redirect('website:persons')
+
+
+def build_chorus(request):
+    vs = Group.objects.filter(kind=Group.CHORUS).values('name')
+    choices = [v['name'] for v in vs]
+    gs = Group.objects.filter(kind=Group.CHORUS)
+    for g in gs:
+        matches = process.extract(g.name, choices)
+        for match, score in matches:
+            if score > 85 and score < 100:
+                child = Group.objects.get(name=match)
+                DuplicateGroup.objects.create(
+                    parent=g,
+                    child=child,
+                    score=score,
+                )
+    messages.success(
+        request,
+        "Build complete.",
+    )
+    return redirect('website:choruses')
+
+
+def build_quartet(request):
+    vs = Group.objects.filter(kind=Group.QUARTET).values('name')
+    choices = [v['name'] for v in vs]
+    gs = Group.objects.filter(kind=Group.QUARTET)
+    for g in gs:
+        matches = process.extract(g.name, choices)
+        for match, score in matches:
+            if score > 85 and score < 100:
+                child = Group.objects.get(name=match)
+                DuplicateGroup.objects.create(
+                    parent=g,
+                    child=child,
+                    score=score,
+                )
+    messages.success(
+        request,
+        "Build complete.",
+    )
+    return redirect('website:quartets')
+
+
+def build_song(request):
+    vs = Song.objects.values('name')
+    choices = [v['name'] for v in vs]
+    gs = Song.objects.all()
+    for g in gs:
+        matches = process.extract(g.name, choices)
+        for match, score in matches:
+            if score > 85 and score < 100:
+                child = Song.objects.get(name=match)
+                DuplicateSong.objects.create(
+                    parent=g,
+                    child=child,
+                    score=score,
+                )
+    messages.success(
+        request,
+        "Build complete.",
+    )
+    return redirect('website:songs')
+
+
+def build_person(request):
+    vs = Person.objects.values('name')
+    choices = [v['name'] for v in vs]
+    gs = Person.objects.all()
+    for g in gs:
+        matches = process.extract(g.name, choices)
+        for match, score in matches:
+            if score > 85 and score < 100:
+                child = Person.objects.get(name=match)
+                DuplicatePerson.objects.create(
+                    parent=g,
+                    child=child,
+                    score=score,
+                )
+    messages.success(
+        request,
+        "Build complete.",
     )
     return redirect('website:persons')
