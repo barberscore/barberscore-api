@@ -238,7 +238,7 @@ def merge_persons(request, parent_id, child_id):
     return redirect('website:persons')
 
 
-def build_chorus(request):
+def build_chorus():
     vs = Group.objects.filter(kind=Group.CHORUS).values('name')
     choices = [v['name'] for v in vs]
     gs = Group.objects.filter(kind=Group.CHORUS)
@@ -252,14 +252,14 @@ def build_chorus(request):
                     child=child,
                     score=score,
                 )
-    messages.success(
-        request,
-        "Build complete.",
-    )
-    return redirect('website:choruses')
+    # messages.success(
+    #     request,
+    #     "Build complete.",
+    # )
+    # return redirect('website:choruses')
 
 
-def build_quartet(request):
+def build_quartet():
     vs = Group.objects.filter(kind=Group.QUARTET).values('name')
     choices = [v['name'] for v in vs]
     gs = Group.objects.filter(kind=Group.QUARTET)
@@ -273,14 +273,14 @@ def build_quartet(request):
                     child=child,
                     score=score,
                 )
-    messages.success(
-        request,
-        "Build complete.",
-    )
-    return redirect('website:quartets')
+    # messages.success(
+    #     request,
+    #     "Build complete.",
+    # )
+    # return redirect('website:quartets')
 
 
-def build_song(request):
+def build_song():
     vs = Song.objects.values('name')
     choices = [v['name'] for v in vs]
     gs = Song.objects.all()
@@ -294,14 +294,14 @@ def build_song(request):
                     child=child,
                     score=score,
                 )
-    messages.success(
-        request,
-        "Build complete.",
-    )
-    return redirect('website:songs')
+    # messages.success(
+    #     request,
+    #     "Build complete.",
+    # )
+    # return redirect('website:songs')
 
 
-def build_person(request):
+def build_person():
     vs = Person.objects.values('name')
     choices = [v['name'] for v in vs]
     gs = Person.objects.all()
@@ -315,8 +315,8 @@ def build_person(request):
                     child=child,
                     score=score,
                 )
-    messages.success(
-        request,
-        "Build complete.",
-    )
-    return redirect('website:persons')
+    # messages.success(
+    #     request,
+    #     "Build complete.",
+    # )
+    # return redirect('website:persons')
