@@ -1044,81 +1044,6 @@ class Director(models.Model):
         )
 
 
-class Arranger(models.Model):
-    """Chorus relation"""
-    ARRANGER = 1
-    COARRANGER = 2
-
-    PART_CHOICES = (
-        (ARRANGER, 'Arranger'),
-        (COARRANGER, 'Co-Arranger'),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    chart = models.ForeignKey(
-        'Chart',
-        null=True,
-        blank=True,
-        related_name='arrangers',
-    )
-
-    catalog = models.ForeignKey(
-        'Catalog',
-        related_name='arrangers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='arrangements',
-    )
-
-    part = models.IntegerField(
-        choices=PART_CHOICES,
-        default=ARRANGER,
-    )
-
-    def __unicode__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.name = "{0} {1}".format(
-            self.chart,
-            self.person,
-        )
-        super(Arranger, self).save(*args, **kwargs)
-
-    # def clean(self):
-    #         if self.contestant.group.kind == Group.QUARTET:
-    #             raise ValidationError('Quartets do not have directors.')
-
-    class Meta:
-        unique_together = (
-            ('chart', 'person',),
-        )
-
-
 class Song(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1206,28 +1131,12 @@ class Performance(models.Model):
         choices=ORDER_CHOICES,
     )
 
-    chart = models.ForeignKey(
-        'Chart',
-        related_name='performances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     is_parody = models.BooleanField(
         default=False,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
-        related_name='performances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    spot = models.ForeignKey(
-        'Spot',
+    arrangement = models.ForeignKey(
+        'Arrangement',
         related_name='performances',
         null=True,
         blank=True,
@@ -1371,88 +1280,7 @@ class Chart(models.Model):
         super(Chart, self).save(*args, **kwargs)
 
 
-class Catalog(models.Model):
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_published = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_songname = models.CharField(
-        null=True,
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_arranger = models.CharField(
-        null=True,
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_fee = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_difficulty = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DIFFICULTY
-    )
-
-    bhs_tempo = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=TEMPO,
-    )
-
-    bhs_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    song = models.ForeignKey(
-        'Song',
-        null=True,
-        blank=True,
-        related_name='catalogs',
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='catalogs',
-    )
-
-
-class Spot(models.Model):
+class Arrangement(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1528,14 +1356,14 @@ class Spot(models.Model):
         'Song',
         null=True,
         blank=True,
-        related_name='spots',
+        related_name='arrangements',
     )
 
-    person = models.ForeignKey(
+    arranger = models.ForeignKey(
         'Person',
         null=True,
         blank=True,
-        related_name='spots',
+        related_name='arrangements',
     )
 
     song_match = models.CharField(
@@ -1578,9 +1406,9 @@ class Spot(models.Model):
     def save(self, *args, **kwargs):
         self.name = "{0} [{1}]".format(
             self.song,
-            self.person,
+            self.arranger,
         )
-        super(Spot, self).save(*args, **kwargs)
+        super(Arrangement, self).save(*args, **kwargs)
 
 
 class PersonF(models.Model):

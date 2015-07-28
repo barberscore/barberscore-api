@@ -97,8 +97,8 @@ def remove_group(request, parent):
 def merge_songs(request, parent, child):
     parent = Song.objects.get(id=parent)
     child = Song.objects.get(id=child)
-    charts = child.charts.all()
-    if not charts.exists():
+    spots = child.spots.all()
+    if not spots.exists():
         child.delete()
         messages.warning(
             request,
@@ -106,15 +106,14 @@ def merge_songs(request, parent, child):
         )
         return redirect('website:songs')
     # move related records
-    for chart in charts:
-        chart.songs.add(parent)
-        chart.songs.remove(child)
+    for spot in spots:
+        spot.song = parent
         try:
-            chart.save()
+            spot.save()
         except IntegrityError:
             messages.error(
                 request,
-                "Target {0} already exists.  Merge manually".format(chart),
+                "Target {0} already exists.  Merge manually".format(spot),
             )
             duplicates = SongF.objects.filter(parent_id=parent)
             children = [d.child for d in duplicates]
