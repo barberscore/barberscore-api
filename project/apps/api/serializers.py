@@ -13,8 +13,7 @@ from .models import (
     Performance,
     Singer,
     Director,
-    Chart,
-    Arranger,
+    Arrangement,
 )
 
 from .search_indexes import (
@@ -227,7 +226,7 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    charts = serializers.SlugRelatedField(
+    arrangements = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -240,7 +239,7 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            'charts',
+            'arrangements',
         )
         lookup_field = 'slug'
 
@@ -296,7 +295,7 @@ class SearchSerializer(HaystackSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    chart = serializers.SlugRelatedField(
+    arrangement = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -315,7 +314,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'round',
             'order',
-            'chart',
+            'arrangement',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -378,70 +377,25 @@ class DirectorSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class ArrangerSerializer(serializers.ModelSerializer):
-    chart = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    person = serializers.SlugRelatedField(
+class ArrangementSerializer(serializers.ModelSerializer):
+    song = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
-    class Meta:
-        model = Arranger
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'chart',
-            'person',
-            'name',
-            'part',
-        )
-        lookup_field = 'slug'
-
-
-class ChartSerializer(serializers.ModelSerializer):
-    # song = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # arranger = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    songs = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    performances = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    arrangers = serializers.SlugRelatedField(
-        many=True,
+    arranger = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
     class Meta:
-        model = Chart
+        model = Arrangement
         fields = (
             'id',
             'url',
             'slug',
             'name',
-            # 'song',
-            # 'arranger',
-            'arrangers',
-            'performances',
-            'songs',
+            'song',
+            'arranger',
         )
         lookup_field = 'slug'
