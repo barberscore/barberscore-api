@@ -2,13 +2,22 @@
 {% load staticfiles %}
 
 {% block title %}
-  Deduplication Tool
+  Barberscore Merge Tool
 {% endblock title %}
 
 {% block content %}
   <div class='container'>
-    <p>
-      Hello, world!
-    </p>
+    <h2>
+      Barberscore Merge Tool
+    </h2>
+    <br><br>
+      Instructions are <a href='http://quick.as/QY6WS73r5'>here</a>.  Click on a link to get to the merge tool.
+    <br><br>
+    <ul class='list-unstyled'>
+      <li><a href='{% url "website:choruses" %}'>Duplicate Choruses</a></li>
+      <li><a href='{% url "website:quartets" %}'>Duplicate Quartets</a></li>
+      <li><a href='{% url "website:songs" %}'>Duplicate Songs</a></li>
+      <li><a href='{% url "website:persons" %}'>Duplicate Persons</a></li>
+    </ul>
   </div>
 {% endblock content %}
