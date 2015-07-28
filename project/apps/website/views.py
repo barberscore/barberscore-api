@@ -100,16 +100,17 @@ def merge_groups(request, parent_id, child_id):
     # move related records
     for contestant in contestants:
         contestant.group = parent
-        try:
-            contestant.save()
-        except IntegrityError:
-            messages.error(
-                request,
-                "Target {0} already exists.  Merge manually.".format(contestant),
-            )
-            duplicates = DuplicateGroup.filter(child=child)
-            duplicates.delete()
-            return r
+        contestant.save()
+        # try:
+        #     contestant.save()
+        # except IntegrityError:
+        #     messages.error(
+        #         request,
+        #         "Target {0} already exists.  Merge manually.".format(contestant),
+        #     )
+        #     duplicates = DuplicateGroup.filter(child=child)
+        #     duplicates.delete()
+        #     return r
     # once records are moved, remove redundant group
     try:
         child.delete()
@@ -142,16 +143,17 @@ def merge_songs(request, parent_id, child_id):
     # move related records
     for arrangement in arrangements:
         arrangement.song = parent
-        try:
-            arrangement.save()
-        except IntegrityError:
-            messages.error(
-                request,
-                "Target {0} already exists.  Merge manually.".format(arrangement),
-            )
-            duplicates = DuplicateSong.filter(child=child)
-            duplicates.delete()
-            return redirect('website:songs')
+        arrangement.save()
+        # try:
+        #     arrangement.save()
+        # except IntegrityError:
+        #     messages.error(
+        #         request,
+        #         "Target {0} already exists.  Merge manually.".format(arrangement),
+        #     )
+        #     duplicates = DuplicateSong.filter(child=child)
+        #     duplicates.delete()
+        #     return redirect('website:songs')
     # once records are moved, remove redundant object
     try:
         child.delete()
@@ -187,40 +189,43 @@ def merge_persons(request, parent_id, child_id):
     # move related records
     for quartet in quartets:
         quartet.person = parent
-        try:
-            quartet.save()
-        except IntegrityError:
-            messages.error(
-                request,
-                "Target {0} already exists.  Merge manually.".format(quartet),
-            )
-            duplicates = DuplicatePerson.filter(child=child)
-            duplicates.delete()
-            return redirect('website:persons')
+        quartet.save()
+        # try:
+        #     quartet.save()
+        # except IntegrityError:
+        #     messages.error(
+        #         request,
+        #         "Target {0} already exists.  Merge manually.".format(quartet),
+        #     )
+        #     duplicates = DuplicatePerson.filter(child=child)
+        #     duplicates.delete()
+        #     return redirect('website:persons')
     for chorus in choruses:
         chorus.person = parent
-        try:
-            chorus.save()
-        except IntegrityError:
-            messages.error(
-                request,
-                "Target {0} already exists.  Merge manually.".format(chorus),
-            )
-            duplicates = DuplicatePerson.filter(child=child)
-            duplicates.delete()
-            return redirect('website:persons')
+        chorus.save()
+        # try:
+        #     chorus.save()
+        # except IntegrityError:
+        #     messages.error(
+        #         request,
+        #         "Target {0} already exists.  Merge manually.".format(chorus),
+        #     )
+        #     duplicates = DuplicatePerson.filter(child=child)
+        #     duplicates.delete()
+        #     return redirect('website:persons')
     for arrangement in arrangements:
         arrangement.person = parent
-        try:
-            arrangement.save()
-        except IntegrityError:
-            messages.error(
-                request,
-                "Target {0} already exists.  Merge manually.".format(arrangement),
-            )
-            duplicates = DuplicatePerson.filter(child=child)
-            duplicates.delete()
-            return redirect('website:persons')
+        arrangement.save()
+        # try:
+        #     arrangement.save()
+        # except IntegrityError:
+        #     messages.error(
+        #         request,
+        #         "Target {0} already exists.  Merge manually.".format(arrangement),
+        #     )
+        #     duplicates = DuplicatePerson.filter(child=child)
+        #     duplicates.delete()
+        #     return redirect('website:persons')
     # once records are moved, remove redundant group
     try:
         child.delete()
