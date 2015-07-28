@@ -1416,6 +1416,7 @@ class Arrangement(models.Model):
 class DuplicateGroup(models.Model):
     parent = models.ForeignKey(
         Group,
+        related_name='duplicates',
     )
     child = models.ForeignKey(
         Group,
@@ -1428,6 +1429,7 @@ class DuplicateGroup(models.Model):
 class DuplicateSong(models.Model):
     parent = models.ForeignKey(
         Song,
+        related_name='duplicates',
     )
     child = models.ForeignKey(
         Song,
@@ -1440,6 +1442,7 @@ class DuplicateSong(models.Model):
 class DuplicatePerson(models.Model):
     parent = models.ForeignKey(
         Person,
+        related_name='duplicates',
     )
     child = models.ForeignKey(
         Person,
