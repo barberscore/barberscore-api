@@ -383,6 +383,8 @@ class Contest(StatusModel):
     )
 
     INTERNATIONAL = 1
+    DISTRICT = 2
+    PRELIMS = 4
 
     LEVEL_CHOICES = (
         (INTERNATIONAL, "International"),
