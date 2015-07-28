@@ -1413,52 +1413,37 @@ class Arrangement(models.Model):
         super(Arrangement, self).save(*args, **kwargs)
 
 
-class PersonF(models.Model):
-    parent = models.ForeignKey(
-        Person,
-        related_name='person_duplicates',
-    )
-    child = models.ForeignKey(
-        Person,
-        related_name='person_children',
-        null=True,
-        blank=True,
-    )
-    score = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-
-class SongF(models.Model):
-    parent = models.ForeignKey(
-        Song,
-        related_name='song_duplicates',
-    )
-    child = models.ForeignKey(
-        Song,
-        related_name='song_children',
-        null=True,
-        blank=True,
-    )
-    score = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-
-class GroupF(models.Model):
+class DuplicateGroup(models.Model):
     parent = models.ForeignKey(
         Group,
-        related_name='group_duplicates',
     )
     child = models.ForeignKey(
         Group,
-        related_name='group_children',
-        null=True,
-        blank=True,
+        related_name='children',
     )
     score = models.IntegerField(
-        null=True,
-        blank=True,
+    )
+
+
+class DuplicateSong(models.Model):
+    parent = models.ForeignKey(
+        Song,
+    )
+    child = models.ForeignKey(
+        Song,
+        related_name='children',
+    )
+    score = models.IntegerField(
+    )
+
+
+class DuplicatePerson(models.Model):
+    parent = models.ForeignKey(
+        Person,
+    )
+    child = models.ForeignKey(
+        Person,
+        related_name='children',
+    )
+    score = models.IntegerField(
     )
