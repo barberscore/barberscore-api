@@ -72,6 +72,7 @@ class SingersInline(admin.TabularInline):
     max_num = 4
     min_num = 4
     can_delete = True
+    show_change_link = True
 
 
 class DirectorsInline(admin.TabularInline):
