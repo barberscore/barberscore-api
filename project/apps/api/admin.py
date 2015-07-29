@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from django_object_actions import (
     DjangoObjectActions,
     takes_instance_or_queryset,
@@ -51,6 +50,7 @@ class PerformancesInline(admin.TabularInline):
 
 
 class SingersInline(admin.TabularInline):
+    model = Singer
     form = select2_modelform(
         Singer,
         attrs={'width': '100px'},
@@ -64,12 +64,13 @@ class SingersInline(admin.TabularInline):
         'part',
         'contestant',
     )
-    model = Singer
     extra = 0
     raw_id_fields = (
         'person',
         'contestant',
     )
+    max_num = 4
+    min_num = 4
     can_delete = True
 
 
