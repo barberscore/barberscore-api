@@ -242,7 +242,9 @@ def build_chorus():
     vs = Group.objects.filter(kind=Group.CHORUS).values('name')
     choices = [v['name'] for v in vs]
     gs = Group.objects.filter(kind=Group.CHORUS)
+    i = 0
     for g in gs:
+        i += 1
         matches = process.extract(g.name, choices)
         for match, score in matches:
             if score > 85 and score < 100:
@@ -252,6 +254,8 @@ def build_chorus():
                     child=child,
                     score=score,
                 )
+        print i
+    return "Done"
     # messages.success(
     #     request,
     #     "Build complete.",
@@ -263,7 +267,9 @@ def build_quartet():
     vs = Group.objects.filter(kind=Group.QUARTET).values('name')
     choices = [v['name'] for v in vs]
     gs = Group.objects.filter(kind=Group.QUARTET)
+    i = 0
     for g in gs:
+        i += 1
         matches = process.extract(g.name, choices)
         for match, score in matches:
             if score > 85 and score < 100:
@@ -273,6 +279,8 @@ def build_quartet():
                     child=child,
                     score=score,
                 )
+        print i
+    return "Done"
     # messages.success(
     #     request,
     #     "Build complete.",
@@ -284,7 +292,9 @@ def build_song():
     vs = Song.objects.values('name')
     choices = [v['name'] for v in vs]
     gs = Song.objects.all()
+    i = 0
     for g in gs:
+        i += 1
         matches = process.extract(g.name, choices)
         for match, score in matches:
             if score > 85 and score < 100:
@@ -294,6 +304,8 @@ def build_song():
                     child=child,
                     score=score,
                 )
+        print i
+    return "Done"
     # messages.success(
     #     request,
     #     "Build complete.",
@@ -305,7 +317,9 @@ def build_person():
     vs = Person.objects.values('name')
     choices = [v['name'] for v in vs]
     gs = Person.objects.all()
+    i = 0
     for g in gs:
+        i += 1
         matches = process.extract(g.name, choices)
         for match, score in matches:
             if score > 85 and score < 100:
@@ -315,6 +329,8 @@ def build_person():
                     child=child,
                     score=score,
                 )
+        print i
+    return "Done"
     # messages.success(
     #     request,
     #     "Build complete.",
