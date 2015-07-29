@@ -15,6 +15,8 @@ from apps.api.models import (
     Group,
     Song,
     Person,
+    Arrangement,
+    Performance,
     DuplicateGroup,
     DuplicateSong,
     DuplicatePerson,
@@ -143,17 +145,21 @@ def merge_songs(request, parent_id, child_id):
     # move related records
     for arrangement in arrangements:
         arrangement.song = parent
-        arrangement.save()
-        # try:
-        #     arrangement.save()
-        # except IntegrityError:
-        #     messages.error(
-        #         request,
-        #         "Target {0} already exists.  Merge manually.".format(arrangement),
-        #     )
-        #     duplicates = DuplicateSong.filter(child=child)
-        #     duplicates.delete()
-        #     return redirect('website:songs')
+        try:
+            arrangement.save()
+        except IntegrityError:
+            new = Arrangement.objects.get(
+                song=parent,
+                arranger=arrangement.arranger,
+            )
+            ps = Performance.objects.filter(
+                arrangement=arrangement,
+            )
+            for p in ps:
+                p.arrangement = new
+                p.save()
+        child.delete()
+        return redirect('website:songs')
     # once records are moved, remove redundant object
     try:
         child.delete()
