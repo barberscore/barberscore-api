@@ -914,6 +914,10 @@ class Contestant(TimeFramedModel):
             ('group', 'contest',),
         )
 
+    def clean(self):
+        if self.singers.count() > 4:
+            raise ValidationError('There can not be more than four persons in a quartet.')
+
 
 class Singer(models.Model):
     """Quartet Relation"""
@@ -974,6 +978,11 @@ class Singer(models.Model):
     def clean(self):
         if self.contestant.group.kind == Group.CHORUS:
             raise ValidationError('Choruses do not have quartet singers.')
+        if self.part:
+            if [s['part'] for s in self.contestant.singers.values(
+                'part'
+            )].count(self.part) > 1:
+                raise ValidationError('There can not be more than one of the same part in a quartet.')
 
     class Meta:
         unique_together = (
