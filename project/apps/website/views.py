@@ -47,7 +47,7 @@ def choruses(request):
     ).filter(kind=Group.CHORUS).distinct().order_by('name')
     paginator = Paginator(
         groups_all,
-        10,
+        1,
     )
     page = request.GET.get('page')
     try:
@@ -69,7 +69,7 @@ def quartets(request):
     ).filter(kind=Group.QUARTET).distinct().order_by('name')
     paginator = Paginator(
         groups_all,
-        10,
+        1,
     )
     page = request.GET.get('page')
     try:
@@ -91,7 +91,7 @@ def songs(request):
     ).distinct().order_by('name')
     paginator = Paginator(
         songs_all,
-        10,
+        1,
     )
     page = request.GET.get('page')
     try:
@@ -113,7 +113,7 @@ def persons(request):
     ).distinct().order_by('name')
     paginator = Paginator(
         persons_all,
-        10,
+        1,
     )
     page = request.GET.get('page')
     try:
