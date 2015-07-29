@@ -958,8 +958,6 @@ class Singer(models.Model):
     )
 
     part = models.IntegerField(
-        null=True,
-        blank=True,
         choices=PART_CHOICES,
     )
 
