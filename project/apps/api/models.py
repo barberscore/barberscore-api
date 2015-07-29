@@ -132,6 +132,10 @@ class Common(models.Model):
         null=True,
     )
 
+    def clean(self):
+        if self.name.endswith(" ") or self.name.startswith(" "):
+            raise ValidationError('Names must not start or end with extra spaces.')
+
     class Meta:
         abstract = True
 
