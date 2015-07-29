@@ -6,17 +6,27 @@ from django.shortcuts import (
     redirect,
 )
 
+from django.core.urlresolvers import reverse
+
 from fuzzywuzzy import process
-from django.db import IntegrityError
+
+from django.db import (
+    IntegrityError,
+    transaction,
+)
+
 from django.contrib import messages
 from django.db.models import Q
+from django.core.paginator import (
+    Paginator,
+    EmptyPage,
+    PageNotAnInteger,
+)
 
 from apps.api.models import (
     Group,
     Song,
     Person,
-    Arrangement,
-    Performance,
     DuplicateGroup,
     DuplicateSong,
     DuplicatePerson,
@@ -31,88 +41,118 @@ def home(request):
 
 
 def choruses(request):
-    groups = Group.objects.filter(
+    groups_all = Group.objects.filter(
         duplicates__isnull=False,
     ).filter(kind=Group.CHORUS).distinct().order_by('name')
+    paginator = Paginator(
+        groups_all,
+        10,
+    )
+    page = request.GET.get('page')
+    try:
+        groups = paginator.page(page)
+    except PageNotAnInteger:
+        groups = paginator.page(1)
+    except EmptyPage:
+        groups = paginator.page(paginator.num_pages)
     return render(
         request,
         'groups.html',
-        {'groups': groups},
+        {'groups': groups, 'page': page},
     )
 
 
 def quartets(request):
-    groups = Group.objects.filter(
+    groups_all = Group.objects.filter(
         duplicates__isnull=False,
     ).filter(kind=Group.QUARTET).distinct().order_by('name')
+    paginator = Paginator(
+        groups_all,
+        10,
+    )
+    page = request.GET.get('page')
+    try:
+        groups = paginator.page(page)
+    except PageNotAnInteger:
+        groups = paginator.page(1)
+    except EmptyPage:
+        groups = paginator.page(paginator.num_pages)
     return render(
         request,
         'groups.html',
-        {'groups': groups},
+        {'groups': groups, 'page': page},
     )
 
 
 def songs(request):
-    songs = Song.objects.filter(
+    songs_all = Song.objects.filter(
         duplicates__isnull=False,
     ).distinct().order_by('name')
+    paginator = Paginator(
+        songs_all,
+        10,
+    )
+    page = request.GET.get('page')
+    try:
+        songs = paginator.page(page)
+    except PageNotAnInteger:
+        songs = paginator.page(1)
+    except EmptyPage:
+        songs = paginator.page(paginator.num_pages)
     return render(
         request,
         'songs.html',
-        {'songs': songs},
+        {'songs': songs, 'page': page},
     )
 
 
 def persons(request):
-    persons = Person.objects.filter(
+    persons_all = Person.objects.filter(
         duplicates__isnull=False,
     ).distinct().order_by('name')
+    paginator = Paginator(
+        persons_all,
+        10,
+    )
+    page = request.GET.get('page')
+    try:
+        persons = paginator.page(page)
+    except PageNotAnInteger:
+        persons = paginator.page(1)
+    except EmptyPage:
+        persons = paginator.page(paginator.num_pages)
     return render(
         request,
         'persons.html',
-        {'persons': persons},
+        {'persons': persons, 'page': page},
     )
 
 
-def remove_group(request, parent_id):
-    parent = Group.objects.get(id=parent_id)
-    if parent.kind == Group.QUARTET:
-        r = redirect('website:quartets')
-    else:
-        r = redirect('website:choruses')
-    duplicates = DuplicateGroup.objects.filter(
-        Q(parent=parent) | Q(child=parent)
-    )
-    duplicates.delete()
-    messages.error(
-        request,
-        "Removed {0} from duplicates.".format(parent.name)
-    )
-    return r
-
-
+@transaction.atomic
 def merge_groups(request, parent_id, child_id):
     parent = Group.objects.get(id=parent_id)
     child = Group.objects.get(id=child_id)
     if parent.kind == 1:
-        r = redirect('website:quartets')
+        target = reverse('website:quartets')
     else:
-        r = redirect('website:choruses')
+        target = reverse('website:choruses')
+    page = request.GET.get('page')
+    if page:
+        target = target + "?page={0}".format(page)
+    r = redirect(target)
     contestants = child.contestants.all()
     # move related records
-    for contestant in contestants:
-        contestant.group = parent
-        contestant.save()
-        # try:
-        #     contestant.save()
-        # except IntegrityError:
-        #     messages.error(
-        #         request,
-        #         "Target {0} already exists.  Merge manually.".format(contestant),
-        #     )
-        #     duplicates = DuplicateGroup.filter(child=child)
-        #     duplicates.delete()
-        #     return r
+    with transaction.atomic():
+        for contestant in contestants:
+            contestant.group = parent
+            try:
+                contestant.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "There is a Contest conflict betwen {0} and {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(parent, child),
+                )
+                return r
     # once records are moved, remove redundant group
     try:
         child.delete()
@@ -125,41 +165,28 @@ def merge_groups(request, parent_id, child_id):
     return r
 
 
-def remove_song(request, parent_id):
-    parent = Song.objects.get(id=parent_id)
-    duplicates = DuplicateSong.objects.filter(
-        Q(parent=parent) | Q(child=parent)
-    )
-    duplicates.delete()
-    messages.error(
-        request,
-        "Removed {0} from duplicates.".format(parent.name)
-    )
-    return redirect('website:songs')
-
-
+@transaction.atomic
 def merge_songs(request, parent_id, child_id):
     parent = Song.objects.get(id=parent_id)
     child = Song.objects.get(id=child_id)
     arrangements = child.arrangements.all()
+    target = reverse('website:songs')
+    page = request.GET.get('page')
+    if page:
+        target = target + "?page={0}".format(page)
+    r = redirect(target)
     # move related records
-    for arrangement in arrangements:
-        arrangement.song = parent
-        try:
-            arrangement.save()
-        except IntegrityError:
-            new = Arrangement.objects.get(
-                song=parent,
-                arranger=arrangement.arranger,
-            )
-            ps = Performance.objects.filter(
-                arrangement=arrangement,
-            )
-            for p in ps:
-                p.arrangement = new
-                p.save()
-        child.delete()
-        return redirect('website:songs')
+    with transaction.atomic():
+        for arrangement in arrangements:
+            arrangement.song = parent
+            try:
+                arrangement.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "There is an existing arrangement for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(arrangement),
+                )
+                return r
     # once records are moved, remove redundant object
     try:
         child.delete()
@@ -169,69 +196,54 @@ def merge_songs(request, parent_id, child_id):
         request,
         "Merged {0} into {1}.".format(child, parent)
     )
-    return redirect('website:songs')
+    return r
 
 
-def remove_person(request, parent_id):
-    parent = Person.objects.get(id=parent_id)
-    duplicates = DuplicatePerson.objects.filter(
-        Q(parent=parent) | Q(child=parent)
-    )
-    duplicates.delete()
-    messages.error(
-        request,
-        "Removed {0} from duplicates.".format(parent.name)
-    )
-    return redirect('website:persons')
-
-
+@transaction.atomic
 def merge_persons(request, parent_id, child_id):
     parent = Person.objects.get(id=parent_id)
     child = Person.objects.get(id=child_id)
     quartets = child.quartets.all()
     choruses = child.choruses.all()
     arrangements = child.arrangements.all()
+    target = reverse('website:persons')
+    page = request.GET.get('page')
+    if page:
+        target = target + "?page={0}".format(page)
+    r = redirect(target)
 
     # move related records
-    for quartet in quartets:
-        quartet.person = parent
-        quartet.save()
-        # try:
-        #     quartet.save()
-        # except IntegrityError:
-        #     messages.error(
-        #         request,
-        #         "Target {0} already exists.  Merge manually.".format(quartet),
-        #     )
-        #     duplicates = DuplicatePerson.filter(child=child)
-        #     duplicates.delete()
-        #     return redirect('website:persons')
-    for chorus in choruses:
-        chorus.person = parent
-        chorus.save()
-        # try:
-        #     chorus.save()
-        # except IntegrityError:
-        #     messages.error(
-        #         request,
-        #         "Target {0} already exists.  Merge manually.".format(chorus),
-        #     )
-        #     duplicates = DuplicatePerson.filter(child=child)
-        #     duplicates.delete()
-        #     return redirect('website:persons')
-    for arrangement in arrangements:
-        arrangement.person = parent
-        arrangement.save()
-        # try:
-        #     arrangement.save()
-        # except IntegrityError:
-        #     messages.error(
-        #         request,
-        #         "Target {0} already exists.  Merge manually.".format(arrangement),
-        #     )
-        #     duplicates = DuplicatePerson.filter(child=child)
-        #     duplicates.delete()
-        #     return redirect('website:persons')
+    with transaction.atomic():
+        for quartet in quartets:
+            quartet.person = parent
+            try:
+                quartet.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "There is an existing member for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(quartet, child),
+                )
+                return r
+        for chorus in choruses:
+            chorus.person = parent
+            try:
+                chorus.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "There is an existing director for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(chorus, child),
+                )
+                return r
+        for arrangement in arrangements:
+            arrangement.person = parent
+            try:
+                arrangement.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "There is an existing arrangement for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(arrangement),
+                )
+                return r
     # once records are moved, remove redundant group
     try:
         child.delete()
@@ -241,7 +253,64 @@ def merge_persons(request, parent_id, child_id):
         request,
         "Merged {0} into {1}.".format(child, parent)
     )
-    return redirect('website:persons')
+    return r
+
+
+def remove_group(request, parent_id):
+    parent = Group.objects.get(id=parent_id)
+    if parent.kind == Group.QUARTET:
+        target = reverse('website:quartets')
+    else:
+        target = reverse('website:choruses')
+    page = request.GET.get('page')
+    if page:
+        target = target + "?page={0}".format(page)
+    r = redirect(target)
+    duplicates = DuplicateGroup.objects.filter(
+        Q(parent=parent) | Q(child=parent)
+    )
+    duplicates.delete()
+    messages.error(
+        request,
+        "Removed {0} from duplicates.".format(parent.name)
+    )
+    return r
+
+
+def remove_song(request, parent_id):
+    parent = Song.objects.get(id=parent_id)
+    target = reverse('website:songs')
+    page = request.GET.get('page')
+    if page:
+        target = target + "?page={0}".format(page)
+    r = redirect(target)
+    duplicates = DuplicateSong.objects.filter(
+        Q(parent=parent) | Q(child=parent)
+    )
+    duplicates.delete()
+    messages.error(
+        request,
+        "Removed {0} from duplicates.".format(parent.name)
+    )
+    return r
+
+
+def remove_person(request, parent_id):
+    parent = Person.objects.get(id=parent_id)
+    target = reverse('website:persons')
+    page = request.GET.get('page')
+    if page:
+        target = target + "?page={0}".format(page)
+    r = redirect(target)
+    duplicates = DuplicatePerson.objects.filter(
+        Q(parent=parent) | Q(child=parent)
+    )
+    duplicates.delete()
+    messages.error(
+        request,
+        "Removed {0} from duplicates.".format(parent.name)
+    )
+    return r
 
 
 def build_chorus():
