@@ -56,7 +56,10 @@ def choruses(request):
         groups = paginator.page(1)
     except EmptyPage:
         groups = paginator.page(paginator.num_pages)
-    duplicate = groups.object_list[0].duplicates.first()
+    try:
+        duplicate = groups.object_list[0].duplicates.first()
+    except IndexError:
+        duplicate = None
     return render(
         request,
         'groups.html',
