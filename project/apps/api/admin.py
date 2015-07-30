@@ -69,8 +69,6 @@ class SingersInline(admin.TabularInline):
         'person',
         'contestant',
     )
-    max_num = 4
-    min_num = 4
     can_delete = True
     show_change_link = True
 

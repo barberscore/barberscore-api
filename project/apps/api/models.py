@@ -973,15 +973,16 @@ class Singer(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1}".format(
+        self.name = "{0} {1} {2}".format(
             self.contestant,
+            self.get_part_display(),
             self.person,
         )
         super(Singer, self).save(*args, **kwargs)
 
     def clean(self):
-        if self.contestant.group.kind == Group.CHORUS:
-            raise ValidationError('Choruses do not have quartet singers.')
+        # if self.contestant.group.kind == Group.CHORUS:
+        #     raise ValidationError('Choruses do not have quartet singers.')
         if self.part:
             if [s['part'] for s in self.contestant.singers.values(
                 'part'
@@ -991,6 +992,9 @@ class Singer(models.Model):
     class Meta:
         unique_together = (
             ('contestant', 'person',),
+        )
+        ordering = (
+            '-name',
         )
 
 
@@ -1041,8 +1045,9 @@ class Director(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1}".format(
+        self.name = "{0} {1} {2}".format(
             self.contestant,
+            self.get_part_display(),
             self.person,
         )
         super(Director, self).save(*args, **kwargs)
