@@ -56,10 +56,11 @@ def choruses(request):
         groups = paginator.page(1)
     except EmptyPage:
         groups = paginator.page(paginator.num_pages)
+    duplicate = groups.object_list[0].duplicates.first()
     return render(
         request,
         'groups.html',
-        {'groups': groups, 'page': page},
+        {'groups': groups, 'page': page, 'duplicate': duplicate},
     )
 
 
@@ -78,10 +79,11 @@ def quartets(request):
         groups = paginator.page(1)
     except EmptyPage:
         groups = paginator.page(paginator.num_pages)
+    duplicate = groups.object_list[0].duplicates.first()
     return render(
         request,
         'groups.html',
-        {'groups': groups, 'page': page},
+        {'groups': groups, 'page': page, 'duplicate': duplicate},
     )
 
 
@@ -100,10 +102,11 @@ def songs(request):
         songs = paginator.page(1)
     except EmptyPage:
         songs = paginator.page(paginator.num_pages)
+    duplicate = songs.object_list[0].duplicates.first()
     return render(
         request,
         'songs.html',
-        {'songs': songs, 'page': page},
+        {'songs': songs, 'page': page, 'duplicate': duplicate},
     )
 
 
@@ -122,10 +125,11 @@ def persons(request):
         persons = paginator.page(1)
     except EmptyPage:
         persons = paginator.page(paginator.num_pages)
+    duplicate = persons.object_list[0].duplicates.first()
     return render(
         request,
         'persons.html',
-        {'persons': persons, 'page': page},
+        {'persons': persons, 'page': page, 'duplicate': duplicate},
     )
 
 

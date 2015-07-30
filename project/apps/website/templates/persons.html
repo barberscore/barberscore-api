@@ -28,28 +28,116 @@
         <tbody>
           {% for person in persons %}
             <tr>
-              <td><a href="{% url 'website:remove-person' person.id.hex %}{%if page%}?page={{page}}{%endif%}"><span class='fa fa-trash-o' style="color:red"></span></a>&nbsp;{{person.name}}&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' person.id.hex %}"><span class='fa fa-external-link'></span></a></td>
-              {% for duplicate in person.duplicates.all %}
-              <td><a href="{% url 'website:merge-persons' duplicate.parent.id.hex duplicate.child.id.hex %}{%if page%}?page={{page}}{%endif%}">{{duplicate.child}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' duplicate.child.id.hex %}"><span class='fa fa-external-link'></span></a></td>
-              {% endfor %}
+              <td class='col-md-1'>
+                <a href="{% url 'website:remove-person' person.id.hex %}{%if page%}?page={{page}}{%endif%}"><span class='fa fa-trash-o fa-2x' style="color:red"></span></a>
+              </td>
+              <td class='col-md-5'>
+                <a href="{% url 'website:merge-persons' duplicate.parent.id.hex duplicate.child.id.hex %}{%if page%}?page={{page}}{%endif%}">{{person.name}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' person.id.hex %}"><span class='fa fa-external-link'></span></a>
+              </td>
+              <td class='col-md-5'>
+                <a href="{% url 'website:merge-persons' duplicate.child.id.hex duplicate.parent.id.hex %}{%if page%}?page={{page}}{%endif%}">{{duplicate.child.name}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' duplicate.child.id.hex %}"><span class='fa fa-external-link'></span></a></td>
+            </tr>
+            <tr>
+              <td class='col-md-1'>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                  <li>{{person.location|default:"<br>"}}</li>
+                  <li>{{person.website|default:"<br>"}}</li>
+                  <li>{{person.facebook|default:"<br>"}}</li>
+                  <li>{{person.twitter|default:"<br>"}}</li>
+                  <li>{{person.email|default:"<br>"}}</li>
+                  <li>{{person.phone|default:"<br>"}}</li>
+                  <li>{{person.chapter_name|default:"<br>"}}</li>
+                  {% comment %}
+                  {% if group.location %}<li>{{group.location}}</li>{% endif %}
+                  {% if group.website %}<li>{{group.website}}</li>{% endif %}
+                  {% if group.facebook %}<li>{{group.facebook}}</li>{% endif %}
+                  {% if group.twitter %}<li>{{group.twitter}}</li>{% endif %}
+                  {% if group.email %}<li>{{group.email}}</li>{% endif %}
+                  {% if group.phone %}<li>{{group.phone}}</li>{% endif %}
+                  {% if group.chapter_name %}<li>{{group.chapter_name}}</li>{% endif %}
+                  {% endcomment %}
+                </ul>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                  <li>{{duplicate.child.location|default:"<br>"}}</li>
+                  <li>{{duplicate.child.website|default:"<br>"}}</li>
+                  <li>{{duplicate.child.facebook|default:"<br>"}}</li>
+                  <li>{{duplicate.child.twitter|default:"<br>"}}</li>
+                  <li>{{duplicate.child.email|default:"<br>"}}</li>
+                  <li>{{duplicate.child.phone|default:"<br>"}}</li>
+                  <li>{{duplicate.child.chapter_name|default:"<br>"}}</li>
+                  {% comment %}
+                  {% if duplicate.child.location %}<li>{{duplicate.child.location}}</li>{% endif %}
+                  {% if duplicate.child.website %}<li>{{duplicate.child.website}}</li>{% endif %}
+                  {% if duplicate.child.facebook %}<li>{{duplicate.child.facebook}}</li>{% endif %}
+                  {% if duplicate.child.twitter %}<li>{{duplicate.child.twitter}}</li>{% endif %}
+                  {% if duplicate.child.email %}<li>{{duplicate.child.email}}</li>{% endif %}
+                  {% if duplicate.child.phone %}<li>{{duplicate.child.phone}}</li>{% endif %}
+                  {% if duplicate.child.chapter_name %}<li>{{duplicate.child.chapter_name}}</li>{% endif %}
+                  {% endcomment %}
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td class='col-md-1'>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                {% for contestant in person.quartets.all %}
+                  <li>{{contestant.name}}</li>
+                {% endfor %}
+                </ul>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                {% for contestant in duplicate.child.quartets.all %}
+                  <li>{{contestant.name}}</li>
+                {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td class='col-md-1'>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                {% for contestant in person.choruses.all %}
+                  <li>{{contestant.name}}</li>
+                {% endfor %}
+                </ul>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                {% for contestant in duplicate.child.choruses.all %}
+                  <li>{{contestant.name}}</li>
+                {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td class='col-md-1'>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                {% for song in person.arrangements.all %}
+                  <li>{{song.name}}</li>
+                {% endfor %}
+                </ul>
+              </td>
+              <td class='col-md-5'>
+                <ul class='list-unstyled'>
+                {% for song in duplicate.child.arrangements.all %}
+                  <li>{{song.name}}</li>
+                {% endfor %}
+                </ul>
+              </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
-      <nav class='pull-left'>
-        <ul class="pager">
-          {% if persons.has_previous %}
-            <li><a href="?page={{ persons.previous_page_number }}">Prev</a></li>
-          {% else %}
-            <li class="disabled"><a href="#">Prev</a></li>
-          {% endif %}
-          {% if persons.has_next %}
-            <li><a href="?page={{persons.next_page_number}}">Next</a></li>
-          {% else %}
-            <li class="disabled"><a href="#">Next</a></li>
-          {% endif %}
-        </ul>
-      </nav>
     {% else %}
       <h1>No Duplicates!</h1>
     {% endif %}
