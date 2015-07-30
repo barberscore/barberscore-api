@@ -12,7 +12,7 @@
     </h2>
     <br><br>
       <p>Instructions are a set of (very short) videos.  </p>
-    <ul class='list-unstyled'>
+    <ul class='list-inline'>
       <li><a href='http://quick.as/wZgxI3dl9'>One</a></li>
       <li><a href='http://quick.as/dQ3XF369Q'>Two</a></li>
       <li><a href='http://quick.as/PmpvsB9D5'>Three</a></li>
@@ -21,13 +21,13 @@
     </ul>
   <br><br>
 
-      <p>Click on a link to get to the merge tool.</p>
+      <p>Click on a link below to merge those objects.</p>
     <br><br>
     <ul class='list-unstyled'>
-      <li><a href='{% url "website:choruses" %}'>Duplicate Choruses</a></li>
-      <li><a href='{% url "website:quartets" %}'>Duplicate Quartets</a></li>
-      <li><a href='{% url "website:songs" %}'>Duplicate Songs</a></li>
-      <li><a href='{% url "website:persons" %}'>Duplicate Persons</a></li>
+      <li><a href='{% url "website:choruses" %}'>Duplicate Choruses</a>: {{choruses}}</li>
+      <li><a href='{% url "website:quartets" %}'>Duplicate Quartets</a>: {{quartets}}</li>
+      <li><a href='{% url "website:songs" %}'>Duplicate Songs</a>: {{songs}}</li>
+      <li><a href='{% url "website:persons" %}'>Duplicate Persons</a>: {{persons}}</li>
     </ul>
   </div>
 {% endblock content %}

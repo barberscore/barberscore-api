@@ -35,9 +35,23 @@ from apps.api.models import (
 
 
 def home(request):
+    choruses = DuplicateGroup.objects.filter(
+        parent__kind=Group.CHORUS,
+    ).count()
+    quartets = DuplicateGroup.objects.filter(
+        parent__kind=Group.QUARTET,
+    ).count()
+    songs = DuplicateSong.objects.count()
+    persons = DuplicatePerson.objects.count()
+
     return render(
         request,
-        'home.html',
+        'home.html', {
+            'choruses': choruses,
+            'quartets': quartets,
+            'songs': songs,
+            'persons': persons,
+        },
     )
 
 
