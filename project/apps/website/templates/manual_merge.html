@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  Manual Merge
+{% endblock title %}
+
+{% block content %}
+  <div class='container'>
+  <h2>Manual Merge</h2>
+  <br><br>
+      <form role='form' class='form-inline' action='' method='POST'>
+      {% csrf_token %}
+        <div class="form-group {% if form.old.errors %} has-error {% endif %}">
+          <label>Old
+            <span class='fa fa-question-circle' data-toggle='tooltip' title='This is the record that will be merged.'></span>
+          </label>
+          {{form.old}}
+        </div>
+        <div class="form-group {% if form.new.errors %} has-error {% endif %}">
+          <label>New
+            <span class='fa fa-question-circle' data-toggle='tooltip' title='The "old" record will be merged into this record.'></span>
+          </label>
+          {{form.new}}
+        </div>
+      <button type="submit" class="btn btn-large btn-primary">Merge</button>
+    </form>
+  </div>
+{% endblock content %}
