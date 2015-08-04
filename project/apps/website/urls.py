@@ -7,9 +7,13 @@ from . import views
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^person/$', views.persons, name='persons'),
+    url(r'^person/all/$', views.all_persons, name='all-persons'),
     url(r'^chorus/$', views.choruses, name='choruses'),
+    url(r'^chorus/all/$', views.all_choruses, name='all-choruses'),
     url(r'^quartet/$', views.quartets, name='quartets'),
+    url(r'^quartet/all/$', views.all_quartets, name='all-quartets'),
     url(r'^song/$', views.songs, name='songs'),
+    url(r'^song/all/$', views.all_songs, name='all-songs'),
     # url(r'^build-chorus/$', views.build_chorus, name='build-chorus'),
     # url(r'^build-quartet/$', views.build_quartet, name='build-quartet'),
     # url(r'^build-song/$', views.build_song, name='build-song'),

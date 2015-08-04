@@ -2,23 +2,23 @@
 {% load staticfiles %}
 
 {% block title %}
-  Persons
+  Quartets
 {% endblock title %}
 
 {% block content %}
   <div class='container'>
-  <h2><a href="{% url 'website:all-persons' %}">Persons</a></h2>
+  <h2><a href="{% url 'website:all-quartets' %}">Quartets</a></h2>
   <br><br>
-    {% if persons %}
+    {% if groups %}
       <nav class='pull-left'>
         <ul class="pager">
-          {% if persons.has_previous %}
-            <li><a href="?page={{ persons.previous_page_number }}">Prev</a></li>
+          {% if groups.has_previous %}
+            <li><a href="?page={{ groups.previous_page_number }}">Prev</a></li>
           {% else %}
             <li class="disabled"><a href="#">Prev</a></li>
           {% endif %}
-          {% if persons.has_next %}
-            <li><a href="?page={{persons.next_page_number}}">Next</a></li>
+          {% if groups.has_next %}
+            <li><a href="?page={{groups.next_page_number}}">Next</a></li>
           {% else %}
             <li class="disabled"><a href="#">Next</a></li>
           {% endif %}
@@ -26,29 +26,30 @@
       </nav>
       <table class='table table-hover '>
         <tbody>
-          {% for person in persons %}
+          {% for group in groups %}
             <tr>
               <td class='col-md-1'>
-                <a href="{% url 'website:remove-person' person.id.hex %}{%if page%}?page={{page}}{%endif%}"><span class='fa fa-trash-o fa-2x' style="color:red"></span></a>
+                <a href="{% url 'website:remove-group' group.id.hex %}{%if page%}?page={{page}}{%endif%}"><span class='fa fa-trash-o fa-2x' style="color:red"></span></a>
               </td>
               <td class='col-md-5'>
-                <a href="{% url 'website:merge-persons' duplicate.parent.id.hex duplicate.child.id.hex %}{%if page%}?page={{page}}{%endif%}">{{person.name}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' person.id.hex %}"><span class='fa fa-external-link'></span></a>
+                <a href="{% url 'website:merge-groups' duplicate.parent.id.hex duplicate.child.id.hex %}{%if page%}?page={{page}}{%endif%}">{{group.name}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_group_change' group.id.hex %}"><span class='fa fa-external-link'></span></a>
               </td>
               <td class='col-md-5'>
-                <a href="{% url 'website:merge-persons' duplicate.child.id.hex duplicate.parent.id.hex %}{%if page%}?page={{page}}{%endif%}">{{duplicate.child.name}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_person_change' duplicate.child.id.hex %}"><span class='fa fa-external-link'></span></a></td>
+                <a href="{% url 'website:merge-groups' duplicate.child.id.hex duplicate.parent.id.hex %}{%if page%}?page={{page}}{%endif%}">{{duplicate.child}}</a>&nbsp;<a target='_blank' href="{% url 'admin:api_group_change' duplicate.child.id.hex %}"><span class='fa fa-external-link'></span></a>
+              </td>
             </tr>
             <tr>
               <td class='col-md-1'>
               </td>
               <td class='col-md-5'>
                 <ul class='list-unstyled'>
-                  <li>{{person.location|default:"<br>"}}</li>
-                  <li>{{person.website|default:"<br>"}}</li>
-                  <li>{{person.facebook|default:"<br>"}}</li>
-                  <li>{{person.twitter|default:"<br>"}}</li>
-                  <li>{{person.email|default:"<br>"}}</li>
-                  <li>{{person.phone|default:"<br>"}}</li>
-                  <li>{{person.chapter_name|default:"<br>"}}</li>
+                  <li>{{group.location|default:"<br>"}}</li>
+                  <li>{{group.website|default:"<br>"}}</li>
+                  <li>{{group.facebook|default:"<br>"}}</li>
+                  <li>{{group.twitter|default:"<br>"}}</li>
+                  <li>{{group.email|default:"<br>"}}</li>
+                  <li>{{group.phone|default:"<br>"}}</li>
+                  <li>{{group.chapter_name|default:"<br>"}}</li>
                   {% comment %}
                   {% if group.location %}<li>{{group.location}}</li>{% endif %}
                   {% if group.website %}<li>{{group.website}}</li>{% endif %}
@@ -80,57 +81,21 @@
                   {% endcomment %}
                 </ul>
               </td>
-            </tr>
-            <tr>
+              </tr>
+              <tr>
               <td class='col-md-1'>
               </td>
               <td class='col-md-5'>
                 <ul class='list-unstyled'>
-                {% for contestant in person.quartets.all %}
+                {% for contestant in group.contestants.all %}
                   <li>{{contestant.name}}</li>
                 {% endfor %}
                 </ul>
               </td>
               <td class='col-md-5'>
                 <ul class='list-unstyled'>
-                {% for contestant in duplicate.child.quartets.all %}
+                {% for contestant in duplicate.child.contestants.all %}
                   <li>{{contestant.name}}</li>
-                {% endfor %}
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <td class='col-md-1'>
-              </td>
-              <td class='col-md-5'>
-                <ul class='list-unstyled'>
-                {% for contestant in person.choruses.all %}
-                  <li>{{contestant.name}}</li>
-                {% endfor %}
-                </ul>
-              </td>
-              <td class='col-md-5'>
-                <ul class='list-unstyled'>
-                {% for contestant in duplicate.child.choruses.all %}
-                  <li>{{contestant.name}}</li>
-                {% endfor %}
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <td class='col-md-1'>
-              </td>
-              <td class='col-md-5'>
-                <ul class='list-unstyled'>
-                {% for song in person.arrangements.all %}
-                  <li>{{song.name}}</li>
-                {% endfor %}
-                </ul>
-              </td>
-              <td class='col-md-5'>
-                <ul class='list-unstyled'>
-                {% for song in duplicate.child.arrangements.all %}
-                  <li>{{song.name}}</li>
                 {% endfor %}
                 </ul>
               </td>

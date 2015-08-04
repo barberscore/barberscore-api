@@ -7,7 +7,7 @@
 
 {% block content %}
   <div class='container'>
-  <h2>Songs</h2>
+  <h2><a href="{% url 'website:all-songs' %}">Songs</a></h2>
   <br><br>
     {% if songs %}
       <nav class='pull-left'>
