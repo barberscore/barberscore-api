@@ -172,7 +172,7 @@ def merge_groups(request, parent_id, child_id):
             except IntegrityError:
                 messages.error(
                     request,
-                    "There is a Contest conflict betwen {0} and {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(parent, child),
+                    u"There is a Contest conflict betwen {0} and {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(parent, child),
                 )
                 return r
     # once records are moved, remove redundant group
@@ -182,7 +182,7 @@ def merge_groups(request, parent_id, child_id):
         raise RuntimeError("Error deleting old group: {0}".format(e))
     messages.success(
         request,
-        "Merged {0} into {1}.".format(child, parent)
+        u"Merged {0} into {1}.".format(child, parent)
     )
     return r
 
@@ -216,7 +216,7 @@ def merge_songs(request, parent_id, child_id):
         raise RuntimeError("Error deleting old song: {0}".format(e))
     messages.success(
         request,
-        "Merged {0} into {1}.".format(child, parent)
+        u"Merged {0} into {1}.".format(child, parent)
     )
     return r
 
@@ -243,7 +243,7 @@ def merge_persons(request, parent_id, child_id):
             except IntegrityError:
                 messages.error(
                     request,
-                    "There is an existing member for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(quartet, child),
+                    u"There is an existing member for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(quartet, child),
                 )
                 return r
         for chorus in choruses:
@@ -253,7 +253,7 @@ def merge_persons(request, parent_id, child_id):
             except IntegrityError:
                 messages.error(
                     request,
-                    "There is an existing director for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(chorus, child),
+                    u"There is an existing director for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(chorus, child),
                 )
                 return r
         for arrangement in arrangements:
@@ -263,7 +263,7 @@ def merge_persons(request, parent_id, child_id):
             except IntegrityError:
                 messages.error(
                     request,
-                    "There is an existing arrangement for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(arrangement),
+                    u"There is an existing arrangement for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(arrangement),
                 )
                 return r
     # once records are moved, remove redundant group
@@ -294,7 +294,7 @@ def remove_group(request, parent_id):
     duplicates.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent.name)
+        u"Removed {0} from duplicates.".format(parent.name)
     )
     return r
 
@@ -312,7 +312,7 @@ def remove_song(request, parent_id):
     duplicates.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent.name)
+        u"Removed {0} from duplicates.".format(parent.name)
     )
     return r
 
@@ -330,7 +330,7 @@ def remove_person(request, parent_id):
     duplicates.delete()
     messages.error(
         request,
-        "Removed {0} from duplicates.".format(parent.name)
+        u"Removed {0} from duplicates.".format(parent.name)
     )
     return r
 
