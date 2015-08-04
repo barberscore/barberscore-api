@@ -18,6 +18,12 @@ urlpatterns = [
     # url(r'^build-quartet/$', views.build_quartet, name='build-quartet'),
     # url(r'^build-song/$', views.build_song, name='build-song'),
     # url(r'^build-person/$', views.build_person, name='build-person'),
+    url(r'^manual-persons/$', views.manual_persons, name='manual-persons'),
+    url(r'^manual-groups/$', views.manual_groups, name='manual-groups'),
+    url(r'^manual-songs/$', views.manual_songs, name='manual-songs'),
+
+
+
     url(r'^merge-groups/(?P<parent_id>[a-zA-Z0-9-]+)/(?P<child_id>[a-zA-Z0-9-]+)/$', views.merge_groups, name='merge-groups'),
     url(r'^remove-group/(?P<parent_id>[a-zA-Z0-9-]+)/$', views.remove_group, name='remove-group'),
     url(r'^merge-songs/(?P<parent_id>[a-zA-Z0-9-]+)/(?P<child_id>[a-zA-Z0-9-]+)/$', views.merge_songs, name='merge-songs'),
