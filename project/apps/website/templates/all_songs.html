@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  Songs
+{% endblock title %}
+
+{% block content %}
+  <div class='container'>
+  <h2><a href="{% url 'website:all-songs' %}">Songs</a></h2>
+  <h3>{{songs.count}} remaining</h3>
+  <br><br>
+    {% if songs %}
+        {% for song in songs %}
+          <ul class='list-unstyled'>
+            <li><a href="{% url 'website:songs' %}?page={{forloop.counter}}">{{song.name}}</a></li>
+          </ul>
+        {% endfor %}
+    {% else %}
+      <h1>No Duplicates!</h1>
+    {% endif %}
+  </div>
+{% endblock content %}

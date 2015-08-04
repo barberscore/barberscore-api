@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  Persons
+{% endblock title %}
+
+{% block content %}
+  <div class='container'>
+  <h2><a href="{% url 'website:all-persons' %}">Persons</a></h2>
+  <h3>{{persons.count}} remaining</h3>
+  <br><br>
+    {% if persons %}
+        {% for person in persons %}
+          <ul class='list-unstyled'>
+            <li><a href="{% url 'website:persons' %}?page={{forloop.counter}}">{{person.name}}</a></li>
+          </ul>
+        {% endfor %}
+    {% else %}
+      <h1>No Duplicates!</h1>
+    {% endif %}
+  </div>
+{% endblock content %}
