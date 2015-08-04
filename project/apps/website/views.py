@@ -55,6 +55,17 @@ def home(request):
     )
 
 
+def all_choruses(request):
+    groups = Group.objects.filter(
+        duplicates__isnull=False,
+    ).filter(kind=Group.CHORUS).distinct().order_by('name')
+    return render(
+        request,
+        'all_choruses.html',
+        {'groups': groups},
+    )
+
+
 def choruses(request):
     groups_all = Group.objects.filter(
         duplicates__isnull=False,
@@ -76,8 +87,19 @@ def choruses(request):
         duplicate = None
     return render(
         request,
-        'groups.html',
+        'choruses.html',
         {'groups': groups, 'page': page, 'duplicate': duplicate},
+    )
+
+
+def all_quartets(request):
+    groups = Group.objects.filter(
+        duplicates__isnull=False,
+    ).filter(kind=Group.QUARTET).distinct().order_by('name')
+    return render(
+        request,
+        'all_quartets.html',
+        {'groups': groups},
     )
 
 
@@ -99,8 +121,19 @@ def quartets(request):
     duplicate = groups.object_list[0].duplicates.first()
     return render(
         request,
-        'groups.html',
+        'quartets.html',
         {'groups': groups, 'page': page, 'duplicate': duplicate},
+    )
+
+
+def all_songs(request):
+    songs = Song.objects.filter(
+        duplicates__isnull=False,
+    ).distinct().order_by('name')
+    return render(
+        request,
+        'all_songs.html',
+        {'songs': songs},
     )
 
 
@@ -124,6 +157,17 @@ def songs(request):
         request,
         'songs.html',
         {'songs': songs, 'page': page, 'duplicate': duplicate},
+    )
+
+
+def all_persons(request):
+    persons = Person.objects.filter(
+        duplicates__isnull=False,
+    ).distinct().order_by('name')
+    return render(
+        request,
+        'all_persons.html',
+        {'persons': persons},
     )
 
 
