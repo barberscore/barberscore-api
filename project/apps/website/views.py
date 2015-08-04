@@ -33,6 +33,12 @@ from apps.api.models import (
     DuplicatePerson,
 )
 
+from .forms import (
+    MergePersonForm,
+    MergeGroupForm,
+    MergeSongForm,
+)
+
 
 def home(request):
     choruses = DuplicateGroup.objects.filter(
@@ -477,3 +483,78 @@ def build_person():
     #     "Build complete.",
     # )
     # return redirect('website:persons')
+
+
+def manual_persons(request):
+    if request.method == 'POST':
+        form = MergePersonForm(request.POST)
+        if form.is_valid():
+            form.merge()
+            messages.success(
+                request,
+                "Success!! Merged {0} into {1}".format(
+                    form.cleaned_data['old'],
+                    form.cleaned_data['new'],
+                )
+            )
+            return redirect('website:home')
+        else:
+            messages.warning(
+                request,
+                form.errors,
+            )
+    else:
+        form = MergePersonForm()
+    return render(
+        request,
+        'manual_merge.html',
+        {'form': form},
+    )
+
+
+def manual_groups(request):
+    if request.method == 'POST':
+        form = MergeGroupForm(request.POST)
+        if form.is_valid():
+            form.merge()
+            messages.success(
+                request,
+                "Success!!",
+            )
+            return redirect('website:home')
+        else:
+            messages.warning(
+                request,
+                form.errors,
+            )
+    else:
+        form = MergeGroupForm()
+    return render(
+        request,
+        'manual_merge.html',
+        {'form': form},
+    )
+
+
+def manual_songs(request):
+    if request.method == 'POST':
+        form = MergeSongForm(request.POST)
+        if form.is_valid():
+            form.merge()
+            messages.success(
+                request,
+                "Success!!",
+            )
+            return redirect('website:home')
+        else:
+            messages.warning(
+                request,
+                form.errors,
+            )
+    else:
+        form = MergeSongForm()
+    return render(
+        request,
+        'manual_merge.html',
+        {'form': form},
+    )

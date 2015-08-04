@@ -29,5 +29,14 @@
       <li><a href='{% url "website:all-songs" %}'>Duplicate Songs</a>: {{songs}}</li>
       <li><a href='{% url "website:all-persons" %}'>Duplicate Persons</a>: {{persons}}</li>
     </ul>
+  <br><br>
+
+      <p>Mege manually. REMEMBER: this will only merge related records; any information directly attached to the old record will be overwritten.</p>
+    <br><br>
+    <ul class='list-unstyled'>
+      <li><a href='{% url "website:manual-groups" %}'>Merge Groups (Quartets or Choruses)</a></li>
+      <li><a href='{% url "website:manual-songs" %}'>Merge Songs</a></li>
+      <li><a href='{% url "website:manual-persons" %}'>Merge Persons</a></li>
+    </ul>
   </div>
 {% endblock content %}
