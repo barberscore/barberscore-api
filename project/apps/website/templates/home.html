@@ -24,10 +24,10 @@
       <p>Click on a link below to merge those objects.</p>
     <br><br>
     <ul class='list-unstyled'>
-      <li><a href='{% url "website:choruses" %}'>Duplicate Choruses</a>: {{choruses}}</li>
-      <li><a href='{% url "website:quartets" %}'>Duplicate Quartets</a>: {{quartets}}</li>
-      <li><a href='{% url "website:songs" %}'>Duplicate Songs</a>: {{songs}}</li>
-      <li><a href='{% url "website:persons" %}'>Duplicate Persons</a>: {{persons}}</li>
+      <li><a href='{% url "website:all-choruses" %}'>Duplicate Choruses</a>: {{choruses}}</li>
+      <li><a href='{% url "website:all-quartets" %}'>Duplicate Quartets</a>: {{quartets}}</li>
+      <li><a href='{% url "website:all-songs" %}'>Duplicate Songs</a>: {{songs}}</li>
+      <li><a href='{% url "website:all-persons" %}'>Duplicate Persons</a>: {{persons}}</li>
     </ul>
   </div>
 {% endblock content %}
