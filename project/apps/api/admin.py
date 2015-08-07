@@ -552,11 +552,13 @@ class ArrangementAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'song',
+        'bhs_songname',
         'arranger',
+        'bhs_arranger',
         'bhs_id',
-        'bhs_published',
-        'bhs_fee',
-        'bhs_difficulty',
-        'bhs_tempo',
-        'bhs_medley',
+        # 'bhs_published',
+        # 'bhs_fee',
+        # 'bhs_difficulty',
+        # 'bhs_tempo',
+        # 'bhs_medley',
     ]
