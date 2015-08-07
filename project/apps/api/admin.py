@@ -545,6 +545,7 @@ class ArrangementAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'song__name',
+        'arranger__name',
     )
     inlines = [
         PerformancesInline,
