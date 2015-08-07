@@ -348,12 +348,12 @@ class Convention(TimeFramedModel):
             self.MIDWINTER,
             self.PACIFIC,
         ]:
-            self.name = "{0} {1}".format(
+            self.name = u"{0} {1}".format(
                 self.get_kind_display(),
                 self.get_year_display(),
             )
         else:
-            self.name = "{0} {1} {2}".format(
+            self.name = u"{0} {1} {2}".format(
                 self.district,
                 self.get_kind_display(),
                 self.get_year_display(),
@@ -503,19 +503,19 @@ class Contest(StatusModel):
 
     def save(self, *args, **kwargs):
         if self.level == self.INTERNATIONAL:
-            self.name = "{0} {1} {2}".format(
+            self.name = u"{0} {1} {2}".format(
                 self.get_level_display(),
                 self.get_kind_display(),
                 self.get_year_display(),
             )
         elif self.level == self.PRELIMS:
-            self.name = "{0} {1} {2}".format(
+            self.name = u"{0} {1} {2}".format(
                 self.district,
                 self.get_level_display(),
                 self.get_year_display(),
             )
         else:
-            self.name = "{0} {1} {2}".format(
+            self.name = u"{0} {1} {2}".format(
                 self.district,
                 self.get_kind_display(),
                 self.get_year_display(),
@@ -864,7 +864,7 @@ class Contestant(TimeFramedModel):
     )
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1}".format(
+        self.name = u"{0} {1}".format(
             self.contest,
             self.group,
         )
@@ -973,7 +973,7 @@ class Singer(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1} {2}".format(
+        self.name = u"{0} {1} {2}".format(
             self.contestant,
             self.get_part_display(),
             self.person,
@@ -1045,7 +1045,7 @@ class Director(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1} {2}".format(
+        self.name = u"{0} {1} {2}".format(
             self.contestant,
             self.get_part_display(),
             self.person,
@@ -1220,7 +1220,7 @@ class Performance(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = "{0} {1} {2} {3}".format(
+        self.name = u"{0} {1} {2} {3}".format(
             self.contestant,
             self.get_round_display(),
             "Song",
@@ -1283,8 +1283,8 @@ class Chart(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        songs = " ".join([(s.name).strip() for s in self.songs.all()])
-        arrangers = " ".join([(a.person.name).strip() for a in self.arrangers.all()])
+        songs = u" ".join([(s.name).strip() for s in self.songs.all()])
+        arrangers = u" ".join([(a.person.name).strip() for a in self.arrangers.all()])
         if arrangers:
             arrangers = '[' + arrangers + ']'
             name = songs + " " + arrangers
@@ -1422,7 +1422,7 @@ class Arrangement(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = "{0} [{1}]".format(
+        self.name = u"{0} [{1}]".format(
             self.song,
             self.arranger,
         )
