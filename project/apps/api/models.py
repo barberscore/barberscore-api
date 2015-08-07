@@ -146,7 +146,7 @@ class Person(Common):
         ordering = ['name']
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     @property
     def first_name(self):
@@ -205,7 +205,7 @@ class Group(Common):
     )
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     class Meta:
         ordering = (
@@ -247,7 +247,7 @@ class District(Common):
         ]
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
 
 class Convention(TimeFramedModel):
@@ -340,7 +340,7 @@ class Convention(TimeFramedModel):
         )
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         if self.kind in [
@@ -499,7 +499,7 @@ class Contest(StatusModel):
                 raise ValidationError("The contest should be the same year as the convention.")
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         if self.level == self.INTERNATIONAL:
@@ -906,7 +906,7 @@ class Contestant(TimeFramedModel):
             return None
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     class Meta:
         ordering = (
@@ -970,7 +970,7 @@ class Singer(models.Model):
     )
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = "{0} {1} {2}".format(
@@ -1042,7 +1042,7 @@ class Director(models.Model):
     )
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = "{0} {1} {2}".format(
@@ -1053,8 +1053,8 @@ class Director(models.Model):
         super(Director, self).save(*args, **kwargs)
 
     def clean(self):
-            if self.contestant.group.kind == Group.QUARTET:
-                raise ValidationError('Quartets do not have directors.')
+        if self.contestant.group.kind == Group.QUARTET:
+            raise ValidationError('Quartets do not have directors.')
 
     class Meta:
         unique_together = (
@@ -1085,7 +1085,7 @@ class Song(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     fuzzy = models.TextField(
         null=True,
@@ -1217,7 +1217,7 @@ class Performance(models.Model):
         )
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = "{0} {1} {2} {3}".format(
@@ -1280,7 +1280,7 @@ class Chart(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         songs = " ".join([(s.name).strip() for s in self.songs.all()])
@@ -1419,7 +1419,7 @@ class Arrangement(models.Model):
         )
 
     def __unicode__(self):
-        return self.name
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = "{0} [{1}]".format(
