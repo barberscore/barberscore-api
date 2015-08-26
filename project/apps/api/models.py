@@ -252,7 +252,7 @@ class District(Common):
 
 class Convention(TimeFramedModel):
     YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 1))):
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
 
     INTERNATIONAL = 1
@@ -371,7 +371,7 @@ class Contest(StatusModel):
     )
 
     YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 1))):
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
 
     QUARTET = 1
