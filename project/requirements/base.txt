@@ -16,8 +16,8 @@ elasticsearch==1.6.0
 django-haystack==2.4.0
 drf-haystack==1.5.1
 django-model-utils==2.3.1
-https://github.com/dbinetti/django-autoslug/zipball/master
 fuzzywuzzy==0.6.1
 python-Levenshtein==0.12.0
 jsonfield==1.0.3
 titlecase==0.7.2
+https://bitbucket.org/neithere/django-autoslug/get/master.zip
