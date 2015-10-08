@@ -40,7 +40,7 @@ class GroupSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'kind',
@@ -97,7 +97,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'contest',
@@ -144,7 +144,7 @@ class ContestSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'year',
@@ -173,7 +173,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'dates',
@@ -207,7 +207,7 @@ class PersonSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'location',
@@ -236,7 +236,7 @@ class SongSerializer(serializers.ModelSerializer):
         model = Song
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'arrangements',
@@ -256,7 +256,7 @@ class DistrictSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'kind',
@@ -309,7 +309,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         model = Performance
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'round',
@@ -343,7 +343,7 @@ class SingerSerializer(serializers.ModelSerializer):
         model = Singer
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'contestant',
             'person',
@@ -367,7 +367,7 @@ class DirectorSerializer(serializers.ModelSerializer):
         model = Director
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'contestant',
             'person',
@@ -392,7 +392,7 @@ class ArrangementSerializer(serializers.ModelSerializer):
         model = Arrangement
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'song',
