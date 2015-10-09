@@ -15,6 +15,7 @@ from .models import (
     Song,
     Person,
     Performance,
+    Score,
     Judge,
     Singer,
     Director,
@@ -46,6 +47,28 @@ class PerformancesInline(admin.TabularInline):
         'contestant',
         'arrangement',
     )
+    can_delete = True
+    show_change_link = True
+
+
+class ScoresInline(admin.TabularInline):
+    # form = select2_modelform(
+    #     Score,
+    #     attrs={'width': '300px'},
+    # )
+    fields = (
+        'judge',
+        'category',
+        'points',
+    )
+    ordering = (
+        'category',
+    )
+    model = Score
+    extra = 0
+    # raw_id_fields = (
+    #     'judge',
+    # )
     can_delete = True
     show_change_link = True
 
@@ -536,6 +559,10 @@ class PerformanceAdmin(admin.ModelAdmin):
             'penalty',
         ),
     )
+
+    inlines = [
+        ScoresInline,
+    ]
 
     list_filter = (
         'contestant__contest__level',
