@@ -15,6 +15,7 @@ from .models import (
     Song,
     Person,
     Performance,
+    Judge,
     Singer,
     Director,
     Arrangement,
@@ -44,6 +45,30 @@ class PerformancesInline(admin.TabularInline):
     raw_id_fields = (
         'contestant',
         'arrangement',
+    )
+    can_delete = True
+    show_change_link = True
+
+
+class JudgesInline(admin.TabularInline):
+    model = Judge
+    form = select2_modelform(
+        Judge,
+        attrs={'width': '100px'},
+    )
+    fields = (
+        'contest',
+        'person',
+        'part',
+    )
+    ordering = (
+        'part',
+        'contest',
+    )
+    extra = 0
+    raw_id_fields = (
+        'person',
+        'contest',
     )
     can_delete = True
     show_change_link = True
@@ -209,6 +234,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     inlines = [
         ContestantsInline,
+        JudgesInline,
     ]
 
     search_fields = (
@@ -468,6 +494,7 @@ class PersonAdmin(admin.ModelAdmin):
         DirectorsInline,
         SingersInline,
         ArrangementsInline,
+        JudgesInline,
     ]
 
 

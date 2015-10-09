@@ -923,6 +923,72 @@ class Contestant(TimeFramedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
 
+class Judge(models.Model):
+    """Contest Judge"""
+    MUSIC = 1
+    PRESENTATION = 2
+    SINGING = 3
+    ADMINISTRATOR = 4
+
+    PART_CHOICES = (
+        (MUSIC, 'Music'),
+        (PRESENTATION, 'Presentation'),
+        (SINGING, 'Singing'),
+        (ADMINISTRATOR, 'Administrator'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='judges',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='contests',
+    )
+
+    part = models.IntegerField(
+        choices=PART_CHOICES,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.contest,
+            self.get_part_display(),
+            self.person,
+        )
+        super(Judge, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('contest', 'person',),
+        )
+        ordering = (
+            '-name',
+        )
+
+
 class Singer(models.Model):
     """Quartet Relation"""
     TENOR = 1
