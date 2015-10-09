@@ -172,17 +172,14 @@ class Person(Common):
 
 class Group(Common):
 
-    QUARTET = 1
-    CHORUS = 2
-
-    KIND_CHOICES = (
-        (QUARTET, "Quartet"),
-        (CHORUS, "Chorus"),
+    KIND = Choices(
+        (1, 'quartet', 'Quartet'),
+        (2, 'chorus', 'Chorus'),
     )
 
     kind = models.IntegerField(
-        choices=KIND_CHOICES,
-        default=QUARTET,
+        choices=KIND,
+        default=KIND.quartet,
     )
 
     chapter_name = models.CharField(
@@ -219,14 +216,10 @@ class Group(Common):
 
 
 class District(Common):
-    BHS = 0
-    DISTRICT = 1
-    AFFILIATE = 2
-
-    KIND_CHOICES = (
-        (BHS, "BHS"),
-        (DISTRICT, "District"),
-        (AFFILIATE, "Affiliate"),
+    KIND = Choices(
+        (0, 'bhs', "BHS"),
+        (1, 'district', "District"),
+        (2, 'affiliate', "Affiliate"),
     )
 
     long_name = models.CharField(
@@ -236,8 +229,8 @@ class District(Common):
     )
 
     kind = models.IntegerField(
-        choices=KIND_CHOICES,
-        default=BHS,
+        choices=KIND,
+        default=KIND.bhs,
     )
 
     class Meta:
@@ -251,22 +244,93 @@ class District(Common):
 
 
 class Convention(TimeFramedModel):
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
+    KIND = Choices(
+        (1, 'international', 'International',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+        (5, 'pacific', 'Pacific',),
+    )
 
-    INTERNATIONAL = 1
-    MIDWINTER = 2
-    FALL = 3
-    SPRING = 4
-    PACIFIC = 5
-
-    KIND_CHOICES = (
-        (INTERNATIONAL, 'International',),
-        (MIDWINTER, 'Midwinter',),
-        (FALL, 'Fall',),
-        (SPRING, 'Spring',),
-        (PACIFIC, 'Pacific',),
+    YEAR = Choices(
+        (2016, '2016', '2016'),
+        (2015, '2015', '2015'),
+        (2014, '2014', '2014'),
+        (2013, '2013', '2013'),
+        (2012, '2012', '2012'),
+        (2011, '2011', '2011'),
+        (2010, '2010', '2010'),
+        (2009, '2009', '2009'),
+        (2008, '2008', '2008'),
+        (2007, '2007', '2007'),
+        (2006, '2006', '2006'),
+        (2005, '2005', '2005'),
+        (2004, '2004', '2004'),
+        (2003, '2003', '2003'),
+        (2002, '2002', '2002'),
+        (2001, '2001', '2001'),
+        (2000, '2000', '2000'),
+        (1999, '1999', '1999'),
+        (1998, '1998', '1998'),
+        (1997, '1997', '1997'),
+        (1996, '1996', '1996'),
+        (1995, '1995', '1995'),
+        (1994, '1994', '1994'),
+        (1993, '1993', '1993'),
+        (1992, '1992', '1992'),
+        (1991, '1991', '1991'),
+        (1990, '1990', '1990'),
+        (1989, '1989', '1989'),
+        (1988, '1988', '1988'),
+        (1987, '1987', '1987'),
+        (1986, '1986', '1986'),
+        (1985, '1985', '1985'),
+        (1984, '1984', '1984'),
+        (1983, '1983', '1983'),
+        (1982, '1982', '1982'),
+        (1981, '1981', '1981'),
+        (1980, '1980', '1980'),
+        (1979, '1979', '1979'),
+        (1978, '1978', '1978'),
+        (1977, '1977', '1977'),
+        (1976, '1976', '1976'),
+        (1975, '1975', '1975'),
+        (1974, '1974', '1974'),
+        (1973, '1973', '1973'),
+        (1972, '1972', '1972'),
+        (1971, '1971', '1971'),
+        (1970, '1970', '1970'),
+        (1969, '1969', '1969'),
+        (1968, '1968', '1968'),
+        (1967, '1967', '1967'),
+        (1966, '1966', '1966'),
+        (1965, '1965', '1965'),
+        (1964, '1964', '1964'),
+        (1963, '1963', '1963'),
+        (1962, '1962', '1962'),
+        (1961, '1961', '1961'),
+        (1960, '1960', '1960'),
+        (1959, '1959', '1959'),
+        (1958, '1958', '1958'),
+        (1957, '1957', '1957'),
+        (1956, '1956', '1956'),
+        (1955, '1955', '1955'),
+        (1954, '1954', '1954'),
+        (1953, '1953', '1953'),
+        (1952, '1952', '1952'),
+        (1951, '1951', '1951'),
+        (1950, '1950', '1950'),
+        (1949, '1949', '1949'),
+        (1948, '1948', '1948'),
+        (1947, '1947', '1947'),
+        (1946, '1946', '1946'),
+        (1945, '1945', '1945'),
+        (1944, '1944', '1944'),
+        (1943, '1943', '1943'),
+        (1942, '1942', '1942'),
+        (1941, '1941', '1941'),
+        (1940, '1940', '1940'),
+        (1939, '1939', '1939'),
     )
 
     id = models.UUIDField(
@@ -283,13 +347,13 @@ class Convention(TimeFramedModel):
     )
 
     kind = models.IntegerField(
-        choices=KIND_CHOICES,
+        choices=KIND,
         null=True,
         blank=True,
     )
 
     year = models.IntegerField(
-        choices=YEAR_CHOICES,
+        choices=YEAR,
         default=datetime.datetime.now().year,
         null=True,
         blank=True,
@@ -370,28 +434,98 @@ class Contest(StatusModel):
         'Complete',
     )
 
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    QUARTET = 1
-    CHORUS = 2
-    SENIOR = 3
-    COLLEGIATE = 4
-
-    KIND_CHOICES = (
-        (QUARTET, 'Quartet',),
-        (CHORUS, 'Chorus',),
-        (SENIOR, 'Senior',),
-        (COLLEGIATE, 'Collegiate',),
+    YEAR = Choices(
+        (2016, '2016', '2016'),
+        (2015, '2015', '2015'),
+        (2014, '2014', '2014'),
+        (2013, '2013', '2013'),
+        (2012, '2012', '2012'),
+        (2011, '2011', '2011'),
+        (2010, '2010', '2010'),
+        (2009, '2009', '2009'),
+        (2008, '2008', '2008'),
+        (2007, '2007', '2007'),
+        (2006, '2006', '2006'),
+        (2005, '2005', '2005'),
+        (2004, '2004', '2004'),
+        (2003, '2003', '2003'),
+        (2002, '2002', '2002'),
+        (2001, '2001', '2001'),
+        (2000, '2000', '2000'),
+        (1999, '1999', '1999'),
+        (1998, '1998', '1998'),
+        (1997, '1997', '1997'),
+        (1996, '1996', '1996'),
+        (1995, '1995', '1995'),
+        (1994, '1994', '1994'),
+        (1993, '1993', '1993'),
+        (1992, '1992', '1992'),
+        (1991, '1991', '1991'),
+        (1990, '1990', '1990'),
+        (1989, '1989', '1989'),
+        (1988, '1988', '1988'),
+        (1987, '1987', '1987'),
+        (1986, '1986', '1986'),
+        (1985, '1985', '1985'),
+        (1984, '1984', '1984'),
+        (1983, '1983', '1983'),
+        (1982, '1982', '1982'),
+        (1981, '1981', '1981'),
+        (1980, '1980', '1980'),
+        (1979, '1979', '1979'),
+        (1978, '1978', '1978'),
+        (1977, '1977', '1977'),
+        (1976, '1976', '1976'),
+        (1975, '1975', '1975'),
+        (1974, '1974', '1974'),
+        (1973, '1973', '1973'),
+        (1972, '1972', '1972'),
+        (1971, '1971', '1971'),
+        (1970, '1970', '1970'),
+        (1969, '1969', '1969'),
+        (1968, '1968', '1968'),
+        (1967, '1967', '1967'),
+        (1966, '1966', '1966'),
+        (1965, '1965', '1965'),
+        (1964, '1964', '1964'),
+        (1963, '1963', '1963'),
+        (1962, '1962', '1962'),
+        (1961, '1961', '1961'),
+        (1960, '1960', '1960'),
+        (1959, '1959', '1959'),
+        (1958, '1958', '1958'),
+        (1957, '1957', '1957'),
+        (1956, '1956', '1956'),
+        (1955, '1955', '1955'),
+        (1954, '1954', '1954'),
+        (1953, '1953', '1953'),
+        (1952, '1952', '1952'),
+        (1951, '1951', '1951'),
+        (1950, '1950', '1950'),
+        (1949, '1949', '1949'),
+        (1948, '1948', '1948'),
+        (1947, '1947', '1947'),
+        (1946, '1946', '1946'),
+        (1945, '1945', '1945'),
+        (1944, '1944', '1944'),
+        (1943, '1943', '1943'),
+        (1942, '1942', '1942'),
+        (1941, '1941', '1941'),
+        (1940, '1940', '1940'),
+        (1939, '1939', '1939'),
     )
 
-    INTERNATIONAL = 1
-    DISTRICT = 2
-    PRELIMS = 4
+    KIND = Choices(
+        (1, 'quartet', 'Quartet',),
+        (2, 'chorus', 'Chorus',),
+        (3, 'senior', 'Senior',),
+        (4, 'collegiate', 'Collegiate',),
+    )
 
-    LEVEL_CHOICES = (
-        (INTERNATIONAL, "International"),
+    LEVEL = Choices(
+        (1, 'international', "International"),
+        (2, 'district', "District"),
+        (4, 'prelims', "Prelims"),
     )
 
     id = models.UUIDField(
@@ -413,17 +547,17 @@ class Contest(StatusModel):
     )
 
     level = models.IntegerField(
-        choices=LEVEL_CHOICES,
-        default=INTERNATIONAL,
+        choices=LEVEL,
+        default=LEVEL.international,
     )
 
     kind = models.IntegerField(
-        choices=KIND_CHOICES,
-        default=QUARTET,
+        choices=KIND,
+        default=KIND.quartet,
     )
 
     year = models.IntegerField(
-        choices=YEAR_CHOICES,
+        choices=YEAR,
         default=datetime.datetime.now().year,
     )
 
@@ -925,16 +1059,11 @@ class Contestant(TimeFramedModel):
 
 class Judge(models.Model):
     """Contest Judge"""
-    MUSIC = 1
-    PRESENTATION = 2
-    SINGING = 3
-    ADMINISTRATOR = 4
-
-    PART_CHOICES = (
-        (MUSIC, 'Music'),
-        (PRESENTATION, 'Presentation'),
-        (SINGING, 'Singing'),
-        (ADMINISTRATOR, 'Administrator'),
+    PART = Choices(
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+        (4, 'administrator', 'Administrator'),
     )
 
     id = models.UUIDField(
@@ -966,7 +1095,7 @@ class Judge(models.Model):
     )
 
     part = models.IntegerField(
-        choices=PART_CHOICES,
+        choices=PART,
     )
 
     def __unicode__(self):
@@ -991,22 +1120,17 @@ class Judge(models.Model):
 
 class Singer(models.Model):
     """Quartet Relation"""
-    TENOR = 1
-    LEAD = 2
-    BARITONE = 3
-    BASS = 4
-
-    PART_CHOICES = (
-        (TENOR, 'Tenor'),
-        (LEAD, 'Lead'),
-        (BARITONE, 'Baritone'),
-        (BASS, 'Bass'),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
     )
 
     name = models.CharField(
@@ -1032,7 +1156,7 @@ class Singer(models.Model):
     )
 
     part = models.IntegerField(
-        choices=PART_CHOICES,
+        choices=PART,
     )
 
     def __unicode__(self):
@@ -1066,18 +1190,15 @@ class Singer(models.Model):
 
 class Director(models.Model):
     """Chorus relation"""
-    DIRECTOR = 1
-    CODIRECTOR = 2
-
-    PART_CHOICES = (
-        (DIRECTOR, 'Director'),
-        (CODIRECTOR, 'Co-Director'),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    PART = Choices(
+        (1, 'director', 'Director'),
+        (2, 'codirector', 'Co-Director'),
     )
 
     name = models.CharField(
@@ -1103,8 +1224,8 @@ class Director(models.Model):
     )
 
     part = models.IntegerField(
-        choices=PART_CHOICES,
-        default=DIRECTOR,
+        choices=PART,
+        default=PART.director,
     )
 
     def __unicode__(self):
@@ -1119,7 +1240,7 @@ class Director(models.Model):
         super(Director, self).save(*args, **kwargs)
 
     def clean(self):
-        if self.contestant.group.kind == Group.QUARTET:
+        if self.contestant.group.kind == Group.KIND.quartet:
             raise ValidationError('Quartets do not have directors.')
 
     class Meta:
@@ -1166,29 +1287,11 @@ class Performance(models.Model):
         editable=False,
     )
 
-    # FINALS = 1
-    # SEMIS = 2
-    # QUARTERS = 3
-
-    # ROUND_CHOICES = (
-    #     (FINALS, "Finals"),
-    #     (SEMIS, "Semis"),
-    #     (QUARTERS, "Quarters"),
-    # )
-
     ROUND = Choices(
         (1, 'finals', 'Finals'),
         (2, 'semis', 'Semis'),
         (3, 'quarters', 'Quarters'),
     )
-
-    # FIRST = 1
-    # SECOND = 2
-
-    # ORDER_CHOICES = (
-    #     (FIRST, '1'),
-    #     (SECOND, '2'),
-    # )
 
     ORDER = Choices(
         (1, 'first', 'First'),
