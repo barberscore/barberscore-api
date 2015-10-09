@@ -1406,6 +1406,16 @@ class Performance(models.Model):
             self.sng_points,
         ])) or None
         panel = self.contestant.contest.panel
+        if self.scores.exists():
+            self.mus_points = self.scores.filter(
+                category=1,  # TODO how does ModelUtils handle?
+            ).aggregate(mp=models.Sum('points'))['mp']
+            self.prs_points = self.scores.filter(
+                category=2,  # TODO how does ModelUtils handle?
+            ).aggregate(mp=models.Sum('points'))['mp']
+            self.sng_points = self.scores.filter(
+                category=3,  # TODO how does ModelUtils handle?
+            ).aggregate(mp=models.Sum('points'))['mp']
         if self.mus_points:
             self.mus_score = round(self.mus_points / panel, 1)
         if self.prs_points:
@@ -1419,10 +1429,10 @@ class Performance(models.Model):
 
 class Score(models.Model):
     CATEGORY = Choices(
-        (1, "Music"),
-        (2, "Presentation"),
-        (3, "Singing"),
-        (4, "Admin"),
+        (1, 'music', "Music"),
+        (2, 'presentation', "Presentation"),
+        (3, 'singing', "Singing"),
+        (4, 'admin', "Admin"),
     )
 
     id = models.UUIDField(
