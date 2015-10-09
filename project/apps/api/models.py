@@ -1309,59 +1309,50 @@ class Performance(models.Model):
         super(Performance, self).save(*args, **kwargs)
 
 
-class Chart(models.Model):
+class Score(models.Model):
+    CATEGORY = Choices(
+        (1, "Music"),
+        (2, "Presentation"),
+        (3, "Singing"),
+        (4, "Admin"),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
     )
 
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
-    songs = models.ManyToManyField(
-        'Song',
+    performance = models.ForeignKey(
+        'Performance',
+        related_name='scores',
+        null=True,
         blank=True,
-        related_name='charts',
+        on_delete=models.SET_NULL,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
+    judge = models.ForeignKey(
+        'Judge',
+        related_name='scores',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
-    class Meta:
-        ordering = ['name']
+    points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
+    category = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=CATEGORY,
+    )
 
-    def save(self, *args, **kwargs):
-        songs = u" ".join([(s.name).strip() for s in self.songs.all()])
-        arrangers = u" ".join([(a.person.name).strip() for a in self.arrangers.all()])
-        if arrangers:
-            arrangers = '[' + arrangers + ']'
-            name = songs + " " + arrangers
-        else:
-            name = songs + " [Unknown]"
-        if self.is_parody:
-            name = name + " (Parody)"
-        if self.is_medley:
-            name = name + " (Medley)"
-        self.name = name
-        super(Chart, self).save(*args, **kwargs)
+    is_practice = models.BooleanField(
+        default=False,
+    )
 
 
 class Arrangement(models.Model):
