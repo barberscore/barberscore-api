@@ -9,7 +9,7 @@ from .models import (
 
 class QuartetFactory(DjangoModelFactory):
     name = "The Buffalo Bills"
-    kind = Group.QUARTET
+    kind = Group.KIND.quartet
 
     class Meta:
         model = Group
