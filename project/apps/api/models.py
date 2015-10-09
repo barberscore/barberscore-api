@@ -1166,28 +1166,33 @@ class Performance(models.Model):
         editable=False,
     )
 
-    FINALS = 1
-    SEMIS = 2
-    QUARTERS = 3
+    # FINALS = 1
+    # SEMIS = 2
+    # QUARTERS = 3
 
-    ROUND_CHOICES = (
-        (FINALS, "Finals"),
-        (SEMIS, "Semis"),
-        (QUARTERS, "Quarters"),
-    )
+    # ROUND_CHOICES = (
+    #     (FINALS, "Finals"),
+    #     (SEMIS, "Semis"),
+    #     (QUARTERS, "Quarters"),
+    # )
 
     ROUND = Choices(
-        (1, "Finals"),
-        (2, "Semis"),
-        (3, "Quarters"),
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semis'),
+        (3, 'quarters', 'Quarters'),
     )
 
-    FIRST = 1
-    SECOND = 2
+    # FIRST = 1
+    # SECOND = 2
 
-    ORDER_CHOICES = (
-        (FIRST, '1'),
-        (SECOND, '2'),
+    # ORDER_CHOICES = (
+    #     (FIRST, '1'),
+    #     (SECOND, '2'),
+    # )
+
+    ORDER = Choices(
+        (1, 'first', 'First'),
+        (2, 'second', 'Second'),
     )
 
     name = models.CharField(
@@ -1212,7 +1217,7 @@ class Performance(models.Model):
     )
 
     order = models.IntegerField(
-        choices=ORDER_CHOICES,
+        choices=ORDER,
     )
 
     is_parody = models.BooleanField(
