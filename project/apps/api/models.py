@@ -408,9 +408,9 @@ class Convention(TimeFramedModel):
 
     def save(self, *args, **kwargs):
         if self.kind in [
-            self.INTERNATIONAL,
-            self.MIDWINTER,
-            self.PACIFIC,
+            self.KIND.international,
+            self.KIND.midwinter,
+            self.KIND.pacific,
         ]:
             self.name = u"{0} {1}".format(
                 self.get_kind_display(),
@@ -625,9 +625,9 @@ class Contest(StatusModel):
             return False
 
     def clean(self):
-            if self.level == self.INTERNATIONAL and self.district is not None:
+            if self.level == self.LEVEL.international and self.district is not None:
                 raise ValidationError('International does not have a district.')
-            if self.level != self.INTERNATIONAL and self.district is None:
+            if self.level != self.LEVEL.international and self.district is None:
                 raise ValidationError('You must provide a district.')
             if self.year != self.convention.year:
                 raise ValidationError("The contest should be the same year as the convention.")
@@ -636,13 +636,13 @@ class Contest(StatusModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.level == self.INTERNATIONAL:
+        if self.level == self.LEVEL.international:
             self.name = u"{0} {1} {2}".format(
                 self.get_level_display(),
                 self.get_kind_display(),
                 self.get_year_display(),
             )
-        elif self.level == self.PRELIMS:
+        elif self.level == self.LEVEL.prelims:
             self.name = u"{0} {1} {2}".format(
                 self.district,
                 self.get_level_display(),
@@ -765,7 +765,7 @@ class Contest(StatusModel):
     #         contestant.save()
 
     def place_quarters(self):
-        if self.kind != self.QUARTET:
+        if self.kind != self.KIND.quartet:
             return
         marker = []
         i = 1
@@ -791,7 +791,7 @@ class Contest(StatusModel):
         return
 
     def place_semis(self):
-        if self.kind != self.QUARTET:
+        if self.kind != self.KIND.quartet:
             return
         marker = []
         i = 1
@@ -817,7 +817,7 @@ class Contest(StatusModel):
         return
 
     def place_finals(self):
-        if self.kind != self.QUARTET:
+        if self.kind != self.KIND.quartet:
             return
         marker = []
         i = 1
