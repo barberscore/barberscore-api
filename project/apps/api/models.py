@@ -467,12 +467,13 @@ class Convention(TimeFramedModel):
 
 class Contest(models.Model):
 
-    # STATUS = Choices(
-    #     'Upcoming',
-    #     'Current',
-    #     'Pending',
-    #     'Complete',
-    # )
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (1, 'upcoming', 'Upcoming',),
+        (2, 'current', 'Current',),
+        (3, 'reviewing', 'Reviewing',),
+        (4, 'complete', 'Complete',),
+    )
 
     YEAR = Choices(
         (2016, '2016', '2016'),
@@ -643,12 +644,9 @@ class Contest(models.Model):
         default=False,
     )
 
-    is_complete = models.BooleanField(
-        default=False,
-    )
-
-    is_place = models.BooleanField(
-        default=False,
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     class Meta:
