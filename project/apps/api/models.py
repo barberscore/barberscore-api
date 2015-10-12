@@ -61,6 +61,20 @@ class Common(models.Model):
         max_length=255,
     )
 
+    start = models.DateField(
+        help_text="""
+            The founding/birth date of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    end = models.DateField(
+        help_text="""
+            The closing/deceased date of the resource.""",
+        blank=True,
+        null=True,
+    )
+
     location = models.CharField(
         help_text="""
             The geographical location of the resource.""",
@@ -132,6 +146,12 @@ class Common(models.Model):
         null=True,
     )
 
+    is_active = models.BooleanField(
+        help_text="""
+            A boolean for active/living resources.""",
+        default=True,
+    )
+
     def clean(self):
         if self.name.endswith(" ") or self.name.startswith(" "):
             raise ValidationError('Names must not start or end with extra spaces.')
@@ -141,6 +161,18 @@ class Common(models.Model):
 
 
 class Person(Common):
+
+    KIND = Choices(
+        (1, 'individual', "Individual"),
+        (2, 'team', "Team"),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            Most persons are individuals; they can be grouped into teams for the purpose of multi-arranger songs.""",
+        choices=KIND,
+        default=KIND.individual,
+    )
 
     class Meta:
         ordering = ['name']
@@ -197,10 +229,6 @@ class Group(Common):
         blank=True,
     )
 
-    is_active = models.BooleanField(
-        default=False,
-    )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -222,15 +250,17 @@ class District(Common):
         (2, 'affiliate', "Affiliate"),
     )
 
-    long_name = models.CharField(
-        null=True,
-        blank=True,
-        max_length=200,
-    )
-
     kind = models.IntegerField(
         choices=KIND,
         default=KIND.bhs,
+    )
+
+    long_name = models.CharField(
+        help_text="""
+            A long-form name for the resource.""",
+        null=True,
+        blank=True,
+        max_length=200,
     )
 
     class Meta:
@@ -341,12 +371,14 @@ class Convention(TimeFramedModel):
 
     name = models.CharField(
         help_text="""
-            The name of the convention.""",
+            The name of the convention (determined programmatically.)""",
         max_length=200,
         unique=True,
     )
 
     kind = models.IntegerField(
+        help_text="""
+            The kind of convention.""",
         choices=KIND,
         null=True,
         blank=True,
@@ -374,22 +406,30 @@ class Convention(TimeFramedModel):
     )
 
     dates = models.CharField(
+        help_text="""
+            The convention dates (will be replaced by start/end).""",
         max_length=200,
         null=True,
         blank=True,
     )
 
     location = models.CharField(
+        help_text="""
+            The location of the convention """,
         max_length=200,
         null=True,
         blank=True,
     )
 
     timezone = TimeZoneField(
+        help_text="""
+            The local timezone of the convention """,
         default='US/Pacific',
     )
 
     is_active = models.BooleanField(
+        help_text="""
+            A global boolean that controls if the resource is accessible via the API""",
         default=False,
     )
 
@@ -542,6 +582,8 @@ class Contest(StatusModel):
     )
 
     name = models.CharField(
+        help_text="""
+            The name of the contest (determined programmatically.)""",
         max_length=200,
         unique=True,
     )
@@ -596,6 +638,8 @@ class Contest(StatusModel):
     )
 
     is_active = models.BooleanField(
+        help_text="""
+            A global boolean that controls if the resource is accessible via the API""",
         default=False,
     )
 
@@ -655,114 +699,6 @@ class Contest(StatusModel):
                 self.get_year_display(),
             )
         super(Contest, self).save(*args, **kwargs)
-
-    # def import_legacy(self):
-    #     reader = csv.reader(self.scoresheet_csv)
-    #     # next(reader)
-    #     data = [row for row in reader]
-
-    #     mappings = {
-    #         'The Westminster Chorus': 'Westminster',
-    #         'Southern Gateway': 'Southern Gateway Chorus',
-    #         'Chorus of Chesapeake': 'Chorus of the Chesapeake',
-    #         'The Big Orange': 'The Big Orange Chorus',
-    #         'The Pathfinder Chorus': 'Pathfinder Chorus',
-    #         'The Big Apple Chorus': 'Big Apple Chorus',
-    #         'Downeasters': 'The Downeasters',
-    #     }
-
-    #     for row in data:
-    #         row[2] = reduce(lambda a, kv: a.replace(*kv), mappings.iteritems(), row[2])
-    #         try:
-    #             group = Group.objects.get(
-    #                 name__iexact=row[2],
-    #             )
-    #         except Group.DoesNotExist:
-    #             if self.kind == self.COLLEGIATE:
-    #                 group = Group.objects.create(
-    #                     name=row[2],
-    #                 )
-    #             else:
-    #                 log.error(u"Missing Group: {0}".format(row[2]))
-    #                 continue
-    #         try:
-    #             contestant = Contestant.objects.get(
-    #                 contest=self,
-    #                 group=group,
-    #             )
-    #         except Contestant.DoesNotExist:
-    #             if self.kind == self.COLLEGIATE:
-    #                 try:
-    #                     district = District.objects.get(
-    #                         name=row[4],
-    #                     )
-    #                 except District.DoesNotExist:
-    #                     district = None
-    #                 contestant = Contestant.objects.create(
-    #                     contest=self,
-    #                     group=group,
-    #                     district=district,
-    #                 )
-    #             else:
-    #                 log.error(u"Missing Contestant: {0}".format(row[2]))
-    #                 continue
-    #         if int(row[0]) == 3:
-    #             contestant.quarters_song1, created = Song.objects.get_or_create(
-    #                 name=u"{0}".format(row[5]).strip(),
-    #             )
-    #             contestant.quarters_mus1_points = int(row[6])
-    #             contestant.quarters_prs1_points = int(row[7])
-    #             contestant.quarters_sng1_points = int(row[8])
-
-    #             contestant.quarters_song2, created = Song.objects.get_or_create(
-    #                 name=u"{0}".format(row[9]).strip(),
-    #             )
-    #             contestant.quarters_mus2_points = int(row[10])
-    #             contestant.quarters_prs2_points = int(row[11])
-    #             contestant.quarters_sng2_points = int(row[12])
-
-    #             contestant.quarters_place = int(row[1])
-
-    #         elif int(row[0]) == 2:
-    #             contestant.semis_song1, created = Song.objects.get_or_create(
-    #                 name=u"{0}".format(row[5]).strip(),
-    #             )
-    #             contestant.semis_mus1_points = int(row[6])
-    #             contestant.semis_prs1_points = int(row[7])
-    #             contestant.semis_sng1_points = int(row[8])
-
-    #             contestant.semis_song2, created = Song.objects.get_or_create(
-    #                 name=u"{0}".format(row[9]).strip(),
-    #             )
-    #             contestant.semis_mus2_points = int(row[10])
-    #             contestant.semis_prs2_points = int(row[11])
-    #             contestant.semis_sng2_points = int(row[12])
-
-    #             contestant.semis_place = int(row[1])
-    #         elif int(row[0]) == 1:
-    #             contestant.finals_song1, created = Song.objects.get_or_create(
-    #                 name=u"{0}".format(row[5]).strip(),
-    #             )
-    #             contestant.finals_mus1_points = int(row[6])
-    #             contestant.finals_prs1_points = int(row[7])
-    #             contestant.finals_sng1_points = int(row[8])
-
-    #             contestant.finals_song2, created = Song.objects.get_or_create(
-    #                 name=u"{0}".format(row[9]).strip(),
-    #             )
-    #             contestant.finals_mus2_points = int(row[10])
-    #             contestant.finals_prs2_points = int(row[11])
-    #             contestant.finals_sng2_points = int(row[12])
-
-    #             contestant.finals_place = int(row[1])
-    #             if contestant.group.kind == 2:
-    #                 contestant.men = int(row[14])
-    #             if self.kind == self.COLLEGIATE:
-    #                 contestant.place = int(row[1])
-    #         else:
-    #             log.error("Missing round")
-    #         contestant.score = float(row[13])
-    #         contestant.save()
 
     def place_quarters(self):
         if self.kind != self.KIND.quartet:

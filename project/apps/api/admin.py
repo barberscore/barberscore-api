@@ -216,11 +216,9 @@ class ConventionAdmin(admin.ModelAdmin):
     fields = (
         'is_active',
         'name',
-        'location',
+        ('location', 'timezone',),
         'dates',
-        'start',
-        'end',
-        'timezone',
+        ('start', 'end',),
         'district',
         'kind',
         'year',
@@ -329,8 +327,10 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     fields = (
+        'is_active',
         'name',
-        ('kind', 'is_active',),
+        'kind',
+        ('start_date', 'end_date',),
         'location',
         'website',
         'facebook',
@@ -470,6 +470,23 @@ class DistrictAdmin(admin.ModelAdmin):
         'kind',
     )
 
+    fields = (
+        'is_active',
+        'name',
+        'long_name',
+        'kind',
+        ('start_date', 'end_date',),
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        'notes',
+    )
+
     list_filter = (
         'kind',
     )
@@ -501,7 +518,10 @@ class PersonAdmin(admin.ModelAdmin):
     )
 
     fields = (
+        'is_active',
         'name',
+        'kind',
+        ('start_date', 'end_date',),
         'location',
         'website',
         'facebook',
