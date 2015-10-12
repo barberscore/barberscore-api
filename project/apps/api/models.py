@@ -23,7 +23,7 @@ from django.core.exceptions import (
 
 from model_utils.models import (
     TimeFramedModel,
-    StatusModel,
+    TimeStampedModel,
 )
 
 from model_utils import Choices
@@ -40,7 +40,7 @@ def generate_image_filename(instance, filename):
     return '{0}{1}'.format(instance.id, ext)
 
 
-class Common(models.Model):
+class Common(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -465,14 +465,14 @@ class Convention(TimeFramedModel):
         super(Convention, self).save(*args, **kwargs)
 
 
-class Contest(StatusModel):
+class Contest(models.Model):
 
-    STATUS = Choices(
-        'Upcoming',
-        'Current',
-        'Pending',
-        'Complete',
-    )
+    # STATUS = Choices(
+    #     'Upcoming',
+    #     'Current',
+    #     'Pending',
+    #     'Complete',
+    # )
 
     YEAR = Choices(
         (2016, '2016', '2016'),
