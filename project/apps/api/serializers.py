@@ -54,6 +54,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'chapterName',
+            'is_active',
             'contestants',
         )
 
@@ -153,9 +154,10 @@ class ContestSerializer(serializers.ModelSerializer):
             'district',
             'panel',
             'is_active',
-            'is_complete',
-            'is_place',
-            'is_score',
+            'status',
+            # 'is_complete',
+            # 'is_place',
+            # 'is_score',
             'scoresheet_pdf',
             'contestants',
         )
@@ -219,6 +221,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'notes',
+            'is_active',
             'arrangements',
             'choruses',
             'quartets',
@@ -270,6 +273,7 @@ class DistrictSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'long_name',
+            'is_active',
             'contestants',
         )
 
