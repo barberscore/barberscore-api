@@ -802,6 +802,11 @@ class Contest(models.Model):
 
 
 class Contestant(TimeFramedModel):
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -931,6 +936,11 @@ class Contestant(TimeFramedModel):
         blank=True,
     )
 
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contest,
@@ -993,6 +1003,11 @@ class Contestant(TimeFramedModel):
 
 class Judge(models.Model):
     """Contest Judge"""
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
     PART = Choices(
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
@@ -1026,6 +1041,11 @@ class Judge(models.Model):
     person = models.ForeignKey(
         'Person',
         related_name='contests',
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     part = models.IntegerField(
@@ -1221,6 +1241,10 @@ class Performance(models.Model):
         editable=False,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
     ROUND = Choices(
         (1, 'finals', 'Finals'),
         (2, 'semis', 'Semis'),
@@ -1247,6 +1271,11 @@ class Performance(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     round = models.IntegerField(
@@ -1362,6 +1391,10 @@ class Performance(models.Model):
 
 
 class Score(models.Model):
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
     CATEGORY = Choices(
         (1, 'music', "Music"),
         (2, 'presentation', "Presentation"),
@@ -1394,6 +1427,11 @@ class Score(models.Model):
     points = models.IntegerField(
         null=True,
         blank=True,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     category = models.IntegerField(
@@ -1536,6 +1574,37 @@ class Arrangement(models.Model):
             self.arranger,
         )
         super(Arrangement, self).save(*args, **kwargs)
+
+
+class Award(models.Model):
+
+    NAME = Choices(
+        (1, 'first', 'First Place Gold Medalist'),
+        (2, 'second', 'First Place Silver Medalist'),
+        (3, 'third', 'Third Place Bronze Medalist'),
+        (4, 'fourth', 'Fourth Place Bronze Medalist'),
+        (5, 'fifth', 'Fifth Place Bronze Medalist'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='awards',
+    )
+
+    name = models.IntegerField(
+        choices=NAME,
+    )
+
+    class Meta:
+        ordering = (
+            'name',
+        )
 
 
 class DuplicateGroup(models.Model):

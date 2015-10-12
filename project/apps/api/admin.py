@@ -20,6 +20,7 @@ from .models import (
     Singer,
     Director,
     Arrangement,
+    Award,
 )
 
 
@@ -155,6 +156,16 @@ class ArrangementsInline(admin.TabularInline):
         'song',
         'arranger',
     )
+    can_delete = True
+    show_change_link = True
+
+
+class AwardsInline(admin.TabularInline):
+    model = Award
+    fields = (
+        'name',
+    )
+    extra = 0
     can_delete = True
     show_change_link = True
 
@@ -374,6 +385,7 @@ class ContestantAdmin(admin.ModelAdmin):
         SingersInline,
         DirectorsInline,
         PerformancesInline,
+        AwardsInline,
     ]
 
     list_display = (
