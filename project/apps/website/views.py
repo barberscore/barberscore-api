@@ -42,10 +42,10 @@ from .forms import (
 
 def home(request):
     choruses = DuplicateGroup.objects.filter(
-        parent__kind=Group.CHORUS,
+        parent__kind=Group.KIND.chorus,
     ).count()
     quartets = DuplicateGroup.objects.filter(
-        parent__kind=Group.QUARTET,
+        parent__kind=Group.KIND.quartet,
     ).count()
     songs = DuplicateSong.objects.count()
     persons = DuplicatePerson.objects.count()
@@ -64,7 +64,7 @@ def home(request):
 def all_choruses(request):
     groups = Group.objects.filter(
         duplicates__isnull=False,
-    ).filter(kind=Group.CHORUS).distinct().order_by('name')
+    ).filter(kind=Group.KIND.chorus).distinct().order_by('name')
     return render(
         request,
         'all_choruses.html',
