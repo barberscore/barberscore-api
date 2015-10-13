@@ -38,10 +38,9 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'kind',
@@ -96,10 +95,9 @@ class ContestantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contestant
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'contest',
@@ -142,10 +140,9 @@ class ContestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contest
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'year',
@@ -163,26 +160,24 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
-class ConventionSerializer(serializers.HyperlinkedModelSerializer):
-    # contests = serializers.HyperlinkedRelatedField(
-    #     view_name='contest-detail',
-    #     lookup_field='slug',
-    #     many=True,
-    #     read_only=True,
-    # )
+class ConventionSerializer(serializers.ModelSerializer):
+    contests = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
 
     class Meta:
         model = Convention
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'dates',
             'year',
             'timezone',
-            # 'contests',
+            'contests',
             'is_active',
         )
         # extra_kwargs = {
@@ -211,10 +206,9 @@ class PersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Person
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'location',
@@ -244,12 +238,11 @@ class SongSerializer(serializers.ModelSerializer):
         model = Song
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'arrangements',
         )
-        lookup_field = 'slug'
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -261,10 +254,9 @@ class DistrictSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'kind',
@@ -318,7 +310,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         model = Performance
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'round',
@@ -335,7 +327,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'penalty',
             'contestant',
         )
-        lookup_field = 'slug'
 
 
 class SingerSerializer(serializers.ModelSerializer):
@@ -352,14 +343,13 @@ class SingerSerializer(serializers.ModelSerializer):
         model = Singer
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'contestant',
             'person',
             'name',
             'part',
         )
-        lookup_field = 'slug'
 
 
 class DirectorSerializer(serializers.ModelSerializer):
@@ -376,14 +366,13 @@ class DirectorSerializer(serializers.ModelSerializer):
         model = Director
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'contestant',
             'person',
             'name',
             'part',
         )
-        lookup_field = 'slug'
 
 
 class ArrangementSerializer(serializers.ModelSerializer):
@@ -401,13 +390,12 @@ class ArrangementSerializer(serializers.ModelSerializer):
         model = Arrangement
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'song',
             'arranger',
         )
-        lookup_field = 'slug'
 
 
 class ScoreSerializer(serializers.ModelSerializer):
@@ -433,10 +421,9 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contestant
-        lookup_field = 'slug'
         fields = (
             'id',
-            'url',
+            # 'url',
             'slug',
             'name',
             'contest',
