@@ -34,6 +34,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
 
+from .validators import (
+    validate_trimmed,
+)
+
 
 def generate_image_filename(instance, filename):
     f, ext = os.path.splitext(filename)
@@ -49,9 +53,15 @@ class Common(TimeStampedModel):
 
     name = models.CharField(
         help_text="""
-            The name of the resource.  Must be unique.  If there are singer name conflicts, please add middle initial, nickname, or other identifying information.""",
+            The name of the resource.""",
         max_length=200,
         unique=True,
+        validators=[
+            validate_trimmed,
+        ],
+        error_messages={
+            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
+        }
     )
 
     slug = AutoSlugField(
@@ -70,7 +80,7 @@ class Common(TimeStampedModel):
 
     end = models.DateField(
         help_text="""
-            The closing/deceased date of the resource.""",
+            The retirement/deceased date of the resource.""",
         blank=True,
         null=True,
     )
@@ -150,10 +160,6 @@ class Common(TimeStampedModel):
         default=True,
     )
 
-    def clean(self):
-        if self.name.endswith(" ") or self.name.startswith(" "):
-            raise ValidationError('Names must not start or end with extra spaces.')
-
     class Meta:
         abstract = True
 
@@ -167,7 +173,7 @@ class Person(Common):
 
     kind = models.IntegerField(
         help_text="""
-            Most persons are individuals; they can be grouped into teams for the purpose of multi-arranger songs.""",
+            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
         choices=KIND,
         default=KIND.individual,
     )
@@ -207,26 +213,38 @@ class Group(Common):
     )
 
     kind = models.IntegerField(
+        help_text="""
+            The kind of group; choices are Quartet or Chorus.""",
         choices=KIND,
         default=KIND.quartet,
     )
 
     chapter_name = models.CharField(
         help_text="""
-            The name of the director(s) of the chorus.""",
+            The chapter name (only for choruses).""",
         max_length=200,
         blank=True,
     )
 
     chapter_code = models.CharField(
         help_text="""
-            The code of the director(s) of the chorus.""",
+            The chapter code (only for choruses).""",
         max_length=200,
         blank=True,
     )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def clean(self):
+        if self.kind == self.KIND.quartet and self.chapter_name:
+            raise ValidationError(
+                {'chapter_name': 'Chapter names are only for choruses.'}
+            )
+        if self.kind == self.KIND.quartet and self.chapter_code:
+            raise ValidationError(
+                {'chapter_code': 'Chapter codes are only for choruses.'}
+            )
 
     class Meta:
         ordering = (
@@ -246,6 +264,8 @@ class District(Common):
     )
 
     kind = models.IntegerField(
+        help_text="""
+            The kind of District.  Choices are BHS (International), District, and Affiliate.""",
         choices=KIND,
         default=KIND.bhs,
     )
