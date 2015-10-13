@@ -50,6 +50,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
         'contests',
     )
     serializer_class = ConventionSerializer
+    lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -63,6 +64,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = ContestSerializer
+    lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -76,6 +78,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'singers',
     )
     serializer_class = ContestantSerializer
+    lookup_field = 'slug'
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -83,6 +86,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = GroupSerializer
+    lookup_field = 'slug'
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -92,6 +96,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'quartets',
     )
     serializer_class = PersonSerializer
+    lookup_field = 'slug'
 
 
 class DistrictViewSet(viewsets.ModelViewSet):
@@ -99,6 +104,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = DistrictSerializer
+    lookup_field = 'slug'
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
@@ -107,6 +113,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         'contestant',
     )
     serializer_class = PerformanceSerializer
+    lookup_field = 'slug'
 
 
 class SingerViewSet(viewsets.ModelViewSet):
@@ -115,6 +122,7 @@ class SingerViewSet(viewsets.ModelViewSet):
         'contestant',
     )
     serializer_class = SingerSerializer
+    lookup_field = 'slug'
 
 
 class DirectorViewSet(viewsets.ModelViewSet):
@@ -123,6 +131,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
         'contestant',
     )
     serializer_class = DirectorSerializer
+    lookup_field = 'slug'
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -130,6 +139,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'arrangements',
     )
     serializer_class = SongSerializer
+    lookup_field = 'slug'
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -146,6 +156,7 @@ class ArrangementViewSet(viewsets.ModelViewSet):
         'arranger',
     )
     serializer_class = ArrangementSerializer
+    lookup_field = 'slug'
 
 
 class SearchViewSet(HaystackViewSet):
@@ -163,3 +174,4 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         'singers',
     )
     serializer_class = ScheduleSerializer
+    lookup_field = 'slug'
