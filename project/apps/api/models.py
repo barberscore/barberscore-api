@@ -114,7 +114,6 @@ class Common(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
-        null=True,
     )
 
     phone = PhoneNumberField(
@@ -143,7 +142,6 @@ class Common(TimeStampedModel):
         help_text="""
             Notes (for internal use only).""",
         blank=True,
-        null=True,
     )
 
     is_active = models.BooleanField(
@@ -197,7 +195,6 @@ class Person(Common):
             return None
 
     fuzzy = models.TextField(
-        null=True,
         blank=True,
     )
 
@@ -219,7 +216,6 @@ class Group(Common):
             The name of the director(s) of the chorus.""",
         max_length=200,
         blank=True,
-        null=True,
     )
 
     chapter_code = models.CharField(
@@ -238,7 +234,6 @@ class Group(Common):
         )
 
     fuzzy = models.TextField(
-        null=True,
         blank=True,
     )
 
@@ -258,7 +253,6 @@ class District(Common):
     long_name = models.CharField(
         help_text="""
             A long-form name for the resource.""",
-        null=True,
         blank=True,
         max_length=200,
     )
@@ -409,7 +403,6 @@ class Convention(TimeFramedModel):
         help_text="""
             The convention dates (will be replaced by start/end).""",
         max_length=200,
-        null=True,
         blank=True,
     )
 
@@ -417,7 +410,6 @@ class Convention(TimeFramedModel):
         help_text="""
             The location of the convention """,
         max_length=200,
-        null=True,
         blank=True,
     )
 
@@ -1229,7 +1221,6 @@ class Song(models.Model):
         return u"{0}".format(self.name)
 
     fuzzy = models.TextField(
-        null=True,
         blank=True,
     )
 
@@ -1339,7 +1330,6 @@ class Performance(models.Model):
     )
 
     penalty = models.TextField(
-        null=True,
         blank=True,
     )
 
@@ -1477,13 +1467,11 @@ class Arrangement(models.Model):
     )
 
     bhs_songname = models.CharField(
-        null=True,
         blank=True,
         max_length=200,
     )
 
     bhs_arranger = models.CharField(
-        null=True,
         blank=True,
         max_length=200,
     )
@@ -1532,7 +1520,6 @@ class Arrangement(models.Model):
     )
 
     song_match = models.CharField(
-        null=True,
         blank=True,
         max_length=200,
     )
@@ -1543,13 +1530,11 @@ class Arrangement(models.Model):
     )
 
     person_match = models.CharField(
-        null=True,
         blank=True,
         max_length=200,
     )
 
     fuzzy = models.TextField(
-        null=True,
         blank=True,
     )
 
