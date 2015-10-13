@@ -1562,7 +1562,7 @@ class Arrangement(models.Model):
 
     class Meta:
         unique_together = (
-            ('bhs_arranger', 'bhs_songname')
+            ('arranger', 'song')
         )
 
     def __unicode__(self):
