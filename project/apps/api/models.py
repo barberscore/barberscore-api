@@ -639,22 +639,44 @@ class Award(models.Model):
         editable=False,
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='awards',
+    name = models.CharField(
+        max_length=255,
+        unique=True,
     )
 
-    name = models.IntegerField(
-        choices=KIND,
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
     )
 
     kind = models.IntegerField(
         choices=KIND,
     )
 
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='awards',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contestant,
+            self.get_kind_display(),
+        )
+        super(Award, self).save(*args, **kwargs)
+
     class Meta:
         ordering = (
             'name',
+        )
+
+        unique_together = (
+            ('kind', 'contestant',),
         )
 
 
