@@ -258,6 +258,395 @@ class Group(Common):
     )
 
 
+class Judge(models.Model):
+    """Contest Judge"""
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    PART = Choices(
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+        (4, 'administrator', 'Administrator'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='judges',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='contests',
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.contest,
+            self.get_part_display(),
+            self.person,
+        )
+        super(Judge, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('contest', 'person',),
+        )
+        ordering = (
+            '-name',
+        )
+
+
+class Singer(models.Model):
+    """Quartet Relation"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='singers',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='quartets',
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.contestant,
+            self.get_part_display(),
+            self.person,
+        )
+        super(Singer, self).save(*args, **kwargs)
+
+    def clean(self):
+        # if self.contestant.group.kind == Group.CHORUS:
+        #     raise ValidationError('Choruses do not have quartet singers.')
+        if self.part:
+            if [s['part'] for s in self.contestant.singers.values(
+                'part'
+            )].count(self.part) > 1:
+                raise ValidationError('There can not be more than one of the same part in a quartet.')
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'person',),
+        )
+        ordering = (
+            '-name',
+        )
+
+
+class Director(models.Model):
+    """Chorus relation"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    PART = Choices(
+        (1, 'director', 'Director'),
+        (2, 'codirector', 'Co-Director'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='directors',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='choruses',
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+        default=PART.director,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.contestant,
+            self.get_part_display(),
+            self.person,
+        )
+        super(Director, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.contestant.group.kind == Group.KIND.quartet:
+            raise ValidationError('Quartets do not have directors.')
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'person',),
+        )
+
+
+class Song(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    fuzzy = models.TextField(
+        blank=True,
+    )
+
+
+class Arrangement(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    TEMPO = Choices(
+        (1, "Ballad"),
+        (2, "Uptune"),
+        (3, "Mixed"),
+    )
+
+    DIFFICULTY = Choices(
+        (1, "Very Easy"),
+        (2, "Easy"),
+        (3, "Medium"),
+        (4, "Hard"),
+        (5, "Very Hard"),
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_published = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_songname = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_fee = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_difficulty = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=DIFFICULTY
+    )
+
+    bhs_tempo = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=TEMPO,
+    )
+
+    bhs_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    song = models.ForeignKey(
+        'Song',
+        null=True,
+        blank=True,
+        related_name='arrangements',
+    )
+
+    arranger = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='arrangements',
+    )
+
+    song_match = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    person_match = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    fuzzy = models.TextField(
+        blank=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    class Meta:
+        unique_together = (
+            ('arranger', 'song')
+        )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} [{1}]".format(
+            self.song,
+            self.arranger,
+        )
+        super(Arrangement, self).save(*args, **kwargs)
+
+
+class Award(models.Model):
+
+    NAME = Choices(
+        (1, 'first', 'First Place Gold Medalist'),
+        (2, 'second', 'First Place Silver Medalist'),
+        (3, 'third', 'Third Place Bronze Medalist'),
+        (4, 'fourth', 'Fourth Place Bronze Medalist'),
+        (5, 'fifth', 'Fifth Place Bronze Medalist'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='awards',
+    )
+
+    name = models.IntegerField(
+        choices=NAME,
+    )
+
+    class Meta:
+        ordering = (
+            'name',
+        )
+
+
 class District(Common):
     KIND = Choices(
         (0, 'bhs', "BHS"),
@@ -315,8 +704,6 @@ class Convention(TimeFramedModel):
         help_text="""
             The kind of convention.""",
         choices=KIND,
-        null=True,
-        blank=True,
     )
 
     year = models.IntegerField(
@@ -355,14 +742,14 @@ class Convention(TimeFramedModel):
 
     location = models.CharField(
         help_text="""
-            The location of the convention """,
+            The location of the convention.""",
         max_length=200,
         blank=True,
     )
 
     timezone = TimeZoneField(
         help_text="""
-            The local timezone of the convention """,
+            The local timezone of the convention.""",
         default='US/Pacific',
     )
 
@@ -423,8 +810,8 @@ class Contest(models.Model):
 
     LEVEL = Choices(
         (1, 'international', "International"),
-        (2, 'district', "District"),
-        (4, 'prelims', "Prelims"),
+        # (2, 'district', "District"),
+        # (4, 'prelims', "Prelims"),
     )
 
     id = models.UUIDField(
@@ -473,6 +860,7 @@ class Contest(models.Model):
 
     district = models.ForeignKey(
         'District',
+        related_name='contests',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -534,7 +922,7 @@ class Contest(models.Model):
             return False
 
     def clean(self):
-            if self.level == self.LEVEL.international and self.district is not None:
+            if self.level == self.LEVEL.international and self.district != 'BHS':
                 raise ValidationError('International does not have a district.')
             if self.level != self.LEVEL.international and self.district is None:
                 raise ValidationError('You must provide a district.')
@@ -868,238 +1256,6 @@ class Contestant(TimeFramedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
 
-class Judge(models.Model):
-    """Contest Judge"""
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    PART = Choices(
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-        (4, 'administrator', 'Administrator'),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='judges',
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='contests',
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    part = models.IntegerField(
-        choices=PART,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.contest,
-            self.get_part_display(),
-            self.person,
-        )
-        super(Judge, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('contest', 'person',),
-        )
-        ordering = (
-            '-name',
-        )
-
-
-class Singer(models.Model):
-    """Quartet Relation"""
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    PART = Choices(
-        (1, 'tenor', 'Tenor'),
-        (2, 'lead', 'Lead'),
-        (3, 'baritone', 'Baritone'),
-        (4, 'bass', 'Bass'),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='singers',
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='quartets',
-    )
-
-    part = models.IntegerField(
-        choices=PART,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.contestant,
-            self.get_part_display(),
-            self.person,
-        )
-        super(Singer, self).save(*args, **kwargs)
-
-    def clean(self):
-        # if self.contestant.group.kind == Group.CHORUS:
-        #     raise ValidationError('Choruses do not have quartet singers.')
-        if self.part:
-            if [s['part'] for s in self.contestant.singers.values(
-                'part'
-            )].count(self.part) > 1:
-                raise ValidationError('There can not be more than one of the same part in a quartet.')
-
-    class Meta:
-        unique_together = (
-            ('contestant', 'person',),
-        )
-        ordering = (
-            '-name',
-        )
-
-
-class Director(models.Model):
-    """Chorus relation"""
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    PART = Choices(
-        (1, 'director', 'Director'),
-        (2, 'codirector', 'Co-Director'),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='directors',
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='choruses',
-    )
-
-    part = models.IntegerField(
-        choices=PART,
-        default=PART.director,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.contestant,
-            self.get_part_display(),
-            self.person,
-        )
-        super(Director, self).save(*args, **kwargs)
-
-    def clean(self):
-        if self.contestant.group.kind == Group.KIND.quartet:
-            raise ValidationError('Quartets do not have directors.')
-
-    class Meta:
-        unique_together = (
-            ('contestant', 'person',),
-        )
-
-
-class Song(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    fuzzy = models.TextField(
-        blank=True,
-    )
-
-
 class Performance(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1273,144 +1429,9 @@ class Score(models.Model):
         editable=False,
     )
 
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='scores',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    judge = models.ForeignKey(
-        'Judge',
-        related_name='scores',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    category = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=CATEGORY,
-    )
-
-    is_practice = models.BooleanField(
-        default=False,
-    )
-
-
-class Arrangement(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_published = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_songname = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_arranger = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_fee = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_difficulty = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DIFFICULTY
-    )
-
-    bhs_tempo = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=TEMPO,
-    )
-
-    bhs_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    song = models.ForeignKey(
-        'Song',
-        null=True,
-        blank=True,
-        related_name='arrangements',
-    )
-
-    arranger = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='arrangements',
-    )
-
-    song_match = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
     name = models.CharField(
-        max_length=200,
+        max_length=255,
         unique=True,
-    )
-
-    person_match = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    fuzzy = models.TextField(
-        blank=True,
     )
 
     slug = AutoSlugField(
@@ -1420,51 +1441,55 @@ class Arrangement(models.Model):
         max_length=255,
     )
 
-    class Meta:
-        unique_together = (
-            ('arranger', 'song')
-        )
+    performance = models.ForeignKey(
+        'Performance',
+        related_name='scores',
+    )
+
+    judge = models.ForeignKey(
+        'Judge',
+        related_name='scores',
+    )
+
+    points = models.IntegerField(
+        help_text="""
+            The number of points awarded (0-100)""",
+        validators=[
+            MaxValueValidator(
+                100,
+                message='Points must be between 0 - 100',
+            ),
+            MinValueValidator(
+                0,
+                message='Points must be between 0 - 100',
+            ),
+        ]
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+    )
+
+    is_practice = models.BooleanField(
+        default=False,
+    )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} [{1}]".format(
-            self.song,
-            self.arranger,
+        self.name = u"{0} {1} {2} {3}".format(
+            self.performance,
+            self.judge.person.name,
+            self.get_category_display(),
+            self.points,
         )
-        super(Arrangement, self).save(*args, **kwargs)
-
-
-class Award(models.Model):
-
-    NAME = Choices(
-        (1, 'first', 'First Place Gold Medalist'),
-        (2, 'second', 'First Place Silver Medalist'),
-        (3, 'third', 'Third Place Bronze Medalist'),
-        (4, 'fourth', 'Fourth Place Bronze Medalist'),
-        (5, 'fifth', 'Fifth Place Bronze Medalist'),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='awards',
-    )
-
-    name = models.IntegerField(
-        choices=NAME,
-    )
-
-    class Meta:
-        ordering = (
-            'name',
-        )
+        super(Score, self).save(*args, **kwargs)
 
 
 class DuplicateGroup(models.Model):
