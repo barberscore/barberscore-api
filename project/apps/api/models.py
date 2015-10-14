@@ -1371,9 +1371,19 @@ class Performance(models.Model):
         max_length=255,
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='performances',
+        null=True,
+        blank=True,
+    )
+
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     status = models.IntegerField(
