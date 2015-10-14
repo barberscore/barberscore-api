@@ -298,6 +298,8 @@ class Judge(models.Model):
     person = models.ForeignKey(
         'Person',
         related_name='contests',
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
     status = models.IntegerField(
@@ -309,6 +311,9 @@ class Judge(models.Model):
         choices=PART,
     )
 
+    num = models.IntegerField(
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -316,13 +321,13 @@ class Judge(models.Model):
         self.name = u"{0} {1} {2}".format(
             self.contest,
             self.get_part_display(),
-            self.person,
+            self.num,
         )
         super(Judge, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('contest', 'person',),
+            ('contest', 'part', 'num'),
         )
         ordering = (
             '-name',
@@ -835,11 +840,15 @@ class Contest(models.Model):
     )
 
     level = models.IntegerField(
+        help_text="""
+            The level of the contest (currently only International is supported.)""",
         choices=LEVEL,
         default=LEVEL.international,
     )
 
     kind = models.IntegerField(
+        help_text="""
+            The kind of the contest (quartet, chorus, senior, collegiate.)""",
         choices=KIND,
         default=KIND.quartet,
     )
@@ -868,6 +877,8 @@ class Contest(models.Model):
 
     convention = models.ForeignKey(
         'Convention',
+        help_text="""
+            The convention at which this contest occurred.""",
         related_name='contests',
         null=True,
         blank=True,
@@ -876,18 +887,21 @@ class Contest(models.Model):
 
     panel = models.IntegerField(
         help_text="""
-            Size of the judging panel (typically
-            three or five.)""",
+            Size of the judging panel (typically three or five.)""",
         default=5,
     )
 
     scoresheet_pdf = models.FileField(
+        help_text="""
+            PDF of the OSS.""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
     )
 
     scoresheet_csv = models.FileField(
+        help_text="""
+            The parsed scoresheet (used for legacy imports).""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
@@ -913,13 +927,6 @@ class Contest(models.Model):
             '-year',
             'kind',
         )
-
-    @property
-    def is_score(self):
-        if self.year > 1993:
-            return True
-        else:
-            return False
 
     def clean(self):
             if self.level == self.LEVEL.international and self.district != 'BHS':
@@ -952,6 +959,12 @@ class Contest(models.Model):
                 self.get_year_display(),
             )
         super(Contest, self).save(*args, **kwargs)
+
+    def prep_panel(self):
+        """
+            Return sentinels for juding panel.
+        """
+        pass
 
     def place_quarters(self):
         if self.kind != self.KIND.quartet:
@@ -1080,6 +1093,8 @@ class Contestant(TimeFramedModel):
 
     district = models.ForeignKey(
         'District',
+        help_text="""
+            The district this contestant is representing.""",
         related_name='contestants',
         null=True,
         blank=True,
@@ -1099,94 +1114,132 @@ class Contestant(TimeFramedModel):
     )
 
     picture = models.ImageField(
-        upload_to=generate_image_filename,
         help_text="""
-            The picture/logo of the resource.""",
+            The performance picture (as opposed to the "official" photo).""",
+        upload_to=generate_image_filename,
         blank=True,
         null=True,
     )
 
     seed = models.IntegerField(
+        help_text="""
+            The incoming rank based on prelim score.""",
         null=True,
         blank=True,
     )
 
     prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
         null=True,
         blank=True,
     )
 
+    # Should make this a property or denorm it.
+    draw = models.IntegerField(
+        help_text="""
+            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
+        null=True,
+        blank=True,
+    )
+
+    # Should make this a property or denorm it.
+    stagetime = models.DateTimeField(
+        help_text="""
+            The estimated stagetime (may be replaced by 'start' in later versions).""",
+        null=True,
+        blank=True,
+    )
+
+    # TODO Everything below here must be protected in some way.  Different model?
+
     points = models.IntegerField(
+        help_text="""
+            Total raw points for this contestant (cumuative).""",
         null=True,
         blank=True,
     )
 
     score = models.FloatField(
+        help_text="""
+            The percentile of the total points (cumulative , all rounds).""",
         null=True,
         blank=True,
     )
 
     place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    stagetime = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    draw = models.IntegerField(
+        help_text="""
+            The final placement/rank of the contestant.""",
         null=True,
         blank=True,
     )
 
     men = models.IntegerField(
+        help_text="""
+            The number of men on stage (only for chourses).""",
         null=True,
         blank=True,
     )
 
     quarters_points = models.IntegerField(
+        help_text="""
+            The total points for the quarterfinal round/session.""",
         null=True,
         blank=True,
     )
 
     semis_points = models.IntegerField(
+        help_text="""
+            The total points for the semifinal round/session.""",
         null=True,
         blank=True,
     )
 
     finals_points = models.IntegerField(
+        help_text="""
+            The total points for the final round/session.""",
         null=True,
         blank=True,
     )
 
     quarters_score = models.FloatField(
+        help_text="""
+            The percential score for the quarterfinal round/session.""",
         null=True,
         blank=True,
     )
 
     semis_score = models.FloatField(
+        help_text="""
+            The percential score for the semifinal round/session.""",
         null=True,
         blank=True,
     )
 
     finals_score = models.FloatField(
+        help_text="""
+            The percential score for the final round/session.""",
         null=True,
         blank=True,
     )
 
     quarters_place = models.IntegerField(
+        help_text="""
+            The place for the quarterfinal round/session.  This is for the quarters only and is NOT cumulative.""",
         null=True,
         blank=True,
     )
 
     semis_place = models.IntegerField(
+        help_text="""
+            The place for the semifinal round/session.  This is for the semis only and is NOT cumulative.""",
         null=True,
         blank=True,
     )
 
     finals_place = models.IntegerField(
+        help_text="""
+            The place for the fainal round/session.  This is for the finals only and is NOT cumulative.""",
         null=True,
         blank=True,
     )
@@ -1308,6 +1361,20 @@ class Performance(models.Model):
         choices=ORDER,
     )
 
+    draw = models.IntegerField(
+        help_text="""
+            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
+        null=True,
+        blank=True,
+    )
+
+    stagetime = models.DateTimeField(
+        help_text="""
+            The estimated stagetime (may be replaced by 'start' in later versions).""",
+        null=True,
+        blank=True,
+    )
+
     is_parody = models.BooleanField(
         default=False,
     )
@@ -1320,47 +1387,68 @@ class Performance(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    # The following need to be protected until released.
+    # Different model?
+
     mus_points = models.IntegerField(
+        help_text="""
+            The total music points for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
+        help_text="""
+            The total presentation points for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
+        help_text="""
+            The total singing points for this performance.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
+        help_text="""
+            The total points for this performance.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
+        help_text="""
+            The percentile music score for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
+        help_text="""
+            The percentile presentation score for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
+        help_text="""
+            The percentile singing score for this performance.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
+        help_text="""
+            The total percentile score for this performance.""",
         null=True,
         blank=True,
     )
 
     penalty = models.TextField(
+        help_text="""
+            Free form for penalties (notes).""",
         blank=True,
     )
 
@@ -1412,6 +1500,10 @@ class Performance(models.Model):
 
 
 class Score(models.Model):
+    """
+        The Score is never released publicly.  These are the actual
+        Judge's scores from the contest.
+    """
     STATUS = Choices(
         (0, 'new', 'New',),
     )
