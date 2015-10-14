@@ -330,7 +330,9 @@ class Judge(models.Model):
             ('contest', 'part', 'num'),
         )
         ordering = (
-            '-name',
+            'contest',
+            'part',
+            'num',
         )
 
 
@@ -623,9 +625,9 @@ class Arrangement(models.Model):
 
 class Award(models.Model):
 
-    NAME = Choices(
+    KIND = Choices(
         (1, 'first', 'First Place Gold Medalist'),
-        (2, 'second', 'First Place Silver Medalist'),
+        (2, 'second', 'Second Place Silver Medalist'),
         (3, 'third', 'Third Place Bronze Medalist'),
         (4, 'fourth', 'Fourth Place Bronze Medalist'),
         (5, 'fifth', 'Fifth Place Bronze Medalist'),
@@ -643,7 +645,11 @@ class Award(models.Model):
     )
 
     name = models.IntegerField(
-        choices=NAME,
+        choices=KIND,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
     )
 
     class Meta:
