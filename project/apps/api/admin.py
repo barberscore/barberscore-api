@@ -21,6 +21,7 @@ from .models import (
     Director,
     Arrangement,
     Award,
+    Session,
 )
 
 
@@ -48,6 +49,31 @@ class PerformancesInline(admin.TabularInline):
         'contestant',
         'arrangement',
     )
+    can_delete = True
+    show_change_link = True
+
+
+class SessionsInline(admin.TabularInline):
+    form = select2_modelform(
+        Session,
+        attrs={'width': '100px'},
+    )
+    fields = (
+        'contest',
+        'kind',
+        'draw',
+        'stagetime',
+    )
+    ordering = (
+        'kind',
+        'draw',
+    )
+    model = Session
+    extra = 0
+    # raw_id_fields = (
+    #     'contestant',
+    #     'arrangement',
+    # )
     can_delete = True
     show_change_link = True
 
@@ -179,8 +205,8 @@ class ContestantsInline(admin.TabularInline):
         'contest',
         'group',
         'district',
-        'draw',
-        'stagetime',
+        'seed',
+        'prelim',
         'place',
         'score',
         'men',
@@ -265,8 +291,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
-        ContestantsInline,
         JudgesInline,
+        ContestantsInline,
+        SessionsInline,
     ]
 
     search_fields = (
