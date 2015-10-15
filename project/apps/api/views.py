@@ -37,7 +37,6 @@ from .serializers import (
     ScoreSerializer,
     DirectorSerializer,
     ArrangementSerializer,
-    ScheduleSerializer,
 )
 
 
@@ -161,17 +160,3 @@ class ArrangementViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(HaystackViewSet):
     serializer_class = SearchSerializer
-
-
-class ScheduleViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.select_related(
-        'group',
-        'contest',
-        'district',
-    ).prefetch_related(
-        'performances',
-        'directors',
-        'singers',
-    )
-    serializer_class = ScheduleSerializer
-    lookup_field = 'slug'
