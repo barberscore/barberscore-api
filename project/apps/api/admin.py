@@ -681,3 +681,8 @@ class ArrangementAdmin(admin.ModelAdmin):
 @admin.register(Event)
 class Event(admin.ModelAdmin):
     save_on_top = True
+    raw_id_fields = (
+        'convention',
+        'contest',
+        'contestant',
+    )
