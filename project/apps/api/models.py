@@ -1337,7 +1337,7 @@ class Contestant(TimeFramedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
 
-class Session(models.Model):
+class Slot(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1410,7 +1410,7 @@ class Session(models.Model):
             self.get_kind_display(),
             self.draw,
         )
-        super(Session, self).save(*args, **kwargs)
+        super(Slot, self).save(*args, **kwargs)
 
     # class Meta:
         # unique_together = (
