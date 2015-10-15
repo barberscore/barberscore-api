@@ -318,7 +318,7 @@ class Judge(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
+        self.name = u"{0} {1} {2:02d}".format(
             self.contest,
             self.get_part_display(),
             self.num,
@@ -1405,7 +1405,7 @@ class Slot(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
+        self.name = u"{0} {1} {2:02d}".format(
             self.contest,
             self.get_kind_display(),
             self.draw,
@@ -1701,6 +1701,102 @@ class Score(models.Model):
             self.points,
         )
         super(Score, self).save(*args, **kwargs)
+
+
+class Event(TimeFramedModel):
+    KIND = Choices(
+        (
+            'Session', [
+                (1, 'finals', 'Finals'),
+                (2, 'semis', 'Semis'),
+                (3, 'quarters', 'Quarters'),
+            ]
+        ), (
+            'Other', [
+                (4, 'other', 'Other',),
+            ]
+        )
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the event (determined programmatically.)""",
+        max_length=200,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        help_text="""
+            The convention at which this event occurs.""",
+        related_name='events',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        help_text="""
+            The contest associated with this event.""",
+        related_name='events',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        help_text="""
+            The contestant associated with this event.""",
+        related_name='events',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    draw = models.IntegerField(
+        help_text="""
+            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
+        null=True,
+        blank=True,
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of event.""",
+        choices=KIND,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The location of the event.""",
+        max_length=200,
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        help_text="""
+            A global boolean that controls if the resource is accessible via the API""",
+        default=False,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0}".format(
+            self.id,
+        )
+        super(Event, self).save(*args, **kwargs)
 
 
 class DuplicateGroup(models.Model):
