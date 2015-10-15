@@ -13,7 +13,7 @@ from .models import (
     Performance,
     Singer,
     Director,
-    Arrangement,
+    Catalog,
     Score,
     Award,
     Event,
@@ -27,26 +27,26 @@ from .search_indexes import (
 )
 
 
-class ArrangementSerializer(serializers.ModelSerializer):
+class CatalogSerializer(serializers.ModelSerializer):
     song = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
-    arranger = serializers.SlugRelatedField(
+    person = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
     class Meta:
-        model = Arrangement
+        model = Catalog
         fields = (
             'id',
             # 'url',
             'slug',
             'name',
             'song',
-            'arranger',
+            'person',
         )
 
 
@@ -382,7 +382,7 @@ class JudgeSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    arrangement = serializers.SlugRelatedField(
+    catalog = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -419,7 +419,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'order',
             'status',
             'is_parody',
-            'arrangement',
+            'catalog',
             'song',
             'arranger',
             'mus_points',
@@ -437,7 +437,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    arrangements = serializers.SlugRelatedField(
+    catalogs = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -479,7 +479,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             'kind',
             'is_active',
-            'arrangements',
+            'catalogs',
             'choruses',
             'quartets',
             'panels',
@@ -557,7 +557,7 @@ class SingerSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    arrangements = serializers.SlugRelatedField(
+    catalogs = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -576,6 +576,6 @@ class SongSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'arrangements',
+            'catalogs',
             'performances',
         )

@@ -4,7 +4,7 @@ from apps.api.models import (
     Person,
     Group,
     Song,
-    Arrangement,
+    Catalog,
 )
 
 from django.db import (
@@ -70,7 +70,7 @@ class MergePersonForm(forms.Form):
         parent = Person.objects.get(name=self.cleaned_data['new'])
         quartets = child.quartets.all()
         choruses = child.choruses.all()
-        arrangements = child.arrangements.all()
+        catalogs = child.catalogs.all()
 
         # move related records
         with transaction.atomic():
@@ -90,13 +90,13 @@ class MergePersonForm(forms.Form):
                     raise forms.ValidationError(
                         u"There is an existing director for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(chorus, child),
                     )
-            for arrangement in arrangements:
-                arrangement.person = parent
+            for catalog in catalogs:
+                catalog.person = parent
                 try:
-                    arrangement.save()
+                    catalog.save()
                 except IntegrityError:
                     raise forms.ValidationError(
-                        u"There is an existing arrangement for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(arrangement),
+                        u"There is an existing catalog for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(catalog),
                     )
         # once records are moved, remove redundant group
         try:
@@ -159,18 +159,18 @@ class MergeSongForm(forms.Form):
     def merge(self):
         child = Song.objects.get(name=self.cleaned_data['old'])
         parent = Song.objects.get(name=self.cleaned_data['new'])
-        arrangements = child.arrangements.all()
+        catalogs = child.catalogs.all()
         # move related records
-        for arrangement in arrangements:
-            arrangement.song = parent
+        for catalog in catalogs:
+            catalog.song = parent
             try:
-                arrangement.save()
+                catalog.save()
             except IntegrityError:
-                ps = arrangement.performances.all()
+                ps = catalog.performances.all()
                 for p in ps:
-                    p.arrangement = Arrangement.objects.get(
+                    p.catalog = Catalog.objects.get(
                         song=parent,
-                        arranger=arrangement.arranger,
+                        person=catalog.person,
                     )
                     p.save()
         # once records are moved, remove redundant object

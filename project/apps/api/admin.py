@@ -19,7 +19,7 @@ from .models import (
     Judge,
     Singer,
     Director,
-    Arrangement,
+    Catalog,
     Award,
     Event,
 )
@@ -34,7 +34,7 @@ class PerformancesInline(admin.TabularInline):
         'contestant',
         'session',
         'order',
-        'arrangement',
+        'catalog',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -47,7 +47,7 @@ class PerformancesInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'contestant',
-        'arrangement',
+        'catalog',
     )
     can_delete = True
     show_change_link = True
@@ -146,16 +146,16 @@ class DirectorsInline(admin.TabularInline):
     can_delete = True
 
 
-class ArrangementsInline(admin.TabularInline):
-    model = Arrangement
+class CatalogsInline(admin.TabularInline):
+    model = Catalog
     fields = (
-        'arranger',
+        'person',
         'song',
     )
     extra = 0
     raw_id_fields = (
         'song',
-        'arranger',
+        'person',
     )
     can_delete = True
     show_change_link = True
@@ -453,7 +453,7 @@ class SongAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        ArrangementsInline,
+        CatalogsInline,
     ]
 
 
@@ -547,7 +547,7 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         DirectorsInline,
         SingersInline,
-        ArrangementsInline,
+        CatalogsInline,
         JudgesInline,
     ]
 
@@ -557,7 +557,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'name',
-        'arrangement',
+        'catalog',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -579,7 +579,7 @@ class PerformanceAdmin(admin.ModelAdmin):
             'order',
         ),
         (
-            'arrangement',
+            'catalog',
         ),
         (
             'mus_points',
@@ -607,16 +607,16 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'contestant',
-        'arrangement',
+        'catalog',
     )
 
 
-@admin.register(Arrangement)
-class ArrangementAdmin(admin.ModelAdmin):
+@admin.register(Catalog)
+class CatalogAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'song',
-        'arranger',
+        'person',
         'bhs_id',
         'bhs_published',
         'bhs_fee',
@@ -626,11 +626,11 @@ class ArrangementAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'song',
-        'arranger',
+        'person',
     )
     search_fields = (
         'song__name',
-        'arranger__name',
+        'person__name',
     )
     inlines = [
         PerformancesInline,
@@ -639,7 +639,7 @@ class ArrangementAdmin(admin.ModelAdmin):
         'name',
         'song',
         'bhs_songname',
-        'arranger',
+        'person',
         'bhs_arranger',
         'bhs_id',
         # 'bhs_published',
