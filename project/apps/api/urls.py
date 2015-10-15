@@ -12,7 +12,7 @@ from .views import (
     PerformanceViewSet,
     SingerViewSet,
     DirectorViewSet,
-    ArrangementViewSet,
+    CatalogViewSet,
     ScoreViewSet,
     JudgeViewSet,
     EventViewSet,
@@ -31,7 +31,7 @@ router.register(r'song', SongViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'singer', SingerViewSet)
 router.register(r'director', DirectorViewSet)
-router.register(r'arrangement', ArrangementViewSet)
+router.register(r'catalog', CatalogViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'judge', JudgeViewSet)
 router.register(r'event', EventViewSet)

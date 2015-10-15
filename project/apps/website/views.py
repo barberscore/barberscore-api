@@ -27,7 +27,7 @@ from apps.api.models import (
     Group,
     Song,
     Person,
-    Arrangement,
+    Catalog,
     DuplicateGroup,
     DuplicateSong,
     DuplicatePerson,
@@ -240,23 +240,23 @@ def merge_groups(request, parent_id, child_id):
 def merge_songs(request, parent_id, child_id):
     parent = Song.objects.get(id=parent_id)
     child = Song.objects.get(id=child_id)
-    arrangements = child.arrangements.all()
+    catalogs = child.catalogs.all()
     target = reverse('website:songs')
     page = request.GET.get('page')
     if page:
         target = target + "?page={0}".format(page)
     r = redirect(target)
     # move related records
-    for arrangement in arrangements:
-        arrangement.song = parent
+    for catalog in catalogs:
+        catalog.song = parent
         try:
-            arrangement.save()
+            catalog.save()
         except IntegrityError:
-            ps = arrangement.performances.all()
+            ps = catalog.performances.all()
             for p in ps:
-                p.arrangement = Arrangement.objects.get(
+                p.catalog = Catalog.objects.get(
                     song=parent,
-                    arranger=arrangement.arranger,
+                    person=catalog.person,
                 )
                 p.save()
     # once records are moved, remove redundant object
@@ -277,7 +277,7 @@ def merge_persons(request, parent_id, child_id):
     child = Person.objects.get(id=child_id)
     quartets = child.quartets.all()
     choruses = child.choruses.all()
-    arrangements = child.arrangements.all()
+    catalogs = child.catalogs.all()
     target = reverse('website:persons')
     page = request.GET.get('page')
     if page:
@@ -306,14 +306,14 @@ def merge_persons(request, parent_id, child_id):
                     u"There is an existing director for {0} with the name {1}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(chorus, child),
                 )
                 return r
-        for arrangement in arrangements:
-            arrangement.person = parent
+        for catalog in catalogs:
+            catalog.person = parent
             try:
-                arrangement.save()
+                catalog.save()
             except IntegrityError:
                 messages.error(
                     request,
-                    u"There is an existing arrangement for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(arrangement),
+                    u"There is an existing catalog for {0}.  Double-check that they are in fact duplicates.  Otherwise, merge manually.".format(catalog),
                 )
                 return r
     # once records are moved, remove redundant group
