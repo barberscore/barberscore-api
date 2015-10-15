@@ -21,6 +21,9 @@ from .models import (
     Score,
     Director,
     Arrangement,
+    Judge,
+    Award,
+    Event,
 )
 
 from .serializers import (
@@ -37,6 +40,9 @@ from .serializers import (
     ScoreSerializer,
     DirectorSerializer,
     ArrangementSerializer,
+    JudgeSerializer,
+    EventSerializer,
+    AwardSerializer,
 )
 
 
@@ -160,3 +166,21 @@ class ArrangementViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(HaystackViewSet):
     serializer_class = SearchSerializer
+
+
+class JudgeViewSet(viewsets.ModelViewSet):
+    queryset = Judge.objects.all()
+    serializer_class = JudgeSerializer
+    lookup_field = 'slug'
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    lookup_field = 'slug'
+
+
+class AwardViewSet(viewsets.ModelViewSet):
+    queryset = Award.objects.all()
+    serializer_class = AwardSerializer
+    lookup_field = 'slug'
