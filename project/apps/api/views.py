@@ -20,7 +20,7 @@ from .models import (
     Singer,
     Score,
     Director,
-    Arrangement,
+    Catalog,
     Judge,
     Award,
     Event,
@@ -39,7 +39,7 @@ from .serializers import (
     SingerSerializer,
     ScoreSerializer,
     DirectorSerializer,
-    ArrangementSerializer,
+    CatalogSerializer,
     JudgeSerializer,
     EventSerializer,
     AwardSerializer,
@@ -96,7 +96,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.prefetch_related(
-        'arrangements',
+        'catalogs',
         'choruses',
         'quartets',
     )
@@ -114,7 +114,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.select_related(
-        'arrangement',
+        'catalog',
         'contestant',
     )
     serializer_class = PerformanceSerializer
@@ -141,7 +141,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
 
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.prefetch_related(
-        'arrangements',
+        'catalogs',
     )
     serializer_class = SongSerializer
     lookup_field = 'slug'
@@ -155,12 +155,12 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ]
 
 
-class ArrangementViewSet(viewsets.ModelViewSet):
-    queryset = Arrangement.objects.select_related(
+class CatalogViewSet(viewsets.ModelViewSet):
+    queryset = Catalog.objects.select_related(
         'song',
-        'arranger',
+        'person',
     )
-    serializer_class = ArrangementSerializer
+    serializer_class = CatalogSerializer
     lookup_field = 'slug'
 
 
