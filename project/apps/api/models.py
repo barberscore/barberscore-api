@@ -1174,7 +1174,7 @@ class Contestant(TimeFramedModel):
 
     score = models.FloatField(
         help_text="""
-            The percentile of the total points (cumulative , all rounds).""",
+            The percentile of the total points (cumulative , all sessions).""",
         null=True,
         blank=True,
     )
@@ -1195,63 +1195,63 @@ class Contestant(TimeFramedModel):
 
     quarters_points = models.IntegerField(
         help_text="""
-            The total points for the quarterfinal round/session.""",
+            The total points for the quarterfinal session.""",
         null=True,
         blank=True,
     )
 
     semis_points = models.IntegerField(
         help_text="""
-            The total points for the semifinal round/session.""",
+            The total points for the semifinal session.""",
         null=True,
         blank=True,
     )
 
     finals_points = models.IntegerField(
         help_text="""
-            The total points for the final round/session.""",
+            The total points for the final session.""",
         null=True,
         blank=True,
     )
 
     quarters_score = models.FloatField(
         help_text="""
-            The percential score for the quarterfinal round/session.""",
+            The percential score for the quarterfinal session.""",
         null=True,
         blank=True,
     )
 
     semis_score = models.FloatField(
         help_text="""
-            The percential score for the semifinal round/session.""",
+            The percential score for the semifinal session.""",
         null=True,
         blank=True,
     )
 
     finals_score = models.FloatField(
         help_text="""
-            The percential score for the final round/session.""",
+            The percential score for the final session.""",
         null=True,
         blank=True,
     )
 
     quarters_place = models.IntegerField(
         help_text="""
-            The place for the quarterfinal round/session.  This is for the quarters only and is NOT cumulative.""",
+            The place for the quarterfinal session.  This is for the quarters only and is NOT cumulative.""",
         null=True,
         blank=True,
     )
 
     semis_place = models.IntegerField(
         help_text="""
-            The place for the semifinal round/session.  This is for the semis only and is NOT cumulative.""",
+            The place for the semifinal session.  This is for the semis only and is NOT cumulative.""",
         null=True,
         blank=True,
     )
 
     finals_place = models.IntegerField(
         help_text="""
-            The place for the fainal round/session.  This is for the finals only and is NOT cumulative.""",
+            The place for the fainal session.  This is for the finals only and is NOT cumulative.""",
         null=True,
         blank=True,
     )
@@ -1267,13 +1267,13 @@ class Contestant(TimeFramedModel):
             self.group,
         )
         self.finals_points = self.performances.filter(
-            round=1,
+            session=1,
         ).aggregate(sum=models.Sum('total_points'))['sum']
         self.semis_points = self.performances.filter(
-            round=2,
+            session=2,
         ).aggregate(sum=models.Sum('total_points'))['sum']
         self.quarters_points = self.performances.filter(
-            round=3,
+            session=3,
         ).aggregate(sum=models.Sum('total_points'))['sum']
         self.points = sum(filter(None, [
             self.quarters_points,
@@ -1332,7 +1332,7 @@ class Performance(models.Model):
         (0, 'new', 'New',),
     )
 
-    ROUND = Choices(
+    SESSION = Choices(
         (1, 'finals', 'Finals'),
         (2, 'semis', 'Semis'),
         (3, 'quarters', 'Quarters'),
@@ -1370,8 +1370,8 @@ class Performance(models.Model):
         default=STATUS.new,
     )
 
-    round = models.IntegerField(
-        choices=ROUND,
+    session = models.IntegerField(
+        choices=SESSION,
     )
 
     order = models.IntegerField(
@@ -1474,11 +1474,11 @@ class Performance(models.Model):
     class Meta:
         ordering = [
             'contestant',
-            'round',
+            'session',
             'order',
         ]
         unique_together = (
-            ('contestant', 'round', 'order',),
+            ('contestant', 'session', 'order',),
         )
 
     def __unicode__(self):
@@ -1487,7 +1487,7 @@ class Performance(models.Model):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2} {3}".format(
             self.contestant,
-            self.get_round_display(),
+            self.get_session_display(),
             "Song",
             self.get_order_display(),
         )
@@ -1667,7 +1667,7 @@ class Event(TimeFramedModel):
 
     draw = models.IntegerField(
         help_text="""
-            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
+            The OA (Order of Appearance) in the contest schedule.  Specific to each session.""",
         null=True,
         blank=True,
     )
