@@ -32,7 +32,7 @@ class PerformancesInline(admin.TabularInline):
     )
     fields = (
         'contestant',
-        'round',
+        'session',
         'order',
         'arrangement',
         'mus_points',
@@ -40,7 +40,7 @@ class PerformancesInline(admin.TabularInline):
         'sng_points',
     )
     ordering = (
-        'round',
+        'session',
         'order',
     )
     model = Performance
@@ -575,7 +575,7 @@ class PerformanceAdmin(admin.ModelAdmin):
             'contestant',
         ),
         (
-            'round',
+            'session',
             'order',
         ),
         (
@@ -598,7 +598,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     list_filter = (
         'contestant__contest__level',
         'contestant__contest__kind',
-        'round',
+        'session',
         'contestant__contest__year',
     )
 
