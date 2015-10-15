@@ -22,6 +22,7 @@ from .models import (
     Arrangement,
     Award,
     Slot,
+    Event,
 )
 
 
@@ -675,3 +676,8 @@ class ArrangementAdmin(admin.ModelAdmin):
         # 'bhs_tempo',
         # 'bhs_medley',
     ]
+
+
+@admin.register(Event)
+class Event(admin.ModelAdmin):
+    save_on_top = True
