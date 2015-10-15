@@ -401,37 +401,3 @@ class ArrangementSerializer(serializers.ModelSerializer):
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
-
-
-class ScheduleSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    group = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    district = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = Contestant
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'contest',
-            'group',
-            'district',
-            'picture',
-            'seed',
-            'prelim',
-            'draw',
-            'stagetime',
-        )
