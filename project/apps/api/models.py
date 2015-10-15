@@ -297,7 +297,7 @@ class Judge(models.Model):
 
     person = models.ForeignKey(
         'Person',
-        related_name='contests',
+        related_name='panels',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -712,7 +712,7 @@ class District(Common):
         return u"{0}".format(self.name)
 
 
-class Convention(TimeFramedModel):
+class Convention(models.Model):
     KIND = Choices(
         (1, 'international', 'International',),
         (2, 'midwinter', 'Midwinter',),
@@ -1098,7 +1098,7 @@ class Contest(models.Model):
         return
 
 
-class Contestant(TimeFramedModel):
+class Contestant(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1353,11 +1353,6 @@ class Performance(models.Model):
         always_update=True,
         unique=True,
         max_length=255,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='performances',
     )
 
     contestant = models.ForeignKey(
