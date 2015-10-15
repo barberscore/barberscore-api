@@ -1483,8 +1483,8 @@ class Performance(models.Model):
         self.name = u"{0} {1} {2} {3}".format(
             self.contestant,
             self.get_session_display(),
-            "Song",
             self.get_order_display(),
+            "Song",
         )
         self.total_points = sum(filter(None, [
             self.mus_points,
