@@ -1412,10 +1412,10 @@ class Session(models.Model):
         )
         super(Session, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('contest', 'kind', 'draw'),
-        )
+    # class Meta:
+        # unique_together = (
+        #     ('contest', 'kind', 'draw'),
+        # )
 
 
 class Performance(models.Model):
