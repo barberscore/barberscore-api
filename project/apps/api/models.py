@@ -299,6 +299,7 @@ class Judge(models.Model):
         'Person',
         related_name='contests',
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
 
@@ -1751,6 +1752,7 @@ class Event(TimeFramedModel):
             The contest associated with this event.""",
         related_name='events',
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
 
@@ -1760,6 +1762,7 @@ class Event(TimeFramedModel):
             The contestant associated with this event.""",
         related_name='events',
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
 
