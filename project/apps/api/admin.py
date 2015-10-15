@@ -21,7 +21,7 @@ from .models import (
     Director,
     Arrangement,
     Award,
-    Session,
+    Slot,
 )
 
 
@@ -53,9 +53,9 @@ class PerformancesInline(admin.TabularInline):
     show_change_link = True
 
 
-class SessionsInline(admin.TabularInline):
+class SlotsInline(admin.TabularInline):
     form = select2_modelform(
-        Session,
+        Slot,
         attrs={'width': '100px'},
     )
     fields = (
@@ -68,7 +68,7 @@ class SessionsInline(admin.TabularInline):
         'kind',
         'draw',
     )
-    model = Session
+    model = Slot
     extra = 0
     # raw_id_fields = (
     #     'contestant',
@@ -293,7 +293,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         JudgesInline,
         ContestantsInline,
-        SessionsInline,
+        SlotsInline,
     ]
 
     search_fields = (
