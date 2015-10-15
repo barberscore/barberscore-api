@@ -15,6 +15,9 @@ from .models import (
     Director,
     Arrangement,
     Score,
+    Award,
+    Event,
+    Judge,
 )
 
 from .search_indexes import (
@@ -24,10 +27,51 @@ from .search_indexes import (
 )
 
 
-class GroupSerializer(serializers.ModelSerializer):
+class ArrangementSerializer(serializers.ModelSerializer):
+    song = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
 
-    chapterName = serializers.CharField(
-        source='chapter_name',
+    arranger = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Arrangement
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'song',
+            'arranger',
+        )
+
+
+class AwardSerializer(serializers.ModelSerializer):
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Award
+        fields = [
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'contestant',
+            'kind',
+        ]
+
+
+class ContestSerializer(serializers.ModelSerializer):
+    convention = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
     )
 
     contestants = serializers.SlugRelatedField(
@@ -36,26 +80,32 @@ class GroupSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    events = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    district = serializers.StringRelatedField()
+
     class Meta:
-        model = Group
+        model = Contest
         fields = (
             'id',
             # 'url',
             'slug',
             'name',
+            'level',
             'kind',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'chapterName',
+            'year',
+            'district',
+            'convention',
+            'panel',
             'is_active',
+            'status',
+            'scoresheet_pdf',
             'contestants',
+            'events',
         )
 
 
@@ -93,6 +143,18 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    events = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    awards = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     class Meta:
         model = Contestant
         fields = (
@@ -106,60 +168,43 @@ class ContestantSerializer(serializers.ModelSerializer):
             'picture',
             'seed',
             'prelim',
-            'place',
             'points',
             'score',
+            'place',
+            'men',
+            'quarters_points',
+            'semis_points',
+            'finals_points',
+            'quarters_score',
+            'semis_score',
+            'finals_score',
+            'quarters_place',
+            'semis_place',
+            'finals_place',
             'delta_score',
             'delta_place',
-            'quarters_place',
-            'quarters_score',
-            'semis_place',
-            'semis_score',
-            'finals_place',
-            'finals_score',
-            'finals_points',
-            'semis_points',
-            'quarters_points',
-            'men',
+            'status',
             'performances',
             'directors',
             'singers',
+            'events',
+            'awards',
         )
 
 
-class ContestSerializer(serializers.ModelSerializer):
-    contestants = serializers.SlugRelatedField(
+class ConventionSerializer(serializers.ModelSerializer):
+    district = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contests = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
     )
 
-    district = serializers.StringRelatedField()
-
-    class Meta:
-        model = Contest
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'year',
-            'level',
-            'kind',
-            'district',
-            'panel',
-            'is_active',
-            'status',
-            # 'is_complete',
-            # 'is_place',
-            # 'is_score',
-            'scoresheet_pdf',
-            'contestants',
-        )
-
-
-class ConventionSerializer(serializers.ModelSerializer):
-    contests = serializers.SlugRelatedField(
+    events = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -172,16 +217,223 @@ class ConventionSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
+            'kind',
             'dates',
+            'location',
             'year',
+            'district',
             'timezone',
             'contests',
+            'events',
             'is_active',
         )
-        # extra_kwargs = {
-        #     # 'url': {'view_name': 'convention-detail', 'lookup_field': 'slug'},
-        #     'contests': {'view_name': 'contest-detail', 'lookup_field': 'slug'},
-        # }
+
+
+class DirectorSerializer(serializers.ModelSerializer):
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+    person = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Director
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'contestant',
+            'person',
+            'part',
+        )
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    contestants = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = District
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'start',
+            'end',
+            'kind',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'kind',
+            'long_name',
+            'is_active',
+            'contestants',
+        )
+
+
+class EventSerializer(serializers.ModelSerializer):
+    convention = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contest = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Event
+        fields = [
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'convention',
+            'contest',
+            'contestant',
+            'draw',
+            'location',
+            'is_active',
+            'kind',
+        ]
+
+
+class GroupSerializer(serializers.ModelSerializer):
+
+    contestants = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Group
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'start',
+            'end',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'kind',
+            'chapter_name',
+            'chapter_code',
+            'is_active',
+            'contestants',
+        )
+
+
+class JudgeSerializer(serializers.ModelSerializer):
+    scores = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+    contest = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+    person = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Judge
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'contest',
+            'person',
+            'part',
+            'status',
+            'scores',
+            'num',
+        )
+
+
+class PerformanceSerializer(serializers.ModelSerializer):
+    arrangement = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    song = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    arranger = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    scores = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Performance
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'session',
+            'order',
+            'status',
+            'is_parody',
+            'arrangement',
+            'song',
+            'arranger',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'penalty',
+            'contestant',
+            'scores',
+        )
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -202,6 +454,12 @@ class PersonSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
+    panels = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     class Meta:
         model = Person
         fields = (
@@ -209,6 +467,8 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
+            'start',
+            'end',
             'location',
             'website',
             'facebook',
@@ -217,60 +477,40 @@ class PersonSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            'notes',
+            'kind',
             'is_active',
             'arrangements',
             'choruses',
             'quartets',
+            'panels',
         )
 
 
-class SongSerializer(serializers.ModelSerializer):
-    arrangements = serializers.SlugRelatedField(
-        many=True,
+class ScoreSerializer(serializers.ModelSerializer):
+    performance = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    judge = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
     class Meta:
-        model = Song
-        fields = (
+        model = Score
+        fields = [
             'id',
             # 'url',
             'slug',
             'name',
-            'arrangements',
-        )
-
-
-class DistrictSerializer(serializers.ModelSerializer):
-    contestants = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = District
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'kind',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'notes',
-            'long_name',
-            'is_active',
-            'contestants',
-        )
+            'performance',
+            'judge',
+            'points',
+            'status',
+            'category',
+            'is_practice',
+        ]
 
 
 class SearchSerializer(HaystackSerializer):
@@ -293,40 +533,6 @@ class SearchSerializer(HaystackSerializer):
         ]
 
 
-class PerformanceSerializer(serializers.ModelSerializer):
-    arrangement = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    contestant = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = Performance
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'session',
-            'order',
-            'arrangement',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'penalty',
-            'contestant',
-        )
-
-
 class SingerSerializer(serializers.ModelSerializer):
     contestant = serializers.SlugRelatedField(
         read_only=True,
@@ -343,59 +549,33 @@ class SingerSerializer(serializers.ModelSerializer):
             'id',
             # 'url',
             'slug',
+            'name',
             'contestant',
             'person',
-            'name',
             'part',
         )
 
 
-class DirectorSerializer(serializers.ModelSerializer):
-    contestant = serializers.SlugRelatedField(
+class SongSerializer(serializers.ModelSerializer):
+    arrangements = serializers.SlugRelatedField(
+        many=True,
         read_only=True,
         slug_field='slug',
     )
-    person = serializers.SlugRelatedField(
+
+    performances = serializers.SlugRelatedField(
+        many=True,
         read_only=True,
         slug_field='slug',
     )
 
     class Meta:
-        model = Director
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'contestant',
-            'person',
-            'name',
-            'part',
-        )
-
-
-class ArrangementSerializer(serializers.ModelSerializer):
-    song = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    arranger = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = Arrangement
+        model = Song
         fields = (
             'id',
             # 'url',
             'slug',
             'name',
-            'song',
-            'arranger',
+            'arrangements',
+            'performances',
         )
-
-
-class ScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Score
