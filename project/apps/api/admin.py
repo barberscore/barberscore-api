@@ -21,7 +21,6 @@ from .models import (
     Director,
     Arrangement,
     Award,
-    Slot,
     Event,
 )
 
@@ -50,31 +49,6 @@ class PerformancesInline(admin.TabularInline):
         'contestant',
         'arrangement',
     )
-    can_delete = True
-    show_change_link = True
-
-
-class SlotsInline(admin.TabularInline):
-    form = select2_modelform(
-        Slot,
-        attrs={'width': '100px'},
-    )
-    fields = (
-        'contest',
-        'kind',
-        'draw',
-        'stagetime',
-    )
-    ordering = (
-        'kind',
-        'draw',
-    )
-    model = Slot
-    extra = 0
-    # raw_id_fields = (
-    #     'contestant',
-    #     'arrangement',
-    # )
     can_delete = True
     show_change_link = True
 
@@ -213,8 +187,9 @@ class ContestantsInline(admin.TabularInline):
         'men',
     )
     ordering = (
-        'draw',
         'place',
+        'seed',
+        'group',
     )
     show_change_link = True
 
@@ -294,7 +269,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         JudgesInline,
         ContestantsInline,
-        SlotsInline,
     ]
 
     search_fields = (
@@ -449,8 +423,6 @@ class ContestantAdmin(admin.ModelAdmin):
         ), (
             'seed',
             'prelim',
-            'draw',
-            'stagetime',
         ), (
             'place',
             'score',
