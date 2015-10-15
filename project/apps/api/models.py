@@ -1164,24 +1164,7 @@ class Contestant(TimeFramedModel):
         blank=True,
     )
 
-    # Should make this a property or denorm it.
-    draw = models.IntegerField(
-        help_text="""
-            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
-        null=True,
-        blank=True,
-    )
-
-    # Should make this a property or denorm it.
-    stagetime = models.DateTimeField(
-        help_text="""
-            The estimated stagetime (may be replaced by 'start' in later versions).""",
-        null=True,
-        blank=True,
-    )
-
     # TODO Everything below here must be protected in some way.  Different model?
-
     points = models.IntegerField(
         help_text="""
             Total raw points for this contestant (cumuative).""",
@@ -1338,87 +1321,6 @@ class Contestant(TimeFramedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
 
-class Slot(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    KIND = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='sessions',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='sessions',
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-        default=KIND.finals,
-    )
-
-    draw = models.IntegerField(
-        help_text="""
-            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
-    )
-
-    stagetime = models.DateTimeField(
-        help_text="""
-            The estimated stagetime (may be replaced by 'start' in later versions).""",
-        null=True,
-        blank=True,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2:02d}".format(
-            self.contest,
-            self.get_kind_display(),
-            self.draw,
-        )
-        super(Slot, self).save(*args, **kwargs)
-
-    # class Meta:
-        # unique_together = (
-        #     ('contest', 'kind', 'draw'),
-        # )
-
-
 class Performance(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1456,16 +1358,11 @@ class Performance(models.Model):
     contest = models.ForeignKey(
         'Contest',
         related_name='performances',
-        null=True,
-        blank=True,
     )
 
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     status = models.IntegerField(
@@ -1481,26 +1378,28 @@ class Performance(models.Model):
         choices=ORDER,
     )
 
-    draw = models.IntegerField(
-        help_text="""
-            The OA (Order of Appearance) in the contest schedule.  Specific to each round/session.""",
-        null=True,
-        blank=True,
-    )
-
-    stagetime = models.DateTimeField(
-        help_text="""
-            The estimated stagetime (may be replaced by 'start' in later versions).""",
-        null=True,
-        blank=True,
-    )
-
     is_parody = models.BooleanField(
         default=False,
     )
 
     arrangement = models.ForeignKey(
         'Arrangement',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    song = models.ForeignKey(
+        'Song',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    arranger = models.ForeignKey(
+        'Person',
         related_name='performances',
         null=True,
         blank=True,
