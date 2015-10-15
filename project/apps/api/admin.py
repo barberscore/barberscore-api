@@ -681,6 +681,27 @@ class ArrangementAdmin(admin.ModelAdmin):
 @admin.register(Event)
 class Event(admin.ModelAdmin):
     save_on_top = True
+    fields = (
+        'is_active',
+        'name',
+        ('start', 'end'),
+        'convention',
+        'contest',
+        'contestant',
+        'kind',
+        'draw',
+        'location',
+    )
+    list_display = [
+        'name',
+        'start',
+        'end',
+        'convention',
+        'contest',
+        'contestant',
+        'kind',
+        'draw',
+    ]
     raw_id_fields = (
         'convention',
         'contest',
