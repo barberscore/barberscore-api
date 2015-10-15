@@ -498,7 +498,7 @@ class Song(models.Model):
     )
 
 
-class Arrangement(models.Model):
+class Catalog(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -572,14 +572,14 @@ class Arrangement(models.Model):
         'Song',
         null=True,
         blank=True,
-        related_name='arrangements',
+        related_name='catalogs',
     )
 
-    arranger = models.ForeignKey(
+    person = models.ForeignKey(
         'Person',
         null=True,
         blank=True,
-        related_name='arrangements',
+        related_name='catalogs',
     )
 
     song_match = models.CharField(
@@ -610,7 +610,7 @@ class Arrangement(models.Model):
 
     class Meta:
         unique_together = (
-            ('arranger', 'song')
+            ('person', 'song')
         )
 
     def __unicode__(self):
@@ -619,9 +619,9 @@ class Arrangement(models.Model):
     def save(self, *args, **kwargs):
         self.name = u"{0} [{1}]".format(
             self.song,
-            self.arranger,
+            self.person,
         )
-        super(Arrangement, self).save(*args, **kwargs)
+        super(Catalog, self).save(*args, **kwargs)
 
 
 class Award(models.Model):
@@ -1377,8 +1377,8 @@ class Performance(models.Model):
         default=False,
     )
 
-    arrangement = models.ForeignKey(
-        'Arrangement',
+    catalog = models.ForeignKey(
+        'Catalog',
         related_name='performances',
         null=True,
         blank=True,

@@ -68,7 +68,7 @@
 #                 part=singer.part,
 #             )
 
-#         for arranger in old_person.arrangements.all():
+#         for arranger in old_person.catalogs.all():
 #             Arranger.objects.create(
 #                 person=new_person,
 #                 chart=arranger.chart,

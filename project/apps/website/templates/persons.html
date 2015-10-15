@@ -122,14 +122,14 @@
               </td>
               <td class='col-md-5'>
                 <ul class='list-unstyled'>
-                {% for song in person.arrangements.all %}
+                {% for song in person.catalogs.all %}
                   <li>{{song.name}}</li>
                 {% endfor %}
                 </ul>
               </td>
               <td class='col-md-5'>
                 <ul class='list-unstyled'>
-                {% for song in duplicate.child.arrangements.all %}
+                {% for song in duplicate.child.catalogs.all %}
                   <li>{{song.name}}</li>
                 {% endfor %}
                 </ul>
