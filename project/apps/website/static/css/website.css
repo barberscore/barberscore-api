@@ -1,17 +1,4 @@
 
-h1, h2, h3, h4, h5, h6, a, p, body, span {
-  font-family: 'Open Sans', sans-serif;
-}
-
 .footer {
   margin-top: 100px;
-}
-
-.table tbody>tr>td.vert-middle{
-    vertical-align: middle;
-}
-
-.centerhack {
-    margin-right: 100px;
-    margin-left: 100px;
 }
