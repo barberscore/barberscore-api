@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include('apps.api.urls')),
-    url(r'^auth/', include('django.contrib.auth.urls', namespace='auth')),
+    url(r'^auth/', include('django.contrib.auth.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^website/', include('apps.website.urls', namespace='website')),
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt')),
