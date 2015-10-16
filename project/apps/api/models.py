@@ -1446,6 +1446,158 @@ class Contestant(models.Model):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
 
+class Appearance(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    SESSION = Choices(
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semis'),
+        (3, 'quarters', 'Quarters'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='appearances',
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    session = models.IntegerField(
+        choices=SESSION,
+    )
+
+    # The following need to be protected until released.
+    # Different model?
+
+    mus_points = models.IntegerField(
+        help_text="""
+            The total music points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        help_text="""
+            The total presentation points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        help_text="""
+            The total singing points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        help_text="""
+            The total points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        help_text="""
+            The percentile music score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        help_text="""
+            The percentile presentation score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        help_text="""
+            The percentile singing score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        help_text="""
+            The total percentile score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    penalty = models.TextField(
+        help_text="""
+            Free form for penalties (notes).""",
+        blank=True,
+    )
+
+    class Meta:
+        ordering = [
+            'contestant',
+            'session',
+        ]
+        unique_together = (
+            ('contestant', 'session',),
+        )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contestant,
+            self.get_session_display(),
+        )
+        # self.total_points = sum(filter(None, [
+        #     self.mus_points,
+        #     self.prs_points,
+        #     self.sng_points,
+        # ])) or None
+        # panel = self.contestant.contest.panel
+        # if self.scores.exists():
+        #     self.mus_points = self.scores.filter(
+        #         category=1,  # TODO how does ModelUtils handle?
+        #     ).aggregate(mp=models.Sum('points'))['mp']
+        #     self.prs_points = self.scores.filter(
+        #         category=2,  # TODO how does ModelUtils handle?
+        #     ).aggregate(mp=models.Sum('points'))['mp']
+        #     self.sng_points = self.scores.filter(
+        #         category=3,  # TODO how does ModelUtils handle?
+        #     ).aggregate(mp=models.Sum('points'))['mp']
+        # if self.mus_points:
+        #     self.mus_score = round(self.mus_points / panel, 1)
+        # if self.prs_points:
+        #     self.prs_score = round(self.prs_points / panel, 1)
+        # if self.sng_points:
+        #     self.sng_score = round(self.sng_points / panel, 1)
+        # if self.total_points:
+        #     self.total_score = round(self.total_points / (panel * 3), 1)
+        super(Appearance, self).save(*args, **kwargs)
+
+
 class Performance(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1483,6 +1635,13 @@ class Performance(models.Model):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
+    )
+
+    appearance = models.ForeignKey(
+        'Appearance',
+        related_name='performances',
+        null=True,
+        blank=True,
     )
 
     status = models.IntegerField(
