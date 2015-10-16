@@ -7,7 +7,7 @@
         Login
       </h1>
       <p class='lead'>
-        Enter Your Username and Password
+        This is a protected site.  Please contact Randy Meyer to receive a login.
       </p>
     </section>
     <section>
@@ -19,7 +19,7 @@
           </div>
         {% endfor %}
         <button type="submit" class="btn btn-success">Submit</button>
-        <a id='forgot-password' class='pull-right' href='{% url "auth:password_reset" %}'>Forgot Password?</a>
+        <a id='forgot-password' class='pull-right' href='{% url "password_reset" %}'>Forgot Password?</a>
         <input type="hidden" name="next" value="{{ next }}" />
       </form>
     </section>
