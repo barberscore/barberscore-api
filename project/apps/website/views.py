@@ -44,6 +44,7 @@ from apps.api.models import (
     DuplicateGroup,
     DuplicateSong,
     DuplicatePerson,
+    Contest,
 )
 
 from .forms import (
@@ -57,10 +58,13 @@ User = get_user_model()
 
 
 def home(request):
-    return render(
-        request,
-        'home.html',
-    )
+    if request.user.is_authenticated():
+        return redirect('website:dashboard')
+    else:
+        return render(
+            request,
+            'home.html',
+        )
 
 
 def login(request):
@@ -126,6 +130,30 @@ def logout(request):
         """You are logged out""",
     )
     return redirect('website:home')
+
+
+@login_required
+def dashboard(request):
+    contests = Contest.objects.exclude(
+        status=Contest.STATUS.complete,
+    )
+    return render(
+        request,
+        'api/dashboard.html',
+        {'contests': contests},
+    )
+
+
+@login_required
+def contest(request, contest_slug):
+    contest = Contest.objects.get(
+        slug=contest_slug,
+    )
+    return render(
+        request,
+        'api/contest.html',
+        {'contest': contest},
+    )
 
 
 def merge(request):
