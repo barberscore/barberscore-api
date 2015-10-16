@@ -392,7 +392,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    arranger = serializers.SlugRelatedField(
+    person = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -421,7 +421,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'is_parody',
             'catalog',
             'song',
-            'arranger',
+            'person',
             'mus_points',
             'prs_points',
             'sng_points',
