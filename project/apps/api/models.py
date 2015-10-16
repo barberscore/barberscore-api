@@ -468,61 +468,61 @@ class Director(models.Model):
         )
 
 
-# class Arranger(models.Model):
-#     """Chorus relation"""
-#     id = models.UUIDField(
-#         primary_key=True,
-#         default=uuid.uuid4,
-#         editable=False,
-#     )
+class Arranger(models.Model):
+    """Chorus relation"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
 
-#     PART = Choices(
-#         (1, 'arranger', 'Arranger'),
-#         (2, 'coarranger', 'Co-Arranger'),
-#     )
+    PART = Choices(
+        (1, 'arranger', 'Arranger'),
+        (2, 'coarranger', 'Co-Arranger'),
+    )
 
-#     name = models.CharField(
-#         max_length=255,
-#         unique=True,
-#     )
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
 
-#     slug = AutoSlugField(
-#         populate_from='name',
-#         always_update=True,
-#         unique=True,
-#         max_length=255,
-#     )
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
 
-#     performance = models.ForeignKey(
-#         'Performance',
-#         # related_name='arrangers',
-#     )
+    performance = models.ForeignKey(
+        'Performance',
+        # related_name='arrangers',
+    )
 
-#     person = models.ForeignKey(
-#         'Person',
-#         # related_name='arrangements',
-#     )
+    person = models.ForeignKey(
+        'Person',
+        # related_name='arrangements',
+    )
 
-#     part = models.IntegerField(
-#         choices=PART,
-#         default=PART.arranger,
-#     )
+    part = models.IntegerField(
+        choices=PART,
+        default=PART.arranger,
+    )
 
-#     def __unicode__(self):
-#         return u"{0}".format(self.name)
+    def __unicode__(self):
+        return u"{0}".format(self.name)
 
-#     def save(self, *args, **kwargs):
-#         self.name = u"{0} {1} {2}".format(
-#             self.performance,
-#             self.get_part_display(),
-#             self.person,
-#         )
-#         super(Arranger, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.performance,
+            self.get_part_display(),
+            self.person,
+        )
+        super(Arranger, self).save(*args, **kwargs)
 
-#     class Meta:
-#         unique_together = (
-#             ('performance', 'person',),
-#         )
+    class Meta:
+        unique_together = (
+            ('performance', 'person',),
+        )
 
 
 class Song(models.Model):
