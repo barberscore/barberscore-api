@@ -18,6 +18,8 @@ urlpatterns = [
         name='logout',
     ),
 
+    url(r'^dashboard/$', views.dashboard, name='dashboard'),
+    url(r'^contest/(?P<contest_slug>[a-zA-Z0-9-]+)/$', views.contest, name='contest'),
 
 
     # url(r'^merge/$', views.merge, name='merge'),
