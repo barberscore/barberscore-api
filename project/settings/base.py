@@ -34,9 +34,9 @@ USE_TZ = True
 SECRET_KEY = get_env_variable("SECRET_KEY")
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'website:login'
+LOGOUT_URL = 'website:logout'
+LOGIN_REDIRECT_URL = 'website:home'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = ()
 ADMINS = (
@@ -50,6 +50,7 @@ DATABASE_URL = get_env_variable("DATABASE_URL")
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 # Auth
+AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )

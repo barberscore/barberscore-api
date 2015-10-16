@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <main class="container">
+    <section class="page-header">
+      <h1>
+        Login
+      </h1>
+      <p class='lead'>
+        Enter Your Username and Password
+      </p>
+    </section>
+    <section>
+      <form id='login' role='form' class='form' action="{% url 'website:login' %}" method='POST'>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-group {% if field.errors %} has-error {% endif %}">
+            {{field.label_tag}}{{ field }}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a id='forgot-password' class='pull-right' href='{% url "auth:password_reset" %}'>Forgot Password?</a>
+        <input type="hidden" name="next" value="{{ next }}" />
+      </form>
+    </section>
+  </main>
+{% endblock content %}
