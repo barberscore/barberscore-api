@@ -6,7 +6,20 @@ from django.shortcuts import (
     redirect,
 )
 
+from django.contrib.auth.decorators import login_required
+
 from django.core.urlresolvers import reverse
+
+from django.contrib.auth import (
+    authenticate,
+    login as auth_login,
+    logout as auth_logout,
+    get_user_model,
+)
+
+# from django.contrib.auth.forms import (
+#     AuthenticationForm,
+# )
 
 from fuzzywuzzy import process
 
@@ -34,13 +47,88 @@ from apps.api.models import (
 )
 
 from .forms import (
+    LoginForm,
     MergePersonForm,
     MergeGroupForm,
     MergeSongForm,
 )
 
+User = get_user_model()
+
 
 def home(request):
+    return render(
+        request,
+        'home.html',
+    )
+
+
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(
+            request.POST,
+        )
+        if form.is_valid():
+            user = authenticate(
+                username=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
+            )
+            if user is not None:
+                if user.is_active:
+                    auth_login(
+                        request,
+                        user,
+                    )
+                    messages.success(
+                        request,
+                        """You are logged in!"""
+                    )
+                    return redirect('website:home')
+                else:
+                    messages.error(
+                        request,
+                        """Your account has been closed.  Please contact Randy Meyer to reopen."""
+                    )
+                    return redirect('website:home')
+            else:
+                try:
+                    user = User.objects.get(email=form.cleaned_data['email'])
+                    messages.error(
+                        request,
+                        """That is not the correct password.  Please try again."""
+                    )
+                except User.DoesNotExist:
+                    messages.error(
+                        request,
+                        """We don't recognize that email; perhaps you used a different one when you registered?"""
+                    )
+        else:
+            for key in form.errors.keys():
+                for error in form.errors[key]:
+                    messages.error(
+                        request,
+                        error,
+                    )
+    else:
+        form = LoginForm()
+    return render(
+        request,
+        'registration/login.html',
+        {'form': form},
+    )
+
+
+@login_required
+def logout(request):
+    auth_logout(request)
+    messages.warning(
+        request,
+        """You are logged out""",
+    )
+    return redirect('website:home')
+
+
+def merge(request):
     choruses = DuplicateGroup.objects.filter(
         parent__kind=Group.KIND.chorus,
     ).count()
@@ -52,7 +140,7 @@ def home(request):
 
     return render(
         request,
-        'home.html', {
+        'merge/merge.html', {
             'choruses': choruses,
             'quartets': quartets,
             'songs': songs,
@@ -67,7 +155,7 @@ def all_choruses(request):
     ).filter(kind=Group.KIND.chorus).distinct().order_by('name')
     return render(
         request,
-        'all_choruses.html',
+        'merge/all_choruses.html',
         {'groups': groups},
     )
 
@@ -93,7 +181,7 @@ def choruses(request):
         duplicate = None
     return render(
         request,
-        'choruses.html',
+        'merge/choruses.html',
         {'groups': groups, 'page': page, 'duplicate': duplicate},
     )
 
@@ -104,7 +192,7 @@ def all_quartets(request):
     ).filter(kind=Group.QUARTET).distinct().order_by('name')
     return render(
         request,
-        'all_quartets.html',
+        'merge/all_quartets.html',
         {'groups': groups},
     )
 
@@ -127,7 +215,7 @@ def quartets(request):
     duplicate = groups.object_list[0].duplicates.first()
     return render(
         request,
-        'quartets.html',
+        'merge/quartets.html',
         {'groups': groups, 'page': page, 'duplicate': duplicate},
     )
 
@@ -138,7 +226,7 @@ def all_songs(request):
     ).distinct().order_by('name')
     return render(
         request,
-        'all_songs.html',
+        'merge/all_songs.html',
         {'songs': songs},
     )
 
@@ -161,7 +249,7 @@ def songs(request):
     duplicate = songs.object_list[0].duplicates.first()
     return render(
         request,
-        'songs.html',
+        'merge/songs.html',
         {'songs': songs, 'page': page, 'duplicate': duplicate},
     )
 
@@ -172,7 +260,7 @@ def all_persons(request):
     ).distinct().order_by('name')
     return render(
         request,
-        'all_persons.html',
+        'merge/all_persons.html',
         {'persons': persons},
     )
 
@@ -195,7 +283,7 @@ def persons(request):
     duplicate = persons.object_list[0].duplicates.first()
     return render(
         request,
-        'persons.html',
+        'merge/persons.html',
         {'persons': persons, 'page': page, 'duplicate': duplicate},
     )
 
@@ -507,7 +595,7 @@ def manual_persons(request):
         form = MergePersonForm()
     return render(
         request,
-        'manual_merge.html',
+        'merge/manual_merge.html',
         {'form': form},
     )
 
@@ -531,7 +619,7 @@ def manual_groups(request):
         form = MergeGroupForm()
     return render(
         request,
-        'manual_merge.html',
+        'merge/manual_merge.html',
         {'form': form},
     )
 
@@ -555,6 +643,6 @@ def manual_songs(request):
         form = MergeSongForm()
     return render(
         request,
-        'manual_merge.html',
+        'merge/manual_merge.html',
         {'form': form},
     )

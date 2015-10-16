@@ -19,6 +19,12 @@ from django.core.validators import (
     MinValueValidator,
 )
 
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    BaseUserManager,
+)
+
 from django.core.exceptions import (
     ValidationError,
 )
@@ -44,6 +50,68 @@ from .validators import (
 def generate_image_filename(instance, filename):
     f, ext = os.path.splitext(filename)
     return '{0}{1}'.format(instance.id, ext)
+
+
+class UserManager(BaseUserManager):
+
+    def create_user(self, email, password, **kwargs):
+        user = self.model(
+            email=self.normalize_email(email),
+            is_active=True,
+            **kwargs
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, email, password, **kwargs):
+        user = self.model(
+            email=email,
+            is_staff=True,
+            is_superuser=True,
+            is_active=True,
+            **kwargs
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    USERNAME_FIELD = 'email'
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    email = models.EmailField(
+        unique=True,
+        help_text="""Your email address will be your username.""",
+    )
+    name = models.CharField(
+        max_length=200,
+        help_text="""Your full name.""",
+    )
+    is_active = models.BooleanField(
+        default=True,
+    )
+    is_staff = models.BooleanField(
+        default=False,
+    )
+    date_joined = models.DateField(
+        auto_now_add=True,
+    )
+
+    objects = UserManager()
+
+    def get_full_name(self):
+        return self.email
+
+    def get_short_name(self):
+        return self.email
 
 
 class Common(TimeStampedModel):
