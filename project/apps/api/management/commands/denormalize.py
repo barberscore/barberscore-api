@@ -6,11 +6,12 @@ from apps.api.models import (
     Convention,
     Contest,
     Contestant,
+    Appearance,
     Performance,
     Group,
-    Person,
     Singer,
     Director,
+    Judge,
 )
 
 
@@ -27,18 +28,18 @@ class Command(BaseCommand):
         cs = Contestant.objects.all()
         for c in cs:
             c.save()
+        as_ = Appearance.objects.all()
+        for a in as_:
+            a.save()
         ps = Performance.objects.all()
         for p in ps:
             p.save()
-        gs = Group.objects.all()
-        for g in gs:
-            g.save()
-        rs = Person.objects.all()
-        for r in rs:
-            r.save()
         ss = Singer.objects.all()
         for s in ss:
             s.save()
+        js = Judge.objects.all()
+        for j in js:
+            j.save()
         ds = Director.objects.all()
         for d in ds:
             d.save()
