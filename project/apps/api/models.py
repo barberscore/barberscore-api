@@ -1854,13 +1854,13 @@ class Performance(models.Model):
             self.get_order_display(),
             "Song",
         )
-        if self.scores.exists():
-            agg = self.scores.exclude(
-                category=4,
-            ).order_by(
-                'category',
-            ).annotate(models.Sum('points'))
-            self.mus_points = agg['1']
+        # if self.scores.exists():
+        #     agg = self.scores.exclude(
+        #         category=4,
+        #     ).order_by(
+        #         'category',
+        #     ).annotate(models.Sum('points'))
+        #     self.mus_points = agg['1']
 
         self.total_points = sum(filter(None, [
             self.mus_points,
@@ -1872,9 +1872,13 @@ class Performance(models.Model):
             self.mus_score = round(self.mus_points / possible * 100, 1)
             self.prs_score = round(self.prs_points / possible * 100, 1)
             self.sng_score = round(self.sng_points / possible * 100, 1)
+        except TypeError:
+            pass
+        try:
             self.total_score = round(self.total_points / (possible * 100 * 3), 1)
         except TypeError:
             pass
+
         # if self.scores.exists():
         #     possible = self.appearance.contestant.contest.panel * 100
         #     agg = self.scores.all().aggregate(
