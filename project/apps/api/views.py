@@ -119,7 +119,9 @@ class DistrictViewSet(viewsets.ModelViewSet):
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.select_related(
         'catalog',
-        'contestant',
+        'appearance',
+    ).prefetch_related(
+        'scores',
     )
     serializer_class = PerformanceSerializer
     lookup_field = 'slug'
