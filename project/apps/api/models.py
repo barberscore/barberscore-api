@@ -1497,7 +1497,7 @@ class Contestant(models.Model):
     @property
     def delta_score(self):
         try:
-            return self.score - self.prelim
+            return self.total_score - self.prelim
         except TypeError:
             return None
 
@@ -1515,7 +1515,6 @@ class Contestant(models.Model):
         ordering = (
             '-contest__year',
             'place',
-            '-score',
         )
         unique_together = (
             ('group', 'contest',),
