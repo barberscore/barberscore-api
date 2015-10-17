@@ -81,12 +81,6 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    events = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
     district = serializers.StringRelatedField()
 
     class Meta:
@@ -106,7 +100,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'status',
             'scoresheet_pdf',
             'contestants',
-            'events',
         )
 
 
@@ -126,7 +119,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    performances = serializers.SlugRelatedField(
+    appearances = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -139,12 +132,6 @@ class ContestantSerializer(serializers.ModelSerializer):
     )
 
     singers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    events = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -193,7 +180,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'delta_score',
             'delta_place',
             'status',
-            'performances',
+            'appearances',
             'directors',
             'singers',
             'events',
@@ -411,6 +398,8 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'name',
             'session',
             'status',
+            'draw',
+            'start',
             'mus_points',
             'prs_points',
             'sng_points',

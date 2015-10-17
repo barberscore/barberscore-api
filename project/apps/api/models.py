@@ -954,10 +954,9 @@ class Contest(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'upcoming', 'Upcoming',),
+        (1, 'structured', 'Structured',),
         (2, 'current', 'Current',),
-        (3, 'reviewing', 'Reviewing',),
-        (4, 'complete', 'Complete',),
+        (3, 'complete', 'Complete',),
     )
 
     KIND = Choices(
@@ -1227,6 +1226,9 @@ class Contestant(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (1, 'qualified', 'Qualified',),
+        (2, 'current', 'Current',),
+        (3, 'complete', 'Complete',),
     )
 
     id = models.UUIDField(
@@ -1558,6 +1560,18 @@ class Appearance(models.Model):
         choices=SESSION,
     )
 
+    draw = models.IntegerField(
+        help_text="""
+            The OA (Order of Appearance) in the contest schedule.  Specific to each session.""",
+        null=True,
+        blank=True,
+    )
+
+    start = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     # The following need to be protected until released.
     # Different model?
 
@@ -1880,6 +1894,9 @@ class Score(models.Model):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
+        (1, 'flagged', 'Flagged',),
+        (2, 'confirmed', 'Confirmed',),
+        (3, 'final', 'Final',),
     )
 
     CATEGORY = Choices(
