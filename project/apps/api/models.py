@@ -1023,9 +1023,6 @@ class Contest(models.Model):
     district = models.ForeignKey(
         'District',
         related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     convention = models.ForeignKey(
@@ -1082,7 +1079,7 @@ class Contest(models.Model):
         )
 
     def clean(self):
-            if self.level == self.LEVEL.international and self.district != 'BHS':
+            if self.level == self.LEVEL.international and self.district.name != 'BHS':
                 raise ValidationError('International does not have a district.')
             if self.level != self.LEVEL.international and self.district is None:
                 raise ValidationError('You must provide a district.')
