@@ -17,6 +17,7 @@ from .views import (
     JudgeViewSet,
     EventViewSet,
     AwardViewSet,
+    AppearanceViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -36,5 +37,6 @@ router.register(r'score', ScoreViewSet)
 router.register(r'judge', JudgeViewSet)
 router.register(r'event', EventViewSet)
 router.register(r'award', AwardViewSet)
+router.register(r'appearance', AppearanceViewSet)
 router.register(r'search', SearchViewSet, base_name='search')
 urlpatterns = router.urls
