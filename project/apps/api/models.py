@@ -391,6 +391,10 @@ class Judge(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    is_practice = models.BooleanField(
+        default=False,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -1297,19 +1301,19 @@ class Contestant(models.Model):
     )
 
     # TODO Everything below here must be protected in some way.  Different model?
-    points = models.IntegerField(
-        help_text="""
-            Total raw points for this contestant (cumuative).""",
-        null=True,
-        blank=True,
-    )
+    # total_points = models.IntegerField(
+    #     help_text="""
+    #         Total raw points for this contestant (cumuative).""",
+    #     null=True,
+    #     blank=True,
+    # )
 
-    score = models.FloatField(
-        help_text="""
-            The percentile of the total points (cumulative , all sessions).""",
-        null=True,
-        blank=True,
-    )
+    # total_score = models.FloatField(
+    #     help_text="""
+    #         The percentile of the total points (cumulative , all sessions).""",
+    #     null=True,
+    #     blank=True,
+    # )
 
     place = models.IntegerField(
         help_text="""
@@ -1962,9 +1966,9 @@ class Score(models.Model):
         choices=CATEGORY,
     )
 
-    is_practice = models.BooleanField(
-        default=False,
-    )
+    @property
+    def is_practice(self):
+        return self.judge.is_practice
 
     def __unicode__(self):
         return u"{0}".format(self.name)

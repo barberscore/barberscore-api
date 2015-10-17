@@ -59,9 +59,11 @@ class ScoresInline(admin.TabularInline):
     #     attrs={'width': '300px'},
     # )
     fields = (
+        'performance',
         'judge',
         'category',
         'points',
+        'is_practice',
     )
     ordering = (
         'category',
@@ -71,6 +73,9 @@ class ScoresInline(admin.TabularInline):
     # raw_id_fields = (
     #     'judge',
     # )
+    readonly_fields = (
+        'is_practice',
+    )
     can_delete = True
     show_change_link = True
 
