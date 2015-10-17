@@ -939,13 +939,13 @@ class Convention(models.Model):
         ]:
             self.name = u"{0} {1}".format(
                 self.get_kind_display(),
-                self.get_year_display(),
+                self.year,
             )
         else:
             self.name = u"{0} {1} {2}".format(
                 self.district,
                 self.get_kind_display(),
-                self.get_year_display(),
+                self.year,
             )
         super(Convention, self).save(*args, **kwargs)
 
@@ -1098,20 +1098,20 @@ class Contest(models.Model):
             self.name = u"{0} {1} {2}".format(
                 self.get_level_display(),
                 self.get_kind_display(),
-                self.get_year_display(),
+                self.year,
             )
-        elif self.level == self.LEVEL.prelims:
-            self.name = u"{0} {1} {2}".format(
-                self.district,
-                self.get_level_display(),
-                self.get_year_display(),
-            )
-        else:
-            self.name = u"{0} {1} {2}".format(
-                self.district,
-                self.get_kind_display(),
-                self.get_year_display(),
-            )
+        # elif self.level == self.LEVEL.prelims:
+        #     self.name = u"{0} {1} {2}".format(
+        #         self.district,
+        #         self.get_level_display(),
+        #         self.year,
+        #     )
+        # else:
+        #     self.name = u"{0} {1} {2}".format(
+        #         self.district,
+        #         self.get_kind_display(),
+        #         self.year,
+        #     )
         super(Contest, self).save(*args, **kwargs)
 
     def prep_panel(self):
@@ -1318,6 +1318,62 @@ class Contestant(models.Model):
         blank=True,
     )
 
+    mus_points = models.IntegerField(
+        help_text="""
+            The total music points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        help_text="""
+            The total presentation points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        help_text="""
+            The total singing points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        help_text="""
+            The total points for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        help_text="""
+            The percentile music score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        help_text="""
+            The percentile presentation score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        help_text="""
+            The percentile singing score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        help_text="""
+            The total percentile score for this appearance.""",
+        null=True,
+        blank=True,
+    )
+
     quarters_points = models.IntegerField(
         help_text="""
             The total points for the quarterfinal session.""",
@@ -1391,27 +1447,40 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
-        self.finals_points = self.performances.filter(
-            session=1,
-        ).aggregate(sum=models.Sum('total_points'))['sum']
-        self.semis_points = self.performances.filter(
-            session=2,
-        ).aggregate(sum=models.Sum('total_points'))['sum']
-        self.quarters_points = self.performances.filter(
-            session=3,
-        ).aggregate(sum=models.Sum('total_points'))['sum']
-        self.points = sum(filter(None, [
-            self.quarters_points,
-            self.semis_points,
-            self.finals_points,
-        ])) or None
-        panel = self.contest.panel
-        if self.quarters_points:
-            self.quarters_score = round(self.quarters_points / (panel * 6), 1)
-        if self.semis_points:
-            self.semis_score = round(self.semis_points / (panel * 6), 1)
-        if self.finals_points:
-            self.finals_score = round(self.finals_points / (panel * 6), 1)
+        if self.appearances.exists():
+            possible = self.contest.panel * 100 * 2 * self.appearances.count()
+            agg = self.appearances.all().aggregate(
+                mus=models.Sum('mus_points'),
+                prs=models.Sum('prs_points'),
+                sng=models.Sum('sng_points'),
+                tot=models.Sum('total_points'),
+            )
+            self.mus_points = agg['mus']
+            self.prs_points = agg['prs']
+            self.sng_points = agg['sng']
+            self.total_points = agg['tot']
+            try:
+                self.mus_score = round(self.mus_points / possible * 100, 1)
+                self.prs_score = round(self.prs_points / possible * 100, 1)
+                self.sng_score = round(self.sng_points / possible * 100, 1)
+                self.total_score = round(self.total_points / (possible * 100 * 3), 1)
+            except TypeError:
+                pass
+        # self.finals_points = self.performances.filter(
+        #     session=1,
+        # ).aggregate(sum=models.Sum('total_points'))['sum']
+        # self.semis_points = self.performances.filter(
+        #     session=2,
+        # ).aggregate(sum=models.Sum('total_points'))['sum']
+        # self.quarters_points = self.performances.filter(
+        #     session=3,
+        # ).aggregate(sum=models.Sum('total_points'))['sum']
+        # if self.quarters_points:
+        #     self.quarters_score = round(self.quarters_points / (panel * 6), 1)
+        # if self.semis_points:
+        #     self.semis_score = round(self.semis_points / (panel * 6), 1)
+        # if self.finals_points:
+        #     self.finals_score = round(self.finals_points / (panel * 6), 1)
         super(Contestant, self).save(*args, **kwargs)
 
     @property
@@ -1571,30 +1640,25 @@ class Appearance(models.Model):
             self.contestant,
             self.get_session_display(),
         )
-        # self.total_points = sum(filter(None, [
-        #     self.mus_points,
-        #     self.prs_points,
-        #     self.sng_points,
-        # ])) or None
-        # panel = self.contestant.contest.panel
-        # if self.scores.exists():
-        #     self.mus_points = self.scores.filter(
-        #         category=1,  # TODO how does ModelUtils handle?
-        #     ).aggregate(mp=models.Sum('points'))['mp']
-        #     self.prs_points = self.scores.filter(
-        #         category=2,  # TODO how does ModelUtils handle?
-        #     ).aggregate(mp=models.Sum('points'))['mp']
-        #     self.sng_points = self.scores.filter(
-        #         category=3,  # TODO how does ModelUtils handle?
-        #     ).aggregate(mp=models.Sum('points'))['mp']
-        # if self.mus_points:
-        #     self.mus_score = round(self.mus_points / panel, 1)
-        # if self.prs_points:
-        #     self.prs_score = round(self.prs_points / panel, 1)
-        # if self.sng_points:
-        #     self.sng_score = round(self.sng_points / panel, 1)
-        # if self.total_points:
-        #     self.total_score = round(self.total_points / (panel * 3), 1)
+        if self.performances.exists():
+            possible = self.contestant.contest.panel * 100 * 2
+            agg = self.performances.all().aggregate(
+                mus=models.Sum('mus_points'),
+                prs=models.Sum('prs_points'),
+                sng=models.Sum('sng_points'),
+                tot=models.Sum('total_points'),
+            )
+            self.mus_points = agg['mus']
+            self.prs_points = agg['prs']
+            self.sng_points = agg['sng']
+            self.total_points = agg['tot']
+            try:
+                self.mus_score = round(self.mus_points / possible * 100, 1)
+                self.prs_score = round(self.prs_points / possible * 100, 1)
+                self.sng_score = round(self.sng_points / possible * 100, 1)
+                self.total_score = round(self.total_points / (possible * 100 * 3), 1)
+            except TypeError:
+                pass
         super(Appearance, self).save(*args, **kwargs)
 
 
@@ -1764,36 +1828,48 @@ class Performance(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3}".format(
-            self.contestant,
-            self.get_session_display(),
+        self.name = u"{0} {1} {2}".format(
+            self.appearance,
             self.get_order_display(),
             "Song",
         )
+        if self.scores.exists():
+            agg = self.scores.exclude(
+                category=4,
+            ).order_by(
+                'category',
+            ).annotate(models.Sum('points'))
+            self.mus_points = agg['1']
+
         self.total_points = sum(filter(None, [
             self.mus_points,
             self.prs_points,
             self.sng_points,
         ])) or None
-        panel = self.contestant.contest.panel
-        if self.scores.exists():
-            self.mus_points = self.scores.filter(
-                category=1,  # TODO how does ModelUtils handle?
-            ).aggregate(mp=models.Sum('points'))['mp']
-            self.prs_points = self.scores.filter(
-                category=2,  # TODO how does ModelUtils handle?
-            ).aggregate(mp=models.Sum('points'))['mp']
-            self.sng_points = self.scores.filter(
-                category=3,  # TODO how does ModelUtils handle?
-            ).aggregate(mp=models.Sum('points'))['mp']
-        if self.mus_points:
-            self.mus_score = round(self.mus_points / panel, 1)
-        if self.prs_points:
-            self.prs_score = round(self.prs_points / panel, 1)
-        if self.sng_points:
-            self.sng_score = round(self.sng_points / panel, 1)
-        if self.total_points:
-            self.total_score = round(self.total_points / (panel * 3), 1)
+        possible = self.appearance.contestant.contest.panel * 100
+        try:
+            self.mus_score = round(self.mus_points / possible * 100, 1)
+            self.prs_score = round(self.prs_points / possible * 100, 1)
+            self.sng_score = round(self.sng_points / possible * 100, 1)
+            self.total_score = round(self.total_points / (possible * 100 * 3), 1)
+        except TypeError:
+            pass
+        # if self.scores.exists():
+        #     possible = self.appearance.contestant.contest.panel * 100
+        #     agg = self.scores.all().aggregate(
+        #         mus=models.Sum('mus_points'),
+        #         prs=models.Sum('prs_points'),
+        #         sng=models.Sum('sng_points'),
+        #         tot=models.Sum('total_points'),
+        #     )
+        #     self.mus_points = agg['mus']
+        #     self.prs_points = agg['prs']
+        #     self.sng_points = agg['sng']
+        #     self.total_points = agg['tot']
+        #     self.mus_score = round(self.mus_points / possible, 1)
+        #     self.prs_score = round(self.prs_points / possible, 1)
+        #     self.sng_score = round(self.sng_points / possible, 1)
+        #     self.total_score = round(self.total_points / (possible * 3), 1)
         super(Performance, self).save(*args, **kwargs)
 
 

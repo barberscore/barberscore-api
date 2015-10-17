@@ -24,6 +24,7 @@ from .models import (
     Judge,
     Award,
     Event,
+    Appearance,
 )
 
 from .serializers import (
@@ -43,6 +44,7 @@ from .serializers import (
     JudgeSerializer,
     EventSerializer,
     AwardSerializer,
+    AppearanceSerializer,
 )
 
 
@@ -118,6 +120,12 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         'contestant',
     )
     serializer_class = PerformanceSerializer
+    lookup_field = 'slug'
+
+
+class AppearanceViewSet(viewsets.ModelViewSet):
+    queryset = Appearance.objects.all()
+    serializer_class = AppearanceSerializer
     lookup_field = 'slug'
 
 
