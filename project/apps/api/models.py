@@ -383,6 +383,14 @@ class Judge(models.Model):
     num = models.IntegerField(
     )
 
+    district = models.ForeignKey(
+        'District',
+        related_name='judges',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
