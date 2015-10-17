@@ -80,9 +80,10 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'contest',
         'district',
     ).prefetch_related(
-        'performances',
+        'appearances',
         'directors',
         'singers',
+        'awards',
     )
     serializer_class = ContestantSerializer
     lookup_field = 'slug'
@@ -101,6 +102,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'catalogs',
         'choruses',
         'quartets',
+        'panels',
     )
     serializer_class = PersonSerializer
     lookup_field = 'slug'
@@ -124,7 +126,11 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 
 
 class AppearanceViewSet(viewsets.ModelViewSet):
-    queryset = Appearance.objects.all()
+    queryset = Appearance.objects.select_related(
+        'contestant',
+    ).prefetch_related(
+        'performances',
+    )
     serializer_class = AppearanceSerializer
     lookup_field = 'slug'
 
@@ -150,13 +156,17 @@ class DirectorViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.prefetch_related(
         'catalogs',
+        'performances',
     )
     serializer_class = SongSerializer
     lookup_field = 'slug'
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
-    queryset = Score.objects.all()
+    queryset = Score.objects.select_related(
+        'performance',
+        'judge',
+    )
     serializer_class = ScoreSerializer
     permission_classes = [
         permissions.DjangoModelPermissions,
@@ -177,7 +187,12 @@ class SearchViewSet(HaystackViewSet):
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
-    queryset = Judge.objects.all()
+    queryset = Judge.objects.select_related(
+        'person',
+        'contest',
+    ).prefetch_related(
+        'scores',
+    )
     serializer_class = JudgeSerializer
     lookup_field = 'slug'
 
@@ -189,6 +204,8 @@ class EventViewSet(viewsets.ModelViewSet):
 
 
 class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.all()
+    queryset = Award.objects.select_related(
+        'contestant',
+    )
     serializer_class = AwardSerializer
     lookup_field = 'slug'
