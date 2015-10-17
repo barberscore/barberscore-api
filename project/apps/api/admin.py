@@ -85,10 +85,11 @@ class JudgesInline(admin.TabularInline):
         'contest',
         'person',
         'part',
+        'num',
     )
     ordering = (
         'part',
-        'contest',
+        'num',
     )
     extra = 0
     raw_id_fields = (
