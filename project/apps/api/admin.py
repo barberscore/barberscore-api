@@ -86,6 +86,8 @@ class JudgesInline(admin.TabularInline):
         'person',
         'part',
         'num',
+        'district',
+        'is_practice',
     )
     ordering = (
         'part',
