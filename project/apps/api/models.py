@@ -1707,10 +1707,10 @@ class Performance(models.Model):
         max_length=255,
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='performances',
-    )
+    # contestant = models.ForeignKey(
+    #     'Contestant',
+    #     related_name='performances',
+    # )
 
     appearance = models.ForeignKey(
         'Appearance',
@@ -1724,9 +1724,9 @@ class Performance(models.Model):
         default=STATUS.new,
     )
 
-    session = models.IntegerField(
-        choices=SESSION,
-    )
+    # session = models.IntegerField(
+    #     choices=SESSION,
+    # )
 
     order = models.IntegerField(
         choices=ORDER,
@@ -1827,12 +1827,11 @@ class Performance(models.Model):
 
     class Meta:
         ordering = [
-            'contestant',
-            'session',
+            'appearance',
             'order',
         ]
         unique_together = (
-            ('contestant', 'session', 'order',),
+            ('appearance', 'order',),
         )
 
     def __unicode__(self):

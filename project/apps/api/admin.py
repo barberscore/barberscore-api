@@ -32,8 +32,7 @@ class PerformancesInline(admin.TabularInline):
         attrs={'width': '100px'},
     )
     fields = (
-        'contestant',
-        'session',
+        'appearance',
         'order',
         'catalog',
         'mus_points',
@@ -41,13 +40,13 @@ class PerformancesInline(admin.TabularInline):
         'sng_points',
     )
     ordering = (
-        'session',
+        'appearance',
         'order',
     )
     model = Performance
     extra = 0
     raw_id_fields = (
-        'contestant',
+        'appearance',
         'catalog',
     )
     can_delete = True
@@ -203,6 +202,35 @@ class ContestantsInline(admin.TabularInline):
     can_delete = True
     readonly_fields = (
         'group',
+    )
+
+
+class AppearancesInline(admin.TabularInline):
+    form = select2_modelform(
+        Appearance,
+        attrs={'width': '100px'},
+    )
+    fields = (
+        'contestant',
+        'session',
+        'draw',
+        'start',
+    )
+    ordering = (
+        'session',
+        'draw',
+        'contestant',
+    )
+    show_change_link = True
+
+    model = Appearance
+    extra = 0
+    raw_id_fields = (
+        'contestant',
+    )
+    can_delete = True
+    readonly_fields = (
+        'contestant',
     )
 
 
@@ -387,8 +415,8 @@ class ContestantAdmin(admin.ModelAdmin):
     inlines = [
         SingersInline,
         DirectorsInline,
-        PerformancesInline,
         AwardsInline,
+        AppearancesInline,
     ]
 
     list_display = (
@@ -559,6 +587,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'catalog',
+        'order',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -573,10 +602,6 @@ class PerformanceAdmin(admin.ModelAdmin):
             'name',
         ),
         (
-            'contestant',
-        ),
-        (
-            'session',
             'order',
         ),
         (
@@ -597,17 +622,16 @@ class PerformanceAdmin(admin.ModelAdmin):
     ]
 
     list_filter = (
-        'contestant__contest__level',
-        'contestant__contest__kind',
-        'session',
-        'contestant__contest__year',
+        'appearance__contestant__contest__level',
+        'appearance__contestant__contest__kind',
+        'appearance__contestant__contest__year',
     )
 
     readonly_fields = (
         'name',
     )
     raw_id_fields = (
-        'contestant',
+        'appearance',
         'catalog',
     )
 
@@ -690,10 +714,12 @@ class Appearance(admin.ModelAdmin):
     ]
     list_display = [
         'name',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
+        'draw',
+        'start',
+    ]
+    list_filter = [
+        'session',
+        'contestant__contest',
     ]
 
 
