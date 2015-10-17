@@ -190,6 +190,7 @@ class JudgeViewSet(viewsets.ModelViewSet):
     queryset = Judge.objects.select_related(
         'person',
         'contest',
+        'district',
     ).prefetch_related(
         'scores',
     )
@@ -197,10 +198,10 @@ class JudgeViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
-    lookup_field = 'slug'
+# class EventViewSet(viewsets.ModelViewSet):
+#     queryset = Event.objects.all()
+#     serializer_class = EventSerializer
+#     lookup_field = 'slug'
 
 
 class AwardViewSet(viewsets.ModelViewSet):
