@@ -62,7 +62,7 @@ class ScoresInline(admin.TabularInline):
         'performance',
         'judge',
         'category',
-        'points',
+        'total_points',
         'is_practice',
     )
     ordering = (
@@ -191,7 +191,7 @@ class ContestantsInline(admin.TabularInline):
         'seed',
         'prelim',
         'place',
-        'score',
+        'total_score',
         'men',
     )
     ordering = (
@@ -430,8 +430,8 @@ class ContestantAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'place',
-        'score',
-        'points',
+        'total_score',
+        'total_points',
         'men',
     )
 
@@ -462,7 +462,7 @@ class ContestantAdmin(admin.ModelAdmin):
             'prelim',
         ), (
             'place',
-            'score',
+            'total_score',
         ),
     )
 
