@@ -22,6 +22,7 @@ from .models import (
     Catalog,
     Award,
     Event,
+    Appearance,
 )
 
 
@@ -679,3 +680,23 @@ class Event(admin.ModelAdmin):
         'contest',
         'contestant',
     )
+
+
+@admin.register(Appearance)
+class Appearance(admin.ModelAdmin):
+    save_on_top = True
+    inlines = [
+        PerformancesInline,
+    ]
+    list_display = [
+        'name',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+    ]
+
+
+@admin.register(Score)
+class Score(admin.ModelAdmin):
+    save_on_top = True

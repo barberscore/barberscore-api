@@ -18,6 +18,7 @@ from .models import (
     Award,
     Event,
     Judge,
+    Appearance,
 )
 
 from .search_indexes import (
@@ -172,15 +173,23 @@ class ContestantSerializer(serializers.ModelSerializer):
             'score',
             'place',
             'men',
-            'quarters_points',
-            'semis_points',
-            'finals_points',
-            'quarters_score',
-            'semis_score',
-            'finals_score',
-            'quarters_place',
-            'semis_place',
-            'finals_place',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            # 'quarters_points',
+            # 'semis_points',
+            # 'finals_points',
+            # 'quarters_score',
+            # 'semis_score',
+            # 'finals_score',
+            # 'quarters_place',
+            # 'semis_place',
+            # 'finals_place',
             'delta_score',
             'delta_place',
             'status',
@@ -381,6 +390,40 @@ class JudgeSerializer(serializers.ModelSerializer):
         )
 
 
+class AppearanceSerializer(serializers.ModelSerializer):
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    performances = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Appearance
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'session',
+            'status',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'contestant',
+            'performances',
+        )
+
+
 class PerformanceSerializer(serializers.ModelSerializer):
     catalog = serializers.SlugRelatedField(
         read_only=True,
@@ -397,7 +440,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contestant = serializers.SlugRelatedField(
+    appearance = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -431,7 +474,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'penalty',
-            'contestant',
+            'appearance',
             'scores',
         )
 
