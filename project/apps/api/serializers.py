@@ -183,7 +183,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'appearances',
             'directors',
             'singers',
-            'events',
+            # 'events',
             'awards',
         )
 
@@ -195,12 +195,6 @@ class ConventionSerializer(serializers.ModelSerializer):
     )
 
     contests = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-
-    events = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -220,7 +214,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'district',
             'timezone',
             'contests',
-            'events',
             'is_active',
         )
 

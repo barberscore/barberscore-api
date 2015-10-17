@@ -15,7 +15,7 @@ from .views import (
     CatalogViewSet,
     ScoreViewSet,
     JudgeViewSet,
-    EventViewSet,
+    # EventViewSet,
     AwardViewSet,
     AppearanceViewSet,
 )
@@ -35,7 +35,7 @@ router.register(r'director', DirectorViewSet)
 router.register(r'catalog', CatalogViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'judge', JudgeViewSet)
-router.register(r'event', EventViewSet)
+# router.register(r'event', EventViewSet)
 router.register(r'award', AwardViewSet)
 router.register(r'appearance', AppearanceViewSet)
 router.register(r'search', SearchViewSet, base_name='search')
