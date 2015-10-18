@@ -849,6 +849,13 @@ class District(Common):
 
 
 class Convention(models.Model):
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (1, 'structured', 'Structured',),
+        (2, 'current', 'Current',),
+        (3, 'complete', 'Complete',),
+    )
+
     KIND = Choices(
         (1, 'international', 'International',),
         (2, 'midwinter', 'Midwinter',),
@@ -868,6 +875,11 @@ class Convention(models.Model):
             The name of the convention (determined programmatically.)""",
         max_length=200,
         unique=True,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     kind = models.IntegerField(
@@ -1853,13 +1865,19 @@ class Performance(models.Model):
             self.get_order_display(),
             "Song",
         )
-        # if self.scores.exists():
-        #     agg = self.scores.exclude(
-        #         category=4,
-        #     ).order_by(
-        #         'category',
-        #     ).annotate(models.Sum('points'))
-        #     self.mus_points = agg['1']
+        if self.scores.exists():
+            agg = self.scores.filter(
+                category__lte=3,
+            ).exclude(
+                judge__is_practice=True,
+            ).order_by(
+                'category',
+            ).values(
+                'category',
+            ).annotate(models.Sum('points'))
+            self.mus_points = agg[0]['points__sum']
+            self.prs_points = agg[1]['points__sum']
+            self.sng_points = agg[2]['points__sum']
 
         self.total_points = sum(filter(None, [
             self.mus_points,
@@ -1947,6 +1965,8 @@ class Score(models.Model):
     points = models.IntegerField(
         help_text="""
             The number of points awarded (0-100)""",
+        null=True,
+        blank=True,
         validators=[
             MaxValueValidator(
                 100,
