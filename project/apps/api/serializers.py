@@ -95,7 +95,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'district',
             'convention',
             'panel',
-            'is_active',
             'status',
             'scoresheet_pdf',
             'contestants',
@@ -204,6 +203,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
+            'status',
             'kind',
             'dates',
             'location',
@@ -211,7 +211,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'district',
             'timezone',
             'contests',
-            'is_active',
         )
 
 
@@ -265,7 +264,6 @@ class DistrictSerializer(serializers.ModelSerializer):
             'description',
             'kind',
             'long_name',
-            'is_active',
             'contestants',
         )
 
@@ -298,7 +296,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'chapter_name',
             'chapter_code',
-            'is_active',
             'contestants',
         )
 
@@ -466,7 +463,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'kind',
-            'is_active',
             'catalogs',
             'choruses',
             'quartets',
