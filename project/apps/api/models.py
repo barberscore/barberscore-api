@@ -1338,6 +1338,16 @@ class Contestant(models.Model):
         max_length=255,
     )
 
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
     picture = models.ImageField(
         help_text="""
             The performance picture (as opposed to the "official" photo).""",
@@ -1385,8 +1395,7 @@ class Contestant(models.Model):
     men = models.IntegerField(
         help_text="""
             The number of men on stage (only for chourses).""",
-        null=True,
-        blank=True,
+        default=4,
     )
 
     mus_points = models.IntegerField(
@@ -1506,11 +1515,6 @@ class Contestant(models.Model):
             The place for the fainal session.  This is for the finals only and is NOT cumulative.""",
         null=True,
         blank=True,
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
     )
 
     def save(self, *args, **kwargs):
