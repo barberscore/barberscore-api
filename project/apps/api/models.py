@@ -1598,6 +1598,9 @@ class Appearance(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (1, 'qualified', 'Qualified',),
+        (2, 'current', 'Current',),
+        (3, 'complete', 'Complete',),
     )
 
     SESSION = Choices(
@@ -1618,14 +1621,19 @@ class Appearance(models.Model):
         max_length=255,
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='appearances',
-    )
-
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='appearances',
     )
 
     session = models.IntegerField(
