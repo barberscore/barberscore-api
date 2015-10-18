@@ -33,6 +33,10 @@ from model_utils.models import (
     TimeStampedModel,
 )
 
+from model_utils.fields import (
+    MonitorField,
+)
+
 from model_utils import Choices
 
 from timezone_field import TimeZoneField
@@ -864,6 +868,10 @@ class Convention(models.Model):
         (5, 'pacific', 'Pacific',),
     )
 
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -878,8 +886,14 @@ class Convention(models.Model):
     )
 
     status = models.IntegerField(
+        help_text="""The current status""",
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
     )
 
     kind = models.IntegerField(
@@ -890,16 +904,7 @@ class Convention(models.Model):
 
     year = models.IntegerField(
         default=datetime.datetime.now().year,
-        validators=[
-            MaxValueValidator(
-                2016,
-                message='Year must be between 1939 and 2016',
-            ),
-            MinValueValidator(
-                1938,
-                message='Year must be between 1939 and 2016',
-            ),
-        ]
+        choices=YEAR_CHOICES,
     )
 
     district = models.ForeignKey(
@@ -982,6 +987,10 @@ class Contest(models.Model):
         (3, 'complete', 'Complete',),
     )
 
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
@@ -1031,16 +1040,7 @@ class Contest(models.Model):
 
     year = models.IntegerField(
         default=datetime.datetime.now().year,
-        validators=[
-            MaxValueValidator(
-                2016,
-                message='Year must be between 1939 and 2016',
-            ),
-            MinValueValidator(
-                1938,
-                message='Year must be between 1939 and 2016',
-            ),
-        ]
+        choices=YEAR_CHOICES,
     )
 
     district = models.ForeignKey(
@@ -1133,10 +1133,28 @@ class Contest(models.Model):
         #     )
         super(Contest, self).save(*args, **kwargs)
 
-    def prep_panel(self):
+    def structure_contest(self):
         """
             Return sentinels for juding panel.
         """
+        # c = Contest.objects.get(year=2016)
+        # ls = Appearance.objects.filter(
+        #     contestant__contest=c,
+        # )
+        # for l in ls:
+        #     p1 = Performance.objects.create(appearance=l, order=1)
+        #     p2 = Performance.objects.create(appearance=l, order=2)
+        #     for j in c.judges.all():
+        #         Score.objects.create(
+        #             performance = p1,
+        #             judge = j,
+        #             category = j.part,
+        #         )
+        #         Score.objects.create(
+        #             performance = p2,
+        #             judge = j,
+        #             category = j.part,
+        #         )
         pass
 
     def place_quarters(self):
