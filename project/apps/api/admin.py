@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.db import models
-from django.forms import widgets
+from django.forms import (
+    widgets,
+)
 
 from django_object_actions import (
     DjangoObjectActions,
@@ -298,10 +300,15 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         for obj in queryset:
             obj.import_legacy()
     import_legacy.label = 'Import Legacy'
+
     form = select2_modelform(
         Contest,
         attrs={'width': '100px'},
     )
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
     save_on_top = True
     objectactions = [
         'import_legacy',
@@ -325,18 +332,17 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_display = (
         'name',
+        'status',
+        'status_monitor',
         'panel',
         'scoresheet_pdf',
         'scoresheet_csv',
-        'is_active',
         'status',
     )
 
     fields = (
-        'is_active',
-        'status',
         'name',
-        'convention',
+        ('status', 'status_monitor',),
         'level',
         'kind',
         'year',
@@ -346,13 +352,24 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'scoresheet_csv',
     )
 
-    raw_id_fields = (
-        'convention',
-    )
+    # raw_id_fields = (
+    #     'convention',
+    # )
 
     readonly_fields = (
         'name',
+        'status_monitor',
     )
+
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == "convention":
+    #         try:
+    #             parent_obj_id = request.resolver_match.args[0]
+    #             obj = Contest.objects.get(pk=parent_obj_id)
+    #             kwargs["queryset"] = Convention.objects.filter(year=obj.year)
+    #         except IndexError:
+    #             pass
+    #     return super(ContestAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Group)
@@ -380,7 +397,6 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        'is_active',
         'name',
         'kind',
         ('start_date', 'end_date',),
@@ -523,7 +539,6 @@ class DistrictAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        'is_active',
         'name',
         'long_name',
         'kind',
@@ -570,7 +585,6 @@ class PersonAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        'is_active',
         'name',
         'kind',
         ('start_date', 'end_date',),
