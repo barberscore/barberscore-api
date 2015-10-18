@@ -449,6 +449,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'status',
         'place',
         'total_score',
         'total_points',
@@ -460,6 +461,7 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        'status',
         'contest__level',
         'contest__kind',
         'contest__year',
@@ -471,6 +473,8 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
     fields = (
+        'name',
+        ('status', 'status_monitor',),
         (
             'contest',
         ), (
