@@ -60,23 +60,19 @@ class ScoresInline(admin.TabularInline):
     fields = (
         'performance',
         'judge',
-        'category',
-        'total_points',
-        'is_practice',
+        # 'category',
+        'points',
     )
     ordering = (
-        'category',
+        'judge',
     )
     model = Score
     extra = 0
-    # raw_id_fields = (
-    #     'judge',
-    # )
-    readonly_fields = (
-        'is_practice',
+    raw_id_fields = (
+        'judge',
     )
-    can_delete = True
-    show_change_link = True
+    # can_delete = True
+    # show_change_link = True
 
 
 class JudgesInline(admin.TabularInline):
