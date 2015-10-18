@@ -940,12 +940,6 @@ class Convention(models.Model):
         default='US/Pacific',
     )
 
-    is_active = models.BooleanField(
-        help_text="""
-            A global boolean that controls if the resource is accessible via the API""",
-        default=False,
-    )
-
     class Meta:
         ordering = [
             'district',
@@ -1024,6 +1018,16 @@ class Contest(models.Model):
         unique=True,
     )
 
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
     level = models.IntegerField(
         help_text="""
             The level of the contest (currently only International is supported.)""",
@@ -1078,17 +1082,6 @@ class Contest(models.Model):
         upload_to=generate_image_filename,
         blank=True,
         null=True,
-    )
-
-    is_active = models.BooleanField(
-        help_text="""
-            A global boolean that controls if the resource is accessible via the API""",
-        default=False,
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
     )
 
     class Meta:
