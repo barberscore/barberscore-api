@@ -436,6 +436,10 @@ class ContestantAdmin(admin.ModelAdmin):
         attrs={'width': '150px'},
     )
 
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
     objectactions = [
         'update_contestants',
     ]
@@ -717,8 +721,11 @@ class Appearance(admin.ModelAdmin):
         'start',
     ]
     list_filter = [
+        'status',
         'session',
-        'contestant__contest',
+        'contestant__contest__level',
+        'contestant__contest__kind',
+        'contestant__contest__year',
     ]
 
 
