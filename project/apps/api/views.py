@@ -23,7 +23,6 @@ from .models import (
     Catalog,
     Judge,
     Award,
-    Event,
     Appearance,
 )
 
@@ -42,7 +41,6 @@ from .serializers import (
     DirectorSerializer,
     CatalogSerializer,
     JudgeSerializer,
-    EventSerializer,
     AwardSerializer,
     AppearanceSerializer,
 )
@@ -198,12 +196,6 @@ class JudgeViewSet(viewsets.ModelViewSet):
     )
     serializer_class = JudgeSerializer
     lookup_field = 'slug'
-
-
-# class EventViewSet(viewsets.ModelViewSet):
-#     queryset = Event.objects.all()
-#     serializer_class = EventSerializer
-#     lookup_field = 'slug'
 
 
 class AwardViewSet(viewsets.ModelViewSet):

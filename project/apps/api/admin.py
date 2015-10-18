@@ -21,7 +21,6 @@ from .models import (
     Director,
     Catalog,
     Award,
-    Event,
     Appearance,
 )
 
@@ -681,37 +680,6 @@ class CatalogAdmin(admin.ModelAdmin):
         # 'bhs_tempo',
         # 'bhs_medley',
     ]
-
-
-@admin.register(Event)
-class Event(admin.ModelAdmin):
-    save_on_top = True
-    fields = (
-        'is_active',
-        'name',
-        ('start', 'end'),
-        'convention',
-        'contest',
-        'contestant',
-        'kind',
-        'draw',
-        'location',
-    )
-    list_display = [
-        'name',
-        'start',
-        'end',
-        'convention',
-        'contest',
-        'contestant',
-        'kind',
-        'draw',
-    ]
-    raw_id_fields = (
-        'convention',
-        'contest',
-        'contestant',
-    )
 
 
 @admin.register(Appearance)
