@@ -994,7 +994,21 @@ class Contest(models.Model):
 
     LEVEL = Choices(
         (1, 'international', "International"),
-        # (2, 'district', "District"),
+        (2, 'district', "District"),
+        # (3, 'division', "Division"),
+        (4, 'prelims', "Prelims"),
+    )
+
+    BRACKET = Choices(
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semis'),
+        (3, 'quarters', 'Quarters'),
+    )
+
+    GOAL = Choices(
+        (1, 'champion', "Champion"),
+        (2, 'qualifier', "Qualifier"),
+        # (3, 'division', "Division"),
         # (4, 'prelims', "Prelims"),
     )
 
@@ -1062,10 +1076,34 @@ class Contest(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    drcj = models.ForeignKey(
+        'Person',
+        help_text="""
+            The director for the contest.""",
+        related_name='contests',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     panel = models.IntegerField(
         help_text="""
             Size of the judging panel (typically three or five.)""",
         default=5,
+    )
+
+    bracket = models.IntegerField(
+        help_text="""
+            Bracket size""",
+        default=BRACKET.finals,
+        choices=BRACKET,
+    )
+
+    goal = models.IntegerField(
+        help_text="""
+            The objective of the contest""",
+        default=GOAL.champion,
+        choices=GOAL,
     )
 
     scoresheet_pdf = models.FileField(
@@ -1112,18 +1150,18 @@ class Contest(models.Model):
                 self.get_kind_display(),
                 self.year,
             )
-        # elif self.level == self.LEVEL.prelims:
-        #     self.name = u"{0} {1} {2}".format(
-        #         self.district,
-        #         self.get_level_display(),
-        #         self.year,
-        #     )
-        # else:
-        #     self.name = u"{0} {1} {2}".format(
-        #         self.district,
-        #         self.get_kind_display(),
-        #         self.year,
-        #     )
+        elif self.level == self.LEVEL.prelims:
+            self.name = u"{0} {1} {2}".format(
+                self.district,
+                self.get_level_display(),
+                self.year,
+            )
+        else:
+            self.name = u"{0} {1} {2}".format(
+                self.district,
+                self.get_kind_display(),
+                self.year,
+            )
         super(Contest, self).save(*args, **kwargs)
 
     def structure_contest(self):
