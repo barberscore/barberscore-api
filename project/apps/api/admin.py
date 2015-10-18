@@ -333,23 +333,23 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'status_monitor',
+        'drcj',
+        'goal',
+        'bracket',
         'panel',
-        'scoresheet_pdf',
-        'scoresheet_csv',
-        'status',
     )
 
     fields = (
         'name',
         ('status', 'status_monitor',),
+        'drcj',
+        'goal',
+        'bracket',
         'level',
         'kind',
         'year',
         'district',
         'panel',
-        'scoresheet_pdf',
-        'scoresheet_csv',
     )
 
     # raw_id_fields = (
