@@ -39,6 +39,7 @@ LOGOUT_URL = 'website:logout'
 LOGIN_REDIRECT_URL = 'website:home'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = ()
+STATIC_URL = '/static/'
 ADMINS = (
     (get_env_variable("FULL_NAME"), get_env_variable("USER_EMAIL")),
 )
