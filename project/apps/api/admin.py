@@ -255,11 +255,11 @@ class ConventionAdmin(admin.ModelAdmin):
         'kind',
         'year',
         'district',
-        'is_active',
+        'status',
     )
 
     fields = (
-        'is_active',
+        'status',
         'name',
         ('location', 'timezone',),
         'dates',
@@ -270,6 +270,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        'status',
         'kind',
         'year',
         'district',
