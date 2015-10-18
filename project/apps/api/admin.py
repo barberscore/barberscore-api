@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.db import models
+from django.forms import widgets
+
 from django_object_actions import (
     DjangoObjectActions,
     takes_instance_or_queryset,
@@ -244,26 +247,30 @@ class ConventionAdmin(admin.ModelAdmin):
         attrs={'width': '100px'},
     )
 
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
     search_fields = (
         'name',
     )
 
     list_display = (
         'name',
+        'status',
+        'status_monitor',
         'location',
         'dates',
         'kind',
         'year',
         'district',
-        'status',
     )
 
     fields = (
-        'status',
         'name',
+        ('status', 'status_monitor',),
         ('location', 'timezone',),
         'dates',
-        ('start', 'end',),
         'district',
         'kind',
         'year',
@@ -278,6 +285,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
+        'status_monitor',
     )
 
     save_on_top = True
