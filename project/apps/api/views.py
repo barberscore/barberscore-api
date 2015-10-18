@@ -49,8 +49,8 @@ from .serializers import (
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
         'district',
-    ).filter(
-        is_active=True,
+    ).exclude(
+        status=Convention.STATUS.new,
     ).prefetch_related(
         'contests',
     )
