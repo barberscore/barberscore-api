@@ -16,7 +16,6 @@ from .models import (
     Catalog,
     Score,
     Award,
-    Event,
     Judge,
     Appearance,
 )
@@ -269,39 +268,6 @@ class DistrictSerializer(serializers.ModelSerializer):
             'is_active',
             'contestants',
         )
-
-
-class EventSerializer(serializers.ModelSerializer):
-    convention = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    contest = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    contestant = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
-    class Meta:
-        model = Event
-        fields = [
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'convention',
-            'contest',
-            'contestant',
-            'draw',
-            'location',
-            'is_active',
-            'kind',
-        ]
 
 
 class GroupSerializer(serializers.ModelSerializer):
