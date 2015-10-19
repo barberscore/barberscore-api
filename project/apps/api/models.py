@@ -1002,10 +1002,10 @@ class Contest(models.Model):
         (3, 'division', "Division"),
     )
 
-    BRACKET = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
+    ROUNDS = Choices(
+        (1, 'one', 'One'),
+        (2, 'two', 'Two'),
+        (3, 'three', 'Three'),
     )
 
     GOAL = Choices(
@@ -1094,11 +1094,11 @@ class Contest(models.Model):
         choices=PANEL_CHOICES,
     )
 
-    bracket = models.IntegerField(
+    rounds = models.IntegerField(
         help_text="""
             Bracket size""",
-        default=BRACKET.finals,
-        choices=BRACKET,
+        default=ROUNDS.one,
+        choices=ROUNDS,
     )
 
     goal = models.IntegerField(
