@@ -1371,20 +1371,6 @@ class Contestant(models.Model):
     )
 
     # TODO Everything below here must be protected in some way.  Different model?
-    # total_points = models.IntegerField(
-    #     help_text="""
-    #         Total raw points for this contestant (cumuative).""",
-    #     null=True,
-    #     blank=True,
-    # )
-
-    # total_score = models.FloatField(
-    #     help_text="""
-    #         The percentile of the total points (cumulative , all sessions).""",
-    #     null=True,
-    #     blank=True,
-    # )
-
     place = models.IntegerField(
         help_text="""
             The final placement/rank of the contestant.""",
@@ -1396,123 +1382,62 @@ class Contestant(models.Model):
         help_text="""
             The number of men on stage (only for chourses).""",
         default=4,
+        null=True,
+        blank=True,
     )
 
     mus_points = models.IntegerField(
-        help_text="""
-            The total music points for this appearance.""",
+        # help_text="""
+        #     The total music points for this appearance.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
-        help_text="""
-            The total presentation points for this appearance.""",
+        # help_text="""
+        #     The total presentation points for this appearance.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
-        help_text="""
-            The total singing points for this appearance.""",
+        # help_text="""
+        #     The total singing points for this appearance.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
-        help_text="""
-            The total points for this appearance.""",
+        # help_text="""
+        #     The total points for this appearance.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
-        help_text="""
-            The percentile music score for this appearance.""",
+        # help_text="""
+        #     The percentile music score for this appearance.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
-        help_text="""
-            The percentile presentation score for this appearance.""",
+        # help_text="""
+        #     The percentile presentation score for this appearance.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
-        help_text="""
-            The percentile singing score for this appearance.""",
+        # help_text="""
+        #     The percentile singing score for this appearance.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
-        help_text="""
-            The total percentile score for this appearance.""",
-        null=True,
-        blank=True,
-    )
-
-    quarters_points = models.IntegerField(
-        help_text="""
-            The total points for the quarterfinal session.""",
-        null=True,
-        blank=True,
-    )
-
-    semis_points = models.IntegerField(
-        help_text="""
-            The total points for the semifinal session.""",
-        null=True,
-        blank=True,
-    )
-
-    finals_points = models.IntegerField(
-        help_text="""
-            The total points for the final session.""",
-        null=True,
-        blank=True,
-    )
-
-    quarters_score = models.FloatField(
-        help_text="""
-            The percential score for the quarterfinal session.""",
-        null=True,
-        blank=True,
-    )
-
-    semis_score = models.FloatField(
-        help_text="""
-            The percential score for the semifinal session.""",
-        null=True,
-        blank=True,
-    )
-
-    finals_score = models.FloatField(
-        help_text="""
-            The percential score for the final session.""",
-        null=True,
-        blank=True,
-    )
-
-    quarters_place = models.IntegerField(
-        help_text="""
-            The place for the quarterfinal session.  This is for the quarters only and is NOT cumulative.""",
-        null=True,
-        blank=True,
-    )
-
-    semis_place = models.IntegerField(
-        help_text="""
-            The place for the semifinal session.  This is for the semis only and is NOT cumulative.""",
-        null=True,
-        blank=True,
-    )
-
-    finals_place = models.IntegerField(
-        help_text="""
-            The place for the fainal session.  This is for the finals only and is NOT cumulative.""",
+        # help_text="""
+        #     The total percentile score for this appearance.""",
         null=True,
         blank=True,
     )
@@ -1522,40 +1447,37 @@ class Contestant(models.Model):
             self.contest,
             self.group,
         )
+
+        # If there are no appearances, skip.
         if self.appearances.exists():
-            possible = self.contest.panel * 100 * 2 * self.appearances.count()
             agg = self.appearances.all().aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
                 sng=models.Sum('sng_points'),
-                tot=models.Sum('total_points'),
             )
             self.mus_points = agg['mus']
             self.prs_points = agg['prs']
             self.sng_points = agg['sng']
-            self.total_points = agg['tot']
+
+            # Calculate total points.
             try:
-                self.mus_score = round(self.mus_points / possible * 100, 1)
-                self.prs_score = round(self.prs_points / possible * 100, 1)
-                self.sng_score = round(self.sng_points / possible * 100, 1)
-                self.total_score = round(self.total_points / (possible * 100 * 3), 1)
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
+
+            # Calculate percentile
+            try:
+                possible = self.contest.panel * 2 * self.appearances.count()
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
             except TypeError:
                 pass
-        # self.finals_points = self.performances.filter(
-        #     session=1,
-        # ).aggregate(sum=models.Sum('total_points'))['sum']
-        # self.semis_points = self.performances.filter(
-        #     session=2,
-        # ).aggregate(sum=models.Sum('total_points'))['sum']
-        # self.quarters_points = self.performances.filter(
-        #     session=3,
-        # ).aggregate(sum=models.Sum('total_points'))['sum']
-        # if self.quarters_points:
-        #     self.quarters_score = round(self.quarters_points / (panel * 6), 1)
-        # if self.semis_points:
-        #     self.semis_score = round(self.semis_points / (panel * 6), 1)
-        # if self.finals_points:
-        #     self.finals_score = round(self.finals_points / (panel * 6), 1)
         super(Contestant, self).save(*args, **kwargs)
 
     @property
@@ -1641,8 +1563,10 @@ class Appearance(models.Model):
     )
 
     draw = models.IntegerField(
-        help_text="""
-            The OA (Order of Appearance) in the contest schedule.  Specific to each session.""",
+        # help_text="""
+        #     The OA (Order of Appearance)
+        #     in the contest schedule.
+        #     Specific to each session.""",
         null=True,
         blank=True,
     )
@@ -1656,57 +1580,57 @@ class Appearance(models.Model):
     # Different model?
 
     mus_points = models.IntegerField(
-        help_text="""
-            The total music points for this appearance.""",
+        # help_text="""
+        #     The total music points for this appearance.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
-        help_text="""
-            The total presentation points for this appearance.""",
+        # help_text="""
+        #     The total presentation points for this appearance.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
-        help_text="""
-            The total singing points for this appearance.""",
+        # help_text="""
+        #     The total singing points for this appearance.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
-        help_text="""
-            The total points for this appearance.""",
+        # help_text="""
+        #     The total points for this appearance.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
-        help_text="""
-            The percentile music score for this appearance.""",
+        # help_text="""
+        #     The percentile music score for this appearance.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
-        help_text="""
-            The percentile presentation score for this appearance.""",
+        # help_text="""
+        #     The percentile presentation score for this appearance.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
-        help_text="""
-            The percentile singing score for this appearance.""",
+        # help_text="""
+        #     The percentile singing score for this appearance.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
-        help_text="""
-            The total percentile score for this appearance.""",
+        # help_text="""
+        #     The total percentile score for this appearance.""",
         null=True,
         blank=True,
     )
@@ -1734,23 +1658,35 @@ class Appearance(models.Model):
             self.contestant,
             self.get_session_display(),
         )
+
+        # Don't bother if there aren't performance scores.
         if self.performances.exists():
-            possible = self.contestant.contest.panel * 100 * 2
             agg = self.performances.all().aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
                 sng=models.Sum('sng_points'),
-                tot=models.Sum('total_points'),
             )
             self.mus_points = agg['mus']
             self.prs_points = agg['prs']
             self.sng_points = agg['sng']
-            self.total_points = agg['tot']
+
+            # Calculate total points.
             try:
-                self.mus_score = round(self.mus_points / possible * 100, 1)
-                self.prs_score = round(self.prs_points / possible * 100, 1)
-                self.sng_score = round(self.sng_points / possible * 100, 1)
-                self.total_score = round(self.total_points / (possible * 100 * 3), 1)
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
+
+            #  Calculate percentile scores
+            try:
+                possible = self.contestant.contest.panel * 2
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
             except TypeError:
                 pass
         super(Appearance, self).save(*args, **kwargs)
@@ -1765,12 +1701,9 @@ class Performance(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-    )
-
-    SESSION = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
+        (1, 'ready', 'Ready',),
+        (2, 'current', 'Current',),
+        (1, 'complete', 'Complete',),
     )
 
     ORDER = Choices(
@@ -1790,10 +1723,15 @@ class Performance(models.Model):
         max_length=255,
     )
 
-    # contestant = models.ForeignKey(
-    #     'Contestant',
-    #     related_name='performances',
-    # )
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
 
     appearance = models.ForeignKey(
         'Appearance',
@@ -1801,15 +1739,6 @@ class Performance(models.Model):
         null=True,
         blank=True,
     )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    # session = models.IntegerField(
-    #     choices=SESSION,
-    # )
 
     order = models.IntegerField(
         choices=ORDER,
@@ -1847,57 +1776,57 @@ class Performance(models.Model):
     # Different model?
 
     mus_points = models.IntegerField(
-        help_text="""
-            The total music points for this performance.""",
+        # help_text="""
+        #     The total music points for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
-        help_text="""
-            The total presentation points for this performance.""",
+        # help_text="""
+        #     The total presentation points for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
-        help_text="""
-            The total singing points for this performance.""",
+        # help_text="""
+        #     The total singing points for this performance.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
-        help_text="""
-            The total points for this performance.""",
+        # help_text="""
+        #     The total points for this performance.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
-        help_text="""
-            The percentile music score for this performance.""",
+        # help_text="""
+        #     The percentile music score for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
-        help_text="""
-            The percentile presentation score for this performance.""",
+        # help_text="""
+        #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
-        help_text="""
-            The percentile singing score for this performance.""",
+        # help_text="""
+        #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
-        help_text="""
-            The total percentile score for this performance.""",
+        # help_text="""
+        #     The total percentile score for this performance.""",
         null=True,
         blank=True,
     )
@@ -1926,6 +1855,8 @@ class Performance(models.Model):
             self.get_order_display(),
             "Song",
         )
+
+        # If we have Judge's scores, use them.
         if self.scores.exists():
             agg = self.scores.filter(
                 category__lte=3,
@@ -1940,39 +1871,25 @@ class Performance(models.Model):
             self.prs_points = agg[1]['points__sum']
             self.sng_points = agg[2]['points__sum']
 
-        self.total_points = sum(filter(None, [
-            self.mus_points,
-            self.prs_points,
-            self.sng_points,
-        ])) or None
-        possible = self.appearance.contestant.contest.panel * 100
+        # Calculate total points.
         try:
-            self.mus_score = round(self.mus_points / possible * 100, 1)
-            self.prs_score = round(self.prs_points / possible * 100, 1)
-            self.sng_score = round(self.sng_points / possible * 100, 1)
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
         except TypeError:
-            pass
-        try:
-            self.total_score = round(self.total_points / (possible * 100 * 3), 1)
-        except TypeError:
-            pass
+            self.total_points = None
 
-        # if self.scores.exists():
-        #     possible = self.appearance.contestant.contest.panel * 100
-        #     agg = self.scores.all().aggregate(
-        #         mus=models.Sum('mus_points'),
-        #         prs=models.Sum('prs_points'),
-        #         sng=models.Sum('sng_points'),
-        #         tot=models.Sum('total_points'),
-        #     )
-        #     self.mus_points = agg['mus']
-        #     self.prs_points = agg['prs']
-        #     self.sng_points = agg['sng']
-        #     self.total_points = agg['tot']
-        #     self.mus_score = round(self.mus_points / possible, 1)
-        #     self.prs_score = round(self.prs_points / possible, 1)
-        #     self.sng_score = round(self.sng_points / possible, 1)
-        #     self.total_score = round(self.total_points / (possible * 3), 1)
+        # Calculate percentile scores.
+        try:
+            possible = self.appearance.contestant.contest.panel
+            self.mus_score = round(self.mus_points / possible, 1)
+            self.prs_score = round(self.prs_points / possible, 1)
+            self.sng_score = round(self.sng_points / possible, 1)
+            self.total_score = round(self.total_points / (possible * 3), 1)
+        except TypeError:
+            pass
         super(Performance, self).save(*args, **kwargs)
 
 
