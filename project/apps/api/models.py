@@ -985,6 +985,10 @@ class Contest(models.Model):
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
 
+    ROUNDS_CHOICES = []
+    for r in reversed(range(1, 6)):
+        ROUNDS_CHOICES.append((r, r))
+
     PANEL_CHOICES = []
     for r in reversed(range(1, 6)):
         PANEL_CHOICES.append((r, r))
@@ -1000,12 +1004,6 @@ class Contest(models.Model):
         (1, 'international', "International"),
         (2, 'district', "District"),
         (3, 'division', "Division"),
-    )
-
-    ROUNDS = Choices(
-        (1, 'one', 'One'),
-        (2, 'two', 'Two'),
-        (3, 'three', 'Three'),
     )
 
     GOAL = Choices(
@@ -1044,15 +1042,15 @@ class Contest(models.Model):
     )
 
     level = models.IntegerField(
-        help_text="""
-            The level of the contest (currently only International is supported.)""",
+        # help_text="""
+        #     The level of the contest (currently only International is supported.)""",
         choices=LEVEL,
         default=LEVEL.international,
     )
 
     kind = models.IntegerField(
-        help_text="""
-            The kind of the contest (quartet, chorus, senior, collegiate.)""",
+        # help_text="""
+        #     The kind of the contest (quartet, chorus, senior, collegiate.)""",
         choices=KIND,
         default=KIND.quartet,
     )
@@ -1077,11 +1075,21 @@ class Contest(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    drcj = models.ForeignKey(
+    rep = models.ForeignKey(
         'Person',
         help_text="""
-            The director for the contest.""",
-        related_name='contests',
+            The CA for the contest.""",
+        related_name='rep_contests',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    admin = models.ForeignKey(
+        'Person',
+        help_text="""
+            The DRCJ for the contest.""",
+        related_name='admin_contests',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1097,8 +1105,8 @@ class Contest(models.Model):
     rounds = models.IntegerField(
         help_text="""
             Bracket size""",
-        default=ROUNDS.one,
-        choices=ROUNDS,
+        default=5,
+        choices=ROUNDS_CHOICES,
     )
 
     goal = models.IntegerField(
