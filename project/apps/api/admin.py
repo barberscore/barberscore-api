@@ -341,7 +341,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'status',
         'drcj',
         'goal',
-        'bracket',
+        'rounds',
         'panel',
     )
 
@@ -350,7 +350,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         ('status', 'status_monitor',),
         'drcj',
         'goal',
-        'bracket',
+        'rounds',
         'level',
         'kind',
         'year',

@@ -93,7 +93,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'level',
             'kind',
             'goal',
-            'bracket',
+            'rounds',
             'year',
             'district',
             'convention',
