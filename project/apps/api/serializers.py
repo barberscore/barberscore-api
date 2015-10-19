@@ -361,11 +361,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    catalog = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
     song = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
