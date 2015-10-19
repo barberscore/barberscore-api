@@ -218,6 +218,10 @@ class AppearancesInline(admin.TabularInline):
         Appearance,
         attrs={'width': '100px'},
     )
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
     fields = (
         'contestant',
         'session',
@@ -454,10 +458,14 @@ class ContestantAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'place',
+        'seed',
+        'prelim',
+        'mus_score',
+        'prs_score',
+        'sng_score',
         'total_score',
-        'total_points',
         'men',
+        'place',
     )
 
     search_fields = (
@@ -479,23 +487,23 @@ class ContestantAdmin(admin.ModelAdmin):
     fields = (
         'name',
         ('status', 'status_monitor',),
-        (
-            'contest',
-        ), (
-            'group',
-        ), (
-            'district',
-        ), (
-            'seed',
-            'prelim',
-        ), (
-            'place',
-            'total_score',
-        ),
+        ('contest', 'group', 'district',),
+        ('seed', 'prelim',),
+        ('place', 'men',),
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
 
     readonly_fields = (
         'name',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
     )
 
     save_on_top = True
@@ -618,38 +626,32 @@ class PersonAdmin(admin.ModelAdmin):
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
     list_display = (
         'name',
-        'catalog',
-        'order',
+        'status',
+        'song',
         'mus_points',
         'prs_points',
         'sng_points',
+        'total_points'
     )
 
     search_fields = (
         'name',
     )
 
-    fields = (
-        (
-            'name',
-        ),
-        (
-            'order',
-        ),
-        (
-            'catalog',
-        ),
-        (
-            'mus_points',
-            'prs_points',
-            'sng_points',
-        ),
-        (
-            'penalty',
-        ),
-    )
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'order',
+        'song',
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+    ]
 
     inlines = [
         ScoresInline,
@@ -663,6 +665,11 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
     )
     raw_id_fields = (
         'appearance',
@@ -712,6 +719,10 @@ class CatalogAdmin(admin.ModelAdmin):
 @admin.register(Appearance)
 class Appearance(admin.ModelAdmin):
     save_on_top = True
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
     inlines = [
         PerformancesInline,
     ]
@@ -726,6 +737,27 @@ class Appearance(admin.ModelAdmin):
         'contestant__contest__level',
         'contestant__contest__kind',
         'contestant__contest__year',
+    ]
+
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'contestant',
+        ('session', 'draw', 'start',),
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+    ]
+
+    readonly_fields = [
+        'name',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
     ]
 
 
