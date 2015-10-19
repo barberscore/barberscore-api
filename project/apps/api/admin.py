@@ -328,6 +328,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     list_filter = (
+        'status',
+        'goal',
         'level',
         'kind',
         'year',
@@ -658,6 +660,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     ]
 
     list_filter = (
+        'status',
         'appearance__contestant__contest__level',
         'appearance__contestant__contest__kind',
         'appearance__contestant__contest__year',
