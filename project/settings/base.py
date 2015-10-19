@@ -163,7 +163,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
