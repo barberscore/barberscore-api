@@ -24,7 +24,7 @@ from .models import (
     Judge,
     Singer,
     Director,
-    Catalog,
+    # Catalog,
     Award,
     Appearance,
 )
@@ -154,19 +154,19 @@ class DirectorsInline(admin.TabularInline):
     can_delete = True
 
 
-class CatalogsInline(admin.TabularInline):
-    model = Catalog
-    fields = (
-        'person',
-        'song',
-    )
-    extra = 0
-    raw_id_fields = (
-        'song',
-        'person',
-    )
-    can_delete = True
-    show_change_link = True
+# class CatalogsInline(admin.TabularInline):
+#     model = Catalog
+#     fields = (
+#         'person',
+#         'song',
+#     )
+#     extra = 0
+#     raw_id_fields = (
+#         'song',
+#         'person',
+#     )
+#     can_delete = True
+#     show_change_link = True
 
 
 class AwardsInline(admin.TabularInline):
@@ -527,9 +527,9 @@ class SongAdmin(admin.ModelAdmin):
         'name',
     )
 
-    inlines = [
-        CatalogsInline,
-    ]
+    # inlines = [
+    #     CatalogsInline,
+    # ]
 
 
 @admin.register(District)
@@ -620,7 +620,7 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         DirectorsInline,
         SingersInline,
-        CatalogsInline,
+        # CatalogsInline,
         JudgesInline,
     ]
 
@@ -680,43 +680,43 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Catalog)
-class CatalogAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = (
-        'song',
-        'person',
-        'bhs_id',
-        'bhs_published',
-        'bhs_fee',
-        'bhs_difficulty',
-        'bhs_tempo',
-        'bhs_medley',
-    )
-    raw_id_fields = (
-        'song',
-        'person',
-    )
-    search_fields = (
-        'song__name',
-        'person__name',
-    )
-    inlines = [
-        PerformancesInline,
-    ]
-    list_display = [
-        'name',
-        'song',
-        'bhs_songname',
-        'person',
-        'bhs_arranger',
-        'bhs_id',
-        # 'bhs_published',
-        # 'bhs_fee',
-        # 'bhs_difficulty',
-        # 'bhs_tempo',
-        # 'bhs_medley',
-    ]
+# @admin.register(Catalog)
+# class CatalogAdmin(admin.ModelAdmin):
+#     save_on_top = True
+#     fields = (
+#         'song',
+#         'person',
+#         'bhs_id',
+#         'bhs_published',
+#         'bhs_fee',
+#         'bhs_difficulty',
+#         'bhs_tempo',
+#         'bhs_medley',
+#     )
+#     raw_id_fields = (
+#         'song',
+#         'person',
+#     )
+#     search_fields = (
+#         'song__name',
+#         'person__name',
+#     )
+#     inlines = [
+#         PerformancesInline,
+#     ]
+#     list_display = [
+#         'name',
+#         'song',
+#         'bhs_songname',
+#         'person',
+#         'bhs_arranger',
+#         'bhs_id',
+#         # 'bhs_published',
+#         # 'bhs_fee',
+#         # 'bhs_difficulty',
+#         # 'bhs_tempo',
+#         # 'bhs_medley',
+#     ]
 
 
 @admin.register(Appearance)
