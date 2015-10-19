@@ -985,6 +985,10 @@ class Contest(models.Model):
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
 
+    PANEL_CHOICES = []
+    for r in reversed(range(1, 6)):
+        PANEL_CHOICES.append((r, r))
+
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
@@ -995,7 +999,7 @@ class Contest(models.Model):
     LEVEL = Choices(
         (1, 'international', "International"),
         (2, 'district', "District"),
-        # (3, 'division', "Division"),
+        (3, 'division', "Division"),
         (4, 'prelims', "Prelims"),
     )
 
@@ -1007,9 +1011,7 @@ class Contest(models.Model):
 
     GOAL = Choices(
         (1, 'championship', "Championship"),
-        (2, 'qualification', "Qualification"),
-        # (3, 'division', "Division"),
-        # (4, 'prelims', "Prelims"),
+        (2, 'prelims', "Prelims"),
     )
 
     id = models.UUIDField(
@@ -1090,6 +1092,7 @@ class Contest(models.Model):
         help_text="""
             Size of the judging panel (typically three or five.)""",
         default=5,
+        choices=PANEL_CHOICES,
     )
 
     bracket = models.IntegerField(
