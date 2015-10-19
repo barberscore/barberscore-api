@@ -1000,7 +1000,6 @@ class Contest(models.Model):
         (1, 'international', "International"),
         (2, 'district', "District"),
         (3, 'division', "Division"),
-        (4, 'prelims', "Prelims"),
     )
 
     BRACKET = Choices(
@@ -1314,26 +1313,6 @@ class Contestant(models.Model):
         editable=False,
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='contestants',
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        related_name='contestants',
-    )
-
-    district = models.ForeignKey(
-        'District',
-        help_text="""
-            The district this contestant is representing.""",
-        related_name='contestants',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -1354,6 +1333,26 @@ class Contestant(models.Model):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='contestants',
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='contestants',
+    )
+
+    district = models.ForeignKey(
+        'District',
+        help_text="""
+            The district this contestant is representing.""",
+        related_name='contestants',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     picture = models.ImageField(
