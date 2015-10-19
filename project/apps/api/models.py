@@ -1127,7 +1127,7 @@ class Contest(models.Model):
 
     class Meta:
         unique_together = (
-            ('level', 'kind', 'year', 'district',),
+            ('level', 'kind', 'year', 'goal', 'district'),
         )
         ordering = (
             'level',
@@ -1155,15 +1155,17 @@ class Contest(models.Model):
                 self.year,
             )
         elif self.level == self.LEVEL.district:
-            self.name = u"{0} {1} {2} {3}".format(
+            self.name = u"{0} {1} {2} {3} {4}".format(
                 self.district,
                 self.get_level_display(),
+                self.get_kind_display(),
                 self.get_goal_display(),
                 self.year,
             )
         else:
-            self.name = u"{0} {1} {2} {3}".format(
-                'Division',
+            self.name = u"{0} {1} {2} {3} {4}".format(
+                'Unknown',
+                self.get_level_display(),
                 self.get_kind_display(),
                 self.get_goal_display(),
                 self.year,
