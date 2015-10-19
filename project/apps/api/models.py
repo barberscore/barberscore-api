@@ -1006,8 +1006,8 @@ class Contest(models.Model):
     )
 
     GOAL = Choices(
-        (1, 'champion', "Champion"),
-        (2, 'qualifier', "Qualifier"),
+        (1, 'championship', "Championship"),
+        (2, 'qualification', "Qualification"),
         # (3, 'division', "Division"),
         # (4, 'prelims', "Prelims"),
     )
@@ -1102,7 +1102,7 @@ class Contest(models.Model):
     goal = models.IntegerField(
         help_text="""
             The objective of the contest""",
-        default=GOAL.champion,
+        default=GOAL.championship,
         choices=GOAL,
     )
 
