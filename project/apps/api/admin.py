@@ -27,7 +27,14 @@ from .models import (
     # Catalog,
     Award,
     Appearance,
+    User,
 )
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    model = User
+    save_on_top = True
 
 
 class PerformancesInline(admin.TabularInline):
@@ -38,7 +45,7 @@ class PerformancesInline(admin.TabularInline):
     fields = (
         'appearance',
         'order',
-        'catalog',
+        'song',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -51,33 +58,33 @@ class PerformancesInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'appearance',
-        'catalog',
+        'song',
     )
     can_delete = True
     show_change_link = True
 
 
 class ScoresInline(admin.TabularInline):
-    # form = select2_modelform(
-    #     Score,
-    #     attrs={'width': '300px'},
-    # )
+    model = Score
+    form = select2_modelform(
+        Score,
+        attrs={'width': '300px'},
+    )
     fields = (
         'performance',
         'judge',
-        # 'category',
+        'category',
         'points',
     )
     ordering = (
         'judge',
     )
-    model = Score
     extra = 0
     raw_id_fields = (
         'judge',
     )
-    # can_delete = True
-    # show_change_link = True
+    can_delete = True
+    show_change_link = True
 
 
 class JudgesInline(admin.TabularInline):
@@ -89,9 +96,9 @@ class JudgesInline(admin.TabularInline):
     fields = (
         'contest',
         'person',
+        'district',
         'part',
         'num',
-        'district',
         'is_practice',
     )
     ordering = (
@@ -105,6 +112,9 @@ class JudgesInline(admin.TabularInline):
     )
     can_delete = True
     show_change_link = True
+    readonly_fields = [
+        'person',
+    ]
 
 
 class SingersInline(admin.TabularInline):
@@ -307,7 +317,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     form = select2_modelform(
         Contest,
-        attrs={'width': '100px'},
+        attrs={'width': '150px'},
     )
     formfield_overrides = {
         models.DateTimeField: {'widget': widgets.DateInput}
@@ -319,8 +329,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
-        JudgesInline,
         ContestantsInline,
+        JudgesInline,
     ]
 
     search_fields = (
@@ -339,7 +349,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'drcj',
+        'rep',
+        'admin',
         'goal',
         'rounds',
         'panel',
@@ -348,19 +359,16 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'drcj',
-        'goal',
-        'rounds',
-        'level',
-        'kind',
-        'year',
+        ('rep', 'admin',),
+        ('level', 'kind', 'goal', 'year',),
         'district',
-        'panel',
+        ('rounds', 'panel',),
     )
 
-    # raw_id_fields = (
-    #     'convention',
-    # )
+    raw_id_fields = (
+        'rep',
+        'admin',
+    )
 
     readonly_fields = (
         'name',
@@ -767,3 +775,12 @@ class Appearance(admin.ModelAdmin):
 @admin.register(Score)
 class Score(admin.ModelAdmin):
     save_on_top = True
+
+
+@admin.register(Judge)
+class Judge(admin.ModelAdmin):
+    save_on_top = True
+    list_display = [
+        'name',
+        'person',
+    ]
