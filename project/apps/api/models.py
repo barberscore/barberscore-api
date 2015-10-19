@@ -1148,21 +1148,24 @@ class Contest(models.Model):
 
     def save(self, *args, **kwargs):
         if self.level == self.LEVEL.international:
-            self.name = u"{0} {1} {2}".format(
+            self.name = u"{0} {1} {2} {3}".format(
                 self.get_level_display(),
                 self.get_kind_display(),
+                self.get_goal_display(),
                 self.year,
             )
-        elif self.level == self.LEVEL.prelims:
-            self.name = u"{0} {1} {2}".format(
+        elif self.level == self.LEVEL.district:
+            self.name = u"{0} {1} {2} {3}".format(
                 self.district,
                 self.get_level_display(),
+                self.get_goal_display(),
                 self.year,
             )
         else:
-            self.name = u"{0} {1} {2}".format(
-                self.district,
+            self.name = u"{0} {1} {2} {3}".format(
+                'Division',
                 self.get_kind_display(),
+                self.get_goal_display(),
                 self.year,
             )
         super(Contest, self).save(*args, **kwargs)
