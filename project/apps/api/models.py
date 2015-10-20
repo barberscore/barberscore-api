@@ -1201,6 +1201,16 @@ class Contest(models.Model):
         #             judge = j,
         #             category = j.part,
         #         )
+
+        # for c in cs:
+        #     i = 1
+        #     while i <= c.rounds:
+        #         Session.objects.create(
+        #             contest=c,
+        #             kind=i,
+        #         )
+        #         i += 1
+
         pass
 
     def place_quarters(self):
@@ -1526,6 +1536,83 @@ class Contestant(models.Model):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
 
+class Session(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (1, 'structured', 'Structured',),
+        (2, 'current', 'Current',),
+        (3, 'complete', 'Complete',),
+    )
+
+    KIND = Choices(
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semis'),
+        (3, 'quarters', 'Quarters'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='sessions',
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+        default=KIND.finals,
+    )
+
+    start = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = [
+            'contest',
+            'kind',
+        ]
+        unique_together = (
+            ('contest', 'kind',),
+        )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contest,
+            self.get_kind_display(),
+        )
+        super(Session, self).save(*args, **kwargs)
+
+
 class Appearance(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1568,22 +1655,36 @@ class Appearance(models.Model):
         monitor='status',
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='appearances',
+        null=True,
+        blank=True,
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='appearances',
+        null=True,
+        blank=True,
+    )
+
     contestant = models.ForeignKey(
         'Contestant',
         related_name='appearances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     kind = models.IntegerField(
         choices=SESSION,
+        null=True,
     )
 
-    draw = models.IntegerField(
-        # help_text="""
-        #     The OA (Order of Appearance)
-        #     in the contest schedule.
-        #     Specific to each session.""",
+    position = models.PositiveSmallIntegerField(
+        'Position',
         null=True,
-        blank=True,
     )
 
     start = models.DateTimeField(
@@ -1656,10 +1757,16 @@ class Appearance(models.Model):
         blank=True,
     )
 
+    @property
+    def draw(self):
+        try:
+            return self.position + 1
+        except TypeError:
+            return None
+
     class Meta:
         ordering = [
-            'contestant',
-            'kind',
+            'position',
         ]
         unique_together = (
             ('contestant', 'kind',),
@@ -1671,7 +1778,7 @@ class Appearance(models.Model):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contestant,
-            self.get_session_display(),
+            self.get_kind_display(),
         )
 
         # Don't bother if there aren't performance scores.
