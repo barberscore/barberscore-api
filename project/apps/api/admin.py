@@ -94,19 +94,19 @@ class JudgesInline(admin.TabularInline):
     model = Judge
     form = select2_modelform(
         Judge,
-        attrs={'width': '100px'},
+        attrs={'width': '200px'},
     )
     fields = (
         'contest',
         'person',
         'district',
-        'part',
-        'num',
-        'is_practice',
+        'category',
+        'slot',
+        # 'is_practice',
     )
     ordering = (
-        'part',
-        'num',
+        'category',
+        'slot',
     )
     extra = 0
     raw_id_fields = (
