@@ -336,11 +336,18 @@ class Judge(models.Model):
         (0, 'new', 'New',),
     )
 
-    PART = Choices(
+    SLOT_CHOICES = []
+    for r in range(1, 6):
+        SLOT_CHOICES.append((r, r))
+
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
         (3, 'singing', 'Singing'),
-        (4, 'administrator', 'Administrator'),
+        (4, 'music_candidate', 'Music Candidate'),
+        (5, 'presentation_candidate', 'Presentation Candidate'),
+        (6, 'singing_candidate', 'Singing Candidate'),
     )
 
     id = models.UUIDField(
@@ -379,11 +386,16 @@ class Judge(models.Model):
         default=STATUS.new,
     )
 
-    part = models.IntegerField(
-        choices=PART,
+    category = models.IntegerField(
+        choices=CATEGORY,
+        null=True,
+        blank=True,
     )
 
-    num = models.IntegerField(
+    slot = models.IntegerField(
+        choices=SLOT_CHOICES,
+        null=True,
+        blank=True,
     )
 
     district = models.ForeignKey(
@@ -402,21 +414,21 @@ class Judge(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2:02d}".format(
+        self.name = u"{0} Judge {1}{2}".format(
             self.contest,
-            self.get_part_display(),
-            self.num,
+            self.category,
+            self.slot,
         )
         super(Judge, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('contest', 'part', 'num'),
+            ('contest', 'category', 'slot'),
         )
         ordering = (
             'contest',
-            'part',
-            'num',
+            'category',
+            'slot',
         )
 
 
