@@ -288,6 +288,7 @@ class SessionsInline(admin.TabularInline):
         'contest',
     )
     can_delete = True
+    classes = ('grp-collapse grp-closed',)
 
 
 @admin.register(Convention)
@@ -648,7 +649,7 @@ class PersonAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'kind',
-        ('start_date', 'end_date',),
+        ('start', 'end',),
         'location',
         'website',
         'facebook',
