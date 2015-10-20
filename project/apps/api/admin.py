@@ -24,11 +24,14 @@ from .models import (
     Judge,
     Singer,
     Director,
+    Session,
     # Catalog,
     Award,
     Appearance,
     User,
 )
+
+from grappelli.forms import GrappelliSortableHiddenMixin
 
 
 @admin.register(User)
@@ -115,6 +118,7 @@ class JudgesInline(admin.TabularInline):
     readonly_fields = [
         'person',
     ]
+    classes = ('grp-collapse grp-closed',)
 
 
 class SingersInline(admin.TabularInline):
@@ -139,6 +143,7 @@ class SingersInline(admin.TabularInline):
     )
     can_delete = True
     show_change_link = True
+    classes = ('grp-collapse grp-closed',)
 
 
 class DirectorsInline(admin.TabularInline):
@@ -162,6 +167,7 @@ class DirectorsInline(admin.TabularInline):
         'contestant',
     )
     can_delete = True
+    classes = ('grp-collapse grp-closed',)
 
 
 # class CatalogsInline(admin.TabularInline):
@@ -187,6 +193,7 @@ class AwardsInline(admin.TabularInline):
     extra = 0
     can_delete = True
     show_change_link = True
+    classes = ('grp-collapse grp-closed',)
 
 
 class ContestantsInline(admin.TabularInline):
@@ -221,9 +228,10 @@ class ContestantsInline(admin.TabularInline):
     readonly_fields = (
         'group',
     )
+    classes = ('grp-collapse grp-closed',)
 
 
-class AppearancesInline(admin.TabularInline):
+class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     form = select2_modelform(
         Appearance,
         attrs={'width': '100px'},
@@ -234,15 +242,12 @@ class AppearancesInline(admin.TabularInline):
 
     fields = (
         'contestant',
-        # 'session',
+        'session',
+        'position',
         'draw',
         'start',
     )
-    ordering = (
-        # 'session',
-        'draw',
-        'contestant',
-    )
+    sortable_field_name = "position"
     show_change_link = True
 
     model = Appearance
@@ -253,7 +258,36 @@ class AppearancesInline(admin.TabularInline):
     can_delete = True
     readonly_fields = (
         'contestant',
+        'draw',
     )
+
+
+class SessionsInline(admin.TabularInline):
+    form = select2_modelform(
+        Session,
+        attrs={'width': '100px'},
+    )
+    formfield_overrides = {
+        models.DateTimeField: {'widget': widgets.DateInput}
+    }
+
+    fields = (
+        'contest',
+        'kind',
+        'start',
+    )
+    ordering = (
+        'contest',
+        'kind',
+    )
+    show_change_link = True
+
+    model = Session
+    extra = 0
+    raw_id_fields = (
+        'contest',
+    )
+    can_delete = True
 
 
 @admin.register(Convention)
@@ -331,6 +365,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         ContestantsInline,
         JudgesInline,
+        SessionsInline,
     ]
 
     search_fields = (
@@ -744,7 +779,7 @@ class Appearance(admin.ModelAdmin):
     ]
     list_filter = [
         'status',
-        # 'session',
+        'session',
         'contestant__contest__level',
         'contestant__contest__kind',
         'contestant__contest__year',
@@ -754,7 +789,8 @@ class Appearance(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'contestant',
-        ('draw', 'start',),
+        'contest',
+        ('session', 'draw', 'start',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
@@ -783,4 +819,16 @@ class Judge(admin.ModelAdmin):
     list_display = [
         'name',
         'person',
+    ]
+
+
+@admin.register(Session)
+class Session(admin.ModelAdmin):
+    save_on_top = True
+    # list_display = [
+    #     'name',
+    #     'person',
+    # ]
+    inlines = [
+        AppearancesInline,
     ]
