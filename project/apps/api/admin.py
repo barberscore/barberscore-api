@@ -234,12 +234,12 @@ class AppearancesInline(admin.TabularInline):
 
     fields = (
         'contestant',
-        'session',
+        # 'session',
         'draw',
         'start',
     )
     ordering = (
-        'session',
+        # 'session',
         'draw',
         'contestant',
     )
@@ -744,7 +744,7 @@ class Appearance(admin.ModelAdmin):
     ]
     list_filter = [
         'status',
-        'session',
+        # 'session',
         'contestant__contest__level',
         'contestant__contest__kind',
         'contestant__contest__year',
@@ -754,7 +754,7 @@ class Appearance(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'contestant',
-        ('session', 'draw', 'start',),
+        ('draw', 'start',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
