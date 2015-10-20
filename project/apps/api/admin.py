@@ -115,9 +115,6 @@ class JudgesInline(admin.TabularInline):
     )
     can_delete = True
     show_change_link = True
-    readonly_fields = [
-        'person',
-    ]
     classes = ('grp-collapse grp-closed',)
 
 
