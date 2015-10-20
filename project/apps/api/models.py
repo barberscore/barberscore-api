@@ -1573,7 +1573,7 @@ class Appearance(models.Model):
         related_name='appearances',
     )
 
-    session = models.IntegerField(
+    kind = models.IntegerField(
         choices=SESSION,
     )
 
@@ -1659,10 +1659,10 @@ class Appearance(models.Model):
     class Meta:
         ordering = [
             'contestant',
-            'session',
+            'kind',
         ]
         unique_together = (
-            ('contestant', 'session',),
+            ('contestant', 'kind',),
         )
 
     def __unicode__(self):
