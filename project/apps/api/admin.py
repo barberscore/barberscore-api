@@ -825,10 +825,29 @@ class Judge(admin.ModelAdmin):
 @admin.register(Session)
 class Session(admin.ModelAdmin):
     save_on_top = True
-    # list_display = [
-    #     'name',
-    #     'person',
-    # ]
+    list_display = [
+        'name',
+        'status',
+        'start',
+    ]
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        ('contest', 'kind',),
+        'start',
+    ]
+
+    readonly_fields = [
+        'name',
+    ]
+
+    list_filter = (
+        'status',
+        'contest__level',
+        'contest__kind',
+        'contest__year',
+    )
+
     inlines = [
         AppearancesInline,
     ]
