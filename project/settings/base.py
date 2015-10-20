@@ -132,6 +132,10 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+# Grappelli
+GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -163,6 +167,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',

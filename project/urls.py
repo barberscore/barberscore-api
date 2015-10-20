@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', include('smuggler.urls')),
+    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include('apps.api.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
