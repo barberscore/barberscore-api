@@ -1760,7 +1760,7 @@ class Appearance(models.Model):
     @property
     def draw(self):
         try:
-            return self.position + 1
+            return "{0:02d}".format(self.position + 1)
         except TypeError:
             return None
 
