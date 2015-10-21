@@ -314,31 +314,18 @@ class Appearance(models.Model):
         monitor='status',
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='appearances',
-        null=True,
-        blank=True,
-    )
-
     session = models.ForeignKey(
         'Session',
         related_name='appearances',
-        null=True,
-        blank=True,
     )
 
     contestant = models.ForeignKey(
         'Contestant',
         related_name='appearances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     position = models.PositiveSmallIntegerField(
         'Position',
-        null=True,
     )
 
     start = models.DateTimeField(
@@ -721,6 +708,14 @@ class Contest(models.Model):
         (3, 'complete', 'Complete',),
     )
 
+    HISTORY = Choices(
+        (0, 'new', 'New',),
+        (10, 'scoresheet', 'Scoresheet',),
+        (40, 'csv', 'CSV',),
+        (40, 'incomplete', 'Incomplete',),
+        (50, 'complete', 'Complete',),
+    )
+
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
@@ -779,6 +774,16 @@ class Contest(models.Model):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    history = models.IntegerField(
+        choices=HISTORY,
+        default=HISTORY.new,
+    )
+
+    history_monitor = MonitorField(
+        help_text="""History last updated""",
+        monitor='history',
     )
 
     level = models.IntegerField(
