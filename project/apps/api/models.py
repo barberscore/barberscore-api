@@ -1651,6 +1651,14 @@ class Performance(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    aranger = models.ForeignKey(
+        'Arranger',
+        related_name='performances',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # The following need to be protected until released.
     # Different model?
 
