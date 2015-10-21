@@ -23,7 +23,6 @@ from .models import (
     Singer,
     Director,
     Session,
-    # Catalog,
     Award,
     Appearance,
     User,
@@ -274,10 +273,6 @@ class SessionsInline(admin.StackedInline):
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
-
     search_fields = (
         'name',
     )
@@ -327,10 +322,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     change_list_template = "admin/change_list_filter_sidebar.html"
     # change_list_filter_template = "admin/filter_listing.html"
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
-
     save_on_top = True
     objectactions = [
         'import_legacy',
@@ -625,10 +616,6 @@ class PersonAdmin(admin.ModelAdmin):
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
-
     list_display = (
         'name',
         'status',
@@ -748,6 +735,7 @@ class Score(admin.ModelAdmin):
 
 @admin.register(Judge)
 class Judge(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
         'name',
@@ -761,7 +749,16 @@ class Judge(admin.ModelAdmin):
     list_display = [
         'name',
         'person',
+        'district',
     ]
+
+    list_filter = (
+        'status',
+        'contest__level',
+        'contest__kind',
+        'contest__year',
+    )
+
     raw_id_fields = (
         'contest',
         'person',
