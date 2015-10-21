@@ -418,6 +418,10 @@ class Judge(models.Model):
         default=False,
     )
 
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -646,6 +650,10 @@ class Song(models.Model):
         unique=True,
         max_length=255,
     )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
 
     class Meta:
         ordering = ['name']
@@ -1389,8 +1397,8 @@ class Contestant(models.Model):
 
     district = models.ForeignKey(
         'District',
-        help_text="""
-            The district this contestant is representing.""",
+        # help_text="""
+        #     The district this contestant is representing.""",
         related_name='contestants',
         null=True,
         blank=True,
@@ -1398,38 +1406,38 @@ class Contestant(models.Model):
     )
 
     picture = models.ImageField(
-        help_text="""
-            The performance picture (as opposed to the "official" photo).""",
+        # help_text="""
+        #     The performance picture (as opposed to the "official" photo).""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
     )
 
     seed = models.IntegerField(
-        help_text="""
-            The incoming rank based on prelim score.""",
+        # help_text="""
+        #     The incoming rank based on prelim score.""",
         null=True,
         blank=True,
     )
 
     prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
+        # help_text="""
+        #     The incoming prelim score.""",
         null=True,
         blank=True,
     )
 
     # TODO Everything below here must be protected in some way.  Different model?
     place = models.IntegerField(
-        help_text="""
-            The final placement/rank of the contestant.""",
+        # help_text="""
+        #     The final placement/rank of the contestant.""",
         null=True,
         blank=True,
     )
 
     men = models.IntegerField(
-        help_text="""
-            The number of men on stage (only for chourses).""",
+        # help_text="""
+        #     The number of men on stage (only for chourses).""",
         default=4,
         null=True,
         blank=True,
@@ -1490,6 +1498,13 @@ class Contestant(models.Model):
         null=True,
         blank=True,
     )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
@@ -1613,7 +1628,7 @@ class Session(models.Model):
         default=KIND.finals,
     )
 
-    start = models.DateTimeField(
+    start = models.DateField(
         null=True,
         blank=True,
     )
@@ -1626,6 +1641,10 @@ class Session(models.Model):
         unique_together = (
             ('contest', 'kind',),
         )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1782,6 +1801,10 @@ class Appearance(models.Model):
         blank=True,
     )
 
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
     @property
     def draw(self):
         try:
@@ -1801,9 +1824,10 @@ class Appearance(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contestant,
+        self.name = u"{0} {1} Contestant {2}".format(
+            self.contest,
             self.get_kind_display(),
+            self.draw,
         )
 
         # Don't bother if there aren't performance scores.
