@@ -1547,7 +1547,7 @@ class Judge(models.Model):
 
     @staticmethod
     def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
+            return ("id__iexact", "name__icontains", "person__icontains",)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
