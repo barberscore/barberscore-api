@@ -239,11 +239,12 @@ class ScoresInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-class SessionsInline(admin.StackedInline):
+class SessionsInline(admin.TabularInline):
     fields = (
         'contest',
         'kind',
         'start',
+        'slots',
     )
     ordering = (
         'contest',
@@ -367,9 +368,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
+        SessionsInline,
         ContestantsInline,
         JudgesInline,
-        SessionsInline,
     ]
 
     search_fields = (
@@ -785,12 +786,13 @@ class Session(admin.ModelAdmin):
         'name',
         'status',
         'start',
+        'slots',
     ]
     fields = [
         'name',
         ('status', 'status_monitor',),
         'contest',
-        ('kind', 'start',),
+        ('kind', 'start', 'slots',),
     ]
 
     readonly_fields = [
