@@ -97,8 +97,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'year',
             'district',
             'convention',
-            'rep',
-            'admin',
             'panel',
             'scoresheet_pdf',
             'contestants',
