@@ -9,8 +9,6 @@ from django_object_actions import (
     takes_instance_or_queryset,
 )
 
-from easy_select2 import select2_modelform
-
 from .models import (
     Convention,
     Contest,
@@ -41,10 +39,6 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class PerformancesInline(admin.TabularInline):
-    form = select2_modelform(
-        Performance,
-        attrs={'width': '100px'},
-    )
     fields = (
         'appearance',
         'order',
@@ -63,16 +57,19 @@ class PerformancesInline(admin.TabularInline):
         'appearance',
         'song',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'appearance',
+            'song',
+        ]
+    }
+
     can_delete = True
     show_change_link = True
 
 
 class ScoresInline(admin.TabularInline):
     model = Score
-    form = select2_modelform(
-        Score,
-        attrs={'width': '300px'},
-    )
     fields = (
         'performance',
         'judge',
@@ -86,16 +83,17 @@ class ScoresInline(admin.TabularInline):
     raw_id_fields = (
         'judge',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'judge',
+        ]
+    }
     can_delete = True
     show_change_link = True
 
 
 class JudgesInline(admin.TabularInline):
     model = Judge
-    form = select2_modelform(
-        Judge,
-        attrs={'width': '200px'},
-    )
     fields = (
         'contest',
         'person',
@@ -111,8 +109,12 @@ class JudgesInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'person',
-        'contest',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+        ]
+    }
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
@@ -120,10 +122,6 @@ class JudgesInline(admin.TabularInline):
 
 class SingersInline(admin.TabularInline):
     model = Singer
-    form = select2_modelform(
-        Singer,
-        attrs={'width': '100px'},
-    )
     fields = (
         'contestant',
         'person',
@@ -136,18 +134,20 @@ class SingersInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'person',
-        'contestant',
+        # 'contestant',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+            # 'contestant',
+        ]
+    }
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
 
 
 class DirectorsInline(admin.TabularInline):
-    form = select2_modelform(
-        Director,
-        attrs={'width': '100px'},
-    )
     fields = (
         'contestant',
         'person',
@@ -163,6 +163,12 @@ class DirectorsInline(admin.TabularInline):
         'person',
         'contestant',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+            'contestant',
+        ]
+    }
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
@@ -179,18 +185,14 @@ class AwardsInline(admin.TabularInline):
 
 
 class ContestantsInline(admin.TabularInline):
-    form = select2_modelform(
-        Contestant,
-        attrs={'width': '100px'},
-    )
     fields = (
         'contest',
         'group',
         'district',
-        'seed',
-        'prelim',
-        'place',
-        'total_score',
+        # 'seed',
+        # 'prelim',
+        # 'place',
+        # 'total_score',
         'men',
     )
     ordering = (
@@ -203,25 +205,20 @@ class ContestantsInline(admin.TabularInline):
     model = Contestant
     extra = 0
     raw_id_fields = (
-        'contest',
+        # 'contest',
         'group',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            # 'contest',
+            'group',
+        ]
+    }
     can_delete = True
-    readonly_fields = (
-        'group',
-    )
     classes = ('grp-collapse grp-closed',)
 
 
 class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
-    form = select2_modelform(
-        Appearance,
-        attrs={'width': '100px'},
-    )
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
-
     fields = (
         'contestant',
         'session',
@@ -237,22 +234,19 @@ class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     raw_id_fields = (
         'contestant',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+        ]
+    }
     can_delete = True
     readonly_fields = (
-        'contestant',
         'draw',
     )
+    classes = ('grp-collapse grp-open',)
 
 
-class SessionsInline(admin.TabularInline):
-    form = select2_modelform(
-        Session,
-        attrs={'width': '100px'},
-    )
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
-
+class SessionsInline(admin.StackedInline):
     fields = (
         'contest',
         'kind',
@@ -266,20 +260,20 @@ class SessionsInline(admin.TabularInline):
 
     model = Session
     extra = 0
-    raw_id_fields = (
-        'contest',
-    )
+    # raw_id_fields = (
+    #     'contest',
+    # )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'contest',
+    #     ]
+    # }
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Convention,
-        attrs={'width': '100px'},
-    )
-
     formfield_overrides = {
         models.DateTimeField: {'widget': widgets.DateInput}
     }
@@ -320,7 +314,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'name',
         'status_monitor',
     )
-
     save_on_top = True
 
 
@@ -375,10 +368,13 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     fields = (
         'name',
         ('status', 'status_monitor',),
-        ('rep', 'admin',),
-        ('level', 'kind', 'goal', 'year',),
+        'level',
+        'kind',
+        'goal',
+        'year',
         'district',
         ('rounds', 'panel',),
+        ('rep', 'admin',),
     )
 
     raw_id_fields = (
@@ -387,9 +383,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     autocomplete_lookup_fields = {
-        'fk': ['rep', 'admin']
+        'fk': [
+            'rep',
+            'admin',
+        ]
     }
-
     readonly_fields = (
         'name',
         'status_monitor',
@@ -408,11 +406,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Group,
-        attrs={'width': '100px'},
-    )
-
     search_fields = (
         'name',
     )
@@ -433,7 +426,7 @@ class GroupAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'kind',
-        ('start_date', 'end_date',),
+        ('start', 'end',),
         'location',
         'website',
         'facebook',
@@ -450,10 +443,6 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
     )
 
-    inlines = [
-        ContestantsInline,
-    ]
-
     save_on_top = True
 
 
@@ -465,14 +454,7 @@ class ContestantAdmin(admin.ModelAdmin):
             obj.save()
     update_contestants.label = 'Update Contestants'
 
-    # form = select2_modelform(
-    #     Contestant,
-    #     attrs={'width': '150px'},
-    # )
-
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
+    change_list_template = "admin/change_list_filter_sidebar.html"
 
     objectactions = [
         'update_contestants',
@@ -482,7 +464,6 @@ class ContestantAdmin(admin.ModelAdmin):
         SingersInline,
         DirectorsInline,
         AwardsInline,
-        AppearancesInline,
     ]
 
     list_display = (
@@ -515,13 +496,17 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
     autocomplete_lookup_fields = {
-        'fk': ['contest', 'group']
+        'fk': [
+            'contest',
+            'group',
+        ]
     }
-
     fields = (
         'name',
         ('status', 'status_monitor',),
-        ('contest', 'group', 'district',),
+        'contest',
+        'group',
+        'district',
         ('seed', 'prelim',),
         ('place', 'men',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
@@ -545,11 +530,6 @@ class ContestantAdmin(admin.ModelAdmin):
 
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Song,
-        attrs={'width': '100px'},
-    )
-
     save_on_top = True
     fields = (
         'name',
@@ -559,18 +539,9 @@ class SongAdmin(admin.ModelAdmin):
         'name',
     )
 
-    # inlines = [
-    #     CatalogsInline,
-    # ]
-
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        District,
-        attrs={'width': '100px'},
-    )
-
     search_fields = (
         'name',
     )
@@ -592,7 +563,7 @@ class DistrictAdmin(admin.ModelAdmin):
         'name',
         'long_name',
         'kind',
-        ('start_date', 'end_date',),
+        ('start', 'end',),
         'location',
         'website',
         'facebook',
@@ -647,7 +618,6 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         DirectorsInline,
         SingersInline,
-        # CatalogsInline,
         JudgesInline,
     ]
 
@@ -676,8 +646,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'order',
-        'song',
+        ('order', 'song',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
@@ -703,59 +672,24 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'appearance',
-        'catalog',
+        'song',
     )
-
-
-# @admin.register(Catalog)
-# class CatalogAdmin(admin.ModelAdmin):
-#     save_on_top = True
-#     fields = (
-#         'song',
-#         'person',
-#         'bhs_id',
-#         'bhs_published',
-#         'bhs_fee',
-#         'bhs_difficulty',
-#         'bhs_tempo',
-#         'bhs_medley',
-#     )
-#     raw_id_fields = (
-#         'song',
-#         'person',
-#     )
-#     search_fields = (
-#         'song__name',
-#         'person__name',
-#     )
-#     inlines = [
-#         PerformancesInline,
-#     ]
-#     list_display = [
-#         'name',
-#         'song',
-#         'bhs_songname',
-#         'person',
-#         'bhs_arranger',
-#         'bhs_id',
-#         # 'bhs_published',
-#         # 'bhs_fee',
-#         # 'bhs_difficulty',
-#         # 'bhs_tempo',
-#         # 'bhs_medley',
-#     ]
+    autocomplete_lookup_fields = {
+        'fk': [
+            'appearance',
+            'song',
+        ]
+    }
 
 
 @admin.register(Appearance)
 class Appearance(admin.ModelAdmin):
     save_on_top = True
-    formfield_overrides = {
-        models.DateTimeField: {'widget': widgets.DateInput}
-    }
+    change_list_template = "admin/change_list_filter_sidebar.html"
 
-    inlines = [
-        PerformancesInline,
-    ]
+    # inlines = [
+    #     PerformancesInline,
+    # ]
     list_display = [
         'name',
         'draw',
@@ -772,9 +706,10 @@ class Appearance(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'contestant',
         'contest',
-        ('session', 'draw', 'start',),
+        'session',
+        'contestant',
+        ('draw', 'start',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
@@ -789,7 +724,21 @@ class Appearance(admin.ModelAdmin):
         'prs_score',
         'sng_score',
         'total_score',
+        'draw',
     ]
+
+    raw_id_fields = (
+        'contestant',
+        'contest',
+        'session',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+            'contest',
+            'session',
+        ]
+    }
 
 
 @admin.register(Score)
@@ -800,9 +749,33 @@ class Score(admin.ModelAdmin):
 @admin.register(Judge)
 class Judge(admin.ModelAdmin):
     save_on_top = True
+    fields = [
+        'name',
+        'status',
+        'contest',
+        'person',
+        'district',
+        ('category', 'slot',),
+    ]
+
     list_display = [
         'name',
         'person',
+    ]
+    raw_id_fields = (
+        'contest',
+        'person',
+    )
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contest',
+            'person',
+        ]
+    }
+
+    readonly_fields = [
+        'name',
     ]
 
 
@@ -817,12 +790,13 @@ class Session(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        ('contest', 'kind',),
-        'start',
+        'contest',
+        ('kind', 'start',),
     ]
 
     readonly_fields = [
         'name',
+        'status_monitor',
     ]
 
     list_filter = (
@@ -831,6 +805,16 @@ class Session(admin.ModelAdmin):
         'contest__kind',
         'contest__year',
     )
+
+    raw_id_fields = (
+        'contest',
+    )
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contest',
+        ]
+    }
 
     inlines = [
         AppearancesInline,

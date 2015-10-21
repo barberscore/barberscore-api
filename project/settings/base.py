@@ -134,7 +134,7 @@ HAYSTACK_CONNECTIONS = {
 
 # Grappelli
 GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
-
+GRAPPELLI_AUTOCOMPLETE_LIMIT = 20
 
 LOGGING = {
     'version': 1,
@@ -174,7 +174,6 @@ INSTALLED_APPS = (
     'haystack',
     'timezone_field',
     'django_object_actions',
-    'easy_select2',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
