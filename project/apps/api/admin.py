@@ -317,7 +317,6 @@ class Appearance(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'contest',
         'session',
         'contestant',
         ('draw', 'start',),
@@ -340,13 +339,11 @@ class Appearance(admin.ModelAdmin):
 
     raw_id_fields = (
         'contestant',
-        'contest',
         'session',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'contestant',
-            'contest',
             'session',
         ]
     }
@@ -355,16 +352,16 @@ class Appearance(admin.ModelAdmin):
 @admin.register(Contest)
 class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     @takes_instance_or_queryset
-    def import_legacy(self, request, queryset):
+    def build(self, request, queryset):
         for obj in queryset:
-            obj.import_legacy()
-    import_legacy.label = 'Import Legacy'
+            obj.build()
+    build.label = 'Build Contest'
 
     change_list_template = "admin/change_list_filter_sidebar.html"
     # change_list_filter_template = "admin/filter_listing.html"
     save_on_top = True
     objectactions = [
-        'import_legacy',
+        'build',
     ]
 
     inlines = [
