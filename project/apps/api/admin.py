@@ -6,6 +6,7 @@ from django_object_actions import (
 )
 
 from .models import (
+    Arranger,
     Convention,
     Contest,
     Contestant,
@@ -25,6 +26,31 @@ from .models import (
 )
 
 from grappelli.forms import GrappelliSortableHiddenMixin
+
+
+class ArrangersInline(admin.TabularInline):
+    model = Arranger
+    fields = (
+        'performance',
+        'person',
+        'part',
+        # 'is_practice',
+    )
+    ordering = (
+        'person',
+    )
+    extra = 0
+    raw_id_fields = (
+        'person',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+        ]
+    }
+    can_delete = True
+    show_change_link = True
+    classes = ('grp-collapse grp-closed',)
 
 
 class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
@@ -199,6 +225,10 @@ class ScoresInline(admin.TabularInline):
     raw_id_fields = (
         'judge',
     )
+    readonly_fields = [
+        'category',
+    ]
+
     autocomplete_lookup_fields = {
         'fk': [
             'judge',
@@ -206,6 +236,7 @@ class ScoresInline(admin.TabularInline):
     }
     can_delete = True
     show_change_link = True
+    classes = ('grp-collapse grp-open',)
 
 
 class SessionsInline(admin.StackedInline):
@@ -357,8 +388,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'rep',
-        'admin',
         'goal',
         'rounds',
         'panel',
@@ -373,20 +402,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'year',
         'district',
         ('rounds', 'panel',),
-        ('rep', 'admin',),
     )
 
-    raw_id_fields = (
-        'rep',
-        'admin',
-    )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'rep',
-            'admin',
-        ]
-    }
     readonly_fields = (
         'name',
         'status_monitor',
@@ -655,6 +672,7 @@ class Judge(admin.ModelAdmin):
 
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     list_display = (
         'name',
@@ -673,12 +691,14 @@ class PerformanceAdmin(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        ('order', 'song',),
+        'order',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+        'song',
     ]
 
     inlines = [
+        ArrangersInline,
         ScoresInline,
     ]
 
@@ -691,11 +711,15 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
+        'mus_points',
+        'prs_points',
+        'sng_points',
         'total_points',
         'mus_score',
         'prs_score',
         'sng_score',
         'total_score',
+        'status_monitor',
     )
     raw_id_fields = (
         'appearance',
