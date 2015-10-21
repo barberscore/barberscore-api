@@ -175,6 +175,109 @@ class Common(TimeStampedModel):
         abstract = True
 
 
+# class Administrator(models.Model):
+#     """Contest Administrator"""
+
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#     )
+
+#     SLOT_CHOICES = []
+#     for r in range(1, 6):
+#         SLOT_CHOICES.append((r, r))
+
+#     CATEGORY = Choices(
+#         (1, 'drcj', 'DRCJ'),
+#         (2, 'admin', 'Contest Administrator'),
+#         (3, 'presentation', 'Assistant Contest Administrator'),
+#     )
+
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
+
+#     name = models.CharField(
+#         max_length=255,
+#         unique=True,
+#     )
+
+#     slug = AutoSlugField(
+#         populate_from='name',
+#         always_update=True,
+#         unique=True,
+#         max_length=255,
+#     )
+
+#     contest = models.ForeignKey(
+#         'Contest',
+#         related_name='judges',
+#     )
+
+#     person = models.ForeignKey(
+#         'Person',
+#         related_name='panels',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
+
+#     status = models.IntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
+
+#     category = models.IntegerField(
+#         choices=CATEGORY,
+#         null=True,
+#         blank=True,
+#     )
+
+#     slot = models.IntegerField(
+#         choices=SLOT_CHOICES,
+#         null=True,
+#         blank=True,
+#     )
+
+#     district = models.ForeignKey(
+#         'District',
+#         related_name='judges',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
+
+#     is_practice = models.BooleanField(
+#         default=False,
+#     )
+
+#     @staticmethod
+#     def autocomplete_search_fields():
+#             return ("id__iexact", "name__icontains", "person__icontains",)
+
+#     def __unicode__(self):
+#         return u"{0}".format(self.name)
+
+#     def save(self, *args, **kwargs):
+#         self.name = u"{0} Administrator {1}{2}".format(
+#             self.contest,
+#             self.category,
+#             self.slot,
+#         )
+#         super(Administrator, self).save(*args, **kwargs)
+
+#     class Meta:
+#         unique_together = (
+#             ('contest', 'category', 'slot'),
+#         )
+#         ordering = (
+#             'contest',
+#             'category',
+#             'slot',
+#         )
+
+
 class Appearance(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -408,12 +511,12 @@ class Arranger(models.Model):
 
     performance = models.ForeignKey(
         'Performance',
-        # related_name='arrangers',
+        related_name='arrangers',
     )
 
     person = models.ForeignKey(
         'Person',
-        # related_name='arrangements',
+        related_name='arrangements',
     )
 
     part = models.IntegerField(
@@ -719,26 +822,6 @@ class Contest(models.Model):
         help_text="""
             The convention at which this contest occurred.""",
         related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    rep = models.ForeignKey(
-        'Person',
-        help_text="""
-            The CA for the contest.""",
-        related_name='rep_contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    admin = models.ForeignKey(
-        'Person',
-        help_text="""
-            The DRCJ for the contest.""",
-        related_name='admin_contests',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1728,19 +1811,19 @@ class Performance(models.Model):
         )
 
         # If we have Judge's scores, use them.
-        if self.scores.exists():
-            agg = self.scores.filter(
-                category__lte=3,
-            ).exclude(
-                judge__is_practice=True,
-            ).order_by(
-                'category',
-            ).values(
-                'category',
-            ).annotate(models.Sum('points'))
-            self.mus_points = agg[0]['points__sum']
-            self.prs_points = agg[1]['points__sum']
-            self.sng_points = agg[2]['points__sum']
+        # if self.scores.exists():
+        #     agg = self.scores.filter(
+        #         judge__category__lte=3,
+        #     ).exclude(
+        #         judge__is_practice=True,
+        #     ).order_by(
+        #         'judge__category',
+        #     ).values(
+        #         'judge__category',
+        #     ).annotate(models.Sum('points'))
+        #     self.mus_points = agg[0]['points__sum']
+        #     self.prs_points = agg[1]['points__sum']
+        #     self.sng_points = agg[2]['points__sum']
 
         # Calculate total points.
         try:
@@ -1821,13 +1904,6 @@ class Score(models.Model):
         (3, 'final', 'Final',),
     )
 
-    CATEGORY = Choices(
-        (1, 'music', "Music"),
-        (2, 'presentation', "Presentation"),
-        (3, 'singing', "Singing"),
-        (4, 'admin', "Admin"),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1878,9 +1954,9 @@ class Score(models.Model):
         default=STATUS.new,
     )
 
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
+    @property
+    def category(self):
+        return self.judge.get_category_display()
 
     @property
     def is_practice(self):
@@ -1893,7 +1969,7 @@ class Score(models.Model):
         self.name = u"{0} {1} {2} {3}".format(
             self.performance,
             self.judge.person.name,
-            self.get_category_display(),
+            self.category,
             self.points,
         )
         super(Score, self).save(*args, **kwargs)
