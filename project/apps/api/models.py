@@ -292,12 +292,6 @@ class Appearance(models.Model):
         (3, 'complete', 'Complete',),
     )
 
-    SESSION = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
-    )
-
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -340,11 +334,6 @@ class Appearance(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    kind = models.IntegerField(
-        choices=SESSION,
-        null=True,
     )
 
     position = models.PositiveSmallIntegerField(
@@ -437,17 +426,16 @@ class Appearance(models.Model):
         ordering = [
             'position',
         ]
-        unique_together = (
-            ('contestant', 'kind',),
-        )
+        # unique_together = (
+        #     ('contestant', 'kind',),
+        # )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} Contestant {2}".format(
-            self.contest,
-            self.get_kind_display(),
+        self.name = u"{0} Position {1}".format(
+            self.session,
             self.draw,
         )
 
@@ -738,7 +726,7 @@ class Contest(models.Model):
         YEAR_CHOICES.append((r, r))
 
     ROUNDS_CHOICES = []
-    for r in reversed(range(1, 6)):
+    for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
 
     PANEL_CHOICES = []
@@ -883,8 +871,6 @@ class Contest(models.Model):
                 raise ValidationError('International does not have a district.')
             if self.level != self.LEVEL.international and self.district is None:
                 raise ValidationError('You must provide a district.')
-            if self.year != self.convention.year:
-                raise ValidationError("The contest should be the same year as the convention.")
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -915,11 +901,49 @@ class Contest(models.Model):
             )
         super(Contest, self).save(*args, **kwargs)
 
-    def structure_contest(self):
+    def build_contest(self):
         """
             Return sentinels for juding panel.
         """
-        # c = Contest.objects.get(year=2016)
+        r = 1
+        while r <= self.rounds:
+            self.sessions.create(
+                contest=self,
+                kind=r,
+            )
+            r += 1
+
+        s = 1
+        while s <= self.panel:
+            self.judges.create(
+                contest=self,
+                category=1,
+                slot=s,
+            )
+            self.judges.create(
+                contest=self,
+                category=2,
+                slot=s,
+            )
+            self.judges.create(
+                contest=self,
+                category=3,
+                slot=s,
+            )
+            s += 1
+
+    def init(self):
+        cs = self.contestants.order_by('?')
+        session = self.sessions.get(kind=self.rounds)
+        p = 0
+        for c in cs:
+            session.appearances.create(
+                contestant=c,
+                position=p,
+                start=session.start,
+            )
+            p += 1
+
         # ls = Appearance.objects.filter(
         #     contestant__contest=c,
         # )
@@ -946,8 +970,6 @@ class Contest(models.Model):
         #             kind=i,
         #         )
         #         i += 1
-
-        pass
 
     def place_quarters(self):
         if self.kind != self.KIND.quartet:
@@ -2032,6 +2054,11 @@ class Session(models.Model):
         blank=True,
     )
 
+    slots = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         ordering = [
             'contest',
@@ -2054,6 +2081,19 @@ class Session(models.Model):
             self.get_kind_display(),
         )
         super(Session, self).save(*args, **kwargs)
+
+    def build_session(self):
+        """
+            Return sentinels for contestants.
+        """
+        s = 0
+        while s < self.session.slots:
+            self.session.appearances.create(
+                session=self.session,
+                position=s,
+                start=self.session.start,
+            )
+            s += 1
 
 
 class Singer(models.Model):
