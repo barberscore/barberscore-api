@@ -376,6 +376,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_filter = (
         'status',
+        'history',
         'goal',
         'level',
         'kind',
@@ -386,6 +387,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
+        'history',
         'goal',
         'rounds',
         'panel',
@@ -394,6 +396,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     fields = (
         'name',
         ('status', 'status_monitor',),
+        ('history', 'history_monitor',),
         'level',
         'kind',
         'goal',
@@ -405,6 +408,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     readonly_fields = (
         'name',
         'status_monitor',
+        'history_monitor',
     )
 
     # def formfield_for_foreignkey(self, db_field, request, **kwargs):
