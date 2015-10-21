@@ -167,21 +167,6 @@ class DirectorsInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-# class CatalogsInline(admin.TabularInline):
-#     model = Catalog
-#     fields = (
-#         'person',
-#         'song',
-#     )
-#     extra = 0
-#     raw_id_fields = (
-#         'song',
-#         'person',
-#     )
-#     can_delete = True
-#     show_change_link = True
-
-
 class AwardsInline(admin.TabularInline):
     model = Award
     fields = (
@@ -347,10 +332,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
             obj.import_legacy()
     import_legacy.label = 'Import Legacy'
 
-    form = select2_modelform(
-        Contest,
-        attrs={'width': '150px'},
-    )
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    # change_list_filter_template = "admin/filter_listing.html"
     formfield_overrides = {
         models.DateTimeField: {'widget': widgets.DateInput}
     }
@@ -402,6 +385,10 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'rep',
         'admin',
     )
+
+    autocomplete_lookup_fields = {
+        'fk': ['rep', 'admin']
+    }
 
     readonly_fields = (
         'name',
@@ -478,10 +465,10 @@ class ContestantAdmin(admin.ModelAdmin):
             obj.save()
     update_contestants.label = 'Update Contestants'
 
-    form = select2_modelform(
-        Contestant,
-        attrs={'width': '150px'},
-    )
+    # form = select2_modelform(
+    #     Contestant,
+    #     attrs={'width': '150px'},
+    # )
 
     formfield_overrides = {
         models.DateTimeField: {'widget': widgets.DateInput}
@@ -526,6 +513,10 @@ class ContestantAdmin(admin.ModelAdmin):
         'contest',
         'group',
     )
+
+    autocomplete_lookup_fields = {
+        'fk': ['contest', 'group']
+    }
 
     fields = (
         'name',
@@ -622,11 +613,6 @@ class DistrictAdmin(admin.ModelAdmin):
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    form = select2_modelform(
-        Person,
-        attrs={'width': '100px'},
-    )
-
     search_fields = (
         'name',
     )

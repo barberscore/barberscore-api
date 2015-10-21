@@ -257,6 +257,10 @@ class Person(Common):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
     @property
     def first_name(self):
         if self.name:
@@ -305,6 +309,10 @@ class Group(Common):
         max_length=200,
         blank=True,
     )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1154,6 +1162,10 @@ class Contest(models.Model):
             'kind',
         )
 
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
     def clean(self):
             if self.level == self.LEVEL.international and self.district.name != 'BHS':
                 raise ValidationError('International does not have a district.')
@@ -1531,8 +1543,9 @@ class Contestant(models.Model):
         except TypeError:
             return None
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
+    # @staticmethod
+    # def autocomplete_search_fields():
+    #     return ("name__icontains",)
 
     class Meta:
         ordering = (
