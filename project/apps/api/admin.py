@@ -1,8 +1,4 @@
 from django.contrib import admin
-from django.db import models
-from django.forms import (
-    widgets,
-)
 
 from django_object_actions import (
     DjangoObjectActions,
@@ -31,10 +27,131 @@ from .models import (
 from grappelli.forms import GrappelliSortableHiddenMixin
 
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    model = User
-    save_on_top = True
+class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
+    fields = (
+        'contestant',
+        'session',
+        'position',
+        'draw',
+        'start',
+    )
+    sortable_field_name = "position"
+    show_change_link = True
+
+    model = Appearance
+    extra = 0
+    raw_id_fields = (
+        'contestant',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+        ]
+    }
+    can_delete = True
+    readonly_fields = (
+        'draw',
+    )
+    classes = ('grp-collapse grp-open',)
+
+
+class AwardsInline(admin.TabularInline):
+    model = Award
+    fields = (
+        'name',
+    )
+    extra = 0
+    can_delete = True
+    show_change_link = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class ContestantsInline(admin.TabularInline):
+    fields = (
+        'contest',
+        'group',
+        'district',
+        # 'seed',
+        # 'prelim',
+        # 'place',
+        # 'total_score',
+        'men',
+    )
+    ordering = (
+        'place',
+        'seed',
+        'group',
+    )
+    show_change_link = True
+
+    model = Contestant
+    extra = 0
+    raw_id_fields = (
+        # 'contest',
+        'group',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            # 'contest',
+            'group',
+        ]
+    }
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class DirectorsInline(admin.TabularInline):
+    fields = (
+        'contestant',
+        'person',
+        'part',
+    )
+    ordering = (
+        'part',
+        'contestant',
+    )
+    model = Director
+    extra = 0
+    raw_id_fields = (
+        'person',
+        'contestant',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+            'contestant',
+        ]
+    }
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class JudgesInline(admin.TabularInline):
+    model = Judge
+    fields = (
+        'contest',
+        'person',
+        'district',
+        'category',
+        'slot',
+        # 'is_practice',
+    )
+    ordering = (
+        'category',
+        'slot',
+    )
+    extra = 0
+    raw_id_fields = (
+        'person',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+        ]
+    }
+    can_delete = True
+    show_change_link = True
+    classes = ('grp-collapse grp-closed',)
 
 
 class PerformancesInline(admin.TabularInline):
@@ -91,31 +208,29 @@ class ScoresInline(admin.TabularInline):
     show_change_link = True
 
 
-class JudgesInline(admin.TabularInline):
-    model = Judge
+class SessionsInline(admin.StackedInline):
     fields = (
         'contest',
-        'person',
-        'district',
-        'category',
-        'slot',
-        # 'is_practice',
+        'kind',
+        'start',
     )
     ordering = (
-        'category',
-        'slot',
+        'contest',
+        'kind',
     )
-    extra = 0
-    raw_id_fields = (
-        'person',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-        ]
-    }
-    can_delete = True
     show_change_link = True
+
+    model = Session
+    extra = 0
+    # raw_id_fields = (
+    #     'contest',
+    # )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'contest',
+    #     ]
+    # }
+    can_delete = True
     classes = ('grp-collapse grp-closed',)
 
 
@@ -146,170 +261,63 @@ class SingersInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class DirectorsInline(admin.TabularInline):
-    fields = (
-        'contestant',
-        'person',
-        'part',
-    )
-    ordering = (
-        'part',
-        'contestant',
-    )
-    model = Director
-    extra = 0
-    raw_id_fields = (
-        'person',
-        'contestant',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-            'contestant',
-        ]
-    }
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
+@admin.register(Appearance)
+class Appearance(admin.ModelAdmin):
+    save_on_top = True
+    change_list_template = "admin/change_list_filter_sidebar.html"
 
-
-class AwardsInline(admin.TabularInline):
-    model = Award
-    fields = (
+    # inlines = [
+    #     PerformancesInline,
+    # ]
+    list_display = [
         'name',
-    )
-    extra = 0
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class ContestantsInline(admin.TabularInline):
-    fields = (
-        'contest',
-        'group',
-        'district',
-        # 'seed',
-        # 'prelim',
-        # 'place',
-        # 'total_score',
-        'men',
-    )
-    ordering = (
-        'place',
-        'seed',
-        'group',
-    )
-    show_change_link = True
-
-    model = Contestant
-    extra = 0
-    raw_id_fields = (
-        # 'contest',
-        'group',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            # 'contest',
-            'group',
-        ]
-    }
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
-    fields = (
-        'contestant',
-        'session',
-        'position',
         'draw',
         'start',
-    )
-    sortable_field_name = "position"
-    show_change_link = True
-
-    model = Appearance
-    extra = 0
-    raw_id_fields = (
-        'contestant',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'contestant',
-        ]
-    }
-    can_delete = True
-    readonly_fields = (
-        'draw',
-    )
-    classes = ('grp-collapse grp-open',)
-
-
-class SessionsInline(admin.StackedInline):
-    fields = (
-        'contest',
-        'kind',
-        'start',
-    )
-    ordering = (
-        'contest',
-        'kind',
-    )
-    show_change_link = True
-
-    model = Session
-    extra = 0
-    # raw_id_fields = (
-    #     'contest',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'contest',
-    #     ]
-    # }
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
-
-
-@admin.register(Convention)
-class ConventionAdmin(admin.ModelAdmin):
-    search_fields = (
-        'name',
-    )
-
-    list_display = (
-        'name',
+    ]
+    list_filter = [
         'status',
-        'status_monitor',
-        'location',
-        'dates',
-        'kind',
-        'year',
-        'district',
-    )
+        'session',
+        'contestant__contest__level',
+        'contestant__contest__kind',
+        'contestant__contest__year',
+    ]
 
-    fields = (
+    fields = [
         'name',
         ('status', 'status_monitor',),
-        ('location', 'timezone',),
-        'dates',
-        'district',
-        'kind',
-        'year',
-    )
+        'contest',
+        'session',
+        'contestant',
+        ('draw', 'start',),
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+    ]
 
-    list_filter = (
-        'status',
-        'kind',
-        'year',
-        'district',
-    )
-
-    readonly_fields = (
+    readonly_fields = [
         'name',
-        'status_monitor',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
+        'draw',
+    ]
+
+    raw_id_fields = (
+        'contestant',
+        'contest',
+        'session',
     )
-    save_on_top = True
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+            'contest',
+            'session',
+        ]
+    }
 
 
 @admin.register(Contest)
@@ -395,48 +403,6 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     #     return super(ContestAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-@admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
-    search_fields = (
-        'name',
-    )
-
-    list_display = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'chapter_name',
-        'chapter_code',
-        'picture',
-    )
-
-    fields = (
-        'name',
-        'kind',
-        ('start', 'end',),
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-        ('chapter_name', 'chapter_code',),
-        'notes',
-    )
-
-    list_filter = (
-        'kind',
-    )
-
-    save_on_top = True
-
-
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     @takes_instance_or_queryset
@@ -519,16 +485,45 @@ class ContestantAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Song)
-class SongAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = (
-        'name',
-    )
-
+@admin.register(Convention)
+class ConventionAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
     )
+
+    list_display = (
+        'name',
+        'status',
+        'status_monitor',
+        'location',
+        'dates',
+        'kind',
+        'year',
+        'district',
+    )
+
+    fields = (
+        'name',
+        ('status', 'status_monitor',),
+        ('location', 'timezone',),
+        'dates',
+        'district',
+        'kind',
+        'year',
+    )
+
+    list_filter = (
+        'status',
+        'kind',
+        'year',
+        'district',
+    )
+
+    readonly_fields = (
+        'name',
+        'status_monitor',
+    )
+    save_on_top = True
 
 
 @admin.register(District)
@@ -573,13 +568,12 @@ class DistrictAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
     )
 
-    save_on_top = True
     list_display = (
         'name',
         'location',
@@ -588,6 +582,8 @@ class PersonAdmin(admin.ModelAdmin):
         'twitter',
         'email',
         'phone',
+        'chapter_name',
+        'chapter_code',
         'picture',
     )
 
@@ -603,13 +599,57 @@ class PersonAdmin(admin.ModelAdmin):
         'phone',
         'picture',
         'description',
+        ('chapter_name', 'chapter_code',),
         'notes',
     )
 
-    inlines = [
-        DirectorsInline,
-        SingersInline,
-        JudgesInline,
+    list_filter = (
+        'kind',
+    )
+
+    save_on_top = True
+
+
+@admin.register(Judge)
+class Judge(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    save_on_top = True
+    fields = [
+        'name',
+        'status',
+        'contest',
+        'person',
+        'district',
+        ('category', 'slot',),
+    ]
+
+    list_display = [
+        'name',
+        'person',
+        'district',
+    ]
+
+    list_filter = (
+        'status',
+        'contest__level',
+        'contest__kind',
+        'contest__year',
+    )
+
+    raw_id_fields = (
+        'contest',
+        'person',
+    )
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contest',
+            'person',
+        ]
+    }
+
+    readonly_fields = [
+        'name',
     ]
 
 
@@ -669,111 +709,49 @@ class PerformanceAdmin(admin.ModelAdmin):
     }
 
 
-@admin.register(Appearance)
-class Appearance(admin.ModelAdmin):
-    save_on_top = True
-    change_list_template = "admin/change_list_filter_sidebar.html"
-
-    # inlines = [
-    #     PerformancesInline,
-    # ]
-    list_display = [
+@admin.register(Person)
+class PersonAdmin(admin.ModelAdmin):
+    search_fields = (
         'name',
-        'draw',
-        'start',
-    ]
-    list_filter = [
-        'status',
-        'session',
-        'contestant__contest__level',
-        'contestant__contest__kind',
-        'contestant__contest__year',
-    ]
-
-    fields = [
-        'name',
-        ('status', 'status_monitor',),
-        'contest',
-        'session',
-        'contestant',
-        ('draw', 'start',),
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-    ]
-
-    readonly_fields = [
-        'name',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-        'draw',
-    ]
-
-    raw_id_fields = (
-        'contestant',
-        'contest',
-        'session',
     )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'contestant',
-            'contest',
-            'session',
-        ]
-    }
+
+    save_on_top = True
+    list_display = (
+        'name',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+    )
+
+    fields = (
+        'name',
+        'kind',
+        ('start', 'end',),
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        'notes',
+    )
+
+    inlines = [
+        DirectorsInline,
+        SingersInline,
+        JudgesInline,
+    ]
 
 
 @admin.register(Score)
 class Score(admin.ModelAdmin):
     save_on_top = True
-
-
-@admin.register(Judge)
-class Judge(admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    save_on_top = True
-    fields = [
-        'name',
-        'status',
-        'contest',
-        'person',
-        'district',
-        ('category', 'slot',),
-    ]
-
-    list_display = [
-        'name',
-        'person',
-        'district',
-    ]
-
-    list_filter = (
-        'status',
-        'contest__level',
-        'contest__kind',
-        'contest__year',
-    )
-
-    raw_id_fields = (
-        'contest',
-        'person',
-    )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'contest',
-            'person',
-        ]
-    }
-
-    readonly_fields = [
-        'name',
-    ]
 
 
 @admin.register(Session)
@@ -816,3 +794,21 @@ class Session(admin.ModelAdmin):
     inlines = [
         AppearancesInline,
     ]
+
+
+@admin.register(Song)
+class SongAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'name',
+    )
+
+    search_fields = (
+        'name',
+    )
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    model = User
+    save_on_top = True
