@@ -135,6 +135,7 @@ HAYSTACK_CONNECTIONS = {
 # Grappelli
 GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
 GRAPPELLI_AUTOCOMPLETE_LIMIT = 20
+# GRAPPELLI_INDEX_DASHBOARD = 'dashboard.CustomIndexDashboard'
 
 LOGGING = {
     'version': 1,
@@ -167,6 +168,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'grappelli.dashboard',
     'grappelli',
     'django.contrib.admin',
     'django.contrib.admindocs',
