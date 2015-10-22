@@ -175,109 +175,6 @@ class Common(TimeStampedModel):
         abstract = True
 
 
-# class Administrator(models.Model):
-#     """Contest Administrator"""
-
-#     STATUS = Choices(
-#         (0, 'new', 'New',),
-#     )
-
-#     SLOT_CHOICES = []
-#     for r in range(1, 6):
-#         SLOT_CHOICES.append((r, r))
-
-#     CATEGORY = Choices(
-#         (1, 'drcj', 'DRCJ'),
-#         (2, 'admin', 'Contest Administrator'),
-#         (3, 'presentation', 'Assistant Contest Administrator'),
-#     )
-
-#     id = models.UUIDField(
-#         primary_key=True,
-#         default=uuid.uuid4,
-#         editable=False,
-#     )
-
-#     name = models.CharField(
-#         max_length=255,
-#         unique=True,
-#     )
-
-#     slug = AutoSlugField(
-#         populate_from='name',
-#         always_update=True,
-#         unique=True,
-#         max_length=255,
-#     )
-
-#     contest = models.ForeignKey(
-#         'Contest',
-#         related_name='judges',
-#     )
-
-#     person = models.ForeignKey(
-#         'Person',
-#         related_name='panels',
-#         null=True,
-#         blank=True,
-#         on_delete=models.SET_NULL,
-#     )
-
-#     status = models.IntegerField(
-#         choices=STATUS,
-#         default=STATUS.new,
-#     )
-
-#     category = models.IntegerField(
-#         choices=CATEGORY,
-#         null=True,
-#         blank=True,
-#     )
-
-#     slot = models.IntegerField(
-#         choices=SLOT_CHOICES,
-#         null=True,
-#         blank=True,
-#     )
-
-#     district = models.ForeignKey(
-#         'District',
-#         related_name='judges',
-#         null=True,
-#         blank=True,
-#         on_delete=models.SET_NULL,
-#     )
-
-#     is_practice = models.BooleanField(
-#         default=False,
-#     )
-
-#     @staticmethod
-#     def autocomplete_search_fields():
-#             return ("id__iexact", "name__icontains", "person__icontains",)
-
-#     def __unicode__(self):
-#         return u"{0}".format(self.name)
-
-#     def save(self, *args, **kwargs):
-#         self.name = u"{0} Administrator {1}{2}".format(
-#             self.contest,
-#             self.category,
-#             self.slot,
-#         )
-#         super(Administrator, self).save(*args, **kwargs)
-
-#     class Meta:
-#         unique_together = (
-#             ('contest', 'category', 'slot'),
-#         )
-#         ordering = (
-#             'contest',
-#             'category',
-#             'slot',
-#         )
-
-
 class Appearance(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -1594,6 +1491,9 @@ class Judge(models.Model):
         (4, 'music_candidate', 'Music Candidate'),
         (5, 'presentation_candidate', 'Presentation Candidate'),
         (6, 'singing_candidate', 'Singing Candidate'),
+        (7, 'singing_candidate', 'Music Composite'),
+        (8, 'singing_candidate', 'Presentation Composite'),
+        (9, 'singing_candidate', 'Singing Composite'),
     )
 
     id = models.UUIDField(
