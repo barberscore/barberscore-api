@@ -655,6 +655,12 @@ class Judge(admin.ModelAdmin):
         'contest__year',
     )
 
+    list_select_related = [
+        'district',
+        'contest',
+        'person',
+    ]
+
     raw_id_fields = (
         'contest',
         'person',
