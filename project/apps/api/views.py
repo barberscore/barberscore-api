@@ -63,7 +63,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         'district',
         'convention',
     ).exclude(
-        status=Contest.STATUS.new,
+        history__lt=Contest.HISTORY.places,
     ).prefetch_related(
         'district',
         'contestants',
