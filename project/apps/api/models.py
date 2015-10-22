@@ -835,7 +835,7 @@ class Contest(models.Model):
             )
             s += 1
 
-    def init(self):
+    def draw_contest(self):
         cs = self.contestants.order_by('?')
         session = self.sessions.get(kind=self.rounds)
         p = 0
@@ -847,23 +847,21 @@ class Contest(models.Model):
             )
             p += 1
 
-        # ls = Appearance.objects.filter(
-        #     contestant__contest=c,
-        # )
-        # for l in ls:
-        #     p1 = Performance.objects.create(appearance=l, order=1)
-        #     p2 = Performance.objects.create(appearance=l, order=2)
-        #     for j in c.judges.all():
-        #         Score.objects.create(
-        #             performance = p1,
-        #             judge = j,
-        #             category = j.part,
-        #         )
-        #         Score.objects.create(
-        #             performance = p2,
-        #             judge = j,
-        #             category = j.part,
-        #         )
+    def start_contest(self):
+        session = self.sessions.get(kind=self.rounds)
+        ls = session.appearances.all()
+        for l in ls:
+            p1 = l.performances.create(appearance=l, order=1)
+            p2 = l.performances.create(appearance=l, order=2)
+            for j in self.judges.filter(category__in=[1, 2, 3]):
+                p1.scores.create(
+                    performance=p1,
+                    judge=j,
+                )
+                p2.scores.create(
+                    performance=p2,
+                    judge=j,
+                )
 
         # for c in cs:
         #     i = 1
@@ -1738,20 +1736,16 @@ class Performance(models.Model):
             "Song",
         )
 
-        # If we have Judge's scores, use them.
-        # if self.scores.exists():
-        #     agg = self.scores.filter(
-        #         judge__category__lte=3,
-        #     ).exclude(
-        #         judge__is_practice=True,
-        #     ).order_by(
-        #         'judge__category',
-        #     ).values(
-        #         'judge__category',
-        #     ).annotate(models.Sum('points'))
-        #     self.mus_points = agg[0]['points__sum']
-        #     self.prs_points = agg[1]['points__sum']
-        #     self.sng_points = agg[2]['points__sum']
+        if self.scores.exists():
+            self.mus_points = self.scores.filter(
+                judge__category__in=[1, 7]
+            ).aggregate(mus=models.Sum('points'))['mus']
+            self.prs_points = self.scores.filter(
+                judge__category__in=[2, 8]
+            ).aggregate(prs=models.Sum('points'))['prs']
+            self.sng_points = self.scores.filter(
+                judge__category__in=[3, 9]
+            ).aggregate(sng=models.Sum('points'))['sng']
 
         # Calculate total points.
         try:
