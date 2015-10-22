@@ -45,6 +45,9 @@ from apps.api.models import (
     DuplicateSong,
     DuplicatePerson,
     Contest,
+    Session,
+    Appearance,
+    Score,
 )
 
 from .forms import (
@@ -153,6 +156,37 @@ def contest(request, contest_slug):
         request,
         'api/contest.html',
         {'contest': contest},
+    )
+
+
+@login_required
+def session(request, session_slug):
+    session = Session.objects.get(
+        slug=session_slug,
+    )
+    appearances = session.appearances.order_by('position')
+    return render(
+        request,
+        'api/session.html',
+        {'session': session, 'appearances': appearances},
+    )
+
+
+@login_required
+def appearance(request, appearance_slug):
+    appearance = Appearance.objects.get(
+        slug=appearance_slug,
+    )
+    # performances = appearance.performances.order_by('order')
+    scores = Score.objects.filter(
+        performance__appearance=appearance,
+    ).order_by('judge', 'performance__order')
+    return render(
+        request,
+        'api/appearance.html', {
+            'appearance': appearance,
+            'scores': scores,
+        },
     )
 
 

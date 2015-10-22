@@ -755,6 +755,11 @@ class PerformanceAdmin(admin.ModelAdmin):
         ]
     }
 
+    ordering = (
+        'name',
+        'order',
+    )
+
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
@@ -798,12 +803,56 @@ class PersonAdmin(admin.ModelAdmin):
 
 @admin.register(Score)
 class Score(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'performance',
+        'judge',
+        'points',
+    ]
+
+    readonly_fields = [
+        'name',
+        'status_monitor',
+    ]
+
+    list_display = [
+        'name',
+        'status',
+        'points',
+    ]
+
+    list_filter = [
+        'status',
+        'performance__appearance__session__contest__level',
+        'performance__appearance__session__contest__kind',
+        'performance__appearance__session__contest__year',
+    ]
+
+    raw_id_fields = [
+        'performance',
+        'judge',
+    ]
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'performance',
+            'judge',
+        ]
+    }
+
+    ordering = [
+        'judge',
+        'performance',
+    ]
 
 
 @admin.register(Session)
 class Session(admin.ModelAdmin):
     save_on_top = True
+    change_list_template = "admin/change_list_filter_sidebar.html"
     list_display = [
         'name',
         'status',

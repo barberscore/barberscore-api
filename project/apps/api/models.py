@@ -320,7 +320,7 @@ class Appearance(models.Model):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.session,
-            self.contestant,
+            self.contestant.group,
         )
 
         # Don't bother if there aren't performance scores.
@@ -1850,6 +1850,16 @@ class Score(models.Model):
         max_length=255,
     )
 
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
     performance = models.ForeignKey(
         'Performance',
         related_name='scores',
@@ -1877,10 +1887,11 @@ class Score(models.Model):
         # ]
     )
 
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+    class Meta:
+        ordering = (
+            'judge',
+            'performance__order',
+        )
 
     @property
     def category(self):
@@ -1894,12 +1905,10 @@ class Score(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id,
-            # self.performance,
-            # self.category,
-            # self.slot,
-            # self.points,
+        self.name = u"{0} {1} {2:02d}".format(
+            self.performance,
+            self.judge.get_category_display(),
+            self.judge.slot,
         )
         super(Score, self).save(*args, **kwargs)
 
