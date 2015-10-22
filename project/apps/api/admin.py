@@ -352,16 +352,27 @@ class Appearance(admin.ModelAdmin):
 @admin.register(Contest)
 class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     @takes_instance_or_queryset
-    def build(self, request, queryset):
+    def build_contest(self, request, queryset):
         for obj in queryset:
-            obj.build()
-    build.label = 'Build Contest'
+            obj.build_contest()
+    build_contest.label = 'Build Contest'
 
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    # change_list_filter_template = "admin/filter_listing.html"
-    save_on_top = True
+    @takes_instance_or_queryset
+    def draw_contest(self, request, queryset):
+        for obj in queryset:
+            obj.draw_contest()
+    draw_contest.label = 'Draw Contest'
+
+    @takes_instance_or_queryset
+    def start_contest(self, request, queryset):
+        for obj in queryset:
+            obj.start_contest()
+    start_contest.label = 'Start Contest'
+
     objectactions = [
-        'build',
+        'build_contest',
+        'draw_contest',
+        'start_contest',
     ]
 
     inlines = [
@@ -370,6 +381,9 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         JudgesInline,
     ]
 
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    # change_list_filter_template = "admin/filter_listing.html"
+    save_on_top = True
     search_fields = (
         'name',
     )
