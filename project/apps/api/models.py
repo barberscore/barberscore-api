@@ -15,8 +15,8 @@ from autoslug import AutoSlugField
 
 from django.core.validators import (
     RegexValidator,
-    MaxValueValidator,
-    MinValueValidator,
+    # MaxValueValidator,
+    # MinValueValidator,
 )
 
 from django.contrib.auth.models import (
@@ -1593,7 +1593,7 @@ class Performance(models.Model):
         (0, 'new', 'New',),
         (1, 'ready', 'Ready',),
         (2, 'current', 'Current',),
-        (1, 'complete', 'Complete',),
+        (3, 'complete', 'Complete',),
     )
 
     ORDER = Choices(
