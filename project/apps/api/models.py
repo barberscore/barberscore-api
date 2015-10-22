@@ -710,8 +710,9 @@ class Contest(models.Model):
 
     HISTORY = Choices(
         (0, 'new', 'New',),
-        (10, 'scoresheet', 'Scoresheet',),
-        (40, 'csv', 'CSV',),
+        (10, 'none', 'None',),
+        (20, 'pdf', 'PDF',),
+        (30, 'places', 'Places',),
         (40, 'incomplete', 'Incomplete',),
         (50, 'complete', 'Complete',),
     )
