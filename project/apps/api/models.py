@@ -352,7 +352,9 @@ class Appearance(models.Model):
                 self.sng_score = round(self.sng_points / possible, 1)
                 self.total_score = round(self.total_points / (possible * 3), 1)
             except TypeError:
-                pass
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
         super(Appearance, self).save(*args, **kwargs)
 
 
@@ -1168,7 +1170,9 @@ class Contestant(models.Model):
                 self.sng_score = round(self.sng_points / possible, 1)
                 self.total_score = round(self.total_points / (possible * 3), 1)
             except TypeError:
-                pass
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
         super(Contestant, self).save(*args, **kwargs)
 
     @property
@@ -1765,7 +1769,9 @@ class Performance(models.Model):
             self.sng_score = round(self.sng_points / possible, 1)
             self.total_score = round(self.total_points / (possible * 3), 1)
         except TypeError:
-            pass
+            self.mus_score = None
+            self.prs_score = None
+            self.sng_score = None
         super(Performance, self).save(*args, **kwargs)
 
 

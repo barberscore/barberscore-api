@@ -326,6 +326,7 @@ class Appearance(admin.ModelAdmin):
 
     readonly_fields = [
         'name',
+        'status_monitor',
         'mus_points',
         'prs_points',
         'sng_points',
