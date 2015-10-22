@@ -318,9 +318,9 @@ class Appearance(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} Position {1}".format(
+        self.name = u"{0} {1}".format(
             self.session,
-            self.draw,
+            self.contestant,
         )
 
         # Don't bother if there aren't performance scores.
@@ -1491,9 +1491,9 @@ class Judge(models.Model):
         (4, 'music_candidate', 'Music Candidate'),
         (5, 'presentation_candidate', 'Presentation Candidate'),
         (6, 'singing_candidate', 'Singing Candidate'),
-        (7, 'singing_candidate', 'Music Composite'),
-        (8, 'singing_candidate', 'Presentation Composite'),
-        (9, 'singing_candidate', 'Singing Composite'),
+        (7, 'music_composite', 'Music Composite'),
+        (8, 'presentation_composite', 'Presentation Composite'),
+        (9, 'singing_composite', 'Singing Composite'),
     )
 
     id = models.UUIDField(
@@ -1865,16 +1865,16 @@ class Score(models.Model):
             The number of points awarded (0-100)""",
         null=True,
         blank=True,
-        validators=[
-            MaxValueValidator(
-                100,
-                message='Points must be between 0 - 100',
-            ),
-            MinValueValidator(
-                0,
-                message='Points must be between 0 - 100',
-            ),
-        ]
+        # validators=[
+        #     MaxValueValidator(
+        #         100,
+        #         message='Points must be between 0 - 100',
+        #     ),
+        #     MinValueValidator(
+        #         0,
+        #         message='Points must be between 0 - 100',
+        #     ),
+        # ]
     )
 
     status = models.IntegerField(
@@ -1894,11 +1894,12 @@ class Score(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3}".format(
-            self.performance,
-            self.judge.person.name,
-            self.category,
-            self.points,
+        self.name = u"{0}".format(
+            self.id,
+            # self.performance,
+            # self.category,
+            # self.slot,
+            # self.points,
         )
         super(Score, self).save(*args, **kwargs)
 
