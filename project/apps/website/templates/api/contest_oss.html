@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+  <main class="container">
+    <section>
+      <h4>
+        Official Scoring Summary: {{contest}}<br>
+      </h4>
+    </section>
+    <section>
+      <div class='table-responsive'>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Place</th>
+              <th>Total</th>
+              <th>Group</th>
+              <th>Song</th>
+              <th>MUS</th>
+              <th>PRS</th>
+              <th>SNG</th>
+              <th>TotS</th>
+              <th>M%</th>
+              <th>P%</th>
+              <th>S%</th>
+              <th>T%</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contestant in contestants %}
+                <tr>
+                  <td>
+                    {{contestant.place}}
+                  </td>
+                  <td>
+                    {{contestant.total_points}}<br>
+                    {{contestant.total_score}}
+                  </td>
+                  <td>
+                    {{contestant.group.name}}
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.song.name}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                    <em>Totals</em>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.mus_points}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.mus_points}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.prs_points}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.prs_points}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.sng_points}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.sng_points}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.total_points}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.total_points}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.mus_score}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.mus_score}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.prs_score}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.prs_score}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.sng_score}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.sng_score}}</em><br>
+                  </td>
+                  <td>
+                    {% for appearance in contestant.appearances.all %}
+                      {% for performance in appearance.performances.all %}
+                        {{performance.total_score}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                      <em>{{contestant.total_score}}</em><br>
+                  </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+{% endblock content %}
