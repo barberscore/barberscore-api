@@ -870,92 +870,35 @@ class Contest(models.Model):
                     judge=j,
                 )
 
-        # for c in cs:
-        #     i = 1
-        #     while i <= c.rounds:
-        #         Session.objects.create(
-        #             contest=c,
-        #             kind=i,
-        #         )
-        #         i += 1
-
-    def place_quarters(self):
-        if self.kind != self.KIND.quartet:
-            return
-        marker = []
-        i = 1
-        for contestant in self.contestants.order_by('-quarters_points'):
-            try:
-                match = contestant.quarters_points == marker[0].quarters_points
-            except IndexError:
-                contestant.quarters_place = i
-                contestant.save()
-                marker.append(contestant)
-                continue
-            if match:
-                contestant.quarters_place = i
-                i += len(marker)
-                contestant.save()
-                marker.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.quarters_place = i
-                contestant.save()
-                marker = [contestant]
-        return
-
-    def place_semis(self):
-        if self.kind != self.KIND.quartet:
-            return
-        marker = []
-        i = 1
-        for contestant in self.contestants.order_by('-semis_points'):
-            try:
-                match = contestant.semis_points == marker[0].semis_points
-            except IndexError:
-                contestant.semis_place = i
-                contestant.save()
-                marker.append(contestant)
-                continue
-            if match:
-                contestant.semis_place = i
-                i += len(marker)
-                contestant.save()
-                marker.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.semis_place = i
-                contestant.save()
-                marker = [contestant]
-        return
-
-    def place_finals(self):
-        if self.kind != self.KIND.quartet:
-            return
-        marker = []
-        i = 1
-        for contestant in self.contestants.order_by('-finals_points'):
-            try:
-                match = contestant.finals_points == marker[0].finals_points
-            except IndexError:
-                contestant.finals_place = i
-                contestant.save()
-                marker.append(contestant)
-                continue
-            if match:
-                contestant.finals_place = i
-                i += len(marker)
-                contestant.save()
-                marker.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.finals_place = i
-                contestant.save()
-                marker = [contestant]
-        return
+    def promote_contest(self):
+        current_session = self.sessions.get(
+            status=self.sessions.model.STATUS.current,
+        )
+        next_session = self.sessions.get(
+            kind=(current_session.kind - 1),
+        )
+        qualifiers = current_session.appearances.filter(
+            place__lte=next_session.slots,
+        ).order_by('?')
+        p = 0
+        for qualifier in qualifiers:
+            l = next_session.appearances.create(
+                contestant=qualifier.contestant,
+                position=p,
+                start=next_session.start,
+            )
+            p += 1
+            p1 = l.performances.create(appearance=l, order=1)
+            p2 = l.performances.create(appearance=l, order=2)
+            for j in self.judges.filter(category__in=[1, 2, 3]):
+                p1.scores.create(
+                    performance=p1,
+                    judge=j,
+                )
+                p2.scores.create(
+                    performance=p2,
+                    judge=j,
+                )
 
     def seed(self):
         marker = []
