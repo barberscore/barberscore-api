@@ -4,6 +4,7 @@ log = logging.getLogger(__name__)
 from django.shortcuts import (
     render,
     redirect,
+    get_object_or_404,
 )
 
 from django.contrib.auth.decorators import login_required
@@ -29,7 +30,12 @@ from django.db import (
 )
 
 from django.contrib import messages
-from django.db.models import Q
+
+from django.db.models import (
+    Q,
+    Prefetch,
+)
+
 from django.core.paginator import (
     Paginator,
     EmptyPage,
@@ -48,6 +54,8 @@ from apps.api.models import (
     Session,
     Appearance,
     Score,
+    Contestant,
+    Performance,
 )
 
 from .forms import (
@@ -187,6 +195,65 @@ def appearance(request, appearance_slug):
             'appearance': appearance,
             'scores': scores,
         },
+    )
+
+
+@login_required
+def session_oss(request, session_slug):
+    session = get_object_or_404(
+        Session,
+        slug=session_slug,
+        # status=Session.STATUS.complete,
+    )
+    appearances = session.appearances.select_related(
+        'contestant__group',
+    ).prefetch_related(
+        'performances',
+        'performances__song',
+    ).filter(
+        status=Appearance.STATUS.complete,
+    ).order_by(
+        'place',
+    )
+    return render(
+        request,
+        'api/session_oss.html',
+        {'session': session, 'appearances': appearances},
+    )
+
+
+@login_required
+def contest_oss(request, contest_slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=contest_slug,
+        status=Contest.STATUS.complete,
+    )
+    contestants = contest.contestants.select_related(
+        'group',
+    ).prefetch_related(
+        Prefetch(
+            'appearances',
+            queryset=Appearance.objects.order_by('session__kind'),
+        ),
+        Prefetch(
+            'appearances__session',
+        ),
+        Prefetch(
+            'appearances__performances',
+            queryset=Performance.objects.order_by('order'),
+        ),
+        Prefetch('appearances__performances__song'),
+    ).filter(
+        status=Contestant.STATUS.complete,
+    ).order_by(
+        'place',
+        # 'appearances__session__kind',
+    )
+    return render(
+        request,
+        'api/contest_oss.html',
+        {'contest': contest, 'contestants': contestants},
     )
 
 
