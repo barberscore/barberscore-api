@@ -256,6 +256,7 @@ class ScoresInline(admin.TabularInline):
     )
     readonly_fields = [
         'category',
+        'judge',
     ]
 
     autocomplete_lookup_fields = {
@@ -356,6 +357,8 @@ class Appearance(admin.ModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
+        'session',
+        'contestant',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -525,8 +528,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'contest',
-        'group',
-        'district',
+        ('group', 'district',),
         ('seed', 'prelim',),
         ('place', 'men',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
@@ -535,6 +537,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
+        'status_monitor',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -627,6 +630,12 @@ class DistrictAdmin(admin.ModelAdmin):
     list_filter = (
         'kind',
     )
+
+    readonly_fields = [
+        'name',
+        'long_name',
+        'kind',
+]
 
     save_on_top = True
 
@@ -763,6 +772,7 @@ class PerformanceAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
+        'order',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -823,11 +833,11 @@ class PersonAdmin(admin.ModelAdmin):
         'notes',
     )
 
-    inlines = [
-        DirectorsInline,
-        SingersInline,
-        JudgesInline,
-    ]
+    # inlines = [
+    #     DirectorsInline,
+    #     SingersInline,
+    #     JudgesInline,
+    # ]
 
 
 @admin.register(Score)
@@ -845,6 +855,8 @@ class Score(admin.ModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
+        'performance',
+        'judge',
     ]
 
     list_display = [
@@ -891,13 +903,15 @@ class Session(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'contest',
-        ('kind', 'start', 'slots',),
+        ('contest', 'kind',),
+        ('start', 'slots',),
     ]
 
     readonly_fields = [
         'name',
         'status_monitor',
+        'contest',
+        'kind',
     ]
 
     list_filter = (
