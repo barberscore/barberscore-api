@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^session/(?P<session_slug>[a-zA-Z0-9-]+)/$', views.session, name='session'),
     url(r'^appearance/(?P<appearance_slug>[a-zA-Z0-9-]+)/$', views.appearance, name='appearance'),
 
+    url(r'^session/(?P<session_slug>[a-zA-Z0-9-]+)/oss/$', views.session_oss, name='session-oss'),
+    url(r'^contest/(?P<contest_slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),
 
     # url(r'^merge/$', views.merge, name='merge'),
     # url(r'^merge/person/$', views.persons, name='persons'),
