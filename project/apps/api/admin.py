@@ -62,21 +62,50 @@ class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         'start',
     )
     sortable_field_name = "position"
-    show_change_link = True
 
     model = Appearance
     extra = 0
-    raw_id_fields = (
-        'contestant',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'contestant',
-        ]
-    }
-    can_delete = True
+    # raw_id_fields = (
+    #     'contestant',
+    # )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'contestant',
+    #     ]
+    # }
     readonly_fields = (
+        'contestant',
+        'session',
         'draw',
+        'start',
+    )
+    classes = ('grp-collapse grp-open',)
+
+
+class PlacementInline(admin.TabularInline):
+    fields = (
+        'contestant',
+        'session',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'place',
+    )
+    model = Appearance
+    readonly_fields = (
+        'contestant',
+        'session',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'place',
+    )
+    ordering = (
+        'place',
+        'sng_points',
+        'mus_points',
     )
     classes = ('grp-collapse grp-open',)
 
@@ -890,6 +919,7 @@ class Session(admin.ModelAdmin):
 
     inlines = [
         AppearancesInline,
+        PlacementInline,
     ]
 
 

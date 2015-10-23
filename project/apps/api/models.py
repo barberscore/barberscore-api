@@ -225,6 +225,11 @@ class Appearance(models.Model):
         'Position',
     )
 
+    place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     start = models.DateTimeField(
         null=True,
         blank=True,
@@ -2010,6 +2015,30 @@ class Session(models.Model):
                 start=self.session.start,
             )
             s += 1
+
+    def place_session(self):
+        cursor = []
+        i = 1
+        for appearance in self.appearances.order_by('-total_points'):
+            try:
+                match = appearance.total_points == cursor[0].total_points
+            except IndexError:
+                appearance.place = i
+                appearance.save()
+                cursor.append(appearance)
+                continue
+            if match:
+                appearance.place = i
+                i += len(cursor)
+                appearance.save()
+                cursor.append(appearance)
+                continue
+            else:
+                i += 1
+                appearance.place = i
+                appearance.save()
+                cursor = [appearance]
+        return
 
 
 class Singer(models.Model):
