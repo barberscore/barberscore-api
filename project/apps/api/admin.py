@@ -439,6 +439,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'goal',
         'rounds',
         'panel',
+        'scoresheet_pdf',
     )
 
     fields = (
@@ -451,6 +452,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'year',
         'district',
         ('rounds', 'panel',),
+        'scoresheet_pdf',
     )
 
     readonly_fields = (
