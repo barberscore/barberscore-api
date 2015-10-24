@@ -1427,6 +1427,9 @@ class Judge(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'scheduled', 'Scheduled',),
+        (20, 'confirmed', 'Confirmed',),
+        (30, 'complete', 'Complete',),
     )
 
     SLOT_CHOICES = []
