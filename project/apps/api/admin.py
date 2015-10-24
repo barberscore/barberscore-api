@@ -127,10 +127,10 @@ class ContestantsInline(admin.TabularInline):
         'contest',
         'group',
         'district',
-        # 'seed',
-        # 'prelim',
-        # 'place',
-        # 'total_score',
+        'seed',
+        'prelim',
+        'place',
+        'total_score',
         'men',
     )
     ordering = (
@@ -146,6 +146,11 @@ class ContestantsInline(admin.TabularInline):
         # 'contest',
         'group',
     )
+    readonly_fields = [
+        'place',
+        'total_score',
+    ]
+
     autocomplete_lookup_fields = {
         'fk': [
             # 'contest',
