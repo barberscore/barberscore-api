@@ -252,6 +252,7 @@ class ScoresInline(admin.TabularInline):
         'judge',
         'category',
         'points',
+        'status',
     )
     ordering = (
         'judge',
