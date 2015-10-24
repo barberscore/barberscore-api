@@ -26,6 +26,7 @@ from .models import (
 )
 
 from grappelli.forms import GrappelliSortableHiddenMixin
+from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 
 class ArrangersInline(admin.TabularInline):
@@ -231,12 +232,12 @@ class PerformancesInline(admin.TabularInline):
     model = Performance
     extra = 0
     raw_id_fields = (
-        'appearance',
+        # 'appearance',
         'song',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'appearance',
+            # 'appearance',
             'song',
         ]
     }
@@ -274,6 +275,38 @@ class ScoresInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-open',)
+
+
+class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
+    fields = (
+        'appearance',
+        'order',
+        'song',
+        # 'mus_points',
+        # 'prs_points',
+        # 'sng_points',
+    )
+    ordering = (
+        'appearance',
+        'order',
+    )
+    model = Performance
+    extra = 0
+    raw_id_fields = (
+        # 'appearance',
+        'song',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            # 'appearance',
+            'song',
+        ]
+    }
+    inlines = (
+        ScoresInline,
+    )
+    can_delete = True
+    show_change_link = True
 
 
 class SessionsInline(admin.TabularInline):
@@ -331,13 +364,13 @@ class SingersInline(admin.TabularInline):
 
 
 @admin.register(Appearance)
-class Appearance(admin.ModelAdmin):
+class Appearance(SuperModelAdmin):
     save_on_top = True
     change_list_template = "admin/change_list_filter_sidebar.html"
 
-    # inlines = [
-    #     PerformancesInline,
-    # ]
+    inlines = [
+        PerformancesStackedInline,
+    ]
     list_display = [
         'name',
         'draw',
