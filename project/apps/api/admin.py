@@ -77,7 +77,7 @@ class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         'contestant',
         'session',
         'draw',
-        'start',
+        # 'start',
     )
     classes = ('grp-collapse grp-open',)
 
@@ -689,7 +689,7 @@ class Judge(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
-        'status',
+        ('status', 'status_monitor',),
         'contest',
         'person',
         'district',
@@ -698,6 +698,7 @@ class Judge(admin.ModelAdmin):
 
     list_display = [
         'name',
+        'status',
         'person',
         'district',
     ]
