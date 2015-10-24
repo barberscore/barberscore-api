@@ -313,6 +313,7 @@ class Appearance(models.Model):
 
     class Meta:
         ordering = [
+            'session',
             'position',
         ]
         # unique_together = (
@@ -730,6 +731,8 @@ class Contest(models.Model):
             Size of the judging panel (typically three or five.)""",
         default=5,
         choices=PANEL_CHOICES,
+        null=True,
+        blank=True,
     )
 
     rounds = models.IntegerField(
