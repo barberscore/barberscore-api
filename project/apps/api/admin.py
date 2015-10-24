@@ -92,6 +92,7 @@ class PlacementInline(admin.TabularInline):
         'total_points',
         'place',
     )
+    extra = 0
     model = Appearance
     readonly_fields = (
         'contestant',
@@ -635,7 +636,7 @@ class DistrictAdmin(admin.ModelAdmin):
         'name',
         'long_name',
         'kind',
-]
+    ]
 
     save_on_top = True
 
