@@ -7,6 +7,7 @@ import uuid
 
 import os
 import datetime
+
 from django.db import (
     models,
 )
@@ -47,6 +48,7 @@ from nameparser import HumanName
 
 from .validators import (
     validate_trimmed,
+    dixon,
 )
 
 
@@ -187,6 +189,7 @@ class Appearance(models.Model):
         (1, 'qualified', 'Qualified',),
         (2, 'current', 'Current',),
         (3, 'complete', 'Complete',),
+        (4, 'flagged', 'Flagged',),
     )
 
     name = models.CharField(
@@ -1550,6 +1553,7 @@ class Performance(models.Model):
         (1, 'ready', 'Ready',),
         (2, 'current', 'Current',),
         (3, 'complete', 'Complete',),
+        (4, 'flagged', 'Flagged',),
     )
 
     ORDER = Choices(
@@ -1727,6 +1731,9 @@ class Performance(models.Model):
             self.prs_score = None
             self.sng_score = None
         super(Performance, self).save(*args, **kwargs)
+
+    def dixon_test(self):
+        return dixon(self.scores.all())
 
 
 class Person(Common):
