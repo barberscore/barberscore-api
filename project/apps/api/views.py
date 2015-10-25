@@ -24,6 +24,7 @@ from .models import (
     Judge,
     Award,
     Appearance,
+    Organization,
 )
 
 from .serializers import (
@@ -43,6 +44,7 @@ from .serializers import (
     JudgeSerializer,
     AwardSerializer,
     AppearanceSerializer,
+    OrganizationSerializer,
 )
 
 
@@ -111,6 +113,12 @@ class DistrictViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = DistrictSerializer
+    lookup_field = 'slug'
+
+
+class OrganizationViewSet(viewsets.ModelViewSet):
+    queryset = Organization.objects.all()
+    serializer_class = OrganizationSerializer
     lookup_field = 'slug'
 
 
