@@ -7,7 +7,6 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    # District,
     Person,
     Song,
     Performance,
@@ -228,37 +227,6 @@ class DirectorSerializer(serializers.ModelSerializer):
             'person',
             'part',
         )
-
-
-# class DistrictSerializer(serializers.ModelSerializer):
-#     contestants = serializers.SlugRelatedField(
-#         many=True,
-#         read_only=True,
-#         slug_field='slug',
-#     )
-
-#     class Meta:
-#         model = District
-#         fields = (
-#             'id',
-#             # 'url',
-#             'slug',
-#             'name',
-#             'start',
-#             'end',
-#             'kind',
-#             'location',
-#             'website',
-#             'facebook',
-#             'twitter',
-#             'email',
-#             'phone',
-#             'picture',
-#             'description',
-#             'kind',
-#             'long_name',
-#             'contestants',
-#         )
 
 
 class GroupSerializer(serializers.ModelSerializer):

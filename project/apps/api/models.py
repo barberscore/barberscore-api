@@ -719,11 +719,6 @@ class Contest(models.Model):
         choices=YEAR_CHOICES,
     )
 
-    district = models.ForeignKey(
-        'District',
-        related_name='contests',
-    )
-
     organization = models.ForeignKey(
         'Organization',
         null=True,
@@ -782,7 +777,7 @@ class Contest(models.Model):
 
     class Meta:
         unique_together = (
-            ('level', 'kind', 'year', 'goal', 'district'),
+            ('level', 'kind', 'year', 'goal', 'organization'),
         )
         ordering = (
             'level',
@@ -989,16 +984,6 @@ class Contestant(models.Model):
     group = models.ForeignKey(
         'Group',
         related_name='contestants',
-    )
-
-    district = models.ForeignKey(
-        'District',
-        # help_text="""
-        #     The district this contestant is representing.""",
-        related_name='contestants',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     organization = models.ForeignKey(
@@ -1239,12 +1224,6 @@ class Convention(models.Model):
         choices=YEAR_CHOICES,
     )
 
-    district = models.ForeignKey(
-        'District',
-        help_text="""
-            The district for the convention.  If International, this is 'BHS'.""",
-    )
-
     organization = models.ForeignKey(
         'Organization',
         null=True,
@@ -1287,7 +1266,7 @@ class Convention(models.Model):
         ]
 
         unique_together = (
-            ('district', 'kind', 'year',),
+            ('organization', 'kind', 'year',),
         )
 
     def __unicode__(self):
@@ -1371,37 +1350,6 @@ class Director(models.Model):
         unique_together = (
             ('contestant', 'person',),
         )
-
-
-class District(Common):
-    KIND = Choices(
-        (0, 'bhs', "BHS"),
-        (1, 'district', "District"),
-        (2, 'affiliate', "Affiliate"),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of District.  Choices are BHS (International), District, and Affiliate.""",
-        choices=KIND,
-        default=KIND.bhs,
-    )
-
-    long_name = models.CharField(
-        help_text="""
-            A long-form name for the resource.""",
-        blank=True,
-        max_length=200,
-    )
-
-    class Meta:
-        ordering = [
-            'kind',
-            'name',
-        ]
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
 
 
 class Group(Common):
@@ -1532,14 +1480,6 @@ class Judge(models.Model):
         choices=SLOT_CHOICES,
         null=True,
         blank=True,
-    )
-
-    district = models.ForeignKey(
-        'District',
-        related_name='judges',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     organization = models.ForeignKey(
