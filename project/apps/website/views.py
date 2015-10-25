@@ -56,6 +56,7 @@ from apps.api.models import (
     Score,
     Contestant,
     Performance,
+    Dis,
 )
 
 from .forms import (
@@ -66,6 +67,15 @@ from .forms import (
 )
 
 User = get_user_model()
+
+
+def dis(request):
+    dis = Dis.objects.all()
+    return render(
+        request,
+        'dis.html',
+        {'nodes': dis},
+    )
 
 
 def home(request):

@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from mptt.admin import MPTTModelAdmin
+
 from django_object_actions import (
     DjangoObjectActions,
     takes_instance_or_queryset,
@@ -23,6 +25,7 @@ from .models import (
     Award,
     Appearance,
     User,
+    Dis,
 )
 
 from grappelli.forms import GrappelliSortableHiddenMixin
@@ -361,6 +364,11 @@ class SingersInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
+
+
+@admin.register(Dis)
+class Dis(MPTTModelAdmin):
+    pass
 
 
 @admin.register(Appearance)
