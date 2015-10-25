@@ -13,7 +13,6 @@ from .models import (
     Contest,
     Group,
     Contestant,
-    # District,
     Song,
     Person,
     Performance,
@@ -32,7 +31,6 @@ from .serializers import (
     ContestSerializer,
     GroupSerializer,
     ContestantSerializer,
-    # DistrictSerializer,
     SongSerializer,
     PersonSerializer,
     SearchSerializer,
@@ -106,14 +104,6 @@ class PersonViewSet(viewsets.ModelViewSet):
     )
     serializer_class = PersonSerializer
     lookup_field = 'slug'
-
-
-# class DistrictViewSet(viewsets.ModelViewSet):
-#     queryset = District.objects.prefetch_related(
-#         'contestants',
-#     )
-#     serializer_class = DistrictSerializer
-#     lookup_field = 'slug'
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
