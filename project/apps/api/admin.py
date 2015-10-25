@@ -25,7 +25,7 @@ from .models import (
     Award,
     Appearance,
     User,
-    Dis,
+    Organization,
 )
 
 from grappelli.forms import GrappelliSortableHiddenMixin
@@ -364,11 +364,6 @@ class SingersInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
-
-
-@admin.register(Dis)
-class Dis(MPTTModelAdmin):
-    pass
 
 
 @admin.register(Appearance)
@@ -780,6 +775,11 @@ class Judge(admin.ModelAdmin):
     readonly_fields = [
         'name',
     ]
+
+
+@admin.register(Organization)
+class Organization(MPTTModelAdmin):
+    pass
 
 
 @admin.register(Performance)
