@@ -13,7 +13,6 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    # District,
     Song,
     Person,
     Performance,
@@ -635,54 +634,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'status_monitor',
     )
     save_on_top = True
-
-
-# @admin.register(District)
-# class DistrictAdmin(admin.ModelAdmin):
-#     search_fields = (
-#         'name',
-#     )
-
-#     list_display = (
-#         'name',
-#         'location',
-#         'website',
-#         'facebook',
-#         'twitter',
-#         'email',
-#         'phone',
-#         'picture',
-#         'long_name',
-#         'kind',
-#     )
-
-#     fields = (
-#         'name',
-#         'long_name',
-#         'kind',
-#         ('start', 'end',),
-#         'location',
-#         'website',
-#         'facebook',
-#         'twitter',
-#         'email',
-#         'phone',
-#         'picture',
-#         'description',
-#         'notes',
-#     )
-
-#     list_filter = (
-#         'kind',
-#     )
-
-#     readonly_fields = [
-#         'name',
-#         'long_name',
-#         'kind',
-#     ]
-
-#     save_on_top = True
 
 
 @admin.register(Group)
