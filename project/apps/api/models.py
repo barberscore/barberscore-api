@@ -724,6 +724,13 @@ class Contest(models.Model):
         related_name='contests',
     )
 
+    organization = models.ForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+        related_name='contests',
+    )
+
     convention = models.ForeignKey(
         'Convention',
         help_text="""
@@ -787,11 +794,12 @@ class Contest(models.Model):
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
 
-    def clean(self):
-            if self.level == self.LEVEL.international and self.district.name != 'BHS':
-                raise ValidationError('International does not have a district.')
-            if self.level != self.LEVEL.international and self.district is None:
-                raise ValidationError('You must provide a district.')
+    # TODO
+    # def clean(self):
+    #         if self.level == self.LEVEL.international and self.district.name != 'BHS':
+    #             raise ValidationError('International does not have a district.')
+    #         if self.level != self.LEVEL.international and self.district is None:
+    #             raise ValidationError('You must provide a district.')
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -806,7 +814,7 @@ class Contest(models.Model):
             )
         elif self.level == self.LEVEL.district:
             self.name = u"{0} {1} {2} {3} {4}".format(
-                self.district,
+                self.organization,
                 self.get_level_display(),
                 self.get_kind_display(),
                 self.get_goal_display(),
@@ -985,6 +993,16 @@ class Contestant(models.Model):
 
     district = models.ForeignKey(
         'District',
+        # help_text="""
+        #     The district this contestant is representing.""",
+        related_name='contestants',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
         # help_text="""
         #     The district this contestant is representing.""",
         related_name='contestants',
@@ -1227,6 +1245,14 @@ class Convention(models.Model):
             The district for the convention.  If International, this is 'BHS'.""",
     )
 
+    organization = models.ForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+        help_text="""
+            The district for the convention.  If International, this is 'BHS'.""",
+    )
+
     slug = AutoSlugField(
         populate_from='name',
         always_update=True,
@@ -1256,7 +1282,7 @@ class Convention(models.Model):
 
     class Meta:
         ordering = [
-            'district',
+            'organization',
             '-year',
         ]
 
@@ -1279,7 +1305,7 @@ class Convention(models.Model):
             )
         else:
             self.name = u"{0} {1} {2}".format(
-                self.district,
+                self.organization,
                 self.get_kind_display(),
                 self.year,
             )
@@ -1510,6 +1536,14 @@ class Judge(models.Model):
 
     district = models.ForeignKey(
         'District',
+        related_name='judges',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
         related_name='judges',
         null=True,
         blank=True,
