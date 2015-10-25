@@ -7,7 +7,7 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    District,
+    # District,
     Person,
     Song,
     Performance,
@@ -81,7 +81,7 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    district = serializers.StringRelatedField()
+    organization = serializers.StringRelatedField()
 
     class Meta:
         model = Contest
@@ -96,7 +96,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'goal',
             'rounds',
             'year',
-            'district',
+            'organization',
             'convention',
             'panel',
             'scoresheet_pdf',
@@ -115,7 +115,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    district = serializers.SlugRelatedField(
+    organization = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -154,7 +154,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'contest',
             'group',
-            'district',
+            'organization',
             'picture',
             'seed',
             'prelim',
@@ -178,7 +178,7 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    district = serializers.SlugRelatedField(
+    organization = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -201,7 +201,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'dates',
             'location',
             'year',
-            'district',
+            'organization',
             'timezone',
             'contests',
         )
@@ -230,35 +230,35 @@ class DirectorSerializer(serializers.ModelSerializer):
         )
 
 
-class DistrictSerializer(serializers.ModelSerializer):
-    contestants = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+# class DistrictSerializer(serializers.ModelSerializer):
+#     contestants = serializers.SlugRelatedField(
+#         many=True,
+#         read_only=True,
+#         slug_field='slug',
+#     )
 
-    class Meta:
-        model = District
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'start',
-            'end',
-            'kind',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'kind',
-            'long_name',
-            'contestants',
-        )
+#     class Meta:
+#         model = District
+#         fields = (
+#             'id',
+#             # 'url',
+#             'slug',
+#             'name',
+#             'start',
+#             'end',
+#             'kind',
+#             'location',
+#             'website',
+#             'facebook',
+#             'twitter',
+#             'email',
+#             'phone',
+#             'picture',
+#             'description',
+#             'kind',
+#             'long_name',
+#             'contestants',
+#         )
 
 
 class GroupSerializer(serializers.ModelSerializer):

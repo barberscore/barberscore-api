@@ -13,7 +13,7 @@ from .models import (
     Contest,
     Group,
     Contestant,
-    District,
+    # District,
     Song,
     Person,
     Performance,
@@ -32,7 +32,7 @@ from .serializers import (
     ContestSerializer,
     GroupSerializer,
     ContestantSerializer,
-    DistrictSerializer,
+    # DistrictSerializer,
     SongSerializer,
     PersonSerializer,
     SearchSerializer,
@@ -50,7 +50,7 @@ from .serializers import (
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
-        'district',
+        'organization',
     ).exclude(
         status=Convention.STATUS.new,
     ).prefetch_related(
@@ -62,12 +62,12 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
-        'district',
+        'organization',
         'convention',
     ).exclude(
         history__lt=Contest.HISTORY.places,
     ).prefetch_related(
-        'district',
+        'organization',
         'contestants',
     )
     serializer_class = ContestSerializer
@@ -78,7 +78,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'group',
         'contest',
-        'district',
+        'organization',
     ).prefetch_related(
         'appearances',
         'directors',
@@ -108,12 +108,12 @@ class PersonViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class DistrictViewSet(viewsets.ModelViewSet):
-    queryset = District.objects.prefetch_related(
-        'contestants',
-    )
-    serializer_class = DistrictSerializer
-    lookup_field = 'slug'
+# class DistrictViewSet(viewsets.ModelViewSet):
+#     queryset = District.objects.prefetch_related(
+#         'contestants',
+#     )
+#     serializer_class = DistrictSerializer
+#     lookup_field = 'slug'
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -198,7 +198,7 @@ class JudgeViewSet(viewsets.ModelViewSet):
     queryset = Judge.objects.select_related(
         'person',
         'contest',
-        'district',
+        'organization',
     ).prefetch_related(
         'scores',
     )
