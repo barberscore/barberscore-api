@@ -40,6 +40,11 @@ from model_utils.fields import (
 
 from model_utils import Choices
 
+from mptt.models import (
+    MPTTModel,
+    TreeForeignKey,
+)
+
 from timezone_field import TimeZoneField
 
 from phonenumber_field.modelfields import PhoneNumberField
@@ -1366,6 +1371,153 @@ class District(Common):
     class Meta:
         ordering = [
             'kind',
+            'name',
+        ]
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+
+class Dis(MPTTModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    KIND = Choices(
+        (0, 'bhs', "BHS"),
+        (1, 'district', "District"),
+        (2, 'affiliate', "Affiliate"),
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.""",
+        max_length=200,
+        unique=True,
+        validators=[
+            validate_trimmed,
+        ],
+        error_messages={
+            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
+        }
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of District.  Choices are BHS (International), District, and Affiliate.""",
+        choices=KIND,
+        default=KIND.bhs,
+    )
+
+    long_name = models.CharField(
+        help_text="""
+            A long-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
+    start = models.DateField(
+        help_text="""
+            The founding/birth date of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    end = models.DateField(
+        help_text="""
+            The retirement/deceased date of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=200,
+        blank=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+    )
+
+    twitter = models.CharField(
+        help_text="""
+            The twitter handle (in form @twitter_handle) of the resource.""",
+        blank=True,
+        max_length=16,
+        validators=[
+            RegexValidator(
+                regex=r'@([A-Za-z0-9_]+)',
+                message="""
+                    Must be a single Twitter handle
+                    in the form `@twitter_handle`.
+                """,
+            ),
+        ],
+    )
+
+    email = models.EmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+    )
+
+    phone = PhoneNumberField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        blank=True,
+        null=True,
+    )
+
+    picture = models.ImageField(
+        upload_to=generate_image_filename,
+        help_text="""
+            The picture/logo of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A description/bio of the resource.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+    )
+
+    parent = TreeForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+    )
+
+    class MPTTMeta:
+        order_insertion_by = [
             'name',
         ]
 
