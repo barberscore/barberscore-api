@@ -13,7 +13,7 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    District,
+    # District,
     Song,
     Person,
     Performance,
@@ -130,7 +130,7 @@ class ContestantsInline(admin.TabularInline):
     fields = (
         'contest',
         'group',
-        'district',
+        'organization',
         'seed',
         'prelim',
         'place',
@@ -196,7 +196,7 @@ class JudgesInline(admin.TabularInline):
     fields = (
         'contest',
         'person',
-        'district',
+        'organization',
         'category',
         'slot',
         # 'is_practice',
@@ -471,7 +471,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'level',
         'kind',
         'year',
-        'district',
+        'organization',
     )
 
     list_display = (
@@ -492,7 +492,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'kind',
         'goal',
         'year',
-        'district',
+        'organization',
         ('rounds', 'panel',),
         'scoresheet_pdf',
     )
@@ -573,7 +573,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'contest',
-        ('group', 'district',),
+        ('group', 'organization',),
         ('seed', 'prelim',),
         ('place', 'men',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
@@ -610,7 +610,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'dates',
         'kind',
         'year',
-        'district',
+        'organization',
     )
 
     fields = (
@@ -618,7 +618,7 @@ class ConventionAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         ('location', 'timezone',),
         'dates',
-        'district',
+        'organization',
         'kind',
         'year',
     )
@@ -627,7 +627,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'year',
-        'district',
+        'organization',
     )
 
     readonly_fields = (
@@ -637,52 +637,52 @@ class ConventionAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(District)
-class DistrictAdmin(admin.ModelAdmin):
-    search_fields = (
-        'name',
-    )
+# @admin.register(District)
+# class DistrictAdmin(admin.ModelAdmin):
+#     search_fields = (
+#         'name',
+#     )
 
-    list_display = (
-        'name',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'long_name',
-        'kind',
-    )
+#     list_display = (
+#         'name',
+#         'location',
+#         'website',
+#         'facebook',
+#         'twitter',
+#         'email',
+#         'phone',
+#         'picture',
+#         'long_name',
+#         'kind',
+#     )
 
-    fields = (
-        'name',
-        'long_name',
-        'kind',
-        ('start', 'end',),
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-        'notes',
-    )
+#     fields = (
+#         'name',
+#         'long_name',
+#         'kind',
+#         ('start', 'end',),
+#         'location',
+#         'website',
+#         'facebook',
+#         'twitter',
+#         'email',
+#         'phone',
+#         'picture',
+#         'description',
+#         'notes',
+#     )
 
-    list_filter = (
-        'kind',
-    )
+#     list_filter = (
+#         'kind',
+#     )
 
-    readonly_fields = [
-        'name',
-        'long_name',
-        'kind',
-    ]
+#     readonly_fields = [
+#         'name',
+#         'long_name',
+#         'kind',
+#     ]
 
-    save_on_top = True
+#     save_on_top = True
 
 
 @admin.register(Group)
@@ -736,7 +736,7 @@ class Judge(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'contest',
         'person',
-        'district',
+        'organization',
         ('category', 'slot',),
     ]
 
@@ -744,7 +744,7 @@ class Judge(admin.ModelAdmin):
         'name',
         'status',
         'person',
-        'district',
+        'organization',
     ]
 
     list_filter = (
@@ -755,7 +755,7 @@ class Judge(admin.ModelAdmin):
     )
 
     list_select_related = [
-        'district',
+        'organization',
         'contest',
         'person',
     ]
