@@ -22,3 +22,4 @@ titlecase==0.7.2
 django-autoslug==1.9.3
 django-grappelli==2.7.1
 django-super-inlines==0.1.4
+django-mptt==0.7.4

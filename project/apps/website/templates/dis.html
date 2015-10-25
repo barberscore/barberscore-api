@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load mptt_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="page-header">
+      <h1>
+        Dis
+      </h1>
+    </div>
+    <div>
+      <ul>
+          {% recursetree nodes %}
+              <li>
+                  {{ node.name }}
+                  {% if not node.is_leaf_node %}
+                      <ul class="children">
+                          {{ children }}
+                      </ul>
+                  {% endif %}
+              </li>
+          {% endrecursetree %}
+      </ul>
+
+    </div>
+  </div>
+{% endblock content %}
+
