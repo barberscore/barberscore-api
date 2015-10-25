@@ -18,6 +18,7 @@ from .models import (
     Award,
     Judge,
     Appearance,
+    Organization,
 )
 
 from .search_indexes import (
@@ -356,6 +357,42 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'total_score',
             'contestant',
             'performances',
+        )
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    children = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+    parent = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Organization
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'start',
+            'end',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            # 'kind',
+            'long_name',
+            'parent',
+            'children',
+            # 'contestants',
         )
 
 
