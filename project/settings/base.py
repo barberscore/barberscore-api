@@ -179,6 +179,7 @@ INSTALLED_APPS = (
     'timezone_field',
     'django_object_actions',
     'corsheaders',
+    'mptt',
     'rest_framework',
     'rest_framework.authtoken',
     'apps.api',
