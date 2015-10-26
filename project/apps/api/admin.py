@@ -13,7 +13,7 @@ from .models import (
     Contest,
     Contestant,
     Group,
-    Song,
+    Tune,
     Person,
     Performance,
     Score,
@@ -222,7 +222,7 @@ class PerformancesInline(admin.TabularInline):
     fields = (
         'appearance',
         'order',
-        'song',
+        'tune',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -235,12 +235,12 @@ class PerformancesInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         # 'appearance',
-        'song',
+        'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
             # 'appearance',
-            'song',
+            'tune',
         ]
     }
 
@@ -283,7 +283,7 @@ class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
         'appearance',
         'order',
-        'song',
+        'tune',
         # 'mus_points',
         # 'prs_points',
         # 'sng_points',
@@ -296,12 +296,12 @@ class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     extra = 0
     raw_id_fields = (
         # 'appearance',
-        'song',
+        'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
             # 'appearance',
-            'song',
+            'tune',
         ]
     }
     inlines = (
@@ -740,7 +740,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'song',
+        'tune',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -757,7 +757,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'order',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-        'song',
+        'tune',
     ]
 
     inlines = [
@@ -787,12 +787,12 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'appearance',
-        'song',
+        'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'appearance',
-            'song',
+            'tune',
         ]
     }
 
@@ -939,8 +939,8 @@ class Session(admin.ModelAdmin):
     ]
 
 
-@admin.register(Song)
-class SongAdmin(admin.ModelAdmin):
+@admin.register(Tune)
+class TuneAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',

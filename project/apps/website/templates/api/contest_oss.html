@@ -43,7 +43,7 @@
                   <td>
                     {% for appearance in contestant.appearances.all %}
                       {% for performance in appearance.performances.all %}
-                        {{performance.song.name}}<br>
+                        {{performance.tune.name}}<br>
                       {% endfor %}
                     {% endfor %}
                     <em>Totals</em>

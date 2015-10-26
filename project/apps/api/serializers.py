@@ -8,7 +8,7 @@ from .models import (
     Contestant,
     Group,
     Person,
-    Song,
+    Tune,
     Performance,
     Singer,
     Director,
@@ -22,13 +22,13 @@ from .models import (
 
 from .search_indexes import (
     GroupIndex,
-    SongIndex,
+    TuneIndex,
     PersonIndex,
 )
 
 
 class CatalogSerializer(serializers.ModelSerializer):
-    song = serializers.SlugRelatedField(
+    tune = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -45,7 +45,7 @@ class CatalogSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'song',
+            'tune',
             'person',
         )
 
@@ -365,7 +365,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    song = serializers.SlugRelatedField(
+    tune = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -397,7 +397,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'status',
             'is_parody',
             # 'catalog',
-            'song',
+            'tune',
             # 'person',
             'appearance',
             'mus_points',
@@ -497,7 +497,7 @@ class SearchSerializer(HaystackSerializer):
     class Meta:
         index_classes = [
             GroupIndex,
-            SongIndex,
+            TuneIndex,
             PersonIndex,
         ]
         fields = [
@@ -532,7 +532,7 @@ class SingerSerializer(serializers.ModelSerializer):
         )
 
 
-class SongSerializer(serializers.ModelSerializer):
+class TuneSerializer(serializers.ModelSerializer):
     catalogs = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -546,7 +546,7 @@ class SongSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Song
+        model = Tune
         fields = (
             'id',
             # 'url',
