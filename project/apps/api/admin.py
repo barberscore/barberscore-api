@@ -99,7 +99,7 @@ class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         # 'start',
         'link',
     )
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-close',)
 
 
 class PlacementInline(admin.TabularInline):
@@ -128,7 +128,7 @@ class PlacementInline(admin.TabularInline):
         'sng_points',
         'mus_points',
     )
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class AwardsInline(admin.TabularInline):
