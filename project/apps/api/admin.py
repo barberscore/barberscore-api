@@ -73,12 +73,12 @@ class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         )
 
     fields = (
+        'link',
         'contestant',
         'session',
         'position',
         'draw',
         'start',
-        'link',
     )
     sortable_field_name = "position"
 
@@ -156,6 +156,7 @@ class ContestantsInline(admin.TabularInline):
         )
 
     fields = (
+        'link',
         'contest',
         'group',
         'organization',
@@ -164,7 +165,6 @@ class ContestantsInline(admin.TabularInline):
         'place',
         'total_score',
         'men',
-        'link',
     )
     ordering = (
         'place',
@@ -264,13 +264,13 @@ class SongsInline(admin.TabularInline):
         )
 
     fields = (
+        'link',
         'performance',
         'order',
         'tune',
         'mus_points',
         'prs_points',
         'sng_points',
-        'link',
     )
     ordering = (
         'performance',
