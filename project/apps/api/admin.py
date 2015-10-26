@@ -686,6 +686,8 @@ class Performance(SuperModelAdmin):
         'name',
         'draw',
         'start',
+        'total_score',
+        'place',
     ]
     list_filter = [
         'status',
@@ -950,6 +952,10 @@ class Session(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         PerformancesInline,
         PlacementInline,
+    ]
+
+    search_fields = [
+        'name',
     ]
 
 
