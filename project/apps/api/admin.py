@@ -99,7 +99,7 @@ class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         # 'start',
         'link',
     )
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class PlacementInline(admin.TabularInline):
@@ -193,7 +193,7 @@ class ContestantsInline(admin.TabularInline):
         ]
     }
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class DirectorsInline(admin.TabularInline):
@@ -324,7 +324,7 @@ class ScoresInline(admin.TabularInline):
     }
     can_delete = True
     show_change_link = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
@@ -356,7 +356,7 @@ class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         ScoresInline,
     )
     show_change_link = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
