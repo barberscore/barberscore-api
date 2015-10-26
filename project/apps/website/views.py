@@ -49,7 +49,7 @@ from apps.api.models import (
     # Catalog,
     Contest,
     Session,
-    Appearance,
+    Performance,
     Score,
     Contestant,
     Song,
@@ -169,27 +169,27 @@ def session(request, session_slug):
     session = Session.objects.get(
         slug=session_slug,
     )
-    appearances = session.appearances.order_by('position')
+    performances = session.performances.order_by('position')
     return render(
         request,
         'api/session.html',
-        {'session': session, 'appearances': appearances},
+        {'session': session, 'performances': performances},
     )
 
 
 @login_required
-def appearance(request, appearance_slug):
-    appearance = Appearance.objects.get(
-        slug=appearance_slug,
+def performance(request, performance_slug):
+    performance = Performance.objects.get(
+        slug=performance_slug,
     )
-    # songs = appearance.songs.order_by('order')
+    # songs = performance.songs.order_by('order')
     scores = Score.objects.filter(
-        song__appearance=appearance,
+        song__performance=performance,
     ).order_by('judge', 'song__order')
     return render(
         request,
-        'api/appearance.html', {
-            'appearance': appearance,
+        'api/performance.html', {
+            'performance': performance,
             'scores': scores,
         },
     )
@@ -202,20 +202,20 @@ def session_oss(request, session_slug):
         slug=session_slug,
         # status=Session.STATUS.complete,
     )
-    appearances = session.appearances.select_related(
+    performances = session.performances.select_related(
         'contestant__group',
     ).prefetch_related(
         'songs',
         'songs__tune',
     ).filter(
-        status=Appearance.STATUS.complete,
+        status=Performance.STATUS.complete,
     ).order_by(
         'place',
     )
     return render(
         request,
         'api/session_oss.html',
-        {'session': session, 'appearances': appearances},
+        {'session': session, 'performances': performances},
     )
 
 
@@ -230,22 +230,22 @@ def contest_oss(request, contest_slug):
         'group',
     ).prefetch_related(
         Prefetch(
-            'appearances',
-            queryset=Appearance.objects.order_by('session__kind'),
+            'performances',
+            queryset=Performance.objects.order_by('session__kind'),
         ),
         Prefetch(
-            'appearances__session',
+            'performances__session',
         ),
         Prefetch(
-            'appearances__songs',
+            'performances__songs',
             queryset=Song.objects.order_by('order'),
         ),
-        Prefetch('appearances__songs__tune'),
+        Prefetch('performances__songs__tune'),
     ).filter(
         status=Contestant.STATUS.complete,
     ).order_by(
         'place',
-        # 'appearances__session__kind',
+        # 'performances__session__kind',
     )
     return render(
         request,

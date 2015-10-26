@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^contest/(?P<contest_slug>[a-zA-Z0-9-]+)/$', views.contest, name='contest'),
     url(r'^session/(?P<session_slug>[a-zA-Z0-9-]+)/$', views.session, name='session'),
-    url(r'^appearance/(?P<appearance_slug>[a-zA-Z0-9-]+)/$', views.appearance, name='appearance'),
+    url(r'^performance/(?P<performance_slug>[a-zA-Z0-9-]+)/$', views.performance, name='performance'),
 
     url(r'^session/(?P<session_slug>[a-zA-Z0-9-]+)/oss/$', views.session_oss, name='session-oss'),
     url(r'^contest/(?P<contest_slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),
