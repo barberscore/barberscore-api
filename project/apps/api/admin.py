@@ -60,12 +60,25 @@ class ArrangersInline(admin.TabularInline):
 
 
 class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_performance_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
     fields = (
         'contestant',
         'session',
         'position',
         'draw',
         'start',
+        'link',
     )
     sortable_field_name = "position"
 
@@ -84,8 +97,9 @@ class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         'session',
         'draw',
         # 'start',
+        'link',
     )
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class PlacementInline(admin.TabularInline):
@@ -114,7 +128,7 @@ class PlacementInline(admin.TabularInline):
         'sng_points',
         'mus_points',
     )
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class AwardsInline(admin.TabularInline):
@@ -140,7 +154,6 @@ class ContestantsInline(admin.TabularInline):
                 )
             )
         )
-    # link.allow_tags = True
 
     fields = (
         'contest',
@@ -238,6 +251,18 @@ class JudgesInline(admin.TabularInline):
 
 
 class SongsInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_song_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
     fields = (
         'performance',
         'order',
@@ -245,6 +270,7 @@ class SongsInline(admin.TabularInline):
         'mus_points',
         'prs_points',
         'sng_points',
+        'link',
     )
     ordering = (
         'performance',
@@ -263,6 +289,9 @@ class SongsInline(admin.TabularInline):
         ]
     }
 
+    readonly_fields = [
+        'link',
+    ]
     can_delete = True
     show_change_link = True
 
@@ -295,7 +324,7 @@ class ScoresInline(admin.TabularInline):
     }
     can_delete = True
     show_change_link = True
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
@@ -327,7 +356,7 @@ class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         ScoresInline,
     )
     show_change_link = True
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
@@ -353,7 +382,7 @@ class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     inlines = (
         SongsStackedInline,
     )
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class SessionsInline(admin.TabularInline):
@@ -380,7 +409,7 @@ class SessionsInline(admin.TabularInline):
     #     ]
     # }
     can_delete = True
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class SingersInline(admin.TabularInline):
@@ -517,7 +546,7 @@ class ContestantAdmin(DjangoObjectActions, admin.ModelAdmin):
         SingersInline,
         DirectorsInline,
         AwardsInline,
-        PerformancesStackedInline,
+        PerformancesInline,
     ]
 
     list_display = (
