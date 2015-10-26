@@ -556,8 +556,8 @@ class Catalog(models.Model):
         default=False,
     )
 
-    song = models.ForeignKey(
-        'Song',
+    tune = models.ForeignKey(
+        'Tune',
         null=True,
         blank=True,
         related_name='catalogs',
@@ -598,7 +598,7 @@ class Catalog(models.Model):
 
     class Meta:
         unique_together = (
-            ('person', 'song')
+            ('person', 'tune')
         )
 
     def __unicode__(self):
@@ -606,7 +606,7 @@ class Catalog(models.Model):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} [{1}]".format(
-            self.song,
+            self.tune,
             self.person,
         )
         super(Catalog, self).save(*args, **kwargs)
@@ -1610,8 +1610,8 @@ class Performance(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    song = models.ForeignKey(
-        'Song',
+    tune = models.ForeignKey(
+        'Tune',
         related_name='performances',
         null=True,
         blank=True,
@@ -1699,7 +1699,7 @@ class Performance(models.Model):
         self.name = u"{0} {1} {2}".format(
             self.appearance,
             self.get_order_display(),
-            "Song",
+            "Tune",
         )
 
         if self.scores.exists():
@@ -2071,7 +2071,7 @@ class Singer(models.Model):
         )
 
 
-class Song(models.Model):
+class Tune(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,

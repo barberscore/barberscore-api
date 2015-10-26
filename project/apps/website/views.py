@@ -206,7 +206,7 @@ def session_oss(request, session_slug):
         'contestant__group',
     ).prefetch_related(
         'performances',
-        'performances__song',
+        'performances__tune',
     ).filter(
         status=Appearance.STATUS.complete,
     ).order_by(
@@ -240,7 +240,7 @@ def contest_oss(request, contest_slug):
             'appearances__performances',
             queryset=Performance.objects.order_by('order'),
         ),
-        Prefetch('appearances__performances__song'),
+        Prefetch('appearances__performances__tune'),
     ).filter(
         status=Contestant.STATUS.complete,
     ).order_by(
