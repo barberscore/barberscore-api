@@ -365,65 +365,6 @@ class SingersInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-@admin.register(Performance)
-class Performance(SuperModelAdmin):
-    save_on_top = True
-    change_list_template = "admin/change_list_filter_sidebar.html"
-
-    inlines = [
-        SongsStackedInline,
-    ]
-    list_display = [
-        'name',
-        'draw',
-        'start',
-    ]
-    list_filter = [
-        'status',
-        'session',
-        'contestant__contest__level',
-        'contestant__contest__kind',
-        'contestant__contest__year',
-    ]
-
-    fields = [
-        'name',
-        ('status', 'status_monitor',),
-        'session',
-        'contestant',
-        ('draw', 'start',),
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-    ]
-
-    readonly_fields = [
-        'name',
-        'status_monitor',
-        'session',
-        'contestant',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-        'draw',
-    ]
-
-    raw_id_fields = (
-        'contestant',
-        'session',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'contestant',
-            'session',
-        ]
-    }
-
-
 @admin.register(Contest)
 class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     @takes_instance_or_queryset
@@ -731,6 +672,69 @@ class Judge(admin.ModelAdmin):
 @admin.register(Organization)
 class Organization(MPTTModelAdmin):
     pass
+
+
+@admin.register(Performance)
+class Performance(SuperModelAdmin):
+    save_on_top = True
+    change_list_template = "admin/change_list_filter_sidebar.html"
+
+    inlines = [
+        SongsStackedInline,
+    ]
+    list_display = [
+        'name',
+        'draw',
+        'start',
+    ]
+    list_filter = [
+        'status',
+        'session',
+        'contestant__contest__level',
+        'contestant__contest__kind',
+        'contestant__contest__year',
+    ]
+
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'session',
+        'contestant',
+        ('draw', 'start',),
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+    ]
+
+    readonly_fields = [
+        'name',
+        'status_monitor',
+        'session',
+        'contestant',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
+        'draw',
+    ]
+
+    raw_id_fields = (
+        'contestant',
+        'session',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+            'session',
+        ]
+    }
+
+    search_fields = (
+        'name',
+    )
 
 
 @admin.register(Song)
