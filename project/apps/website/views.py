@@ -52,7 +52,7 @@ from apps.api.models import (
     Appearance,
     Score,
     Contestant,
-    Performance,
+    Song,
 )
 
 from .forms import (
@@ -182,10 +182,10 @@ def appearance(request, appearance_slug):
     appearance = Appearance.objects.get(
         slug=appearance_slug,
     )
-    # performances = appearance.performances.order_by('order')
+    # songs = appearance.songs.order_by('order')
     scores = Score.objects.filter(
-        performance__appearance=appearance,
-    ).order_by('judge', 'performance__order')
+        song__appearance=appearance,
+    ).order_by('judge', 'song__order')
     return render(
         request,
         'api/appearance.html', {
@@ -205,8 +205,8 @@ def session_oss(request, session_slug):
     appearances = session.appearances.select_related(
         'contestant__group',
     ).prefetch_related(
-        'performances',
-        'performances__tune',
+        'songs',
+        'songs__tune',
     ).filter(
         status=Appearance.STATUS.complete,
     ).order_by(
@@ -237,10 +237,10 @@ def contest_oss(request, contest_slug):
             'appearances__session',
         ),
         Prefetch(
-            'appearances__performances',
-            queryset=Performance.objects.order_by('order'),
+            'appearances__songs',
+            queryset=Song.objects.order_by('order'),
         ),
-        Prefetch('appearances__performances__tune'),
+        Prefetch('appearances__songs__tune'),
     ).filter(
         status=Contestant.STATUS.complete,
     ).order_by(
@@ -275,7 +275,7 @@ def contest_oss(request, contest_slug):
 #     )
 
 
-# def all_choruses(request):
+# def all_choruses(request):s
 #     groups = Group.objects.filter(
 #         duplicates__isnull=False,
 #     ).filter(kind=Group.KIND.chorus).distinct().order_by('name')
@@ -466,7 +466,7 @@ def contest_oss(request, contest_slug):
 #         try:
 #             catalog.save()
 #         except IntegrityError:
-#             ps = catalog.performances.all()
+#             ps = catalog.songs.all()
 #             for p in ps:
 #                 p.catalog = Catalog.objects.get(
 #                     song=parent,

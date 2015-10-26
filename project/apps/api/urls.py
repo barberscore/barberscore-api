@@ -8,7 +8,7 @@ from .views import (
     TuneViewSet,
     PersonViewSet,
     SearchViewSet,
-    PerformanceViewSet,
+    SongViewSet,
     SingerViewSet,
     DirectorViewSet,
     CatalogViewSet,
@@ -27,7 +27,7 @@ router.register(r'group', GroupViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'tune', TuneViewSet)
-router.register(r'performance', PerformanceViewSet)
+router.register(r'song', SongViewSet)
 router.register(r'singer', SingerViewSet)
 router.register(r'director', DirectorViewSet)
 router.register(r'catalog', CatalogViewSet)

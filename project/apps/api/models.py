@@ -337,9 +337,8 @@ class Appearance(models.Model):
             self.contestant.group,
         )
 
-        # Don't bother if there aren't performance scores.
-        if self.performances.exists():
-            agg = self.performances.all().aggregate(
+        if self.songs.exists():
+            agg = self.songs.all().aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
                 sng=models.Sum('sng_points'),
@@ -397,9 +396,11 @@ class Arranger(models.Model):
         max_length=255,
     )
 
-    performance = models.ForeignKey(
-        'Performance',
+    song = models.ForeignKey(
+        'Song',
         related_name='arrangers',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
@@ -417,7 +418,7 @@ class Arranger(models.Model):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.performance,
+            self.song,
             self.get_part_display(),
             self.person,
         )
@@ -425,7 +426,7 @@ class Arranger(models.Model):
 
     class Meta:
         unique_together = (
-            ('performance', 'person',),
+            ('song', 'person',),
         )
 
 
@@ -872,15 +873,15 @@ class Contest(models.Model):
         session = self.sessions.get(kind=self.rounds)
         ls = session.appearances.all()
         for l in ls:
-            p1 = l.performances.create(appearance=l, order=1)
-            p2 = l.performances.create(appearance=l, order=2)
+            p1 = l.songs.create(appearance=l, order=1)
+            p2 = l.songs.create(appearance=l, order=2)
             for j in self.judges.filter(category__in=[1, 2, 3]):
                 p1.scores.create(
-                    performance=p1,
+                    song=p1,
                     judge=j,
                 )
                 p2.scores.create(
-                    performance=p2,
+                    song=p2,
                     judge=j,
                 )
 
@@ -902,15 +903,15 @@ class Contest(models.Model):
                 start=next_session.start,
             )
             p += 1
-            p1 = l.performances.create(appearance=l, order=1)
-            p2 = l.performances.create(appearance=l, order=2)
+            p1 = l.songs.create(appearance=l, order=1)
+            p2 = l.songs.create(appearance=l, order=2)
             for j in self.judges.filter(category__in=[1, 2, 3]):
                 p1.scores.create(
-                    performance=p1,
+                    song=p1,
                     judge=j,
                 )
                 p2.scores.create(
-                    performance=p2,
+                    song=p2,
                     judge=j,
                 )
 
@@ -998,7 +999,7 @@ class Contestant(models.Model):
 
     picture = models.ImageField(
         # help_text="""
-        #     The performance picture (as opposed to the "official" photo).""",
+        #     The song picture (as opposed to the "official" photo).""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
@@ -1545,7 +1546,7 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
 
-class Performance(models.Model):
+class Song(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1589,7 +1590,7 @@ class Performance(models.Model):
 
     appearance = models.ForeignKey(
         'Appearance',
-        related_name='performances',
+        related_name='songs',
         null=True,
         blank=True,
     )
@@ -1604,7 +1605,7 @@ class Performance(models.Model):
 
     catalog = models.ForeignKey(
         'Catalog',
-        related_name='performances',
+        related_name='songs',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1612,7 +1613,7 @@ class Performance(models.Model):
 
     tune = models.ForeignKey(
         'Tune',
-        related_name='performances',
+        related_name='songs',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1623,56 +1624,56 @@ class Performance(models.Model):
 
     mus_points = models.IntegerField(
         # help_text="""
-        #     The total music points for this performance.""",
+        #     The total music points for this song.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
         # help_text="""
-        #     The total presentation points for this performance.""",
+        #     The total presentation points for this song.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
         # help_text="""
-        #     The total singing points for this performance.""",
+        #     The total singing points for this song.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
         # help_text="""
-        #     The total points for this performance.""",
+        #     The total points for this song.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
         # help_text="""
-        #     The percentile music score for this performance.""",
+        #     The percentile music score for this song.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
         # help_text="""
-        #     The percentile presentation score for this performance.""",
+        #     The percentile presentation score for this song.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
         # help_text="""
-        #     The percentile singing score for this performance.""",
+        #     The percentile singing score for this song.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
         # help_text="""
-        #     The total percentile score for this performance.""",
+        #     The total percentile score for this song.""",
         null=True,
         blank=True,
     )
@@ -1734,7 +1735,7 @@ class Performance(models.Model):
             self.mus_score = None
             self.prs_score = None
             self.sng_score = None
-        super(Performance, self).save(*args, **kwargs)
+        super(Song, self).save(*args, **kwargs)
 
     def dixon_test(self):
         return dixon(self.scores.all())
@@ -1825,9 +1826,11 @@ class Score(models.Model):
         monitor='status',
     )
 
-    performance = models.ForeignKey(
-        'Performance',
+    song = models.ForeignKey(
+        'Song',
         related_name='scores',
+        null=True,
+        blank=True,
     )
 
     judge = models.ForeignKey(
@@ -1855,7 +1858,7 @@ class Score(models.Model):
     class Meta:
         ordering = (
             'judge',
-            'performance__order',
+            'song__order',
         )
 
     @property
@@ -1871,7 +1874,7 @@ class Score(models.Model):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2:02d}".format(
-            self.performance,
+            self.song,
             self.judge.get_category_display(),
             self.judge.slot,
         )

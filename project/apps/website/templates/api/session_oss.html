@@ -42,48 +42,48 @@
                     {{appearance.contestant.group.name}}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.tune.name}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.tune.name}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.mus_points}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.mus_points}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.prs_points}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.prs_points}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.sng_points}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.sng_points}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.total_points}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.total_points}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.mus_score}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.mus_score}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.prs_score}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.prs_score}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.sng_score}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.sng_score}}<br>
                     {% endfor %}
                   </td>
                   <td>
-                    {% for performance in appearance.performances.all %}
-                      {{performance.total_score}}<br>
+                    {% for song in appearance.songs.all %}
+                      {{song.total_score}}<br>
                     {% endfor %}
                   </td>
                 </tr>
