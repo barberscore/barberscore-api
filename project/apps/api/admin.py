@@ -386,7 +386,20 @@ class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
 
 
 class SessionsInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_session_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
     fields = (
+        'link',
         'contest',
         'kind',
         'start',
@@ -410,6 +423,9 @@ class SessionsInline(admin.TabularInline):
     # }
     can_delete = True
     classes = ('grp-collapse grp-closed',)
+    readonly_fields = [
+        'link',
+    ]
 
 
 class SingersInline(admin.TabularInline):
