@@ -899,10 +899,10 @@ class Score(admin.ModelAdmin):
 @admin.register(Session)
 class Session(DjangoObjectActions, admin.ModelAdmin):
     @takes_instance_or_queryset
-    def build_contest(self, request, queryset):
+    def place_session(self, request, queryset):
         for obj in queryset:
             obj.place_session()
-    build_contest.label = 'Place Session'
+    place_session.label = 'Place Session'
 
     objectactions = [
         'place_session',
