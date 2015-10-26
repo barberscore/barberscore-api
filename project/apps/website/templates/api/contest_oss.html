@@ -41,72 +41,72 @@
                     {{contestant.group.name}}
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.tune.name}}<br>
                       {% endfor %}
                     {% endfor %}
                     <em>Totals</em>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.mus_points}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.mus_points}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.prs_points}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.prs_points}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.sng_points}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.sng_points}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.total_points}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.total_points}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.mus_score}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.mus_score}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.prs_score}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.prs_score}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.sng_score}}<br>
                       {% endfor %}
                     {% endfor %}
                       <em>{{contestant.sng_score}}</em><br>
                   </td>
                   <td>
-                    {% for appearance in contestant.appearances.all %}
-                      {% for song in appearance.songs.all %}
+                    {% for performance in contestant.performances.all %}
+                      {% for song in performance.songs.all %}
                         {{song.total_score}}<br>
                       {% endfor %}
                     {% endfor %}

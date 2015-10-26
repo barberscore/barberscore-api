@@ -6,7 +6,7 @@ from apps.api.models import (
     Convention,
     Contest,
     Contestant,
-    Appearance,
+    Performance,
     Song,
     Group,
     Singer,
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         cs = Contestant.objects.all()
         for c in cs:
             c.save()
-        as_ = Appearance.objects.all()
+        as_ = Performance.objects.all()
         for a in as_:
             a.save()
         ps = Song.objects.all()

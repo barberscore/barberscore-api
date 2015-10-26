@@ -22,7 +22,7 @@ from .models import (
     Director,
     Session,
     Award,
-    Appearance,
+    Performance,
     User,
     Organization,
 )
@@ -56,7 +56,7 @@ class ArrangersInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
+class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     fields = (
         'contestant',
         'session',
@@ -66,7 +66,7 @@ class AppearancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     )
     sortable_field_name = "position"
 
-    model = Appearance
+    model = Performance
     extra = 0
     # raw_id_fields = (
     #     'contestant',
@@ -96,7 +96,7 @@ class PlacementInline(admin.TabularInline):
         'place',
     )
     extra = 0
-    model = Appearance
+    model = Performance
     readonly_fields = (
         'contestant',
         'session',
@@ -220,7 +220,7 @@ class JudgesInline(admin.TabularInline):
 
 class SongsInline(admin.TabularInline):
     fields = (
-        'appearance',
+        'performance',
         'order',
         'tune',
         'mus_points',
@@ -228,18 +228,18 @@ class SongsInline(admin.TabularInline):
         'sng_points',
     )
     ordering = (
-        'appearance',
+        'performance',
         'order',
     )
     model = Song
     extra = 0
     raw_id_fields = (
-        # 'appearance',
+        # 'performance',
         'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            # 'appearance',
+            # 'performance',
             'tune',
         ]
     }
@@ -281,7 +281,7 @@ class ScoresInline(admin.TabularInline):
 
 class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
-        'appearance',
+        'performance',
         'order',
         'tune',
         # 'mus_points',
@@ -289,18 +289,18 @@ class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         # 'sng_points',
     )
     ordering = (
-        'appearance',
+        'performance',
         'order',
     )
     model = Song
     extra = 0
     raw_id_fields = (
-        # 'appearance',
+        # 'performance',
         'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            # 'appearance',
+            # 'performance',
             'tune',
         ]
     }
@@ -365,8 +365,8 @@ class SingersInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-@admin.register(Appearance)
-class Appearance(SuperModelAdmin):
+@admin.register(Performance)
+class Performance(SuperModelAdmin):
     save_on_top = True
     change_list_template = "admin/change_list_filter_sidebar.html"
 
@@ -767,9 +767,9 @@ class SongAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'appearance__contestant__contest__level',
-        'appearance__contestant__contest__kind',
-        'appearance__contestant__contest__year',
+        'performance__contestant__contest__level',
+        'performance__contestant__contest__kind',
+        'performance__contestant__contest__year',
     )
 
     readonly_fields = (
@@ -786,12 +786,12 @@ class SongAdmin(admin.ModelAdmin):
         'status_monitor',
     )
     raw_id_fields = (
-        'appearance',
+        'performance',
         'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'appearance',
+            'performance',
             'tune',
         ]
     }
@@ -869,9 +869,9 @@ class Score(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'song__appearance__session__contest__level',
-        'song__appearance__session__contest__kind',
-        'song__appearance__session__contest__year',
+        'song__performance__session__contest__level',
+        'song__performance__session__contest__kind',
+        'song__performance__session__contest__year',
     ]
 
     raw_id_fields = [
@@ -934,7 +934,7 @@ class Session(admin.ModelAdmin):
     }
 
     inlines = [
-        AppearancesInline,
+        PerformancesInline,
         PlacementInline,
     ]
 

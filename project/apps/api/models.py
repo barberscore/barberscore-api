@@ -182,7 +182,7 @@ class Common(TimeStampedModel):
         abstract = True
 
 
-class Appearance(models.Model):
+class Performance(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -221,12 +221,12 @@ class Appearance(models.Model):
 
     session = models.ForeignKey(
         'Session',
-        related_name='appearances',
+        related_name='performances',
     )
 
     contestant = models.ForeignKey(
         'Contestant',
-        related_name='appearances',
+        related_name='performances',
     )
 
     position = models.PositiveSmallIntegerField(
@@ -248,56 +248,56 @@ class Appearance(models.Model):
 
     mus_points = models.IntegerField(
         # help_text="""
-        #     The total music points for this appearance.""",
+        #     The total music points for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
         # help_text="""
-        #     The total presentation points for this appearance.""",
+        #     The total presentation points for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
         # help_text="""
-        #     The total singing points for this appearance.""",
+        #     The total singing points for this performance.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
         # help_text="""
-        #     The total points for this appearance.""",
+        #     The total points for this performance.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
         # help_text="""
-        #     The percentile music score for this appearance.""",
+        #     The percentile music score for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
         # help_text="""
-        #     The percentile presentation score for this appearance.""",
+        #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
         # help_text="""
-        #     The percentile singing score for this appearance.""",
+        #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
         # help_text="""
-        #     The total percentile score for this appearance.""",
+        #     The total percentile score for this performance.""",
         null=True,
         blank=True,
     )
@@ -368,7 +368,7 @@ class Appearance(models.Model):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-        super(Appearance, self).save(*args, **kwargs)
+        super(Performance, self).save(*args, **kwargs)
 
 
 class Arranger(models.Model):
@@ -862,7 +862,7 @@ class Contest(models.Model):
         session = self.sessions.get(kind=self.rounds)
         p = 0
         for c in cs:
-            session.appearances.create(
+            session.performances.create(
                 contestant=c,
                 position=p,
                 start=session.start,
@@ -871,10 +871,10 @@ class Contest(models.Model):
 
     def start_contest(self):
         session = self.sessions.get(kind=self.rounds)
-        ls = session.appearances.all()
+        ls = session.performances.all()
         for l in ls:
-            p1 = l.songs.create(appearance=l, order=1)
-            p2 = l.songs.create(appearance=l, order=2)
+            p1 = l.songs.create(performance=l, order=1)
+            p2 = l.songs.create(performance=l, order=2)
             for j in self.judges.filter(category__in=[1, 2, 3]):
                 p1.scores.create(
                     song=p1,
@@ -892,19 +892,19 @@ class Contest(models.Model):
         next_session = self.sessions.get(
             kind=(current_session.kind - 1),
         )
-        qualifiers = current_session.appearances.filter(
+        qualifiers = current_session.performances.filter(
             place__lte=next_session.slots,
         ).order_by('?')
         p = 0
         for qualifier in qualifiers:
-            l = next_session.appearances.create(
+            l = next_session.performances.create(
                 contestant=qualifier.contestant,
                 position=p,
                 start=next_session.start,
             )
             p += 1
-            p1 = l.songs.create(appearance=l, order=1)
-            p2 = l.songs.create(appearance=l, order=2)
+            p1 = l.songs.create(performance=l, order=1)
+            p2 = l.songs.create(performance=l, order=2)
             for j in self.judges.filter(category__in=[1, 2, 3]):
                 p1.scores.create(
                     song=p1,
@@ -1037,56 +1037,56 @@ class Contestant(models.Model):
 
     mus_points = models.IntegerField(
         # help_text="""
-        #     The total music points for this appearance.""",
+        #     The total music points for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_points = models.IntegerField(
         # help_text="""
-        #     The total presentation points for this appearance.""",
+        #     The total presentation points for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_points = models.IntegerField(
         # help_text="""
-        #     The total singing points for this appearance.""",
+        #     The total singing points for this performance.""",
         null=True,
         blank=True,
     )
 
     total_points = models.IntegerField(
         # help_text="""
-        #     The total points for this appearance.""",
+        #     The total points for this performance.""",
         null=True,
         blank=True,
     )
 
     mus_score = models.FloatField(
         # help_text="""
-        #     The percentile music score for this appearance.""",
+        #     The percentile music score for this performance.""",
         null=True,
         blank=True,
     )
 
     prs_score = models.FloatField(
         # help_text="""
-        #     The percentile presentation score for this appearance.""",
+        #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
     )
 
     sng_score = models.FloatField(
         # help_text="""
-        #     The percentile singing score for this appearance.""",
+        #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
     )
 
     total_score = models.FloatField(
         # help_text="""
-        #     The total percentile score for this appearance.""",
+        #     The total percentile score for this performance.""",
         null=True,
         blank=True,
     )
@@ -1104,9 +1104,9 @@ class Contestant(models.Model):
             self.group,
         )
 
-        # If there are no appearances, skip.
-        if self.appearances.exists():
-            agg = self.appearances.all().aggregate(
+        # If there are no performances, skip.
+        if self.performances.exists():
+            agg = self.performances.all().aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
                 sng=models.Sum('sng_points'),
@@ -1127,7 +1127,7 @@ class Contestant(models.Model):
 
             # Calculate percentile
             try:
-                possible = self.contest.panel * 2 * self.appearances.count()
+                possible = self.contest.panel * 2 * self.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -1588,8 +1588,8 @@ class Song(models.Model):
         monitor='status',
     )
 
-    appearance = models.ForeignKey(
-        'Appearance',
+    performance = models.ForeignKey(
+        'Performance',
         related_name='songs',
         null=True,
         blank=True,
@@ -1686,11 +1686,11 @@ class Song(models.Model):
 
     class Meta:
         ordering = [
-            'appearance',
+            'performance',
             'order',
         ]
         unique_together = (
-            ('appearance', 'order',),
+            ('performance', 'order',),
         )
 
     def __unicode__(self):
@@ -1698,7 +1698,7 @@ class Song(models.Model):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.appearance,
+            self.performance,
             self.get_order_display(),
             "Tune",
         )
@@ -1726,7 +1726,7 @@ class Song(models.Model):
 
         # Calculate percentile scores.
         try:
-            possible = self.appearance.contestant.contest.panel
+            possible = self.performance.contestant.contest.panel
             self.mus_score = round(self.mus_points / possible, 1)
             self.prs_score = round(self.prs_points / possible, 1)
             self.sng_score = round(self.sng_points / possible, 1)
@@ -1972,7 +1972,7 @@ class Session(models.Model):
         """
         s = 0
         while s < self.session.slots:
-            self.session.appearances.create(
+            self.session.performances.create(
                 session=self.session,
                 position=s,
                 start=self.session.start,
@@ -1982,25 +1982,25 @@ class Session(models.Model):
     def place_session(self):
         cursor = []
         i = 1
-        for appearance in self.appearances.order_by('-total_points'):
+        for performance in self.performances.order_by('-total_points'):
             try:
-                match = appearance.total_points == cursor[0].total_points
+                match = performance.total_points == cursor[0].total_points
             except IndexError:
-                appearance.place = i
-                appearance.save()
-                cursor.append(appearance)
+                performance.place = i
+                performance.save()
+                cursor.append(performance)
                 continue
             if match:
-                appearance.place = i
+                performance.place = i
                 i += len(cursor)
-                appearance.save()
-                cursor.append(appearance)
+                performance.save()
+                cursor.append(performance)
                 continue
             else:
                 i += 1
-                appearance.place = i
-                appearance.save()
-                cursor = [appearance]
+                performance.place = i
+                performance.save()
+                cursor = [performance]
         return
 
 
