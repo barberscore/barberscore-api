@@ -30,8 +30,8 @@
     </section>
     <section>
       <ul class='list-unstyled'>
-      {% for appearance in appearances %}
-        <li><a href='{% url "website:appearance" appearance.slug %}'>{{appearance}}</a></li>
+      {% for performance in performances %}
+        <li><a href='{% url "website:performance" performance.slug %}'>{{performance}}</a></li>
       {% endfor %}
       </ul>
     </section>

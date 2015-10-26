@@ -16,7 +16,7 @@ from .models import (
     Score,
     Award,
     Judge,
-    Appearance,
+    Performance,
     Organization,
 )
 
@@ -119,7 +119,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    appearances = serializers.SlugRelatedField(
+    performances = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -169,7 +169,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'total_score',
             'delta_score',
             'delta_place',
-            'appearances',
+            'performances',
             'directors',
             'singers',
             'awards',
@@ -292,7 +292,7 @@ class JudgeSerializer(serializers.ModelSerializer):
         )
 
 
-class AppearanceSerializer(serializers.ModelSerializer):
+class PerformanceSerializer(serializers.ModelSerializer):
     contestant = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -305,7 +305,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Appearance
+        model = Performance
         fields = (
             'id',
             # 'url',
@@ -375,7 +375,7 @@ class SongSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    appearance = serializers.SlugRelatedField(
+    performance = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -399,7 +399,7 @@ class SongSerializer(serializers.ModelSerializer):
             # 'catalog',
             'tune',
             # 'person',
-            'appearance',
+            'performance',
             'mus_points',
             'prs_points',
             'sng_points',

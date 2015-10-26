@@ -6,16 +6,16 @@
     {% comment %}
     <ol class="breadcrumb">
       <li><a id='breadcrumb-dashboard' href="{% url 'website:dashboard' %}">Dashboard</a></li>
-      <li class='active'>Contest: {{appearance}}</li>
+      <li class='active'>Contest: {{performance}}</li>
     </ol>
     {% endcomment %}
 
     <section>
       <h3>
-        {{appearance.session}}
+        {{performance.session}}
       </h3>
       <h1>
-        Contestant #{{appearance.draw}}: {{appearance.contestant.group}}
+        Contestant #{{performance.draw}}: {{performance.contestant.group}}
       </h1>
       <br><br>
           <button class='btn btn-lg btn-default'>Previous Contestant</button>
@@ -24,7 +24,7 @@
     </section>
     <br><br><br>
     <section>
-      <table id='appearancesTable' class='table'>
+      <table id='performancesTable' class='table'>
         <thead>
           <tr class='vert-middle'>
             <th>Judge</th>
@@ -60,7 +60,7 @@
           </h4>
         </div>
           <div class='table-responsive'>
-            <table id='appearancesTable' class='table'>
+            <table id='performancesTable' class='table'>
               <thead>
                 <tr class='vert-middle'>
                   <th>Name</th>
@@ -74,20 +74,20 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for appearance in appearances %}
+                  {% for performance in performances %}
                     <tr class='vert-middle'>
-                      <td><a id='appearance' href='{% url "website:appearance" appearance.slug %}'>{{appearance}}</a></td>
-                      <td class='text-right'>{{appearance.start_date}}</td>
-                      <td class='text-right'>{{appearance.get_term_display}}</td>
-                      <td class='text-right'>{{appearance.iterations|apnumber|title}}</td>
-                      <td class='text-right'>{{appearance.premium|floatformat:0|intcomma}}</td>
-                      <td class='text-right'>{{appearance.strike|floatformat:0|intcomma}}</td>
-                      <td class='text-right'>{{appearance.market|floatformat:0|intcomma}}</td>
-                      {# <td class='text-right'><a id='appearance-edit' href="{% url 'website:appearance-edit' appearance.slug %}"><span class='fa fa-edit'></span></a><a id='appearance-delete' href="{% url 'website:appearance-delete' appearance.slug %}"><span class='fa fa-trash'></span></a></td> #}
+                      <td><a id='performance' href='{% url "website:performance" performance.slug %}'>{{performance}}</a></td>
+                      <td class='text-right'>{{performance.start_date}}</td>
+                      <td class='text-right'>{{performance.get_term_display}}</td>
+                      <td class='text-right'>{{performance.iterations|apnumber|title}}</td>
+                      <td class='text-right'>{{performance.premium|floatformat:0|intcomma}}</td>
+                      <td class='text-right'>{{performance.strike|floatformat:0|intcomma}}</td>
+                      <td class='text-right'>{{performance.market|floatformat:0|intcomma}}</td>
+                      {# <td class='text-right'><a id='performance-edit' href="{% url 'website:performance-edit' performance.slug %}"><span class='fa fa-edit'></span></a><a id='performance-delete' href="{% url 'website:performance-delete' performance.slug %}"><span class='fa fa-trash'></span></a></td> #}
                     </tr>
                   {% endfor %}
                 <tr>
-                  <td><a id='appearance-create' href="{% url 'website:appearance-create'  %}"><span class='fa fa-plus'></span>(Add New Project)</a></td>
+                  <td><a id='performance-create' href="{% url 'website:performance-create'  %}"><span class='fa fa-plus'></span>(Add New Project)</a></td>
                   <td colspan='7'></td>
                 </tr>
               </tbody>

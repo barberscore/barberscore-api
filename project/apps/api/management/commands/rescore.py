@@ -4,7 +4,7 @@ from django.core.management.base import (
 
 from apps.api.models import (
     Contestant,
-    Appearance,
+    Performance,
     Song,
 )
 
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         ps = Song.objects.all()
         for p in ps:
             p.save()
-        as_ = Appearance.objects.all()
+        as_ = Performance.objects.all()
         for a in as_:
             a.save()
         cs = Contestant.objects.all()
