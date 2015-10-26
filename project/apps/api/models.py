@@ -1169,6 +1169,16 @@ class Contestant(models.Model):
         if self.singers.count() > 4:
             raise ValidationError('There can not be more than four persons in a quartet.')
 
+    def denorm(self):
+        ps = self.performances.all()
+        for p in ps:
+            songs = p.songs.all()
+            for song in songs:
+                song.save()
+            p.save()
+        self.save()
+        return "De-normalized record"
+
 
 class Convention(models.Model):
     STATUS = Choices(

@@ -455,11 +455,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
 
 @admin.register(Contestant)
-class ContestantAdmin(admin.ModelAdmin):
+class ContestantAdmin(DjangoObjectActions, admin.ModelAdmin):
     @takes_instance_or_queryset
     def update_contestants(self, request, queryset):
         for obj in queryset:
-            obj.save()
+            obj.denorm()
     update_contestants.label = 'Update Contestants'
 
     change_list_template = "admin/change_list_filter_sidebar.html"
