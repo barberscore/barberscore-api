@@ -897,7 +897,17 @@ class Score(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class Session(admin.ModelAdmin):
+class Session(DjangoObjectActions, admin.ModelAdmin):
+    @takes_instance_or_queryset
+    def build_contest(self, request, queryset):
+        for obj in queryset:
+            obj.place_session()
+    build_contest.label = 'Place Session'
+
+    objectactions = [
+        'place_session',
+    ]
+
     save_on_top = True
     change_list_template = "admin/change_list_filter_sidebar.html"
     list_display = [
