@@ -2,7 +2,7 @@ from haystack import indexes
 
 from .models import (
     Group,
-    Song,
+    Tune,
     Person,
 )
 
@@ -27,9 +27,9 @@ class PersonIndex(indexes.ModelSearchIndex, indexes.Indexable):
         ]
 
 
-class SongIndex(indexes.ModelSearchIndex, indexes.Indexable):
+class TuneIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
-        model = Song
+        model = Tune
         fields = [
             'name',
             'slug',
