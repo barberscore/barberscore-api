@@ -1,5 +1,8 @@
 from django.contrib import admin
 
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+
 from mptt.admin import MPTTModelAdmin
 
 from django_object_actions import (
@@ -126,6 +129,19 @@ class AwardsInline(admin.TabularInline):
 
 
 class ContestantsInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_contestant_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+    # link.allow_tags = True
+
     fields = (
         'contest',
         'group',
@@ -135,12 +151,14 @@ class ContestantsInline(admin.TabularInline):
         'place',
         'total_score',
         'men',
+        'link',
     )
     ordering = (
         'place',
         'seed',
         'group',
     )
+
     show_change_link = True
 
     model = Contestant
@@ -152,6 +170,7 @@ class ContestantsInline(admin.TabularInline):
     readonly_fields = [
         'place',
         'total_score',
+        'link',
     ]
 
     autocomplete_lookup_fields = {
@@ -307,8 +326,34 @@ class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     inlines = (
         ScoresInline,
     )
-    can_delete = True
     show_change_link = True
+    classes = ('grp-collapse grp-open',)
+
+
+class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
+    fields = (
+        'contestant',
+        'session',
+    )
+    model = Performance
+    extra = 0
+    # raw_id_fields = (
+    #     'contestant',
+    # )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'contestant',
+    #     ]
+    # }
+    readonly_fields = (
+        'contestant',
+        'session',
+        # 'start',
+    )
+    inlines = (
+        SongsStackedInline,
+    )
+    classes = ('grp-collapse grp-open',)
 
 
 class SessionsInline(admin.TabularInline):
@@ -335,7 +380,7 @@ class SessionsInline(admin.TabularInline):
     #     ]
     # }
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class SingersInline(admin.TabularInline):
@@ -472,6 +517,7 @@ class ContestantAdmin(DjangoObjectActions, admin.ModelAdmin):
         SingersInline,
         DirectorsInline,
         AwardsInline,
+        PerformancesStackedInline,
     ]
 
     list_display = (
