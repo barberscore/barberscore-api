@@ -9,7 +9,7 @@ from .models import (
     Group,
     Person,
     Tune,
-    Performance,
+    Song,
     Singer,
     Director,
     Catalog,
@@ -298,7 +298,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    performances = serializers.SlugRelatedField(
+    songs = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -324,7 +324,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'contestant',
-            'performances',
+            'songs',
         )
 
 
@@ -364,7 +364,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformanceSerializer(serializers.ModelSerializer):
+class SongSerializer(serializers.ModelSerializer):
     tune = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -387,7 +387,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Performance
+        model = Song
         fields = (
             'id',
             # 'url',
@@ -463,7 +463,7 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class ScoreSerializer(serializers.ModelSerializer):
-    performance = serializers.SlugRelatedField(
+    song = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -480,7 +480,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'performance',
+            'song',
             'judge',
             'points',
             'status',
@@ -539,7 +539,7 @@ class TuneSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    performances = serializers.SlugRelatedField(
+    songs = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -553,5 +553,5 @@ class TuneSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'catalogs',
-            'performances',
+            'songs',
         )

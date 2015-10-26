@@ -15,7 +15,7 @@ from .models import (
     Contestant,
     Tune,
     Person,
-    Performance,
+    Song,
     Singer,
     Score,
     Director,
@@ -34,7 +34,7 @@ from .serializers import (
     TuneSerializer,
     PersonSerializer,
     SearchSerializer,
-    PerformanceSerializer,
+    SongSerializer,
     SingerSerializer,
     ScoreSerializer,
     DirectorSerializer,
@@ -112,14 +112,14 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class PerformanceViewSet(viewsets.ModelViewSet):
-    queryset = Performance.objects.select_related(
+class SongViewSet(viewsets.ModelViewSet):
+    queryset = Song.objects.select_related(
         'catalog',
         'appearance',
     ).prefetch_related(
         'scores',
     )
-    serializer_class = PerformanceSerializer
+    serializer_class = SongSerializer
     lookup_field = 'slug'
 
 
@@ -127,7 +127,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'contestant',
     ).prefetch_related(
-        'performances',
+        'songs',
     )
     serializer_class = AppearanceSerializer
     lookup_field = 'slug'
@@ -154,7 +154,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
 class TuneViewSet(viewsets.ModelViewSet):
     queryset = Tune.objects.prefetch_related(
         'catalogs',
-        'performances',
+        'songs',
     )
     serializer_class = TuneSerializer
     lookup_field = 'slug'
@@ -162,7 +162,7 @@ class TuneViewSet(viewsets.ModelViewSet):
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
-        'performance',
+        'song',
         'judge',
     )
     serializer_class = ScoreSerializer

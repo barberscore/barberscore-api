@@ -5,7 +5,7 @@ from django.core.management.base import (
 from apps.api.models import (
     Contestant,
     Appearance,
-    Performance,
+    Song,
 )
 
 
@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "Command to denormailze data."
 
     def handle(self, *args, **options):
-        ps = Performance.objects.all()
+        ps = Song.objects.all()
         for p in ps:
             p.save()
         as_ = Appearance.objects.all()

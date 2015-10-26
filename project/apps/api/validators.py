@@ -78,11 +78,11 @@ def dixon(qs, left=True, right=True, q_dict=Q95):
     for q in qs:
         if round(q.points * .01, 2) in outliers:
             q.status = q.STATUS.flagged
-            q.performance.status = q.performance.STATUS.flagged
-            q.performance.appearance.status = q.performance.appearance.STATUS.flagged
+            q.song.status = q.song.STATUS.flagged
+            q.song.appearance.status = q.song.appearance.STATUS.flagged
             q.save()
-            q.performance.save()
-            q.performance.appearance.save()
+            q.song.save()
+            q.song.appearance.save()
             output = 'Flagged Outliers'
     return output
 
