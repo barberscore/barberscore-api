@@ -7,7 +7,7 @@ from apps.api.models import (
     Contest,
     Contestant,
     Appearance,
-    Performance,
+    Song,
     Group,
     Singer,
     Director,
@@ -31,7 +31,7 @@ class Command(BaseCommand):
         as_ = Appearance.objects.all()
         for a in as_:
             a.save()
-        ps = Performance.objects.all()
+        ps = Song.objects.all()
         for p in ps:
             p.save()
         ss = Singer.objects.all()

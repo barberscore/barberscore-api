@@ -15,7 +15,7 @@ from .models import (
     Group,
     Tune,
     Person,
-    Performance,
+    Song,
     Score,
     Judge,
     Singer,
@@ -34,7 +34,7 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 class ArrangersInline(admin.TabularInline):
     model = Arranger
     fields = (
-        'performance',
+        'song',
         'person',
         'part',
         # 'is_practice',
@@ -218,7 +218,7 @@ class JudgesInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class PerformancesInline(admin.TabularInline):
+class SongsInline(admin.TabularInline):
     fields = (
         'appearance',
         'order',
@@ -231,7 +231,7 @@ class PerformancesInline(admin.TabularInline):
         'appearance',
         'order',
     )
-    model = Performance
+    model = Song
     extra = 0
     raw_id_fields = (
         # 'appearance',
@@ -251,7 +251,7 @@ class PerformancesInline(admin.TabularInline):
 class ScoresInline(admin.TabularInline):
     model = Score
     fields = (
-        'performance',
+        'song',
         'judge',
         'category',
         'points',
@@ -279,7 +279,7 @@ class ScoresInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
+class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
         'appearance',
         'order',
@@ -292,7 +292,7 @@ class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'appearance',
         'order',
     )
-    model = Performance
+    model = Song
     extra = 0
     raw_id_fields = (
         # 'appearance',
@@ -371,7 +371,7 @@ class Appearance(SuperModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
 
     inlines = [
-        PerformancesStackedInline,
+        SongsStackedInline,
     ]
     list_display = [
         'name',
@@ -733,8 +733,8 @@ class Organization(MPTTModelAdmin):
     pass
 
 
-@admin.register(Performance)
-class PerformanceAdmin(admin.ModelAdmin):
+@admin.register(Song)
+class SongAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     list_display = (
@@ -849,7 +849,7 @@ class Score(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'performance',
+        'song',
         'judge',
         'points',
     ]
@@ -857,7 +857,7 @@ class Score(admin.ModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
-        'performance',
+        'song',
         'judge',
     ]
 
@@ -869,26 +869,26 @@ class Score(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'performance__appearance__session__contest__level',
-        'performance__appearance__session__contest__kind',
-        'performance__appearance__session__contest__year',
+        'song__appearance__session__contest__level',
+        'song__appearance__session__contest__kind',
+        'song__appearance__session__contest__year',
     ]
 
     raw_id_fields = [
-        'performance',
+        'song',
         'judge',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
-            'performance',
+            'song',
             'judge',
         ]
     }
 
     ordering = [
         'judge',
-        'performance',
+        'song',
     ]
 
 
