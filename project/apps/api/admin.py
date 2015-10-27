@@ -457,7 +457,15 @@ class SingersInline(admin.TabularInline):
 
 @admin.register(Catalog)
 class CatalogAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        'name',
+        'song_name',
+        'tune',
+        'person',
+        'bhs_id',
+        'bhs_songname',
+        'bhs_arranger',
+    ]
 
 
 @admin.register(Contest)
