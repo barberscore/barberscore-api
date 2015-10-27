@@ -182,195 +182,6 @@ class Common(TimeStampedModel):
         abstract = True
 
 
-class Performance(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (1, 'qualified', 'Qualified',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
-        (4, 'flagged', 'Flagged',),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='performances',
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='performances',
-    )
-
-    position = models.PositiveSmallIntegerField(
-        'Position',
-    )
-
-    place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    start = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    # The following need to be protected until released.
-    # Different model?
-
-    mus_points = models.IntegerField(
-        # help_text="""
-        #     The total music points for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    prs_points = models.IntegerField(
-        # help_text="""
-        #     The total presentation points for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        # help_text="""
-        #     The total singing points for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    total_points = models.IntegerField(
-        # help_text="""
-        #     The total points for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    mus_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    prs_score = models.FloatField(
-        # help_text="""
-        #     The percentile presentation score for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    sng_score = models.FloatField(
-        # help_text="""
-        #     The percentile singing score for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    total_score = models.FloatField(
-        # help_text="""
-        #     The total percentile score for this performance.""",
-        null=True,
-        blank=True,
-    )
-
-    penalty = models.TextField(
-        help_text="""
-            Free form for penalties (notes).""",
-        blank=True,
-    )
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    @property
-    def draw(self):
-        try:
-            return "{0:02d}".format(self.position + 1)
-        except TypeError:
-            return None
-
-    class Meta:
-        ordering = [
-            'session',
-            'position',
-        ]
-        # unique_together = (
-        #     ('contestant', 'kind',),
-        # )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.session,
-            self.contestant.group,
-        )
-
-        if self.songs.exists():
-            agg = self.songs.all().aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
-
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
-
-            #  Calculate percentile scores
-            try:
-                possible = self.contestant.contest.panel * 2
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
-        super(Performance, self).save(*args, **kwargs)
-
-
 class Arranger(models.Model):
     """Chorus relation"""
     id = models.UUIDField(
@@ -1051,12 +862,14 @@ class Contestant(models.Model):
         #     The total music points for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     prs_points = models.IntegerField(
         # help_text="""
         #     The total presentation points for this performance.""",
         null=True,
+        editable=False,
         blank=True,
     )
 
@@ -1065,6 +878,7 @@ class Contestant(models.Model):
         #     The total singing points for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     total_points = models.IntegerField(
@@ -1072,6 +886,7 @@ class Contestant(models.Model):
         #     The total points for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     mus_score = models.FloatField(
@@ -1079,6 +894,7 @@ class Contestant(models.Model):
         #     The percentile music score for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     prs_score = models.FloatField(
@@ -1086,6 +902,7 @@ class Contestant(models.Model):
         #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     sng_score = models.FloatField(
@@ -1093,6 +910,7 @@ class Contestant(models.Model):
         #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     total_score = models.FloatField(
@@ -1100,6 +918,7 @@ class Contestant(models.Model):
         #     The total percentile score for this performance.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     @staticmethod
@@ -1567,6 +1386,203 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
 
+class Performance(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (1, 'qualified', 'Qualified',),
+        (2, 'current', 'Current',),
+        (3, 'complete', 'Complete',),
+        (4, 'flagged', 'Flagged',),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='performances',
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='performances',
+    )
+
+    position = models.PositiveSmallIntegerField(
+        'Position',
+    )
+
+    place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    start = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    # The following need to be protected until released.
+    # Different model?
+
+    mus_points = models.IntegerField(
+        # help_text="""
+        #     The total music points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_points = models.IntegerField(
+        # help_text="""
+        #     The total presentation points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sng_points = models.IntegerField(
+        # help_text="""
+        #     The total singing points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_points = models.IntegerField(
+        # help_text="""
+        #     The total points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    mus_score = models.FloatField(
+        # help_text="""
+        #     The percentile music score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_score = models.FloatField(
+        # help_text="""
+        #     The percentile presentation score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sng_score = models.FloatField(
+        # help_text="""
+        #     The percentile singing score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_score = models.FloatField(
+        # help_text="""
+        #     The total percentile score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    penalty = models.TextField(
+        help_text="""
+            Free form for penalties (notes).""",
+        blank=True,
+    )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
+    @property
+    def draw(self):
+        try:
+            return "{0:02d}".format(self.position + 1)
+        except TypeError:
+            return None
+
+    class Meta:
+        ordering = [
+            'session',
+            'position',
+        ]
+        # unique_together = (
+        #     ('contestant', 'kind',),
+        # )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.session,
+            self.contestant.group,
+        )
+
+        if self.songs.exists():
+            agg = self.songs.all().aggregate(
+                mus=models.Sum('mus_points'),
+                prs=models.Sum('prs_points'),
+                sng=models.Sum('sng_points'),
+            )
+            self.mus_points = agg['mus']
+            self.prs_points = agg['prs']
+            self.sng_points = agg['sng']
+
+            # Calculate total points.
+            try:
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
+
+            #  Calculate percentile scores
+            try:
+                possible = self.contestant.contest.panel * 2
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
+            except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
+        super(Performance, self).save(*args, **kwargs)
+
+
 class Person(Common):
 
     KIND = Choices(
@@ -1981,6 +1997,7 @@ class Song(models.Model):
         #     The total music points for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     prs_points = models.IntegerField(
@@ -1988,6 +2005,7 @@ class Song(models.Model):
         #     The total presentation points for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     sng_points = models.IntegerField(
@@ -1995,6 +2013,7 @@ class Song(models.Model):
         #     The total singing points for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     total_points = models.IntegerField(
@@ -2002,6 +2021,7 @@ class Song(models.Model):
         #     The total points for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     mus_score = models.FloatField(
@@ -2009,6 +2029,7 @@ class Song(models.Model):
         #     The percentile music score for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     prs_score = models.FloatField(
@@ -2016,6 +2037,7 @@ class Song(models.Model):
         #     The percentile presentation score for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     sng_score = models.FloatField(
@@ -2023,6 +2045,7 @@ class Song(models.Model):
         #     The percentile singing score for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     total_score = models.FloatField(
@@ -2030,6 +2053,7 @@ class Song(models.Model):
         #     The total percentile score for this song.""",
         null=True,
         blank=True,
+        editable=False,
     )
 
     penalty = models.TextField(
