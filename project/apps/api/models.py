@@ -298,12 +298,6 @@ class Award(models.Model):
 
 
 class Catalog(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
     TEMPO = Choices(
         (1, "Ballad"),
         (2, "Uptune"),
@@ -316,6 +310,24 @@ class Catalog(models.Model):
         (3, "Medium"),
         (4, "Hard"),
         (5, "Very Hard"),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    tune = models.ForeignKey(
+        'Tune',
+        null=True,
+        blank=True,
+        related_name='catalogs',
+    )
+
+    song_name = models.CharField(
+        blank=True,
+        max_length=200,
     )
 
     bhs_id = models.IntegerField(
@@ -366,70 +378,6 @@ class Catalog(models.Model):
     is_medley = models.BooleanField(
         default=False,
     )
-
-    tune = models.ForeignKey(
-        'Tune',
-        null=True,
-        blank=True,
-        related_name='catalogs',
-    )
-
-    song_name = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='catalogs',
-    )
-
-    song_match = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-    )
-
-    person_match = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    fuzzy = models.TextField(
-        blank=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    class Meta:
-        unique_together = (
-            ('person', 'tune')
-        )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} [{1}]".format(
-            self.tune,
-            self.person,
-        )
-        super(Catalog, self).save(*args, **kwargs)
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
 
 
 class Contest(models.Model):
