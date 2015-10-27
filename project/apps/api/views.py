@@ -62,8 +62,8 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'organization',
         'convention',
-    ).exclude(
-        history__lt=Contest.HISTORY.places,
+    ).filter(
+        history=Contest.HISTORY.complete,
     ).prefetch_related(
         'organization',
         'contestants',
