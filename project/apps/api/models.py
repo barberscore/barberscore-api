@@ -207,13 +207,6 @@ class Arranger(models.Model):
         max_length=255,
     )
 
-    song = models.ForeignKey(
-        'Song',
-        related_name='foos',
-        null=True,
-        blank=True,
-    )
-
     catalog = models.ForeignKey(
         'Catalog',
         # related_name='arrangements',
@@ -244,7 +237,7 @@ class Arranger(models.Model):
 
     class Meta:
         unique_together = (
-            ('song', 'person',),
+            ('catalog', 'person',),
         )
 
 

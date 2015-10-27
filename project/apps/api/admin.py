@@ -462,7 +462,6 @@ class ArrangerAdmin(admin.ModelAdmin):
         'name',
         'catalog',
         'person',
-        'song',
     ]
 
 
