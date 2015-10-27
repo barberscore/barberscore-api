@@ -228,9 +228,8 @@ class Arranger(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.song,
-            self.get_part_display(),
+        self.name = u"{0} {2}".format(
+            self.catalog,
             self.person,
         )
         super(Arranger, self).save(*args, **kwargs)
