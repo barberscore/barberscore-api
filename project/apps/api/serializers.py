@@ -370,10 +370,10 @@ class SongSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    catalog = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # catalog = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     performance = serializers.SlugRelatedField(
         read_only=True,
@@ -397,7 +397,7 @@ class SongSerializer(serializers.ModelSerializer):
             'status',
             'is_parody',
             'tune',
-            'catalog',
+            # 'catalog',
             'arranger',
             'performance',
             'mus_points',
