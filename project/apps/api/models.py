@@ -612,6 +612,10 @@ class Catalog(models.Model):
         )
         super(Catalog, self).save(*args, **kwargs)
 
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
 
 class Contest(models.Model):
 
