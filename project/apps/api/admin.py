@@ -11,7 +11,7 @@ from django_object_actions import (
 )
 
 from .models import (
-    Arranger,
+    Catalog,
     Convention,
     Contest,
     Contestant,
@@ -34,29 +34,29 @@ from grappelli.forms import GrappelliSortableHiddenMixin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 
-class ArrangersInline(admin.TabularInline):
-    model = Arranger
-    fields = (
-        'song',
-        'person',
-        'part',
-        # 'is_practice',
-    )
-    ordering = (
-        'person',
-    )
-    extra = 0
-    raw_id_fields = (
-        'person',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-        ]
-    }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
+# class ArrangersInline(admin.TabularInline):
+#     model = Arranger
+#     fields = (
+#         'song',
+#         'person',
+#         'part',
+#         # 'is_practice',
+#     )
+#     ordering = (
+#         'person',
+#     )
+#     extra = 0
+#     raw_id_fields = (
+#         'person',
+#     )
+#     autocomplete_lookup_fields = {
+#         'fk': [
+#             'person',
+#         ]
+#     }
+#     can_delete = True
+#     show_change_link = True
+#     classes = ('grp-collapse grp-closed',)
 
 
 class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
@@ -453,6 +453,11 @@ class SingersInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
+
+
+@admin.register(Catalog)
+class CatalogAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Contest)
@@ -855,10 +860,11 @@ class SongAdmin(admin.ModelAdmin):
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
         'tune',
+        'catalog',
     ]
 
     inlines = [
-        ArrangersInline,
+        # ArrangersInline,
         ScoresInline,
     ]
 
@@ -885,11 +891,13 @@ class SongAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'performance',
         'tune',
+        'catalog',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'performance',
             'tune',
+            'catalog',
         ]
     }
 
