@@ -382,6 +382,11 @@ class Catalog(models.Model):
         related_name='catalogs',
     )
 
+    song_name = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
     person = models.ForeignKey(
         'Person',
         null=True,
