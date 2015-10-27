@@ -33,7 +33,8 @@ class CatalogSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    person = serializers.SlugRelatedField(
+    arrangers = serializers.SlugRelatedField(
+        many=True,
         read_only=True,
         slug_field='slug',
     )
@@ -43,10 +44,9 @@ class CatalogSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             # 'url',
-            'slug',
-            'name',
             'tune',
-            'person',
+            'song_name',
+            'arrangers',
         )
 
 
@@ -398,7 +398,7 @@ class SongSerializer(serializers.ModelSerializer):
             'is_parody',
             'tune',
             'catalog',
-            # 'person',
+            'arranger',
             'performance',
             'mus_points',
             'prs_points',
