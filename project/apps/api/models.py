@@ -209,7 +209,7 @@ class Arranger(models.Model):
 
     catalog = models.ForeignKey(
         'Catalog',
-        # related_name='arrangements',
+        related_name='arrangers',
         null=True,
         blank=True,
     )
