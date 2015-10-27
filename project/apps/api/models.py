@@ -403,6 +403,13 @@ class Arranger(models.Model):
         blank=True,
     )
 
+    catalog = models.ForeignKey(
+        'Catalog',
+        # related_name='arrangements',
+        null=True,
+        blank=True,
+    )
+
     person = models.ForeignKey(
         'Person',
         related_name='arrangements',
