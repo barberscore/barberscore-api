@@ -414,11 +414,11 @@ class SongSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    catalogs = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # catalogs = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     choruses = serializers.SlugRelatedField(
         many=True,
@@ -455,7 +455,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'kind',
-            'catalogs',
+            # 'catalogs',
             'choruses',
             'quartets',
             'panels',
@@ -533,11 +533,11 @@ class SingerSerializer(serializers.ModelSerializer):
 
 
 class TuneSerializer(serializers.ModelSerializer):
-    catalogs = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # catalogs = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     songs = serializers.SlugRelatedField(
         many=True,
@@ -552,6 +552,6 @@ class TuneSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'catalogs',
+            # 'catalogs',
             'songs',
         )
