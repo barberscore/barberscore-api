@@ -60,7 +60,8 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 #     classes = ('grp-collapse grp-closed',)
 
 
-class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
+# class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
+class PerformancesInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
@@ -79,7 +80,7 @@ class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
         'session',
         'position',
         'draw',
-        'start',
+        # 'start',
     )
     sortable_field_name = "position"
 
