@@ -468,10 +468,8 @@ class ArrangerAdmin(admin.ModelAdmin):
 @admin.register(Catalog)
 class CatalogAdmin(admin.ModelAdmin):
     list_display = [
-        'name',
         'song_name',
         'tune',
-        'person',
         'bhs_id',
         'bhs_songname',
         'bhs_arranger',
@@ -915,7 +913,6 @@ class SongAdmin(admin.ModelAdmin):
         'fk': [
             'performance',
             'tune',
-            'catalog',
         ]
     }
 
