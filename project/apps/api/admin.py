@@ -11,6 +11,7 @@ from django_object_actions import (
 )
 
 from .models import (
+    Arranger,
     Catalog,
     Convention,
     Contest,
@@ -453,6 +454,16 @@ class SingersInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
+
+
+@admin.register(Arranger)
+class ArrangerAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'catalog',
+        'person',
+        'song',
+    ]
 
 
 @admin.register(Catalog)

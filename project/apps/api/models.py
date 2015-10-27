@@ -209,7 +209,7 @@ class Arranger(models.Model):
 
     song = models.ForeignKey(
         'Song',
-        related_name='arrangers',
+        related_name='foos',
         null=True,
         blank=True,
     )
@@ -1997,6 +1997,18 @@ class Song(models.Model):
     # The following need to be protected until released.
     # Different model?
 
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+        editable=False,
+    )
+
+    arranger = models.CharField(
+        max_length=255,
+        blank=True,
+        editable=False,
+    )
+
     mus_points = models.IntegerField(
         # help_text="""
         #     The total music points for this song.""",
@@ -2085,6 +2097,12 @@ class Song(models.Model):
             self.get_order_display(),
             "Tune",
         )
+
+        if self.catalog:
+            self.title = self.catalog.song_name
+            self.arranger = ", ".join(
+                [l['person__name'] for l in self.catalog.arrangers.values('person__name')]
+            )
 
         if self.scores.exists():
             self.mus_points = self.scores.filter(
