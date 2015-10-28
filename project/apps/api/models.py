@@ -384,9 +384,9 @@ class Contest(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'structured', 'Structured',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
+        (10, 'structured', 'Structured',),
+        (20, 'current', 'Current',),
+        (30, 'complete', 'Complete',),
     )
 
     HISTORY = Choices(
@@ -711,9 +711,9 @@ class Contestant(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'qualified', 'Qualified',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'current', 'Current',),
+        (30, 'complete', 'Complete',),
     )
 
     id = models.UUIDField(
@@ -958,9 +958,9 @@ class Contestant(models.Model):
 class Convention(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'structured', 'Structured',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
+        (10, 'structured', 'Structured',),
+        (20, 'current', 'Current',),
+        (30, 'complete', 'Complete',),
     )
 
     KIND = Choices(
@@ -1340,10 +1340,10 @@ class Performance(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'qualified', 'Qualified',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
-        (4, 'flagged', 'Flagged',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'current', 'Current',),
+        (30, 'complete', 'Complete',),
+        (40, 'flagged', 'Flagged',),
     )
 
     name = models.CharField(
@@ -1580,9 +1580,9 @@ class Score(models.Model):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'flagged', 'Flagged',),
-        (2, 'confirmed', 'Confirmed',),
-        (3, 'final', 'Final',),
+        (10, 'flagged', 'Flagged',),
+        (20, 'confirmed', 'Confirmed',),
+        (30, 'final', 'Final',),
     )
 
     id = models.UUIDField(
@@ -1677,9 +1677,9 @@ class Session(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'structured', 'Structured',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
+        (10, 'structured', 'Structured',),
+        (20, 'current', 'Current',),
+        (30, 'complete', 'Complete',),
     )
 
     KIND = Choices(
@@ -1870,10 +1870,10 @@ class Song(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (1, 'ready', 'Ready',),
-        (2, 'current', 'Current',),
-        (3, 'complete', 'Complete',),
-        (4, 'flagged', 'Flagged',),
+        (10, 'ready', 'Ready',),
+        (20, 'current', 'Current',),
+        (30, 'complete', 'Complete',),
+        (40, 'flagged', 'Flagged',),
     )
 
     ORDER = Choices(
