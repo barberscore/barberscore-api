@@ -7,7 +7,6 @@ from .views import (
     ContestantViewSet,
     TuneViewSet,
     PersonViewSet,
-    SearchViewSet,
     SongViewSet,
     SingerViewSet,
     DirectorViewSet,
@@ -17,6 +16,7 @@ from .views import (
     AwardViewSet,
     PerformanceViewSet,
     OrganizationViewSet,
+    # SearchViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -36,5 +36,5 @@ router.register(r'judge', JudgeViewSet)
 router.register(r'award', AwardViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'organization', OrganizationViewSet)
-router.register(r'search', SearchViewSet, base_name='search')
+# router.register(r'search', SearchViewSet, base_name='search')
 urlpatterns = router.urls
