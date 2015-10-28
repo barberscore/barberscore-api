@@ -133,17 +133,6 @@ class PlacementInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-class AwardsInline(admin.TabularInline):
-    model = Award
-    fields = (
-        'name',
-    )
-    extra = 0
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
-
-
 class ContestantsInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
@@ -466,6 +455,11 @@ class ArrangerAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Award)
+class AwardAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Catalog)
 class CatalogAdmin(admin.ModelAdmin):
     list_display = [
@@ -583,7 +577,6 @@ class ContestantAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         SingersInline,
         DirectorsInline,
-        AwardsInline,
         PerformancesInline,
     ]
 
