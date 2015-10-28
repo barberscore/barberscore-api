@@ -120,14 +120,14 @@
     </section>
     <section>
       <ul class='list-inline'>
-      {% for judge in contest.judges %}
+      {% for judge in contest.judges.all %}
         <li>{{judge}}</li>
       {% endfor %}
       </ul>
     </section>
     <section>
       <ul class='list-unstyled'>
-      {% for winner in contest.winners %}
+      {% for winner in contest.winners.all %}
         <li>{{winner}}</li>
       {% endfor %}
       </ul>
