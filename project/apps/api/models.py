@@ -242,14 +242,6 @@ class Arranger(models.Model):
 
 class Award(models.Model):
 
-    KIND = Choices(
-        (1, 'first', 'First Place Gold Medalist'),
-        (2, 'second', 'Second Place Silver Medalist'),
-        (3, 'third', 'Third Place Bronze Medalist'),
-        (4, 'fourth', 'Fourth Place Bronze Medalist'),
-        (5, 'fifth', 'Fifth Place Bronze Medalist'),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -268,32 +260,12 @@ class Award(models.Model):
         max_length=255,
     )
 
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='awards',
-    )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contestant,
-            self.get_kind_display(),
-        )
-        super(Award, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
             'name',
-        )
-
-        unique_together = (
-            ('kind', 'contestant',),
         )
 
 
@@ -2120,6 +2092,52 @@ class Tune(models.Model):
     fuzzy = models.TextField(
         blank=True,
     )
+
+
+class Winner(models.Model):
+    """Chorus relation"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='winners',
+    )
+
+    award = models.ForeignKey(
+        'Person',
+        related_name='winners',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contestant,
+            self.award,
+        )
+        super(Winner, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'award',),
+        )
 
 
 class UserManager(BaseUserManager):
