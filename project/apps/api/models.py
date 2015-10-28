@@ -357,7 +357,9 @@ class Contest(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'structured', 'Structured',),
+        (15, 'ready', 'Ready',),
         (20, 'current', 'Current',),
+        (25, 'review', 'Review',),
         (30, 'complete', 'Complete',),
     )
 
@@ -461,8 +463,6 @@ class Contest(models.Model):
 
     organization = models.ForeignKey(
         'Organization',
-        null=True,
-        blank=True,
         related_name='contests',
     )
 
@@ -593,50 +593,45 @@ class Contest(models.Model):
             p += 1
 
     def start_contest(self):
+        # Start first session.
         session = self.sessions.get(kind=self.rounds)
-        ls = session.performances.all()
-        for l in ls:
-            p1 = l.songs.create(performance=l, order=1)
-            p2 = l.songs.create(performance=l, order=2)
-            for j in self.judges.filter(category__in=[1, 2, 3]):
-                p1.scores.create(
-                    song=p1,
-                    judge=j,
-                )
-                p2.scores.create(
-                    song=p2,
-                    judge=j,
-                )
+        session.start()
+        self.status = self.STATUS.current
+        self.save()
+        return "Contest Started"
 
-    def promote_contest(self):
-        current_session = self.sessions.get(
-            status=self.sessions.model.STATUS.current,
-        )
-        next_session = self.sessions.get(
-            kind=(current_session.kind - 1),
-        )
-        qualifiers = current_session.performances.filter(
-            place__lte=next_session.slots,
-        ).order_by('?')
-        p = 0
-        for qualifier in qualifiers:
-            l = next_session.performances.create(
-                contestant=qualifier.contestant,
-                position=p,
-                start=next_session.start,
-            )
-            p += 1
-            p1 = l.songs.create(performance=l, order=1)
-            p2 = l.songs.create(performance=l, order=2)
-            for j in self.judges.filter(category__in=[1, 2, 3]):
-                p1.scores.create(
-                    song=p1,
-                    judge=j,
-                )
-                p2.scores.create(
-                    song=p2,
-                    judge=j,
-                )
+    def end_contest(self):
+        cursor = []
+        i = 1
+        # TODO rescore
+        for contestant in self.contestants.order_by('-total_points'):
+            try:
+                match = contestant.total_points == cursor[0].total_points
+            except IndexError:
+                contestant.place = i
+                contestant.save()
+                cursor.append(contestant)
+                continue
+            if match:
+                contestant.place = i
+                i += len(cursor)
+                contestant.save()
+                cursor.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.place = i
+                contestant.save()
+                cursor = [contestant]
+        self.status = self.STATUS.review
+        self.save()
+        return "Contest Ended"
+
+    def confirm_contest(self):
+        # Validation logic
+        self.status = self.STATUS.compete
+        self.save()
+        return "Contest Confirmed"
 
     def seed(self):
         marker = []
@@ -1300,10 +1295,11 @@ class Performance(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
+        (10, 'structured', 'Structured',),
+        (15, 'ready', 'Ready',),
         (20, 'current', 'Current',),
+        (25, 'review', 'Review',),
         (30, 'complete', 'Complete',),
-        (40, 'flagged', 'Flagged',),
     )
 
     name = models.CharField(
@@ -1436,6 +1432,18 @@ class Performance(models.Model):
         except TypeError:
             return None
 
+    def start_performance(self):
+        self.status = self.STATUS.current
+        self.save()
+
+    def end_performance(self):
+        self.status = self.STATUS.review
+        self.save()
+
+    def confirm_performance(self):
+        self.status = self.STATUS.complete
+        self.save()
+
     class Meta:
         ordering = [
             'session',
@@ -1559,8 +1567,8 @@ class Score(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'flagged', 'Flagged',),
-        (20, 'confirmed', 'Confirmed',),
-        (30, 'final', 'Final',),
+        (20, 'passed', 'Passed',),
+        (30, 'complete', 'Complete',),
     )
 
     id = models.UUIDField(
@@ -1656,7 +1664,9 @@ class Session(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'structured', 'Structured',),
+        (15, 'ready', 'Ready',),
         (20, 'current', 'Current',),
+        (25, 'review', 'Review',),
         (30, 'complete', 'Complete',),
     )
 
@@ -1744,7 +1754,28 @@ class Session(models.Model):
             )
             s += 1
 
-    def place_session(self):
+    def start_session(self):
+        ls = self.performances.all()
+        for l in ls:
+            p1 = l.songs.create(performance=l, order=1)
+            p2 = l.songs.create(performance=l, order=2)
+            for j in self.judges.filter(category__in=[1, 2, 3]):  # TODO custom manager?
+                p1.scores.create(
+                    song=p1,
+                    judge=j,
+                )
+                p2.scores.create(
+                    song=p2,
+                    judge=j,
+                )
+        performance = self.performances.get(position=0)
+        performance.start()
+        self.status = self.STATUS.current
+        self.save()
+        return "Session Started"
+
+    def end_session(self):
+        # TODO Validate performances over
         cursor = []
         i = 1
         for performance in self.performances.order_by('-total_points'):
@@ -1766,7 +1797,44 @@ class Session(models.Model):
                 performance.place = i
                 performance.save()
                 cursor = [performance]
-        return
+        self.status = self.STATUS.review
+        self.save()
+        return "Session Ended"
+
+    def confirm_session(self):
+        # TODO Some validation
+        try:
+            # TODO This is an awful lot to be in a try/except; refactor?
+            next_session = self.contest.sessions.get(
+                kind=(self.kind - 1),
+            )
+            qualifiers = self.performances.filter(
+                place__lte=next_session.slots,
+            ).order_by('?')
+            p = 0
+            for qualifier in qualifiers:
+                l = next_session.performances.create(
+                    contestant=qualifier.contestant,
+                    position=p,
+                    start=next_session.start,
+                )
+                p += 1
+                p1 = l.songs.create(performance=l, order=1)
+                p2 = l.songs.create(performance=l, order=2)
+                for j in self.judges.filter(category__in=[1, 2, 3]):
+                    p1.scores.create(
+                        song=p1,
+                        judge=j,
+                    )
+                    p2.scores.create(
+                        song=p2,
+                        judge=j,
+                    )
+        except self.DoesNotExist:
+            pass
+        self.status = self.STATUS.complete
+        self.save()
+        return 'Session Confirmed'
 
 
 class Singer(models.Model):
@@ -1848,10 +1916,9 @@ class Song(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'ready', 'Ready',),
-        (20, 'current', 'Current',),
+        (10, 'flagged', 'Flagged',),
+        (20, 'passed', 'Passed',),
         (30, 'complete', 'Complete',),
-        (40, 'flagged', 'Flagged',),
     )
 
     ORDER = Choices(
