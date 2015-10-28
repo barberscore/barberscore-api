@@ -1140,9 +1140,20 @@ class Director(models.Model):
 
 class Group(Common):
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
     KIND = Choices(
         (1, 'quartet', 'Quartet'),
         (2, 'chorus', 'Chorus'),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     kind = models.IntegerField(
@@ -1530,6 +1541,14 @@ class Performance(models.Model):
 
 class Person(Common):
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+        (30, 'retired', 'Retired',),
+        (40, 'deceased', 'Deceased',),
+    )
+
     KIND = Choices(
         (1, 'individual', "Individual"),
         (2, 'team', "Team"),
@@ -1540,6 +1559,11 @@ class Person(Common):
             Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
         choices=KIND,
         default=KIND.individual,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     class Meta:
