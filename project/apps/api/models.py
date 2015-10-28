@@ -1012,8 +1012,6 @@ class Convention(models.Model):
 
     organization = models.ForeignKey(
         'Organization',
-        null=True,
-        blank=True,
         help_text="""
             The district for the convention.  If International, this is 'BHS'.""",
     )
@@ -1154,6 +1152,11 @@ class Group(Common):
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
     )
 
     kind = models.IntegerField(
@@ -1564,6 +1567,11 @@ class Person(Common):
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
     )
 
     class Meta:
