@@ -2124,6 +2124,13 @@ class Winner(models.Model):
         related_name='winners',
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='winners',
+        null=True,
+        blank=True,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
