@@ -31,7 +31,7 @@ from .models import (
     Organization,
 )
 
-from grappelli.forms import GrappelliSortableHiddenMixin
+# from grappelli.forms import GrappelliSortableHiddenMixin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 
@@ -184,7 +184,7 @@ class ContestantsInline(admin.TabularInline):
         ]
     }
     can_delete = True
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class DirectorsInline(admin.TabularInline):
@@ -400,7 +400,6 @@ class SessionsInline(admin.TabularInline):
         'contest',
         'kind',
     )
-    show_change_link = True
 
     model = Session
     extra = 0
@@ -412,7 +411,6 @@ class SessionsInline(admin.TabularInline):
     #         'contest',
     #     ]
     # }
-    can_delete = True
     classes = ('grp-collapse grp-closed',)
     readonly_fields = [
         'link',
@@ -498,8 +496,8 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     ]
 
     inlines = [
-        SessionsInline,
         ContestantsInline,
+        SessionsInline,
         JudgesInline,
     ]
 
@@ -534,11 +532,11 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
+        'organization',
         'level',
         'kind',
         'goal',
         'year',
-        'organization',
         ('rounds', 'panel',),
         'scoresheet_pdf',
     )
