@@ -81,7 +81,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'performances',
         'directors',
         'singers',
-        'awards',
+        # 'awards',
     )
     serializer_class = ContestantSerializer
     lookup_field = 'slug'
