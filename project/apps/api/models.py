@@ -568,29 +568,13 @@ class Contest(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.level == self.LEVEL.international:
-            self.name = u"{0} {1} {2} {3}".format(
-                self.get_level_display(),
-                self.get_kind_display(),
-                self.get_goal_display(),
-                self.year,
-            )
-        elif self.level == self.LEVEL.district:
-            self.name = u"{0} {1} {2} {3} {4}".format(
-                self.organization,
-                self.get_level_display(),
-                self.get_kind_display(),
-                self.get_goal_display(),
-                self.year,
-            )
-        else:
-            self.name = u"{0} {1} {2} {3} {4}".format(
-                'Unknown',
-                self.get_level_display(),
-                self.get_kind_display(),
-                self.get_goal_display(),
-                self.year,
-            )
+        self.name = u"{0} {1} {2} {3} {4}".format(
+            self.organization,
+            self.get_level_display(),
+            self.get_kind_display(),
+            self.get_goal_display(),
+            self.year,
+        )
         super(Contest, self).save(*args, **kwargs)
 
     def build_contest(self):
@@ -1057,21 +1041,11 @@ class Convention(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.kind in [
-            self.KIND.international,
-            self.KIND.midwinter,
-            self.KIND.pacific,
-        ]:
-            self.name = u"{0} {1}".format(
-                self.get_kind_display(),
-                self.year,
-            )
-        else:
-            self.name = u"{0} {1} {2}".format(
-                self.organization,
-                self.get_kind_display(),
-                self.year,
-            )
+        self.name = u"{0} {1} {2}".format(
+            self.organization,
+            self.get_kind_display(),
+            self.year,
+        )
         super(Convention, self).save(*args, **kwargs)
 
 
