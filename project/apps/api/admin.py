@@ -698,6 +698,8 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'status',
+        'status_monitor',
         'location',
         'website',
         'facebook',
@@ -711,6 +713,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
+        ('status', 'status_monitor',),
         'kind',
         ('start', 'end',),
         'location',
@@ -729,6 +732,9 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
     )
 
+    readonly_fields = (
+        'status_monitor',
+    )
     save_on_top = True
 
 
@@ -932,6 +938,8 @@ class PersonAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'name',
+        'status',
+        'status_monitor',
         'location',
         'website',
         'facebook',
@@ -943,6 +951,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
+        ('status', 'status_monitor',),
         'kind',
         ('start', 'end',),
         'location',
@@ -956,6 +965,9 @@ class PersonAdmin(admin.ModelAdmin):
         'notes',
     )
 
+    readonly_fields = (
+        'status_monitor',
+    )
     # inlines = [
     #     DirectorsInline,
     #     SingersInline,
