@@ -2120,7 +2120,7 @@ class Winner(models.Model):
     )
 
     award = models.ForeignKey(
-        'Person',
+        'Award',
         related_name='winners',
     )
 
