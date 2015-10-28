@@ -51,11 +51,6 @@ class CatalogSerializer(serializers.ModelSerializer):
 
 
 class AwardSerializer(serializers.ModelSerializer):
-    contestant = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
     class Meta:
         model = Award
         fields = [
@@ -63,8 +58,6 @@ class AwardSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'contestant',
-            'kind',
         ]
 
 
