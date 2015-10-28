@@ -224,7 +224,7 @@ def contest_oss(request, contest_slug):
     contest = get_object_or_404(
         Contest,
         slug=contest_slug,
-        status=Contest.STATUS.complete,
+        # status=Contest.STATUS.complete,
     )
     contestants = contest.contestants.select_related(
         'group',
@@ -242,7 +242,7 @@ def contest_oss(request, contest_slug):
         ),
         Prefetch('performances__songs__tune'),
     ).filter(
-        status=Contestant.STATUS.complete,
+        status=Contestant.STATUS.new,
     ).order_by(
         'place',
         # 'performances__session__kind',
