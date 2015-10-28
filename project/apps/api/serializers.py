@@ -130,11 +130,11 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    awards = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # awards = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Contestant
@@ -165,7 +165,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'performances',
             'directors',
             'singers',
-            'awards',
+            # 'awards',
         )
 
 
