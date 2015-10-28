@@ -118,5 +118,19 @@
         </table>
       </div>
     </section>
+    <section>
+      <ul class='list-inline'>
+      {% for judge in contest.judges %}
+        <li>{{judge}}</li>
+      {% endfor %}
+      </ul>
+    </section>
+    <section>
+      <ul class='list-unstyled'>
+      {% for winner in contest.winners %}
+        <li>{{winner}}</li>
+      {% endfor %}
+      </ul>
+    </section>
   </main>
 {% endblock content %}
