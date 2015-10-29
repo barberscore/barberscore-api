@@ -408,18 +408,19 @@ class Contest(models.Model):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     name = models.CharField(
         help_text="""
             The name of the contest (determined programmatically.)""",
         max_length=200,
         unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
     )
 
     status = models.IntegerField(
