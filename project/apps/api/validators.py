@@ -21,7 +21,7 @@ Q95 = {n:q for n,q in zip(range(3,len(q95)+1), q95)}
 Q99 = {n:q for n,q in zip(range(3,len(q99)+1), q99)}
 
 
-def dixon(qs, left=True, right=True, q_dict=Q95):
+def dixon(performance, left=True, right=True, q_dict=Q90):
     """
     Keyword arguments:
         data = A ordered or unordered list of data points (int or float).
@@ -39,52 +39,50 @@ def dixon(qs, left=True, right=True, q_dict=Q95):
        for [5,1,5] -> [1, None]
 
     """
-    assert(left or right), 'At least one of the variables, `left` or `right`, must be True.'
-    assert(len(qs) >= 3), 'At least 3 data points are required'
-    assert(len(qs) <= max(q_dict.keys())), 'Sample size too large'
-    data = [round(i.points * .01, 2) for i in qs]
-    sdata = sorted(data)
-    Q_mindiff, Q_maxdiff = (0,0), (0,0)
+    for song in performance.songs.all():
+        scores = song.scores.all()
+        assert(left or right), 'At least one of the variables, `left` or `right`, must be True.'
+        assert(len(scores) >= 3), 'At least 3 data points are required'
+        assert(len(scores) <= max(q_dict.keys())), 'Sample size too large'
+        data = [round(score.points * .01, 2) for score in scores]
+        sdata = sorted(data)
+        Q_mindiff, Q_maxdiff = (0, 0), (0, 0)
 
-    if left:
-        Q_min = (sdata[1] - sdata[0])
-        try:
-            Q_min /= (sdata[-1] - sdata[0])
-        except ZeroDivisionError:
-            pass
-        Q_mindiff = (Q_min - q_dict[len(data)], sdata[0])
+        if left:
+            Q_min = (sdata[1] - sdata[0])
+            try:
+                Q_min /= (sdata[-1] - sdata[0])
+            except ZeroDivisionError:
+                pass
+            Q_mindiff = (Q_min - q_dict[len(data)], sdata[0])
 
-    if right:
-        Q_max = abs((sdata[-2] - sdata[-1]))
-        try:
-            Q_max /= abs((sdata[0] - sdata[-1]))
-        except ZeroDivisionError:
-            pass
-        Q_maxdiff = (Q_max - q_dict[len(data)], sdata[-1])
+        if right:
+            Q_max = abs((sdata[-2] - sdata[-1]))
+            try:
+                Q_max /= abs((sdata[0] - sdata[-1]))
+            except ZeroDivisionError:
+                pass
+            Q_maxdiff = (Q_max - q_dict[len(data)], sdata[-1])
 
-    if not Q_mindiff[0] > 0 and not Q_maxdiff[0] > 0:
-        outliers = [None, None]
+        if not Q_mindiff[0] > 0 and not Q_maxdiff[0] > 0:
+            outliers = [None, None]
 
-    elif Q_mindiff[0] == Q_maxdiff[0]:
-        outliers = [Q_mindiff[1], Q_maxdiff[1]]
+        elif Q_mindiff[0] == Q_maxdiff[0]:
+            outliers = [Q_mindiff[1], Q_maxdiff[1]]
 
-    elif Q_mindiff[0] > Q_maxdiff[0]:
-        outliers = [Q_mindiff[1], None]
+        elif Q_mindiff[0] > Q_maxdiff[0]:
+            outliers = [Q_mindiff[1], None]
 
-    else:
-        outliers = [None, Q_maxdiff[1]]
+        else:
+            outliers = [None, Q_maxdiff[1]]
 
-    output = 'No Outliers'
-    for q in qs:
-        if round(q.points * .01, 2) in outliers:
-            q.status = q.STATUS.flagged
-            q.song.status = q.song.STATUS.flagged
-            q.song.performance.status = q.song.performance.STATUS.flagged
-            q.save()
-            q.song.save()
-            q.song.performance.save()
-            output = 'Flagged Outliers'
-    return output
+        for score in scores:
+            if round(score.points * .01, 2) in outliers:
+                score.status = score.STATUS.flagged
+                score.song.status = score.song.STATUS.flagged
+                score.save()
+                score.song.save()
+    return "Performance Tested"
 
 
 def validate_trimmed(value):
