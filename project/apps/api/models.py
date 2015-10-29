@@ -664,7 +664,7 @@ class Contestant(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
+        (10, 'ready', 'Ready',),
         (20, 'current', 'Current',),
         (30, 'complete', 'Complete',),
     )
@@ -1439,8 +1439,10 @@ class Performance(models.Model):
         self.save()
 
     def end_performance(self):
+        result = dixon(self)
         self.status = self.STATUS.review
         self.save()
+        return result
 
     def confirm_performance(self):
         self.status = self.STATUS.complete
@@ -2124,9 +2126,6 @@ class Song(models.Model):
             self.prs_score = None
             self.sng_score = None
         super(Song, self).save(*args, **kwargs)
-
-    def dixon_test(self):
-        return dixon(self.scores.all())
 
 
 class Tune(models.Model):
