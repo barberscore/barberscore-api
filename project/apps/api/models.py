@@ -442,28 +442,35 @@ class Contest(models.Model):
         monitor='history',
     )
 
+    organization = models.ForeignKey(
+        'Organization',
+        related_name='contests',
+    )
+
     level = models.IntegerField(
         # help_text="""
         #     The level of the contest (currently only International is supported.)""",
         choices=LEVEL,
-        default=LEVEL.international,
+        # default=LEVEL.international,
     )
 
     kind = models.IntegerField(
         # help_text="""
         #     The kind of the contest (quartet, chorus, senior, collegiate.)""",
         choices=KIND,
-        default=KIND.quartet,
+        # default=KIND.quartet,
+    )
+
+    goal = models.IntegerField(
+        help_text="""
+            The objective of the contest""",
+        default=GOAL.championship,
+        # choices=GOAL,
     )
 
     year = models.IntegerField(
         default=datetime.datetime.now().year,
         choices=YEAR_CHOICES,
-    )
-
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='contests',
     )
 
     convention = models.ForeignKey(
@@ -490,13 +497,6 @@ class Contest(models.Model):
             Bracket size""",
         default=5,
         choices=ROUNDS_CHOICES,
-    )
-
-    goal = models.IntegerField(
-        help_text="""
-            The objective of the contest""",
-        default=GOAL.championship,
-        choices=GOAL,
     )
 
     scoresheet_pdf = models.FileField(
@@ -579,6 +579,8 @@ class Contest(models.Model):
                 slot=s,
             )
             s += 1
+        self.status = self.STATUS.structured
+        self.save()
 
     def draw_contest(self):
         cs = self.contestants.order_by('?')
@@ -591,11 +593,13 @@ class Contest(models.Model):
                 start=session.start,
             )
             p += 1
+        self.status = self.STATUS.ready
+        self.save()
 
     def start_contest(self):
         # Start first session.
         session = self.sessions.get(kind=self.rounds)
-        session.start()
+        session.start_session()
         self.status = self.STATUS.current
         self.save()
         return "Contest Started"
@@ -1759,7 +1763,7 @@ class Session(models.Model):
         for l in ls:
             p1 = l.songs.create(performance=l, order=1)
             p2 = l.songs.create(performance=l, order=2)
-            for j in self.judges.filter(category__in=[1, 2, 3]):  # TODO custom manager?
+            for j in self.contest.judges.filter(category__in=[1, 2, 3]):  # TODO custom manager?
                 p1.scores.create(
                     song=p1,
                     judge=j,
@@ -1769,7 +1773,7 @@ class Session(models.Model):
                     judge=j,
                 )
         performance = self.performances.get(position=0)
-        performance.start()
+        performance.start_performance()
         self.status = self.STATUS.current
         self.save()
         return "Session Started"
