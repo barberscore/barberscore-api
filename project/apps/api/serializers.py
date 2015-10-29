@@ -73,8 +73,6 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    organization = serializers.StringRelatedField()
-
     class Meta:
         model = Contest
         fields = (
@@ -83,12 +81,12 @@ class ContestSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
+            'organization',
             'level',
             'kind',
             'goal',
             'rounds',
             'year',
-            'organization',
             'convention',
             'panel',
             'scoresheet_pdf',
