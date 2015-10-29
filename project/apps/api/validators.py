@@ -75,13 +75,15 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
 
         else:
             outliers = [None, Q_maxdiff[1]]
-
+        #  Set default
+        song.status = song.STATUS.passed
         for score in scores:
+            score.status = score.STATUS.passed
             if round(score.points * .01, 2) in outliers:
                 score.status = score.STATUS.flagged
                 score.song.status = score.song.STATUS.flagged
-                score.save()
-                score.song.save()
+            score.save()
+        song.save()
     return "Performance Tested"
 
 
