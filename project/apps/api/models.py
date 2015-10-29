@@ -464,8 +464,8 @@ class Contest(models.Model):
     goal = models.IntegerField(
         help_text="""
             The objective of the contest""",
-        default=GOAL.championship,
-        # choices=GOAL,
+        choices=GOAL,
+        # default=GOAL.championship,
     )
 
     year = models.IntegerField(
@@ -486,17 +486,15 @@ class Contest(models.Model):
     panel = models.IntegerField(
         help_text="""
             Size of the judging panel (typically three or five.)""",
-        default=5,
         choices=PANEL_CHOICES,
-        null=True,
-        blank=True,
+        # default=5,
     )
 
     rounds = models.IntegerField(
         help_text="""
             Bracket size""",
-        default=5,
         choices=ROUNDS_CHOICES,
+        # default=1,
     )
 
     scoresheet_pdf = models.FileField(
