@@ -97,7 +97,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.prefetch_related(
-        'catalogs',
+        # 'catalogs',
         'choruses',
         'quartets',
         'panels',
@@ -153,7 +153,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
 
 class TuneViewSet(viewsets.ModelViewSet):
     queryset = Tune.objects.prefetch_related(
-        'catalogs',
+        # 'catalogs',
         'songs',
     )
     serializer_class = TuneSerializer
