@@ -322,6 +322,7 @@ class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
         'performance',
         'order',
+        'status',
         'tune',
         # 'mus_points',
         # 'prs_points',
@@ -489,10 +490,17 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
             obj.start_contest()
     start_contest.label = 'Start Contest'
 
+    @takes_instance_or_queryset
+    def end_contest(self, request, queryset):
+        for obj in queryset:
+            obj.end_contest()
+    end_contest.label = 'End Contest'
+
     objectactions = [
         'build_contest',
         'draw_contest',
         'start_contest',
+        'end_contest',
     ]
 
     inlines = [
@@ -1019,13 +1027,13 @@ class Score(admin.ModelAdmin):
 @admin.register(Session)
 class Session(DjangoObjectActions, admin.ModelAdmin):
     @takes_instance_or_queryset
-    def place_session(self, request, queryset):
+    def end_session(self, request, queryset):
         for obj in queryset:
-            obj.place_session()
-    place_session.label = 'Place Session'
+            obj.end_session()
+    end_session.label = 'End Session'
 
     objectactions = [
-        'place_session',
+        'end_session',
     ]
 
     save_on_top = True

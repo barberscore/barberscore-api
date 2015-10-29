@@ -599,6 +599,9 @@ class Contest(models.Model):
         session = self.sessions.get(kind=self.rounds)
         session.start_session()
         self.status = self.STATUS.current
+        contestants = self.contestants.all()
+        for contestant in contestants:
+            contestant.status = contestant.STATUS.current
         self.save()
         return "Contest Started"
 
@@ -627,6 +630,8 @@ class Contest(models.Model):
                 cursor = [contestant]
         self.status = self.STATUS.review
         self.save()
+
+        # TODO Confer awards
         return "Contest Ended"
 
     def confirm_contest(self):
