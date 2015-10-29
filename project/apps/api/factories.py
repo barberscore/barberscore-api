@@ -17,7 +17,7 @@ def impanel_judges(contest):
     for judge in judges:
         judge.person = Person.objects.order_by('?').first()
         judge.save()
-        return "Judges Impaneled"
+    return "Judges Impaneled"
 
 
 def add_contestants(contest, number):
@@ -44,7 +44,7 @@ def score_performance(performance):
             score.points = randint(low, high)
             score.save()
         song.save()
-    performance.save()
+    performance.end_performance()
     return "Performance Scored"
 
 
