@@ -645,7 +645,7 @@ class Contest(models.Model):
 
     def confirm_contest(self):
         # Validation logic
-        self.status = self.STATUS.compete
+        self.status = self.STATUS.complete
         self.save()
         return "Contest Confirmed"
 
@@ -1846,7 +1846,7 @@ class Session(models.Model):
                 p += 1
                 p1 = l.songs.create(performance=l, order=1)
                 p2 = l.songs.create(performance=l, order=2)
-                for j in self.judges.filter(category__in=[1, 2, 3]):
+                for j in self.contest.judges.filter(category__in=[1, 2, 3]):
                     p1.scores.create(
                         song=p1,
                         judge=j,
