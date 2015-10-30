@@ -119,18 +119,28 @@
       </div>
     </section>
     <section>
-      <ul class='list-inline'>
-      {% for judge in contest.judges.all %}
-        <li>{{judge}}</li>
+      <h4>Awards</h4>
+      <ul class='list-unstyled'>
+      {% for winner in contest.winners.all %}
+        <li>{{winner.award.name}}: {{winner.contestant.group.name}}</li>
       {% endfor %}
       </ul>
     </section>
     <section>
-      <ul class='list-unstyled'>
-      {% for winner in contest.winners.all %}
-        <li>{{winner}}</li>
+      <h4>Judges</h4>
+      <table class='table'>
+      {% regroup judges by get_category_display as judges_list %}
+      <tbody>
+      {% for get_category_display in judges_list %}
+      <tr>
+        {% for judge in get_category_display.list %}
+          <td>{{judge.person.name}}, {{judge.designation}}</td>
+        {% endfor %}
+        </tr>
       {% endfor %}
-      </ul>
+      </tbody>
+
+      </table>
     </section>
   </main>
 {% endblock content %}
