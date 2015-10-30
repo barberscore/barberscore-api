@@ -51,7 +51,6 @@ from apps.api.models import (
     Session,
     Performance,
     Score,
-    Contestant,
     Song,
 )
 
@@ -241,16 +240,15 @@ def contest_oss(request, contest_slug):
             queryset=Song.objects.order_by('order'),
         ),
         Prefetch('performances__songs__tune'),
-    ).filter(
-        status=Contestant.STATUS.new,
     ).order_by(
         'place',
         # 'performances__session__kind',
     )
+    judges = contest.judges.order_by('category', 'slot',)
     return render(
         request,
         'api/contest_oss.html',
-        {'contest': contest, 'contestants': contestants},
+        {'contest': contest, 'contestants': contestants, 'judges': judges},
     )
 
 
