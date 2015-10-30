@@ -629,6 +629,14 @@ class Contest(models.Model):
                 contestant.place = i
                 contestant.save()
                 cursor = [contestant]
+        if self.goal == self.GOAL.championship:
+            Winner.objects.create(
+                contestant=self.contestants.get(place=1),
+                award=Award.objects.get(
+                    name='Champion',
+                ),
+                contest=self,
+            )
         self.status = self.STATUS.review
         self.save()
 
@@ -1246,6 +1254,13 @@ class Judge(models.Model):
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains", "person__icontains",)
+
+    @property
+    def designation(self):
+        return u"{0[0]}-{1:02d}".format(
+            self.get_category_display(),
+            self.slot,
+        )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
