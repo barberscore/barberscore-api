@@ -128,6 +128,7 @@
     </section>
     <section>
       <h4>Judges</h4>
+      <div class='table-responsive'>
       <table class='table'>
       {% regroup judges by get_category_display as judges_list %}
       <tbody>
@@ -141,6 +142,7 @@
       </tbody>
 
       </table>
+      </div>
     </section>
   </main>
 {% endblock content %}
