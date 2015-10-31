@@ -12,6 +12,10 @@ from django.db import (
     models,
 )
 
+from django.db.models.query import (
+    QuerySet,
+)
+
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -39,6 +43,10 @@ from model_utils.fields import (
 )
 
 from model_utils import Choices
+
+from model_utils.managers import (
+    PassThroughManager,
+)
 
 from mptt.models import (
     MPTTModel,
@@ -1164,6 +1172,23 @@ class Group(Common):
     )
 
 
+class JudgeQuerySet(QuerySet):
+    def composite(self):
+        return self.filter(category__in=[7, 8, 9])
+
+    def practice(self):
+        return self.filter(category__in=[4, 5, 6])
+
+    def scoring(self):
+        return self.filter(category__in=[1, 2, 3])
+
+    def administrator(self):
+        return self.filter(category=0)
+
+    def contest(self):
+        return self.filter(category__in=[0, 1, 2, 3])
+
+
 class Judge(models.Model):
     """Contest Judge"""
 
@@ -1250,6 +1275,8 @@ class Judge(models.Model):
     is_practice = models.BooleanField(
         default=False,
     )
+
+    objects = PassThroughManager.for_queryset_class(JudgeQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1784,7 +1811,7 @@ class Session(models.Model):
         for l in ls:
             p1 = l.songs.create(performance=l, order=1)
             p2 = l.songs.create(performance=l, order=2)
-            for j in self.contest.judges.filter(category__in=[1, 2, 3]):  # TODO custom manager?
+            for j in self.contest.judges.scoring():
                 p1.scores.create(
                     song=p1,
                     judge=j,
@@ -1846,7 +1873,7 @@ class Session(models.Model):
                 p += 1
                 p1 = l.songs.create(performance=l, order=1)
                 p2 = l.songs.create(performance=l, order=2)
-                for j in self.contest.judges.filter(category__in=[1, 2, 3]):
+                for j in self.contest.judges.scoring():
                     p1.scores.create(
                         song=p1,
                         judge=j,

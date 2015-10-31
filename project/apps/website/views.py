@@ -244,7 +244,7 @@ def contest_oss(request, contest_slug):
         'place',
         # 'performances__session__kind',
     )
-    judges = contest.judges.order_by('category', 'slot',)
+    judges = contest.judges.contest().order_by('category', 'slot',)
     return render(
         request,
         'api/contest_oss.html',
