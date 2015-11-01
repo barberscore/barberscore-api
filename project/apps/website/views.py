@@ -7,6 +7,8 @@ from django.shortcuts import (
     get_object_or_404,
 )
 
+from easy_pdf.views import PDFTemplateView
+
 from django.contrib.auth.decorators import login_required
 
 # from django.core.urlresolvers import reverse
@@ -245,12 +247,51 @@ def contest_oss(request, contest_slug):
         # 'performances__session__kind',
     )
     judges = contest.judges.contest().order_by('category', 'slot',)
+    winners = contest.winners.all()
     return render(
         request,
         'api/contest_oss.html',
-        {'contest': contest, 'contestants': contestants, 'judges': judges},
+        {'contest': contest, 'contestants': contestants, 'judges': judges, 'winners': winners},
     )
 
+
+class HelloPDFView(PDFTemplateView):
+    template_name = "pdf/oss.html"
+    model = Contest
+
+    def get_context_data(self, **kwargs):
+            context = super(HelloPDFView, self).get_context_data(**kwargs)
+            contest = get_object_or_404(
+                Contest,
+                slug=self.kwargs['slug'],
+                # status=Contest.STATUS.complete,
+            )
+            contestants = contest.contestants.select_related(
+                'group',
+            ).prefetch_related(
+                Prefetch(
+                    'performances',
+                    queryset=Performance.objects.order_by('session__kind'),
+                ),
+                Prefetch(
+                    'performances__session',
+                ),
+                Prefetch(
+                    'performances__songs',
+                    queryset=Song.objects.order_by('order'),
+                ),
+                Prefetch('performances__songs__tune'),
+            ).order_by(
+                'place',
+                # 'performances__session__kind',
+            )
+            judges = contest.judges.contest().order_by('category', 'slot',)
+            winners = contest.winners.all()
+            context["contest"] = contest
+            context["contestants"] = contestants
+            context["judges"] = judges
+            context["winners"] = winners
+            return context
 
 # def merge(request):
 #     choruses = DuplicateGroup.objects.filter(

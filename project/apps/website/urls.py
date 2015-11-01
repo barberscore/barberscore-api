@@ -25,6 +25,7 @@ urlpatterns = [
 
     url(r'^session/(?P<session_slug>[a-zA-Z0-9-]+)/oss/$', views.session_oss, name='session-oss'),
     url(r'^contest/(?P<contest_slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),
+    url(r"^contest/(?P<slug>[a-zA-Z0-9-]+)/pdf/$", views.HelloPDFView.as_view())
     # url(r'^merge/$', views.merge, name='merge'),
     # url(r'^merge/person/$', views.persons, name='persons'),
     # url(r'^merge/person/all/$', views.all_persons, name='all-persons'),
