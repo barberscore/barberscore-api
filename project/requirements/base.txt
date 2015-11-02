@@ -2,6 +2,7 @@ django==1.8.5
 django-cors-headers==1.1.0
 dj-database-url==0.3.0
 django-timezone-field==1.3
+pytz==2015.7
 djangorestframework==3.3.0
 nameparser==0.3.11
 psycopg2==2.6.1
@@ -12,13 +13,13 @@ django-filter==0.11.0
 phonenumbers==7.1.0
 Pillow==3.0.0
 elasticsearch==1.7.0
-django-haystack==2.4.0
-drf-haystack==1.5.4
+django-haystack==2.4.1
+drf-haystack==1.5.5
 django-model-utils==2.3.1
 jsonfield==1.0.3
 titlecase==0.8.0
 django-autoslug==1.9.3
-django-grappelli==2.7.1
+django-grappelli==2.7.2
 django-super-inlines==0.1.4
 django-mptt==0.7.4
 django-easy-pdf==0.1.0
