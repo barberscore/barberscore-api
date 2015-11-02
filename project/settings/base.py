@@ -175,7 +175,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
-    # 'haystack',
+    'haystack',
     'easy_pdf',
     'timezone_field',
     'django_object_actions',
