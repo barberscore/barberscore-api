@@ -5,45 +5,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-# class DuplicateGroup(models.Model):
-#     parent = models.ForeignKey(
-#         Group,
-#         related_name='duplicates',
-#     )
-#     child = models.ForeignKey(
-#         Group,
-#         related_name='children',
-#     )
-#     score = models.IntegerField(
-#     )
-
-
-# class DuplicateSong(models.Model):
-#     parent = models.ForeignKey(
-#         Song,
-#         related_name='duplicates',
-#     )
-#     child = models.ForeignKey(
-#         Song,
-#         related_name='children',
-#     )
-#     score = models.IntegerField(
-#     )
-
-
-# class DuplicatePerson(models.Model):
-#     parent = models.ForeignKey(
-#         Person,
-#         related_name='duplicates',
-#     )
-#     child = models.ForeignKey(
-#         Person,
-#         related_name='children',
-#     )
-#     score = models.IntegerField(
-#     )
-
-
 def deinterlace(path):
     with open(path) as csvfile:
         raw = [row for row in csv.reader(
