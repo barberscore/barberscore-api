@@ -33,6 +33,7 @@ from .serializers import (
     ContestantSerializer,
     TuneSerializer,
     PersonSerializer,
+    SearchSerializer,
     SongSerializer,
     SingerSerializer,
     ScoreSerializer,
@@ -42,7 +43,6 @@ from .serializers import (
     AwardSerializer,
     PerformanceSerializer,
     OrganizationSerializer,
-    # SearchSerializer,
 )
 
 
@@ -180,8 +180,8 @@ class CatalogViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-# class SearchViewSet(HaystackViewSet):
-#     serializer_class = SearchSerializer
+class SearchViewSet(HaystackViewSet):
+    serializer_class = SearchSerializer
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
