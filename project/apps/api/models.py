@@ -1167,10 +1167,6 @@ class Group(Common):
             'name',
         )
 
-    fuzzy = models.TextField(
-        blank=True,
-    )
-
 
 class JudgeQuerySet(QuerySet):
     def composite(self):
@@ -1605,10 +1601,6 @@ class Person(Common):
             return name.last
         else:
             return None
-
-    fuzzy = models.TextField(
-        blank=True,
-    )
 
 
 class Score(models.Model):
@@ -2204,10 +2196,6 @@ class Tune(models.Model):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
-
-    fuzzy = models.TextField(
-        blank=True,
-    )
 
 
 class Winner(models.Model):
