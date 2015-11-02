@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-# from drf_haystack.serializers import HaystackSerializer
+from drf_haystack.serializers import HaystackSerializer
 
 from .models import (
     Convention,
@@ -20,11 +20,11 @@ from .models import (
     Organization,
 )
 
-# from .search_indexes import (
-#     GroupIndex,
-#     TuneIndex,
-#     PersonIndex,
-# )
+from .search_indexes import (
+    GroupIndex,
+    TuneIndex,
+    PersonIndex,
+)
 
 
 class CatalogSerializer(serializers.ModelSerializer):
@@ -480,24 +480,24 @@ class ScoreSerializer(serializers.ModelSerializer):
         ]
 
 
-# class SearchSerializer(HaystackSerializer):
-#     kind = serializers.CharField(
-#         source='model_name',
-#     )
+class SearchSerializer(HaystackSerializer):
+    kind = serializers.CharField(
+        source='model_name',
+    )
 
-#     class Meta:
-#         index_classes = [
-#             GroupIndex,
-#             TuneIndex,
-#             PersonIndex,
-#         ]
-#         fields = [
-#             "text",
-#             "name",
-#             "slug",
-#             "description",
-#             "kind",
-#         ]
+    class Meta:
+        index_classes = [
+            GroupIndex,
+            TuneIndex,
+            PersonIndex,
+        ]
+        fields = [
+            "text",
+            "name",
+            "slug",
+            "description",
+            "kind",
+        ]
 
 
 class SingerSerializer(serializers.ModelSerializer):
