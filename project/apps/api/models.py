@@ -496,13 +496,17 @@ class Contest(models.Model):
         help_text="""
             Size of the judging panel (typically three or five.)""",
         choices=PANEL_CHOICES,
+        null=True,
+        blank=True,
         # default=5,
     )
 
     rounds = models.IntegerField(
         help_text="""
-            Bracket size""",
+            Number of rounds""",
         choices=ROUNDS_CHOICES,
+        null=True,
+        blank=True,
         # default=1,
     )
 
@@ -1221,6 +1225,7 @@ class Judge(models.Model):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -1574,6 +1579,10 @@ class Person(Common):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    is_judge = models.BooleanField(
+        default=False,
     )
 
     class Meta:
