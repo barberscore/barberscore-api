@@ -1,13 +1,9 @@
 from django import forms
 
-from django.forms.models import (
-    inlineformset_factory,
-)
-
 from apps.api.models import (
     Contest,
     Judge,
-    Person,
+    Contestant,
 )
 
 
@@ -107,6 +103,11 @@ class ContestForm(forms.ModelForm):
             contest.save()
         return contest
 
+    def draw(self, contest):
+        # Save the provided password in hashed format
+        contest.draw_contest()
+        return contest
+
 
 class ImpanelForm(forms.ModelForm):
     # person = forms.ModelChoiceField(
@@ -149,3 +150,32 @@ class ImpanelForm(forms.ModelForm):
             ),
         }
 
+
+class ContestantForm(forms.ModelForm):
+    # person = forms.ModelChoiceField(
+    #     queryset=Person.objects.filter(
+    #         name__startswith='David',
+    #     ),
+    #     widget=forms.Select,
+    # )
+
+    class Meta:
+        model = Contestant
+        fields = [
+            'contest',
+            'group',
+            # 'status',
+            # 'category',
+            # 'slot',
+            # 'organization',
+        ]
+        extra = 0
+        widgets = {
+            'group': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'contest': forms.HiddenInput(
+            ),
+        }
