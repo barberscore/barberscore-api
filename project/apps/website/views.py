@@ -24,7 +24,10 @@ from django.db.models import (
     Prefetch,
 )
 
-from django.forms import modelformset_factory
+from django.forms import (
+    modelformset_factory,
+    inlineformset_factory,
+)
 
 
 from apps.api.models import (
@@ -177,14 +180,17 @@ def contest_impanel(request, slug):
         Contest,
         slug=slug,
     )
-    JudgeFormSet = modelformset_factory(
+    JudgeFormSet = inlineformset_factory(
+        Contest,
         Judge,
         form=ImpanelForm,
+        extra=0,
+        can_delete=False,
     )
     if request.method == 'POST':
         formset = JudgeFormSet(
             request.POST,
-            queryset=contest.judges.all(),
+            instance=contest,
         )
         if formset.is_valid():
             formset.save()
@@ -198,7 +204,7 @@ def contest_impanel(request, slug):
                     )
     else:
         formset = JudgeFormSet(
-            queryset=contest.judges.all(),
+            instance=contest,
         )
     return render(
         request,

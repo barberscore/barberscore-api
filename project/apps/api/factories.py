@@ -9,13 +9,49 @@ from .models import (
     Person,
     Contestant,
     Tune,
+    Judge,
 )
 
 
 def impanel_judges(contest):
-    judges = contest.judges.all()
-    for judge in judges:
-        judge.person = Person.objects.order_by('?').first()
+    person = Person.objects.filter(
+        judge=Person.JUDGE.admin,
+    ).order_by('?').first()
+    judge = contest.judges.filter(
+        category=Judge.CATEGORY.admin,
+        person=None,
+    ).first()
+    judge.person = person
+    judge.save()
+    persons = Person.objects.filter(
+        judge=Person.JUDGE.music,
+    ).order_by('?')[:contest.panel]
+    for person in persons:
+        judge = contest.judges.filter(
+            category=Judge.CATEGORY.music,
+            person=None,
+        ).first()
+        judge.person = person
+        judge.save()
+    persons = Person.objects.filter(
+        judge=Person.JUDGE.singing,
+    ).order_by('?')[:contest.panel]
+    for person in persons:
+        judge = contest.judges.filter(
+            category=Judge.CATEGORY.singing,
+            person=None,
+        ).first()
+        judge.person = person
+        judge.save()
+    persons = Person.objects.filter(
+        judge=Person.JUDGE.presentation,
+    ).order_by('?')[:contest.panel]
+    for person in persons:
+        judge = contest.judges.filter(
+            category=Judge.CATEGORY.presentation,
+            person=None,
+        ).first()
+        judge.person = person
         judge.save()
     return "Judges Impaneled"
 
