@@ -192,7 +192,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'location',
             'year',
             'organization',
-            'timezone',
+            # 'timezone',
             'contests',
         )
 
