@@ -1,7 +1,7 @@
 from django import forms
 
 from django.forms.models import (
-    modelformset_factory,
+    inlineformset_factory,
 )
 
 from apps.api.models import (
@@ -109,33 +109,43 @@ class ContestForm(forms.ModelForm):
 
 
 class ImpanelForm(forms.ModelForm):
-    person = forms.ModelChoiceField(
-        queryset=Person.objects.filter(
-            name__startswith='David',
-        ),
-        widget=forms.TextInput,
-    )
+    # person = forms.ModelChoiceField(
+    #     queryset=Person.objects.filter(
+    #         name__startswith='David',
+    #     ),
+    #     widget=forms.Select,
+    # )
 
     class Meta:
         model = Judge
         fields = [
             'contest',
             'person',
-            'status',
+            # 'status',
             'category',
             'slot',
-            'organization',
+            # 'organization',
         ]
-        # widgets = {
-        #     'panel': forms.Select(
-        #         attrs={
-        #             'class': 'form-control',
-        #         },
-        #     ),
-        #     'rounds': forms.Select(
-        #         attrs={
-        #             'class': 'form-control',
-        #         },
-        #     ),
-        # }
+        extra = 0
+        widgets = {
+            'person': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'category': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': 'readonly',
+                },
+            ),
+            'slot': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': 'readonly',
+                },
+            ),
+            'contest': forms.HiddenInput(
+            ),
+        }
 

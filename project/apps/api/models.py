@@ -562,8 +562,14 @@ class Contest(models.Model):
 
     def build_contest(self):
         """
-            Return sentinels for juding panel.
+            Return sentinels for judging panel.
         """
+
+        self.judges.create(
+            contest=self,
+            category=0,
+            slot=1,
+        )
         r = 1
         while r <= self.rounds:
             self.sessions.create(
@@ -1246,6 +1252,7 @@ class Judge(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        limit_choices_to={'judge__isnull': False},
     )
 
     status = models.IntegerField(
@@ -1304,6 +1311,7 @@ class Judge(models.Model):
     class Meta:
         unique_together = (
             ('contest', 'category', 'slot'),
+            ('contest', 'person',),
         )
         ordering = (
             'contest',
@@ -1614,6 +1622,10 @@ class Person(Common):
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
+
+    @property
+    def is_judge(self):
+        return bool(self.judge)
 
     @property
     def first_name(self):
