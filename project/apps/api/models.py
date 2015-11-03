@@ -1631,6 +1631,14 @@ class Person(Common):
         else:
             return None
 
+    @property
+    def nick_name(self):
+        if self.name:
+            name = HumanName(self.nickname)
+            return name.nickname
+        else:
+            return None
+
 
 class Score(models.Model):
     """
