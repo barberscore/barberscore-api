@@ -1564,6 +1564,19 @@ class Person(Common):
         (2, 'team', "Team"),
     )
 
+    JUDGE = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+        (4, 'music_candidate', 'Music Candidate'),
+        (5, 'presentation_candidate', 'Presentation Candidate'),
+        (6, 'singing_candidate', 'Singing Candidate'),
+        (7, 'music_composite', 'Music Composite'),
+        (8, 'presentation_composite', 'Presentation Composite'),
+        (9, 'singing_composite', 'Singing Composite'),
+    )
+
     kind = models.IntegerField(
         help_text="""
             Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
@@ -1581,8 +1594,15 @@ class Person(Common):
         monitor='status',
     )
 
-    is_judge = models.BooleanField(
-        default=False,
+    judge = models.IntegerField(
+        choices=JUDGE,
+        null=True,
+        blank=True,
+    )
+
+    judge_monitor = MonitorField(
+        help_text="""Certification last updated""",
+        monitor='judge',
     )
 
     class Meta:
