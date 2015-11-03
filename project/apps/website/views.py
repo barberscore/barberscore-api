@@ -37,12 +37,14 @@ from apps.api.models import (
     Performance,
     Score,
     Song,
+    Contestant,
 )
 
 from .forms import (
     LoginForm,
     ContestForm,
     ImpanelForm,
+    ContestantForm,
 )
 
 User = get_user_model()
@@ -194,7 +196,7 @@ def contest_impanel(request, slug):
         )
         if formset.is_valid():
             formset.save()
-            redirect('SOMEWHERELSE')
+            return redirect('website:contest_contestants', contest.slug)
         else:
             for key in formset.errors.keys():
                 for error in formset.errors[key]:
@@ -210,6 +212,73 @@ def contest_impanel(request, slug):
         request,
         'manage/impanel.html',
         {'formset': formset},
+    )
+
+
+@login_required
+def contest_contestants(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    ContestantFormSet = inlineformset_factory(
+        Contest,
+        Contestant,
+        form=ContestantForm,
+        extra=50,
+        can_delete=False,
+    )
+    if request.method == 'POST':
+        formset = ContestantFormSet(
+            request.POST,
+            instance=contest,
+        )
+        if formset.is_valid():
+            formset.save()
+            messages.success(
+                request,
+                """Contestant(s) added.""",
+            )
+            return redirect('website:contest_contestants', contest.slug)
+        else:
+            for key in formset.errors.keys():
+                for error in formset.errors[key]:
+                    messages.error(
+                        request,
+                        error,
+                    )
+    else:
+        formset = ContestantFormSet(
+            instance=contest,
+        )
+    return render(
+        request,
+        'manage/contestants.html',
+        {'formset': formset},
+    )
+
+
+@login_required
+def contest_draw(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    contestants = contest.contestants.order_by('name')
+    if request.method == 'POST':
+        form = ContestForm(request.POST, instance=contest)
+        form.draw(contest)
+        messages.warning(
+            request,
+            """{0} has been drawn!""".format(contest),
+        )
+        return redirect('website:contest_draw', contest.slug)
+    else:
+        form = ContestForm(instance=contest)
+    return render(
+        request,
+        'manage/draw.html',
+        {'form': form, 'contestants': contestants},
     )
 
 
