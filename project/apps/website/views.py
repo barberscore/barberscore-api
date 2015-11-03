@@ -127,9 +127,9 @@ def dashboard(request):
 
 
 @login_required
-def contest(request, contest_slug):
+def contest(request, slug):
     contest = Contest.objects.get(
-        slug=contest_slug,
+        slug=slug,
     )
     return render(
         request,
@@ -139,9 +139,9 @@ def contest(request, contest_slug):
 
 
 @login_required
-def session(request, session_slug):
+def session(request, slug):
     session = Session.objects.get(
-        slug=session_slug,
+        slug=slug,
     )
     performances = session.performances.order_by('position')
     return render(
@@ -152,9 +152,9 @@ def session(request, session_slug):
 
 
 @login_required
-def performance(request, performance_slug):
+def performance(request, slug):
     performance = Performance.objects.get(
-        slug=performance_slug,
+        slug=slug,
     )
     # songs = performance.songs.order_by('order')
     scores = Score.objects.filter(
@@ -170,10 +170,10 @@ def performance(request, performance_slug):
 
 
 @login_required
-def session_oss(request, session_slug):
+def session_oss(request, slug):
     session = get_object_or_404(
         Session,
-        slug=session_slug,
+        slug=slug,
         # status=Session.STATUS.complete,
     )
     performances = session.performances.select_related(
@@ -194,10 +194,10 @@ def session_oss(request, session_slug):
 
 
 @login_required
-def contest_oss(request, contest_slug):
+def contest_oss(request, slug):
     contest = get_object_or_404(
         Contest,
-        slug=contest_slug,
+        slug=slug,
         # status=Contest.STATUS.complete,
     )
     contestants = contest.contestants.select_related(
