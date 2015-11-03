@@ -1,7 +1,17 @@
 from django import forms
 
-class LoginForm(forms.Form):
+from django.forms.models import (
+    modelformset_factory,
+)
 
+from apps.api.models import (
+    Contest,
+    Judge,
+    Person,
+)
+
+
+class LoginForm(forms.Form):
     email = forms.EmailField(
         required=True,
         # label=popover_html(
@@ -20,7 +30,6 @@ class LoginForm(forms.Form):
             'required': 'Please enter your email address.',
         },
     )
-
     password = forms.CharField(
         required=True,
         # label=popover_html(
@@ -38,3 +47,95 @@ class LoginForm(forms.Form):
             'required': 'Please enter your password.',
         },
     )
+
+
+class ContestForm(forms.ModelForm):
+    class Meta:
+        model = Contest
+        fields = [
+            # 'organization',
+            # 'level',
+            # 'kind',
+            # 'goal',
+            # 'year',
+            'panel',
+            'rounds',
+        ]
+        widgets = {
+            # 'organization': forms.Select(
+            #     attrs={
+            #         'class': 'form-control',
+            #     },
+            # ),
+            # 'level': forms.Select(
+            #     attrs={
+            #         'class': 'form-control',
+            #     },
+            # ),
+            # 'kind': forms.Select(
+            #     attrs={
+            #         'class': 'form-control',
+            #     },
+            # ),
+            # 'goal': forms.Select(
+            #     attrs={
+            #         'class': 'form-control',
+            #     },
+            # ),
+            # 'year': forms.Select(
+            #     attrs={
+            #         'class': 'form-control',
+            #     },
+            # ),
+            'panel': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'rounds': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+        }
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        contest = super(ContestForm, self).save(commit=False)
+        contest.build_contest()
+        if commit:
+            contest.save()
+        return contest
+
+
+class ImpanelForm(forms.ModelForm):
+    person = forms.ModelChoiceField(
+        queryset=Person.objects.filter(
+            name__startswith='David',
+        ),
+        widget=forms.TextInput,
+    )
+
+    class Meta:
+        model = Judge
+        fields = [
+            'contest',
+            'person',
+            'status',
+            'category',
+            'slot',
+            'organization',
+        ]
+        # widgets = {
+        #     'panel': forms.Select(
+        #         attrs={
+        #             'class': 'form-control',
+        #         },
+        #     ),
+        #     'rounds': forms.Select(
+        #         attrs={
+        #             'class': 'form-control',
+        #         },
+        #     ),
+        # }
+

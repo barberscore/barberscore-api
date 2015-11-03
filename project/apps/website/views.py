@@ -24,8 +24,12 @@ from django.db.models import (
     Prefetch,
 )
 
+from django.forms import modelformset_factory
+
+
 from apps.api.models import (
     Contest,
+    Judge,
     Session,
     Performance,
     Score,
@@ -34,6 +38,8 @@ from apps.api.models import (
 
 from .forms import (
     LoginForm,
+    ContestForm,
+    ImpanelForm,
 )
 
 User = get_user_model()
@@ -135,6 +141,69 @@ def contest(request, slug):
         request,
         'api/contest.html',
         {'contest': contest},
+    )
+
+
+@login_required
+def contest_build(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    if request.method == 'POST':
+        form = ContestForm(request.POST, instance=contest)
+        if form.is_valid():
+            form.save()
+            return redirect('website:contest_impanel', contest.slug)
+        else:
+            for key in form.errors.keys():
+                for error in form.errors[key]:
+                    messages.error(
+                        request,
+                        error,
+                    )
+    else:
+        form = ContestForm(instance=contest)
+    return render(
+        request,
+        'manage/build.html',
+        {'form': form},
+    )
+
+
+@login_required
+def contest_impanel(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    JudgeFormSet = modelformset_factory(
+        Judge,
+        form=ImpanelForm,
+    )
+    if request.method == 'POST':
+        formset = JudgeFormSet(
+            request.POST,
+            queryset=contest.judges.all(),
+        )
+        if formset.is_valid():
+            formset.save()
+            redirect('SOMEWHERELSE')
+        else:
+            for key in formset.errors.keys():
+                for error in formset.errors[key]:
+                    messages.error(
+                        request,
+                        error,
+                    )
+    else:
+        formset = JudgeFormSet(
+            queryset=contest.judges.all(),
+        )
+    return render(
+        request,
+        'manage/impanel.html',
+        {'formset': formset},
     )
 
 
