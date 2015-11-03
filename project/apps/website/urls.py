@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/build/$', views.contest_build, name='contest_build'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/impanel/$', views.contest_impanel, name='contest_impanel'),
+    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/contestants/$', views.contest_contestants, name='contest_contestants'),
+    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/draw/$', views.contest_draw, name='contest_draw'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/$', views.contest, name='contest'),
 
 
