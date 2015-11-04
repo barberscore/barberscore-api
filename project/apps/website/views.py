@@ -25,7 +25,6 @@ from django.db.models import (
 )
 
 from django.forms import (
-    modelformset_factory,
     inlineformset_factory,
 )
 
@@ -41,10 +40,12 @@ from apps.api.models import (
 )
 
 from .forms import (
+    make_contestant_form,
     LoginForm,
     ContestForm,
-    ImpanelForm,
-    ContestantForm,
+    JudgeForm,
+    # ContestantForm,
+    ScoreForm,
 )
 
 User = get_user_model()
@@ -185,7 +186,7 @@ def contest_impanel(request, slug):
     JudgeFormSet = inlineformset_factory(
         Contest,
         Judge,
-        form=ImpanelForm,
+        form=JudgeForm,
         extra=0,
         can_delete=False,
     )
@@ -221,6 +222,7 @@ def contest_contestants(request, slug):
         Contest,
         slug=slug,
     )
+    ContestantForm = make_contestant_form(contest)
     ContestantFormSet = inlineformset_factory(
         Contest,
         Contestant,
@@ -279,6 +281,70 @@ def contest_draw(request, slug):
         request,
         'manage/draw.html',
         {'form': form, 'contestants': contestants},
+    )
+
+
+@login_required
+def contest_start(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    session = contest.sessions.get(
+        kind=contest.rounds,
+    )
+    performances = session.performances.order_by('position')
+    if request.method == 'POST':
+        form = ContestForm(request.POST, instance=contest)
+        form.start(contest)
+        messages.success(
+            request,
+            """The contest has been started!""".format(contest),
+        )
+        return redirect('website:contest_score', contest.slug)
+    else:
+        form = ContestForm(instance=contest)
+    return render(
+        request,
+        'manage/start.html', {
+            'form': form,
+            'contest': contest,
+            'session': session,
+            'performances': performances,
+        },
+    )
+
+
+@login_required
+def contest_score(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    session = contest.sessions.get(
+        status=Session.STATUS.current,
+    )
+    performance = session.performances.get(
+        status=Performance.STATUS.current,
+    )
+    ScoreFormSet = inlineformset_factory(
+        Song,
+        Score,
+        form=ScoreForm,
+        can_delete=False,
+    )
+    if request.method == 'POST':
+        return redirect('website:contest_score', contest.slug)
+    else:
+        form = ContestForm(instance=contest)
+    return render(
+        request,
+        'manage/start.html', {
+            'form': form,
+            'contest': contest,
+            'session': session,
+            'performance': performance,
+        },
     )
 
 
