@@ -4,6 +4,8 @@ from apps.api.models import (
     Contest,
     Judge,
     Contestant,
+    Score,
+    Group,
 )
 
 
@@ -49,40 +51,10 @@ class ContestForm(forms.ModelForm):
     class Meta:
         model = Contest
         fields = [
-            # 'organization',
-            # 'level',
-            # 'kind',
-            # 'goal',
-            # 'year',
             'panel',
             'rounds',
         ]
         widgets = {
-            # 'organization': forms.Select(
-            #     attrs={
-            #         'class': 'form-control',
-            #     },
-            # ),
-            # 'level': forms.Select(
-            #     attrs={
-            #         'class': 'form-control',
-            #     },
-            # ),
-            # 'kind': forms.Select(
-            #     attrs={
-            #         'class': 'form-control',
-            #     },
-            # ),
-            # 'goal': forms.Select(
-            #     attrs={
-            #         'class': 'form-control',
-            #     },
-            # ),
-            # 'year': forms.Select(
-            #     attrs={
-            #         'class': 'form-control',
-            #     },
-            # ),
             'panel': forms.Select(
                 attrs={
                     'class': 'form-control',
@@ -96,7 +68,6 @@ class ContestForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        # Save the provided password in hashed format
         contest = super(ContestForm, self).save(commit=False)
         contest.build_contest()
         if commit:
@@ -104,28 +75,22 @@ class ContestForm(forms.ModelForm):
         return contest
 
     def draw(self, contest):
-        # Save the provided password in hashed format
         contest.draw_contest()
         return contest
 
+    def start(self, contest):
+        contest.start_contest()
+        return contest
 
-class ImpanelForm(forms.ModelForm):
-    # person = forms.ModelChoiceField(
-    #     queryset=Person.objects.filter(
-    #         name__startswith='David',
-    #     ),
-    #     widget=forms.Select,
-    # )
 
+class JudgeForm(forms.ModelForm):
     class Meta:
         model = Judge
         fields = [
             'contest',
             'person',
-            # 'status',
             'category',
             'slot',
-            # 'organization',
         ]
         extra = 0
         widgets = {
@@ -151,31 +116,48 @@ class ImpanelForm(forms.ModelForm):
         }
 
 
-class ContestantForm(forms.ModelForm):
-    # person = forms.ModelChoiceField(
-    #     queryset=Person.objects.filter(
-    #         name__startswith='David',
-    #     ),
-    #     widget=forms.Select,
-    # )
+def make_contestant_form(contest):
+    class ContestantForm(forms.ModelForm):
+        group = forms.ModelChoiceField(
+            queryset=Group.objects.filter(
+                status=Group.STATUS.active,
+                kind=contest.kind,
+            ),
+        )
 
+        class Meta:
+            model = Contestant
+            fields = [
+                'contest',
+                'group',
+            ]
+            extra = 0
+            widgets = {
+                'group': forms.Select(
+                    attrs={
+                        'class': 'form-control',
+                    },
+                ),
+                'contest': forms.HiddenInput(
+                ),
+            }
+    return ContestantForm
+
+
+class ScoreForm(forms.ModelForm):
     class Meta:
-        model = Contestant
+        model = Score
         fields = [
-            'contest',
-            'group',
-            # 'status',
-            # 'category',
-            # 'slot',
-            # 'organization',
+            'song',
+            'points',
         ]
         extra = 0
         widgets = {
-            'group': forms.Select(
+            'points': forms.TextInput(
                 attrs={
                     'class': 'form-control',
                 },
             ),
-            'contest': forms.HiddenInput(
+            'song': forms.HiddenInput(
             ),
         }

@@ -3,6 +3,18 @@
 
 {% block content %}
   <main class="container">
+  <section>
+    <h2>
+      {{contest}}
+    </h2>
+    <h3>
+      {{session}}
+    </h3>
+    <h4>
+      {{performance}}
+    </h4>
+  </section>
+
     <section>
       <form id='draw' role='form' class='form' action='' method='POST'>
         {% csrf_token %}

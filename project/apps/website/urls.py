@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/impanel/$', views.contest_impanel, name='contest_impanel'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/contestants/$', views.contest_contestants, name='contest_contestants'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/draw/$', views.contest_draw, name='contest_draw'),
+    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/start/$', views.contest_start, name='contest_start'),
+    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/score/$', views.contest_score, name='contest_score'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/$', views.contest, name='contest'),
 
 
