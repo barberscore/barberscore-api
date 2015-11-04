@@ -4,6 +4,10 @@
 {% block content %}
   <main class="container">
     <section>
+<p class='lead'>
+  When you are done adding contestants, you can set the draw by clicking the "Draw" button below.  You will be able to make adjustments up through the official start of the contest.
+</p>
+    <a href='{% url "website:contest_draw" formset.instance.slug %}' class='btn btn-warning'>Draw</a>
 
 <form method="post" action="">
     {% csrf_token %}
