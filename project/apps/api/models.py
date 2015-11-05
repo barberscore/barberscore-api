@@ -2030,6 +2030,7 @@ class Song(models.Model):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -2052,8 +2053,6 @@ class Song(models.Model):
     performance = models.ForeignKey(
         'Performance',
         related_name='songs',
-        null=True,
-        blank=True,
     )
 
     order = models.IntegerField(
@@ -2080,20 +2079,18 @@ class Song(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    # The following need to be protected until released.
-    # Different model?
-
     title = models.CharField(
         max_length=255,
         blank=True,
-        editable=False,
     )
 
     arranger = models.CharField(
         max_length=255,
         blank=True,
-        editable=False,
     )
+
+    # The following need to be protected until released.
+    # Different model?
 
     mus_points = models.IntegerField(
         # help_text="""

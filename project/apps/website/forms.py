@@ -189,3 +189,25 @@ ScoreFormSet = inlineformset_factory(
     extra=0,
     can_delete=False,
 )
+
+
+class SongForm(forms.ModelForm):
+    class Meta:
+        model = Song
+        fields = [
+            'performance',
+            'order',
+            'title',
+        ]
+        extra = 0
+        widgets = {
+            'title': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'performance': forms.HiddenInput(
+            ),
+            'order': forms.HiddenInput(
+            ),
+        }

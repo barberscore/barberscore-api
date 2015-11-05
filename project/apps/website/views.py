@@ -190,12 +190,13 @@ def contest_impanel(request, slug):
             formset.save()
             return redirect('website:contest_contestants', contest.slug)
         else:
-            for key in formset.errors.keys():
-                for error in formset.errors[key]:
-                    messages.error(
-                        request,
-                        error,
-                    )
+            for form in formset:
+                for key in form.errors.keys():
+                    for error in form.errors[key]:
+                        messages.error(
+                            request,
+                            error,
+                        )
     else:
         formset = JudgeFormSet(
             instance=contest,
@@ -234,12 +235,13 @@ def contest_contestants(request, slug):
             )
             return redirect('website:contest_contestants', contest.slug)
         else:
-            for key in formset.errors.keys():
-                for error in formset.errors[key]:
-                    messages.error(
-                        request,
-                        error,
-                    )
+            for form in formset:
+                for key in form.errors.keys():
+                    for error in form.errors[key]:
+                        messages.error(
+                            request,
+                            error,
+                        )
     else:
         formset = ContestantFormSet(
             instance=contest,
