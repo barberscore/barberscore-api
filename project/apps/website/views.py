@@ -31,7 +31,6 @@ from django.forms import (
 
 from apps.api.models import (
     Contest,
-    Judge,
     Session,
     Performance,
     Score,
@@ -43,9 +42,8 @@ from .forms import (
     make_contestant_form,
     LoginForm,
     ContestForm,
-    JudgeForm,
-    # ContestantForm,
     ScoreForm,
+    JudgeFormSet,
 )
 
 User = get_user_model()
@@ -182,13 +180,6 @@ def contest_impanel(request, slug):
     contest = get_object_or_404(
         Contest,
         slug=slug,
-    )
-    JudgeFormSet = inlineformset_factory(
-        Contest,
-        Judge,
-        form=JudgeForm,
-        extra=0,
-        can_delete=False,
     )
     if request.method == 'POST':
         formset = JudgeFormSet(
