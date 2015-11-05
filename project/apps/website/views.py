@@ -337,6 +337,25 @@ def contest_score(request, slug):
             formset2.save()
             # TODO plus change state, run valiations and denormalize.
             return redirect('website:home')
+        else:
+            for form in formset1:
+                for key in form.errors.keys():
+                    for error in form.errors[key]:
+                        messages.error(
+                            request,
+                            error,
+                        )
+            for form in formset2:
+                for key in form.errors.keys():
+                    for error in form.errors[key]:
+                        messages.error(
+                            request,
+                            error,
+                        )
+            formsets = [
+                formset1,
+                formset2,
+            ]
     else:
         formset1 = ScoreFormSet(
             instance=song1,
@@ -346,11 +365,17 @@ def contest_score(request, slug):
             instance=song2,
             prefix='song2',
         )
+        formsets = [
+            formset1,
+            formset2,
+        ]
+
     return render(
         request,
         'manage/score.html', {
-            'formset1': formset1,
-            'formset2': formset2,
+            # 'formset1': formset1,
+            # 'formset2': formset2,
+            'formsets': formsets,
             'contest': contest,
             'session': session,
             'performance': performance,
