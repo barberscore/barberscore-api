@@ -174,10 +174,7 @@ class ScoreForm(forms.ModelForm):
                     'class': 'form-control',
                 },
             ),
-            'judge': forms.Select(
-                attrs={
-                    'class': 'form-control',
-                },
+            'judge': forms.HiddenInput(
             ),
             'status': forms.HiddenInput(
             ),
