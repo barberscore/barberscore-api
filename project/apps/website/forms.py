@@ -1,11 +1,16 @@
 from django import forms
 
+from django.forms import (
+    inlineformset_factory,
+)
+
 from apps.api.models import (
     Contest,
     Judge,
     Contestant,
     Score,
     Group,
+    Song,
 )
 
 
@@ -116,6 +121,15 @@ class JudgeForm(forms.ModelForm):
         }
 
 
+JudgeFormSet = inlineformset_factory(
+    Contest,
+    Judge,
+    form=JudgeForm,
+    extra=0,
+    can_delete=False,
+)
+
+
 def make_contestant_form(contest):
     class ContestantForm(forms.ModelForm):
         group = forms.ModelChoiceField(
@@ -149,7 +163,9 @@ class ScoreForm(forms.ModelForm):
         model = Score
         fields = [
             'song',
+            'judge',
             'points',
+            'status',
         ]
         extra = 0
         widgets = {
@@ -158,6 +174,22 @@ class ScoreForm(forms.ModelForm):
                     'class': 'form-control',
                 },
             ),
+            'judge': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'status': forms.HiddenInput(
+            ),
             'song': forms.HiddenInput(
             ),
         }
+
+ScoreFormSet = inlineformset_factory(
+    Song,
+    Score,
+    form=ScoreForm,
+    extra=0,
+    can_delete=False,
+)
+
