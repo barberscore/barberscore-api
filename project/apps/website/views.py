@@ -42,7 +42,7 @@ from .forms import (
     make_contestant_form,
     LoginForm,
     ContestForm,
-    ScoreForm,
+    ScoreFormSet,
     JudgeFormSet,
 )
 
@@ -318,23 +318,43 @@ def contest_score(request, slug):
     performance = session.performances.get(
         status=Performance.STATUS.current,
     )
-    ScoreFormSet = inlineformset_factory(
-        Song,
-        Score,
-        form=ScoreForm,
-        can_delete=False,
-    )
+    contestant = performance.contestant
+    song1 = performance.songs.get(order=1)
+    song2 = performance.songs.get(order=2)
     if request.method == 'POST':
-        return redirect('website:contest_score', contest.slug)
+        formset1 = ScoreFormSet(
+            request.POST,
+            instance=song1,
+            prefix='song1',
+        )
+        formset2 = ScoreFormSet(
+            request.POST,
+            instance=song2,
+            prefix='song2',
+        )
+        if formset1.is_valid() and formset2.is_valid():
+            formset1.save()
+            formset2.save()
+            # TODO plus change state, run valiations and denormalize.
+            return redirect('website:home')
     else:
-        form = ContestForm(instance=contest)
+        formset1 = ScoreFormSet(
+            instance=song1,
+            prefix='song1',
+        )
+        formset2 = ScoreFormSet(
+            instance=song2,
+            prefix='song2',
+        )
     return render(
         request,
-        'manage/start.html', {
-            'form': form,
+        'manage/score.html', {
+            'formset1': formset1,
+            'formset2': formset2,
             'contest': contest,
             'session': session,
             'performance': performance,
+            'contestant': contestant,
         },
     )
 
