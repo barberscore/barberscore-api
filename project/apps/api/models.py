@@ -1695,8 +1695,6 @@ class Score(models.Model):
     song = models.ForeignKey(
         'Song',
         related_name='scores',
-        null=True,
-        blank=True,
     )
 
     judge = models.ForeignKey(
@@ -1737,6 +1735,16 @@ class Score(models.Model):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def flag(self):
+        self.status = self.STATUS.flagged
+        self.save()
+        return
+
+    def confirm(self):
+        self.status = self.STATUS.passed
+        self.save()
+        return
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2:02d}".format(
@@ -2172,8 +2180,8 @@ class Song(models.Model):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
             self.performance,
-            self.get_order_display(),
-            "Tune",
+            'Song',
+            self.order,
         )
 
         if self.catalog:
