@@ -3,38 +3,88 @@
 
 {% block content %}
   <main class="container">
-  <section>
-    <h2>
-      {{contest}}
-    </h2>
-    <h3>
-      {{session}}
-    </h3>
-    <h4>
-      {{performance}}
-    </h4>
-  </section>
-
-<form method="post" action="">
-    {% csrf_token %}
-    {{formset1.management_form}}
-    {% for form in formset1 %}
-      <div class='form-inline'>
-        {{form}}
-      <br><br>
-      </div>
-    {% endfor %}
-    <hr>
-    {{formset2.management_form}}
-    {% for form in formset2 %}
-      <div class='form-inline'>
-        {{form}}
-      <br><br>
-      </div>
-    {% endfor %}
-    <button type='submit' class='btn btn-success'>Submit</button>
-</form>
-
-
+    <section>
+      <h2>
+        {{contest}}
+      </h2>
+      <h3>
+        {{session}}
+      </h3>
+      <h4>
+        {{performance}}
+      </h4>
+    </section>
+    <section>
+      <form id='score' role='form' class='form' method="POST" action="{% url 'website:contest_score' contest.slug %}">
+        {% csrf_token %}
+        {# <div class='col-md-9'> #}
+          {% for formset in formsets %}
+            {{formset.management_form}}
+          {% endfor %}
+          <table class='table'>
+            <thead>
+              <tr>
+                <th>Judge</th>
+                <th>Song1</th>
+                <th>Song2</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for form1 in formsets.0 %}
+                {% for hidden in form1.hidden_fields %}
+                  {{hidden}}
+                {% endfor %}
+                <tr>
+                  <td>
+                      {{form1.instance.judge}} - {{form1.instance.judge.person.name}}
+                  </td>
+                  <td>
+                    <fieldset class="form-group{% if form1.points.errors %} has-error{% endif %}">
+                      {{form1.points}}
+                    </fieldset>
+                  </td>
+              {% for form2 in formsets.1 %}
+                {% if form2.instance.judge == form1.instance.judge %}
+                {% for hidden in form2.hidden_fields %}
+                  {{hidden}}
+                {% endfor %}
+                  <td>
+                    <fieldset class="form-group{% if form2.points.errors %} has-error{% endif %}">
+                      {{form2.points}}
+                    </fieldset>
+                  </td>
+                  {% endif %}
+              {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% comment %}
+        {# </div> #}
+        {# <div class='col-md-3'> #}
+          {{formset2.management_form}}
+          <table class='table'>
+            <thead>
+              <tr>
+                <th>Song2</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for form in formset2 %}
+                <tr>
+                  <td>
+                    <fieldset class="form-group{% if field.errors %} has-error{% endif %}">
+                      {{form.points}}
+                    </fieldset>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% endcomment %}
+        {# </div> #}
+        <button type='submit' class='btn btn-success'>Submit</button>
+      </form>
+    </section>
   </main>
 {% endblock content %}
