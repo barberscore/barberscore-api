@@ -15,16 +15,26 @@
     </h4>
   </section>
 
-    <section>
-      <form id='draw' role='form' class='form' action='' method='POST'>
-        {% csrf_token %}
-        <fieldset class='form-group'>
-          <p><span class='fa fa-check-square-o'></span>&nbsp;Yes, set the initial draw for the contest.</p>
-        </fieldset>
-        <button class='btn btn-danger' type='submit'>Draw</button>
-        {# <a id='cancel' class="btn btn-default" href="{%url 'website:portfolio' portfolio.slug %}">Cancel</a> #}
-      </form>
+<form method="post" action="">
+    {% csrf_token %}
+    {{formset1.management_form}}
+    {% for form in formset1 %}
+      <div class='form-inline'>
+        {{form}}
+      <br><br>
+      </div>
+    {% endfor %}
+    <hr>
+    {{formset2.management_form}}
+    {% for form in formset2 %}
+      <div class='form-inline'>
+        {{form}}
+      <br><br>
+      </div>
+    {% endfor %}
+    <button type='submit' class='btn btn-success'>Submit</button>
+</form>
 
-    </section>
+
   </main>
 {% endblock content %}
