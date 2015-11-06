@@ -44,6 +44,7 @@ from .forms import (
     ContestForm,
     ScoreFormSet,
     JudgeFormSet,
+    SongForm,
 )
 
 User = get_user_model()
@@ -314,9 +315,12 @@ def contest_score(request, slug):
         Contest,
         slug=slug,
     )
-    session = contest.sessions.get(
-        status=Session.STATUS.current,
-    )
+    try:
+        session = contest.sessions.get(
+            status=Session.STATUS.current,
+        )
+    except Session.DoesNotExist:
+        return redirect('website:contest_confirm', contest.slug)
     performance = session.performances.get(
         status=Performance.STATUS.current,
     )
@@ -324,6 +328,16 @@ def contest_score(request, slug):
     song1 = performance.songs.get(order=1)
     song2 = performance.songs.get(order=2)
     if request.method == 'POST':
+        songform1 = SongForm(
+            request.POST,
+            instance=song1,
+            prefix='sf1',
+        )
+        songform2 = SongForm(
+            request.POST,
+            instance=song2,
+            prefix='sf2',
+        )
         formset1 = ScoreFormSet(
             request.POST,
             instance=song1,
@@ -334,12 +348,42 @@ def contest_score(request, slug):
             instance=song2,
             prefix='song2',
         )
-        if formset1.is_valid() and formset2.is_valid():
-            formset1.save()
-            formset2.save()
+        if all([
+            songform1.is_valid(),
+            songform2.is_valid(),
+            formset1.is_valid(),
+            formset2.is_valid(),
+        ]):
+            songform1.save(),
+            songform2.save(),
+            formset1.save(),
+            formset2.save(),
             # TODO plus change state, run valiations and denormalize.
-            return redirect('website:home')
+            performance.end_performance()
+            try:
+                next_performance = Performance.objects.get(
+                    session=session,
+                    position=performance.position + 1,
+                )
+            except Performance.DoesNotExist:
+                session.end_session()
+                return redirect('website:home')
+            next_performance.status = Performance.STATUS.current
+            next_performance.save()
+            return redirect('website:contest_score', contest.slug)
         else:
+            for key in songform1.errors.keys():
+                for error in songform1.errors[key]:
+                    messages.error(
+                        request,
+                        error,
+                    )
+            for key in songform2.errors.keys():
+                for error in songform2.errors[key]:
+                    messages.error(
+                        request,
+                        error,
+                    )
             for form in formset1:
                 for key in form.errors.keys():
                     for error in form.errors[key]:
@@ -359,6 +403,14 @@ def contest_score(request, slug):
                 formset2,
             ]
     else:
+        songform1 = SongForm(
+            instance=song1,
+            prefix='sf1',
+        )
+        songform2 = SongForm(
+            instance=song2,
+            prefix='sf2',
+        )
         formset1 = ScoreFormSet(
             instance=song1,
             prefix='song1',
@@ -375,13 +427,37 @@ def contest_score(request, slug):
     return render(
         request,
         'manage/score.html', {
-            # 'formset1': formset1,
-            # 'formset2': formset2,
+            'songform1': songform1,
+            'songform2': songform2,
             'formsets': formsets,
             'contest': contest,
             'session': session,
             'performance': performance,
             'contestant': contestant,
+        },
+    )
+
+
+@login_required
+def contest_confirm(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+    )
+    session = contest.sessions.get(
+        status=Session.STATUS.review,
+    )
+    performances = session.performances.order_by('place')
+    songs = [song for song in performances]
+    scores = [score for score in songs]
+    return render(
+        request,
+        'manage/confirm.html', {
+            'contest': contest,
+            'session': session,
+            'performances': performances,
+            'songs': song,
+            'scores': scores,
         },
     )
 

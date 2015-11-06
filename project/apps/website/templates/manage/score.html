@@ -5,14 +5,8 @@
   <main class="container">
     <section>
       <h2>
-        {{contest}}
-      </h2>
-      <h3>
-        {{session}}
-      </h3>
-      <h4>
         {{performance}}
-      </h4>
+      </h2>
     </section>
     <section>
       <form id='score' role='form' class='form' method="POST" action="{% url 'website:contest_score' contest.slug %}">
@@ -21,6 +15,18 @@
           {% for formset in formsets %}
             {{formset.management_form}}
           {% endfor %}
+          {% for hidden in songform1.hidden_fields %}
+            {{hidden}}
+          {% endfor %}
+          <fieldset class="form-group{% if songform1.title.errors %} has-error{% endif %}">
+            Song 1: {{songform1.title}}
+          </fieldset>
+          {% for hidden in songform2.hidden_fields %}
+            {{hidden}}
+          {% endfor %}
+          <fieldset class="form-group{% if songform2.title.errors %} has-error{% endif %}">
+            Song 2:  {{songform2.title}}
+          </fieldset>
           <table class='table'>
             <thead>
               <tr>
