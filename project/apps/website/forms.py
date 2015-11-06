@@ -204,6 +204,7 @@ class SongForm(forms.ModelForm):
             'title': forms.TextInput(
                 attrs={
                     'class': 'form-control',
+                    'placeholder': 'Song Title',
                 },
             ),
             'performance': forms.HiddenInput(
