@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/draw/$', views.contest_draw, name='contest_draw'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/start/$', views.contest_start, name='contest_start'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/score/$', views.contest_score, name='contest_score'),
+    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/confirm/$', views.contest_confirm, name='contest_confirm'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/$', views.contest, name='contest'),
 
 

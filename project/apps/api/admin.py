@@ -802,6 +802,7 @@ class Performance(SuperModelAdmin):
     ]
     list_display = [
         'name',
+        'status',
         'draw',
         'start',
         'total_score',
