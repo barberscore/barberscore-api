@@ -1292,7 +1292,7 @@ class Judge(models.Model):
 
     @property
     def designation(self):
-        return u"{0[0]}-{1:02d}".format(
+        return u"{0[0]}{1:1d}".format(
             self.get_category_display(),
             self.slot,
         )
@@ -1489,6 +1489,16 @@ class Performance(models.Model):
         try:
             return "{0:02d}".format(self.position + 1)
         except TypeError:
+            return None
+
+    def get_next(self):
+        try:
+            obj = self.__class__.objects.get(
+                session=self.session,
+                position=self.position + 1,
+            )
+            return obj
+        except self.DoesNotExist:
             return None
 
     def start_performance(self):
@@ -1841,6 +1851,16 @@ class Session(models.Model):
             self.get_kind_display(),
         )
         super(Session, self).save(*args, **kwargs)
+
+    def get_next(self):
+        try:
+            obj = self.__class__.objects.get(
+                contest=self.contest,
+                kind=self.kind - 1,
+            )
+            return obj
+        except self.DoesNotExist:
+            return None
 
     def build_session(self):
         """
