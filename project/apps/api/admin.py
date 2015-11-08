@@ -955,6 +955,7 @@ class PersonAdmin(admin.ModelAdmin):
         'kind',
         ('start', 'end',),
         'judge',
+        'organization',
         'location',
         'website',
         'facebook',
