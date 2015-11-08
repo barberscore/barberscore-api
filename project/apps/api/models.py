@@ -1260,6 +1260,11 @@ class Judge(models.Model):
         default=STATUS.new,
     )
 
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
     category = models.IntegerField(
         choices=CATEGORY,
         null=True,
