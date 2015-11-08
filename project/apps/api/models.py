@@ -1623,6 +1623,12 @@ class Person(Common):
         monitor='judge',
     )
 
+    organization = models.ForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         ordering = ['name']
 
