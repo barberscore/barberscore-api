@@ -954,6 +954,7 @@ class PersonAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'kind',
         ('start', 'end',),
+        'judge',
         'location',
         'website',
         'facebook',
