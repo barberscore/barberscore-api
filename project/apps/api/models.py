@@ -451,7 +451,7 @@ class Contest(models.Model):
         monitor='history',
     )
 
-    organization = models.ForeignKey(
+    organization = TreeForeignKey(
         'Organization',
         related_name='contests',
     )
@@ -739,7 +739,7 @@ class Contestant(models.Model):
         related_name='contestants',
     )
 
-    organization = models.ForeignKey(
+    organization = TreeForeignKey(
         'Organization',
         # help_text="""
         #     The district this contestant is representing.""",
@@ -995,7 +995,7 @@ class Convention(models.Model):
         choices=YEAR_CHOICES,
     )
 
-    organization = models.ForeignKey(
+    organization = TreeForeignKey(
         'Organization',
         help_text="""
             The district for the convention.  If International, this is 'BHS'.""",
@@ -1277,7 +1277,7 @@ class Panelist(models.Model):
         blank=True,
     )
 
-    organization = models.ForeignKey(
+    organization = TreeForeignKey(
         'Organization',
         related_name='panelists',
         null=True,
@@ -1628,7 +1628,7 @@ class Person(Common):
         monitor='judge',
     )
 
-    organization = models.ForeignKey(
+    organization = TreeForeignKey(
         'Organization',
         null=True,
         blank=True,
