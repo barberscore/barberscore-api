@@ -9,51 +9,51 @@ from .models import (
     Person,
     Contestant,
     Tune,
-    Judge,
+    Panelist,
 )
 
 
-def impanel_judges(contest):
+def impanel_panelists(contest):
     person = Person.objects.filter(
         judge=Person.JUDGE.admin,
     ).order_by('?').first()
-    judge = contest.judges.filter(
-        category=Judge.CATEGORY.admin,
+    panelist = contest.panelists.filter(
+        category=Panelist.CATEGORY.admin,
         person=None,
     ).first()
-    judge.person = person
-    judge.save()
+    panelist.person = person
+    panelist.save()
     persons = Person.objects.filter(
         judge=Person.JUDGE.music,
     ).order_by('?')[:contest.panel]
     for person in persons:
-        judge = contest.judges.filter(
-            category=Judge.CATEGORY.music,
+        panelist = contest.panelists.filter(
+            category=Panelist.CATEGORY.music,
             person=None,
         ).first()
-        judge.person = person
-        judge.save()
+        panelist.person = person
+        panelist.save()
     persons = Person.objects.filter(
         judge=Person.JUDGE.singing,
     ).order_by('?')[:contest.panel]
     for person in persons:
-        judge = contest.judges.filter(
-            category=Judge.CATEGORY.singing,
+        panelist = contest.panelists.filter(
+            category=Panelist.CATEGORY.singing,
             person=None,
         ).first()
-        judge.person = person
-        judge.save()
+        panelist.person = person
+        panelist.save()
     persons = Person.objects.filter(
         judge=Person.JUDGE.presentation,
     ).order_by('?')[:contest.panel]
     for person in persons:
-        judge = contest.judges.filter(
-            category=Judge.CATEGORY.presentation,
+        panelist = contest.panelists.filter(
+            category=Panelist.CATEGORY.presentation,
             person=None,
         ).first()
-        judge.person = person
-        judge.save()
-    return "Judges Impaneled"
+        panelist.person = person
+        panelist.save()
+    return "Panelists Impaneled"
 
 
 def add_contestants(contest, number):

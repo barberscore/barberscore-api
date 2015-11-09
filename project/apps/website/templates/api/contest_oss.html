@@ -127,15 +127,15 @@
       </ul>
     </section>
     <section>
-      <h4>Judges</h4>
+      <h4>Panelists</h4>
       <div class='table-responsive'>
       <table class='table'>
-      {% regroup judges by get_category_display as judges_list %}
+      {% regroup panelists by get_category_display as panelists_list %}
       <tbody>
-      {% for get_category_display in judges_list %}
+      {% for get_category_display in panelists_list %}
       <tr>
-        {% for judge in get_category_display.list %}
-          <td>{{judge.person.name}}, {{judge.designation}}</td>
+        {% for panelist in get_category_display.list %}
+          <td>{{panelist.person.name}}, {{panelist.designation}}</td>
         {% endfor %}
         </tr>
       {% endfor %}
