@@ -540,6 +540,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
+        'convention',
         'organization',
         'level',
         'kind',
@@ -650,6 +651,7 @@ class ContestantAdmin(DjangoObjectActions, admin.ModelAdmin):
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = (
         'name',
     )
