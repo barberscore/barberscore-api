@@ -59,6 +59,7 @@ def impanel_panelists(contest):
 def add_contestants(contest, number):
     groups = Group.objects.filter(
         kind=contest.kind,
+        status=Group.STATUS.active,
     ).order_by('?')[:number]
     for group in groups:
         Contestant.objects.create(
@@ -73,7 +74,7 @@ def score_performance(performance):
     base = randint(70, 90)
     songs = performance.songs.all()
     for song in songs:
-        song.tune = Tune.objects.order_by('?').first()
+        song.title = Tune.objects.order_by('?').first().name
         scores = song.scores.all()
         for score in scores:
             low, high = base, base + 5
