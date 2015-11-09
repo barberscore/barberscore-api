@@ -11,7 +11,7 @@ from apps.api.models import (
     Group,
     Singer,
     Director,
-    Judge,
+    Panelist,
 )
 
 
@@ -37,7 +37,7 @@ class Command(BaseCommand):
         ss = Singer.objects.all()
         for s in ss:
             s.save()
-        js = Judge.objects.all()
+        js = Panelist.objects.all()
         for j in js:
             j.save()
         ds = Director.objects.all()

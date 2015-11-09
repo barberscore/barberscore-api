@@ -565,7 +565,7 @@ class Contest(models.Model):
             Return sentinels for judging panel.
         """
 
-        self.judges.create(
+        self.panelists.create(
             contest=self,
             category=0,
             slot=1,
@@ -580,17 +580,17 @@ class Contest(models.Model):
 
         s = 1
         while s <= self.panel:
-            self.judges.create(
+            self.panelists.create(
                 contest=self,
                 category=1,
                 slot=s,
             )
-            self.judges.create(
+            self.panelists.create(
                 contest=self,
                 category=2,
                 slot=s,
             )
-            self.judges.create(
+            self.panelists.create(
                 contest=self,
                 category=3,
                 slot=s,
@@ -1178,7 +1178,7 @@ class Group(Common):
         )
 
 
-class JudgeQuerySet(QuerySet):
+class PanelistQuerySet(QuerySet):
     def composite(self):
         return self.filter(category__in=[7, 8, 9])
 
@@ -1195,8 +1195,8 @@ class JudgeQuerySet(QuerySet):
         return self.filter(category__in=[0, 1, 2, 3])
 
 
-class Judge(models.Model):
-    """Contest Judge"""
+class Panelist(models.Model):
+    """Contest Panelist"""
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1243,7 +1243,7 @@ class Judge(models.Model):
 
     contest = models.ForeignKey(
         'Contest',
-        related_name='judges',
+        related_name='panelists',
     )
 
     person = models.ForeignKey(
@@ -1279,7 +1279,7 @@ class Judge(models.Model):
 
     organization = models.ForeignKey(
         'Organization',
-        related_name='judges',
+        related_name='panelists',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1289,7 +1289,7 @@ class Judge(models.Model):
         default=False,
     )
 
-    objects = PassThroughManager.for_queryset_class(JudgeQuerySet)()
+    objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1306,12 +1306,12 @@ class Judge(models.Model):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} Judge {1}{2}".format(
+        self.name = u"{0} Panelist {1}{2}".format(
             self.contest,
             self.category,
             self.slot,
         )
-        super(Judge, self).save(*args, **kwargs)
+        super(Panelist, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
@@ -1676,7 +1676,7 @@ class Person(Common):
 class Score(models.Model):
     """
         The Score is never released publicly.  These are the actual
-        Judge's scores from the contest.
+        Panelist's scores from the contest.
     """
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1718,8 +1718,8 @@ class Score(models.Model):
         related_name='scores',
     )
 
-    judge = models.ForeignKey(
-        'Judge',
+    panelist = models.ForeignKey(
+        'Panelist',
         related_name='scores',
     )
 
@@ -1742,17 +1742,17 @@ class Score(models.Model):
 
     class Meta:
         ordering = (
-            'judge',
+            'panelist',
             'song__order',
         )
 
     @property
     def category(self):
-        return self.judge.get_category_display()
+        return self.panelist.get_category_display()
 
     @property
     def is_practice(self):
-        return self.judge.is_practice
+        return self.panelist.is_practice
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1770,8 +1770,8 @@ class Score(models.Model):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2:02d}".format(
             self.song,
-            self.judge.get_category_display(),
-            self.judge.slot,
+            self.panelist.get_category_display(),
+            self.panelist.slot,
         )
         super(Score, self).save(*args, **kwargs)
 
@@ -1891,14 +1891,14 @@ class Session(models.Model):
         for l in ls:
             p1 = l.songs.create(performance=l, order=1)
             p2 = l.songs.create(performance=l, order=2)
-            for j in self.contest.judges.scoring():
+            for j in self.contest.panelists.scoring():
                 p1.scores.create(
                     song=p1,
-                    judge=j,
+                    panelist=j,
                 )
                 p2.scores.create(
                     song=p2,
-                    judge=j,
+                    panelist=j,
                 )
         performance = self.performances.get(position=0)
         performance.start_performance()
@@ -1953,14 +1953,14 @@ class Session(models.Model):
                 p += 1
                 p1 = l.songs.create(performance=l, order=1)
                 p2 = l.songs.create(performance=l, order=2)
-                for j in self.contest.judges.scoring():
+                for j in self.contest.panelists.scoring():
                     p1.scores.create(
                         song=p1,
-                        judge=j,
+                        panelist=j,
                     )
                     p2.scores.create(
                         song=p2,
-                        judge=j,
+                        panelist=j,
                     )
         except self.DoesNotExist:
             pass
@@ -2220,13 +2220,13 @@ class Song(models.Model):
 
         if self.scores.exists():
             self.mus_points = self.scores.filter(
-                judge__category__in=[1, 7]
+                panelist__category__in=[1, 7]
             ).aggregate(mus=models.Sum('points'))['mus']
             self.prs_points = self.scores.filter(
-                judge__category__in=[2, 8]
+                panelist__category__in=[2, 8]
             ).aggregate(prs=models.Sum('points'))['prs']
             self.sng_points = self.scores.filter(
-                judge__category__in=[3, 9]
+                panelist__category__in=[3, 9]
             ).aggregate(sng=models.Sum('points'))['sng']
 
         # Calculate total points.

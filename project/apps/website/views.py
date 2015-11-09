@@ -43,7 +43,7 @@ from .forms import (
     LoginForm,
     ContestForm,
     ScoreFormSet,
-    JudgeFormSet,
+    PanelistFormSet,
     SongForm,
 )
 
@@ -183,7 +183,7 @@ def contest_impanel(request, slug):
         slug=slug,
     )
     if request.method == 'POST':
-        formset = JudgeFormSet(
+        formset = PanelistFormSet(
             request.POST,
             instance=contest,
         )
@@ -199,7 +199,7 @@ def contest_impanel(request, slug):
                             error,
                         )
     else:
-        formset = JudgeFormSet(
+        formset = PanelistFormSet(
             instance=contest,
         )
     return render(
@@ -543,12 +543,12 @@ def contest_oss(request, slug):
         'place',
         # 'performances__session__kind',
     )
-    judges = contest.judges.contest().order_by('category', 'slot',)
+    panelists = contest.panelists.contest().order_by('category', 'slot',)
     winners = contest.winners.all()
     return render(
         request,
         'api/contest_oss.html',
-        {'contest': contest, 'contestants': contestants, 'judges': judges, 'winners': winners},
+        {'contest': contest, 'contestants': contestants, 'panelists': panelists, 'winners': winners},
     )
 
 
@@ -582,10 +582,10 @@ class HelloPDFView(PDFTemplateView):
                 'place',
                 # 'performances__session__kind',
             )
-            judges = contest.judges.contest().order_by('category', 'slot',)
+            panelists = contest.panelists.contest().order_by('category', 'slot',)
             winners = contest.winners.all()
             context["contest"] = contest
             context["contestants"] = contestants
-            context["judges"] = judges
+            context["panelists"] = panelists
             context["winners"] = winners
             return context
