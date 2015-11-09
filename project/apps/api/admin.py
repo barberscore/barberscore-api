@@ -21,7 +21,7 @@ from .models import (
     Person,
     Song,
     Score,
-    Judge,
+    Panelist,
     Singer,
     Director,
     Session,
@@ -213,8 +213,8 @@ class DirectorsInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class JudgesInline(admin.TabularInline):
-    model = Judge
+class PanelistsInline(admin.TabularInline):
+    model = Panelist
     fields = (
         'contest',
         'person',
@@ -291,26 +291,26 @@ class ScoresInline(admin.TabularInline):
     model = Score
     fields = (
         'song',
-        'judge',
+        'panelist',
         'category',
         'points',
         'status',
     )
     ordering = (
-        'judge',
+        'panelist',
     )
     extra = 0
     raw_id_fields = (
-        'judge',
+        'panelist',
     )
     readonly_fields = [
         'category',
-        'judge',
+        'panelist',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
-            'judge',
+            'panelist',
         ]
     }
     can_delete = True
@@ -506,7 +506,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = [
         ContestantsInline,
         SessionsInline,
-        JudgesInline,
+        PanelistsInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -737,8 +737,8 @@ class GroupAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Judge)
-class Judge(admin.ModelAdmin):
+@admin.register(Panelist)
+class Panelist(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
@@ -973,7 +973,7 @@ class PersonAdmin(admin.ModelAdmin):
     # inlines = [
     #     DirectorsInline,
     #     SingersInline,
-    #     JudgesInline,
+    #     PanelistsInline,
     # ]
 
 
@@ -985,7 +985,7 @@ class Score(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'song',
-        'judge',
+        'panelist',
         'points',
     ]
 
@@ -993,7 +993,7 @@ class Score(admin.ModelAdmin):
         'name',
         'status_monitor',
         'song',
-        'judge',
+        'panelist',
     ]
 
     list_display = [
@@ -1011,18 +1011,18 @@ class Score(admin.ModelAdmin):
 
     raw_id_fields = [
         'song',
-        'judge',
+        'panelist',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
             'song',
-            'judge',
+            'panelist',
         ]
     }
 
     ordering = [
-        'judge',
+        'panelist',
         'song',
     ]
 

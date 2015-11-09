@@ -27,17 +27,17 @@
       <table id='performancesTable' class='table'>
         <thead>
           <tr class='vert-middle'>
-            <th>Judge</th>
+            <th>Panelist</th>
             <th>Song 1</th>
             <th>Song 2</th>
           </tr>
         </thead>
         <tbody>
-          {% regroup scores by judge as judges %}
-          {% for judge in judges %}
+          {% regroup scores by panelist as panelists %}
+          {% for panelist in panelists %}
               <tr class='vert-middle'>
-                <td>{{judge.grouper.get_category_display}} 0{{judge.grouper.get_slot_display}} ({{judge.grouper.person.name}})</td>
-                  {% for score in judge.list %}
+                <td>{{panelist.grouper.get_category_display}} 0{{panelist.grouper.get_slot_display}} ({{panelist.grouper.person.name}})</td>
+                  {% for score in panelist.list %}
                 <td>
                     <input>
                 </td>

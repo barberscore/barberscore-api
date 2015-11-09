@@ -15,7 +15,7 @@ from .models import (
     Catalog,
     Score,
     Award,
-    Judge,
+    Panelist,
     Performance,
     Organization,
 )
@@ -252,7 +252,7 @@ class GroupSerializer(serializers.ModelSerializer):
         )
 
 
-class JudgeSerializer(serializers.ModelSerializer):
+class PanelistSerializer(serializers.ModelSerializer):
     scores = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -268,7 +268,7 @@ class JudgeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Judge
+        model = Panelist
         fields = (
             'id',
             # 'url',
@@ -459,7 +459,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    judge = serializers.SlugRelatedField(
+    panelist = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -472,7 +472,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'song',
-            'judge',
+            'panelist',
             'points',
             'status',
             'category',
