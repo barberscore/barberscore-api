@@ -139,13 +139,15 @@ def dashboard(request):
 
 @login_required
 def contest(request, slug):
-    contest = Contest.objects.get(
+    contest = get_object_or_404(
+        Contest,
         slug=slug,
     )
+    sessions = contest.sessions.all()
     return render(
         request,
-        'api/contest.html',
-        {'contest': contest},
+        'manage/contest.html',
+        {'contest': contest, 'sessions': sessions},
     )
 
 
@@ -156,7 +158,10 @@ def contest_build(request, slug):
         slug=slug,
     )
     if request.method == 'POST':
-        form = ContestForm(request.POST, instance=contest)
+        form = ContestForm(
+            request.POST,
+            instance=contest,
+        )
         if form.is_valid():
             form.save()
             return redirect('website:contest_impanel', contest.slug)
@@ -168,10 +173,12 @@ def contest_build(request, slug):
                         error,
                     )
     else:
-        form = ContestForm(instance=contest)
+        form = ContestForm(
+            instance=contest,
+        )
     return render(
         request,
-        'manage/build.html',
+        'manage/contest_build.html',
         {'form': form},
     )
 
@@ -189,7 +196,7 @@ def contest_impanel(request, slug):
         )
         if formset.is_valid():
             formset.save()
-            return redirect('website:contest_contestants', contest.slug)
+            return redirect('website:contest_fill', contest.slug)
         else:
             for form in formset:
                 for key in form.errors.keys():
@@ -204,13 +211,13 @@ def contest_impanel(request, slug):
         )
     return render(
         request,
-        'manage/impanel.html',
+        'manage/contest_impanel.html',
         {'formset': formset},
     )
 
 
 @login_required
-def contest_contestants(request, slug):
+def contest_fill(request, slug):
     contest = get_object_or_404(
         Contest,
         slug=slug,
@@ -234,7 +241,7 @@ def contest_contestants(request, slug):
                 request,
                 """Contestant(s) added.""",
             )
-            return redirect('website:contest_contestants', contest.slug)
+            return redirect('website:contest_fill', contest.slug)
         else:
             for form in formset:
                 for key in form.errors.keys():
@@ -249,32 +256,8 @@ def contest_contestants(request, slug):
         )
     return render(
         request,
-        'manage/contestants.html',
+        'manage/contest_fill.html',
         {'formset': formset},
-    )
-
-
-@login_required
-def contest_draw(request, slug):
-    contest = get_object_or_404(
-        Contest,
-        slug=slug,
-    )
-    contestants = contest.contestants.order_by('name')
-    if request.method == 'POST':
-        form = ContestForm(request.POST, instance=contest)
-        form.draw(contest)
-        messages.warning(
-            request,
-            """{0} has been drawn!""".format(contest),
-        )
-        return redirect('website:contest_draw', contest.slug)
-    else:
-        form = ContestForm(instance=contest)
-    return render(
-        request,
-        'manage/draw.html',
-        {'form': form, 'contestants': contestants},
     )
 
 
@@ -284,43 +267,83 @@ def contest_start(request, slug):
         Contest,
         slug=slug,
     )
-    session = contest.sessions.get(
-        kind=contest.rounds,
-    )
-    performances = session.performances.order_by('position')
-    if request.method == 'POST':
-        form = ContestForm(request.POST, instance=contest)
-        form.start(contest)
-        messages.success(
-            request,
-            """The contest has been started!""".format(contest),
-        )
-        return redirect('website:contest_score', contest.slug)
-    else:
-        form = ContestForm(instance=contest)
+    # session = contest.sessions.get(
+    #     kind=contest.rounds,
+    # )
+    # performances = session.performances.order_by('position')
+    # if request.method == 'POST':
+    #     form = ContestForm(request.POST, instance=contest)
+    #     form.start(contest)
+    #     messages.success(
+    #         request,
+    #         """The contest has been started!""".format(contest),
+    #     )
+    #     return redirect('website:session_score', session.slug)
+    # else:
+    #     form = ContestForm(instance=contest)
     return render(
         request,
-        'manage/start.html', {
-            'form': form,
+        'manage/contest_start.html', {
             'contest': contest,
-            'session': session,
-            'performances': performances,
         },
     )
 
 
 @login_required
-def contest_score(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def session_draw(request, slug):
+    session = get_object_or_404(
+        Session,
         slug=slug,
     )
-    try:
-        session = contest.sessions.get(
-            status=Session.STATUS.current,
-        )
-    except Session.DoesNotExist:
-        return redirect('website:contest_confirm', contest.slug)
+    # contestants = contest.contestants.order_by('name')
+    # if request.method == 'POST':
+    #     form = ContestForm(request.POST, instance=contest)
+    #     form.draw(contest)
+    #     messages.warning(
+    #         request,
+    #         """{0} has been drawn!""".format(contest),
+    #     )
+    #     return redirect('website:contest_start', contest.slug)
+    # else:
+    #     form = ContestForm(instance=contest)
+    return render(
+        request,
+        'manage/session_draw.html',
+        {'session': session},
+    )
+
+
+@login_required
+def session_start(request, slug):
+    session = get_object_or_404(
+        Session,
+        slug=slug,
+    )
+    # performances = session.performances.order_by('position')
+    # if request.method == 'POST':
+    #     form = ContestForm(request.POST, instance=contest)
+    #     form.start(contest)
+    #     messages.success(
+    #         request,
+    #         """The contest has been started!""".format(contest),
+    #     )
+    #     return redirect('website:session_score', session.slug)
+    # else:
+    #     form = ContestForm(instance=contest)
+    return render(
+        request,
+        'manage/session_start.html', {
+            'session': session,
+        },
+    )
+
+
+@login_required
+def performance_score(request, slug):
+    session = get_object_or_404(
+        Session,
+        slug=slug,
+    )
     performance = session.performances.get(
         status=Performance.STATUS.current,
     )
@@ -439,57 +462,22 @@ def contest_score(request, slug):
 
 
 @login_required
-def contest_confirm(request, slug):
-    contest = get_object_or_404(
-        Contest,
-        slug=slug,
-    )
-    session = contest.sessions.get(
-        status=Session.STATUS.review,
-    )
-    performances = session.performances.order_by('place')
-    songs = [song for song in performances]
-    scores = [score for score in songs]
+def session_end(request, slug):
+    session = Session.objects.get(slug=slug)
     return render(
         request,
-        'manage/confirm.html', {
-            'contest': contest,
-            'session': session,
-            'performances': performances,
-            'songs': song,
-            'scores': scores,
-        },
+        'manage/session_end.html',
+        {'session': session},
     )
 
 
 @login_required
-def session(request, slug):
-    session = Session.objects.get(
-        slug=slug,
-    )
-    performances = session.performances.order_by('position')
+def contest_end(request, slug):
+    contest = Contest.objects.get(slug=slug)
     return render(
         request,
-        'api/session.html',
-        {'session': session, 'performances': performances},
-    )
-
-
-@login_required
-def performance(request, slug):
-    performance = Performance.objects.get(
-        slug=slug,
-    )
-    # songs = performance.songs.order_by('order')
-    scores = Score.objects.filter(
-        song__performance=performance,
-    ).order_by('judge', 'song__order')
-    return render(
-        request,
-        'api/performance.html', {
-            'performance': performance,
-            'scores': scores,
-        },
+        'manage/conetst_end.html',
+        {'contest': contest},
     )
 
 
