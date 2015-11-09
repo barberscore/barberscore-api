@@ -24,6 +24,12 @@ from django.core.validators import (
     # MinValueValidator,
 )
 
+from django_fsm import (
+    transition,
+    # FSMField,
+    FSMIntegerField,
+)
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
@@ -362,6 +368,22 @@ class Catalog(models.Model):
 
 class Contest(models.Model):
 
+    NEW = 0
+    STRUCTURED = 10
+    READY = 15
+    CURRENT = 20
+    REVIEW = 25
+    COMPLETE = 30
+
+    STATE_CHOICES = (
+        (NEW, 'New',),
+        (STRUCTURED, 'Structured',),
+        (READY, 'Ready',),
+        (CURRENT, 'Current',),
+        (REVIEW, 'Review',),
+        (COMPLETE, 'Complete',),
+    )
+
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'structured', 'Structured',),
@@ -429,6 +451,11 @@ class Contest(models.Model):
         always_update=True,
         unique=True,
         max_length=255,
+    )
+
+    state = FSMIntegerField(
+        default=STATUS.new,
+        choices=STATUS,
     )
 
     status = models.IntegerField(
@@ -560,6 +587,7 @@ class Contest(models.Model):
         )
         super(Contest, self).save(*args, **kwargs)
 
+    @transition(field=state, source=STATUS.new, target=STATUS.structured,)
     def build_contest(self):
         """
             Return sentinels for judging panel.
@@ -596,8 +624,8 @@ class Contest(models.Model):
                 slot=s,
             )
             s += 1
-        self.status = self.STATUS.structured
-        self.save()
+        # self.status = self.STATUS.structured
+        # self.save()
 
     def draw_contest(self):
         cs = self.contestants.order_by('?')

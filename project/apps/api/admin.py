@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
 from mptt.admin import MPTTModelAdmin
+from fsm_admin.mixins import FSMTransitionMixin
 
 from django_object_actions import (
     DjangoObjectActions,
@@ -471,36 +472,40 @@ class CatalogAdmin(admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
-    @takes_instance_or_queryset
-    def build_contest(self, request, queryset):
-        for obj in queryset:
-            obj.build_contest()
-    build_contest.label = 'Build Contest'
+class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    # class ContestAdmin(DjangoObjectActions, admin.MoadelAdmin):
+    # @takes_instance_or_queryset
+    # def build_contest(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.build_contest()
+    # build_contest.label = 'Build Contest'
 
-    @takes_instance_or_queryset
-    def draw_contest(self, request, queryset):
-        for obj in queryset:
-            obj.draw_contest()
-    draw_contest.label = 'Draw Contest'
+    # @takes_instance_or_queryset
+    # def draw_contest(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.draw_contest()
+    # draw_contest.label = 'Draw Contest'
 
-    @takes_instance_or_queryset
-    def start_contest(self, request, queryset):
-        for obj in queryset:
-            obj.start_contest()
-    start_contest.label = 'Start Contest'
+    # @takes_instance_or_queryset
+    # def start_contest(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.start_contest()
+    # start_contest.label = 'Start Contest'
 
-    @takes_instance_or_queryset
-    def end_contest(self, request, queryset):
-        for obj in queryset:
-            obj.end_contest()
-    end_contest.label = 'End Contest'
+    # @takes_instance_or_queryset
+    # def end_contest(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.end_contest()
+    # end_contest.label = 'End Contest'
 
-    objectactions = [
-        'build_contest',
-        'draw_contest',
-        'start_contest',
-        'end_contest',
+    # objectactions = [
+    #     'build_contest',
+    #     'draw_contest',
+    #     'start_contest',
+    #     'end_contest',
+    # ]
+    fsm_field = [
+        'state',
     ]
 
     inlines = [
@@ -538,6 +543,7 @@ class ContestAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     fields = (
         'name',
+        'state',
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
         'convention',
