@@ -94,3 +94,28 @@ def validate_trimmed(value):
             code='invalid',
         )
 
+
+def is_prepped(contest):
+    return all([
+        contest.organization,
+        contest.level,
+        contest.kind,
+        contest.goal,
+        contest.year,
+        contest.panel,
+        contest.rounds,
+    ])
+
+
+def is_impaneled(contest):
+    for panelist in contest.panelists.contest():
+        if not panelist.person:
+            return False
+    return True
+
+
+def is_allocated(contest):
+    for session in contest.sessions.all():
+        if not session.slots:
+            return False
+    return True
