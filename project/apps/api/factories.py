@@ -21,7 +21,10 @@ def impanel_panelists(contest):
         category=Panelist.CATEGORY.admin,
         person=None,
     ).first()
-    panelist.person = person
+    try:
+        panelist.person = person
+    except AttributeError:
+        return "All spots filled"
     panelist.save()
     persons = Person.objects.filter(
         judge=Person.JUDGE.music,
@@ -57,8 +60,12 @@ def impanel_panelists(contest):
 
 
 def add_contestants(contest, number):
+    if contest.kind == 2:
+        kind = Group.KIND.chorus
+    else:
+        kind = Group.KIND.quartet
     groups = Group.objects.filter(
-        kind=contest.kind,
+        kind=kind,
         status=Group.STATUS.active,
     ).order_by('?')[:number]
     for group in groups:
