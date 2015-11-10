@@ -453,12 +453,7 @@ class Contest(models.Model):
         max_length=255,
     )
 
-    state = FSMIntegerField(
-        default=STATUS.new,
-        choices=STATUS,
-    )
-
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -587,7 +582,7 @@ class Contest(models.Model):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    @transition(field=state, source=STATUS.new, target=STATUS.structured,)
+    @transition(field=status, source=STATUS.new, target=STATUS.structured,)
     def build_contest(self):
         """
             Return sentinels for judging panel.
@@ -747,7 +742,7 @@ class Contestant(models.Model):
         max_length=255,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1406,7 +1401,7 @@ class Performance(models.Model):
         max_length=255,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1731,7 +1726,7 @@ class Score(models.Model):
         max_length=255,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1838,7 +1833,7 @@ class Session(models.Model):
         max_length=255,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -2099,7 +2094,7 @@ class Song(models.Model):
         max_length=255,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
