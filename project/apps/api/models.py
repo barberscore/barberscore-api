@@ -621,7 +621,9 @@ class Contest(models.Model):
         # Seed contestants
         marker = []
         i = 1
-        for contestant in self.contestants.order_by('-prelim'):
+        for contestant in self.contestants.filter(
+            status=self.contestants.model.STATUS.accepted,
+        ).order_by('-prelim'):
             try:
                 match = contestant.prelim == marker[0].prelim
             except IndexError:
@@ -640,7 +642,9 @@ class Contest(models.Model):
                 contestant.seed = i
                 contestant.save()
                 marker = [contestant]
-        # Start substate?  TODO
+        for contestant in self.contestants.filter(status=self.contestants.model.STATUS.accepted):
+            contestant.compete()
+            contestant.save()
         session = self.sessions.get(kind=self.rounds)
         session.draw()
         return "{0} Ready".format(self)
@@ -718,9 +722,13 @@ class Contestant(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'ready', 'Ready',),
-        (20, 'current', 'Current',),
-        (30, 'complete', 'Complete',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'accepted', 'Accepted',),
+        (30, 'declined', 'Declined',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'competing', 'Competing',),
+        (60, 'finished', 'Finished',),
+        (90, 'complete', 'Complete',),
     )
 
     id = models.UUIDField(
@@ -877,8 +885,76 @@ class Contestant(models.Model):
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
 
+    @property
+    def delta_score(self):
+        try:
+            return self.total_score - self.prelim
+        except TypeError:
+            return None
+
+    @property
+    def delta_place(self):
+        try:
+            return self.seed - self.place
+        except TypeError:
+            return None
+
+    @transition(field=status, source=STATUS.new, target=STATUS.qualified)
+    def qualify(self):
+        # Send notice?
+        return "{0} Qualified".format(self)
+
+    @transition(field=status, source=STATUS.qualified, target=STATUS.accepted)
+    def accept(self):
+        # Send notice?
+        return "{0} Accepted".format(self)
+
+    @transition(field=status, source=STATUS.declined, target=STATUS.accepted)
+    def reaccept(self):
+        # Send notice?
+        return "{0} Reaccepted".format(self)
+
+    @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
+    def decline(self):
+        # Send notice?
+        return "{0} Declined".format(self)
+
+    @transition(field=status, source=STATUS.accepted, target=STATUS.competing)
+    def compete(self):
+        # Send notice?
+        return "{0} Competing".format(self)
+
+    @transition(field=status, source=STATUS.competing, target=STATUS.dropped)
+    def drop(self):
+        # Send notice?
+        return "{0} Dropped".format(self)
+
+    @transition(field=status, source=STATUS.competing, target=STATUS.finished)
+    def finish(self):
+        # Send notice?
+        return "{0} Finished".format(self)
+
+    @transition(field=status, source=STATUS.finished, target=STATUS.complete)
+    def complete(self):
+        # Send notice?
+        return "{0} Complete".format(self)
+
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def clean(self):
+        if self.singers.count() > 4:
+            raise ValidationError('There can not be more than four persons in a quartet.')
+
+    def denorm(self):
+        ps = self.performances.all()
+        for p in ps:
+            songs = p.songs.all()
+            for song in songs:
+                song.save()
+            p.save()
+        self.save()
+        return "De-normalized record"
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
@@ -920,24 +996,6 @@ class Contestant(models.Model):
                 self.sng_score = None
         super(Contestant, self).save(*args, **kwargs)
 
-    @property
-    def delta_score(self):
-        try:
-            return self.total_score - self.prelim
-        except TypeError:
-            return None
-
-    @property
-    def delta_place(self):
-        try:
-            return self.seed - self.place
-        except TypeError:
-            return None
-
-    # @staticmethod
-    # def autocomplete_search_fields():
-    #     return ("name__icontains",)
-
     class Meta:
         ordering = (
             '-contest__year',
@@ -946,20 +1004,6 @@ class Contestant(models.Model):
         unique_together = (
             ('group', 'contest',),
         )
-
-    def clean(self):
-        if self.singers.count() > 4:
-            raise ValidationError('There can not be more than four persons in a quartet.')
-
-    def denorm(self):
-        ps = self.performances.all()
-        for p in ps:
-            songs = p.songs.all()
-            for song in songs:
-                song.save()
-            p.save()
-        self.save()
-        return "De-normalized record"
 
 
 class Convention(models.Model):

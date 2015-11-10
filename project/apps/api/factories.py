@@ -69,11 +69,13 @@ def add_contestants(contest, number):
         status=Group.STATUS.active,
     ).order_by('?')[:number]
     for group in groups:
-        Contestant.objects.create(
+        contestant = Contestant.objects.create(
             contest=contest,
             group=group,
-            status=Contestant.STATUS.ready,
         )
+        contestant.qualify()
+        contestant.accept()
+        contestant.save()
     return "Contestants Added"
 
 
