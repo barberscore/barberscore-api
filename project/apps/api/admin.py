@@ -505,7 +505,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     #     'end_contest',
     # ]
     fsm_field = [
-        'state',
+        'status',
     ]
 
     inlines = [
@@ -543,7 +543,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     fields = (
         'name',
-        'state',
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
         'convention',

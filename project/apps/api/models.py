@@ -68,6 +68,8 @@ from nameparser import HumanName
 from .validators import (
     validate_trimmed,
     dixon,
+    is_prepped,
+    is_impaneled,
 )
 
 
@@ -368,26 +370,11 @@ class Catalog(models.Model):
 
 class Contest(models.Model):
 
-    NEW = 0
-    STRUCTURED = 10
-    READY = 15
-    CURRENT = 20
-    REVIEW = 25
-    COMPLETE = 30
-
-    STATE_CHOICES = (
-        (NEW, 'New',),
-        (STRUCTURED, 'Structured',),
-        (READY, 'Ready',),
-        (CURRENT, 'Current',),
-        (REVIEW, 'Review',),
-        (COMPLETE, 'Complete',),
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'structured', 'Structured',),
-        (15, 'ready', 'Ready',),
+        (12, 'impaneled', 'Impaneled',),
+        (15, 'allocated', 'Allocated',),
         (20, 'current', 'Current',),
         (25, 'review', 'Review',),
         (30, 'complete', 'Complete',),
@@ -582,17 +569,19 @@ class Contest(models.Model):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.structured,)
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.structured,
+        conditions=[
+            is_prepped,
+        ]
+    )
     def build_contest(self):
         """
-            Return sentinels for judging panel.
+            Structure the contest.
         """
-
-        self.panelists.create(
-            contest=self,
-            category=0,
-            slot=1,
-        )
+        # Add Sessions
         r = 1
         while r <= self.rounds:
             self.sessions.create(
@@ -601,6 +590,14 @@ class Contest(models.Model):
             )
             r += 1
 
+        # Create an adminstrator sentinel
+        self.panelists.create(
+            contest=self,
+            category=0,
+            slot=1,
+        )
+
+        # Create sentinels for the panel.
         s = 1
         while s <= self.panel:
             self.panelists.create(
@@ -619,8 +616,29 @@ class Contest(models.Model):
                 slot=s,
             )
             s += 1
-        # self.status = self.STATUS.structured
-        # self.save()
+        return "{0} structured".format(self)
+
+    @transition(
+        field=status,
+        source=STATUS.structured,
+        target=STATUS.impaneled,
+        conditions=[
+            is_impaneled,
+        ]
+    )
+    def impanel_contest(self):
+        return "{0} impaneled".format(self)
+
+    @transition(
+        field=status,
+        source=STATUS.impaneled,
+        target=STATUS.allocated,
+        conditions=[
+            is_allocated,
+        ]
+    )
+    def allocate_contest(self):
+        return "{0} allocated".format(self)
 
     def draw_contest(self):
         cs = self.contestants.order_by('?')
