@@ -70,6 +70,8 @@ from .validators import (
     dixon,
     is_prepped,
     is_impaneled,
+    is_scheduled,
+    has_contestants,
 )
 
 
@@ -373,10 +375,9 @@ class Contest(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'structured', 'Structured',),
-        (12, 'impaneled', 'Impaneled',),
-        (15, 'allocated', 'Allocated',),
-        (20, 'current', 'Current',),
-        (25, 'review', 'Review',),
+        (15, 'ready', 'Ready',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
         (30, 'complete', 'Complete',),
     )
 
@@ -569,14 +570,7 @@ class Contest(models.Model):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.structured,
-        conditions=[
-            is_prepped,
-        ]
-    )
+    @transition(field=status, source=STATUS.new, target=STATUS.structured, conditions=[is_prepped])
     def build_contest(self):
         """
             Structure the contest.
@@ -618,57 +612,72 @@ class Contest(models.Model):
             s += 1
         return "{0} structured".format(self)
 
-    @transition(
-        field=status,
-        source=STATUS.structured,
-        target=STATUS.impaneled,
-        conditions=[
-            is_impaneled,
-        ]
-    )
-    def impanel_contest(self):
-        return "{0} impaneled".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.impaneled,
-        target=STATUS.allocated,
-        conditions=[
-            is_allocated,
-        ]
-    )
-    def allocate_contest(self):
-        return "{0} allocated".format(self)
-
-    def draw_contest(self):
-        cs = self.contestants.order_by('?')
+    @transition(field=status, source=STATUS.structured, target=STATUS.ready, conditions=[
+        is_scheduled,
+        is_impaneled,
+        has_contestants,
+    ])
+    def ready(self):
+        # Seed contestants
+        marker = []
+        i = 1
+        for contestant in self.contestants.order_by('-prelim'):
+            try:
+                match = contestant.prelim == marker[0].prelim
+            except IndexError:
+                contestant.seed = i
+                contestant.save()
+                marker.append(contestant)
+                continue
+            if match:
+                contestant.seed = i
+                i += len(marker)
+                contestant.save()
+                marker.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.seed = i
+                contestant.save()
+                marker = [contestant]
+        # Start substate?  TODO
         session = self.sessions.get(kind=self.rounds)
-        p = 0
-        for c in cs:
-            session.performances.create(
-                contestant=c,
-                position=p,
-                start=session.start,
-            )
-            p += 1
-        self.status = self.STATUS.ready
-        self.save()
+        session.draw()
+        return "{0} Ready".format(self)
 
-    def start_contest(self):
-        # Start first session.
-        session = self.sessions.get(kind=self.rounds)
-        session.start_session()
-        self.status = self.STATUS.current
-        contestants = self.contestants.all()
-        for contestant in contestants:
-            contestant.status = contestant.STATUS.current
-        self.save()
-        return "Contest Started"
+    @transition(field=status, source=STATUS.ready, target=STATUS.started)
+    # Check everything is ready
+    def start(self):
+        # some other sub-logic?
+        return "{0} Started".format(self)
 
-    def end_contest(self):
+    @transition(field=status, source=STATUS.started, target=STATUS.finished)
+    # Check everything is done.
+    def finish(self):
+        # Denormalize
+        ns = Song.objects.filter(
+            performance__session__contest=self,
+        )
+        for n in ns:
+            n.save()
+        ps = Performance.objects.filter(
+            session__contest=self,
+        )
+        for p in ps:
+            p.save()
+        ss = Session.objects.filter(
+            contest=self,
+        )
+        for s in ss:
+            s.save()
+        ts = Contestant.objects.filter(
+            contest=self,
+        )
+        for t in ts:
+            t.save()
+        # Rank results
         cursor = []
         i = 1
-        # TODO rescore
         for contestant in self.contestants.order_by('-total_points'):
             try:
                 match = contestant.total_points == cursor[0].total_points
@@ -696,41 +705,13 @@ class Contest(models.Model):
                 ),
                 contest=self,
             )
-        self.status = self.STATUS.review
-        self.save()
-
         # TODO Confer awards
-        return "Contest Ended"
+        return "{0} Ready for Review".format(self)
 
-    def confirm_contest(self):
-        # Validation logic
-        self.status = self.STATUS.complete
-        self.save()
-        return "Contest Confirmed"
-
-    def seed(self):
-        marker = []
-        i = 1
-        for contestant in self.contestants.order_by('-prelim'):
-            try:
-                match = contestant.prelim == marker[0].prelim
-            except IndexError:
-                contestant.seed = i
-                contestant.save()
-                marker.append(contestant)
-                continue
-            if match:
-                contestant.seed = i
-                i += len(marker)
-                contestant.save()
-                marker.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.seed = i
-                contestant.save()
-                marker = [contestant]
-        return
+    @transition(field=status, source=STATUS.finished, target=STATUS.complete)
+    def finalize(self):
+        # Review logic
+        return "{0} Ready".format(self)
 
 
 class Contestant(models.Model):
@@ -2008,6 +1989,19 @@ class Session(models.Model):
         self.status = self.STATUS.complete
         self.save()
         return 'Session Confirmed'
+    # def draw_contest(self):
+    #     cs = self.contestants.order_by('?')
+    #     session = self.sessions.get(kind=self.rounds)
+    #     p = 0
+    #     for c in cs:
+    #         session.performances.create(
+    #             contestant=c,
+    #             position=p,
+    #             start=session.start,
+    #         )
+    #         p += 1
+    #     self.status = self.STATUS.ready
+    #     self.save()
 
 
 class Singer(models.Model):
