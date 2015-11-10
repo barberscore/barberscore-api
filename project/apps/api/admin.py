@@ -6,10 +6,10 @@ from django.core.urlresolvers import reverse
 from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
 
-from django_object_actions import (
-    DjangoObjectActions,
-    takes_instance_or_queryset,
-)
+# from django_object_actions import (
+#     DjangoObjectActions,
+#     takes_instance_or_queryset,
+# )
 
 from .models import (
     Arranger,
@@ -574,18 +574,18 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Contestant)
-class ContestantAdmin(DjangoObjectActions, admin.ModelAdmin):
-    @takes_instance_or_queryset
-    def update_contestants(self, request, queryset):
-        for obj in queryset:
-            obj.denorm()
-    update_contestants.label = 'Update Contestants'
+class ContestantAdmin(admin.ModelAdmin):
+    # @takes_instance_or_queryset
+    # def update_contestants(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.denorm()
+    # update_contestants.label = 'Update Contestants'
 
     change_list_template = "admin/change_list_filter_sidebar.html"
 
-    objectactions = [
-        'update_contestants',
-    ]
+    # objectactions = [
+    #     'update_contestants',
+    # ]
 
     inlines = [
         SingersInline,
@@ -1036,16 +1036,16 @@ class Score(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class Session(DjangoObjectActions, admin.ModelAdmin):
-    @takes_instance_or_queryset
-    def end_session(self, request, queryset):
-        for obj in queryset:
-            obj.end_session()
-    end_session.label = 'End Session'
+class Session(admin.ModelAdmin):
+    # @takes_instance_or_queryset
+    # def end_session(self, request, queryset):
+    #     for obj in queryset:
+    #         obj.end_session()
+    # end_session.label = 'End Session'
 
-    objectactions = [
-        'end_session',
-    ]
+    # objectactions = [
+    #     'end_session',
+    # ]
 
     save_on_top = True
     change_list_template = "admin/change_list_filter_sidebar.html"
