@@ -573,18 +573,12 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Contestant)
-class ContestantAdmin(admin.ModelAdmin):
-    # @takes_instance_or_queryset
-    # def update_contestants(self, request, queryset):
-    #     for obj in queryset:
-    #         obj.denorm()
-    # update_contestants.label = 'Update Contestants'
+class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
-
-    # objectactions = [
-    #     'update_contestants',
-    # ]
 
     inlines = [
         SingersInline,
