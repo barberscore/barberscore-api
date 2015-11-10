@@ -25,3 +25,6 @@ django-mptt==0.7.4
 django-easy-pdf==0.1.0
 xhtml2pdf==0.0.6
 reportlab==2.7
+django-fsm==2.3.0
+django-fsm-admin==1.2.2
+django-fsm-log==1.2.1
