@@ -14,14 +14,6 @@ from apps.api.models import (
 
 class Command(BaseCommand):
     help = "Merge selected groups by name"
-    option_list = BaseCommand.option_list + (
-        make_option(
-            "-o",
-            "--old",
-            dest="old",
-            help="specify old name",
-        ),
-    )
     option_list = option_list + (
         make_option(
             "-n",

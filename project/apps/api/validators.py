@@ -114,8 +114,14 @@ def is_impaneled(contest):
     return True
 
 
-def is_allocated(contest):
+def is_scheduled(contest):
     for session in contest.sessions.all():
         if not session.slots:
             return False
+        if not session.start:
+            return False
     return True
+
+
+def has_contestants(contest):
+    return contest.contestants.exists()
