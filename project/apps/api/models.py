@@ -1005,7 +1005,7 @@ class Convention(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (20, 'current', 'Current',),
+        (20, 'started', 'Started',),
         (30, 'final', 'Final',),
     )
 
@@ -1422,8 +1422,8 @@ class Performance(models.Model):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (15, 'prepped', 'Prepped',),
-        (20, 'current', 'Current',),
-        (25, 'review', 'Review',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
     )
 
@@ -1575,16 +1575,16 @@ class Performance(models.Model):
         # p2.build()
         return
 
-    @transition(field=status, source=STATUS.built, target=STATUS.current)
+    @transition(field=status, source=STATUS.built, target=STATUS.started)
     def start(self):
         return
 
-    @transition(field=status, source=STATUS.current, target=STATUS.review)
+    @transition(field=status, source=STATUS.started, target=STATUS.finished)
     def finish(self):
         # result = dixon(self)
         return
 
-    @transition(field=status, source=STATUS.review, target=STATUS.final)
+    @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def confirm(self):
         return
 
@@ -1862,8 +1862,8 @@ class Session(models.Model):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (15, 'prepped', 'Prepped',),
-        (20, 'current', 'Current',),
-        (25, 'review', 'Review',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
     )
 
@@ -1948,7 +1948,7 @@ class Session(models.Model):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.current)
+    @transition(field=status, source=STATUS.new, target=STATUS.started)
     def start(self):
         if self.contest.rounds == self.kind:
             s = self.contest.contestants.filter(
@@ -1969,7 +1969,7 @@ class Session(models.Model):
         # performance.start_performance()
         return "Session Started"
 
-    @transition(field=status, source=STATUS.current, target=STATUS.review)
+    @transition(field=status, source=STATUS.started, target=STATUS.finished)
     def finish(self):
         # TODO Validate performances over
         cursor = []
@@ -1995,7 +1995,7 @@ class Session(models.Model):
                 cursor = [performance]
         return "Session Ended"
 
-    @transition(field=status, source=STATUS.review, target=STATUS.final)
+    @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def confirm(self):
         # TODO Some validation
         try:

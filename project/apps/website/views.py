@@ -345,7 +345,7 @@ def performance_score(request, slug):
         slug=slug,
     )
     performance = session.performances.get(
-        status=Performance.STATUS.current,
+        status=Performance.STATUS.started,
     )
     contestant = performance.contestant
     song1 = performance.songs.get(order=1)
@@ -391,7 +391,7 @@ def performance_score(request, slug):
             except Performance.DoesNotExist:
                 session.end_session()
                 return redirect('website:home')
-            next_performance.status = Performance.STATUS.current
+            next_performance.status = Performance.STATUS.started
             next_performance.save()
             return redirect('website:contest_score', contest.slug)
         else:
