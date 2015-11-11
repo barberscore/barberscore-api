@@ -123,3 +123,10 @@ def is_scheduled(contest):
 
 def has_contestants(contest):
     return contest.contestants.exists()
+
+
+def contest_started(session):
+    if session.contest.status == session.contest.STATUS.started:
+        return True
+    else:
+        return False
