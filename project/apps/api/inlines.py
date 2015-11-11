@@ -352,7 +352,8 @@ class SessionInline(admin.TabularInline):
         'link',
         'contest',
         'kind',
-        'start',
+        'status',
+        'start_date',
         'slots',
     )
     ordering = (

@@ -615,30 +615,24 @@ class Score(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class Session(admin.ModelAdmin):
-    # @takes_instance_or_queryset
-    # def end_session(self, request, queryset):
-    #     for obj in queryset:
-    #         obj.end_session()
-    # end_session.label = 'End Session'
-
-    # objectactions = [
-    #     'end_session',
-    # ]
+class Session(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
 
     save_on_top = True
     change_list_template = "admin/change_list_filter_sidebar.html"
     list_display = [
         'name',
         'status',
-        'start',
+        'start_date',
         'slots',
     ]
     fields = [
         'name',
         ('status', 'status_monitor',),
         ('contest', 'kind',),
-        ('start', 'slots',),
+        ('start_date', 'slots',),
     ]
 
     readonly_fields = [
