@@ -128,7 +128,7 @@ def logout(request):
 @login_required
 def dashboard(request):
     contests = Contest.objects.exclude(
-        status=Contest.STATUS.complete,
+        status=Contest.STATUS.final,
     )
     return render(
         request,
@@ -486,7 +486,7 @@ def session_oss(request, slug):
     session = get_object_or_404(
         Session,
         slug=slug,
-        # status=Session.STATUS.complete,
+        # status=Session.STATUS.final,
     )
     performances = session.performances.select_related(
         'contestant__group',
@@ -494,7 +494,7 @@ def session_oss(request, slug):
         'songs',
         'songs__tune',
     ).filter(
-        status=Performance.STATUS.complete,
+        status=Performance.STATUS.final,
     ).order_by(
         'place',
     )
@@ -510,7 +510,7 @@ def contest_oss(request, slug):
     contest = get_object_or_404(
         Contest,
         slug=slug,
-        # status=Contest.STATUS.complete,
+        # status=Contest.STATUS.final,
     )
     contestants = contest.contestants.select_related(
         'group',
@@ -549,7 +549,7 @@ class HelloPDFView(PDFTemplateView):
             contest = get_object_or_404(
                 Contest,
                 slug=self.kwargs['slug'],
-                # status=Contest.STATUS.complete,
+                # status=Contest.STATUS.final,
             )
             contestants = contest.contestants.select_related(
                 'group',
