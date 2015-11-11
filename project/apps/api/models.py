@@ -904,15 +904,10 @@ class Contestant(models.Model):
         # Send notice?
         return "{0} Qualified".format(self)
 
-    @transition(field=status, source=STATUS.qualified, target=STATUS.accepted)
+    @transition(field=status, source=[STATUS.qualified, STATUS.declined], target=STATUS.accepted)
     def accept(self):
         # Send notice?
         return "{0} Accepted".format(self)
-
-    @transition(field=status, source=STATUS.declined, target=STATUS.accepted)
-    def reaccept(self):
-        # Send notice?
-        return "{0} Reaccepted".format(self)
 
     @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
     def decline(self):
