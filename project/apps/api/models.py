@@ -1748,10 +1748,11 @@ class Score(TimeStampedModel):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
-        (5, 'prepped', 'Prepped',),
-        (10, 'flagged', 'Flagged',),
-        (20, 'passed', 'Passed',),
-        (30, 'final', 'Final',),
+        (10, 'built', 'Built',),
+        (20, 'prepped', 'Prepped',),
+        (30, 'flagged', 'Flagged',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
     )
 
     id = models.UUIDField(
@@ -1826,7 +1827,11 @@ class Score(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.prepped)
+    @transition(field=status, source=STATUS.new, target=STATUS.built)
+    def build(self):
+        return
+
+    @transition(field=status, source=STATUS.built, target=STATUS.prepped)
     def prep(self):
         return
 
@@ -1834,11 +1839,11 @@ class Score(TimeStampedModel):
     def flag(self):
         return
 
-    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.passed)
-    def finalize(self):
+    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.confirmed)
+    def confirm(self):
         return
 
-    @transition(field=status, source=STATUS.passed, target=STATUS.final)
+    @transition(field=status, source=STATUS.confirmed, target=STATUS.final)
     def finalize(self):
         return
 
@@ -1948,7 +1953,11 @@ class Session(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.prepped)
+    @transition(field=status, source=STATUS.new, target=STATUS.built)
+    def build(self):
+        return
+
+    @transition(field=status, source=STATUS.built, target=STATUS.prepped)
     def prep(self):
         return
 
@@ -2126,10 +2135,10 @@ class Song(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (20, 'built', 'Built',),
+        (10, 'built', 'Built',),
         (20, 'prepped', 'Prepped',),
         (30, 'flagged', 'Flagged',),
-        (40, 'passed', 'Passed',),
+        (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
     )
 
@@ -2297,11 +2306,11 @@ class Song(TimeStampedModel):
     def flag(self):
         return
 
-    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.passed)
-    def clear(self):
+    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.confirmed)
+    def confirm(self):
         return
 
-    @transition(field=status, source=STATUS.passed, target=STATUS.final)
+    @transition(field=status, source=STATUS.confirmed, target=STATUS.final)
     def finalize(self):
         return
 
