@@ -305,7 +305,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'status',
             'session',
             'draw',
-            'start',
+            'start_time',
             'mus_points',
             'prs_points',
             'sng_points',

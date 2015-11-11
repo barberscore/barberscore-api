@@ -108,7 +108,7 @@ def is_filled(contest):
 
 
 def is_impaneled(contest):
-    for panelist in contest.panelists.official:
+    for panelist in contest.panelists.official():
         if not panelist.person:
             return False
     return True
@@ -116,7 +116,7 @@ def is_impaneled(contest):
 
 def is_scheduled(contest):
     for session in contest.sessions.all():
-        if not session.start:
+        if not session.start_date:
             return False
     return True
 

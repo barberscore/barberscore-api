@@ -6,26 +6,57 @@ from django.db import (
     models,
 )
 
-# from django.db.models.query import (
-#     QuerySet,
+from django.db.models.query import (
+    QuerySet,
+)
+
+# from .models import (
+#     Panelist,
+#     Contestant,
 # )
 
 
-# class PanelistQuerySet(QuerySet):
-#     def composite(self):
-#         return self.filter(category__in=[7, 8, 9])
+class PanelistQuerySet(QuerySet):
+    def official(self):
+        return self.filter(
+            category__in=[
+                self.model.CATEGORY.admin,
+                self.model.CATEGORY.music,
+                self.model.CATEGORY.presentation,
+                self.model.CATEGORY.singing,
+            ]
+        )
 
-#     def practice(self):
-#         return self.filter(category__in=[4, 5, 6])
+    def practice(self):
+        return self.filter(
+            category__in=[
+                self.model.CATEGORY.music_candidate,
+                self.model.CATEGORY.presentation_candidate,
+                self.model.CATEGORY.singing_candidate,
+            ]
+        )
 
-#     def scoring(self):
-#         return self.filter(category__in=[1, 2, 3])
+    def composite(self):
+        return self.filter(
+            category__in=[
+                self.model.CATEGORY.music_composite,
+                self.model.CATEGORY.presentation_composite,
+                self.model.CATEGORY.singing_composite,
+            ]
+        )
 
-#     def administrator(self):
-#         return self.filter(category=0)
 
-#     def contest(self):
-#         return self.filter(category__in=[0, 1, 2, 3])
+class ContestantQuerySet(QuerySet):
+    def accepted(self):
+        return self.filter(
+            status=self.model.STATUS.accepted,
+        )
+
+    def official(self):
+        return self.filter(
+            status=self.model.STATUS.official,
+        )
+
 
 class SessionManager(models.Manager):
     def initial(self):
