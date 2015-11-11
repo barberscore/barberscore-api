@@ -29,7 +29,6 @@ from django_fsm import (
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
-    BaseUserManager,
 )
 
 from django.core.exceptions import (
@@ -62,9 +61,11 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
 
-# from .managers import (
-#     PanelistQuerySet,
-# )
+from .managers import (
+    UserManager,
+    SessionManager,
+    # PanelistQuerySet,
+)
 
 
 from .validators import (
@@ -74,6 +75,7 @@ from .validators import (
     is_impaneled,
     is_scheduled,
     has_contestants,
+    contest_started,
 )
 
 
@@ -625,9 +627,7 @@ class Contest(TimeStampedModel):
         # Seed contestants
         marker = []
         i = 1
-        for contestant in self.contestants.filter(
-            status=self.contestants.model.STATUS.accepted,
-        ).order_by('-prelim'):
+        for contestant in self.contestants.accepted.all().order_by('-prelim'):
             try:
                 match = contestant.prelim == marker[0].prelim
             except IndexError:
@@ -650,9 +650,12 @@ class Contest(TimeStampedModel):
 
     @transition(field=status, source=STATUS.prepped, target=STATUS.started)
     def start(self):
-        for contestant in self.contestants.accepted:
+        for contestant in self.contestants.accepted.all():
             contestant.compete()
             contestant.save()
+        session = self.sessions.initial()
+        session.prep()
+        session.save()
         # some other sub-logic?
         return "{0} Started".format(self)
 
@@ -884,6 +887,7 @@ class Contestant(TimeStampedModel):
 
     objects = models.Manager()
     accepted = QueryManager(status=STATUS.accepted)
+    competing = QueryManager(status=STATUS.competing)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1910,6 +1914,8 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    objects = SessionManager()
+
     class Meta:
         ordering = [
             'contest',
@@ -1943,23 +1949,29 @@ class Session(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built)
+    @transition(field=status, source=STATUS.new, target=STATUS.built, conditions=[contest_started])
     def build(self):
+        # Draws the session
+        for contestant in self.contest.contestants.competing.all().order_by('?'):
+            performance = self.performances.model(
+                session=self,
+            )
+            performance.build()
+            performance.save()
         return
 
     @transition(field=status, source=STATUS.built, target=STATUS.prepped)
     def prep(self):
-        # Draw
         return
 
     @transition(field=status, source=STATUS.prepped, target=STATUS.started)
     def start(self):
-        if self.contest.rounds == self.kind:
-            s = self.contest.contestants.filter(
-                status=self.contest.contestants.model.STATUS.competing,
-            ).count()
-        else:
-            s = self.slots
+        # if self.contest.rounds == self.kind:
+        #     s = self.contest.contestants.filter(
+        #         status=self.contest.contestants.model.STATUS.competing,
+        #     ).count()
+        # else:
+        #     s = self.slots
         # while s > 0:
         #     p = self.performances.create(
         #         session=self.session,
@@ -2432,32 +2444,6 @@ class Winner(TimeStampedModel):
         unique_together = (
             ('contestant', 'award',),
         )
-
-
-class UserManager(BaseUserManager):
-
-    def create_user(self, email, password, **kwargs):
-        user = self.model(
-            email=self.normalize_email(email),
-            is_active=True,
-            **kwargs
-        )
-        user.set_password(password)
-        user.save(using=self._db)
-
-        return user
-
-    def create_superuser(self, email, password, **kwargs):
-        user = self.model(
-            email=email,
-            is_staff=True,
-            is_superuser=True,
-            is_active=True,
-            **kwargs
-        )
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
