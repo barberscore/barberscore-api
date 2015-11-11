@@ -1,15 +1,20 @@
 from django.contrib import admin
 
-from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
-
 from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
 
-# from django_object_actions import (
-#     DjangoObjectActions,
-#     takes_instance_or_queryset,
-# )
+from .inlines import (
+    ContestantInline,
+    DirectorInline,
+    PerformanceInline,
+    PlacementInline,
+    PanelistInline,
+    ScoreInline,
+    SongStackedInline,
+    # SongInline,
+    SingerInline,
+    SessionInline,
+)
 
 from .models import (
     Arranger,
@@ -23,8 +28,6 @@ from .models import (
     Song,
     Score,
     Panelist,
-    Singer,
-    Director,
     Session,
     Award,
     Performance,
@@ -33,7 +36,7 @@ from .models import (
 )
 
 # from grappelli.forms import GrappelliSortableHiddenMixin
-from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
+from super_inlines.admin import SuperModelAdmin
 
 
 # class ArrangersInline(admin.TabularInline):
@@ -59,391 +62,6 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 #     can_delete = True
 #     show_change_link = True
 #     classes = ('grp-collapse grp-closed',)
-
-
-# class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
-class PerformancesInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_performance_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
-
-    fields = (
-        'link',
-        'contestant',
-        'session',
-        'position',
-        'draw',
-        # 'start',
-    )
-    sortable_field_name = "position"
-
-    model = Performance
-    extra = 0
-    # raw_id_fields = (
-    #     'contestant',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'contestant',
-    #     ]
-    # }
-    readonly_fields = (
-        'contestant',
-        'session',
-        'draw',
-        # 'start',
-        'link',
-    )
-    classes = ('grp-collapse grp-close',)
-
-
-class PlacementInline(admin.TabularInline):
-    fields = (
-        'contestant',
-        'session',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'place',
-    )
-    extra = 0
-    model = Performance
-    readonly_fields = (
-        'contestant',
-        'session',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'place',
-    )
-    ordering = (
-        'place',
-        'sng_points',
-        'mus_points',
-    )
-    classes = ('grp-collapse grp-open',)
-
-
-class ContestantsInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_contestant_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
-
-    fields = (
-        'link',
-        'contest',
-        'group',
-        'organization',
-        'seed',
-        'prelim',
-        'place',
-        'total_score',
-        'men',
-    )
-    ordering = (
-        'place',
-        'seed',
-        'group',
-    )
-
-    show_change_link = True
-
-    model = Contestant
-    extra = 0
-    raw_id_fields = (
-        # 'contest',
-        'group',
-    )
-    readonly_fields = [
-        'place',
-        'total_score',
-        'link',
-    ]
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            # 'contest',
-            'group',
-        ]
-    }
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class DirectorsInline(admin.TabularInline):
-    fields = (
-        'contestant',
-        'person',
-        'part',
-    )
-    ordering = (
-        'part',
-        'contestant',
-    )
-    model = Director
-    extra = 0
-    raw_id_fields = (
-        'person',
-        'contestant',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-            'contestant',
-        ]
-    }
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class PanelistsInline(admin.TabularInline):
-    model = Panelist
-    fields = (
-        'contest',
-        'person',
-        'organization',
-        'category',
-        'slot',
-        # 'is_practice',
-    )
-    ordering = (
-        'category',
-        'slot',
-    )
-    extra = 0
-    raw_id_fields = (
-        'person',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-        ]
-    }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class SongsInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_song_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
-
-    fields = (
-        'link',
-        'performance',
-        'order',
-        'tune',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-    )
-    ordering = (
-        'performance',
-        'order',
-    )
-    model = Song
-    extra = 0
-    raw_id_fields = (
-        # 'performance',
-        'tune',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            # 'performance',
-            'tune',
-        ]
-    }
-
-    readonly_fields = [
-        'link',
-    ]
-    can_delete = True
-    show_change_link = True
-
-
-class ScoresInline(admin.TabularInline):
-    model = Score
-    fields = (
-        'song',
-        'panelist',
-        'category',
-        'points',
-        'status',
-    )
-    ordering = (
-        'panelist',
-    )
-    extra = 0
-    raw_id_fields = (
-        'panelist',
-    )
-    readonly_fields = [
-        'category',
-        'panelist',
-    ]
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'panelist',
-        ]
-    }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-open',)
-
-
-class SongsStackedInline(SuperInlineModelAdmin, admin.StackedInline):
-    fields = (
-        'performance',
-        'order',
-        'status',
-        'tune',
-        # 'mus_points',
-        # 'prs_points',
-        # 'sng_points',
-    )
-    ordering = (
-        'performance',
-        'order',
-    )
-    model = Song
-    extra = 0
-    raw_id_fields = (
-        # 'performance',
-        'tune',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            # 'performance',
-            'tune',
-        ]
-    }
-    inlines = (
-        ScoresInline,
-    )
-    show_change_link = True
-    classes = ('grp-collapse grp-open',)
-
-
-class PerformancesStackedInline(SuperInlineModelAdmin, admin.StackedInline):
-    fields = (
-        'contestant',
-        'session',
-    )
-    model = Performance
-    extra = 0
-    # raw_id_fields = (
-    #     'contestant',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'contestant',
-    #     ]
-    # }
-    readonly_fields = (
-        'contestant',
-        'session',
-        # 'start',
-    )
-    inlines = (
-        SongsStackedInline,
-    )
-    classes = ('grp-collapse grp-closed',)
-
-
-class SessionsInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_session_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
-
-    fields = (
-        'link',
-        'contest',
-        'kind',
-        'start',
-        'slots',
-    )
-    ordering = (
-        'contest',
-        'kind',
-    )
-
-    model = Session
-    extra = 0
-    # raw_id_fields = (
-    #     'contest',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'contest',
-    #     ]
-    # }
-    classes = ('grp-collapse grp-closed',)
-    readonly_fields = [
-        'link',
-    ]
-
-
-class SingersInline(admin.TabularInline):
-    model = Singer
-    fields = (
-        'contestant',
-        'person',
-        'part',
-    )
-    ordering = (
-        'part',
-        'contestant',
-    )
-    extra = 0
-    raw_id_fields = (
-        'person',
-        # 'contestant',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-            # 'contestant',
-        ]
-    }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
 
 
 @admin.register(Arranger)
@@ -478,9 +96,9 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        ContestantsInline,
-        SessionsInline,
-        PanelistsInline,
+        ContestantInline,
+        SessionInline,
+        PanelistInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -549,9 +167,9 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
 
     inlines = [
-        SingersInline,
-        DirectorsInline,
-        PerformancesInline,
+        SingerInline,
+        DirectorInline,
+        PerformanceInline,
     ]
 
     list_display = (
@@ -767,7 +385,7 @@ class Performance(SuperModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
 
     inlines = [
-        SongsStackedInline,
+        SongStackedInline,
     ]
     list_display = [
         'name',
@@ -857,7 +475,7 @@ class SongAdmin(admin.ModelAdmin):
 
     inlines = [
         # ArrangersInline,
-        ScoresInline,
+        ScoreInline,
     ]
 
     list_filter = (
@@ -1048,7 +666,7 @@ class Session(admin.ModelAdmin):
     }
 
     inlines = [
-        PerformancesInline,
+        PerformanceInline,
         PlacementInline,
     ]
 

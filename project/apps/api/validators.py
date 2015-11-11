@@ -95,7 +95,7 @@ def validate_trimmed(value):
         )
 
 
-def is_prepped(contest):
+def is_filled(contest):
     return all([
         contest.organization,
         contest.level,
@@ -108,7 +108,7 @@ def is_prepped(contest):
 
 
 def is_impaneled(contest):
-    for panelist in contest.panelists.contest():
+    for panelist in contest.panelists.official:
         if not panelist.person:
             return False
     return True

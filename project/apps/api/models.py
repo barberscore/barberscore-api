@@ -12,10 +12,6 @@ from django.db import (
     models,
 )
 
-from django.db.models.query import (
-    QuerySet,
-)
-
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -51,7 +47,8 @@ from model_utils.fields import (
 from model_utils import Choices
 
 from model_utils.managers import (
-    PassThroughManager,
+    # PassThroughManager,
+    QueryManager,
 )
 
 from mptt.models import (
@@ -65,10 +62,15 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
 
+# from .managers import (
+#     PanelistQuerySet,
+# )
+
+
 from .validators import (
     validate_trimmed,
-    dixon,
-    is_prepped,
+    # dixon,
+    is_filled,
     is_impaneled,
     is_scheduled,
     has_contestants,
@@ -570,18 +572,20 @@ class Contest(TimeStampedModel):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built, conditions=[is_prepped])
+    @transition(field=status, source=STATUS.new, target=STATUS.built, conditions=[is_filled])
     def build(self):
         """
             Build the contest.
         """
-        # Add Sessions
+        # Build Sessions
         r = 1
         while r <= self.rounds:
-            self.sessions.create(
+            session = self.sessions.model(
                 contest=self,
                 kind=r,
             )
+            session.build()
+            session.save()
             r += 1
 
         # Create an adminstrator sentinel
@@ -610,9 +614,9 @@ class Contest(TimeStampedModel):
                 slot=s,
             )
             s += 1
-        return "{0} built".format(self)
+        return "{0} Built".format(self)
 
-    @transition(field=status, source=STATUS.built, target=STATUS.prepped, conditions=[
+    @transition(field=status, source=[STATUS.built, STATUS.prepped], target=STATUS.prepped, conditions=[
         is_scheduled,
         is_impaneled,
         has_contestants,
@@ -642,16 +646,13 @@ class Contest(TimeStampedModel):
                 contestant.seed = i
                 contestant.save()
                 marker = [contestant]
-        for contestant in self.contestants.filter(status=self.contestants.model.STATUS.accepted):
-            contestant.compete()
-            contestant.save()
-        session = self.sessions.get(kind=self.rounds)
-        session.draw()
         return "{0} Prepped".format(self)
 
     @transition(field=status, source=STATUS.prepped, target=STATUS.started)
-    # Check everything is ready
     def start(self):
+        for contestant in self.contestants.accepted:
+            contestant.compete()
+            contestant.save()
         # some other sub-logic?
         return "{0} Started".format(self)
 
@@ -880,6 +881,9 @@ class Contestant(TimeStampedModel):
         blank=True,
         editable=False,
     )
+
+    objects = models.Manager()
+    accepted = QueryManager(status=STATUS.accepted)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1239,23 +1243,6 @@ class Group(Common):
         )
 
 
-class PanelistQuerySet(QuerySet):
-    def composite(self):
-        return self.filter(category__in=[7, 8, 9])
-
-    def practice(self):
-        return self.filter(category__in=[4, 5, 6])
-
-    def scoring(self):
-        return self.filter(category__in=[1, 2, 3])
-
-    def administrator(self):
-        return self.filter(category=0)
-
-    def contest(self):
-        return self.filter(category__in=[0, 1, 2, 3])
-
-
 class Panelist(TimeStampedModel):
     """Contest Panelist"""
 
@@ -1350,7 +1337,10 @@ class Panelist(TimeStampedModel):
         default=False,
     )
 
-    objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
+    objects = models.Manager()
+    official = QueryManager(category__in=[0, 1, 2, 3])
+    practice = QueryManager(category__in=[4, 5, 6])
+    composite = QueryManager(category__in=[7, 8, 9])
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1959,6 +1949,7 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source=STATUS.built, target=STATUS.prepped)
     def prep(self):
+        # Draw
         return
 
     @transition(field=status, source=STATUS.prepped, target=STATUS.started)
