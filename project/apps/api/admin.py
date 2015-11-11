@@ -473,37 +473,6 @@ class CatalogAdmin(admin.ModelAdmin):
 
 @admin.register(Contest)
 class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    # class ContestAdmin(DjangoObjectActions, admin.MoadelAdmin):
-    # @takes_instance_or_queryset
-    # def build_contest(self, request, queryset):
-    #     for obj in queryset:
-    #         obj.build_contest()
-    # build_contest.label = 'Build Contest'
-
-    # @takes_instance_or_queryset
-    # def draw_contest(self, request, queryset):
-    #     for obj in queryset:
-    #         obj.draw_contest()
-    # draw_contest.label = 'Draw Contest'
-
-    # @takes_instance_or_queryset
-    # def start_contest(self, request, queryset):
-    #     for obj in queryset:
-    #         obj.start_contest()
-    # start_contest.label = 'Start Contest'
-
-    # @takes_instance_or_queryset
-    # def end_contest(self, request, queryset):
-    #     for obj in queryset:
-    #         obj.end_contest()
-    # end_contest.label = 'End Contest'
-
-    # objectactions = [
-    #     'build_contest',
-    #     'draw_contest',
-    #     'start_contest',
-    #     'end_contest',
-    # ]
     fsm_field = [
         'status',
     ]
@@ -515,7 +484,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
-    # change_list_filter_template = "admin/filter_listing.html"
     save_on_top = True
     search_fields = (
         'name',
