@@ -375,7 +375,7 @@ class Contest(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
+        (15, 'prepped', 'Prepped',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
@@ -612,12 +612,12 @@ class Contest(models.Model):
             s += 1
         return "{0} built".format(self)
 
-    @transition(field=status, source=STATUS.built, target=STATUS.ready, conditions=[
+    @transition(field=status, source=STATUS.built, target=STATUS.prepped, conditions=[
         is_scheduled,
         is_impaneled,
         has_contestants,
     ])
-    def ready(self):
+    def prep(self):
         # Seed contestants
         marker = []
         i = 1
@@ -647,9 +647,9 @@ class Contest(models.Model):
             contestant.save()
         session = self.sessions.get(kind=self.rounds)
         session.draw()
-        return "{0} Ready".format(self)
+        return "{0} Prepped".format(self)
 
-    @transition(field=status, source=STATUS.ready, target=STATUS.started)
+    @transition(field=status, source=STATUS.prepped, target=STATUS.started)
     # Check everything is ready
     def start(self):
         # some other sub-logic?
@@ -710,12 +710,12 @@ class Contest(models.Model):
                 contest=self,
             )
         # TODO Confer awards
-        return "{0} Ready for Review".format(self)
+        return "{0} Prepped for Review".format(self)
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def finalize(self):
         # Review logic
-        return "{0} Ready".format(self)
+        return "{0} Prepped".format(self)
 
 
 class Contestant(models.Model):
@@ -1426,7 +1426,7 @@ class Performance(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
+        (15, 'prepped', 'Prepped',),
         (20, 'current', 'Current',),
         (25, 'review', 'Review',),
         (30, 'final', 'Final',),
@@ -1753,7 +1753,7 @@ class Score(models.Model):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
-        (5, 'ready', 'Ready',),
+        (5, 'prepped', 'Prepped',),
         (10, 'flagged', 'Flagged',),
         (20, 'passed', 'Passed',),
         (30, 'final', 'Final',),
@@ -1831,15 +1831,15 @@ class Score(models.Model):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.ready)
-    def ready(self):
+    @transition(field=status, source=STATUS.new, target=STATUS.prepped)
+    def prep(self):
         return
 
-    @transition(field=status, source=STATUS.ready, target=STATUS.flagged)
+    @transition(field=status, source=STATUS.prepped, target=STATUS.flagged)
     def flag(self):
         return
 
-    @transition(field=status, source=[STATUS.ready, STATUS.flagged], target=STATUS.passed)
+    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.passed)
     def confirm(self):
         return
 
@@ -1866,7 +1866,7 @@ class Session(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
+        (15, 'prepped', 'Prepped',),
         (20, 'current', 'Current',),
         (25, 'review', 'Review',),
         (30, 'final', 'Final',),
@@ -2044,7 +2044,7 @@ class Session(models.Model):
     #             start=session.start,
     #         )
     #         p += 1
-    #     self.status = self.STATUS.ready
+    #     self.status = self.STATUS.prepped
     #     self.save()
 
 
@@ -2127,7 +2127,7 @@ class Song(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (5, 'ready', 'Ready',),
+        (5, 'prepped', 'Prepped',),
         (10, 'flagged', 'Flagged',),
         (20, 'passed', 'Passed',),
         (30, 'final', 'Final',),
@@ -2285,15 +2285,15 @@ class Song(models.Model):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.ready)
-    def ready(self):
+    @transition(field=status, source=STATUS.new, target=STATUS.prepped)
+    def prep(self):
         return
 
-    @transition(field=status, source=STATUS.ready, target=STATUS.flagged)
+    @transition(field=status, source=STATUS.prepped, target=STATUS.flagged)
     def flag(self):
         return
 
-    @transition(field=status, source=[STATUS.ready, STATUS.flagged], target=STATUS.passed)
+    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.passed)
     def confirm(self):
         return
 
