@@ -1,4 +1,6 @@
-from random import randint
+from random import (
+    randint,
+)
 
 from factory.django import (
     DjangoModelFactory,
@@ -72,6 +74,7 @@ def add_contestants(contest, number):
         contestant = Contestant.objects.create(
             contest=contest,
             group=group,
+            prelim=randint(700, 900) * .1,
         )
         contestant.qualify()
         contestant.accept()

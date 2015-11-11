@@ -46,8 +46,7 @@ from model_utils.fields import (
 from model_utils import Choices
 
 from model_utils.managers import (
-    # PassThroughManager,
-    QueryManager,
+    PassThroughManager,
 )
 
 from mptt.models import (
@@ -64,7 +63,8 @@ from nameparser import HumanName
 from .managers import (
     UserManager,
     SessionManager,
-    # PanelistQuerySet,
+    PanelistQuerySet,
+    ContestantQuerySet,
 )
 
 
@@ -75,7 +75,7 @@ from .validators import (
     is_impaneled,
     is_scheduled,
     has_contestants,
-    contest_started,
+    # contest_started,
 )
 
 
@@ -618,16 +618,21 @@ class Contest(TimeStampedModel):
             s += 1
         return "{0} Built".format(self)
 
-    @transition(field=status, source=[STATUS.built, STATUS.prepped], target=STATUS.prepped, conditions=[
-        is_scheduled,
-        is_impaneled,
-        has_contestants,
-    ])
+    @transition(
+        field=status,
+        source=[STATUS.built, STATUS.prepped],
+        target=STATUS.prepped,
+        conditions=[
+            is_scheduled,
+            is_impaneled,
+            has_contestants,
+        ],
+    )
     def prep(self):
         # Seed contestants
         marker = []
         i = 1
-        for contestant in self.contestants.accepted.all().order_by('-prelim'):
+        for contestant in self.contestants.accepted().order_by('-prelim'):
             try:
                 match = contestant.prelim == marker[0].prelim
             except IndexError:
@@ -648,15 +653,20 @@ class Contest(TimeStampedModel):
                 marker = [contestant]
         return "{0} Prepped".format(self)
 
-    @transition(field=status, source=STATUS.prepped, target=STATUS.started)
+    @transition(
+        field=status,
+        source=STATUS.prepped,
+        target=STATUS.started,
+        # conditions=[
+        # ],
+    )
     def start(self):
-        for contestant in self.contestants.accepted.all():
-            contestant.compete()
+        for contestant in self.contestants.accepted():
+            contestant.register()
             contestant.save()
         session = self.sessions.initial()
         session.prep()
         session.save()
-        # some other sub-logic?
         return "{0} Started".format(self)
 
     @transition(field=status, source=STATUS.started, target=STATUS.finished)
@@ -730,7 +740,7 @@ class Contestant(TimeStampedModel):
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
-        (50, 'competing', 'Competing',),
+        (50, 'official', 'Official',),
         (60, 'finished', 'Finished',),
         (90, 'final', 'Final',),
     )
@@ -885,9 +895,7 @@ class Contestant(TimeStampedModel):
         editable=False,
     )
 
-    objects = models.Manager()
-    accepted = QueryManager(status=STATUS.accepted)
-    competing = QueryManager(status=STATUS.competing)
+    objects = PassThroughManager.for_queryset_class(ContestantQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -922,17 +930,17 @@ class Contestant(TimeStampedModel):
         # Send notice?
         return "{0} Declined".format(self)
 
-    @transition(field=status, source=STATUS.accepted, target=STATUS.competing)
-    def compete(self):
+    @transition(field=status, source=STATUS.accepted, target=STATUS.official)
+    def register(self):
         # Send notice?
-        return "{0} Competing".format(self)
+        return "{0} Official".format(self)
 
-    @transition(field=status, source=STATUS.competing, target=STATUS.dropped)
+    @transition(field=status, source=STATUS.official, target=STATUS.dropped)
     def drop(self):
         # Send notice?
         return "{0} Dropped".format(self)
 
-    @transition(field=status, source=STATUS.competing, target=STATUS.finished)
+    @transition(field=status, source=STATUS.official, target=STATUS.finished)
     def finish(self):
         # Send notice?
         return "{0} Finished".format(self)
@@ -1341,10 +1349,7 @@ class Panelist(TimeStampedModel):
         default=False,
     )
 
-    objects = models.Manager()
-    official = QueryManager(category__in=[0, 1, 2, 3])
-    practice = QueryManager(category__in=[4, 5, 6])
-    composite = QueryManager(category__in=[7, 8, 9])
+    objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1462,7 +1467,7 @@ class Performance(TimeStampedModel):
         blank=True,
     )
 
-    start = models.DateTimeField(
+    start_time = models.DateTimeField(
         null=True,
         blank=True,
     )
@@ -1904,7 +1909,7 @@ class Session(TimeStampedModel):
         default=KIND.finals,
     )
 
-    start = models.DateField(
+    start_date = models.DateField(
         null=True,
         blank=True,
     )
@@ -1949,26 +1954,46 @@ class Session(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built, conditions=[contest_started])
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+    )
     def build(self):
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.prepped,
+        # conditions=[
+        #     contest_started,
+        # ]
+    )
+    def prep(self):
         # Draws the session
-        for contestant in self.contest.contestants.competing.all().order_by('?'):
+        p = 0
+        for contestant in self.contest.contestants.official().order_by('?'):
             performance = self.performances.model(
                 session=self,
+                contestant=contestant,
+                position=p,
             )
             performance.build()
             performance.save()
+            p += 1
         return
 
-    @transition(field=status, source=STATUS.built, target=STATUS.prepped)
-    def prep(self):
-        return
-
-    @transition(field=status, source=STATUS.prepped, target=STATUS.started)
+    @transition(
+        field=status,
+        source=STATUS.prepped,
+        target=STATUS.started,
+    )
     def start(self):
+        return
         # if self.contest.rounds == self.kind:
         #     s = self.contest.contestants.filter(
-        #         status=self.contest.contestants.model.STATUS.competing,
+        #         status=self.contest.contestants.model.STATUS.official,
         #     ).count()
         # else:
         #     s = self.slots
@@ -1983,7 +2008,7 @@ class Session(TimeStampedModel):
 
         # performance = self.performances.get(position=0)
         # performance.start_performance()
-        return "Session Started"
+        # return "Session Started"
 
     @transition(field=status, source=STATUS.started, target=STATUS.finished)
     def finish(self):
@@ -2027,7 +2052,7 @@ class Session(TimeStampedModel):
                 l = next_session.performances.create(
                     contestant=qualifier.contestant,
                     position=p,
-                    start=next_session.start,
+                    # start=next_session.start,
                 )
                 p += 1
                 p1 = l.songs.create(performance=l, order=1)
