@@ -374,11 +374,11 @@ class Contest(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'structured', 'Structured',),
+        (10, 'built', 'Built',),
         (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     HISTORY = Choices(
@@ -570,10 +570,10 @@ class Contest(models.Model):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.structured, conditions=[is_prepped])
-    def build_contest(self):
+    @transition(field=status, source=STATUS.new, target=STATUS.built, conditions=[is_prepped])
+    def build(self):
         """
-            Structure the contest.
+            Build the contest.
         """
         # Add Sessions
         r = 1
@@ -610,9 +610,9 @@ class Contest(models.Model):
                 slot=s,
             )
             s += 1
-        return "{0} structured".format(self)
+        return "{0} built".format(self)
 
-    @transition(field=status, source=STATUS.structured, target=STATUS.ready, conditions=[
+    @transition(field=status, source=STATUS.built, target=STATUS.ready, conditions=[
         is_scheduled,
         is_impaneled,
         has_contestants,
@@ -712,7 +712,7 @@ class Contest(models.Model):
         # TODO Confer awards
         return "{0} Ready for Review".format(self)
 
-    @transition(field=status, source=STATUS.finished, target=STATUS.complete)
+    @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def finalize(self):
         # Review logic
         return "{0} Ready".format(self)
@@ -728,7 +728,7 @@ class Contestant(models.Model):
         (40, 'dropped', 'Dropped',),
         (50, 'competing', 'Competing',),
         (60, 'finished', 'Finished',),
-        (90, 'complete', 'Complete',),
+        (90, 'final', 'Final',),
     )
 
     id = models.UUIDField(
@@ -934,10 +934,10 @@ class Contestant(models.Model):
         # Send notice?
         return "{0} Finished".format(self)
 
-    @transition(field=status, source=STATUS.finished, target=STATUS.complete)
-    def complete(self):
+    @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    def finalize(self):
         # Send notice?
-        return "{0} Complete".format(self)
+        return "{0} Finalized".format(self)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1009,9 +1009,9 @@ class Contestant(models.Model):
 class Convention(models.Model):
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'structured', 'Structured',),
+        (10, 'built', 'Built',),
         (20, 'current', 'Current',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     KIND = Choices(
@@ -1268,7 +1268,7 @@ class Panelist(models.Model):
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
         (20, 'confirmed', 'Confirmed',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     SLOT_CHOICES = []
@@ -1425,11 +1425,11 @@ class Performance(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'structured', 'Structured',),
+        (10, 'built', 'Built',),
         (15, 'ready', 'Ready',),
         (20, 'current', 'Current',),
         (25, 'review', 'Review',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     name = models.CharField(
@@ -1572,7 +1572,7 @@ class Performance(models.Model):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.structured)
+    @transition(field=status, source=STATUS.new, target=STATUS.built)
     def build(self):
         # p1 = self.songs.create(performance=self, order=1)
         # p2 = self.songs.create(performance=self, order=2)
@@ -1580,7 +1580,7 @@ class Performance(models.Model):
         # p2.build()
         return
 
-    @transition(field=status, source=STATUS.structured, target=STATUS.current)
+    @transition(field=status, source=STATUS.built, target=STATUS.current)
     def start(self):
         return
 
@@ -1589,7 +1589,7 @@ class Performance(models.Model):
         # result = dixon(self)
         return
 
-    @transition(field=status, source=STATUS.review, target=STATUS.complete)
+    @transition(field=status, source=STATUS.review, target=STATUS.final)
     def confirm(self):
         return
 
@@ -1753,10 +1753,10 @@ class Score(models.Model):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'ready', 'Ready',),
+        (5, 'ready', 'Ready',),
         (10, 'flagged', 'Flagged',),
         (20, 'passed', 'Passed',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     id = models.UUIDField(
@@ -1843,7 +1843,7 @@ class Score(models.Model):
     def confirm(self):
         return
 
-    @transition(field=status, source=STATUS.passed, target=STATUS.complete)
+    @transition(field=status, source=STATUS.passed, target=STATUS.final)
     def finalize(self):
         return
 
@@ -1865,11 +1865,11 @@ class Session(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'structured', 'Structured',),
+        (10, 'built', 'Built',),
         (15, 'ready', 'Ready',),
         (20, 'current', 'Current',),
         (25, 'review', 'Review',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     KIND = Choices(
@@ -2000,7 +2000,7 @@ class Session(models.Model):
                 cursor = [performance]
         return "Session Ended"
 
-    @transition(field=status, source=STATUS.review, target=STATUS.complete)
+    @transition(field=status, source=STATUS.review, target=STATUS.final)
     def confirm(self):
         # TODO Some validation
         try:
@@ -2130,7 +2130,7 @@ class Song(models.Model):
         (5, 'ready', 'Ready',),
         (10, 'flagged', 'Flagged',),
         (20, 'passed', 'Passed',),
-        (30, 'complete', 'Complete',),
+        (30, 'final', 'Final',),
     )
 
     ORDER = Choices(
@@ -2297,7 +2297,7 @@ class Song(models.Model):
     def confirm(self):
         return
 
-    @transition(field=status, source=STATUS.passed, target=STATUS.complete)
+    @transition(field=status, source=STATUS.passed, target=STATUS.final)
     def finalize(self):
         return
 
