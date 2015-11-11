@@ -107,14 +107,14 @@ class Common(TimeStampedModel):
         max_length=255,
     )
 
-    start = models.DateField(
+    start_date = models.DateField(
         help_text="""
             The founding/birth date of the resource.""",
         blank=True,
         null=True,
     )
 
-    end = models.DateField(
+    end_date = models.DateField(
         help_text="""
             The retirement/deceased date of the resource.""",
         blank=True,
@@ -200,7 +200,7 @@ class Common(TimeStampedModel):
         abstract = True
 
 
-class Arranger(models.Model):
+class Arranger(TimeStampedModel):
     """Chorus relation"""
     id = models.UUIDField(
         primary_key=True,
@@ -258,7 +258,7 @@ class Arranger(models.Model):
         )
 
 
-class Award(models.Model):
+class Award(TimeStampedModel):
 
     id = models.UUIDField(
         primary_key=True,
@@ -287,7 +287,7 @@ class Award(models.Model):
         )
 
 
-class Catalog(models.Model):
+class Catalog(TimeStampedModel):
     TEMPO = Choices(
         (1, "Ballad"),
         (2, "Uptune"),
@@ -370,7 +370,7 @@ class Catalog(models.Model):
     )
 
 
-class Contest(models.Model):
+class Contest(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -718,7 +718,7 @@ class Contest(models.Model):
         return "{0} Prepped".format(self)
 
 
-class Contestant(models.Model):
+class Contestant(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1001,7 +1001,7 @@ class Contestant(models.Model):
         )
 
 
-class Convention(models.Model):
+class Convention(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
@@ -1111,7 +1111,7 @@ class Convention(models.Model):
         super(Convention, self).save(*args, **kwargs)
 
 
-class Director(models.Model):
+class Director(TimeStampedModel):
     """Chorus relation"""
     id = models.UUIDField(
         primary_key=True,
@@ -1256,7 +1256,7 @@ class PanelistQuerySet(QuerySet):
         return self.filter(category__in=[0, 1, 2, 3])
 
 
-class Panelist(models.Model):
+class Panelist(TimeStampedModel):
     """Contest Panelist"""
 
     STATUS = Choices(
@@ -1411,7 +1411,7 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
 
-class Performance(models.Model):
+class Performance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1585,7 +1585,7 @@ class Performance(models.Model):
         return
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
-    def confirm(self):
+    def finalize(self):
         return
 
     class Meta:
@@ -1741,7 +1741,7 @@ class Person(Common):
             return None
 
 
-class Score(models.Model):
+class Score(TimeStampedModel):
     """
         The Score is never released publicly.  These are the actual
         Panelist's scores from the contest.
@@ -1835,7 +1835,7 @@ class Score(models.Model):
         return
 
     @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.passed)
-    def confirm(self):
+    def finalize(self):
         return
 
     @transition(field=status, source=STATUS.passed, target=STATUS.final)
@@ -1851,7 +1851,7 @@ class Score(models.Model):
         super(Score, self).save(*args, **kwargs)
 
 
-class Session(models.Model):
+class Session(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1948,7 +1948,11 @@ class Session(models.Model):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.started)
+    @transition(field=status, source=STATUS.new, target=STATUS.prepped)
+    def prep(self):
+        return
+
+    @transition(field=status, source=STATUS.prepped, target=STATUS.started)
     def start(self):
         if self.contest.rounds == self.kind:
             s = self.contest.contestants.filter(
@@ -1996,7 +2000,7 @@ class Session(models.Model):
         return "Session Ended"
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
-    def confirm(self):
+    def finalize(self):
         # TODO Some validation
         try:
             # TODO This is an awful lot to be in a try/except; refactor?
@@ -2043,7 +2047,7 @@ class Session(models.Model):
     #     self.save()
 
 
-class Singer(models.Model):
+class Singer(TimeStampedModel):
     """Quartet Relation"""
     id = models.UUIDField(
         primary_key=True,
@@ -2113,7 +2117,7 @@ class Singer(models.Model):
         )
 
 
-class Song(models.Model):
+class Song(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2122,10 +2126,11 @@ class Song(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (5, 'prepped', 'Prepped',),
-        (10, 'flagged', 'Flagged',),
-        (20, 'passed', 'Passed',),
-        (30, 'final', 'Final',),
+        (20, 'built', 'Built',),
+        (20, 'prepped', 'Prepped',),
+        (30, 'flagged', 'Flagged',),
+        (40, 'passed', 'Passed',),
+        (50, 'final', 'Final',),
     )
 
     ORDER = Choices(
@@ -2280,7 +2285,11 @@ class Song(models.Model):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.prepped)
+    @transition(field=status, source=STATUS.new, target=STATUS.built)
+    def build(self):
+        return
+
+    @transition(field=status, source=STATUS.built, target=STATUS.prepped)
     def prep(self):
         return
 
@@ -2289,7 +2298,7 @@ class Song(models.Model):
         return
 
     @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.passed)
-    def confirm(self):
+    def clear(self):
         return
 
     @transition(field=status, source=STATUS.passed, target=STATUS.final)
@@ -2344,7 +2353,7 @@ class Song(models.Model):
         super(Song, self).save(*args, **kwargs)
 
 
-class Tune(models.Model):
+class Tune(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2374,7 +2383,7 @@ class Tune(models.Model):
         return u"{0}".format(self.name)
 
 
-class Winner(models.Model):
+class Winner(TimeStampedModel):
     """Chorus relation"""
     id = models.UUIDField(
         primary_key=True,
