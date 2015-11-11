@@ -74,7 +74,7 @@ class ContestForm(forms.ModelForm):
 
     def save(self, commit=True):
         contest = super(ContestForm, self).save(commit=False)
-        contest.build_contest()
+        contest.build()
         if commit:
             contest.save()
         return contest
