@@ -531,7 +531,7 @@ def contest_oss(request, slug):
         'place',
         # 'performances__session__kind',
     )
-    panelists = contest.panelists.contest().order_by('category', 'slot',)
+    panelists = contest.panelists.official
     winners = contest.winners.all()
     return render(
         request,
@@ -570,7 +570,7 @@ class HelloPDFView(PDFTemplateView):
                 'place',
                 # 'performances__session__kind',
             )
-            panelists = contest.panelists.contest().order_by('category', 'slot',)
+            panelists = contest.panelists.official
             winners = contest.winners.all()
             context["contest"] = contest
             context["contestants"] = contestants
