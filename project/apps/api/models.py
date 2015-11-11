@@ -1572,19 +1572,26 @@ class Performance(models.Model):
         except self.DoesNotExist:
             return None
 
-    def start_performance(self):
-        self.status = self.STATUS.current
-        self.save()
+    @transition(field=status, source=STATUS.new, target=STATUS.structured)
+    def build(self):
+        # p1 = self.songs.create(performance=self, order=1)
+        # p2 = self.songs.create(performance=self, order=2)
+        # p1.build()
+        # p2.build()
+        return
 
-    def end_performance(self):
-        result = dixon(self)
-        self.status = self.STATUS.review
-        self.save()
-        return result
+    @transition(field=status, source=STATUS.structured, target=STATUS.current)
+    def start(self):
+        return
 
-    def confirm_performance(self):
-        self.status = self.STATUS.complete
-        self.save()
+    @transition(field=status, source=STATUS.current, target=STATUS.review)
+    def finish(self):
+        # result = dixon(self)
+        return
+
+    @transition(field=status, source=STATUS.review, target=STATUS.complete)
+    def confirm(self):
+        return
 
     class Meta:
         ordering = [
@@ -1746,6 +1753,7 @@ class Score(models.Model):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'ready', 'Ready',),
         (10, 'flagged', 'Flagged',),
         (20, 'passed', 'Passed',),
         (30, 'complete', 'Complete',),
@@ -1823,14 +1831,20 @@ class Score(models.Model):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def flag(self):
-        self.status = self.STATUS.flagged
-        self.save()
+    @transition(field=status, source=STATUS.new, target=STATUS.ready)
+    def ready(self):
         return
 
+    @transition(field=status, source=STATUS.ready, target=STATUS.flagged)
+    def flag(self):
+        return
+
+    @transition(field=status, source=[STATUS.ready, STATUS.flagged], target=STATUS.passed)
     def confirm(self):
-        self.status = self.STATUS.passed
-        self.save()
+        return
+
+    @transition(field=status, source=STATUS.passed, target=STATUS.complete)
+    def finalize(self):
         return
 
     def save(self, *args, **kwargs):
@@ -1939,40 +1953,29 @@ class Session(models.Model):
         except self.DoesNotExist:
             return None
 
-    def build_session(self):
-        """
-            Return sentinels for contestants.
-        """
-        s = 0
-        while s < self.session.slots:
-            self.session.performances.create(
-                session=self.session,
-                position=s,
-                start=self.session.start,
-            )
-            s += 1
+    @transition(field=status, source=STATUS.new, target=STATUS.current)
+    def start(self):
+        if self.contest.rounds == self.kind:
+            s = self.contest.contestants.filter(
+                status=self.contest.contestants.model.STATUS.competing,
+            ).count()
+        else:
+            s = self.slots
+        # while s > 0:
+        #     p = self.performances.create(
+        #         session=self.session,
+        #         position=s,
+        #         # start=self.session.start,
+        #     )
+        #     # p = performance.build()
+        #     s -= 1
 
-    def start_session(self):
-        ls = self.performances.all()
-        for l in ls:
-            p1 = l.songs.create(performance=l, order=1)
-            p2 = l.songs.create(performance=l, order=2)
-            for j in self.contest.panelists.scoring():
-                p1.scores.create(
-                    song=p1,
-                    panelist=j,
-                )
-                p2.scores.create(
-                    song=p2,
-                    panelist=j,
-                )
-        performance = self.performances.get(position=0)
-        performance.start_performance()
-        self.status = self.STATUS.current
-        self.save()
+        # performance = self.performances.get(position=0)
+        # performance.start_performance()
         return "Session Started"
 
-    def end_session(self):
+    @transition(field=status, source=STATUS.current, target=STATUS.review)
+    def finish(self):
         # TODO Validate performances over
         cursor = []
         i = 1
@@ -1995,11 +1998,10 @@ class Session(models.Model):
                 performance.place = i
                 performance.save()
                 cursor = [performance]
-        self.status = self.STATUS.review
-        self.save()
         return "Session Ended"
 
-    def confirm_session(self):
+    @transition(field=status, source=STATUS.review, target=STATUS.complete)
+    def confirm(self):
         # TODO Some validation
         try:
             # TODO This is an awful lot to be in a try/except; refactor?
@@ -2030,8 +2032,6 @@ class Session(models.Model):
                     )
         except self.DoesNotExist:
             pass
-        self.status = self.STATUS.complete
-        self.save()
         return 'Session Confirmed'
     # def draw_contest(self):
     #     cs = self.contestants.order_by('?')
@@ -2127,6 +2127,7 @@ class Song(models.Model):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (5, 'ready', 'Ready',),
         (10, 'flagged', 'Flagged',),
         (20, 'passed', 'Passed',),
         (30, 'complete', 'Complete',),
@@ -2283,6 +2284,22 @@ class Song(models.Model):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    @transition(field=status, source=STATUS.new, target=STATUS.ready)
+    def ready(self):
+        return
+
+    @transition(field=status, source=STATUS.ready, target=STATUS.flagged)
+    def flag(self):
+        return
+
+    @transition(field=status, source=[STATUS.ready, STATUS.flagged], target=STATUS.passed)
+    def confirm(self):
+        return
+
+    @transition(field=status, source=STATUS.passed, target=STATUS.complete)
+    def finalize(self):
+        return
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
