@@ -70,7 +70,7 @@ from .managers import (
 
 from .validators import (
     validate_trimmed,
-    # dixon,
+    dixon,
     is_filled,
     is_impaneled,
     is_scheduled,
@@ -79,6 +79,9 @@ from .validators import (
     # contest_started,
     scores_entered,
     songs_entered,
+    sessions_finished,
+    session_finished,
+    performances_finished,
 )
 
 
@@ -672,7 +675,14 @@ class Contest(TimeStampedModel):
         session.save()
         return "{0} Started".format(self)
 
-    @transition(field=status, source=STATUS.started, target=STATUS.finished)
+    @transition(
+        field=status,
+        source=STATUS.started,
+        target=STATUS.finished,
+        conditions=[
+            sessions_finished,
+        ],
+    )
     # Check everything is done.
     def finish(self):
         # Denormalize
@@ -1617,10 +1627,20 @@ class Performance(TimeStampedModel):
         ]
     )
     def finish(self):
-        # result = dixon(self)
+        dixon(self)
+        performance = self.get_next()
+        performance.start()
+        performance.save()
         return
 
-    @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.final,
+        conditions=[
+            session_finished,
+        ]
+    )
     def finalize(self):
         return
 
@@ -1787,6 +1807,7 @@ class Score(TimeStampedModel):
         (10, 'built', 'Built',),
         (20, 'prepped', 'Prepped',),
         (30, 'flagged', 'Flagged',),
+        (35, 'cleared', 'Cleared',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
     )
@@ -1871,8 +1892,12 @@ class Score(TimeStampedModel):
     def prep(self):
         return
 
-    @transition(field=status, source=STATUS.prepped, target=STATUS.flagged)
+    @transition(field=status, source=STATUS.built, target=STATUS.flagged)
     def flag(self):
+        return
+
+    @transition(field=status, source=STATUS.built, target=STATUS.cleared)
+    def clear(self):
         return
 
     @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.confirmed)
@@ -2053,7 +2078,14 @@ class Session(TimeStampedModel):
         # performance.start_performance()
         # return "Session Started"
 
-    @transition(field=status, source=STATUS.started, target=STATUS.finished)
+    @transition(
+        field=status,
+        source=STATUS.started,
+        target=STATUS.finished,
+        conditions=[
+            performances_finished,
+        ]
+    )
     def finish(self):
         # TODO Validate performances over
         cursor = []
@@ -2210,6 +2242,7 @@ class Song(TimeStampedModel):
         (10, 'built', 'Built',),
         (20, 'prepped', 'Prepped',),
         (30, 'flagged', 'Flagged',),
+        (35, 'cleared', 'Cleared',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
     )

@@ -95,7 +95,7 @@ def score_performance(performance):
             score.points = randint(low, high)
             score.save()
         song.save()
-    performance.end_performance()
+    performance.save()
     return "Performance Scored"
 
 
