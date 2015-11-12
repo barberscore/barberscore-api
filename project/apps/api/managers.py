@@ -36,6 +36,18 @@ class PanelistQuerySet(QuerySet):
             ]
         )
 
+    def scoring(self):
+        return self.filter(
+            category__in=[
+                self.model.CATEGORY.music,
+                self.model.CATEGORY.presentation,
+                self.model.CATEGORY.singing,
+                self.model.CATEGORY.music_candidate,
+                self.model.CATEGORY.presentation_candidate,
+                self.model.CATEGORY.singing_candidate,
+            ]
+        )
+
     def composite(self):
         return self.filter(
             category__in=[

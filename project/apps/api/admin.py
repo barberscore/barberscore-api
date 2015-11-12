@@ -380,7 +380,11 @@ class Organization(MPTTModelAdmin):
 
 
 @admin.register(Performance)
-class Performance(SuperModelAdmin):
+class Performance(FSMTransitionMixin, SuperModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
     save_on_top = True
     change_list_template = "admin/change_list_filter_sidebar.html"
 
@@ -391,7 +395,7 @@ class Performance(SuperModelAdmin):
         'name',
         'status',
         'draw',
-        'start',
+        'start_time',
         'total_score',
         'place',
     ]
@@ -408,7 +412,7 @@ class Performance(SuperModelAdmin):
         ('status', 'status_monitor',),
         'session',
         'contestant',
-        ('draw', 'start',),
+        ('draw', 'start_time',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]

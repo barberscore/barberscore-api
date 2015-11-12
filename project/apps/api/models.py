@@ -75,7 +75,10 @@ from .validators import (
     is_impaneled,
     is_scheduled,
     has_contestants,
+    session_scheduled,
     # contest_started,
+    scores_entered,
+    songs_entered,
 )
 
 
@@ -1566,19 +1569,53 @@ class Performance(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built)
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+        conditions=[
+        ]
+    )
     def build(self):
-        # p1 = self.songs.create(performance=self, order=1)
-        # p2 = self.songs.create(performance=self, order=2)
-        # p1.build()
-        # p2.build()
+        i = 1
+        while i <= 2:
+            song = self.songs.create(
+                performance=self,
+                order=i,
+            )
+            song.build()
+            song.save()
+            i += 1
         return
 
-    @transition(field=status, source=STATUS.built, target=STATUS.started)
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.prepped,
+    )
+    def prep(self):
+        return
+
+    @transition(
+        field=status,
+        source=[
+            STATUS.built,
+            STATUS.prepped,
+        ],
+        target=STATUS.started,
+    )
     def start(self):
         return
 
-    @transition(field=status, source=STATUS.started, target=STATUS.finished)
+    @transition(
+        field=status,
+        source=STATUS.started,
+        target=STATUS.finished,
+        conditions=[
+            scores_entered,
+            songs_entered,
+        ]
+    )
     def finish(self):
         # result = dixon(self)
         return
@@ -1974,7 +2011,7 @@ class Session(TimeStampedModel):
         # Draws the session
         p = 0
         for contestant in self.contest.contestants.official().order_by('?'):
-            performance = self.performances.model(
+            performance = self.performances.create(
                 session=self,
                 contestant=contestant,
                 position=p,
@@ -1988,8 +2025,14 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.prepped,
         target=STATUS.started,
+        conditions=[
+            session_scheduled,
+        ]
     )
     def start(self):
+        performance = self.performances.order_by('position').first()
+        performance.start()
+        performance.save()
         return
         # if self.contest.rounds == self.kind:
         #     s = self.contest.contestants.filter(
@@ -2038,37 +2081,38 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def finalize(self):
-        # TODO Some validation
-        try:
-            # TODO This is an awful lot to be in a try/except; refactor?
-            next_session = self.contest.sessions.get(
-                kind=(self.kind - 1),
-            )
-            qualifiers = self.performances.filter(
-                place__lte=next_session.slots,
-            ).order_by('?')
-            p = 0
-            for qualifier in qualifiers:
-                l = next_session.performances.create(
-                    contestant=qualifier.contestant,
-                    position=p,
-                    # start=next_session.start,
-                )
-                p += 1
-                p1 = l.songs.create(performance=l, order=1)
-                p2 = l.songs.create(performance=l, order=2)
-                for j in self.contest.panelists.scoring():
-                    p1.scores.create(
-                        song=p1,
-                        panelist=j,
-                    )
-                    p2.scores.create(
-                        song=p2,
-                        panelist=j,
-                    )
-        except self.DoesNotExist:
-            pass
-        return 'Session Confirmed'
+        return
+        # # TODO Some validation
+        # try:
+        #     # TODO This is an awful lot to be in a try/except; refactor?
+        #     next_session = self.contest.sessions.get(
+        #         kind=(self.kind - 1),
+        #     )
+        #     qualifiers = self.performances.filter(
+        #         place__lte=next_session.slots,
+        #     ).order_by('?')
+        #     p = 0
+        #     for qualifier in qualifiers:
+        #         l = next_session.performances.create(
+        #             contestant=qualifier.contestant,
+        #             position=p,
+        #             # start=next_session.start,
+        #         )
+        #         p += 1
+        #         p1 = l.songs.create(performance=l, order=1)
+        #         p2 = l.songs.create(performance=l, order=2)
+        #         for j in self.contest.panelists.scoring():
+        #             p1.scores.create(
+        #                 song=p1,
+        #                 panelist=j,
+        #             )
+        #             p2.scores.create(
+        #                 song=p2,
+        #                 panelist=j,
+        #             )
+        # except self.DoesNotExist:
+        #     pass
+        # return 'Session Confirmed'
     # def draw_contest(self):
     #     cs = self.contestants.order_by('?')
     #     session = self.sessions.get(kind=self.rounds)
@@ -2322,23 +2366,57 @@ class Song(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built)
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+    )
     def build(self):
+        for panelist in self.performance.session.contest.panelists.scoring():
+            score = self.scores.create(
+                song=self,
+                panelist=panelist,
+            )
+            score.build()
+            score.save()
         return
 
-    @transition(field=status, source=STATUS.built, target=STATUS.prepped)
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.prepped,
+    )
     def prep(self):
         return
 
-    @transition(field=status, source=STATUS.prepped, target=STATUS.flagged)
+    @transition(
+        field=status,
+        source=[
+            STATUS.built,
+            STATUS.prepped,
+        ],
+        target=STATUS.flagged,
+    )
     def flag(self):
         return
 
-    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.confirmed)
+    @transition(
+        field=status,
+        source=[
+            STATUS.built,
+            STATUS.prepped,
+            STATUS.flagged,
+        ],
+        target=STATUS.confirmed,
+    )
     def confirm(self):
         return
 
-    @transition(field=status, source=STATUS.confirmed, target=STATUS.final)
+    @transition(
+        field=status,
+        source=STATUS.confirmed,
+        target=STATUS.final,
+    )
     def finalize(self):
         return
 
