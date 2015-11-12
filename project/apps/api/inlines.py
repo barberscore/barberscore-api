@@ -35,6 +35,7 @@ class PerformanceInline(admin.TabularInline):
     fields = (
         'link',
         'contestant',
+        'status',
         'session',
         'position',
         'draw',
@@ -281,7 +282,8 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'performance',
         'order',
         'status',
-        'tune',
+        'title',
+        # 'tune',
         # 'mus_points',
         # 'prs_points',
         # 'sng_points',
