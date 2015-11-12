@@ -2,6 +2,8 @@ from random import (
     randint,
 )
 
+from django.utils import timezone
+
 from factory.django import (
     DjangoModelFactory,
 )
@@ -95,6 +97,15 @@ def score_performance(performance):
         song.save()
     performance.end_performance()
     return "Performance Scored"
+
+
+def schedule_performances(session):
+    performances = session.performances.all()
+    for performance in performances:
+        performance.start_time = timezone.now()
+        performance.prep()
+        performance.save()
+    return "Performances scheduled"
 
 
 class QuartetFactory(DjangoModelFactory):

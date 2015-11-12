@@ -130,3 +130,10 @@ def contest_started(session):
         return True
     else:
         return False
+
+
+def session_scheduled(session):
+    for performance in session.performances.all():
+        if not performance.start_time:
+            return False
+    return True
