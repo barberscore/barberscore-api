@@ -181,7 +181,6 @@ INSTALLED_APPS = (
     'haystack',
     'easy_pdf',
     'timezone_field',
-    'django_object_actions',
     'corsheaders',
     'mptt',
     'rest_framework',

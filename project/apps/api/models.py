@@ -82,6 +82,7 @@ from .validators import (
     sessions_finished,
     session_finished,
     performances_finished,
+    scores_cleared,
 )
 
 
@@ -1628,9 +1629,6 @@ class Performance(TimeStampedModel):
     )
     def finish(self):
         dixon(self)
-        performance = self.get_next()
-        performance.start()
-        performance.save()
         return
 
     @transition(
@@ -1896,7 +1894,7 @@ class Score(TimeStampedModel):
     def flag(self):
         return
 
-    @transition(field=status, source=STATUS.built, target=STATUS.cleared)
+    @transition(field=status, source=[STATUS.built, STATUS.cleared], target=STATUS.cleared)
     def clear(self):
         return
 
@@ -2016,6 +2014,14 @@ class Session(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
+    def next_performance(self):
+        try:
+            return self.performances.filter(
+                status=self.performances.model.STATUS.prepped,
+            ).order_by('position').first()
+        except self.performances.model.DoesNotExist:
+            return None
+
     @transition(
         field=status,
         source=STATUS.new,
@@ -2084,6 +2090,7 @@ class Session(TimeStampedModel):
         target=STATUS.finished,
         conditions=[
             performances_finished,
+            scores_cleared,
         ]
     )
     def finish(self):
