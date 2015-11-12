@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 
-
 q80 = [0.886,0.679,0.557,0.482,0.434,0.399,0.370,0.349,0.332,0.318,0.305,0.294,0.285,0.277,0.269,0.263,0.258,0.252,0.247,0.242,0.238,0.234,0.230,0.227,0.224,0.220,0.218,0.215]
 
 q90 = [
@@ -175,3 +174,20 @@ def performances_finished(session):
         if performance.status != performance.STATUS.finished:
             return False
     return True
+
+
+def scores_cleared(session):
+    for performance in session.performances.all():
+        for song in performance.songs.all():
+            for score in song.scores.all():
+                if score.status == score.STATUS.flagged:
+                    return False
+    return True
+    # scores = Score.objects.filter(
+    #     song__performance__session=session,
+    #     status=Score.STATUS.flagged,
+    # )
+    # if scores:
+    #     return False
+    # else:
+    #     return True
