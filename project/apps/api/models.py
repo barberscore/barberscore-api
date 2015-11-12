@@ -386,7 +386,7 @@ class Contest(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'prepped', 'Prepped',),
+        (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
@@ -627,8 +627,8 @@ class Contest(TimeStampedModel):
 
     @transition(
         field=status,
-        source=[STATUS.built, STATUS.prepped],
-        target=STATUS.prepped,
+        source=[STATUS.built, STATUS.ready],
+        target=STATUS.ready,
         conditions=[
             is_scheduled,
             is_impaneled,
@@ -658,11 +658,11 @@ class Contest(TimeStampedModel):
                 contestant.seed = i
                 contestant.save()
                 marker = [contestant]
-        return "{0} Prepped".format(self)
+        return "{0} Ready".format(self)
 
     @transition(
         field=status,
-        source=STATUS.prepped,
+        source=STATUS.ready,
         target=STATUS.started,
         # conditions=[
         # ],
@@ -738,12 +738,12 @@ class Contest(TimeStampedModel):
                 contest=self,
             )
         # TODO Confer awards
-        return "{0} Prepped for Review".format(self)
+        return "{0} Ready for Review".format(self)
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def finalize(self):
         # Review logic
-        return "{0} Prepped".format(self)
+        return "{0} Ready".format(self)
 
 
 class Contestant(TimeStampedModel):
@@ -1269,6 +1269,31 @@ class Group(Common):
         )
 
 
+class Organization(MPTTModel, Common):
+    long_name = models.CharField(
+        help_text="""
+            A long-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
+    parent = TreeForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+    )
+
+    class MPTTMeta:
+        order_insertion_by = [
+            'name',
+        ]
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+
 class Panelist(TimeStampedModel):
     """Contest Panelist"""
 
@@ -1399,31 +1424,6 @@ class Panelist(TimeStampedModel):
         )
 
 
-class Organization(MPTTModel, Common):
-    long_name = models.CharField(
-        help_text="""
-            A long-form name for the resource.""",
-        blank=True,
-        max_length=200,
-    )
-
-    parent = TreeForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-    )
-
-    class MPTTMeta:
-        order_insertion_by = [
-            'name',
-        ]
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-
 class Performance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1434,7 +1434,7 @@ class Performance(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'prepped', 'Prepped',),
+        (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
@@ -1602,7 +1602,7 @@ class Performance(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.built,
-        target=STATUS.prepped,
+        target=STATUS.ready,
     )
     def prep(self):
         return
@@ -1611,7 +1611,7 @@ class Performance(TimeStampedModel):
         field=status,
         source=[
             STATUS.built,
-            STATUS.prepped,
+            STATUS.ready,
         ],
         target=STATUS.started,
     )
@@ -1803,7 +1803,7 @@ class Score(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (20, 'prepped', 'Prepped',),
+        (20, 'ready', 'Ready',),
         (30, 'flagged', 'Flagged',),
         (35, 'cleared', 'Cleared',),
         (40, 'confirmed', 'Confirmed',),
@@ -1886,7 +1886,7 @@ class Score(TimeStampedModel):
     def build(self):
         return
 
-    @transition(field=status, source=STATUS.built, target=STATUS.prepped)
+    @transition(field=status, source=STATUS.built, target=STATUS.ready)
     def prep(self):
         return
 
@@ -1898,7 +1898,7 @@ class Score(TimeStampedModel):
     def clear(self):
         return
 
-    @transition(field=status, source=[STATUS.prepped, STATUS.flagged], target=STATUS.confirmed)
+    @transition(field=status, source=[STATUS.ready, STATUS.flagged], target=STATUS.confirmed)
     def confirm(self):
         return
 
@@ -1925,7 +1925,7 @@ class Session(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'prepped', 'Prepped',),
+        (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
@@ -2017,7 +2017,7 @@ class Session(TimeStampedModel):
     def next_performance(self):
         try:
             return self.performances.filter(
-                status=self.performances.model.STATUS.prepped,
+                status=self.performances.model.STATUS.ready,
             ).order_by('position').first()
         except self.performances.model.DoesNotExist:
             return None
@@ -2033,7 +2033,7 @@ class Session(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.built,
-        target=STATUS.prepped,
+        target=STATUS.ready,
         # conditions=[
         #     contest_started,
         # ]
@@ -2054,7 +2054,7 @@ class Session(TimeStampedModel):
 
     @transition(
         field=status,
-        source=STATUS.prepped,
+        source=STATUS.ready,
         target=STATUS.started,
         conditions=[
             session_scheduled,
@@ -2163,7 +2163,7 @@ class Session(TimeStampedModel):
     #             start=session.start,
     #         )
     #         p += 1
-    #     self.status = self.STATUS.prepped
+    #     self.status = self.STATUS.ready
     #     self.save()
 
 
@@ -2247,7 +2247,7 @@ class Song(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (20, 'prepped', 'Prepped',),
+        (20, 'ready', 'Ready',),
         (30, 'flagged', 'Flagged',),
         (35, 'cleared', 'Cleared',),
         (40, 'confirmed', 'Confirmed',),
@@ -2424,7 +2424,7 @@ class Song(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.built,
-        target=STATUS.prepped,
+        target=STATUS.ready,
     )
     def prep(self):
         return
@@ -2433,7 +2433,7 @@ class Song(TimeStampedModel):
         field=status,
         source=[
             STATUS.built,
-            STATUS.prepped,
+            STATUS.ready,
         ],
         target=STATUS.flagged,
     )
@@ -2444,7 +2444,7 @@ class Song(TimeStampedModel):
         field=status,
         source=[
             STATUS.built,
-            STATUS.prepped,
+            STATUS.ready,
             STATUS.flagged,
         ],
         target=STATUS.confirmed,
