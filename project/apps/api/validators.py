@@ -75,15 +75,12 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
 
         else:
             outliers = [None, Q_maxdiff[1]]
-        #  Set default
-        song.status = song.STATUS.confirmed
         for score in scores:
-            score.status = score.STATUS.confirmed
             if round(score.points * .01, 2) in outliers:
-                score.status = score.STATUS.flagged
-                score.song.status = score.song.STATUS.flagged
+                score.flag()
+            else:
+                score.clear()
             score.save()
-        song.save()
     return "Performance Tested"
 
 
@@ -135,5 +132,46 @@ def contest_started(session):
 def session_scheduled(session):
     for performance in session.performances.all():
         if not performance.start_time:
+            return False
+    return True
+
+
+def scores_entered(performance):
+    songs = performance.songs.all()
+    for song in songs:
+        scores = song.scores.all()
+        for score in scores:
+            if not score.points:
+                return False
+        return True
+
+
+def songs_entered(performance):
+    songs = performance.songs.all()
+    for song in songs:
+        if not song.title:
+            return False
+    return True
+
+
+def sessions_finished(contest):
+    sessions = contest.sessions.all()
+    for session in sessions:
+        if session.status != session.STATUS.finished:
+            return False
+    return True
+
+
+def session_finished(performance):
+    session = performance.session
+    if session.status != session.STATUS.finished:
+        return False
+    return True
+
+
+def performances_finished(session):
+    performances = session.performances.all()
+    for performance in performances:
+        if performance.status != performance.STATUS.finished:
             return False
     return True
