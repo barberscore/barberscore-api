@@ -71,18 +71,21 @@ from .managers import (
 from .validators import (
     validate_trimmed,
     dixon,
-    is_filled,
     is_impaneled,
     is_scheduled,
     has_contestants,
     session_scheduled,
-    # contest_started,
+    contest_started,
     scores_entered,
     songs_entered,
     sessions_finished,
     session_finished,
     performances_finished,
-    scores_cleared,
+    scores_validated,
+    song_entered,
+    score_entered,
+    preceding_finished,
+    preceding_session_finished,
 )
 
 
@@ -386,7 +389,6 @@ class Contest(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         (30, 'final', 'Final',),
@@ -517,8 +519,8 @@ class Contest(TimeStampedModel):
         help_text="""
             Size of the judging panel (typically three or five.)""",
         choices=PANEL_CHOICES,
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
         # default=5,
     )
 
@@ -526,8 +528,8 @@ class Contest(TimeStampedModel):
         help_text="""
             Number of rounds""",
         choices=ROUNDS_CHOICES,
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
         # default=1,
     )
 
@@ -581,20 +583,19 @@ class Contest(TimeStampedModel):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built, conditions=[is_filled])
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+    )
     def build(self):
-        """
-            Build the contest.
-        """
-        # Build Sessions
+        # Triggered by contest post_save signal if created
         r = 1
         while r <= self.rounds:
-            session = self.sessions.model(
+            self.sessions.create(
                 contest=self,
                 kind=r,
             )
-            session.build()
-            session.save()
             r += 1
 
         # Create an adminstrator sentinel
@@ -623,57 +624,70 @@ class Contest(TimeStampedModel):
                 slot=s,
             )
             s += 1
-        return "{0} Built".format(self)
+        return
+
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.built,
+    #         STATUS.ready,
+    #     ],
+    #     target=STATUS.ready,
+    #     conditions=[
+    #         is_scheduled,
+    #         is_impaneled,
+    #         has_contestants,
+    #     ],
+    # )
+    # def prep(self):
+    #     # Seed contestants
+    #     marker = []
+    #     i = 1
+    #     for contestant in self.contestants.accepted().order_by('-prelim'):
+    #         try:
+    #             match = contestant.prelim == marker[0].prelim
+    #         except IndexError:
+    #             contestant.seed = i
+    #             contestant.save()
+    #             marker.append(contestant)
+    #             continue
+    #         if match:
+    #             contestant.seed = i
+    #             i += len(marker)
+    #             contestant.save()
+    #             marker.append(contestant)
+    #             continue
+    #         else:
+    #             i += 1
+    #             contestant.seed = i
+    #             contestant.save()
+    #             marker = [contestant]
+    #     return "{0} Ready".format(self)
 
     @transition(
         field=status,
-        source=[STATUS.built, STATUS.ready],
-        target=STATUS.ready,
+        source=STATUS.built,
+        target=STATUS.started,
         conditions=[
             is_scheduled,
             is_impaneled,
             has_contestants,
         ],
     )
-    def prep(self):
-        # Seed contestants
-        marker = []
-        i = 1
-        for contestant in self.contestants.accepted().order_by('-prelim'):
-            try:
-                match = contestant.prelim == marker[0].prelim
-            except IndexError:
-                contestant.seed = i
-                contestant.save()
-                marker.append(contestant)
-                continue
-            if match:
-                contestant.seed = i
-                i += len(marker)
-                contestant.save()
-                marker.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.seed = i
-                contestant.save()
-                marker = [contestant]
-        return "{0} Ready".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.ready,
-        target=STATUS.started,
-        # conditions=[
-        # ],
-    )
     def start(self):
-        for contestant in self.contestants.accepted():
+        # Triggered in UI
+        # TODO seed contestants?
+        session = self.sessions.initial()
+        p = 0
+        for contestant in self.contestants.accepted().order_by('?'):
             contestant.register()
             contestant.save()
-        session = self.sessions.initial()
-        session.prep()
-        session.save()
+            session.performances.create(
+                session=session,
+                contestant=contestant,
+                position=p,
+            )
+            p += 1
         return "{0} Started".format(self)
 
     @transition(
@@ -944,9 +958,13 @@ class Contestant(TimeStampedModel):
         # Send notice?
         return "{0} Declined".format(self)
 
-    @transition(field=status, source=STATUS.accepted, target=STATUS.official)
+    @transition(
+        field=status,
+        source=STATUS.accepted,
+        target=STATUS.official,
+    )
     def register(self):
-        # Send notice?
+        # Triggered by contest start
         return "{0} Official".format(self)
 
     @transition(field=status, source=STATUS.official, target=STATUS.dropped)
@@ -1433,11 +1451,12 @@ class Performance(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
+        # (10, 'built', 'Built',),
+        # (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
-        (30, 'final', 'Final',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
     )
 
     name = models.CharField(
@@ -1570,6 +1589,16 @@ class Performance(TimeStampedModel):
         except TypeError:
             return None
 
+    def get_preceding(self):
+        try:
+            obj = self.__class__.objects.get(
+                session=self.session,
+                position=self.position - 1,
+            )
+            return obj
+        except self.DoesNotExist:
+            return None
+
     def get_next(self):
         try:
             obj = self.__class__.objects.get(
@@ -1580,42 +1609,50 @@ class Performance(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
+    # @transition(
+    #     field=status,
+    #     source=STATUS.new,
+    #     target=STATUS.built,
+    #     conditions=[
+    #     ]
+    # )
+    # def build(self):
+    #     return
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.built,
+    #     target=STATUS.ready,
+    # )
+    # def prep(self):
+    #     return
+
     @transition(
         field=status,
-        source=STATUS.new,
-        target=STATUS.built,
+        source=[
+            # STATUS.built,
+            STATUS.new,
+        ],
+        target=STATUS.started,
         conditions=[
+            preceding_finished,
         ]
     )
-    def build(self):
+    def start(self):
+        # Triggered from UI
+        # Creates Song and Score sentinels.
         i = 1
         while i <= 2:
             song = self.songs.create(
                 performance=self,
                 order=i,
             )
-            song.build()
-            song.save()
+            for panelist in self.session.contest.panelists.scoring():
+                song.scores.create(
+                    song=song,
+                    panelist=panelist,
+                )
             i += 1
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.ready,
-    )
-    def prep(self):
-        return
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.built,
-            STATUS.ready,
-        ],
-        target=STATUS.started,
-    )
-    def start(self):
         return
 
     @transition(
@@ -1628,15 +1665,28 @@ class Performance(TimeStampedModel):
         ]
     )
     def finish(self):
-        dixon(self)
+        # Triggered from UI
+        dixon(self)  # TODO Should this be somewhere else?  Song perhaps?
+        for song in self.songs.all():
+            song.confirm()
         return
 
     @transition(
         field=status,
         source=STATUS.finished,
-        target=STATUS.final,
+        target=STATUS.confirmed,
         conditions=[
             session_finished,
+        ]
+    )
+    def confirm(self):
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.confirmed,
+        target=STATUS.final,
+        conditions=[
         ]
     )
     def finalize(self):
@@ -1802,10 +1852,9 @@ class Score(TimeStampedModel):
     """
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'ready', 'Ready',),
+        (20, 'entered', 'Entered',),
         (30, 'flagged', 'Flagged',),
-        (35, 'cleared', 'Cleared',),
+        (35, 'validated', 'Validated',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
     )
@@ -1875,34 +1924,56 @@ class Score(TimeStampedModel):
     def category(self):
         return self.panelist.get_category_display()
 
-    @property
-    def is_practice(self):
-        return self.panelist.is_practice
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(field=status, source=STATUS.new, target=STATUS.built)
-    def build(self):
-        return
-
-    @transition(field=status, source=STATUS.built, target=STATUS.ready)
-    def prep(self):
-        return
-
-    @transition(field=status, source=STATUS.built, target=STATUS.flagged)
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.flagged,
+        conditions=[
+            score_entered,
+            # TODO Could be 'performance_finished' here if want to prevent admin UI
+        ]
+    )
     def flag(self):
+        # Triggered from dixon test in performance.finish()
         return
 
-    @transition(field=status, source=[STATUS.built, STATUS.cleared], target=STATUS.cleared)
-    def clear(self):
+    @transition(
+        field=status,
+        source=[
+            STATUS.new,
+            STATUS.flagged,
+        ],
+        target=STATUS.validated,
+        conditions=[
+            score_entered,
+            # TODO Could be 'performance_finished' here if want to prevent admin UI
+        ]
+    )
+    def validate(self):
+        # Triggered from dixon test in performance.finish() or UI
         return
 
-    @transition(field=status, source=[STATUS.ready, STATUS.flagged], target=STATUS.confirmed)
+    @transition(
+        field=status,
+        source=[
+            STATUS.validated,
+        ],
+        target=STATUS.confirmed,
+        conditions=[
+            # song_entered,
+        ]
+    )
     def confirm(self):
         return
 
-    @transition(field=status, source=STATUS.confirmed, target=STATUS.final)
+    @transition(
+        field=status,
+        source=STATUS.confirmed,
+        target=STATUS.final,
+    )
     def finalize(self):
         return
 
@@ -1997,6 +2068,16 @@ class Session(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
+    def get_preceding(self):
+        try:
+            obj = self.__class__.objects.get(
+                contest=self.contest,
+                kind=self.kind + 1,
+            )
+            return obj
+        except self.DoesNotExist:
+            return None
+
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contest,
@@ -2022,67 +2103,47 @@ class Session(TimeStampedModel):
         except self.performances.model.DoesNotExist:
             return None
 
+    # @transition(
+    #     field=status,
+    #     source=STATUS.new,
+    #     target=STATUS.built,
+    # )
+    # def build(self):
+    #     return
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.built,
+    #     target=STATUS.ready,
+    #     # conditions=[
+    #     #     contest_started,
+    #     # ]
+    # )
+    # def prep(self):
+    #     p = 0
+    #     for contestant in self.contest.contestants.official().order_by('?'):
+    #         self.performances.create(
+    #             session=self,
+    #             contestant=contestant,
+    #             position=p,
+    #         )
+    #         p += 1
+    #     return
+
     @transition(
         field=status,
         source=STATUS.new,
-        target=STATUS.built,
-    )
-    def build(self):
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.ready,
-        # conditions=[
-        #     contest_started,
-        # ]
-    )
-    def prep(self):
-        # Draws the session
-        p = 0
-        for contestant in self.contest.contestants.official().order_by('?'):
-            performance = self.performances.create(
-                session=self,
-                contestant=contestant,
-                position=p,
-            )
-            performance.build()
-            performance.save()
-            p += 1
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.ready,
         target=STATUS.started,
         conditions=[
-            session_scheduled,
+            # session_drawn,
+            # session_scheduled,
+            contest_started,
+            preceding_session_finished,
         ]
     )
     def start(self):
-        performance = self.performances.order_by('position').first()
-        performance.start()
-        performance.save()
+        # Triggered in UI
         return
-        # if self.contest.rounds == self.kind:
-        #     s = self.contest.contestants.filter(
-        #         status=self.contest.contestants.model.STATUS.official,
-        #     ).count()
-        # else:
-        #     s = self.slots
-        # while s > 0:
-        #     p = self.performances.create(
-        #         session=self.session,
-        #         position=s,
-        #         # start=self.session.start,
-        #     )
-        #     # p = performance.build()
-        #     s -= 1
-
-        # performance = self.performances.get(position=0)
-        # performance.start_performance()
-        # return "Session Started"
 
     @transition(
         field=status,
@@ -2090,7 +2151,7 @@ class Session(TimeStampedModel):
         target=STATUS.finished,
         conditions=[
             performances_finished,
-            scores_cleared,
+            scores_validated,
         ]
     )
     def finish(self):
@@ -2246,10 +2307,10 @@ class Song(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'ready', 'Ready',),
-        (30, 'flagged', 'Flagged',),
-        (35, 'cleared', 'Cleared',),
+        # (10, 'built', 'Built',),
+        # (20, 'entered', 'Entered',),
+        # (30, 'flagged', 'Flagged',),
+        # (35, 'validated', 'Validated',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
     )
@@ -2406,50 +2467,33 @@ class Song(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.built,
-    )
-    def build(self):
-        for panelist in self.performance.session.contest.panelists.scoring():
-            score = self.scores.create(
-                song=self,
-                panelist=panelist,
-            )
-            score.build()
-            score.save()
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.ready,
-    )
-    def prep(self):
-        return
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.new,
+    #     ],
+    #     target=STATUS.entered,
+    #     conditions=[
+    #         song_entered,
+    #     ]
+    # )
+    # def enter(self):
+    #     # Triggered from form/admin
+    #     return
 
     @transition(
         field=status,
         source=[
-            STATUS.built,
-            STATUS.ready,
-        ],
-        target=STATUS.flagged,
-    )
-    def flag(self):
-        return
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.built,
-            STATUS.ready,
-            STATUS.flagged,
+            STATUS.new,
         ],
         target=STATUS.confirmed,
+        conditions=[
+            song_entered,
+            # TODO could put `performance_finished` here if want to prevent UI
+        ]
     )
     def confirm(self):
+        # Triggered from performance.finish()
         return
 
     @transition(
