@@ -78,7 +78,7 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
             if round(score.points * .01, 2) in outliers:
                 score.flag()
             else:
-                score.clear()
+                score.validate()
             score.save()
     return "Performance Tested"
 
@@ -89,18 +89,6 @@ def validate_trimmed(value):
             'Value must not start or end with white space.',
             code='invalid',
         )
-
-
-def is_filled(contest):
-    return all([
-        contest.organization,
-        contest.level,
-        contest.kind,
-        contest.goal,
-        contest.year,
-        contest.panel,
-        contest.rounds,
-    ])
 
 
 def is_impaneled(contest):
@@ -135,24 +123,6 @@ def session_scheduled(session):
     return True
 
 
-def scores_entered(performance):
-    songs = performance.songs.all()
-    for song in songs:
-        scores = song.scores.all()
-        for score in scores:
-            if not score.points:
-                return False
-        return True
-
-
-def songs_entered(performance):
-    songs = performance.songs.all()
-    for song in songs:
-        if not song.title:
-            return False
-    return True
-
-
 def sessions_finished(contest):
     sessions = contest.sessions.all()
     for session in sessions:
@@ -176,7 +146,7 @@ def performances_finished(session):
     return True
 
 
-def scores_cleared(session):
+def scores_validated(session):
     for performance in session.performances.all():
         for song in performance.songs.all():
             for score in song.scores.all():
@@ -191,3 +161,54 @@ def scores_cleared(session):
     #     return False
     # else:
     #     return True
+
+
+def song_entered(song):
+    if song.title:
+        return True
+    else:
+        return False
+
+
+def score_entered(score):
+    if score.points:
+        return True
+    else:
+        return False
+
+
+def songs_entered(performance):
+    songs = performance.songs.all()
+    for song in songs:
+        if not song_entered(song):
+            return False
+    return True
+
+
+def scores_entered(performance):
+    songs = performance.songs.all()
+    for song in songs:
+        for score in song.scores.all():
+            if not score_entered(score):
+                return False
+    return True
+
+
+def preceding_finished(performance):
+    preceding = performance.get_preceding()
+    if preceding:
+        if preceding.status == performance.STATUS.finished:
+            return True
+        else:
+            return False
+    return True
+
+
+def preceding_session_finished(session):
+    preceding = session.get_preceding()
+    if preceding:
+        if preceding.status == session.STATUS.finished:
+            return True
+        else:
+            return False
+    return True
