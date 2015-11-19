@@ -1,6 +1,6 @@
 -r base.txt
 
 djrill==1.4.0
-django-storages-redux==1.2.3
+django-storages-redux==1.3
 boto==2.38.0
-waitress==0.8.9
+waitress==0.8.10
