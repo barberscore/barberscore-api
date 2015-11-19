@@ -1806,6 +1806,11 @@ class Person(Common):
         blank=True,
     )
 
+    member = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         ordering = ['name']
 
