@@ -27,3 +27,4 @@ reportlab==2.7
 django-fsm==2.3.0
 django-fsm-admin==1.2.2
 django-fsm-log==1.2.1
+factory-boy==2.6.0
