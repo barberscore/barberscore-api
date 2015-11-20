@@ -74,7 +74,7 @@ from .validators import (
     is_impaneled,
     is_scheduled,
     has_contestants,
-    session_scheduled,
+    # session_scheduled,
     contest_started,
     scores_entered,
     songs_entered,
@@ -1287,6 +1287,72 @@ class Group(Common):
         )
 
 
+class Certification(TimeStampedModel):
+    """Certification"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
+    STATUS = Choices(
+        (1, 'active', 'Active'),
+        (2, 'candidate', 'Candidate'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='certifications',
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.person,
+            self.get_part_display(),
+        )
+        super(Certification, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('category', 'person',),
+        )
+
+
 class Organization(MPTTModel, Common):
     long_name = models.CharField(
         help_text="""
@@ -1400,10 +1466,6 @@ class Panelist(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    is_practice = models.BooleanField(
-        default=False,
     )
 
     objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
