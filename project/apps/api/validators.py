@@ -131,11 +131,11 @@ def sessions_finished(contest):
     return True
 
 
-def session_finished(performance):
-    session = performance.session
-    if session.status != session.STATUS.finished:
-        return False
-    return True
+# def session_finished(performance):
+#     session = performance.session
+#     if session.status != session.STATUS.finished:
+#         return False
+#     return True
 
 
 def performances_finished(session):
