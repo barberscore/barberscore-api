@@ -2158,6 +2158,13 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
+    entrant = models.ForeignKey(
+        'Entrant',
+        related_name='performances',
+        null=True,
+        blank=True,
+    )
+
     day = models.ForeignKey(
         'Day',
         related_name='performances',
