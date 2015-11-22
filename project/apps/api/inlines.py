@@ -12,10 +12,20 @@ from .models import (
     Score,
     Panelist,
     Singer,
+    Day,
     Director,
     Session,
     Performance,
 )
+
+
+class DayInline(admin.TabularInline):
+    model = Day
+    extra = 0
+    fields = (
+        'convention',
+        'kind',
+    )
 
 
 # class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):

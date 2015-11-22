@@ -760,6 +760,224 @@ class Contest(TimeStampedModel):
         return "{0} Ready".format(self)
 
 
+class Entrant(TimeStampedModel):
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (60, 'finished', 'Finished',),
+        (90, 'final', 'Final',),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='entrants',
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='entrants',
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        # help_text="""
+        #     The district this contestant is representing.""",
+        related_name='entrants',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    picture = models.ImageField(
+        # help_text="""
+        #     The song picture (as opposed to the "official" photo).""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    seed = models.IntegerField(
+        # help_text="""
+        #     The incoming rank based on prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        # help_text="""
+        #     The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    # TODO Everything below here must be protected in some way.  Different model?
+    place = models.IntegerField(
+        # help_text="""
+        #     The final placement/rank of the contestant.""",
+        null=True,
+        blank=True,
+    )
+
+    men = models.IntegerField(
+        # help_text="""
+        #     The number of men on stage (only for chourses).""",
+        default=4,
+        null=True,
+        blank=True,
+    )
+
+    # @staticmethod
+    # def autocomplete_search_fields():
+    #         return ("id__iexact", "name__icontains",)
+
+    # @property
+    # def delta_score(self):
+    #     try:
+    #         return self.total_score - self.prelim
+    #     except TypeError:
+    #         return None
+
+    # @property
+    # def delta_place(self):
+    #     try:
+    #         return self.seed - self.place
+    #     except TypeError:
+    #         return None
+
+    # @transition(field=status, source=STATUS.new, target=STATUS.qualified)
+    # def qualify(self):
+    #     # Send notice?
+    #     return "{0} Qualified".format(self)
+
+    # @transition(field=status, source=[STATUS.qualified, STATUS.declined], target=STATUS.accepted)
+    # def accept(self):
+    #     # Send notice?
+    #     return "{0} Accepted".format(self)
+
+    # @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
+    # def decline(self):
+    #     # Send notice?
+    #     return "{0} Declined".format(self)
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.accepted,
+    #     target=STATUS.official,
+    # )
+    # def register(self):
+    #     # Triggered by contest start
+    #     return "{0} Official".format(self)
+
+    # @transition(field=status, source=STATUS.official, target=STATUS.dropped)
+    # def drop(self):
+    #     # Send notice?
+    #     return "{0} Dropped".format(self)
+
+    # @transition(field=status, source=STATUS.official, target=STATUS.finished)
+    # def finish(self):
+    #     # Send notice?
+    #     return "{0} Finished".format(self)
+
+    # @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    # def finalize(self):
+    #     # Send notice?
+    #     return "{0} Finalized".format(self)
+
+    # def __unicode__(self):
+    #     return u"{0}".format(self.name)
+
+    # def clean(self):
+    #     if self.singers.count() > 4:
+    #         raise ValidationError('There can not be more than four persons in a quartet.')
+
+    # def denorm(self):
+    #     ps = self.performances.all()
+    #     for p in ps:
+    #         songs = p.songs.all()
+    #         for song in songs:
+    #             song.save()
+    #         p.save()
+    #     self.save()
+    #     return "De-normalized record"
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contest,
+            self.group,
+        )
+
+        # # If there are no performances, skip.
+        # if self.performances.exists():
+        #     agg = self.performances.all().aggregate(
+        #         mus=models.Sum('mus_points'),
+        #         prs=models.Sum('prs_points'),
+        #         sng=models.Sum('sng_points'),
+        #     )
+        #     self.mus_points = agg['mus']
+        #     self.prs_points = agg['prs']
+        #     self.sng_points = agg['sng']
+
+        #     # Calculate total points.
+        #     try:
+        #         self.total_points = sum([
+        #             self.mus_points,
+        #             self.prs_points,
+        #             self.sng_points,
+        #         ])
+        #     except TypeError:
+        #         self.total_points = None
+
+        #     # Calculate percentile
+        #     try:
+        #         possible = self.contest.panel * 2 * self.performances.count()
+        #         self.mus_score = round(self.mus_points / possible, 1)
+        #         self.prs_score = round(self.prs_points / possible, 1)
+        #         self.sng_score = round(self.sng_points / possible, 1)
+        #         self.total_score = round(self.total_points / (possible * 3), 1)
+        #     except TypeError:
+        #         self.mus_score = None
+        #         self.prs_score = None
+        #         self.sng_score = None
+        super(Entrant, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = (
+            'contest',
+            'group',
+        )
+        unique_together = (
+            ('group', 'contest',),
+        )
+
+
 class Contestant(TimeStampedModel):
 
     STATUS = Choices(
@@ -809,6 +1027,13 @@ class Contestant(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='contestants',
+    )
+
+    entrant = models.ForeignKey(
+        'Entrant',
+        related_name='contestants',
+        null=True,
+        blank=True,
     )
 
     organization = TreeForeignKey(
@@ -1139,8 +1364,9 @@ class Convention(TimeStampedModel):
 
     class Meta:
         ordering = [
-            'organization',
             '-year',
+            'kind',
+            'organization',
         ]
 
         unique_together = (
