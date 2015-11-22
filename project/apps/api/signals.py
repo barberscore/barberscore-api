@@ -20,7 +20,8 @@ def user_post_save(sender, instance=None, created=False, **kwargs):
 
 
 @receiver(post_save, sender=Contest)
-def contest_post_save(sender, instance=None, created=False, **kwargs):
-    if created:
-        instance.build()
-        instance.save()
+def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    if not raw:
+        if created:
+            instance.build()
+            instance.save()
