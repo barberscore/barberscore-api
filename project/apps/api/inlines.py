@@ -36,7 +36,6 @@ class PerformanceInline(admin.TabularInline):
         'link',
         'contestant',
         'status',
-        'session',
         'position',
         'draw',
         # 'start',
@@ -55,7 +54,6 @@ class PerformanceInline(admin.TabularInline):
     # }
     readonly_fields = (
         'contestant',
-        'session',
         'draw',
         # 'start',
         'link',
@@ -66,7 +64,6 @@ class PerformanceInline(admin.TabularInline):
 class PlacementInline(admin.TabularInline):
     fields = (
         'contestant',
-        'session',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -77,7 +74,6 @@ class PlacementInline(admin.TabularInline):
     model = Performance
     readonly_fields = (
         'contestant',
-        'session',
         'mus_points',
         'prs_points',
         'sng_points',
