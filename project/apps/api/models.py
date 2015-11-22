@@ -801,6 +801,13 @@ class Entrant(TimeStampedModel):
         related_name='entrants',
     )
 
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='entrants',
+        null=True,
+        blank=True,
+    )
+
     group = models.ForeignKey(
         'Group',
         related_name='entrants',
