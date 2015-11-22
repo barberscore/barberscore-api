@@ -7,13 +7,13 @@ from .inlines import (
     ContestantInline,
     DirectorInline,
     PerformanceInline,
-    PlacementInline,
+    # PlacementInline,
     PanelistInline,
     ScoreInline,
     SongStackedInline,
     # SongInline,
     SingerInline,
-    SessionInline,
+    # SessionInline,
 )
 
 from .models import (
@@ -97,7 +97,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         ContestantInline,
-        SessionInline,
+        # SessionInline,
         PanelistInline,
     ]
 
@@ -390,6 +390,7 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
 
     inlines = [
         SongStackedInline,
+        # SessionInline,
     ]
     list_display = [
         'name',
@@ -401,7 +402,6 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     ]
     list_filter = [
         'status',
-        'session',
         'contestant__contest__level',
         'contestant__contest__kind',
         'contestant__contest__year',
@@ -410,7 +410,6 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'session',
         'contestant',
         ('draw', 'start_time',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
@@ -420,7 +419,6 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
-        'session',
         'contestant',
         'mus_points',
         'prs_points',
@@ -435,12 +433,10 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
 
     raw_id_fields = (
         'contestant',
-        'session',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'contestant',
-            'session',
         ]
     }
 
@@ -595,9 +591,9 @@ class Score(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'song__performance__session__contest__level',
-        'song__performance__session__contest__kind',
-        'song__performance__session__contest__year',
+        'song__performance__contestant__contest__level',
+        'song__performance__contestant__contest__kind',
+        'song__performance__contestant__contest__year',
     ]
 
     raw_id_fields = [
@@ -663,10 +659,10 @@ class Session(FSMTransitionMixin, admin.ModelAdmin):
         ]
     }
 
-    inlines = [
-        PerformanceInline,
-        PlacementInline,
-    ]
+    # inlines = [
+    #     PerformanceInline,
+    #     PlacementInline,
+    # ]
 
     search_fields = [
         'name',
