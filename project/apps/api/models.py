@@ -937,7 +937,7 @@ class Entrant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.contest,
+            self.convention,
             self.group,
         )
 
@@ -977,11 +977,11 @@ class Entrant(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'contest',
+            'convention',
             'group',
         )
         unique_together = (
-            ('group', 'contest',),
+            ('group', 'convention',),
         )
 
 
