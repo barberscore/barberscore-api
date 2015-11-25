@@ -2196,16 +2196,16 @@ class Performance(TimeStampedModel):
                 self.total_points = None
 
             #  Calculate percentile scores
-            try:
-                possible = self.entrant.contest.panel * 2
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
+            # try:
+            #     possible = self.entrant.contest.panel * 2
+            #     self.mus_score = round(self.mus_points / possible, 1)
+            #     self.prs_score = round(self.prs_points / possible, 1)
+            #     self.sng_score = round(self.sng_points / possible, 1)
+            #     self.total_score = round(self.total_points / (possible * 3), 1)
+            # except TypeError:
+            #     self.mus_score = None
+            #     self.prs_score = None
+            #     self.sng_score = None
         super(Performance, self).save(*args, **kwargs)
 
 
@@ -3009,16 +3009,16 @@ class Song(TimeStampedModel):
             self.total_points = None
 
         # Calculate percentile scores.
-        try:
-            possible = self.performance.entrant.contest.panel
-            self.mus_score = round(self.mus_points / possible, 1)
-            self.prs_score = round(self.prs_points / possible, 1)
-            self.sng_score = round(self.sng_points / possible, 1)
-            self.total_score = round(self.total_points / (possible * 3), 1)
-        except TypeError:
-            self.mus_score = None
-            self.prs_score = None
-            self.sng_score = None
+        # try:
+        #     possible = self.performance.entrant.contest.panel
+        #     self.mus_score = round(self.mus_points / possible, 1)
+        #     self.prs_score = round(self.prs_points / possible, 1)
+        #     self.sng_score = round(self.sng_points / possible, 1)
+        #     self.total_score = round(self.total_points / (possible * 3), 1)
+        # except TypeError:
+        #     self.mus_score = None
+        #     self.prs_score = None
+        #     self.sng_score = None
         super(Song, self).save(*args, **kwargs)
 
 
