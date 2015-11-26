@@ -73,7 +73,7 @@ from .validators import (
     dixon,
     is_impaneled,
     is_scheduled,
-    has_contestants,
+    # has_contestants,
     # session_scheduled,
     contest_started,
     scores_entered,
@@ -678,7 +678,7 @@ class Contest(TimeStampedModel):
         conditions=[
             is_scheduled,
             is_impaneled,
-            has_contestants,
+            # has_contestants,
         ],
     )
     def start(self):
@@ -884,6 +884,9 @@ class Entrant(TimeStampedModel):
             ('group', 'contest',),
         )
 
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
 
 class Contestant(TimeStampedModel):
 
@@ -931,10 +934,10 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
-    group = models.ForeignKey(
-        'Group',
-        related_name='contestants',
-    )
+    # group = models.ForeignKey(
+    #     'Group',
+    #     related_name='contestants',
+    # )
 
     entrant = models.ForeignKey(
         'Entrant',
@@ -1141,7 +1144,7 @@ class Contestant(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contest,
-            self.group,
+            self.entrant,
         )
 
         # If there are no performances, skip.
@@ -1184,7 +1187,7 @@ class Contestant(TimeStampedModel):
             'place',
         )
         unique_together = (
-            ('group', 'contest',),
+            ('entrant', 'contest',),
         )
 
 
@@ -1569,6 +1572,13 @@ class Director(TimeStampedModel):
         related_name='directors',
     )
 
+    entrant = models.ForeignKey(
+        'Entrant',
+        related_name='directors',
+        null=True,
+        blank=True,
+    )
+
     person = models.ForeignKey(
         'Person',
         related_name='choruses',
@@ -1590,9 +1600,9 @@ class Director(TimeStampedModel):
         )
         super(Director, self).save(*args, **kwargs)
 
-    def clean(self):
-        if self.contestant.group.kind == Group.KIND.quartet:
-            raise ValidationError('Quartets do not have directors.')
+    # def clean(self):
+    #     if self.contestant.group.kind == Group.KIND.quartet:
+    #         raise ValidationError('Quartets do not have directors.')
 
     class Meta:
         unique_together = (
@@ -1934,13 +1944,6 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
-    # contestant = models.ForeignKey(
-    #     'Contestant',
-    #     related_name='performances',
-    #     null=True,
-    #     blank=True,
-    # )
-
     entrant = models.ForeignKey(
         'Entrant',
         related_name='performances',
@@ -2171,8 +2174,7 @@ class Performance(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.session,
-            # self.entrant.group,
-            self.id.hex,
+            self.entrant.group,
         )
 
         if self.songs.exists():
@@ -2728,6 +2730,13 @@ class Singer(TimeStampedModel):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='singers',
+    )
+
+    entrant = models.ForeignKey(
+        'Entrant',
+        related_name='singers',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
