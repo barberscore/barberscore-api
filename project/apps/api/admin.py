@@ -80,7 +80,16 @@ class ArrangerAdmin(admin.ModelAdmin):
 
 @admin.register(Award)
 class AwardAdmin(admin.ModelAdmin):
-    pass
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    list_filter = (
+        'status',
+        'contest__level',
+        'contest__kind',
+        'contest__year',
+    )
+    inlines = [
+        ContestantInline,
+    ]
 
 
 @admin.register(Catalog)
@@ -175,13 +184,6 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'seed',
-        'prelim',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-        'men',
         'place',
     )
 
@@ -191,44 +193,29 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'contest__level',
-        'contest__kind',
-        'contest__year',
+        'entrant__contest__level',
+        'entrant__contest__kind',
+        'entrant__contest__year',
     )
 
     raw_id_fields = (
-        'contest',
         'entrant',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'contest',
             'entrant',
         ]
     }
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'contest',
         ('entrant', 'organization',),
-        ('seed', 'prelim',),
-        ('place', 'men',),
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
 
     readonly_fields = (
         'name',
         'status_monitor',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
     )
 
     save_on_top = True
@@ -245,12 +232,13 @@ class EntrantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         SingerInline,
         DirectorInline,
-        # PerformanceInline,
+        ContestantInline,
     ]
 
     list_display = (
         'name',
         'status',
+        'organization',
         # 'seed',
         # 'prelim',
         # 'mus_score',
@@ -287,7 +275,7 @@ class EntrantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'contest',
-        # ('entrant', 'organization',),
+        'organization',
         # ('seed', 'prelim',),
         # ('place', 'men',),
         # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
