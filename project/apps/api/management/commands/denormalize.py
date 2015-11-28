@@ -5,12 +5,10 @@ from django.core.management.base import (
 from apps.api.models import (
     Convention,
     Contest,
-    Award,
     Contestant,
-    Entrant,
-    Session,
     Performance,
     Song,
+    Group,
     Singer,
     Director,
     Panelist,
@@ -27,21 +25,9 @@ class Command(BaseCommand):
         ts = Contest.objects.all()
         for t in ts:
             t.save()
-        ps = Panelist.objects.all()
-        for p in ps:
-            p.save()
-        ws = Award.objects.all()
-        for w in ws:
-            w.save()
-        es = Entrant.objects.all()
-        for e in es:
-            e.save()
         cs = Contestant.objects.all()
         for c in cs:
             c.save()
-        ss = Session.objects.all()
-        for s in ss:
-            s.save()
         as_ = Performance.objects.all()
         for a in as_:
             a.save()
