@@ -105,8 +105,8 @@ def is_scheduled(contest):
     return True
 
 
-# def has_contestants(contest):
-#     return contest.contestants.exists()
+def has_contestants(contest):
+    return contest.contestants.exists()
 
 
 def contest_started(session):
