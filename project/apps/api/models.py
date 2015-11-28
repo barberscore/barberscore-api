@@ -744,7 +744,7 @@ class Contest(TimeStampedModel):
                 contestant.save()
                 cursor = [contestant]
         if self.goal == self.GOAL.championship:
-            Winner.objects.create(
+            Ranking.objects.create(
                 contestant=self.contestants.get(place=1),
                 award=Award.objects.get(
                     name='Champion',
@@ -3035,7 +3035,7 @@ class Tune(TimeStampedModel):
         return u"{0}".format(self.name)
 
 
-class Winner(TimeStampedModel):
+class Ranking(TimeStampedModel):
     """Chorus relation"""
     id = models.UUIDField(
         primary_key=True,
@@ -3057,17 +3057,17 @@ class Winner(TimeStampedModel):
 
     contestant = models.ForeignKey(
         'Contestant',
-        related_name='winners',
+        related_name='rankings',
     )
 
     award = models.ForeignKey(
         'Award',
-        related_name='winners',
+        related_name='rankings',
     )
 
     contest = models.ForeignKey(
         'Contest',
-        related_name='winners',
+        related_name='rankings',
     )
 
     def __unicode__(self):
@@ -3078,7 +3078,7 @@ class Winner(TimeStampedModel):
             self.contestant,
             self.award,
         )
-        super(Winner, self).save(*args, **kwargs)
+        super(Ranking, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
