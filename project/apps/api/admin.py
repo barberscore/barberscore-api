@@ -14,7 +14,6 @@ from .inlines import (
     # SongInline,
     SingerInline,
     # SessionInline,
-    DayInline,
 )
 
 from .models import (
@@ -23,7 +22,6 @@ from .models import (
     Convention,
     Contest,
     Contestant,
-    Day,
     Group,
     Tune,
     Person,
@@ -236,40 +234,6 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Day)
-class DayAdmin(admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    list_display = (
-        'name',
-        'status',
-        'status_monitor',
-        'kind',
-    )
-
-    fields = (
-        'name',
-        ('status', 'status_monitor',),
-        'kind',
-    )
-
-    # list_filter = (
-    #     'status',
-    #     'kind',
-    #     'year',
-    #     'organization',
-    # )
-
-    inlines = [
-        PerformanceInline,
-    ]
-
-    readonly_fields = (
-        'name',
-        'status_monitor',
-    )
-    save_on_top = True
-
-
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -304,10 +268,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'year',
         'organization',
     )
-
-    inlines = [
-        DayInline,
-    ]
 
     readonly_fields = (
         'name',
