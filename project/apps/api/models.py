@@ -274,6 +274,13 @@ class Arranger(TimeStampedModel):
 
 class Award(TimeStampedModel):
 
+    KIND = Choices(
+        (10, 'championship', 'Championship',),
+        (20, 'qualifier', 'Qualifier',),
+        (30, 'novice', 'Novice',),
+        (40, 'dc', 'Other',),
+    )
+
     STATUS = Choices(
         (0, 'new', 'New',),
     )
@@ -304,6 +311,12 @@ class Award(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+        null=True,
+        blank=True,
     )
 
     contest = models.ForeignKey(
