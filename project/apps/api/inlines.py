@@ -210,24 +210,24 @@ class EntrantInline(admin.TabularInline):
 
 class DirectorInline(admin.TabularInline):
     fields = (
-        'entrant',
+        'contestant',
         'person',
         'part',
     )
     ordering = (
         'part',
-        'entrant',
+        'contestant',
     )
     model = Director
     extra = 0
     raw_id_fields = (
         'person',
-        'entrant',
+        'contestant',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'person',
-            'entrant',
+            'contestant',
         ]
     }
     can_delete = True
@@ -460,13 +460,13 @@ class SessionInline(admin.TabularInline):
 class SingerInline(admin.TabularInline):
     model = Singer
     fields = (
-        'entrant',
+        'contestant',
         'person',
         'part',
     )
     ordering = (
         'part',
-        'entrant',
+        'contestant',
     )
     extra = 0
     raw_id_fields = (
