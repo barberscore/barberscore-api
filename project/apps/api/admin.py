@@ -172,6 +172,12 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     change_list_template = "admin/change_list_filter_sidebar.html"
 
+    inlines = [
+        SingerInline,
+        DirectorInline,
+        # PerformanceInline,
+    ]
+
     list_display = (
         'name',
         'status',

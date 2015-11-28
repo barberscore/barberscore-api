@@ -1567,9 +1567,16 @@ class Director(TimeStampedModel):
         max_length=255,
     )
 
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='directors',
+    )
+
     entrant = models.ForeignKey(
         'Entrant',
         related_name='directors',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
@@ -1587,7 +1594,7 @@ class Director(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.entrant,
+            self.contestant,
             self.get_part_display(),
             self.person,
         )
@@ -1599,7 +1606,7 @@ class Director(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('entrant', 'person',),
+            ('contestant', 'person',),
         )
 
 
@@ -2720,9 +2727,16 @@ class Singer(TimeStampedModel):
         max_length=255,
     )
 
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='singers',
+    )
+
     entrant = models.ForeignKey(
         'Entrant',
         related_name='singers',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
@@ -2739,7 +2753,7 @@ class Singer(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.entrant,
+            self.contestant,
             self.get_part_display(),
             self.person,
         )
@@ -2749,14 +2763,14 @@ class Singer(TimeStampedModel):
         # if self.contestant.group.kind == Group.CHORUS:
         #     raise ValidationError('Choruses do not have quartet singers.')
         if self.part:
-            if [s['part'] for s in self.entrant.singers.values(
+            if [s['part'] for s in self.contestant.singers.values(
                 'part'
             )].count(self.part) > 1:
                 raise ValidationError('There can not be more than one of the same part in a quartet.')
 
     class Meta:
         unique_together = (
-            ('entrant', 'person',),
+            ('contestant', 'person',),
         )
         ordering = (
             '-name',
