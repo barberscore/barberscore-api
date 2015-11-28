@@ -292,13 +292,6 @@ class Award(TimeStampedModel):
         max_length=255,
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='awards',
-        null=True,
-        blank=True,
-    )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -946,7 +939,7 @@ class Entrant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.contest,
+            self.convention,
             self.group,
         )
 
@@ -986,11 +979,11 @@ class Entrant(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'contest',
+            'convention',
             'group',
         )
         unique_together = (
-            ('group', 'contest',),
+            ('group', 'convention',),
         )
 
 
@@ -1047,13 +1040,6 @@ class Contestant(TimeStampedModel):
 
     entrant = models.ForeignKey(
         'Entrant',
-        related_name='contestants',
-        null=True,
-        blank=True,
-    )
-
-    award = models.ForeignKey(
-        'Award',
         related_name='contestants',
         null=True,
         blank=True,
@@ -1993,143 +1979,143 @@ class Panelist(TimeStampedModel):
         )
 
 
-# class Rank(TimeStampedModel):
-#     id = models.UUIDField(
-#         primary_key=True,
-#         default=uuid.uuid4,
-#         editable=False,
-#     )
+class Rank(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
 
-#     STATUS = Choices(
-#         (0, 'new', 'New',),
-#         # (10, 'built', 'Built',),
-#         # (15, 'ready', 'Ready',),
-#         # (20, 'started', 'Started',),
-#         # (25, 'finished', 'Finished',),
-#         (40, 'confirmed', 'Confirmed',),
-#         (50, 'final', 'Final',),
-#     )
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        # (10, 'built', 'Built',),
+        # (15, 'ready', 'Ready',),
+        # (20, 'started', 'Started',),
+        # (25, 'finished', 'Finished',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
+    )
 
-#     name = models.CharField(
-#         max_length=255,
-#         unique=True,
-#     )
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
 
-#     slug = AutoSlugField(
-#         populate_from='name',
-#         always_update=True,
-#         unique=True,
-#         max_length=255,
-#     )
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
 
-#     status = FSMIntegerField(
-#         choices=STATUS,
-#         default=STATUS.new,
-#     )
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
 
-#     status_monitor = MonitorField(
-#         help_text="""Status last updated""",
-#         monitor='status',
-#     )
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
 
-#     session = models.ForeignKey(
-#         'Session',
-#         related_name='ranks',
-#     )
+    session = models.ForeignKey(
+        'Session',
+        related_name='ranks',
+    )
 
-#     performance = models.ForeignKey(
-#         'Performance',
-#         related_name='ranks',
-#     )
+    performance = models.ForeignKey(
+        'Performance',
+        related_name='ranks',
+    )
 
-#     place = models.IntegerField(
-#         null=True,
-#         blank=True,
-#     )
+    place = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-#     # @transition(
-#     #     field=status,
-#     #     source=[
-#     #         # STATUS.built,
-#     #         STATUS.new,
-#     #     ],
-#     #     target=STATUS.started,
-#     #     conditions=[
-#     #         preceding_finished,
-#     #     ]
-#     # )
-#     # def start(self):
-#     #     # Triggered from UI
-#     #     # Creates Song and Score sentinels.
-#     #     i = 1
-#     #     while i <= 2:
-#     #         song = self.songs.create(
-#     #             performance=self,
-#     #             order=i,
-#     #         )
-#     #         for panelist in self.session.contest.panelists.scoring():
-#     #             song.scores.create(
-#     #                 song=song,
-#     #                 panelist=panelist,
-#     #             )
-#     #         i += 1
-#     #     return
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         # STATUS.built,
+    #         STATUS.new,
+    #     ],
+    #     target=STATUS.started,
+    #     conditions=[
+    #         preceding_finished,
+    #     ]
+    # )
+    # def start(self):
+    #     # Triggered from UI
+    #     # Creates Song and Score sentinels.
+    #     i = 1
+    #     while i <= 2:
+    #         song = self.songs.create(
+    #             performance=self,
+    #             order=i,
+    #         )
+    #         for panelist in self.session.contest.panelists.scoring():
+    #             song.scores.create(
+    #                 song=song,
+    #                 panelist=panelist,
+    #             )
+    #         i += 1
+    #     return
 
-#     # @transition(
-#     #     field=status,
-#     #     source=STATUS.started,
-#     #     target=STATUS.finished,
-#     #     conditions=[
-#     #         scores_entered,
-#     #         songs_entered,
-#     #     ]
-#     # )
-#     # def finish(self):
-#     #     # Triggered from UI
-#     #     dixon(self)  # TODO Should this be somewhere else?  Song perhaps?
-#     #     for song in self.songs.all():
-#     #         song.confirm()
-#     #     return
+    # @transition(
+    #     field=status,
+    #     source=STATUS.started,
+    #     target=STATUS.finished,
+    #     conditions=[
+    #         scores_entered,
+    #         songs_entered,
+    #     ]
+    # )
+    # def finish(self):
+    #     # Triggered from UI
+    #     dixon(self)  # TODO Should this be somewhere else?  Song perhaps?
+    #     for song in self.songs.all():
+    #         song.confirm()
+    #     return
 
-#     # @transition(
-#     #     field=status,
-#     #     source=STATUS.finished,
-#     #     target=STATUS.confirmed,
-#     #     # conditions=[
-#     #     #     session_finished,
-#     #     # ]
-#     # )
-#     # def confirm(self):
-#     #     return
+    # @transition(
+    #     field=status,
+    #     source=STATUS.finished,
+    #     target=STATUS.confirmed,
+    #     # conditions=[
+    #     #     session_finished,
+    #     # ]
+    # )
+    # def confirm(self):
+    #     return
 
-#     # @transition(
-#     #     field=status,
-#     #     source=STATUS.confirmed,
-#     #     target=STATUS.final,
-#     #     conditions=[
-#     #     ]
-#     # )
-#     # def finalize(self):
-#     #     return
+    # @transition(
+    #     field=status,
+    #     source=STATUS.confirmed,
+    #     target=STATUS.final,
+    #     conditions=[
+    #     ]
+    # )
+    # def finalize(self):
+    #     return
 
-#     class Meta:
-#         ordering = [
-#             'session',
-#             'place',
-#         ]
-#         unique_together = (
-#             ('session', 'performance',),
-#         )
+    class Meta:
+        ordering = [
+            'session',
+            'place',
+        ]
+        unique_together = (
+            ('session', 'performance',),
+        )
 
-#     def __unicode__(self):
-#         return u"{0}".format(self.name)
+    def __unicode__(self):
+        return u"{0}".format(self.name)
 
-#     def save(self, *args, **kwargs):
-#         self.name = u"{0} {1}".format(
-#             self.session,
-#             self.performance,
-#         )
-#         super(Rank, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.session,
+            self.performance,
+        )
+        super(Rank, self).save(*args, **kwargs)
 
 
 class Performance(TimeStampedModel):
@@ -2179,8 +2165,6 @@ class Performance(TimeStampedModel):
     contestant = models.ForeignKey(
         'Contestant',
         related_name='performances',
-        null=True,
-        blank=True,
     )
 
     entrant = models.ForeignKey(
