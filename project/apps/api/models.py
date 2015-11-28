@@ -1879,6 +1879,12 @@ class Panelist(TimeStampedModel):
 
 
 class Performance(TimeStampedModel):
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='performances',
+        null=True,
+        blank=True,
+    )
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3030,6 +3036,57 @@ class Tune(TimeStampedModel):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+
+class Winner(TimeStampedModel):
+    """Chorus relation"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='winners',
+    )
+
+    award = models.ForeignKey(
+        'Award',
+        related_name='winners',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='winners',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contestant,
+            self.award,
+        )
+        super(Winner, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'award',),
+        )
 
 
 class User(AbstractBaseUser, PermissionsMixin):
