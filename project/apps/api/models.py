@@ -709,7 +709,7 @@ class Contest(TimeStampedModel):
     def finish(self):
         # Denormalize
         ns = Song.objects.filter(
-            performance__session__contest=self,
+            performance__contestant__contest=self,
         )
         for n in ns:
             n.save()
@@ -810,6 +810,13 @@ class Entrant(TimeStampedModel):
         blank=True,
     )
 
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='entrants',
+        null=True,
+        blank=True,
+    )
+
     group = models.ForeignKey(
         'Group',
         related_name='entrants',
@@ -847,6 +854,14 @@ class Entrant(TimeStampedModel):
         blank=True,
     )
 
+    # TODO Everything below here must be protected in some way.  Different model?
+    place = models.IntegerField(
+        # help_text="""
+        #     The final placement/rank of the contestant.""",
+        null=True,
+        blank=True,
+    )
+
     men = models.IntegerField(
         # help_text="""
         #     The number of men on stage (only for chourses).""",
@@ -855,11 +870,118 @@ class Entrant(TimeStampedModel):
         blank=True,
     )
 
+    # @staticmethod
+    # def autocomplete_search_fields():
+    #         return ("id__iexact", "name__icontains",)
+
+    # @property
+    # def delta_score(self):
+    #     try:
+    #         return self.total_score - self.prelim
+    #     except TypeError:
+    #         return None
+
+    # @property
+    # def delta_place(self):
+    #     try:
+    #         return self.seed - self.place
+    #     except TypeError:
+    #         return None
+
+    # @transition(field=status, source=STATUS.new, target=STATUS.qualified)
+    # def qualify(self):
+    #     # Send notice?
+    #     return "{0} Qualified".format(self)
+
+    # @transition(field=status, source=[STATUS.qualified, STATUS.declined], target=STATUS.accepted)
+    # def accept(self):
+    #     # Send notice?
+    #     return "{0} Accepted".format(self)
+
+    # @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
+    # def decline(self):
+    #     # Send notice?
+    #     return "{0} Declined".format(self)
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.accepted,
+    #     target=STATUS.official,
+    # )
+    # def register(self):
+    #     # Triggered by contest start
+    #     return "{0} Official".format(self)
+
+    # @transition(field=status, source=STATUS.official, target=STATUS.dropped)
+    # def drop(self):
+    #     # Send notice?
+    #     return "{0} Dropped".format(self)
+
+    # @transition(field=status, source=STATUS.official, target=STATUS.finished)
+    # def finish(self):
+    #     # Send notice?
+    #     return "{0} Finished".format(self)
+
+    # @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    # def finalize(self):
+    #     # Send notice?
+    #     return "{0} Finalized".format(self)
+
+    # def __unicode__(self):
+    #     return u"{0}".format(self.name)
+
+    # def clean(self):
+    #     if self.singers.count() > 4:
+    #         raise ValidationError('There can not be more than four persons in a quartet.')
+
+    # def denorm(self):
+    #     ps = self.performances.all()
+    #     for p in ps:
+    #         songs = p.songs.all()
+    #         for song in songs:
+    #             song.save()
+    #         p.save()
+    #     self.save()
+    #     return "De-normalized record"
+
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contest,
             self.group,
         )
+
+        # # If there are no performances, skip.
+        # if self.performances.exists():
+        #     agg = self.performances.all().aggregate(
+        #         mus=models.Sum('mus_points'),
+        #         prs=models.Sum('prs_points'),
+        #         sng=models.Sum('sng_points'),
+        #     )
+        #     self.mus_points = agg['mus']
+        #     self.prs_points = agg['prs']
+        #     self.sng_points = agg['sng']
+
+        #     # Calculate total points.
+        #     try:
+        #         self.total_points = sum([
+        #             self.mus_points,
+        #             self.prs_points,
+        #             self.sng_points,
+        #         ])
+        #     except TypeError:
+        #         self.total_points = None
+
+        #     # Calculate percentile
+        #     try:
+        #         possible = self.contest.panel * 2 * self.performances.count()
+        #         self.mus_score = round(self.mus_points / possible, 1)
+        #         self.prs_score = round(self.prs_points / possible, 1)
+        #         self.sng_score = round(self.sng_points / possible, 1)
+        #         self.total_score = round(self.total_points / (possible * 3), 1)
+        #     except TypeError:
+        #         self.mus_score = None
+        #         self.prs_score = None
+        #         self.sng_score = None
         super(Entrant, self).save(*args, **kwargs)
 
     class Meta:
@@ -1871,6 +1993,145 @@ class Panelist(TimeStampedModel):
         )
 
 
+# class Rank(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
+
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         # (10, 'built', 'Built',),
+#         # (15, 'ready', 'Ready',),
+#         # (20, 'started', 'Started',),
+#         # (25, 'finished', 'Finished',),
+#         (40, 'confirmed', 'Confirmed',),
+#         (50, 'final', 'Final',),
+#     )
+
+#     name = models.CharField(
+#         max_length=255,
+#         unique=True,
+#     )
+
+#     slug = AutoSlugField(
+#         populate_from='name',
+#         always_update=True,
+#         unique=True,
+#         max_length=255,
+#     )
+
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
+
+#     status_monitor = MonitorField(
+#         help_text="""Status last updated""",
+#         monitor='status',
+#     )
+
+#     session = models.ForeignKey(
+#         'Session',
+#         related_name='ranks',
+#     )
+
+#     performance = models.ForeignKey(
+#         'Performance',
+#         related_name='ranks',
+#     )
+
+#     place = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
+
+#     # @transition(
+#     #     field=status,
+#     #     source=[
+#     #         # STATUS.built,
+#     #         STATUS.new,
+#     #     ],
+#     #     target=STATUS.started,
+#     #     conditions=[
+#     #         preceding_finished,
+#     #     ]
+#     # )
+#     # def start(self):
+#     #     # Triggered from UI
+#     #     # Creates Song and Score sentinels.
+#     #     i = 1
+#     #     while i <= 2:
+#     #         song = self.songs.create(
+#     #             performance=self,
+#     #             order=i,
+#     #         )
+#     #         for panelist in self.session.contest.panelists.scoring():
+#     #             song.scores.create(
+#     #                 song=song,
+#     #                 panelist=panelist,
+#     #             )
+#     #         i += 1
+#     #     return
+
+#     # @transition(
+#     #     field=status,
+#     #     source=STATUS.started,
+#     #     target=STATUS.finished,
+#     #     conditions=[
+#     #         scores_entered,
+#     #         songs_entered,
+#     #     ]
+#     # )
+#     # def finish(self):
+#     #     # Triggered from UI
+#     #     dixon(self)  # TODO Should this be somewhere else?  Song perhaps?
+#     #     for song in self.songs.all():
+#     #         song.confirm()
+#     #     return
+
+#     # @transition(
+#     #     field=status,
+#     #     source=STATUS.finished,
+#     #     target=STATUS.confirmed,
+#     #     # conditions=[
+#     #     #     session_finished,
+#     #     # ]
+#     # )
+#     # def confirm(self):
+#     #     return
+
+#     # @transition(
+#     #     field=status,
+#     #     source=STATUS.confirmed,
+#     #     target=STATUS.final,
+#     #     conditions=[
+#     #     ]
+#     # )
+#     # def finalize(self):
+#     #     return
+
+#     class Meta:
+#         ordering = [
+#             'session',
+#             'place',
+#         ]
+#         unique_together = (
+#             ('session', 'performance',),
+#         )
+
+#     def __unicode__(self):
+#         return u"{0}".format(self.name)
+
+#     def save(self, *args, **kwargs):
+#         self.name = u"{0} {1}".format(
+#             self.session,
+#             self.performance,
+#         )
+#         super(Rank, self).save(*args, **kwargs)
+
+
 class Performance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1915,12 +2176,12 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
-    # contestant = models.ForeignKey(
-    #     'Contestant',
-    #     related_name='performances',
-    #     null=True,
-    #     blank=True,
-    # )
+    contestant = models.ForeignKey(
+        'Contestant',
+        related_name='performances',
+        null=True,
+        blank=True,
+    )
 
     entrant = models.ForeignKey(
         'Entrant',
@@ -2141,17 +2402,18 @@ class Performance(TimeStampedModel):
         ordering = [
             'position',
         ]
-        unique_together = (
-            ('session', 'entrant',),
-        )
+        # unique_together = (
+        #     ('contestant', 'kind',),
+        # )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.session,
-            self.entrant.group,
+            # self.session,
+            self.id.hex,
+            self.contestant.group,
         )
 
         if self.songs.exists():
@@ -2176,7 +2438,7 @@ class Performance(TimeStampedModel):
 
             #  Calculate percentile scores
             try:
-                possible = self.entrant.contest.panel * 2
+                possible = self.contestant.contest.panel * 2
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -2989,7 +3251,7 @@ class Song(TimeStampedModel):
 
         # Calculate percentile scores.
         try:
-            possible = self.performance.entrant.contest.panel
+            possible = self.performance.contestant.contest.panel
             self.mus_score = round(self.mus_points / possible, 1)
             self.prs_score = round(self.prs_points / possible, 1)
             self.sng_score = round(self.sng_points / possible, 1)

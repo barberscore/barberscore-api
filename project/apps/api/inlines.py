@@ -8,7 +8,6 @@ from super_inlines.admin import SuperInlineModelAdmin
 
 from .models import (
     Contestant,
-    Entrant,
     Song,
     Score,
     Panelist,
@@ -17,7 +16,6 @@ from .models import (
     Director,
     Session,
     Performance,
-    Award,
 )
 
 
@@ -46,7 +44,7 @@ class PerformanceInline(admin.TabularInline):
 
     fields = (
         'link',
-        'entrant',
+        'contestant',
         'status',
         'position',
         'draw',
@@ -65,7 +63,7 @@ class PerformanceInline(admin.TabularInline):
     #     ]
     # }
     readonly_fields = (
-        'entrant',
+        'contestant',
         'draw',
         # 'start',
         'link',
@@ -73,31 +71,31 @@ class PerformanceInline(admin.TabularInline):
     classes = ('grp-collapse grp-close',)
 
 
-# class PlacementInline(admin.TabularInline):
-#     fields = (
-#         'contestant',
-#         'mus_points',
-#         'prs_points',
-#         'sng_points',
-#         'total_points',
-#         'place',
-#     )
-#     extra = 0
-#     model = Performance
-#     readonly_fields = (
-#         'contestant',
-#         'mus_points',
-#         'prs_points',
-#         'sng_points',
-#         'total_points',
-#         'place',
-#     )
-#     ordering = (
-#         'place',
-#         'sng_points',
-#         'mus_points',
-#     )
-#     classes = ('grp-collapse grp-open',)
+class PlacementInline(admin.TabularInline):
+    fields = (
+        'contestant',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'place',
+    )
+    extra = 0
+    model = Performance
+    readonly_fields = (
+        'contestant',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'place',
+    )
+    ordering = (
+        'place',
+        'sng_points',
+        'mus_points',
+    )
+    classes = ('grp-collapse grp-open',)
 
 
 class ContestantInline(admin.TabularInline):
@@ -154,60 +152,6 @@ class ContestantInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class EntrantInline(admin.TabularInline):
-    # def link(self, obj):
-    #     return mark_safe(
-    #         "<a href={0}>link</a>".format(
-    #             reverse(
-    #                 'admin:api_contestant_change',
-    #                 args=(
-    #                     obj.id.hex,
-    #                 )
-    #             )
-    #         )
-    #     )
-
-    fields = (
-        # 'link',
-        'contest',
-        'group',
-        # 'organization',
-        # 'seed',
-        # 'prelim',
-        # 'place',
-        # 'total_score',
-        # 'men',
-    )
-    # ordering = (
-    #     'place',
-    #     'seed',
-    #     'group',
-    # )
-
-    show_change_link = True
-
-    model = Entrant
-    extra = 0
-    raw_id_fields = (
-        # 'contest',
-        'group',
-    )
-    # readonly_fields = [
-    #     'place',
-    #     'total_score',
-    #     'link',
-    # ]
-
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         # 'contest',
-    #         'group',
-    #     ]
-    # }
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
-
-
 class DirectorInline(admin.TabularInline):
     fields = (
         'contestant',
@@ -257,22 +201,6 @@ class PanelistInline(admin.TabularInline):
             'person',
         ]
     }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class AwardInline(admin.TabularInline):
-    model = Award
-    fields = (
-        'contest',
-        'name',
-    )
-    ordering = (
-        'contest',
-        'name',
-    )
-    extra = 0
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
