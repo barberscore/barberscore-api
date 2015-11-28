@@ -14,7 +14,7 @@ from .inlines import (
     SongStackedInline,
     # SongInline,
     SingerInline,
-    SessionInline,
+    # SessionInline,
     DayInline,
     AwardInline,
 )
@@ -25,7 +25,6 @@ from .models import (
     Convention,
     Contest,
     Contestant,
-    Entrant,
     Day,
     Group,
     Tune,
@@ -102,7 +101,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         EntrantInline,
-        SessionInline,
+        # SessionInline,
         PanelistInline,
         AwardInline,
     ]
@@ -204,20 +203,20 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     raw_id_fields = (
         'contest',
-        'entrant',
+        'group',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'contest',
-            'entrant',
+            'group',
         ]
     }
     fields = (
         'name',
         ('status', 'status_monitor',),
         'contest',
-        ('entrant', 'organization',),
+        ('group', 'organization',),
         ('seed', 'prelim',),
         ('place', 'men',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
@@ -235,82 +234,6 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'prs_score',
         'sng_score',
         'total_score',
-    )
-
-    save_on_top = True
-
-
-@admin.register(Entrant)
-class EntrantAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    change_list_template = "admin/change_list_filter_sidebar.html"
-
-    inlines = [
-        SingerInline,
-        DirectorInline,
-        # PerformanceInline,
-    ]
-
-    list_display = (
-        'name',
-        'status',
-        # 'seed',
-        # 'prelim',
-        # 'mus_score',
-        # 'prs_score',
-        # 'sng_score',
-        # 'total_score',
-        # 'men',
-        # 'place',
-    )
-
-    search_fields = (
-        'name',
-    )
-
-    list_filter = (
-        'status',
-        'contest__level',
-        'contest__kind',
-        'contest__year',
-    )
-
-    # raw_id_fields = (
-    #     'contest',
-    #     'entrant',
-    # )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'contest',
-            'entrant',
-        ]
-    }
-    fields = (
-        'name',
-        ('status', 'status_monitor',),
-        'contest',
-        # ('entrant', 'organization',),
-        # ('seed', 'prelim',),
-        # ('place', 'men',),
-        # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-    )
-
-    readonly_fields = (
-        'name',
-        'status_monitor',
-        # 'mus_points',
-        # 'prs_points',
-        # 'sng_points',
-        # 'total_points',
-        # 'mus_score',
-        # 'prs_score',
-        # 'sng_score',
-        # 'total_score',
     )
 
     save_on_top = True
@@ -779,10 +702,10 @@ class Session(FSMTransitionMixin, admin.ModelAdmin):
         ]
     }
 
-    inlines = [
-        PerformanceInline,
-        # PlacementInline,
-    ]
+    # inlines = [
+    #     PerformanceInline,
+    #     PlacementInline,
+    # ]
 
     search_fields = [
         'name',
