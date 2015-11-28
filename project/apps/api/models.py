@@ -799,8 +799,6 @@ class Entrant(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='entrants',
-        null=True,
-        blank=True,
     )
 
     convention = models.ForeignKey(
