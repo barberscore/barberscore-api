@@ -5,7 +5,6 @@ from fsm_admin.mixins import FSMTransitionMixin
 
 from .inlines import (
     ContestantInline,
-    EntrantInline,
     DirectorInline,
     PerformanceInline,
     # PlacementInline,
@@ -16,7 +15,6 @@ from .inlines import (
     SingerInline,
     # SessionInline,
     DayInline,
-    AwardInline,
 )
 
 from .models import (
@@ -100,10 +98,9 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        EntrantInline,
+        ContestantInline,
         # SessionInline,
         PanelistInline,
-        AwardInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -174,7 +171,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         SingerInline,
         DirectorInline,
-        # PerformanceInline,
+        PerformanceInline,
     ]
 
     list_display = (
@@ -445,15 +442,15 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     ]
     list_filter = [
         'status',
-        'entrant__contest__level',
-        'entrant__contest__kind',
-        'entrant__contest__year',
+        'contestant__contest__level',
+        'contestant__contest__kind',
+        'contestant__contest__year',
     ]
 
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'entrant',
+        'contestant',
         ('draw', 'start_time',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
@@ -462,7 +459,7 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
-        'entrant',
+        'contestant',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -475,11 +472,11 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     ]
 
     raw_id_fields = (
-        'entrant',
+        'contestant',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'entrant',
+            'contestant',
         ]
     }
 
@@ -523,9 +520,9 @@ class SongAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'performance__entrant__contest__level',
-        'performance__entrant__contest__kind',
-        'performance__entrant__contest__year',
+        'performance__contestant__contest__level',
+        'performance__contestant__contest__kind',
+        'performance__contestant__contest__year',
     )
 
     readonly_fields = (
@@ -634,9 +631,9 @@ class Score(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'song__performance__session__contest__level',
-        'song__performance__session__contest__kind',
-        'song__performance__session__contest__year',
+        'song__performance__contestant__contest__level',
+        'song__performance__contestant__contest__kind',
+        'song__performance__contestant__contest__year',
     ]
 
     raw_id_fields = [
