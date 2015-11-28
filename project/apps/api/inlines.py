@@ -115,33 +115,39 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        # 'contest',
-        'entrant',
+        'contest',
+        'group',
         'organization',
+        'seed',
+        'prelim',
+        'place',
+        'total_score',
+        'men',
     )
     ordering = (
         'place',
         'seed',
-        'entrant',
+        'group',
     )
 
     show_change_link = True
 
     model = Contestant
     extra = 0
-    # raw_id_fields = (
-    #     # 'contest',
-    #     'entrant',
-    # )
+    raw_id_fields = (
+        # 'contest',
+        'group',
+    )
     readonly_fields = [
         'place',
+        'total_score',
         'link',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
             # 'contest',
-            'entrant',
+            'group',
         ]
     }
     can_delete = True
