@@ -768,19 +768,6 @@ class Contest(TimeStampedModel):
 
 
 class Entrant(TimeStampedModel):
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='entrants',
-        null=True,
-        blank=True,
-    )
-
-    place = models.IntegerField(
-        # help_text="""
-        #     The final placement/rank of the contestant.""",
-        null=True,
-        blank=True,
-    )
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1885,12 +1872,6 @@ class Panelist(TimeStampedModel):
 
 
 class Performance(TimeStampedModel):
-    contestant = models.ForeignKey(
-        'Contestant',
-        related_name='performances',
-        null=True,
-        blank=True,
-    )
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
