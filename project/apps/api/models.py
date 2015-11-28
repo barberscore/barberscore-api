@@ -274,10 +274,6 @@ class Arranger(TimeStampedModel):
 
 class Award(TimeStampedModel):
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -294,16 +290,6 @@ class Award(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     contest = models.ForeignKey(
@@ -782,6 +768,20 @@ class Contest(TimeStampedModel):
 
 
 class Entrant(TimeStampedModel):
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='entrants',
+        null=True,
+        blank=True,
+    )
+
+    place = models.IntegerField(
+        # help_text="""
+        #     The final placement/rank of the contestant.""",
+        null=True,
+        blank=True,
+    )
+
     STATUS = Choices(
         (0, 'new', 'New',),
         (60, 'finished', 'Finished',),
@@ -868,6 +868,139 @@ class Entrant(TimeStampedModel):
         blank=True,
     )
 
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contest,
+            self.group,
+        )
+        super(Entrant, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = (
+            'contest',
+            'group',
+        )
+        unique_together = (
+            ('group', 'contest',),
+        )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+
+class Contestant(TimeStampedModel):
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'accepted', 'Accepted',),
+        (30, 'declined', 'Declined',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'official', 'Official',),
+        (60, 'finished', 'Finished',),
+        (90, 'final', 'Final',),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='contestants',
+    )
+
+    # group = models.ForeignKey(
+    #     'Group',
+    #     related_name='contestants',
+    # )
+
+    entrant = models.ForeignKey(
+        'Entrant',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
+    award = models.ForeignKey(
+        'Award',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        # help_text="""
+        #     The district this contestant is representing.""",
+        related_name='contestants',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    picture = models.ImageField(
+        # help_text="""
+        #     The song picture (as opposed to the "official" photo).""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    seed = models.IntegerField(
+        # help_text="""
+        #     The incoming rank based on prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        # help_text="""
+        #     The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    # TODO Everything below here must be protected in some way.  Different model?
+    place = models.IntegerField(
+        # help_text="""
+        #     The final placement/rank of the contestant.""",
+        null=True,
+        blank=True,
+    )
+
+    men = models.IntegerField(
+        # help_text="""
+        #     The number of men on stage (only for chourses).""",
+        default=4,
+        null=True,
+        blank=True,
+    )
+
     mus_points = models.IntegerField(
         # help_text="""
         #     The total music points for this performance.""",
@@ -932,167 +1065,6 @@ class Entrant(TimeStampedModel):
         editable=False,
     )
 
-    def clean(self):
-        if self.singers.count() > 4:
-            raise ValidationError('There can not be more than four persons in a quartet.')
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contest,
-            self.group,
-        )
-        # If there are no performances, skip.
-        if self.performances.exists():
-            agg = self.performances.all().aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
-
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
-
-            # Calculate percentile
-            try:
-                possible = self.contest.panel * 2 * self.performances.count()
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
-        super(Entrant, self).save(*args, **kwargs)
-
-    class Meta:
-        ordering = (
-            'contest',
-            'group',
-        )
-        unique_together = (
-            ('group', 'contest',),
-        )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-
-class Contestant(TimeStampedModel):
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
-        (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
-        (50, 'official', 'Official',),
-        (60, 'finished', 'Finished',),
-        (90, 'final', 'Final',),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    # contest = models.ForeignKey(
-    #     'Contest',
-    #     related_name='contestants',
-    # )
-
-    # group = models.ForeignKey(
-    #     'Group',
-    #     related_name='contestants',
-    # )
-
-    entrant = models.ForeignKey(
-        'Entrant',
-        related_name='contestants',
-        null=True,
-        blank=True,
-    )
-
-    award = models.ForeignKey(
-        'Award',
-        related_name='contestants',
-        null=True,
-        blank=True,
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        # help_text="""
-        #     The district this contestant is representing.""",
-        related_name='contestants',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    picture = models.ImageField(
-        # help_text="""
-        #     The song picture (as opposed to the "official" photo).""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    seed = models.IntegerField(
-        # help_text="""
-        #     The incoming rank based on prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    prelim = models.FloatField(
-        # help_text="""
-        #     The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    # TODO Everything below here must be protected in some way.  Different model?
-    place = models.IntegerField(
-        # help_text="""
-        #     The final placement/rank of the contestant.""",
-        null=True,
-        blank=True,
-    )
-
     objects = PassThroughManager.for_queryset_class(ContestantQuerySet)()
 
     @staticmethod
@@ -1155,6 +1127,10 @@ class Contestant(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
+    def clean(self):
+        if self.singers.count() > 4:
+            raise ValidationError('There can not be more than four persons in a quartet.')
+
     def denorm(self):
         ps = self.performances.all()
         for p in ps:
@@ -1167,18 +1143,51 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.award,
+            self.contest,
             self.entrant,
         )
+
+        # If there are no performances, skip.
+        if self.performances.exists():
+            agg = self.performances.all().aggregate(
+                mus=models.Sum('mus_points'),
+                prs=models.Sum('prs_points'),
+                sng=models.Sum('sng_points'),
+            )
+            self.mus_points = agg['mus']
+            self.prs_points = agg['prs']
+            self.sng_points = agg['sng']
+
+            # Calculate total points.
+            try:
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
+
+            # Calculate percentile
+            try:
+                possible = self.contest.panel * 2 * self.performances.count()
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
+            except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
         super(Contestant, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
-            '-entrant__contest__year',
+            '-contest__year',
             'place',
         )
         unique_together = (
-            ('entrant', 'award',),
+            ('entrant', 'contest',),
         )
 
 
