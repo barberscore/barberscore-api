@@ -1946,7 +1946,6 @@ class Performance(TimeStampedModel):
         related_name='performances',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     day = models.ForeignKey(
@@ -2171,8 +2170,7 @@ class Performance(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.session,
-            # self.entrant.group,
-            self.id.hex,
+            self.entrant.group,
         )
 
         if self.songs.exists():
