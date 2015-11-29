@@ -14,7 +14,8 @@ from .inlines import (
     # SongInline,
     SingerInline,
     AwardInline,
-    # SessionInline,
+    SessionInline,
+    RankingInline,
 )
 
 from .models import (
@@ -23,6 +24,7 @@ from .models import (
     Convention,
     Contest,
     Contestant,
+    Day,
     Group,
     Tune,
     Person,
@@ -76,7 +78,16 @@ class ArrangerAdmin(admin.ModelAdmin):
 
 @admin.register(Award)
 class AwardAdmin(admin.ModelAdmin):
-    pass
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    inlines = [
+        RankingInline,
+    ]
+
+    list_filter = (
+        'status',
+        'kind',
+        'contest__year',
+    )
 
 
 @admin.register(Catalog)
@@ -100,6 +111,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ContestantInline,
         AwardInline,
         PanelistInline,
+        SessionInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -275,6 +287,13 @@ class ConventionAdmin(admin.ModelAdmin):
         'status_monitor',
     )
     save_on_top = True
+
+
+@admin.register(Day)
+class DayAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        'name',
+    ]
 
 
 @admin.register(Group)
@@ -660,10 +679,10 @@ class Session(FSMTransitionMixin, admin.ModelAdmin):
         ]
     }
 
-    # inlines = [
-    #     PerformanceInline,
-    #     PlacementInline,
-    # ]
+    inlines = [
+        PerformanceInline,
+        # PlacementInline,
+    ]
 
     search_fields = [
         'name',
