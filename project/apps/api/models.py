@@ -72,8 +72,9 @@ from .validators import (
     validate_trimmed,
     dixon,
     is_impaneled,
-    is_scheduled,
+    # is_scheduled,
     has_contestants,
+    has_awards,
     # session_scheduled,
     contest_started,
     scores_entered,
@@ -554,9 +555,6 @@ class Contest(TimeStampedModel):
         help_text="""
             The convention at which this contest occurred.""",
         related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     panel = models.IntegerField(
@@ -713,9 +711,10 @@ class Contest(TimeStampedModel):
         source=STATUS.built,
         target=STATUS.started,
         conditions=[
-            is_scheduled,
+            # is_scheduled,
             is_impaneled,
             has_contestants,
+            has_awards,
         ],
     )
     def start(self):
@@ -1183,8 +1182,8 @@ class Convention(TimeStampedModel):
 
     class Meta:
         ordering = [
-            'organization',
             '-year',
+            'organization__name',
         ]
 
         unique_together = (
@@ -1656,6 +1655,9 @@ class Organization(MPTTModel, Common):
     class MPTTMeta:
         order_insertion_by = [
             'name',
+        ]
+        ordering = [
+            'tree_id',
         ]
 
     def __unicode__(self):
