@@ -334,6 +334,7 @@ class Award(TimeStampedModel):
             self.contest,
             self.get_kind_display(),
         )
+        super(Award, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2966,11 +2967,6 @@ class Ranking(TimeStampedModel):
 
     award = models.ForeignKey(
         'Award',
-        related_name='rankings',
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
         related_name='rankings',
     )
 
