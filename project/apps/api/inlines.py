@@ -15,6 +15,7 @@ from .models import (
     Director,
     Session,
     Performance,
+    Award,
 )
 
 
@@ -191,6 +192,20 @@ class PanelistInline(admin.TabularInline):
             'person',
         ]
     }
+    can_delete = True
+    show_change_link = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class AwardInline(admin.TabularInline):
+    model = Award
+    fields = (
+        'contest',
+        'name',
+        'kind',
+        # 'is_practice',
+    )
+    extra = 0
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)

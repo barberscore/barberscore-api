@@ -13,6 +13,7 @@ from .inlines import (
     SongStackedInline,
     # SongInline,
     SingerInline,
+    AwardInline,
     # SessionInline,
 )
 
@@ -97,7 +98,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         ContestantInline,
-        # SessionInline,
+        AwardInline,
         PanelistInline,
     ]
 
