@@ -289,7 +289,7 @@ class Award(TimeStampedModel):
     KIND = Choices(
         (1, 'championship', 'Championship',),
         (2, 'qualifier', 'Qualifier',),
-        # (3, 'senior', 'Senior',),
+        (3, 'novice', 'Novice',),
         # (4, 'collegiate', 'Collegiate',),
     )
 
@@ -542,6 +542,8 @@ class Contest(TimeStampedModel):
         help_text="""
             The objective of the contest""",
         choices=GOAL,
+        null=True,
+        blank=True,
         # default=GOAL.championship,
     )
 
@@ -616,11 +618,10 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3} {4}".format(
+        self.name = u"{0} {1} {2} {3}".format(
             self.organization,
             self.get_level_display(),
             self.get_kind_display(),
-            self.get_goal_display(),
             self.year,
         )
         super(Contest, self).save(*args, **kwargs)
@@ -1219,13 +1220,9 @@ class Day(TimeStampedModel):
     )
 
     KIND = Choices(
-        (1, 'sunday', 'Sunday'),
-        (2, 'monday', 'Monday'),
-        (3, 'tuesday', 'Tuesday'),
-        (4, 'wednesday', 'Wednesday'),
-        (5, 'thursday', 'Thursday'),
-        (6, 'friday', 'Friday'),
-        (7, 'saturday', 'Saturday'),
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semis'),
+        (3, 'quarters', 'Quarters'),
     )
 
     name = models.CharField(
@@ -1255,6 +1252,11 @@ class Day(TimeStampedModel):
         related_name='days',
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='days',
+    )
+
     kind = models.IntegerField(
         choices=KIND,
     )
@@ -1268,11 +1270,11 @@ class Day(TimeStampedModel):
 
     class Meta:
         ordering = [
-            'convention',
+            'contest',
             'kind',
         ]
         unique_together = (
-            ('convention', 'kind',),
+            ('contest', 'kind',),
         )
 
     # @staticmethod
@@ -1294,7 +1296,7 @@ class Day(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.convention,
+            self.contest,
             self.get_kind_display(),
         )
         super(Day, self).save(*args, **kwargs)

@@ -14,6 +14,8 @@ from .models import (
     Contestant,
     Tune,
     Panelist,
+    Award,
+    Ranking,
 )
 
 
@@ -63,7 +65,7 @@ def impanel_panelists(contest):
     return "Panelists Impaneled"
 
 
-def add_contestants(contest, number):
+def add_contestants(contest, number=20):
     if contest.kind == 2:
         kind = Group.KIND.chorus
     else:
@@ -81,6 +83,20 @@ def add_contestants(contest, number):
         contestant.qualify()
         contestant.accept()
         contestant.save()
+    return "Contestants Added"
+
+
+def add_rankings(award, number=10):
+    if award.kind == Award.KIND.championship:
+        contestants = award.contest.contestants.all()
+    if award.kind == Award.KIND.novice:
+        contestants = award.contest.contestants.order_by('?')[:number]
+    for contestant in contestants:
+        ranking = Ranking.objects.create(
+            award=award,
+            contestant=contestant
+        )
+        ranking.save()
     return "Contestants Added"
 
 

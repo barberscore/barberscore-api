@@ -16,6 +16,7 @@ from .models import (
     Session,
     Performance,
     Award,
+    Ranking,
 )
 
 
@@ -143,6 +144,26 @@ class ContestantInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
+class RankingInline(admin.TabularInline):
+    fields = (
+        'award',
+        'contestant',
+    )
+    ordering = (
+        'contestant',
+    )
+
+    show_change_link = True
+
+    model = Ranking
+    extra = 0
+    raw_id_fields = (
+        'contestant',
+    )
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
+
+
 class DirectorInline(admin.TabularInline):
     fields = (
         'contestant',
@@ -198,8 +219,21 @@ class PanelistInline(admin.TabularInline):
 
 
 class AwardInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_award_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
     model = Award
     fields = (
+        'link',
         'contest',
         'name',
         'kind',
@@ -207,6 +241,10 @@ class AwardInline(admin.TabularInline):
     )
     extra = 0
     can_delete = True
+    readonly_fields = [
+        'link',
+        'name',
+    ]
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
 
