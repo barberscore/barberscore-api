@@ -274,6 +274,24 @@ class Arranger(TimeStampedModel):
 
 class Award(TimeStampedModel):
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'accepted', 'Accepted',),
+        (30, 'declined', 'Declined',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'official', 'Official',),
+        (60, 'finished', 'Finished',),
+        (90, 'final', 'Final',),
+    )
+
+    KIND = Choices(
+        (1, 'championship', 'Championship',),
+        (2, 'qualifier', 'Qualifier',),
+        # (3, 'senior', 'Senior',),
+        # (4, 'collegiate', 'Collegiate',),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -291,6 +309,31 @@ class Award(TimeStampedModel):
         unique=True,
         max_length=255,
     )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='awards',
+    )
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.contest,
+            self.get_kind_display(),
+        )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1742,145 +1785,6 @@ class Panelist(TimeStampedModel):
             'category',
             'slot',
         )
-
-
-class Rank(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
-        # (15, 'ready', 'Ready',),
-        # (20, 'started', 'Started',),
-        # (25, 'finished', 'Finished',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='ranks',
-    )
-
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='ranks',
-    )
-
-    place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         # STATUS.built,
-    #         STATUS.new,
-    #     ],
-    #     target=STATUS.started,
-    #     conditions=[
-    #         preceding_finished,
-    #     ]
-    # )
-    # def start(self):
-    #     # Triggered from UI
-    #     # Creates Song and Score sentinels.
-    #     i = 1
-    #     while i <= 2:
-    #         song = self.songs.create(
-    #             performance=self,
-    #             order=i,
-    #         )
-    #         for panelist in self.session.contest.panelists.scoring():
-    #             song.scores.create(
-    #                 song=song,
-    #                 panelist=panelist,
-    #             )
-    #         i += 1
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.started,
-    #     target=STATUS.finished,
-    #     conditions=[
-    #         scores_entered,
-    #         songs_entered,
-    #     ]
-    # )
-    # def finish(self):
-    #     # Triggered from UI
-    #     dixon(self)  # TODO Should this be somewhere else?  Song perhaps?
-    #     for song in self.songs.all():
-    #         song.confirm()
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.finished,
-    #     target=STATUS.confirmed,
-    #     # conditions=[
-    #     #     session_finished,
-    #     # ]
-    # )
-    # def confirm(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.confirmed,
-    #     target=STATUS.final,
-    #     conditions=[
-    #     ]
-    # )
-    # def finalize(self):
-    #     return
-
-    class Meta:
-        ordering = [
-            'session',
-            'place',
-        ]
-        unique_together = (
-            ('session', 'performance',),
-        )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.session,
-            self.performance,
-        )
-        super(Rank, self).save(*args, **kwargs)
 
 
 class Performance(TimeStampedModel):
