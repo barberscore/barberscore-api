@@ -175,7 +175,7 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        'contest',
+        'convention',
         'group',
         'organization',
         'seed',
@@ -195,7 +195,7 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     extra = 0
     raw_id_fields = (
-        # 'contest',
+        'convention',
         'group',
     )
     readonly_fields = [
