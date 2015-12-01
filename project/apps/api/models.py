@@ -1020,7 +1020,6 @@ class Contestant(TimeStampedModel):
 
     class Meta:
         ordering = (
-            '-convention__year',
             'place',
         )
         # unique_together = (
