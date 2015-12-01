@@ -56,11 +56,11 @@ class ContestForm(forms.ModelForm):
     class Meta:
         model = Contest
         fields = [
-            'panel',
+            'panel_size',
             'rounds',
         ]
         widgets = {
-            'panel': forms.Select(
+            'panel_size': forms.Select(
                 attrs={
                     'class': 'form-control',
                 },
