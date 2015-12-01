@@ -413,12 +413,11 @@ class Award(TimeStampedModel):
         return "Session Ended"
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
-            # self.organization,
-            # self.get_level_display(),
-            # self.get_kind_display(),
-            # self.get_goal_display(),
+        self.name = u"{0} {1} {2} {3}".format(
+            self.organization,
+            self.get_level_display(),
+            self.get_kind_display(),
+            self.get_goal_display(),
         )
         super(Award, self).save(*args, **kwargs)
 
