@@ -2662,7 +2662,7 @@ class Session(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0}".format(
-            self.hex.id,
+            self.id.hex,
             # self.convention,
             # self.get_kind_display(),
         )
