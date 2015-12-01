@@ -19,9 +19,9 @@ def user_post_save(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-@receiver(post_save, sender=Contest)
-def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    if not raw:
-        if created:
-            instance.build()
-            instance.save()
+# @receiver(post_save, sender=Contest)
+# def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+#     if not raw:
+#         if created:
+#             instance.build()
+#             instance.save()
