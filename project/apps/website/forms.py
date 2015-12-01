@@ -5,6 +5,7 @@ from django.forms import (
 )
 
 from apps.api.models import (
+    Contest,
     Panelist,
     Contestant,
     Score,
@@ -51,82 +52,82 @@ class LoginForm(forms.Form):
     )
 
 
-# class ContestForm(forms.ModelForm):
-#     class Meta:
-#         model = Contest
-#         fields = [
-#             'panel_size',
-#             'rounds',
-#         ]
-#         widgets = {
-#             'panel_size': forms.Select(
-#                 attrs={
-#                     'class': 'form-control',
-#                 },
-#             ),
-#             'rounds': forms.Select(
-#                 attrs={
-#                     'class': 'form-control',
-#                 },
-#             ),
-#         }
+class ContestForm(forms.ModelForm):
+    class Meta:
+        model = Contest
+        fields = [
+            'panel_size',
+            'rounds',
+        ]
+        widgets = {
+            'panel_size': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'rounds': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+        }
 
-#     def save(self, commit=True):
-#         contest = super(ContestForm, self).save(commit=False)
-#         contest.build()
-#         if commit:
-#             contest.save()
-#         return contest
+    def save(self, commit=True):
+        contest = super(ContestForm, self).save(commit=False)
+        contest.build()
+        if commit:
+            contest.save()
+        return contest
 
-#     def draw(self, contest):
-#         contest.draw_contest()
-#         return contest
+    def draw(self, contest):
+        contest.draw_contest()
+        return contest
 
-#     def start(self, contest):
-#         contest.start_contest()
-#         return contest
-
-
-# class PanelistForm(forms.ModelForm):
-#     class Meta:
-#         model = Panelist
-#         fields = [
-#             'contest',
-#             'person',
-#             'category',
-#             'slot',
-#         ]
-#         extra = 0
-#         widgets = {
-#             'person': forms.Select(
-#                 attrs={
-#                     'class': 'form-control',
-#                 },
-#             ),
-#             'category': forms.Select(
-#                 attrs={
-#                     'class': 'form-control',
-#                     'readonly': 'readonly',
-#                 },
-#             ),
-#             'slot': forms.Select(
-#                 attrs={
-#                     'class': 'form-control',
-#                     'readonly': 'readonly',
-#                 },
-#             ),
-#             'contest': forms.HiddenInput(
-#             ),
-#         }
+    def start(self, contest):
+        contest.start_contest()
+        return contest
 
 
-# PanelistFormSet = inlineformset_factory(
-#     Contest,
-#     Panelist,
-#     form=PanelistForm,
-#     extra=0,
-#     can_delete=False,
-# )
+class PanelistForm(forms.ModelForm):
+    class Meta:
+        model = Panelist
+        fields = [
+            'contest',
+            'person',
+            'category',
+            'slot',
+        ]
+        extra = 0
+        widgets = {
+            'person': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                },
+            ),
+            'category': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': 'readonly',
+                },
+            ),
+            'slot': forms.Select(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': 'readonly',
+                },
+            ),
+            'contest': forms.HiddenInput(
+            ),
+        }
+
+
+PanelistFormSet = inlineformset_factory(
+    Contest,
+    Panelist,
+    form=PanelistForm,
+    extra=0,
+    can_delete=False,
+)
 
 
 def make_contestant_form(contest):
