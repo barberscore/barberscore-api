@@ -1666,6 +1666,85 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
 
+class Panel(TimeStampedModel):
+    """Contest Panelist"""
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'scheduled', 'Scheduled',),
+        (20, 'confirmed', 'Confirmed',),
+        (30, 'final', 'Final',),
+    )
+
+    KIND = Choices(
+        (1, 'quartet', 'Quartet',),
+        (2, 'chorus', 'Chorus',),
+        (3, 'senior', 'Senior',),
+        (4, 'collegiate', 'Collegiate',),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='panels',
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
+        choices=KIND,
+        null=True,
+        blank=True,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.convention,
+            self.kind,
+        )
+        super(Panel, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('convention', 'kind',),
+        )
+        ordering = (
+            'convention',
+            'kind',
+        )
+
+
 class Panelist(TimeStampedModel):
     """Contest Panelist"""
 
@@ -2395,6 +2474,13 @@ class Session(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='sessions',
+    )
+
+    panel = models.ForeignKey(
+        'Panel',
+        related_name='sessions',
+        null=True,
+        blank=True,
     )
 
     kind = models.IntegerField(
