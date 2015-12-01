@@ -15,7 +15,6 @@ from .inlines import (
     SongStackedInline,
     # SongInline,
     SingerInline,
-    AwardInline,
     SessionInline,
     RankingInline,
 )
@@ -26,7 +25,6 @@ from .models import (
     Convention,
     Contest,
     Contestant,
-    Day,
     Group,
     Tune,
     Person,
@@ -35,7 +33,6 @@ from .models import (
     Panel,
     Panelist,
     Session,
-    Award,
     Performance,
     User,
     Organization,
@@ -72,6 +69,35 @@ from super_inlines.admin import SuperModelAdmin
 
 @admin.register(Panel)
 class PanelAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    save_on_top = True
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'convention',
+        'kind',
+        'size',
+        'rounds',
+    ]
+
+    list_display = [
+        'name',
+        'status',
+        'convention',
+        'kind',
+        'size',
+        'rounds',
+    ]
+
+    raw_id_fields = (
+        'convention',
+    )
+
+    readonly_fields = [
+        'name',
+        'status_monitor',
+    ]
+
     inlines = [
         SessionInline,
     ]
@@ -84,20 +110,6 @@ class ArrangerAdmin(admin.ModelAdmin):
         'catalog',
         'person',
     ]
-
-
-@admin.register(Award)
-class AwardAdmin(admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    inlines = [
-        RankingInline,
-    ]
-
-    list_filter = (
-        'status',
-        'kind',
-        'contest__year',
-    )
 
 
 @admin.register(Catalog)
@@ -210,26 +222,23 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'contest__level',
-        'contest__kind',
-        'contest__year',
     )
 
     raw_id_fields = (
-        'contest',
+        'convention',
         'group',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'contest',
+            'convention',
             'group',
         ]
     }
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'contest',
+        'convention',
         ('group', 'organization',),
         ('seed', 'prelim',),
         ('place', 'men',),
@@ -299,13 +308,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'status_monitor',
     )
     save_on_top = True
-
-
-@admin.register(Day)
-class DayAdmin(admin.ModelAdmin):
-    readonly_fields = [
-        'name',
-    ]
 
 
 @admin.register(Group)
@@ -378,9 +380,6 @@ class Panelist(admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'contest__level',
-        'contest__kind',
-        'contest__year',
     )
 
     list_select_related = [
@@ -434,9 +433,6 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     ]
     list_filter = [
         'status',
-        'contestant__contest__level',
-        'contestant__contest__kind',
-        'contestant__contest__year',
     ]
 
     fields = [
@@ -512,9 +508,6 @@ class SongAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'performance__contestant__contest__level',
-        'performance__contestant__contest__kind',
-        'performance__contestant__contest__year',
     )
 
     readonly_fields = (
@@ -623,9 +616,6 @@ class Score(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'song__performance__contestant__contest__level',
-        'song__performance__contestant__contest__kind',
-        'song__performance__contestant__contest__year',
     ]
 
     raw_id_fields = [
@@ -663,31 +653,28 @@ class Session(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        ('contest', 'kind',),
+        ('panel', 'kind',),
         ('start_date', 'slots',),
     ]
 
     readonly_fields = [
         'name',
         'status_monitor',
-        'contest',
+        'panel',
         'kind',
     ]
 
     list_filter = (
         'status',
-        'contest__level',
-        'contest__kind',
-        'contest__year',
     )
 
     raw_id_fields = (
-        'contest',
+        'panel',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'contest',
+            'panel',
         ]
     }
 

@@ -14,7 +14,6 @@ from .models import (
     Director,
     Catalog,
     Score,
-    Award,
     Panelist,
     Performance,
     Organization,
@@ -48,17 +47,6 @@ class CatalogSerializer(serializers.ModelSerializer):
             'song_name',
             'arrangers',
         )
-
-
-class AwardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Award
-        fields = [
-            'id',
-            # 'url',
-            'slug',
-            'name',
-        ]
 
 
 class ContestSerializer(serializers.ModelSerializer):
