@@ -850,6 +850,13 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
     group = models.ForeignKey(
         'Group',
         related_name='contestants',

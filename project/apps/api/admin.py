@@ -294,6 +294,7 @@ class ConventionAdmin(admin.ModelAdmin):
     inlines = [
         ContestInline,
         PanelInline,
+        ContestantInline,
     ]
 
     readonly_fields = (
