@@ -2050,13 +2050,6 @@ class Score(TimeStampedModel):
         related_name='scores',
     )
 
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='scores',
-        null=True,
-        blank=True,
-    )
-
     points = models.IntegerField(
         help_text="""
             The number of points awarded (0-100)""",
