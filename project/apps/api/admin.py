@@ -463,7 +463,6 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
-        'contestant',
         'mus_points',
         'prs_points',
         'sng_points',
