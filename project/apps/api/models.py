@@ -2661,9 +2661,10 @@ class Session(TimeStampedModel):
             return None
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.convention,
-            self.get_kind_display(),
+        self.name = u"{0}".format(
+            self.hex.id,
+            # self.convention,
+            # self.get_kind_display(),
         )
         super(Session, self).save(*args, **kwargs)
 
