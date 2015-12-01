@@ -274,12 +274,6 @@ class Arranger(TimeStampedModel):
 
 
 class Award(TimeStampedModel):
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='awards',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -305,10 +299,6 @@ class Award(TimeStampedModel):
         (2, 'qualifier', 'Qualifier',),
         # (4, 'collegiate', 'Collegiate',),
     )
-
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
 
     ROUNDS_CHOICES = []
     for r in reversed(range(1, 4)):
@@ -371,11 +361,6 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    year = models.IntegerField(
-        default=datetime.datetime.now().year,
-        choices=YEAR_CHOICES,
-    )
-
     rounds = models.IntegerField(
         help_text="""
             Number of rounds""",
@@ -383,6 +368,11 @@ class Award(TimeStampedModel):
         null=True,
         blank=True,
         # default=1,
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='awards',
     )
 
     convention = models.ForeignKey(
@@ -435,10 +425,10 @@ class Award(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    # class Meta:
-    #     ordering = (
-    #         '-contest',
-    #     )
+    class Meta:
+        ordering = (
+            '-contest',
+        )
 
 
 class Catalog(TimeStampedModel):
@@ -900,12 +890,6 @@ class Contest(TimeStampedModel):
 
 
 class Contestant(TimeStampedModel):
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='contestants',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -944,6 +928,11 @@ class Contestant(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='contestants',
     )
 
     convention = models.ForeignKey(
@@ -1147,10 +1136,9 @@ class Contestant(TimeStampedModel):
         return "De-normalized record"
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.hex.id,
-            # self.convention,
-            # self.group,
+        self.name = u"{0} {1}".format(
+            self.contest,
+            self.group,
         )
 
         # If there are no performances, skip.
@@ -1189,7 +1177,7 @@ class Contestant(TimeStampedModel):
 
     class Meta:
         ordering = (
-            # '-contest__year',
+            '-contest__year',
             'place',
         )
         unique_together = (
@@ -1308,13 +1296,6 @@ class Convention(TimeStampedModel):
 
 
 class Day(TimeStampedModel):
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='days',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1363,6 +1344,11 @@ class Day(TimeStampedModel):
         related_name='days',
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='days',
+    )
+
     kind = models.IntegerField(
         choices=KIND,
     )
@@ -1376,7 +1362,7 @@ class Day(TimeStampedModel):
 
     class Meta:
         ordering = [
-            # 'contest',
+            'contest',
             'kind',
         ]
         unique_together = (
@@ -1402,7 +1388,7 @@ class Day(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.convention,
+            self.contest,
             self.get_kind_display(),
         )
         super(Day, self).save(*args, **kwargs)
@@ -1773,13 +1759,6 @@ class Organization(MPTTModel, Common):
 
 
 class Panel(TimeStampedModel):
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='panels',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-
     """Panel"""
 
     STATUS = Choices(
@@ -1820,6 +1799,11 @@ class Panel(TimeStampedModel):
         max_length=255,
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='panel',
+    )
+
     convention = models.ForeignKey(
         'Convention',
         related_name='panel',
@@ -1854,13 +1838,6 @@ class Panel(TimeStampedModel):
 
 
 class Panelist(TimeStampedModel):
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='panelists',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-
     """Contest Panelist"""
 
     STATUS = Choices(
@@ -1904,6 +1881,11 @@ class Panelist(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
+    )
+
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='panelists',
     )
 
     convention = models.ForeignKey(
@@ -1976,11 +1958,10 @@ class Panelist(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
-            # self.convention,
-            # self.category,
-            # self.slot,
+        self.name = u"{0} Panelist {1}{2}".format(
+            self.contest,
+            self.category,
+            self.slot,
         )
         super(Panelist, self).save(*args, **kwargs)
 
@@ -1990,7 +1971,7 @@ class Panelist(TimeStampedModel):
             ('contest', 'person',),
         )
         ordering = (
-            'convention',
+            'contest',
             'category',
             'slot',
         )
@@ -2553,13 +2534,6 @@ class Score(TimeStampedModel):
 
 
 class Session(TimeStampedModel):
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='sessions',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2603,15 +2577,13 @@ class Session(TimeStampedModel):
         monitor='status',
     )
 
-    convention = models.ForeignKey(
-        'Convention',
+    contest = models.ForeignKey(
+        'Contest',
         related_name='sessions',
-        null=True,
-        blank=True,
     )
 
-    panel = models.ForeignKey(
-        'Panel',
+    convention = models.ForeignKey(
+        'Convention',
         related_name='sessions',
         null=True,
         blank=True,
@@ -2636,7 +2608,7 @@ class Session(TimeStampedModel):
 
     class Meta:
         ordering = [
-            'convention',
+            'contest',
             'kind',
         ]
         unique_together = (
@@ -2662,7 +2634,7 @@ class Session(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.convention,
+            self.contest,
             self.get_kind_display(),
         )
         super(Session, self).save(*args, **kwargs)
