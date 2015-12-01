@@ -141,9 +141,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status',
         'history',
-        # 'goal',
+        'goal',
         'rounds',
-        'panel',
         'scoresheet_pdf',
     )
 
@@ -155,9 +154,9 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'organization',
         'level',
         'kind',
-        # 'goal',
+        'goal',
         'year',
-        ('rounds', 'panel',),
+        'rounds',
         'scoresheet_pdf',
     )
 
