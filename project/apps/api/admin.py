@@ -36,6 +36,7 @@ from .models import (
     Performance,
     User,
     Organization,
+    Ranking,
 )
 
 # from grappelli.forms import GrappelliSortableHiddenMixin
@@ -65,6 +66,21 @@ from super_inlines.admin import SuperModelAdmin
 #     can_delete = True
 #     show_change_link = True
 #     classes = ('grp-collapse grp-closed',)
+
+
+@admin.register(Ranking)
+class RankingAdmin(admin.ModelAdmin):
+    search_fields = [
+        'name',
+    ]
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+        ]
+    }
+    raw_id_fields = [
+        'contestant',
+    ]
 
 
 @admin.register(Panel)
