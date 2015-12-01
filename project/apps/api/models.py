@@ -456,15 +456,12 @@ class Contest(TimeStampedModel):
     for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
 
-    PANEL_CHOICES = []
-    for r in reversed(range(1, 6)):
-        PANEL_CHOICES.append((r, r))
-
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
         (3, 'senior', 'Senior',),
         (4, 'collegiate', 'Collegiate',),
+        (5, 'novice', 'Novice',),
     )
 
     LEVEL = Choices(
@@ -475,7 +472,7 @@ class Contest(TimeStampedModel):
 
     GOAL = Choices(
         (1, 'championship', "Championship"),
-        (2, 'prelims', "Prelims"),
+        (2, 'qualifier', "Qualifier"),
     )
 
     id = models.UUIDField(
@@ -559,14 +556,14 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
-    panel = models.IntegerField(
-        help_text="""
-            Size of the judging panel (typically three or five.)""",
-        choices=PANEL_CHOICES,
-        # null=True,
-        # blank=True,
-        # default=5,
-    )
+    # panel = models.IntegerField(
+    #     help_text="""
+    #         Size of the judging panel (typically three or five.)""",
+    #     choices=PANEL_CHOICES,
+    #     # null=True,
+    #     # blank=True,
+    #     # default=5,
+    # )
 
     rounds = models.IntegerField(
         help_text="""
@@ -575,6 +572,13 @@ class Contest(TimeStampedModel):
         # null=True,
         # blank=True,
         # default=1,
+    )
+
+    qual_score = models.FloatField(
+        # help_text="""
+        #     The percentile music score for this performance.""",
+        null=True,
+        blank=True,
     )
 
     scoresheet_pdf = models.FileField(
@@ -618,10 +622,11 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3}".format(
+        self.name = u"{0} {1} {2} {3} {4}".format(
             self.organization,
             self.get_level_display(),
             self.get_kind_display(),
+            self.get_goal_display(),
             self.year,
         )
         super(Contest, self).save(*args, **kwargs)
@@ -641,33 +646,33 @@ class Contest(TimeStampedModel):
             )
             r += 1
 
-        # Create an adminstrator sentinel
-        self.panelists.create(
-            contest=self,
-            category=0,
-            slot=1,
-        )
+        # # Create an adminstrator sentinel
+        # self.panelists.create(
+        #     contest=self,
+        #     category=0,
+        #     slot=1,
+        # )
 
-        # Create sentinels for the panel.
-        s = 1
-        while s <= self.panel:
-            self.panelists.create(
-                contest=self,
-                category=1,
-                slot=s,
-            )
-            self.panelists.create(
-                contest=self,
-                category=2,
-                slot=s,
-            )
-            self.panelists.create(
-                contest=self,
-                category=3,
-                slot=s,
-            )
-            s += 1
-        return
+        # # Create sentinels for the panel.
+        # s = 1
+        # while s <= self.panel:
+        #     self.panelists.create(
+        #         contest=self,
+        #         category=1,
+        #         slot=s,
+        #     )
+        #     self.panelists.create(
+        #         contest=self,
+        #         category=2,
+        #         slot=s,
+        #     )
+        #     self.panelists.create(
+        #         contest=self,
+        #         category=3,
+        #         slot=s,
+        #     )
+        #     s += 1
+        # return
 
     # @transition(
     #     field=status,
@@ -787,14 +792,14 @@ class Contest(TimeStampedModel):
                 contestant.place = i
                 contestant.save()
                 cursor = [contestant]
-        if self.goal == self.GOAL.championship:
-            Ranking.objects.create(
-                contestant=self.contestants.get(place=1),
-                award=Award.objects.get(
-                    name='Champion',
-                ),
-                contest=self,
-            )
+        # if self.goal == self.GOAL.championship:
+        #     Ranking.objects.create(
+        #         contestant=self.contestants.get(place=1),
+        #         award=Award.objects.get(
+        #             name='Champion',
+        #         ),
+        #         contest=self,
+        #     )
         # TODO Confer awards
         return "{0} Ready for Review".format(self)
 
