@@ -287,27 +287,10 @@ class Award(TimeStampedModel):
     )
 
     KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-        (5, 'novice', 'Novice',),
-    )
-
-    GOAL = Choices(
         (1, 'championship', 'Championship',),
         (2, 'qualifier', 'Qualifier',),
+        (3, 'novice', 'Novice',),
         # (4, 'collegiate', 'Collegiate',),
-    )
-
-    ROUNDS_CHOICES = []
-    for r in reversed(range(1, 4)):
-        ROUNDS_CHOICES.append((r, r))
-
-    LEVEL = Choices(
-        (1, 'international', "International"),
-        (2, 'district', "District"),
-        (3, 'division', "Division"),
     )
 
     id = models.UUIDField(
@@ -338,36 +321,8 @@ class Award(TimeStampedModel):
         monitor='status',
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='awards',
-        null=True,
-        blank=True,
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-        null=True,
-        blank=True,
-    )
-
     kind = models.IntegerField(
         choices=KIND,
-    )
-
-    goal = models.IntegerField(
-        choices=GOAL,
-        null=True,
-        blank=True,
-    )
-
-    rounds = models.IntegerField(
-        help_text="""
-            Number of rounds""",
-        choices=ROUNDS_CHOICES,
-        null=True,
-        blank=True,
-        # default=1,
     )
 
     contest = models.ForeignKey(
@@ -375,49 +330,10 @@ class Award(TimeStampedModel):
         related_name='awards',
     )
 
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='awards',
-        null=True,
-        blank=True,
-    )
-
-    qual_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    def finish(self):
-        # TODO Validate performances over
-        cursor = []
-        i = 1
-        for ranking in self.rankings.order_by('-total_points'):
-            try:
-                match = ranking.total_points == cursor[0].total_points
-            except IndexError:
-                ranking.place = i
-                ranking.save()
-                cursor.append(ranking)
-                continue
-            if match:
-                ranking.place = i
-                i += len(cursor)
-                ranking.save()
-                cursor.append(ranking)
-                continue
-            else:
-                i += 1
-                ranking.place = i
-                ranking.save()
-                cursor = [ranking]
-        return "Session Ended"
-
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3}".format(
-            self.organization,
-            self.get_level_display(),
+        self.name = u"{0} {1}".format(
+            self.contest,
             self.get_kind_display(),
-            self.get_goal_display(),
         )
         super(Award, self).save(*args, **kwargs)
 
@@ -426,7 +342,7 @@ class Award(TimeStampedModel):
 
     class Meta:
         ordering = (
-            '-contest',
+            'name',
         )
 
 
@@ -643,7 +559,7 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
-    panel_size = models.IntegerField(
+    panel = models.IntegerField(
         help_text="""
             Size of the judging panel (typically three or five.)""",
         choices=PANEL_CHOICES,
@@ -932,13 +848,6 @@ class Contestant(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='contestants',
-        null=True,
-        blank=True,
     )
 
     group = models.ForeignKey(
@@ -1757,85 +1666,6 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
 
-class Panel(TimeStampedModel):
-    """Panel"""
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
-        (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
-        (50, 'official', 'Official',),
-        (60, 'finished', 'Finished',),
-        (90, 'final', 'Final',),
-    )
-
-    KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-        (5, 'novice', 'Novice',),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='panel',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='panel',
-        null=True,
-        blank=True
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-        null=True,
-        blank=True,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
-        )
-        super(Panel, self).save(*args, **kwargs)
-
-
 class Panelist(TimeStampedModel):
     """Contest Panelist"""
 
@@ -1885,20 +1715,6 @@ class Panelist(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='panelists',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='panelists',
-        null=True,
-        blank=True,
-    )
-
-    panel = models.ForeignKey(
-        'Panel',
-        related_name='panelists',
-        null=True,
-        blank=True,
     )
 
     person = models.ForeignKey(
@@ -2581,13 +2397,6 @@ class Session(TimeStampedModel):
         related_name='sessions',
     )
 
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='sessions',
-        null=True,
-        blank=True,
-    )
-
     kind = models.IntegerField(
         choices=KIND,
         default=KIND.finals,
@@ -2709,9 +2518,6 @@ class Session(TimeStampedModel):
     )
     def finish(self):
         # TODO Validate performances over
-        # TODO  Not sure this denorm is the best approach
-        for contestant in self.contest.contestants.all():
-            contestant.save()
         cursor = []
         i = 1
         for performance in self.performances.order_by('-total_points'):
@@ -3168,78 +2974,6 @@ class Ranking(TimeStampedModel):
         related_name='rankings',
     )
 
-    # TODO Everything below here must be protected in some way.  Different model?
-    place = models.IntegerField(
-        # help_text="""
-        #     The final placement/rank of the contestant.""",
-        null=True,
-        blank=True,
-    )
-
-    mus_points = models.IntegerField(
-        # help_text="""
-        #     The total music points for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    prs_points = models.IntegerField(
-        # help_text="""
-        #     The total presentation points for this performance.""",
-        null=True,
-        editable=False,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        # help_text="""
-        #     The total singing points for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    total_points = models.IntegerField(
-        # help_text="""
-        #     The total points for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    mus_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    prs_score = models.FloatField(
-        # help_text="""
-        #     The percentile presentation score for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    sng_score = models.FloatField(
-        # help_text="""
-        #     The percentile singing score for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    total_score = models.FloatField(
-        # help_text="""
-        #     The total percentile score for this performance.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3248,41 +2982,6 @@ class Ranking(TimeStampedModel):
             self.contestant,
             self.award,
         )
-        # If there are no performances, skip.
-        if self.contestant.performances.exists():
-            # Filter for performances related to award
-            agg = self.contestant.performances.filter(
-                session__kind__lte=self.award.rounds,
-            ).aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
-
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
-
-            # Calculate percentile
-            try:
-                possible = self.award.contest.panel * 2 * self.contestant.performances.count()
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
         super(Ranking, self).save(*args, **kwargs)
 
     class Meta:
