@@ -1757,7 +1757,7 @@ class Panel(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.convention,
-            self.kind,
+            self.get_kind_display(),
         )
         super(Panel, self).save(*args, **kwargs)
 
