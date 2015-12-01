@@ -89,23 +89,6 @@ class AwardAdmin(admin.ModelAdmin):
         'contest__year',
     )
 
-    readonly_fields = [
-        'name',
-        'status_monitor',
-    ]
-
-    fields = [
-        'name',
-        ('status', 'status_monitor'),
-        'contest',
-        'organization',
-        'level',
-        'kind',
-        'goal',
-        'rounds',
-        'qual_score',
-    ]
-
 
 @admin.register(Catalog)
 class CatalogAdmin(admin.ModelAdmin):
@@ -153,7 +136,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'history',
         # 'goal',
         'rounds',
-        'panel_size',
+        'panel',
         'scoresheet_pdf',
     )
 
@@ -167,7 +150,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         # 'goal',
         'year',
-        ('rounds', 'panel_size',),
+        ('rounds', 'panel',),
         'scoresheet_pdf',
     )
 
@@ -200,7 +183,6 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         SingerInline,
         DirectorInline,
         PerformanceInline,
-        RankingInline,
     ]
 
     list_display = (
