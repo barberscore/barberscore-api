@@ -21,7 +21,6 @@ from .models import (
     Director,
     Catalog,
     Panelist,
-    Award,
     Performance,
     Organization,
 )
@@ -40,7 +39,6 @@ from .serializers import (
     DirectorSerializer,
     CatalogSerializer,
     PanelistSerializer,
-    AwardSerializer,
     PerformanceSerializer,
     OrganizationSerializer,
 )
@@ -193,12 +191,4 @@ class PanelistViewSet(viewsets.ModelViewSet):
         'scores',
     )
     serializer_class = PanelistSerializer
-    lookup_field = 'slug'
-
-
-class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
-        'contestant',
-    )
-    serializer_class = AwardSerializer
     lookup_field = 'slug'
