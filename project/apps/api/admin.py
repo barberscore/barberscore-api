@@ -7,7 +7,9 @@ from .inlines import (
     ContestantInline,
     DirectorInline,
     PerformanceInline,
+    ContestInline,
     # PlacementInline,
+    PanelInline,
     PanelistInline,
     ScoreInline,
     SongStackedInline,
@@ -30,6 +32,7 @@ from .models import (
     Person,
     Song,
     Score,
+    Panel,
     Panelist,
     Session,
     Award,
@@ -65,6 +68,12 @@ from super_inlines.admin import SuperModelAdmin
 #     can_delete = True
 #     show_change_link = True
 #     classes = ('grp-collapse grp-closed',)
+
+
+@admin.register(Panel)
+class PanelAdmin(admin.ModelAdmin):
+    pass
+
 
 
 @admin.register(Arranger)
@@ -281,6 +290,11 @@ class ConventionAdmin(admin.ModelAdmin):
         'year',
         'organization',
     )
+
+    inlines = [
+        ContestInline,
+        PanelInline,
+    ]
 
     readonly_fields = (
         'name',

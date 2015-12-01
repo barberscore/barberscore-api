@@ -9,9 +9,11 @@ from super_inlines.admin import SuperInlineModelAdmin
 from .models import (
     Contestant,
     Song,
+    Contest,
     Score,
     Panelist,
     Singer,
+    Panel,
     Director,
     Session,
     Performance,
@@ -88,6 +90,74 @@ class PlacementInline(admin.TabularInline):
         'mus_points',
     )
     classes = ('grp-collapse grp-open',)
+
+
+class PanelInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_panel_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'name',
+        'convention',
+    )
+    show_change_link = True
+
+    model = Panel
+    extra = 0
+    raw_id_fields = (
+        'convention',
+    )
+    readonly_fields = [
+        'link',
+        'name',
+    ]
+
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class ContestInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_contest_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'name',
+        'convention',
+    )
+    show_change_link = True
+
+    model = Contest
+    extra = 0
+    raw_id_fields = (
+        'convention',
+    )
+    readonly_fields = [
+        'link',
+        'name',
+    ]
+
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
 
 
 class ContestantInline(admin.TabularInline):
@@ -249,52 +319,6 @@ class AwardInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-# class SongInline(admin.TabularInline):
-#     def link(self, obj):
-#         return mark_safe(
-#             "<a href={0}>link</a>".format(
-#                 reverse(
-#                     'admin:api_song_change',
-#                     args=(
-#                         obj.id.hex,
-#                     )
-#                 )
-#             )
-#         )
-
-#     fields = (
-#         'link',
-#         'performance',
-#         'order',
-#         'tune',
-#         'mus_points',
-#         'prs_points',
-#         'sng_points',
-#     )
-#     ordering = (
-#         'performance',
-#         'order',
-#     )
-#     model = Song
-#     extra = 0
-#     raw_id_fields = (
-#         # 'performance',
-#         'tune',
-#     )
-#     autocomplete_lookup_fields = {
-#         'fk': [
-#             # 'performance',
-#             'tune',
-#         ]
-#     }
-
-#     readonly_fields = [
-#         'link',
-#     ]
-#     can_delete = True
-#     show_change_link = True
-
-
 class ScoreInline(admin.TabularInline):
     model = Score
     fields = (
@@ -453,3 +477,49 @@ class SingerInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
+
+
+# class SongInline(admin.TabularInline):
+#     def link(self, obj):
+#         return mark_safe(
+#             "<a href={0}>link</a>".format(
+#                 reverse(
+#                     'admin:api_song_change',
+#                     args=(
+#                         obj.id.hex,
+#                     )
+#                 )
+#             )
+#         )
+
+#     fields = (
+#         'link',
+#         'performance',
+#         'order',
+#         'tune',
+#         'mus_points',
+#         'prs_points',
+#         'sng_points',
+#     )
+#     ordering = (
+#         'performance',
+#         'order',
+#     )
+#     model = Song
+#     extra = 0
+#     raw_id_fields = (
+#         # 'performance',
+#         'tune',
+#     )
+#     autocomplete_lookup_fields = {
+#         'fk': [
+#             # 'performance',
+#             'tune',
+#         ]
+#     }
+
+#     readonly_fields = [
+#         'link',
+#     ]
+#     can_delete = True
+#     show_change_link = True
