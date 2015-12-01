@@ -8,7 +8,7 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Contest,
+    Convention,
 )
 
 
@@ -21,16 +21,21 @@ class Command(BaseCommand):
             type=str,
         )
         parser.add_argument(
-            'number',
+            '--kind',
+            type=int,
+        )
+
+        parser.add_argument(
+            '--number',
             type=int,
         )
 
     def handle(self, *args, **options):
         try:
-            contest = Contest.objects.get(
+            convention = Convention.objects.get(
                 slug=options['slug'],
             )
-        except Contest.DoesNotExist:
+        except Convention.DoesNotExist:
             raise CommandError("Contest does not exist.")
-        result = add_contestants(contest, options['number'])
+        result = add_contestants(convention, options['number'])
         self.stdout.write("{0}".format(result))
