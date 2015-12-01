@@ -2974,6 +2974,13 @@ class Ranking(TimeStampedModel):
         related_name='rankings',
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='rankings',
+        null=True,
+        blank=True,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
