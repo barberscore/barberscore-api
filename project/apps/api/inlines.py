@@ -62,7 +62,7 @@ class PerformanceInline(admin.TabularInline):
         # 'start',
         'link',
     )
-    classes = ('grp-collapse grp-close',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class PlacementInline(admin.TabularInline):
