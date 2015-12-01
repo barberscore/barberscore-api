@@ -1683,6 +1683,14 @@ class Panel(TimeStampedModel):
         (4, 'collegiate', 'Collegiate',),
     )
 
+    ROUNDS_CHOICES = []
+    for r in reversed(range(1, 4)):
+        ROUNDS_CHOICES.append((r, r))
+
+    PANEL_CHOICES = []
+    for r in reversed(range(1, 6)):
+        PANEL_CHOICES.append((r, r))
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1715,6 +1723,24 @@ class Panel(TimeStampedModel):
     convention = models.ForeignKey(
         'Convention',
         related_name='panels',
+    )
+
+    size = models.IntegerField(
+        help_text="""
+            Size of the judging panel (typically three or five.)""",
+        choices=PANEL_CHOICES,
+        null=True,
+        blank=True,
+        # default=5,
+    )
+
+    rounds = models.IntegerField(
+        help_text="""
+            Number of rounds""",
+        choices=ROUNDS_CHOICES,
+        null=True,
+        blank=True,
+        # default=1,
     )
 
     kind = models.IntegerField(
