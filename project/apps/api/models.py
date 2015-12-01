@@ -273,79 +273,6 @@ class Arranger(TimeStampedModel):
         )
 
 
-class Award(TimeStampedModel):
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
-        (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
-        (50, 'official', 'Official',),
-        (60, 'finished', 'Finished',),
-        (90, 'final', 'Final',),
-    )
-
-    KIND = Choices(
-        (1, 'championship', 'Championship',),
-        (2, 'qualifier', 'Qualifier',),
-        (3, 'novice', 'Novice',),
-        # (4, 'collegiate', 'Collegiate',),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='awards',
-    )
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contest,
-            self.get_kind_display(),
-        )
-        super(Award, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    class Meta:
-        ordering = (
-            'name',
-        )
-
-
 class Catalog(TimeStampedModel):
     TEMPO = Choices(
         (1, "Ballad"),
@@ -482,8 +409,8 @@ class Contest(TimeStampedModel):
     )
 
     name = models.CharField(
-        help_text="""
-            The name of the contest (determined programmatically.)""",
+        # help_text="""
+        #     The name of the contest (determined programmatically.)""",
         max_length=200,
         unique=True,
         editable=False,
@@ -850,11 +777,6 @@ class Contestant(TimeStampedModel):
         monitor='status',
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='contestants',
-    )
-
     convention = models.ForeignKey(
         'Convention',
         related_name='contestants',
@@ -1056,9 +978,10 @@ class Contestant(TimeStampedModel):
         return "De-normalized record"
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contest,
-            self.group,
+        self.name = u"{0}".format(
+            self.id.hex,
+            # self.convention,
+            # self.group,
         )
 
         # If there are no performances, skip.
@@ -1082,27 +1005,27 @@ class Contestant(TimeStampedModel):
             except TypeError:
                 self.total_points = None
 
-            # Calculate percentile
-            try:
-                possible = self.contest.panel * 2 * self.performances.count()
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
+            # # Calculate percentile
+            # try:
+            #     possible = self.contest.panel * 2 * self.performances.count()
+            #     self.mus_score = round(self.mus_points / possible, 1)
+            #     self.prs_score = round(self.prs_points / possible, 1)
+            #     self.sng_score = round(self.sng_points / possible, 1)
+            #     self.total_score = round(self.total_points / (possible * 3), 1)
+            # except TypeError:
+            #     self.mus_score = None
+            #     self.prs_score = None
+            #     self.sng_score = None
         super(Contestant, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
-            '-contest__year',
+            '-convention__year',
             'place',
         )
-        unique_together = (
-            ('group', 'contest',),
-        )
+        # unique_together = (
+        #     ('group', 'convention',),
+        # )
 
 
 class Convention(TimeStampedModel):
@@ -1213,247 +1136,6 @@ class Convention(TimeStampedModel):
             self.year,
         )
         super(Convention, self).save(*args, **kwargs)
-
-
-class Day(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
-        # (15, 'ready', 'Ready',),
-        # (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (30, 'final', 'Final',),
-    )
-
-    KIND = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='days',
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='days',
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    # objects = DayManager()
-
-    class Meta:
-        ordering = [
-            'contest',
-            'kind',
-        ]
-        unique_together = (
-            ('contest', 'kind',),
-        )
-
-    # @staticmethod
-    # def autocomplete_search_fields():
-    #         return ("id__iexact", "name__icontains",)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    # def get_preceding(self):
-    #     try:
-    #         obj = self.__class__.objects.get(
-    #             contest=self.contest,
-    #             kind=self.kind + 1,
-    #         )
-    #         return obj
-    #     except self.DoesNotExist:
-    #         return None
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contest,
-            self.get_kind_display(),
-        )
-        super(Day, self).save(*args, **kwargs)
-
-    # def get_next(self):
-    #     try:
-    #         obj = self.__class__.objects.get(
-    #             contest=self.contest,
-    #             kind=self.kind - 1,
-    #         )
-    #         return obj
-    #     except self.DoesNotExist:
-    #         return None
-
-    # def next_performance(self):
-    #     try:
-    #         return self.performances.filter(
-    #             status=self.performances.model.STATUS.ready,
-    #         ).order_by('position').first()
-    #     except self.performances.model.DoesNotExist:
-    #         return None
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.built,
-    # )
-    # def build(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.built,
-    #     target=STATUS.ready,
-    #     # conditions=[
-    #     #     contest_started,
-    #     # ]
-    # )
-    # def prep(self):
-    #     p = 0
-    #     for contestant in self.contest.contestants.official().order_by('?'):
-    #         self.performances.create(
-    #             session=self,
-    #             contestant=contestant,
-    #             position=p,
-    #         )
-    #         p += 1
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.started,
-    #     conditions=[
-    #         # session_drawn,
-    #         # session_scheduled,
-    #         contest_started,
-    #         preceding_session_finished,
-    #     ]
-    # )
-    # def start(self):
-    #     # Triggered in UI
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.started,
-    #     target=STATUS.finished,
-    #     conditions=[
-    #         performances_finished,
-    #         scores_validated,
-    #     ]
-    # )
-    # def finish(self):
-    #     # TODO Validate performances over
-    #     cursor = []
-    #     i = 1
-    #     for performance in self.performances.order_by('-total_points'):
-    #         try:
-    #             match = performance.total_points == cursor[0].total_points
-    #         except IndexError:
-    #             performance.place = i
-    #             performance.save()
-    #             cursor.append(performance)
-    #             continue
-    #         if match:
-    #             performance.place = i
-    #             i += len(cursor)
-    #             performance.save()
-    #             cursor.append(performance)
-    #             continue
-    #         else:
-    #             i += 1
-    #             performance.place = i
-    #             performance.save()
-    #             cursor = [performance]
-    #     return "Session Ended"
-
-    # @transition(field=status, source=STATUS.finished, target=STATUS.final)
-    # def finalize(self):
-    #     return
-    #     # # TODO Some validation
-    #     # try:
-    #     #     # TODO This is an awful lot to be in a try/except; refactor?
-    #     #     next_session = self.contest.sessions.get(
-    #     #         kind=(self.kind - 1),
-    #     #     )
-    #     #     qualifiers = self.performances.filter(
-    #     #         place__lte=next_session.slots,
-    #     #     ).order_by('?')
-    #     #     p = 0
-    #     #     for qualifier in qualifiers:
-    #     #         l = next_session.performances.create(
-    #     #             contestant=qualifier.contestant,
-    #     #             position=p,
-    #     #             # start=next_session.start,
-    #     #         )
-    #     #         p += 1
-    #     #         p1 = l.songs.create(performance=l, order=1)
-    #     #         p2 = l.songs.create(performance=l, order=2)
-    #     #         for j in self.contest.panelists.scoring():
-    #     #             p1.scores.create(
-    #     #                 song=p1,
-    #     #                 panelist=j,
-    #     #             )
-    #     #             p2.scores.create(
-    #     #                 song=p2,
-    #     #                 panelist=j,
-    #     #             )
-    #     # except self.DoesNotExist:
-    #     #     pass
-    #     # return 'Session Confirmed'
-    # # def draw_contest(self):
-    # #     cs = self.contestants.order_by('?')
-    # #     session = self.sessions.get(kind=self.rounds)
-    # #     p = 0
-    # #     for c in cs:
-    # #         session.performances.create(
-    # #             contestant=c,
-    # #             position=p,
-    # #             start=session.start,
-    # #         )
-    # #         p += 1
-    # #     self.status = self.STATUS.ready
-    # #     self.save()
 
 
 class Director(TimeStampedModel):
@@ -1958,13 +1640,6 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
-    day = models.ForeignKey(
-        'Day',
-        related_name='performances',
-        null=True,
-        blank=True,
-    )
-
     position = models.PositiveSmallIntegerField(
         'Position',
     )
@@ -2376,6 +2051,13 @@ class Score(TimeStampedModel):
         related_name='scores',
     )
 
+    # performance = models.ForeignKey(
+    #     'Performance',
+    #     related_name='scores',
+    #     null=True,
+    #     blank=True,
+    # )
+
     points = models.IntegerField(
         help_text="""
             The number of points awarded (0-100)""",
@@ -2509,11 +2191,6 @@ class Session(TimeStampedModel):
         monitor='status',
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='sessions',
-    )
-
     panel = models.ForeignKey(
         'Panel',
         related_name='sessions',
@@ -2540,11 +2217,11 @@ class Session(TimeStampedModel):
 
     class Meta:
         ordering = [
-            'contest',
+            'panel',
             'kind',
         ]
         unique_together = (
-            ('contest', 'kind',),
+            ('panel', 'kind',),
         )
 
     @staticmethod
@@ -3093,11 +2770,6 @@ class Ranking(TimeStampedModel):
         related_name='rankings',
     )
 
-    award = models.ForeignKey(
-        'Award',
-        related_name='rankings',
-    )
-
     contest = models.ForeignKey(
         'Contest',
         related_name='rankings',
@@ -3111,13 +2783,13 @@ class Ranking(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contestant,
-            self.award,
+            self.contest,
         )
         super(Ranking, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('contestant', 'award',),
+            ('contestant', 'contest',),
         )
 
 

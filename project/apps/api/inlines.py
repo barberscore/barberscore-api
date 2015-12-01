@@ -17,7 +17,6 @@ from .models import (
     Director,
     Session,
     Performance,
-    Award,
     Ranking,
 )
 
@@ -108,7 +107,11 @@ class PanelInline(admin.TabularInline):
     fields = (
         'link',
         'name',
+        'status',
         'convention',
+        'kind',
+        'size',
+        'rounds',
     )
     show_change_link = True
 
@@ -143,6 +146,12 @@ class ContestInline(admin.TabularInline):
         'link',
         'name',
         'convention',
+        'organization',
+        'level',
+        'kind',
+        'goal',
+        'year',
+        'rounds',
     )
     show_change_link = True
 
@@ -216,7 +225,7 @@ class ContestantInline(admin.TabularInline):
 
 class RankingInline(admin.TabularInline):
     fields = (
-        'award',
+        'contest',
         'contestant',
     )
     ordering = (
@@ -284,37 +293,6 @@ class PanelistInline(admin.TabularInline):
         ]
     }
     can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-closed',)
-
-
-class AwardInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_award_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
-
-    model = Award
-    fields = (
-        'link',
-        'contest',
-        'name',
-        'kind',
-        # 'is_practice',
-    )
-    extra = 0
-    can_delete = True
-    readonly_fields = [
-        'link',
-        'name',
-    ]
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
 
@@ -425,14 +403,14 @@ class SessionInline(admin.TabularInline):
 
     fields = (
         'link',
-        'contest',
+        'panel',
         'kind',
         'status',
         'start_date',
         'slots',
     )
     ordering = (
-        'contest',
+        'panel',
         'kind',
     )
 
