@@ -72,8 +72,9 @@ from super_inlines.admin import SuperModelAdmin
 
 @admin.register(Panel)
 class PanelAdmin(admin.ModelAdmin):
-    pass
-
+    inlines = [
+        SessionInline,
+    ]
 
 
 @admin.register(Arranger)
@@ -117,10 +118,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        ContestantInline,
-        AwardInline,
-        PanelistInline,
-        SessionInline,
+        RankingInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
