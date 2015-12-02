@@ -109,6 +109,12 @@ class PanelAdmin(admin.ModelAdmin):
         'convention',
     )
 
+    autocomplete_lookup_fields = {
+        'fk': [
+            'convention',
+        ]
+    }
+
     readonly_fields = [
         'name',
         'status_monitor',
@@ -116,6 +122,7 @@ class PanelAdmin(admin.ModelAdmin):
 
     inlines = [
         SessionInline,
+        PanelistInline,
     ]
 
 
