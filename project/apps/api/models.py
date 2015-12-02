@@ -1799,18 +1799,17 @@ class Performance(TimeStampedModel):
         ordering = [
             'position',
         ]
-        # unique_together = (
-        #     ('contestant', 'kind',),
-        # )
+        unique_together = (
+            ('session', 'contestant',),
+        )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            # self.session,
-            self.id.hex,
-            self.contestant.group,
+            self.session,
+            self.contestant,
         )
 
         if self.songs.exists():
@@ -1833,17 +1832,17 @@ class Performance(TimeStampedModel):
             except TypeError:
                 self.total_points = None
 
-            #  Calculate percentile scores
-            # try:
-            #     possible = self.contestant.contest.panel * 2
-            #     self.mus_score = round(self.mus_points / possible, 1)
-            #     self.prs_score = round(self.prs_points / possible, 1)
-            #     self.sng_score = round(self.sng_points / possible, 1)
-            #     self.total_score = round(self.total_points / (possible * 3), 1)
-            # except TypeError:
-            #     self.mus_score = None
-            #     self.prs_score = None
-            #     self.sng_score = None
+            # Calculate percentile scores
+            try:
+                possible = self.session.panel.size * 2
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
+            except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
         super(Performance, self).save(*args, **kwargs)
 
 
