@@ -2592,6 +2592,53 @@ class Song(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.performance,
+            'Song',
+            self.order,
+        )
+
+        if self.catalog:
+            self.title = self.catalog.song_name
+            self.arranger = ", ".join(
+                [l['person__name'] for l in self.catalog.arrangers.values('person__name')]
+            )
+
+        if self.scores.exists():
+            self.mus_points = self.scores.filter(
+                kind__in=[1, 7]
+            ).aggregate(mus=models.Sum('points'))['mus']
+            self.prs_points = self.scores.filter(
+                kind__in=[2, 8]
+            ).aggregate(prs=models.Sum('points'))['prs']
+            self.sng_points = self.scores.filter(
+                kind__in=[3, 9]
+            ).aggregate(sng=models.Sum('points'))['sng']
+
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
+
+        # Calculate percentile scores.
+        try:
+            possible = self.performance.session.panel.size
+            self.mus_score = round(self.mus_points / possible, 1)
+            self.prs_score = round(self.prs_points / possible, 1)
+            self.sng_score = round(self.sng_points / possible, 1)
+            self.total_score = round(self.total_points / (possible * 3), 1)
+        except TypeError:
+            self.mus_score = None
+            self.prs_score = None
+            self.sng_score = None
+        super(Song, self).save(*args, **kwargs)
+
     # @transition(
     #     field=status,
     #     source=[
@@ -2628,53 +2675,6 @@ class Song(TimeStampedModel):
     )
     def finalize(self):
         return
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.performance,
-            'Song',
-            self.order,
-        )
-
-        if self.catalog:
-            self.title = self.catalog.song_name
-            self.arranger = ", ".join(
-                [l['person__name'] for l in self.catalog.arrangers.values('person__name')]
-            )
-
-        if self.scores.exists():
-            self.mus_points = self.scores.filter(
-                panelist__category__in=[1, 7]
-            ).aggregate(mus=models.Sum('points'))['mus']
-            self.prs_points = self.scores.filter(
-                panelist__category__in=[2, 8]
-            ).aggregate(prs=models.Sum('points'))['prs']
-            self.sng_points = self.scores.filter(
-                panelist__category__in=[3, 9]
-            ).aggregate(sng=models.Sum('points'))['sng']
-
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
-
-        # Calculate percentile scores.
-        # try:
-        #     possible = self.performance.contestant.contest.panel
-        #     self.mus_score = round(self.mus_points / possible, 1)
-        #     self.prs_score = round(self.prs_points / possible, 1)
-        #     self.sng_score = round(self.sng_points / possible, 1)
-        #     self.total_score = round(self.total_points / (possible * 3), 1)
-        # except TypeError:
-        #     self.mus_score = None
-        #     self.prs_score = None
-        #     self.sng_score = None
-        super(Song, self).save(*args, **kwargs)
 
 
 class Tune(TimeStampedModel):
