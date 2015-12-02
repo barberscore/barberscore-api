@@ -1570,25 +1570,25 @@ class Panelist(TimeStampedModel):
         )
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return u"{0}".format(self.id)
 
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.panel,
-            self.get_category_display(),
-            self.slot,
-        )
-        super(Panelist, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.name = u"{0} {1} {2}".format(
+    #         self.panel,
+    #         self.get_category_display(),
+    #         self.slot,
+    #     )
+    #     super(Panelist, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('panel', 'category', 'slot'),
-        )
-        ordering = (
-            'panel',
-            'category',
-            'slot',
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('panel', 'category', 'slot'),
+    #     )
+    #     ordering = (
+    #         'panel',
+    #         'category',
+    #         'slot',
+    #     )
 
 
 class Performance(TimeStampedModel):
