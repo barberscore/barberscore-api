@@ -1331,8 +1331,6 @@ class Organization(MPTTModel, Common):
 
 
 class Panel(TimeStampedModel):
-    """Contest Panelist"""
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
@@ -1393,26 +1391,18 @@ class Panel(TimeStampedModel):
         help_text="""
             Size of the judging panel (typically three or five.)""",
         choices=PANEL_CHOICES,
-        null=True,
-        blank=True,
-        # default=5,
     )
 
     rounds = models.IntegerField(
         help_text="""
             Number of rounds""",
         choices=ROUNDS_CHOICES,
-        null=True,
-        blank=True,
-        # default=1,
     )
 
     kind = models.IntegerField(
         help_text="""
-            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
+            The Panel is different than the contest objective.""",
         choices=KIND,
-        null=True,
-        blank=True,
     )
 
     def __unicode__(self):
