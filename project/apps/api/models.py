@@ -1439,7 +1439,7 @@ class Panelist(TimeStampedModel):
     for r in range(1, 6):
         SLOT_CHOICES.append((r, r))
 
-    CATEGORY = Choices(
+    KIND = Choices(
         (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
@@ -1474,8 +1474,6 @@ class Panelist(TimeStampedModel):
     panel = models.ForeignKey(
         'Panel',
         related_name='panelists',
-        null=True,
-        blank=True,
     )
 
     person = models.ForeignKey(
@@ -1497,16 +1495,12 @@ class Panelist(TimeStampedModel):
         monitor='status',
     )
 
-    category = models.IntegerField(
-        choices=CATEGORY,
-        null=True,
-        blank=True,
+    kind = models.IntegerField(
+        choices=KIND,
     )
 
     slot = models.IntegerField(
         choices=SLOT_CHOICES,
-        null=True,
-        blank=True,
     )
 
     organization = TreeForeignKey(
@@ -1514,10 +1508,9 @@ class Panelist(TimeStampedModel):
         related_name='panelists',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
-    objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
+    # objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1526,30 +1519,30 @@ class Panelist(TimeStampedModel):
     @property
     def designation(self):
         return u"{0[0]}{1:1d}".format(
-            self.get_category_display(),
+            self.get_kind_display(),
             self.slot,
         )
 
     def __unicode__(self):
-        return u"{0}".format(self.id)
+        return u"{0}".format(self.name)
 
-    # def save(self, *args, **kwargs):
-    #     self.name = u"{0} {1} {2}".format(
-    #         self.panel,
-    #         self.get_category_display(),
-    #         self.slot,
-    #     )
-    #     super(Panelist, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.panel,
+            self.get_kind_display(),
+            self.slot,
+        )
+        super(Panelist, self).save(*args, **kwargs)
 
-    # class Meta:
-    #     unique_together = (
-    #         ('panel', 'category', 'slot'),
-    #     )
-    #     ordering = (
-    #         'panel',
-    #         'category',
-    #         'slot',
-    #     )
+    class Meta:
+        unique_together = (
+            ('panel', 'kind', 'slot'),
+        )
+        ordering = (
+            'panel',
+            'kind',
+            'slot',
+        )
 
 
 class Performance(TimeStampedModel):
