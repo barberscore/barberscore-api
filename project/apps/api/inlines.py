@@ -194,8 +194,8 @@ class ContestantInline(admin.TabularInline):
         'men',
     )
     ordering = (
-        'place',
-        'seed',
+        'convention',
+        'group__kind',
         'group',
     )
 
@@ -272,15 +272,15 @@ class DirectorInline(admin.TabularInline):
 class PanelistInline(admin.TabularInline):
     model = Panelist
     fields = (
-        'contest',
+        'panel',
         'person',
         'organization',
-        'category',
+        'kind',
         'slot',
         # 'is_practice',
     )
     ordering = (
-        'category',
+        'kind',
         'slot',
     )
     extra = 0
