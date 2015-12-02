@@ -2169,6 +2169,11 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
+    num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     start_date = models.DateField(
         null=True,
         blank=True,
@@ -2829,6 +2834,40 @@ class Ranking(TimeStampedModel):
             self.contest,
             self.contestant,
         )
+        # If there are no performances, skip.
+        if self.contestant.performances.exists():
+            agg = self.contestant.performances.all(
+                session__kind__lte=self.contest.rounds,
+            ).aggregate(
+                mus=models.Sum('mus_points'),
+                prs=models.Sum('prs_points'),
+                sng=models.Sum('sng_points'),
+            )
+            self.mus_points = agg['mus']
+            self.prs_points = agg['prs']
+            self.sng_points = agg['sng']
+
+            # Calculate total points.
+            try:
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
+
+            # # Calculate percentile
+            # try:
+            #     possible = self.contest.panel * 2 * self.performances.count()
+            #     self.mus_score = round(self.mus_points / possible, 1)
+            #     self.prs_score = round(self.prs_points / possible, 1)
+            #     self.sng_score = round(self.sng_points / possible, 1)
+            #     self.total_score = round(self.total_points / (possible * 3), 1)
+            # except TypeError:
+            #     self.mus_score = None
+            #     self.prs_score = None
+            #     self.sng_score = None
         super(Ranking, self).save(*args, **kwargs)
 
     class Meta:
