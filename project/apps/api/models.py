@@ -2735,8 +2735,6 @@ class Ranking(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='rankings',
-        null=True,
-        blank=True,
     )
 
     def __unicode__(self):
@@ -2744,8 +2742,8 @@ class Ranking(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.contestant,
             self.contest,
+            self.contestant,
         )
         super(Ranking, self).save(*args, **kwargs)
 
