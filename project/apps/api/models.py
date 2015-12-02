@@ -2050,7 +2050,7 @@ class Score(TimeStampedModel):
         related_name='scores',
     )
 
-    perf = models.ForeignKey(
+    performance = models.ForeignKey(
         'Performance',
         related_name='scores',
         null=True,
