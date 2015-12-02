@@ -2159,13 +2159,10 @@ class Session(TimeStampedModel):
     panel = models.ForeignKey(
         'Panel',
         related_name='sessions',
-        null=True,
-        blank=True,
     )
 
     kind = models.IntegerField(
         choices=KIND,
-        default=KIND.finals,
     )
 
     start_date = models.DateField(
@@ -2208,7 +2205,7 @@ class Session(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.contest,
+            self.panel,
             self.get_kind_display(),
         )
         super(Session, self).save(*args, **kwargs)
