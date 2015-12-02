@@ -231,7 +231,7 @@ class RankingInline(admin.TabularInline):
         'total_score',
     )
     ordering = (
-        'total_score',
+        'place',
     )
 
     show_change_link = True
