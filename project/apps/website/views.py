@@ -43,7 +43,7 @@ from .forms import (
     LoginForm,
     ContestForm,
     ScoreFormSet,
-    PanelistFormSet,
+    # PanelistFormSet,
     SongForm,
 )
 
@@ -190,10 +190,10 @@ def contest_impanel(request, slug):
         slug=slug,
     )
     if request.method == 'POST':
-        formset = PanelistFormSet(
-            request.POST,
-            instance=contest,
-        )
+        # formset = PanelistFormSet(
+        #     request.POST,
+        #     instance=contest,
+        # )
         if formset.is_valid():
             formset.save()
             return redirect('website:contest_fill', contest.slug)
@@ -206,9 +206,10 @@ def contest_impanel(request, slug):
                             error,
                         )
     else:
-        formset = PanelistFormSet(
-            instance=contest,
-        )
+        # formset = PanelistFormSet(
+        #     instance=contest,
+        # )
+        pass
     return render(
         request,
         'manage/contest_impanel.html',
@@ -531,12 +532,16 @@ def contest_oss(request, slug):
         'place',
         # 'performances__session__kind',
     )
-    panelists = contest.panelists.official
-    rankings = contest.rankings.all()
+    # panelists = contest.panelists.official
+    # rankings = contest.rankings.all()
     return render(
         request,
-        'api/contest_oss.html',
-        {'contest': contest, 'contestants': contestants, 'panelists': panelists, 'rankings': rankings},
+        'api/contest_oss.html', {
+            'contest': contest,
+            'contestants': contestants,
+            # 'panelists': panelists,
+            # 'rankings': rankings,
+        },
     )
 
 

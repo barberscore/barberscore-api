@@ -381,7 +381,7 @@ class Panelist(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'contest',
+        'panel',
         'person',
         'organization',
         ('category', 'slot',),
@@ -400,18 +400,18 @@ class Panelist(admin.ModelAdmin):
 
     list_select_related = [
         'organization',
-        'contest',
+        'panel',
         'person',
     ]
 
     raw_id_fields = (
-        'contest',
+        'panel',
         'person',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'contest',
+            'panel',
             'person',
         ]
     }
