@@ -482,6 +482,7 @@ class Contest(TimeStampedModel):
         related_name='contests',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     rounds = models.IntegerField(
