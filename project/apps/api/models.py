@@ -452,27 +452,21 @@ class Contest(TimeStampedModel):
         # help_text="""
         #     The level of the contest (currently only International is supported.)""",
         choices=LEVEL,
-        # default=LEVEL.international,
     )
 
     kind = models.IntegerField(
         # help_text="""
         #     The kind of the contest (quartet, chorus, senior, collegiate.)""",
         choices=KIND,
-        # default=KIND.quartet,
     )
 
     goal = models.IntegerField(
         help_text="""
             The objective of the contest""",
         choices=GOAL,
-        null=True,
-        blank=True,
-        # default=GOAL.championship,
     )
 
     year = models.IntegerField(
-        default=datetime.datetime.now().year,
         choices=YEAR_CHOICES,
     )
 
@@ -483,22 +477,10 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
-    # panel = models.IntegerField(
-    #     help_text="""
-    #         Size of the judging panel (typically three or five.)""",
-    #     choices=PANEL_CHOICES,
-    #     # null=True,
-    #     # blank=True,
-    #     # default=5,
-    # )
-
     rounds = models.IntegerField(
         help_text="""
             Number of rounds""",
         choices=ROUNDS_CHOICES,
-        # null=True,
-        # blank=True,
-        # default=1,
     )
 
     qual_score = models.FloatField(
@@ -537,13 +519,6 @@ class Contest(TimeStampedModel):
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
-
-    # TODO
-    # def clean(self):
-    #         if self.level == self.LEVEL.international and self.district.name != 'BHS':
-    #             raise ValidationError('International does not have a district.')
-    #         if self.level != self.LEVEL.international and self.district is None:
-    #             raise ValidationError('You must provide a district.')
 
     def __unicode__(self):
         return u"{0}".format(self.name)
