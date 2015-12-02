@@ -302,7 +302,7 @@ class ScoreInline(admin.TabularInline):
     fields = (
         'song',
         'panelist',
-        'category',
+        'kind',
         'points',
         'status',
     )
@@ -314,7 +314,7 @@ class ScoreInline(admin.TabularInline):
         'panelist',
     )
     readonly_fields = [
-        'category',
+        'kind',
         'panelist',
     ]
 
