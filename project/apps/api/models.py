@@ -1575,7 +1575,7 @@ class Panelist(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
             self.panel,
-            self.category,
+            self.get_category_display(),
             self.slot,
         )
         super(Panelist, self).save(*args, **kwargs)
@@ -1583,7 +1583,6 @@ class Panelist(TimeStampedModel):
     class Meta:
         unique_together = (
             ('panel', 'category', 'slot'),
-            ('panel', 'person',),
         )
         ordering = (
             'panel',
@@ -2050,6 +2049,8 @@ class Score(TimeStampedModel):
     panelist = models.ForeignKey(
         'Panelist',
         related_name='scores',
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
     performance = models.ForeignKey(
