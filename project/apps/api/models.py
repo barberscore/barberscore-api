@@ -1510,11 +1510,6 @@ class Panelist(TimeStampedModel):
         max_length=255,
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='panelists',
-    )
-
     panel = models.ForeignKey(
         'Panel',
         related_name='panelists',
@@ -1578,8 +1573,8 @@ class Panelist(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} Panelist {1}{2}".format(
-            self.contest,
+        self.name = u"{0} {1} {2}".format(
+            self.panel,
             self.category,
             self.slot,
         )
@@ -1587,11 +1582,11 @@ class Panelist(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('contest', 'category', 'slot'),
-            ('contest', 'person',),
+            ('panel', 'category', 'slot'),
+            ('panel', 'person',),
         )
         ordering = (
-            'contest',
+            'panel',
             'category',
             'slot',
         )

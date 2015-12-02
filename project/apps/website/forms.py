@@ -86,7 +86,7 @@ class PanelistForm(forms.ModelForm):
     class Meta:
         model = Panelist
         fields = [
-            'contest',
+            'panel',
             'person',
             'category',
             'slot',
@@ -110,18 +110,18 @@ class PanelistForm(forms.ModelForm):
                     'readonly': 'readonly',
                 },
             ),
-            'contest': forms.HiddenInput(
+            'panel': forms.HiddenInput(
             ),
         }
 
 
-PanelistFormSet = inlineformset_factory(
-    Contest,
-    Panelist,
-    form=PanelistForm,
-    extra=0,
-    can_delete=False,
-)
+# PanelistFormSet = inlineformset_factory(
+#     Contest,
+#     Panelist,
+#     form=PanelistForm,
+#     extra=0,
+#     can_delete=False,
+# )
 
 
 def make_contestant_form(contest):
