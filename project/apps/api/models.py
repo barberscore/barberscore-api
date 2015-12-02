@@ -1515,6 +1515,13 @@ class Panelist(TimeStampedModel):
         related_name='panelists',
     )
 
+    panel = models.ForeignKey(
+        'Panel',
+        related_name='panelists',
+        null=True,
+        blank=True,
+    )
+
     person = models.ForeignKey(
         'Person',
         related_name='panels',
