@@ -2024,11 +2024,6 @@ class Score(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='scores',
-    )
-
     points = models.IntegerField(
         help_text="""
             The number of points awarded (0-100)""",
