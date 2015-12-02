@@ -2107,7 +2107,7 @@ class Score(TimeStampedModel):
         return self.panelist.get_category_display()
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return u"{0}".format(self.id)
 
     @transition(
         field=status,
@@ -2159,13 +2159,13 @@ class Score(TimeStampedModel):
     def finalize(self):
         return
 
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2:02d}".format(
-            self.song,
-            self.panelist.get_category_display(),
-            self.panelist.slot,
-        )
-        super(Score, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.name = u"{0} {1} {2:02d}".format(
+    #         self.song,
+    #         self.panelist.get_category_display(),
+    #         self.panelist.slot,
+    #     )
+    #     super(Score, self).save(*args, **kwargs)
 
 
 class Session(TimeStampedModel):
