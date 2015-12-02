@@ -227,9 +227,11 @@ class RankingInline(admin.TabularInline):
     fields = (
         'contest',
         'contestant',
+        'place',
+        'total_score',
     )
     ordering = (
-        'contestant',
+        'total_score',
     )
 
     show_change_link = True
@@ -239,6 +241,14 @@ class RankingInline(admin.TabularInline):
     raw_id_fields = (
         'contestant',
     )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'contestant',
+        ]
+    }
+    readonly_fields = [
+        'total_score',
+    ]
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
