@@ -998,7 +998,9 @@ class Contestant(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'place',
+            'convention',
+            'group__kind',
+            'group',
         )
         unique_together = (
             ('group', 'convention',),
@@ -1416,7 +1418,7 @@ class Panel(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
+        self.name = u"{0} {1} Panel".format(
             self.convention,
             self.get_kind_display(),
         )
@@ -2737,6 +2739,86 @@ class Ranking(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='rankings',
+    )
+
+    # TODO Everything below here must be protected in some way.  Different model?
+    place = models.IntegerField(
+        # help_text="""
+        #     The final placement/rank of the contestant.""",
+        null=True,
+        blank=True,
+    )
+
+    men = models.IntegerField(
+        # help_text="""
+        #     The number of men on stage (only for chourses).""",
+        default=4,
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        # help_text="""
+        #     The total music points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_points = models.IntegerField(
+        # help_text="""
+        #     The total presentation points for this performance.""",
+        null=True,
+        editable=False,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        # help_text="""
+        #     The total singing points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_points = models.IntegerField(
+        # help_text="""
+        #     The total points for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    mus_score = models.FloatField(
+        # help_text="""
+        #     The percentile music score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_score = models.FloatField(
+        # help_text="""
+        #     The percentile presentation score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sng_score = models.FloatField(
+        # help_text="""
+        #     The percentile singing score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_score = models.FloatField(
+        # help_text="""
+        #     The total percentile score for this performance.""",
+        null=True,
+        blank=True,
+        editable=False,
     )
 
     def __unicode__(self):
