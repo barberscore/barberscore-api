@@ -88,7 +88,7 @@ class PanelistForm(forms.ModelForm):
         fields = [
             'panel',
             'person',
-            'category',
+            'kind',
             'slot',
         ]
         extra = 0
@@ -98,7 +98,7 @@ class PanelistForm(forms.ModelForm):
                     'class': 'form-control',
                 },
             ),
-            'category': forms.Select(
+            'kind': forms.Select(
                 attrs={
                     'class': 'form-control',
                     'readonly': 'readonly',
