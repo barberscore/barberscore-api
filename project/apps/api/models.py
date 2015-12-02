@@ -477,6 +477,13 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
+    panel = models.ForeignKey(
+        'Panel',
+        related_name='contests',
+        null=True,
+        blank=True,
+    )
+
     rounds = models.IntegerField(
         help_text="""
             Number of rounds""",
