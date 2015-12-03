@@ -966,30 +966,30 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.convention,
+            self.panel,
             self.group,
         )
 
         # If there are no performances, skip.
-        if self.performances.exists():
-            agg = self.performances.all().aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
+        # if self.performances.exists():
+        #     agg = self.performances.all().aggregate(
+        #         mus=models.Sum('mus_points'),
+        #         prs=models.Sum('prs_points'),
+        #         sng=models.Sum('sng_points'),
+        #     )
+        #     self.mus_points = agg['mus']
+        #     self.prs_points = agg['prs']
+        #     self.sng_points = agg['sng']
 
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
+        #     # Calculate total points.
+        #     try:
+        #         self.total_points = sum([
+        #             self.mus_points,
+        #             self.prs_points,
+        #             self.sng_points,
+        #         ])
+        #     except TypeError:
+        #         self.total_points = None
 
             # # Calculate percentile
             # try:
@@ -1011,7 +1011,7 @@ class Contestant(TimeStampedModel):
             'group',
         )
         unique_together = (
-            ('group', 'convention',),
+            ('group', 'panel',),
         )
 
 
