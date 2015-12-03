@@ -11,6 +11,7 @@ from factory.django import (
 from .models import (
     Group,
     Contestant,
+    Panel,
     Certification,
     Tune,
     Panelist,
@@ -85,16 +86,20 @@ def add_panelists(panel):
     return "Panelists Impaneled"
 
 
-def add_contestants(convention, kind=Group.KIND.quartet, number=20):
+def add_contestants(panel, number=20):
+    if panel.kind == Panel.KIND.chorus:
+        kind = Group.KIND.chorus
+    else:
+        kind = Group.KIND.quartet
     groups = Group.objects.filter(
         kind=kind,
         status=Group.STATUS.active,
     ).order_by('?')[:number]
     for group in groups:
         contestant = Contestant.objects.create(
-            convention=convention,
+            panel=panel,
             group=group,
-            # prelim=randint(700, 900) * .1,
+            prelim=randint(700, 900) * .1,
         )
         contestant.qualify()
         contestant.accept()
@@ -103,7 +108,7 @@ def add_contestants(convention, kind=Group.KIND.quartet, number=20):
 
 
 def add_rankings(contest, number=10):
-    contestants = contest.convention.contestants.order_by('?')[:number]
+    contestants = contest.panel.contestants.order_by('?')[:number]
     for contestant in contestants:
         Ranking.objects.create(
             contest=contest,
