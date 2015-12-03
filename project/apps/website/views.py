@@ -43,7 +43,7 @@ from .forms import (
     LoginForm,
     ContestForm,
     ScoreFormSet,
-    # PanelistFormSet,
+    # JudgeFormSet,
     SongForm,
 )
 
@@ -190,7 +190,7 @@ def contest_impanel(request, slug):
         slug=slug,
     )
     if request.method == 'POST':
-        # formset = PanelistFormSet(
+        # formset = JudgeFormSet(
         #     request.POST,
         #     instance=contest,
         # )
@@ -206,7 +206,7 @@ def contest_impanel(request, slug):
                             error,
                         )
     else:
-        # formset = PanelistFormSet(
+        # formset = JudgeFormSet(
         #     instance=contest,
         # )
         pass
@@ -532,14 +532,14 @@ def contest_oss(request, slug):
         'place',
         # 'performances__session__kind',
     )
-    # panelists = contest.panelists.official
+    # judges = contest.judges.official
     # rankings = contest.rankings.all()
     return render(
         request,
         'api/contest_oss.html', {
             'contest': contest,
             'contestants': contestants,
-            # 'panelists': panelists,
+            # 'judges': judges,
             # 'rankings': rankings,
         },
     )
@@ -575,10 +575,10 @@ class HelloPDFView(PDFTemplateView):
                 'place',
                 # 'performances__session__kind',
             )
-            panelists = contest.panelists.official
+            judges = contest.judges.official
             rankings = contest.rankings.all()
             context["contest"] = contest
             context["contestants"] = contestants
-            context["panelists"] = panelists
+            context["judges"] = judges
             context["rankings"] = rankings
             return context

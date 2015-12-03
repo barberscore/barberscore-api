@@ -13,7 +13,7 @@ from .views import (
     DirectorViewSet,
     CatalogViewSet,
     ScoreViewSet,
-    PanelistViewSet,
+    JudgeViewSet,
     PerformanceViewSet,
     OrganizationViewSet,
 )
@@ -31,7 +31,7 @@ router.register(r'singer', SingerViewSet)
 router.register(r'director', DirectorViewSet)
 router.register(r'catalog', CatalogViewSet)
 router.register(r'score', ScoreViewSet)
-router.register(r'panelist', PanelistViewSet)
+router.register(r'judge', JudgeViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'search', SearchViewSet, base_name='search')

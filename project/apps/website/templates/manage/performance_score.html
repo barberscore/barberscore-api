@@ -30,7 +30,7 @@
           <table class='table'>
             <thead>
               <tr>
-                <th>Panelist</th>
+                <th>Judge</th>
                 <th>Song1</th>
                 <th>Song2</th>
               </tr>
@@ -42,7 +42,7 @@
                 {% endfor %}
                 <tr>
                   <td>
-                      {{form1.instance.panelist}} - {{form1.instance.panelist.person.name}}
+                      {{form1.instance.judge}} - {{form1.instance.judge.person.name}}
                   </td>
                   <td>
                     <fieldset class="form-group{% if form1.points.errors %} has-error{% endif %}">
@@ -50,7 +50,7 @@
                     </fieldset>
                   </td>
               {% for form2 in formsets.1 %}
-                {% if form2.instance.panelist == form1.instance.panelist %}
+                {% if form2.instance.judge == form1.instance.judge %}
                 {% for hidden in form2.hidden_fields %}
                   {{hidden}}
                 {% endfor %}

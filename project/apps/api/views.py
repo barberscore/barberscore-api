@@ -20,7 +20,7 @@ from .models import (
     Score,
     Director,
     Catalog,
-    Panelist,
+    Judge,
     Performance,
     Organization,
 )
@@ -38,7 +38,7 @@ from .serializers import (
     ScoreSerializer,
     DirectorSerializer,
     CatalogSerializer,
-    PanelistSerializer,
+    JudgeSerializer,
     PerformanceSerializer,
     OrganizationSerializer,
 )
@@ -161,7 +161,7 @@ class TuneViewSet(viewsets.ModelViewSet):
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
-        'panelist',
+        'judge',
     )
     serializer_class = ScoreSerializer
     permission_classes = [
@@ -182,13 +182,13 @@ class SearchViewSet(HaystackViewSet):
     serializer_class = SearchSerializer
 
 
-class PanelistViewSet(viewsets.ModelViewSet):
-    queryset = Panelist.objects.select_related(
+class JudgeViewSet(viewsets.ModelViewSet):
+    queryset = Judge.objects.select_related(
         'person',
         'contest',
         'organization',
     ).prefetch_related(
         'scores',
     )
-    serializer_class = PanelistSerializer
+    serializer_class = JudgeSerializer
     lookup_field = 'slug'

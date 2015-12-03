@@ -6,7 +6,7 @@ from django.forms import (
 
 from apps.api.models import (
     Contest,
-    Panelist,
+    Judge,
     Contestant,
     Score,
     Group,
@@ -82,9 +82,9 @@ class ContestForm(forms.ModelForm):
         return contest
 
 
-class PanelistForm(forms.ModelForm):
+class JudgeForm(forms.ModelForm):
     class Meta:
-        model = Panelist
+        model = Judge
         fields = [
             'panel',
             'person',
@@ -115,10 +115,10 @@ class PanelistForm(forms.ModelForm):
         }
 
 
-# PanelistFormSet = inlineformset_factory(
+# JudgeFormSet = inlineformset_factory(
 #     Contest,
-#     Panelist,
-#     form=PanelistForm,
+#     Judge,
+#     form=JudgeForm,
 #     extra=0,
 #     can_delete=False,
 # )
@@ -157,7 +157,7 @@ class ScoreForm(forms.ModelForm):
         model = Score
         fields = [
             'song',
-            'panelist',
+            'judge',
             'points',
             'status',
         ]
@@ -168,7 +168,7 @@ class ScoreForm(forms.ModelForm):
                     'class': 'form-control',
                 },
             ),
-            'panelist': forms.HiddenInput(
+            'judge': forms.HiddenInput(
             ),
             'status': forms.HiddenInput(
             ),

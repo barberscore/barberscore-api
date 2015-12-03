@@ -92,8 +92,8 @@ def validate_trimmed(value):
 
 
 def is_impaneled(contest):
-    for panelist in contest.panelists.official():
-        if not panelist.person:
+    for judge in contest.judges.official():
+        if not judge.person:
             return False
     return True
 
