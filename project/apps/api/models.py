@@ -765,13 +765,6 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
-    panel = models.ForeignKey(
-        'Panel',
-        related_name='contestants',
-        null=True,
-        blank=True,
-    )
-
     group = models.ForeignKey(
         'Group',
         related_name='contestants',
