@@ -14,7 +14,7 @@ from .models import (
     Panel,
     Certification,
     Tune,
-    Panelist,
+    Judge,
     Ranking,
     Session,
 )
@@ -35,12 +35,12 @@ def add_sessions(panel):
         k -= 1
 
 
-def add_panelists(panel):
+def add_judges(panel):
     size = panel.size
     admin = Certification.objects.filter(
         category=Certification.CATEGORY.admin,
     ).order_by('?').first()
-    Panelist.objects.create(
+    Judge.objects.create(
         person=admin.person,
         panel=panel,
         slot=1,
@@ -52,7 +52,7 @@ def add_panelists(panel):
     ).order_by('?')[:size]
     i = 1
     for music in musics:
-        Panelist.objects.create(
+        Judge.objects.create(
             person=music.person,
             panel=panel,
             slot=i,
@@ -64,7 +64,7 @@ def add_panelists(panel):
     ).order_by('?')[:size]
     i = 1
     for presentation in presentations:
-        Panelist.objects.create(
+        Judge.objects.create(
             person=presentation.person,
             panel=panel,
             slot=i,
@@ -76,14 +76,14 @@ def add_panelists(panel):
     ).order_by('?')[:size]
     i = 1
     for singing in singings:
-        Panelist.objects.create(
+        Judge.objects.create(
             person=singing.person,
             panel=panel,
             slot=i,
             kind=singing.category,
         )
         i += 1
-    return "Panelists Impaneled"
+    return "Judges Impaneled"
 
 
 def add_contestants(panel, number=20):

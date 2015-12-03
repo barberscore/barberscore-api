@@ -4,7 +4,7 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    add_panelists,
+    add_judges,
 )
 
 from apps.api.models import (
@@ -29,5 +29,5 @@ class Command(BaseCommand):
                 )
             except Panel.DoesNotExist:
                 raise CommandError("Contest does not exist.")
-            result = add_panelists(panel)
+            result = add_judges(panel)
             self.stdout.write("{0}".format(result))

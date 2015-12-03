@@ -10,7 +10,7 @@ from apps.api.models import (
     Song,
     # Singer,
     # Director,
-    # Panelist,
+    # Judge,
     Ranking,
     Session,
     Panel,
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         # ss = Singer.objects.all()
         # for s in ss:
         #     s.save()
-        # js = Panelist.objects.all()
+        # js = Judge.objects.all()
         # for j in js:
         #     j.save()
         # ds = Director.objects.all()
