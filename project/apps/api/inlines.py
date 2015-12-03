@@ -186,7 +186,8 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        'convention',
+        # 'convention',
+        'panel',
         'group',
         'organization',
         'seed',
@@ -196,7 +197,7 @@ class ContestantInline(admin.TabularInline):
         'men',
     )
     ordering = (
-        'convention',
+        # 'convention',
         'group__kind',
         'group',
     )
@@ -206,7 +207,8 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     extra = 0
     raw_id_fields = (
-        'convention',
+        # 'convention',
+        'panel',
         'group',
     )
     readonly_fields = [
@@ -217,7 +219,7 @@ class ContestantInline(admin.TabularInline):
 
     autocomplete_lookup_fields = {
         'fk': [
-            # 'contest',
+            'panel',
             'group',
         ]
     }
