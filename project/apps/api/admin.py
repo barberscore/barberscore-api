@@ -256,20 +256,20 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     raw_id_fields = (
-        'convention',
+        'panel',
         'group',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'convention',
+            'panel',
             'group',
         ]
     }
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'convention',
+        'panel',
         ('group', 'organization',),
         ('seed', 'prelim',),
         ('place', 'men',),
