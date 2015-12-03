@@ -10,58 +10,78 @@ from factory.django import (
 
 from .models import (
     Group,
-    Person,
     Contestant,
     Certification,
     Tune,
     Panelist,
     Ranking,
+    Session,
 )
 
 
+def add_sessions(panel):
+    # TODO Wonky.  Do these need kinds?
+    rounds = panel.rounds
+    k = rounds
+    i = 1
+    while i <= rounds:
+        Session.objects.create(
+            panel=panel,
+            num=i,
+            kind=k,
+        )
+        i += 1
+        k -= 1
+
+
 def add_panelists(panel):
+    size = panel.size
     admin = Certification.objects.filter(
         category=Certification.CATEGORY.admin,
     ).order_by('?').first()
-    panelist = contest.panelists.filter(
-        category=Panelist.CATEGORY.admin,
-        person=None,
-    ).first()
-    try:
-        panelist.person = person
-    except AttributeError:
-        return "All spots filled"
-    panelist.save()
-    persons = Person.objects.filter(
-        judge=Person.JUDGE.music,
-    ).order_by('?')[:contest.panel]
-    for person in persons:
-        panelist = contest.panelists.filter(
-            category=Panelist.CATEGORY.music,
-            person=None,
-        ).first()
-        panelist.person = person
-        panelist.save()
-    persons = Person.objects.filter(
-        judge=Person.JUDGE.singing,
-    ).order_by('?')[:contest.panel]
-    for person in persons:
-        panelist = contest.panelists.filter(
-            category=Panelist.CATEGORY.singing,
-            person=None,
-        ).first()
-        panelist.person = person
-        panelist.save()
-    persons = Person.objects.filter(
-        judge=Person.JUDGE.presentation,
-    ).order_by('?')[:contest.panel]
-    for person in persons:
-        panelist = contest.panelists.filter(
-            category=Panelist.CATEGORY.presentation,
-            person=None,
-        ).first()
-        panelist.person = person
-        panelist.save()
+    Panelist.objects.create(
+        person=admin.person,
+        panel=panel,
+        slot=1,
+        kind=admin.category,
+    )
+    # TODO This is not very DRY...
+    musics = Certification.objects.filter(
+        category=Certification.CATEGORY.music,
+    ).order_by('?')[:size]
+    i = 1
+    for music in musics:
+        Panelist.objects.create(
+            person=music.person,
+            panel=panel,
+            slot=i,
+            kind=music.category,
+        )
+        i += 1
+    presentations = Certification.objects.filter(
+        category=Certification.CATEGORY.presentation,
+    ).order_by('?')[:size]
+    i = 1
+    for presentation in presentations:
+        Panelist.objects.create(
+            person=presentation.person,
+            panel=panel,
+            slot=i,
+            kind=presentation.category,
+        )
+        i += 1
+    singings = Certification.objects.filter(
+        category=Certification.CATEGORY.singing,
+    ).order_by('?')[:size]
+    i = 1
+    for singing in singings:
+        Panelist.objects.create(
+            person=singing.person,
+            panel=panel,
+            slot=i,
+            kind=singing.category,
+        )
+        i += 1
     return "Panelists Impaneled"
 
 

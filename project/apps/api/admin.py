@@ -123,6 +123,7 @@ class PanelAdmin(admin.ModelAdmin):
     inlines = [
         SessionInline,
         PanelistInline,
+        ContestInline,
     ]
 
 
@@ -170,11 +171,13 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'year',
         'organization',
+        'panel',
     )
 
     list_display = (
         'name',
         'status',
+        'panel',
         'organization',
         'level',
         'kind',
@@ -189,6 +192,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
         'convention',
+        'panel',
         'organization',
         'level',
         'kind',
