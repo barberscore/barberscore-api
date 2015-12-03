@@ -152,6 +152,7 @@ class ContestInline(admin.TabularInline):
         'goal',
         'year',
         'rounds',
+        'qual_score',
     )
     show_change_link = True
 
