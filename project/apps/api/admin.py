@@ -70,21 +70,46 @@ from super_inlines.admin import SuperModelAdmin
 
 @admin.register(Ranking)
 class RankingAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = [
         'name',
     ]
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'contestant',
+        'contest',
+        'place',
+        'men',
+    ]
+    list_filter = (
+        'status',
+        'contest__panel__convention',
+    )
+
     autocomplete_lookup_fields = {
         'fk': [
             'contestant',
+            'contest',
         ]
     }
+    readonly_fields = [
+        'name',
+        'status_monitor',
+    ]
+
     raw_id_fields = [
         'contestant',
+        'contest',
     ]
 
 
 @admin.register(Panel)
-class PanelAdmin(admin.ModelAdmin):
+class PanelAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
     change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
@@ -192,7 +217,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
-        'convention',
         'panel',
         'organization',
         'level',
@@ -232,6 +256,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         SingerInline,
         DirectorInline,
         PerformanceInline,
+        RankingInline,
     ]
 
     list_display = (
@@ -329,9 +354,9 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        ContestInline,
+        # ContestInline,
         PanelInline,
-        ContestantInline,
+        # ContestantInline,
     ]
 
     readonly_fields = (
@@ -468,6 +493,7 @@ class Performance(FSMTransitionMixin, SuperModelAdmin):
     ]
     list_filter = [
         'status',
+        'session',
     ]
 
     fields = [

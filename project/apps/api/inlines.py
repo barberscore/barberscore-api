@@ -145,7 +145,6 @@ class ContestInline(admin.TabularInline):
     fields = (
         'link',
         'name',
-        'convention',
         'panel',
         'organization',
         'level',
@@ -160,7 +159,7 @@ class ContestInline(admin.TabularInline):
     model = Contest
     extra = 0
     raw_id_fields = (
-        'convention',
+        'panel',
     )
     readonly_fields = [
         'link',
@@ -187,7 +186,7 @@ class ContestantInline(admin.TabularInline):
     fields = (
         'link',
         # 'convention',
-        'panel',
+        # 'panel',
         'group',
         'organization',
         'seed',
@@ -208,7 +207,7 @@ class ContestantInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         # 'convention',
-        'panel',
+        # 'panel',
         'group',
     )
     readonly_fields = [
@@ -219,7 +218,7 @@ class ContestantInline(admin.TabularInline):
 
     autocomplete_lookup_fields = {
         'fk': [
-            'panel',
+            # 'panel',
             'group',
         ]
     }
@@ -228,7 +227,21 @@ class ContestantInline(admin.TabularInline):
 
 
 class RankingInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_ranking_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
     fields = (
+        'link',
+        'name',
         'contest',
         'contestant',
         'place',
@@ -251,6 +264,8 @@ class RankingInline(admin.TabularInline):
         ]
     }
     readonly_fields = [
+        'link',
+        'name',
         'total_score',
     ]
     can_delete = True
@@ -421,6 +436,7 @@ class SessionInline(admin.TabularInline):
         'kind',
         'status',
         'start_date',
+        'num',
         'slots',
     )
     ordering = (

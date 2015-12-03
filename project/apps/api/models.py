@@ -470,19 +470,9 @@ class Contest(TimeStampedModel):
         choices=YEAR_CHOICES,
     )
 
-    convention = models.ForeignKey(
-        'Convention',
-        help_text="""
-            The convention at which this contest occurred.""",
-        related_name='contests',
-    )
-
     panel = models.ForeignKey(
         'Panel',
         related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     rounds = models.IntegerField(
@@ -622,86 +612,86 @@ class Contest(TimeStampedModel):
     #             marker = [contestant]
     #     return "{0} Ready".format(self)
 
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.started,
-        conditions=[
-            # is_scheduled,
-            is_impaneled,
-            has_contestants,
-            has_awards,
-        ],
-    )
-    def start(self):
-        # Triggered in UI
-        # TODO seed contestants?
-        session = self.sessions.initial()
-        p = 0
-        for contestant in self.contestants.accepted().order_by('?'):
-            contestant.register()
-            contestant.save()
-            session.performances.create(
-                session=session,
-                contestant=contestant,
-                position=p,
-            )
-            p += 1
-        return "{0} Started".format(self)
+    # @transition(
+    #     field=status,
+    #     source=STATUS.built,
+    #     target=STATUS.started,
+    #     conditions=[
+    #         # is_scheduled,
+    #         is_impaneled,
+    #         has_contestants,
+    #         has_awards,
+    #     ],
+    # )
+    # def start(self):
+    #     # Triggered in UI
+    #     # TODO seed contestants?
+    #     session = self.sessions.initial()
+    #     p = 0
+    #     for contestant in self.contestants.accepted().order_by('?'):
+    #         contestant.register()
+    #         contestant.save()
+    #         session.performances.create(
+    #             session=session,
+    #             contestant=contestant,
+    #             position=p,
+    #         )
+    #         p += 1
+    #     return "{0} Started".format(self)
 
     @transition(
         field=status,
         source=STATUS.started,
         target=STATUS.finished,
         conditions=[
-            sessions_finished,
+            # sessions_finished,
         ],
     )
     # Check everything is done.
     def finish(self):
         # Denormalize
         ns = Song.objects.filter(
-            performance__contestant__contest=self,
+            performance__session__panel=self.panel,
         )
         for n in ns:
             n.save()
         ps = Performance.objects.filter(
-            session__contest=self,
+            session__panel=self.panel,
         )
         for p in ps:
             p.save()
-        ss = Session.objects.filter(
-            contest=self,
-        )
-        for s in ss:
-            s.save()
         ts = Contestant.objects.filter(
-            contest=self,
+            panel=self.panel,
         )
         for t in ts:
             t.save()
+        rs = Ranking.objects.filter(
+            contest=self,
+        )
+        for r in rs:
+            r.save()
         # Rank results
         cursor = []
         i = 1
-        for contestant in self.contestants.order_by('-total_points'):
+        for ranking in self.rankings.order_by('-total_points'):
             try:
-                match = contestant.total_points == cursor[0].total_points
+                match = ranking.total_points == cursor[0].total_points
             except IndexError:
-                contestant.place = i
-                contestant.save()
-                cursor.append(contestant)
+                ranking.place = i
+                ranking.save()
+                cursor.append(ranking)
                 continue
             if match:
-                contestant.place = i
+                ranking.place = i
                 i += len(cursor)
-                contestant.save()
-                cursor.append(contestant)
+                ranking.save()
+                cursor.append(ranking)
                 continue
             else:
                 i += 1
-                contestant.place = i
-                contestant.save()
-                cursor = [contestant]
+                ranking.place = i
+                ranking.save()
+                cursor = [ranking]
         return "{0} Ready for Review".format(self)
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
@@ -1341,8 +1331,8 @@ class Organization(MPTTModel, Common):
 class Panel(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'scheduled', 'Scheduled',),
-        (20, 'confirmed', 'Confirmed',),
+        (10, 'built', 'Built',),
+        (20, 'started', 'Started',),
         (30, 'final', 'Final',),
     )
 
@@ -1380,7 +1370,7 @@ class Panel(TimeStampedModel):
         max_length=255,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1431,6 +1421,33 @@ class Panel(TimeStampedModel):
             'convention',
             'kind',
         )
+
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.started,
+        conditions=[
+            # is_scheduled,
+            # is_impaneled,
+            # has_contestants,
+            # has_awards,
+        ],
+    )
+    def start(self):
+        # Triggered in UI
+        # TODO seed contestants?
+        session = self.sessions.get(num=1)
+        p = 0
+        for contestant in self.contestants.accepted().order_by('?'):
+            contestant.register()
+            contestant.save()
+            session.performances.create(
+                session=session,
+                contestant=contestant,
+                position=p,
+            )
+            p += 1
+        return "{0} Started".format(self)
 
 
 class Panelist(TimeStampedModel):
@@ -1518,7 +1535,7 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
-    # objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
+    objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1808,10 +1825,11 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for panelist in self.session.contest.panelists.scoring():
+            for panelist in self.session.panel.panelists.scoring():
                 song.scores.create(
                     song=song,
                     panelist=panelist,
+                    kind=panelist.kind,
                 )
             i += 1
         return
@@ -2270,8 +2288,8 @@ class Session(TimeStampedModel):
         conditions=[
             # session_drawn,
             # session_scheduled,
-            contest_started,
-            preceding_session_finished,
+            # contest_started,
+            # preceding_session_finished,
         ]
     )
     def start(self):
@@ -2716,7 +2734,10 @@ class Tune(TimeStampedModel):
 
 
 class Ranking(TimeStampedModel):
-    """Chorus relation"""
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2733,6 +2754,16 @@ class Ranking(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
     )
 
     contestant = models.ForeignKey(
