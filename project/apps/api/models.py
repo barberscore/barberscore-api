@@ -765,6 +765,13 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
+    panel = models.ForeignKey(
+        'Panel',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
     group = models.ForeignKey(
         'Group',
         related_name='contestants',
@@ -958,9 +965,10 @@ class Contestant(TimeStampedModel):
         return "De-normalized record"
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.convention,
-            self.group,
+        self.name = u"{0}".format(
+            self.id.hex,
+            # self.convention,
+            # self.group,
         )
 
         # If there are no performances, skip.
@@ -1003,9 +1011,9 @@ class Contestant(TimeStampedModel):
             'group__kind',
             'group',
         )
-        unique_together = (
-            ('group', 'convention',),
-        )
+        # unique_together = (
+        #     ('group', 'convention',),
+        # )
 
 
 class Convention(TimeStampedModel):
