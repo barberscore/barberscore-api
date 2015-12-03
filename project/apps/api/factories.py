@@ -12,15 +12,16 @@ from .models import (
     Group,
     Person,
     Contestant,
+    Certification,
     Tune,
     Panelist,
     Ranking,
 )
 
 
-def impanel_panelists(contest):
-    person = Person.objects.filter(
-        judge=Person.JUDGE.admin,
+def add_panelists(panel):
+    admin = Certification.objects.filter(
+        category=Certification.CATEGORY.admin,
     ).order_by('?').first()
     panelist = contest.panelists.filter(
         category=Panelist.CATEGORY.admin,
@@ -73,7 +74,7 @@ def add_contestants(convention, kind=Group.KIND.quartet, number=20):
         contestant = Contestant.objects.create(
             convention=convention,
             group=group,
-            prelim=randint(700, 900) * .1,
+            # prelim=randint(700, 900) * .1,
         )
         contestant.qualify()
         contestant.accept()
@@ -81,18 +82,14 @@ def add_contestants(convention, kind=Group.KIND.quartet, number=20):
     return "Contestants Added"
 
 
-# def add_rankings(award, number=10):
-#     if award.kind == Award.KIND.championship:
-#         contestants = award.contest.contestants.all()
-#     if award.kind == Award.KIND.novice:
-#         contestants = award.contest.contestants.order_by('?')[:number]
-#     for contestant in contestants:
-#         ranking = Ranking.objects.create(
-#             award=award,
-#             contestant=contestant
-#         )
-#         ranking.save()
-#     return "Contestants Added"
+def add_rankings(contest, number=10):
+    contestants = contest.convention.contestants.order_by('?')[:number]
+    for contestant in contestants:
+        Ranking.objects.create(
+            contest=contest,
+            contestant=contestant,
+        )
+    return "Rankings Added"
 
 
 def score_performance(performance):
