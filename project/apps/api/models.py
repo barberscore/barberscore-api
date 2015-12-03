@@ -1059,7 +1059,6 @@ class Convention(TimeStampedModel):
     )
 
     year = models.IntegerField(
-        default=datetime.datetime.now().year,
         choices=YEAR_CHOICES,
     )
 
