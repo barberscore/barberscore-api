@@ -890,6 +890,55 @@ class Contestant(TimeStampedModel):
 
     objects = PassThroughManager.for_queryset_class(ContestantQuerySet)()
 
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.panel,
+            self.group,
+        )
+
+        # If there are no performances, skip.
+        # if self.performances.exists():
+        #     agg = self.performances.all().aggregate(
+        #         mus=models.Sum('mus_points'),
+        #         prs=models.Sum('prs_points'),
+        #         sng=models.Sum('sng_points'),
+        #     )
+        #     self.mus_points = agg['mus']
+        #     self.prs_points = agg['prs']
+        #     self.sng_points = agg['sng']
+
+        #     # Calculate total points.
+        #     try:
+        #         self.total_points = sum([
+        #             self.mus_points,
+        #             self.prs_points,
+        #             self.sng_points,
+        #         ])
+        #     except TypeError:
+        #         self.total_points = None
+
+        # # Calculate percentile
+        # try:
+        #     possible = self.contest.panel * 2 * self.performances.count()
+        #     self.mus_score = round(self.mus_points / possible, 1)
+        #     self.prs_score = round(self.prs_points / possible, 1)
+        #     self.sng_score = round(self.sng_points / possible, 1)
+        #     self.total_score = round(self.total_points / (possible * 3), 1)
+        # except TypeError:
+        #     self.mus_score = None
+        #     self.prs_score = None
+        #     self.sng_score = None
+        super(Contestant, self).save(*args, **kwargs)
+
+    class Meta:
+        # ordering = (
+        #     'panel',
+        #     'group',
+        # )
+        unique_together = (
+            ('group', 'panel',),
+        )
+
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
@@ -963,56 +1012,6 @@ class Contestant(TimeStampedModel):
             p.save()
         self.save()
         return "De-normalized record"
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.panel,
-            self.group,
-        )
-
-        # If there are no performances, skip.
-        # if self.performances.exists():
-        #     agg = self.performances.all().aggregate(
-        #         mus=models.Sum('mus_points'),
-        #         prs=models.Sum('prs_points'),
-        #         sng=models.Sum('sng_points'),
-        #     )
-        #     self.mus_points = agg['mus']
-        #     self.prs_points = agg['prs']
-        #     self.sng_points = agg['sng']
-
-        #     # Calculate total points.
-        #     try:
-        #         self.total_points = sum([
-        #             self.mus_points,
-        #             self.prs_points,
-        #             self.sng_points,
-        #         ])
-        #     except TypeError:
-        #         self.total_points = None
-
-        # # Calculate percentile
-        # try:
-        #     possible = self.contest.panel * 2 * self.performances.count()
-        #     self.mus_score = round(self.mus_points / possible, 1)
-        #     self.prs_score = round(self.prs_points / possible, 1)
-        #     self.sng_score = round(self.sng_points / possible, 1)
-        #     self.total_score = round(self.total_points / (possible * 3), 1)
-        # except TypeError:
-        #     self.mus_score = None
-        #     self.prs_score = None
-        #     self.sng_score = None
-        super(Contestant, self).save(*args, **kwargs)
-
-    class Meta:
-        ordering = (
-            'panel',
-            'group__kind',
-            'group',
-        )
-        unique_together = (
-            ('group', 'panel',),
-        )
 
 
 class Convention(TimeStampedModel):
@@ -1437,10 +1436,10 @@ class Panel(TimeStampedModel):
         unique_together = (
             ('convention', 'kind',),
         )
-        ordering = (
-            'convention',
-            'kind',
-        )
+        # ordering = (
+        #     'convention',
+        #     'kind',
+        # )
 
 
 class Panelist(TimeStampedModel):
@@ -1814,9 +1813,9 @@ class Performance(TimeStampedModel):
         return
 
     class Meta:
-        ordering = [
-            'position',
-        ]
+        # ordering = [
+        #     'position',
+        # ]
         unique_together = (
             ('session', 'contestant',),
         )
