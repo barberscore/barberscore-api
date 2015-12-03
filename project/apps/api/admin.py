@@ -175,10 +175,13 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'history',
+        'organization',
+        'level',
+        'kind',
         'goal',
+        'year',
         'rounds',
-        'scoresheet_pdf',
+        'qual_score',
     )
 
     fields = (
@@ -192,7 +195,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'goal',
         'year',
         'rounds',
-        'scoresheet_pdf',
+        'qual_score',
     )
 
     readonly_fields = (

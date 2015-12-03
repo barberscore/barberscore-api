@@ -4,11 +4,11 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    impanel_panelists,
+    add_panelists,
 )
 
 from apps.api.models import (
-    Contest,
+    Panel,
 )
 
 
@@ -24,10 +24,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for slug in options['slug']:
             try:
-                contest = Contest.objects.get(
+                panel = Panel.objects.get(
                     slug=slug,
                 )
-            except Contest.DoesNotExist:
+            except Panel.DoesNotExist:
                 raise CommandError("Contest does not exist.")
-            result = impanel_panelists(contest)
+            result = add_panelists(panel)
             self.stdout.write("{0}".format(result))

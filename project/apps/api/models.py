@@ -1261,6 +1261,7 @@ class Certification(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (0, 'new', 'New'),
         (1, 'active', 'Active'),
         (2, 'candidate', 'Candidate'),
     )
@@ -1286,8 +1287,9 @@ class Certification(TimeStampedModel):
         choices=CATEGORY,
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
+        default=STATUS.new,
     )
 
     status_monitor = MonitorField(
@@ -1299,9 +1301,9 @@ class Certification(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
+        self.name = u"{0} {1}".format(
             self.person,
-            self.get_part_display(),
+            self.get_category_display(),
         )
         super(Certification, self).save(*args, **kwargs)
 
