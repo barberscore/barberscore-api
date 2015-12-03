@@ -908,17 +908,17 @@ class Contestant(TimeStampedModel):
             except TypeError:
                 self.total_points = None
 
-        # Calculate percentile
-        try:
-            possible = self.panel.size * 2 * self.performances.count()
-            self.mus_score = round(self.mus_points / possible, 1)
-            self.prs_score = round(self.prs_points / possible, 1)
-            self.sng_score = round(self.sng_points / possible, 1)
-            self.total_score = round(self.total_points / (possible * 3), 1)
-        except TypeError:
-            self.mus_score = None
-            self.prs_score = None
-            self.sng_score = None
+            # Calculate percentile
+            try:
+                possible = self.panel.size * 2 * self.performances.count()
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
+            except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
         super(Contestant, self).save(*args, **kwargs)
 
     class Meta:
@@ -2624,27 +2624,27 @@ class Song(TimeStampedModel):
                 kind__in=[3, 9]
             ).aggregate(sng=models.Sum('points'))['sng']
 
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
+            # Calculate total points.
+            try:
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
 
-        # Calculate percentile scores.
-        try:
-            possible = self.performance.session.panel.size
-            self.mus_score = round(self.mus_points / possible, 1)
-            self.prs_score = round(self.prs_points / possible, 1)
-            self.sng_score = round(self.sng_points / possible, 1)
-            self.total_score = round(self.total_points / (possible * 3), 1)
-        except TypeError:
-            self.mus_score = None
-            self.prs_score = None
-            self.sng_score = None
+            # Calculate percentile scores.
+            try:
+                possible = self.performance.session.panel.size
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
+            except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
         super(Song, self).save(*args, **kwargs)
 
     # @transition(
