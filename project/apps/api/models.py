@@ -2840,6 +2840,8 @@ class Ranking(TimeStampedModel):
         if self.contestant.performances.exists():
             agg = self.contestant.performances.filter(
                 session__num__lte=self.contest.rounds,
+            ).filter(
+                session__panel=self.contest.panel,
             ).aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),

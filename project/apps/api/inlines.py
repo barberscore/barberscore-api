@@ -146,6 +146,7 @@ class ContestInline(admin.TabularInline):
         'link',
         'name',
         'convention',
+        'panel',
         'organization',
         'level',
         'kind',
