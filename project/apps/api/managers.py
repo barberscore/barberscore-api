@@ -19,41 +19,41 @@ from django.db.models.query import (
 class PanelistQuerySet(QuerySet):
     def official(self):
         return self.filter(
-            category__in=[
-                self.model.CATEGORY.admin,
-                self.model.CATEGORY.music,
-                self.model.CATEGORY.presentation,
-                self.model.CATEGORY.singing,
+            kind__in=[
+                self.model.KIND.admin,
+                self.model.KIND.music,
+                self.model.KIND.presentation,
+                self.model.KIND.singing,
             ]
         )
 
     def practice(self):
         return self.filter(
-            category__in=[
-                self.model.CATEGORY.music_candidate,
-                self.model.CATEGORY.presentation_candidate,
-                self.model.CATEGORY.singing_candidate,
+            kind__in=[
+                self.model.KIND.music_candidate,
+                self.model.KIND.presentation_candidate,
+                self.model.KIND.singing_candidate,
             ]
         )
 
     def scoring(self):
         return self.filter(
-            category__in=[
-                self.model.CATEGORY.music,
-                self.model.CATEGORY.presentation,
-                self.model.CATEGORY.singing,
-                self.model.CATEGORY.music_candidate,
-                self.model.CATEGORY.presentation_candidate,
-                self.model.CATEGORY.singing_candidate,
+            kind__in=[
+                self.model.KIND.music,
+                self.model.KIND.presentation,
+                self.model.KIND.singing,
+                self.model.KIND.music_candidate,
+                self.model.KIND.presentation_candidate,
+                self.model.KIND.singing_candidate,
             ]
         )
 
     def composite(self):
         return self.filter(
-            category__in=[
-                self.model.CATEGORY.music_composite,
-                self.model.CATEGORY.presentation_composite,
-                self.model.CATEGORY.singing_composite,
+            kind__in=[
+                self.model.KIND.music_composite,
+                self.model.KIND.presentation_composite,
+                self.model.KIND.singing_composite,
             ]
         )
 

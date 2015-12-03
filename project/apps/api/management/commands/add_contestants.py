@@ -8,7 +8,7 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Convention,
+    Panel,
 )
 
 
@@ -32,10 +32,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            convention = Convention.objects.get(
+            panel = Panel.objects.get(
                 slug=options['slug'],
             )
-        except Convention.DoesNotExist:
-            raise CommandError("Contest does not exist.")
-        result = add_contestants(convention, options['number'])
+        except Panel.DoesNotExist:
+            raise CommandError("Panel does not exist.")
+        result = add_contestants(panel, options['number'])
         self.stdout.write("{0}".format(result))
