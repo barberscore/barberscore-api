@@ -21,12 +21,12 @@ class Command(BaseCommand):
     help = "Command to denormailze data."
 
     def handle(self, *args, **options):
-        ps = Song.objects.all()
+        ss = Song.objects.all()
+        for s in ss:
+            s.save()
+        ps = Performance.objects.all()
         for p in ps:
             p.save()
-        as_ = Performance.objects.all()
-        for a in as_:
-            a.save()
         cs = Contestant.objects.all()
         for c in cs:
             c.save()
@@ -36,15 +36,15 @@ class Command(BaseCommand):
         ss = Session.objects.all()
         for s in ss:
             s.save()
-        ts = Contest.objects.all()
-        for t in ts:
-            t.save()
+        cs = Contest.objects.all()
+        for c in cs:
+            c.save()
         ps = Panel.objects.all()
         for p in ps:
             p.save()
-        vs = Convention.objects.all()
-        for v in vs:
-            v.save()
+        cs = Convention.objects.all()
+        for c in cs:
+            c.save()
         # ss = Singer.objects.all()
         # for s in ss:
         #     s.save()
