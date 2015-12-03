@@ -11,12 +11,12 @@ from django.db.models.query import (
 )
 
 # from .models import (
-#     Panelist,
+#     Judge,
 #     Contestant,
 # )
 
 
-class PanelistQuerySet(QuerySet):
+class JudgeQuerySet(QuerySet):
     def official(self):
         return self.filter(
             kind__in=[

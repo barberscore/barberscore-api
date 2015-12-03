@@ -11,7 +11,7 @@ from .models import (
     Song,
     Contest,
     Score,
-    Panelist,
+    Judge,
     Singer,
     Panel,
     Director,
@@ -298,8 +298,8 @@ class DirectorInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class PanelistInline(admin.TabularInline):
-    model = Panelist
+class JudgeInline(admin.TabularInline):
+    model = Judge
     fields = (
         'panel',
         'person',
@@ -330,26 +330,26 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = (
         'song',
-        'panelist',
+        'judge',
         'kind',
         'points',
         'status',
     )
     ordering = (
-        'panelist',
+        'judge',
     )
     extra = 0
     raw_id_fields = (
-        'panelist',
+        'judge',
     )
     readonly_fields = [
         'kind',
-        'panelist',
+        'judge',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
-            'panelist',
+            'judge',
         ]
     }
     can_delete = True
