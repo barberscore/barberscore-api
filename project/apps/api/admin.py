@@ -10,7 +10,7 @@ from .inlines import (
     ContestInline,
     # PlacementInline,
     PanelInline,
-    PanelistInline,
+    JudgeInline,
     ScoreInline,
     SongStackedInline,
     # SongInline,
@@ -31,7 +31,7 @@ from .models import (
     Song,
     Score,
     Panel,
-    Panelist,
+    Judge,
     Session,
     Performance,
     User,
@@ -147,7 +147,7 @@ class PanelAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         SessionInline,
-        PanelistInline,
+        JudgeInline,
         ContestInline,
         ContestantInline,
     ]
@@ -418,8 +418,8 @@ class GroupAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Panelist)
-class Panelist(admin.ModelAdmin):
+@admin.register(Judge)
+class Judge(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
@@ -645,7 +645,7 @@ class PersonAdmin(admin.ModelAdmin):
     # inlines = [
     #     DirectorsInline,
     #     SingersInline,
-    #     PanelistsInline,
+    #     JudgesInline,
     # ]
 
 
@@ -657,7 +657,7 @@ class Score(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'song',
-        'panelist',
+        'judge',
         'points',
     ]
 
@@ -665,7 +665,7 @@ class Score(admin.ModelAdmin):
         'name',
         'status_monitor',
         'song',
-        'panelist',
+        'judge',
     ]
 
     list_display = [
@@ -680,18 +680,18 @@ class Score(admin.ModelAdmin):
 
     raw_id_fields = [
         'song',
-        'panelist',
+        'judge',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
             'song',
-            'panelist',
+            'judge',
         ]
     }
 
     ordering = [
-        'panelist',
+        'judge',
         'song',
     ]
 

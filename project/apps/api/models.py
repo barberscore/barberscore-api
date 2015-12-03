@@ -63,7 +63,7 @@ from nameparser import HumanName
 from .managers import (
     UserManager,
     SessionManager,
-    PanelistQuerySet,
+    JudgeQuerySet,
     ContestantQuerySet,
 )
 
@@ -547,7 +547,7 @@ class Contest(TimeStampedModel):
             r += 1
 
         # # Create an adminstrator sentinel
-        # self.panelists.create(
+        # self.judges.create(
         #     contest=self,
         #     category=0,
         #     slot=1,
@@ -556,17 +556,17 @@ class Contest(TimeStampedModel):
         # # Create sentinels for the panel.
         # s = 1
         # while s <= self.panel:
-        #     self.panelists.create(
+        #     self.judges.create(
         #         contest=self,
         #         category=1,
         #         slot=s,
         #     )
-        #     self.panelists.create(
+        #     self.judges.create(
         #         contest=self,
         #         category=2,
         #         slot=s,
         #     )
-        #     self.panelists.create(
+        #     self.judges.create(
         #         contest=self,
         #         category=3,
         #         slot=s,
@@ -1450,8 +1450,8 @@ class Panel(TimeStampedModel):
         return "{0} Started".format(self)
 
 
-class Panelist(TimeStampedModel):
-    """Contest Panelist"""
+class Judge(TimeStampedModel):
+    """Contest Judge"""
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1498,7 +1498,7 @@ class Panelist(TimeStampedModel):
 
     panel = models.ForeignKey(
         'Panel',
-        related_name='panelists',
+        related_name='judges',
     )
 
     person = models.ForeignKey(
@@ -1530,12 +1530,12 @@ class Panelist(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
-        related_name='panelists',
+        related_name='judges',
         null=True,
         blank=True,
     )
 
-    objects = PassThroughManager.for_queryset_class(PanelistQuerySet)()
+    objects = PassThroughManager.for_queryset_class(JudgeQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1557,7 +1557,7 @@ class Panelist(TimeStampedModel):
             self.get_kind_display(),
             self.slot,
         )
-        super(Panelist, self).save(*args, **kwargs)
+        super(Judge, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
@@ -1825,11 +1825,11 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for panelist in self.session.panel.panelists.scoring():
+            for judge in self.session.panel.judges.scoring():
                 song.scores.create(
                     song=song,
-                    panelist=panelist,
-                    kind=panelist.kind,
+                    judge=judge,
+                    kind=judge.kind,
                 )
             i += 1
         return
@@ -1981,7 +1981,7 @@ class Person(Common):
 class Score(TimeStampedModel):
     """
         The Score is never released publicly.  These are the actual
-        Panelist's scores from the contest.
+        Judge's scores from the contest.
     """
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -2042,8 +2042,8 @@ class Score(TimeStampedModel):
         related_name='scores',
     )
 
-    panelist = models.ForeignKey(
-        'Panelist',
+    judge = models.ForeignKey(
+        'Judge',
         related_name='scores',
         null=True,
         blank=True,
@@ -2069,7 +2069,7 @@ class Score(TimeStampedModel):
 
     # class Meta:
     #     ordering = (
-    #         'panelist',
+    #         'judge',
     #         'song__order',
     #     )
 
@@ -2352,14 +2352,14 @@ class Session(TimeStampedModel):
         #         p += 1
         #         p1 = l.songs.create(performance=l, order=1)
         #         p2 = l.songs.create(performance=l, order=2)
-        #         for j in self.contest.panelists.scoring():
+        #         for j in self.contest.judges.scoring():
         #             p1.scores.create(
         #                 song=p1,
-        #                 panelist=j,
+        #                 judge=j,
         #             )
         #             p2.scores.create(
         #                 song=p2,
-        #                 panelist=j,
+        #                 judge=j,
         #             )
         # except self.DoesNotExist:
         #     pass
