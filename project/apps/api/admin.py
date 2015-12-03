@@ -124,6 +124,7 @@ class PanelAdmin(admin.ModelAdmin):
         SessionInline,
         PanelistInline,
         ContestInline,
+        ContestantInline,
     ]
 
 
@@ -381,6 +382,10 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = (
         'kind',
     )
+
+    inlines = [
+        ContestantInline,
+    ]
 
     readonly_fields = (
         'status_monitor',
