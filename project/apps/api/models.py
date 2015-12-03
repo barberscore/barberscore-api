@@ -763,13 +763,13 @@ class Contestant(TimeStampedModel):
     convention = models.ForeignKey(
         'Convention',
         related_name='contestants',
+        null=True,
+        blank=True,
     )
 
     panel = models.ForeignKey(
         'Panel',
         related_name='contestants',
-        null=True,
-        blank=True,
     )
 
     group = models.ForeignKey(
