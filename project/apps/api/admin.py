@@ -13,6 +13,7 @@ from .inlines import (
     JudgeInline,
     ScoreInline,
     SongStackedInline,
+    CertificationInline,
     # SongInline,
     SingerInline,
     SessionInline,
@@ -630,7 +631,6 @@ class PersonAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'kind',
         ('start_date', 'end_date',),
-        'judge',
         'organization',
         'location',
         'website',
@@ -646,11 +646,11 @@ class PersonAdmin(admin.ModelAdmin):
     readonly_fields = (
         'status_monitor',
     )
-    # inlines = [
-    #     DirectorsInline,
-    #     SingersInline,
-    #     JudgesInline,
-    # ]
+    inlines = [
+        DirectorInline,
+        SingerInline,
+        CertificationInline,
+    ]
 
 
 @admin.register(Score)
