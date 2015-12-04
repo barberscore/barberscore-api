@@ -13,8 +13,8 @@ phonenumbers==7.1.1
 Pillow==3.0.0
 elasticsearch==1.7.0
 django-haystack==2.4.1
-drf-haystack==1.5.5
-django-model-utils==2.3.1
+drf-haystack==1.5.6
+django-model-utils==2.4
 jsonfield==1.0.3
 titlecase==0.8.0
 django-autoslug==1.9.3
