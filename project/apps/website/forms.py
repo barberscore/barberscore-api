@@ -88,7 +88,7 @@ class JudgeForm(forms.ModelForm):
         fields = [
             'contest',
             'person',
-            'kind',
+            'category',
             'slot',
         ]
         extra = 0
@@ -98,7 +98,7 @@ class JudgeForm(forms.ModelForm):
                     'class': 'form-control',
                 },
             ),
-            'kind': forms.Select(
+            'category': forms.Select(
                 attrs={
                     'class': 'form-control',
                     'readonly': 'readonly',
