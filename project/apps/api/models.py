@@ -1658,7 +1658,6 @@ class Judge(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        limit_choices_to={'judge__isnull': False},
     )
 
     status = models.IntegerField(
