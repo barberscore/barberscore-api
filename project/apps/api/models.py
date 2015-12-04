@@ -1622,6 +1622,12 @@ class Judge(TimeStampedModel):
         (3, 'singing', 'Singing'),
     )
 
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1666,6 +1672,10 @@ class Judge(TimeStampedModel):
 
     category = models.IntegerField(
         choices=CATEGORY,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
     )
 
     slot = models.IntegerField(
@@ -2160,6 +2170,12 @@ class Score(TimeStampedModel):
         (3, 'singing', 'Singing'),
     )
 
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2190,6 +2206,10 @@ class Score(TimeStampedModel):
 
     category = models.IntegerField(
         choices=CATEGORY,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
     )
 
     song = models.ForeignKey(
