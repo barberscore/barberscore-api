@@ -8,12 +8,12 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Panel,
+    Contest,
 )
 
 
 class Command(BaseCommand):
-    help = "Create sample panel."
+    help = "Create sample contest."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -32,10 +32,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            panel = Panel.objects.get(
+            contest = Contest.objects.get(
                 slug=options['slug'],
             )
-        except Panel.DoesNotExist:
-            raise CommandError("Panel does not exist.")
-        result = add_contestants(panel, options['number'])
+        except Contest.DoesNotExist:
+            raise CommandError("Contest does not exist.")
+        result = add_contestants(contest, options['number'])
         self.stdout.write("{0}".format(result))
