@@ -638,6 +638,7 @@ class PersonAdmin(admin.ModelAdmin):
         'twitter',
         'email',
         'phone',
+        'member',
         'picture',
         'description',
         'notes',
