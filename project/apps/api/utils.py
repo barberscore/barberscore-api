@@ -283,18 +283,18 @@ def merge_groups(from_group, to_group):
 
 
 def score_contestant(contestant):
-    panel = contestant.award.panel
+    contest = contestant.award.contest
     if contestant.award.kind == 1:
         if contestant.quarters_points and not contestant.semis_points:
-            contestant.score = round(contestant.points / (panel * 6 * 1), 1)
+            contestant.score = round(contestant.points / (contest * 6 * 1), 1)
         elif contestant.semis_points and not contestant.finals_points:
-            contestant.score = round(contestant.points / (panel * 6 * 2), 1)
+            contestant.score = round(contestant.points / (contest * 6 * 2), 1)
         elif contestant.finals_points:
-            contestant.score = round(contestant.points / (panel * 6 * 3), 1)
+            contestant.score = round(contestant.points / (contest * 6 * 3), 1)
         else:
             contestant.score = None
     else:
-        contestant.score = round(contestant.points / (panel * 6 * 1), 1)
+        contestant.score = round(contestant.points / (contest * 6 * 1), 1)
     contestant.save()
     return
 

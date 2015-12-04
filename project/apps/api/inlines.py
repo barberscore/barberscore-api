@@ -13,7 +13,7 @@ from .models import (
     Score,
     Judge,
     Singer,
-    Panel,
+    Contest,
     Director,
     Session,
     Performance,
@@ -91,12 +91,12 @@ class PlacementInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-class PanelInline(admin.TabularInline):
+class ContestInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_panel_change',
+                    'admin:api_contest_change',
                     args=(
                         obj.id.hex,
                     )
@@ -115,7 +115,7 @@ class PanelInline(admin.TabularInline):
     )
     show_change_link = True
 
-    model = Panel
+    model = Contest
     extra = 0
     raw_id_fields = (
         'convention',
@@ -145,7 +145,7 @@ class AwardInline(admin.TabularInline):
     fields = (
         'link',
         'name',
-        'panel',
+        'contest',
         'organization',
         'level',
         'kind',
@@ -159,7 +159,7 @@ class AwardInline(admin.TabularInline):
     model = Award
     extra = 0
     raw_id_fields = (
-        'panel',
+        'contest',
     )
     readonly_fields = [
         'link',
@@ -186,7 +186,7 @@ class ContestantInline(admin.TabularInline):
     fields = (
         'link',
         # 'convention',
-        # 'panel',
+        # 'contest',
         'group',
         'organization',
         'seed',
@@ -207,7 +207,7 @@ class ContestantInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         # 'convention',
-        # 'panel',
+        # 'contest',
         'group',
     )
     readonly_fields = [
@@ -218,7 +218,7 @@ class ContestantInline(admin.TabularInline):
 
     autocomplete_lookup_fields = {
         'fk': [
-            # 'panel',
+            # 'contest',
             'group',
         ]
     }
@@ -301,7 +301,7 @@ class DirectorInline(admin.TabularInline):
 class JudgeInline(admin.TabularInline):
     model = Judge
     fields = (
-        'panel',
+        'contest',
         'person',
         'organization',
         'kind',
@@ -431,7 +431,7 @@ class SessionInline(admin.TabularInline):
 
     fields = (
         'link',
-        'panel',
+        'contest',
         'kind',
         'status',
         'start_date',
@@ -439,7 +439,7 @@ class SessionInline(admin.TabularInline):
         'slots',
     )
     ordering = (
-        'panel',
+        'contest',
         'kind',
     )
 

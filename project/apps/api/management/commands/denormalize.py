@@ -13,7 +13,7 @@ from apps.api.models import (
     # Judge,
     Competitor,
     Session,
-    Panel,
+    Contest,
 )
 
 
@@ -39,7 +39,7 @@ class Command(BaseCommand):
         cs = Award.objects.all()
         for c in cs:
             c.save()
-        ps = Panel.objects.all()
+        ps = Contest.objects.all()
         for p in ps:
             p.save()
         cs = Convention.objects.all()

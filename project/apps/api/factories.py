@@ -11,7 +11,7 @@ from factory.django import (
 from .models import (
     Group,
     Contestant,
-    Panel,
+    Contest,
     Certification,
     Tune,
     Judge,
@@ -20,14 +20,14 @@ from .models import (
 )
 
 
-def add_sessions(panel):
+def add_sessions(contest):
     # TODO Wonky.  Do these need kinds?
-    rounds = panel.rounds
+    rounds = contest.rounds
     k = rounds
     i = 1
     while i <= rounds:
         Session.objects.create(
-            panel=panel,
+            contest=contest,
             num=i,
             kind=k,
         )
@@ -35,14 +35,14 @@ def add_sessions(panel):
         k -= 1
 
 
-def add_judges(panel):
-    size = panel.size
+def add_judges(contest):
+    size = contest.size
     admin = Certification.objects.filter(
         category=Certification.CATEGORY.admin,
     ).order_by('?').first()
     Judge.objects.create(
         person=admin.person,
-        panel=panel,
+        contest=contest,
         slot=1,
         kind=admin.category,
     )
@@ -54,7 +54,7 @@ def add_judges(panel):
     for music in musics:
         Judge.objects.create(
             person=music.person,
-            panel=panel,
+            contest=contest,
             slot=i,
             kind=music.category,
         )
@@ -66,7 +66,7 @@ def add_judges(panel):
     for presentation in presentations:
         Judge.objects.create(
             person=presentation.person,
-            panel=panel,
+            contest=contest,
             slot=i,
             kind=presentation.category,
         )
@@ -78,16 +78,16 @@ def add_judges(panel):
     for singing in singings:
         Judge.objects.create(
             person=singing.person,
-            panel=panel,
+            contest=contest,
             slot=i,
             kind=singing.category,
         )
         i += 1
-    return "Judges Impaneled"
+    return "Judges Imcontested"
 
 
-def add_contestants(panel, number=20):
-    if panel.kind == Panel.KIND.chorus:
+def add_contestants(contest, number=20):
+    if contest.kind == Contest.KIND.chorus:
         kind = Group.KIND.chorus
     else:
         kind = Group.KIND.quartet
@@ -97,7 +97,7 @@ def add_contestants(panel, number=20):
     ).order_by('?')[:number]
     for group in groups:
         contestant = Contestant.objects.create(
-            panel=panel,
+            contest=contest,
             group=group,
             prelim=randint(700, 900) * .1,
         )
@@ -108,7 +108,7 @@ def add_contestants(panel, number=20):
 
 
 def add_competitors(award, number=10):
-    contestants = award.panel.contestants.order_by('?')[:number]
+    contestants = award.contest.contestants.order_by('?')[:number]
     for contestant in contestants:
         Competitor.objects.create(
             award=award,
