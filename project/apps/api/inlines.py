@@ -327,12 +327,12 @@ class JudgeInline(admin.TabularInline):
         'contest',
         'person',
         'organization',
-        'kind',
+        'category',
         'slot',
         # 'is_practice',
     )
     ordering = (
-        'kind',
+        'category',
         'slot',
     )
     extra = 0
@@ -354,7 +354,7 @@ class ScoreInline(admin.TabularInline):
     fields = (
         'song',
         'judge',
-        'kind',
+        'category',
         'points',
         'status',
     )
@@ -367,7 +367,7 @@ class ScoreInline(admin.TabularInline):
     )
     readonly_fields = [
         'song',
-        'kind',
+        'category',
         'judge',
     ]
 

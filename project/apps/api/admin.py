@@ -429,7 +429,7 @@ class JudgeAdmin(admin.ModelAdmin):
         'contest',
         'person',
         'organization',
-        ('kind', 'slot',),
+        ('category', 'slot',),
     ]
 
     list_display = [

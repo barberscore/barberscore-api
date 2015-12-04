@@ -708,17 +708,17 @@ class Certification(TimeStampedModel):
         editable=False,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New'),
+        (1, 'active', 'Active'),
+        (2, 'candidate', 'Candidate'),
+    )
+
     CATEGORY = Choices(
         (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
         (3, 'singing', 'Singing'),
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New'),
-        (1, 'active', 'Active'),
-        (2, 'candidate', 'Candidate'),
     )
 
     name = models.CharField(
@@ -1615,7 +1615,7 @@ class Judge(TimeStampedModel):
     for r in range(1, 6):
         SLOT_CHOICES.append((r, r))
 
-    KIND = Choices(
+    CATEGORY = Choices(
         (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
@@ -1664,8 +1664,8 @@ class Judge(TimeStampedModel):
         monitor='status',
     )
 
-    kind = models.IntegerField(
-        choices=KIND,
+    category = models.IntegerField(
+        choices=CATEGORY,
     )
 
     slot = models.IntegerField(
@@ -1688,7 +1688,7 @@ class Judge(TimeStampedModel):
     @property
     def designation(self):
         return u"{0[0]}{1:1d}".format(
-            self.get_kind_display(),
+            self.get_category_display(),
             self.slot,
         )
 
@@ -1698,18 +1698,18 @@ class Judge(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
             self.contest,
-            self.get_kind_display(),
+            self.get_category_display(),
             self.slot,
         )
         super(Judge, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('contest', 'kind', 'slot'),
+            ('contest', 'category', 'slot'),
         )
         ordering = (
             'contest',
-            'kind',
+            'category',
             'slot',
         )
 
@@ -2153,7 +2153,7 @@ class Score(TimeStampedModel):
         (50, 'final', 'Final',),
     )
 
-    KIND = Choices(
+    CATEGORY = Choices(
         (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
@@ -2188,8 +2188,8 @@ class Score(TimeStampedModel):
         monitor='status',
     )
 
-    kind = models.IntegerField(
-        choices=KIND,
+    category = models.IntegerField(
+        choices=CATEGORY,
     )
 
     song = models.ForeignKey(
