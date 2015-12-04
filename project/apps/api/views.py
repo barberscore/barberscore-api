@@ -98,7 +98,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         # 'catalogs',
         'choruses',
         'quartets',
-        'panels',
+        'contests',
     )
     serializer_class = PersonSerializer
     lookup_field = 'slug'

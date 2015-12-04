@@ -9,7 +9,7 @@ from .inlines import (
     PerformanceInline,
     AwardInline,
     # PlacementInline,
-    PanelInline,
+    ContestInline,
     JudgeInline,
     ScoreInline,
     SongStackedInline,
@@ -30,7 +30,7 @@ from .models import (
     Person,
     Song,
     Score,
-    Panel,
+    Contest,
     Judge,
     Session,
     Performance,
@@ -84,7 +84,7 @@ class CompetitorAdmin(admin.ModelAdmin):
     ]
     list_filter = (
         'status',
-        'award__panel__convention',
+        'award__contest__convention',
     )
 
     autocomplete_lookup_fields = {
@@ -104,8 +104,8 @@ class CompetitorAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Panel)
-class PanelAdmin(FSMTransitionMixin, admin.ModelAdmin):
+@admin.register(Contest)
+class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -197,13 +197,13 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'year',
         'organization',
-        'panel',
+        'contest',
     )
 
     list_display = (
         'name',
         'status',
-        'panel',
+        'contest',
         'organization',
         'level',
         'kind',
@@ -217,7 +217,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
-        'panel',
+        'contest',
         'organization',
         'level',
         'kind',
@@ -281,20 +281,20 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     raw_id_fields = (
-        'panel',
+        'contest',
         'group',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'panel',
+            'contest',
             'group',
         ]
     }
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'panel',
+        'contest',
         ('group', 'organization',),
         ('seed', 'prelim',),
         ('place', 'men',),
@@ -355,7 +355,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
     inlines = [
         # AwardInline,
-        PanelInline,
+        ContestInline,
         # ContestantInline,
     ]
 
@@ -425,7 +425,7 @@ class JudgeAdmin(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'panel',
+        'contest',
         'person',
         'organization',
         ('kind', 'slot',),
@@ -444,18 +444,18 @@ class JudgeAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'organization',
-        'panel',
+        'contest',
         'person',
     ]
 
     raw_id_fields = (
-        'panel',
+        'contest',
         'person',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'panel',
+            'contest',
             'person',
         ]
     }
@@ -717,14 +717,14 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        ('panel', 'kind',),
+        ('contest', 'kind',),
         ('start_date', 'slots',),
     ]
 
     readonly_fields = [
         'name',
         'status_monitor',
-        'panel',
+        'contest',
         'kind',
     ]
 
@@ -733,12 +733,12 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     raw_id_fields = (
-        'panel',
+        'contest',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'panel',
+            'contest',
         ]
     }
 
