@@ -17,7 +17,7 @@ from .models import (
     Director,
     Session,
     Performance,
-    Ranking,
+    Competitor,
 )
 
 
@@ -226,12 +226,12 @@ class ContestantInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class RankingInline(admin.TabularInline):
+class CompetitorInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_ranking_change',
+                    'admin:api_competitor_change',
                     args=(
                         obj.id.hex,
                     )
@@ -253,7 +253,7 @@ class RankingInline(admin.TabularInline):
 
     show_change_link = True
 
-    model = Ranking
+    model = Competitor
     extra = 0
     raw_id_fields = (
         'contestant',

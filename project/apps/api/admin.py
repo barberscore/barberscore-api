@@ -16,7 +16,7 @@ from .inlines import (
     # SongInline,
     SingerInline,
     SessionInline,
-    RankingInline,
+    CompetitorInline,
 )
 
 from .models import (
@@ -36,7 +36,7 @@ from .models import (
     Performance,
     User,
     Organization,
-    Ranking,
+    Competitor,
 )
 
 # from grappelli.forms import GrappelliSortableHiddenMixin
@@ -68,8 +68,8 @@ from super_inlines.admin import SuperModelAdmin
 #     classes = ('grp-collapse grp-closed',)
 
 
-@admin.register(Ranking)
-class RankingAdmin(admin.ModelAdmin):
+@admin.register(Competitor)
+class CompetitorAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = [
         'name',
@@ -180,7 +180,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        RankingInline,
+        CompetitorInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -256,7 +256,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         SingerInline,
         DirectorInline,
         PerformanceInline,
-        RankingInline,
+        CompetitorInline,
     ]
 
     list_display = (

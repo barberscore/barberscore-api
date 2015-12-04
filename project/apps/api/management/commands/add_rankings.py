@@ -4,7 +4,7 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    add_rankings,
+    add_competitors,
 )
 
 from apps.api.models import (
@@ -32,5 +32,5 @@ class Command(BaseCommand):
             )
         except Contest.DoesNotExist:
             raise CommandError("Contest does not exist.")
-        result = add_rankings(contest, options['number'])
+        result = add_competitors(contest, options['number'])
         self.stdout.write("{0}".format(result))

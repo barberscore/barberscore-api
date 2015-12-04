@@ -665,7 +665,7 @@ class Contest(TimeStampedModel):
         )
         for t in ts:
             t.save()
-        rs = Ranking.objects.filter(
+        rs = Competitor.objects.filter(
             contest=self,
         )
         for r in rs:
@@ -673,25 +673,25 @@ class Contest(TimeStampedModel):
         # Rank results
         cursor = []
         i = 1
-        for ranking in self.rankings.order_by('-total_points'):
+        for competitor in self.competitors.order_by('-total_points'):
             try:
-                match = ranking.total_points == cursor[0].total_points
+                match = competitor.total_points == cursor[0].total_points
             except IndexError:
-                ranking.place = i
-                ranking.save()
-                cursor.append(ranking)
+                competitor.place = i
+                competitor.save()
+                cursor.append(competitor)
                 continue
             if match:
-                ranking.place = i
+                competitor.place = i
                 i += len(cursor)
-                ranking.save()
-                cursor.append(ranking)
+                competitor.save()
+                cursor.append(competitor)
                 continue
             else:
                 i += 1
-                ranking.place = i
-                ranking.save()
-                cursor = [ranking]
+                competitor.place = i
+                competitor.save()
+                cursor = [competitor]
         return "{0} Ready for Review".format(self)
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
@@ -2733,7 +2733,7 @@ class Tune(TimeStampedModel):
         return u"{0}".format(self.name)
 
 
-class Ranking(TimeStampedModel):
+class Competitor(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
     )
@@ -2768,12 +2768,12 @@ class Ranking(TimeStampedModel):
 
     contestant = models.ForeignKey(
         'Contestant',
-        related_name='rankings',
+        related_name='competitors',
     )
 
     contest = models.ForeignKey(
         'Contest',
-        related_name='rankings',
+        related_name='competitors',
     )
 
     # TODO Everything below here must be protected in some way.  Different model?
@@ -2900,7 +2900,7 @@ class Ranking(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-        super(Ranking, self).save(*args, **kwargs)
+        super(Competitor, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
