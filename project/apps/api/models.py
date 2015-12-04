@@ -1917,17 +1917,6 @@ class Person(Common):
         monitor='status',
     )
 
-    judge = models.IntegerField(
-        choices=JUDGE,
-        null=True,
-        blank=True,
-    )
-
-    judge_monitor = MonitorField(
-        help_text="""Certification last updated""",
-        monitor='judge',
-    )
-
     organization = TreeForeignKey(
         'Organization',
         null=True,
