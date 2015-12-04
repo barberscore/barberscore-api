@@ -29,3 +29,5 @@ django-fsm-admin==1.2.2
 django-fsm-log==1.2.1
 factory-boy==2.6.0
 docutils==0.12
+fuzzywuzzy==0.8.0
+python-Levenshtein==0.12.0
