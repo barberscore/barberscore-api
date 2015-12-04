@@ -2807,15 +2807,22 @@ class Song(TimeStampedModel):
             # Only use the Scores model when we have scores
             # from a judging panel.  Otherwise, use what's
             # already there (typically imported).
-            self.mus_points = self.scores.filter(
-                kind__in=[1, 7]
-            ).aggregate(mus=models.Sum('points'))['mus']
-            self.prs_points = self.scores.filter(
-                kind__in=[2, 8]
-            ).aggregate(prs=models.Sum('points'))['prs']
-            self.sng_points = self.scores.filter(
-                kind__in=[3, 9]
-            ).aggregate(sng=models.Sum('points'))['sng']
+            scores = self.scores.exclude(
+                kind=self.scores.model.KIND.practice,
+            ).order_by(
+                'category',
+            ).values(
+                'category',
+            ).annotate(
+                total=models.Sum('points')
+            )
+            for score in scores:
+                if score['category'] == self.scores.model.CATEGORY.music:
+                    self.mus_points = score['total']
+                if score['category'] == self.scores.model.CATEGORY.presentation:
+                    self.prs_points = score['total']
+                if score['category'] == self.scores.model.CATEGORY.singing:
+                    self.sng_points = score['total']
 
             # Calculate total points.
             try:
