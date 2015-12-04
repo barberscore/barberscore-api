@@ -10,6 +10,7 @@ from .models import (
     Contestant,
     Song,
     Award,
+    Certification,
     Score,
     Judge,
     Singer,
@@ -185,8 +186,7 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        # 'convention',
-        # 'contest',
+        'contest',
         'group',
         'organization',
         'seed',
@@ -196,7 +196,6 @@ class ContestantInline(admin.TabularInline):
         'men',
     )
     ordering = (
-        # 'convention',
         'group__kind',
         'group',
     )
@@ -206,8 +205,7 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     extra = 0
     raw_id_fields = (
-        # 'convention',
-        # 'contest',
+        'contest',
         'group',
     )
     readonly_fields = [
@@ -216,12 +214,12 @@ class ContestantInline(admin.TabularInline):
         'link',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            # 'contest',
-            'group',
-        ]
-    }
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         # 'contest',
+    #         'group',
+    #     ]
+    # }
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
@@ -288,12 +286,37 @@ class DirectorInline(admin.TabularInline):
         'person',
         'contestant',
     )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-            'contestant',
-        ]
-    }
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'person',
+    #         'contestant',
+    #     ]
+    # }
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class CertificationInline(admin.TabularInline):
+    fields = (
+        'name',
+        'person',
+        'status',
+        'category',
+    )
+    model = Certification
+    extra = 0
+    raw_id_fields = (
+        'person',
+    )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'person',
+    #         'contestant',
+    #     ]
+    # }
+    readonly_fields = [
+        'name',
+    ]
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
@@ -343,14 +366,16 @@ class ScoreInline(admin.TabularInline):
         'song',
     )
     readonly_fields = [
+        'song',
         'kind',
+        'judge',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'song',
-        ]
-    }
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'song',
+    #     ]
+    # }
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-open',)
@@ -363,9 +388,7 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'status',
         'title',
         # 'tune',
-        # 'mus_points',
-        # 'prs_points',
-        # 'sng_points',
+        ('mus_points', 'prs_points', 'sng_points',),
     )
     ordering = (
         'performance',
@@ -374,18 +397,21 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     model = Song
     extra = 0
     raw_id_fields = (
-        # 'performance',
         'tune',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            # 'performance',
             'tune',
         ]
     }
     inlines = (
         ScoreInline,
     )
+    readonly_fields = [
+        'mus_points',
+        'prs_points',
+        'sng_points',
+    ]
     show_change_link = True
     classes = ('grp-collapse grp-open',)
 
@@ -473,14 +499,14 @@ class SingerInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'person',
-        # 'contestant',
+        'contestant',
     )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-            # 'contestant',
-        ]
-    }
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'person',
+    #         # 'contestant',
+    #     ]
+    # }
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
