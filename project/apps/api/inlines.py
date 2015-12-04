@@ -9,7 +9,7 @@ from super_inlines.admin import SuperInlineModelAdmin
 from .models import (
     Contestant,
     Song,
-    Contest,
+    Award,
     Score,
     Judge,
     Singer,
@@ -129,12 +129,12 @@ class PanelInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class ContestInline(admin.TabularInline):
+class AwardInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_contest_change',
+                    'admin:api_award_change',
                     args=(
                         obj.id.hex,
                     )
@@ -156,7 +156,7 @@ class ContestInline(admin.TabularInline):
     )
     show_change_link = True
 
-    model = Contest
+    model = Award
     extra = 0
     raw_id_fields = (
         'panel',
@@ -242,7 +242,7 @@ class CompetitorInline(admin.TabularInline):
     fields = (
         'link',
         'name',
-        'contest',
+        'award',
         'contestant',
         'place',
         'total_score',
@@ -446,11 +446,11 @@ class SessionInline(admin.TabularInline):
     model = Session
     extra = 0
     # raw_id_fields = (
-    #     'contest',
+    #     'award',
     # )
     # autocomplete_lookup_fields = {
     #     'fk': [
-    #         'contest',
+    #         'award',
     #     ]
     # }
     classes = ('grp-collapse grp-closed',)

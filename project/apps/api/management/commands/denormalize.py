@@ -4,7 +4,7 @@ from django.core.management.base import (
 
 from apps.api.models import (
     Convention,
-    Contest,
+    Award,
     Contestant,
     Performance,
     Song,
@@ -36,7 +36,7 @@ class Command(BaseCommand):
         ss = Session.objects.all()
         for s in ss:
             s.save()
-        cs = Contest.objects.all()
+        cs = Award.objects.all()
         for c in cs:
             c.save()
         ps = Panel.objects.all()

@@ -107,11 +107,11 @@ def add_contestants(panel, number=20):
     return "Contestants Added"
 
 
-def add_competitors(contest, number=10):
-    contestants = contest.panel.contestants.order_by('?')[:number]
+def add_competitors(award, number=10):
+    contestants = award.panel.contestants.order_by('?')[:number]
     for contestant in contestants:
         Competitor.objects.create(
-            contest=contest,
+            award=award,
             contestant=contestant,
         )
     return "Competitors Added"

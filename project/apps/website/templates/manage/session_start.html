@@ -5,7 +5,7 @@
   <main class="container">
     <section>
       <h3>
-        {{contest}}
+        {{award}}
       </h3>
 
       <h4>
@@ -22,7 +22,7 @@
       <form id='draw' role='form' class='form' action='' method='POST'>
         {% csrf_token %}
         <fieldset class='form-group'>
-          <p><span class='fa fa-check-square-o'></span>&nbsp;Yes, start the contest with these contestants.</p>
+          <p><span class='fa fa-check-square-o'></span>&nbsp;Yes, start the award with these contestants.</p>
         </fieldset>
         <button class='btn btn-success btn-lg' type='submit'>Start</button>
         {# <a id='cancel' class="btn btn-default" href="{%url 'website:portfolio' portfolio.slug %}">Cancel</a> #}
