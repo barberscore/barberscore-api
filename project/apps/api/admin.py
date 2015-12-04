@@ -7,7 +7,7 @@ from .inlines import (
     ContestantInline,
     DirectorInline,
     PerformanceInline,
-    ContestInline,
+    AwardInline,
     # PlacementInline,
     PanelInline,
     JudgeInline,
@@ -23,7 +23,7 @@ from .models import (
     Arranger,
     Catalog,
     Convention,
-    Contest,
+    Award,
     Contestant,
     Group,
     Tune,
@@ -78,19 +78,19 @@ class CompetitorAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'contestant',
-        'contest',
+        'award',
         'place',
         'men',
     ]
     list_filter = (
         'status',
-        'contest__panel__convention',
+        'award__panel__convention',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'contestant',
-            'contest',
+            'award',
         ]
     }
     readonly_fields = [
@@ -100,7 +100,7 @@ class CompetitorAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'contestant',
-        'contest',
+        'award',
     ]
 
 
@@ -148,7 +148,7 @@ class PanelAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         SessionInline,
         JudgeInline,
-        ContestInline,
+        AwardInline,
         ContestantInline,
     ]
 
@@ -173,8 +173,8 @@ class CatalogAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Contest)
-class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
+@admin.register(Award)
+class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -237,11 +237,11 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     #     if db_field.name == "convention":
     #         try:
     #             parent_obj_id = request.resolver_match.args[0]
-    #             obj = Contest.objects.get(pk=parent_obj_id)
+    #             obj = Award.objects.get(pk=parent_obj_id)
     #             kwargs["queryset"] = Convention.objects.filter(year=obj.year)
     #         except IndexError:
     #             pass
-    #     return super(ContestAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+    #     return super(AwardAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Contestant)
@@ -354,7 +354,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        # ContestInline,
+        # AwardInline,
         PanelInline,
         # ContestantInline,
     ]

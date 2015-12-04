@@ -91,30 +91,30 @@ def validate_trimmed(value):
         )
 
 
-def is_impaneled(contest):
-    for judge in contest.judges.official():
+def is_impaneled(award):
+    for judge in award.judges.official():
         if not judge.person:
             return False
     return True
 
 
-def is_scheduled(contest):
-    for session in contest.sessions.all():
+def is_scheduled(award):
+    for session in award.sessions.all():
         if not session.start_date:
             return False
     return True
 
 
-def has_contestants(contest):
-    return contest.contestants.exists()
+def has_contestants(award):
+    return award.contestants.exists()
 
 
-def has_awards(contest):
-    return contest.awards.exists()
+def has_awards(award):
+    return award.awards.exists()
 
 
-def contest_started(session):
-    if session.contest.status == session.contest.STATUS.started:
+def award_started(session):
+    if session.award.status == session.award.STATUS.started:
         return True
     else:
         return False
@@ -127,8 +127,8 @@ def session_scheduled(session):
     return True
 
 
-def sessions_finished(contest):
-    sessions = contest.sessions.all()
+def sessions_finished(award):
+    sessions = award.sessions.all()
     for session in sessions:
         if session.status != session.STATUS.finished:
             return False

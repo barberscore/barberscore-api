@@ -28,6 +28,6 @@ class Command(BaseCommand):
                     slug=slug,
                 )
             except Panel.DoesNotExist:
-                raise CommandError("Contest does not exist.")
+                raise CommandError("Award does not exist.")
             result = add_judges(panel)
             self.stdout.write("{0}".format(result))

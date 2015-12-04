@@ -76,7 +76,7 @@ from .validators import (
     has_contestants,
     has_awards,
     # session_scheduled,
-    contest_started,
+    award_started,
     scores_entered,
     songs_entered,
     sessions_finished,
@@ -356,7 +356,7 @@ class Catalog(TimeStampedModel):
     )
 
 
-class Contest(TimeStampedModel):
+class Award(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -410,7 +410,7 @@ class Contest(TimeStampedModel):
 
     name = models.CharField(
         # help_text="""
-        #     The name of the contest (determined programmatically.)""",
+        #     The name of the award (determined programmatically.)""",
         max_length=200,
         unique=True,
         editable=False,
@@ -445,24 +445,24 @@ class Contest(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
-        related_name='contests',
+        related_name='awards',
     )
 
     level = models.IntegerField(
         # help_text="""
-        #     The level of the contest (currently only International is supported.)""",
+        #     The level of the award (currently only International is supported.)""",
         choices=LEVEL,
     )
 
     kind = models.IntegerField(
         # help_text="""
-        #     The kind of the contest (quartet, chorus, senior, collegiate.)""",
+        #     The kind of the award (quartet, chorus, senior, collegiate.)""",
         choices=KIND,
     )
 
     goal = models.IntegerField(
         help_text="""
-            The objective of the contest""",
+            The objective of the award""",
         choices=GOAL,
     )
 
@@ -472,7 +472,7 @@ class Contest(TimeStampedModel):
 
     panel = models.ForeignKey(
         'Panel',
-        related_name='contests',
+        related_name='awards',
     )
 
     rounds = models.IntegerField(
@@ -529,7 +529,7 @@ class Contest(TimeStampedModel):
             self.get_goal_display(),
             self.year,
         )
-        super(Contest, self).save(*args, **kwargs)
+        super(Award, self).save(*args, **kwargs)
 
     @transition(
         field=status,
@@ -537,18 +537,18 @@ class Contest(TimeStampedModel):
         target=STATUS.built,
     )
     def build(self):
-        # Triggered by contest post_save signal if created
+        # Triggered by award post_save signal if created
         r = 1
         while r <= self.rounds:
             self.sessions.create(
-                contest=self,
+                award=self,
                 kind=r,
             )
             r += 1
 
         # # Create an adminstrator sentinel
         # self.judges.create(
-        #     contest=self,
+        #     award=self,
         #     category=0,
         #     slot=1,
         # )
@@ -557,17 +557,17 @@ class Contest(TimeStampedModel):
         # s = 1
         # while s <= self.panel:
         #     self.judges.create(
-        #         contest=self,
+        #         award=self,
         #         category=1,
         #         slot=s,
         #     )
         #     self.judges.create(
-        #         contest=self,
+        #         award=self,
         #         category=2,
         #         slot=s,
         #     )
         #     self.judges.create(
-        #         contest=self,
+        #         award=self,
         #         category=3,
         #         slot=s,
         #     )
@@ -666,7 +666,7 @@ class Contest(TimeStampedModel):
         for t in ts:
             t.save()
         rs = Competitor.objects.filter(
-            contest=self,
+            award=self,
         )
         for r in rs:
             r.save()
@@ -959,7 +959,7 @@ class Contestant(TimeStampedModel):
         target=STATUS.official,
     )
     def register(self):
-        # Triggered by contest start
+        # Triggered by award start
         return "{0} Official".format(self)
 
     @transition(field=status, source=STATUS.official, target=STATUS.dropped)
@@ -1399,7 +1399,7 @@ class Panel(TimeStampedModel):
 
     kind = models.IntegerField(
         help_text="""
-            The Panel is different than the contest objective.""",
+            The Panel is different than the award objective.""",
         choices=KIND,
     )
 
@@ -1451,7 +1451,7 @@ class Panel(TimeStampedModel):
 
 
 class Judge(TimeStampedModel):
-    """Contest Judge"""
+    """Award Judge"""
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1981,7 +1981,7 @@ class Person(Common):
 class Score(TimeStampedModel):
     """
         The Score is never released publicly.  These are the actual
-        Judge's scores from the contest.
+        Judge's scores from the award.
     """
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -2229,7 +2229,7 @@ class Session(TimeStampedModel):
     def get_preceding(self):
         try:
             obj = self.__class__.objects.get(
-                contest=self.contest,
+                award=self.award,
                 kind=self.kind + 1,
             )
             return obj
@@ -2239,7 +2239,7 @@ class Session(TimeStampedModel):
     def get_next(self):
         try:
             obj = self.__class__.objects.get(
-                contest=self.contest,
+                award=self.award,
                 kind=self.kind - 1,
             )
             return obj
@@ -2267,12 +2267,12 @@ class Session(TimeStampedModel):
     #     source=STATUS.built,
     #     target=STATUS.ready,
     #     # conditions=[
-    #     #     contest_started,
+    #     #     award_started,
     #     # ]
     # )
     # def prep(self):
     #     p = 0
-    #     for contestant in self.contest.contestants.official().order_by('?'):
+    #     for contestant in self.award.contestants.official().order_by('?'):
     #         self.performances.create(
     #             session=self,
     #             contestant=contestant,
@@ -2288,7 +2288,7 @@ class Session(TimeStampedModel):
         conditions=[
             # session_drawn,
             # session_scheduled,
-            # contest_started,
+            # award_started,
             # preceding_session_finished,
         ]
     )
@@ -2336,7 +2336,7 @@ class Session(TimeStampedModel):
         # # TODO Some validation
         # try:
         #     # TODO This is an awful lot to be in a try/except; refactor?
-        #     next_session = self.contest.sessions.get(
+        #     next_session = self.award.sessions.get(
         #         kind=(self.kind - 1),
         #     )
         #     qualifiers = self.performances.filter(
@@ -2352,7 +2352,7 @@ class Session(TimeStampedModel):
         #         p += 1
         #         p1 = l.songs.create(performance=l, order=1)
         #         p2 = l.songs.create(performance=l, order=2)
-        #         for j in self.contest.judges.scoring():
+        #         for j in self.award.judges.scoring():
         #             p1.scores.create(
         #                 song=p1,
         #                 judge=j,
@@ -2364,7 +2364,7 @@ class Session(TimeStampedModel):
         # except self.DoesNotExist:
         #     pass
         # return 'Session Confirmed'
-    # def draw_contest(self):
+    # def draw_award(self):
     #     cs = self.contestants.order_by('?')
     #     session = self.sessions.get(kind=self.rounds)
     #     p = 0
@@ -2771,8 +2771,8 @@ class Competitor(TimeStampedModel):
         related_name='competitors',
     )
 
-    contest = models.ForeignKey(
-        'Contest',
+    award = models.ForeignKey(
+        'Award',
         related_name='competitors',
     )
 
@@ -2861,15 +2861,15 @@ class Competitor(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.contest,
+            self.award,
             self.contestant,
         )
         # If there are no performances, skip.
         if self.contestant.performances.exists():
             agg = self.contestant.performances.filter(
-                session__num__lte=self.contest.rounds,
+                session__num__lte=self.award.rounds,
             ).filter(
-                session__panel=self.contest.panel,
+                session__panel=self.award.panel,
             ).aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
@@ -2891,7 +2891,7 @@ class Competitor(TimeStampedModel):
 
             # Calculate percentile
             try:
-                possible = self.contest.panel.size * 2 * self.contestant.performances.count()
+                possible = self.award.panel.size * 2 * self.contestant.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -2904,10 +2904,10 @@ class Competitor(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('contestant', 'contest',),
+            ('contestant', 'award',),
         )
         ordering = (
-            'contest',
+            'award',
             'contestant',
         )
 
