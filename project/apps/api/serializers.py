@@ -4,8 +4,11 @@ from drf_haystack.serializers import HaystackSerializer
 
 from .models import (
     Convention,
+    Contest,
     Award,
+    Competitor,
     Contestant,
+    Session,
     Group,
     Person,
     Tune,
@@ -49,13 +52,67 @@ class CatalogSerializer(serializers.ModelSerializer):
         )
 
 
-class AwardSerializer(serializers.ModelSerializer):
+class ContestSerializer(serializers.ModelSerializer):
     convention = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
+    awards = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    sessions = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    judges = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
     contestants = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Contest
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'status',
+            'kind',
+            'rounds',
+            'size',
+            'convention',
+            'awards',
+            'sessions',
+            'contestants',
+            'judges',
+        )
+
+
+class AwardSerializer(serializers.ModelSerializer):
+    contest = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    organization = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    competitors = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -73,22 +130,51 @@ class AwardSerializer(serializers.ModelSerializer):
             'level',
             'kind',
             'goal',
-            'rounds',
             'year',
-            'convention',
+            'rounds',
+            'qual_score',
             'contest',
-            'scoresheet_pdf',
-            'contestants',
+            'competitors',
         )
 
 
-class ContestantSerializer(serializers.ModelSerializer):
+class CompetitorSerializer(serializers.ModelSerializer):
     award = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
 
-    group = serializers.SlugRelatedField(
+    contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Competitor
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'status',
+            'place',
+            'place',
+            'men',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'award',
+            'contestant',
+        )
+
+
+class ContestantSerializer(serializers.ModelSerializer):
+    contest = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -116,11 +202,11 @@ class ContestantSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    # awards = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
+    competitors = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
 
     class Meta:
         model = Contestant
@@ -130,8 +216,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
-            'award',
-            'group',
             'organization',
             'picture',
             'seed',
@@ -148,10 +232,37 @@ class ContestantSerializer(serializers.ModelSerializer):
             'total_score',
             'delta_score',
             'delta_place',
+            'contest',
             'performances',
             'directors',
             'singers',
-            # 'awards',
+            'competitors',
+        )
+
+
+class SessionSerializer(serializers.ModelSerializer):
+    contest = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+    performances = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Session
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'status',
+            'kind',
+            'slots',
+            'contest',
+            'performances',
         )
 
 
@@ -161,7 +272,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    awards = serializers.SlugRelatedField(
+    contests = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -181,7 +292,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'year',
             'organization',
             # 'timezone',
-            'awards',
+            'contests',
         )
 
 
@@ -246,7 +357,7 @@ class JudgeSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='slug',
     )
-    award = serializers.SlugRelatedField(
+    contest = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -262,17 +373,21 @@ class JudgeSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'award',
             'person',
-            'part',
+            'kind',
             'status',
+            'contest',
             'scores',
-            'num',
         )
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
     contestant = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -291,7 +406,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
-            'session',
             'draw',
             'start_time',
             'mus_points',
@@ -302,6 +416,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
+            'session',
             'contestant',
             'songs',
         )
@@ -463,8 +578,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'judge',
             'points',
             'status',
-            'category',
-            'is_practice',
+            'kind',
         ]
 
 
