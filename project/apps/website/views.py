@@ -533,14 +533,14 @@ def contest_oss(request, slug):
         # 'performances__session__kind',
     )
     # judges = contest.judges.official
-    # rankings = contest.rankings.all()
+    # competitors = contest.competitors.all()
     return render(
         request,
         'api/contest_oss.html', {
             'contest': contest,
             'contestants': contestants,
             # 'judges': judges,
-            # 'rankings': rankings,
+            # 'competitors': competitors,
         },
     )
 
@@ -576,9 +576,9 @@ class HelloPDFView(PDFTemplateView):
                 # 'performances__session__kind',
             )
             judges = contest.judges.official
-            rankings = contest.rankings.all()
+            competitors = contest.competitors.all()
             context["contest"] = contest
             context["contestants"] = contestants
             context["judges"] = judges
-            context["rankings"] = rankings
+            context["competitors"] = competitors
             return context

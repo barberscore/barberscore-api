@@ -15,7 +15,7 @@ from .models import (
     Certification,
     Tune,
     Judge,
-    Ranking,
+    Competitor,
     Session,
 )
 
@@ -107,14 +107,14 @@ def add_contestants(panel, number=20):
     return "Contestants Added"
 
 
-def add_rankings(contest, number=10):
+def add_competitors(contest, number=10):
     contestants = contest.panel.contestants.order_by('?')[:number]
     for contestant in contestants:
-        Ranking.objects.create(
+        Competitor.objects.create(
             contest=contest,
             contestant=contestant,
         )
-    return "Rankings Added"
+    return "Competitors Added"
 
 
 def score_performance(performance):
