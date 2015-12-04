@@ -71,7 +71,7 @@ from .managers import (
 from .validators import (
     validate_trimmed,
     dixon,
-    is_impaneled,
+    is_imcontested,
     # is_scheduled,
     has_contestants,
     has_awards,
@@ -470,8 +470,8 @@ class Award(TimeStampedModel):
         choices=YEAR_CHOICES,
     )
 
-    panel = models.ForeignKey(
-        'Panel',
+    contest = models.ForeignKey(
+        'Contest',
         related_name='awards',
     )
 
@@ -553,9 +553,9 @@ class Award(TimeStampedModel):
         #     slot=1,
         # )
 
-        # # Create sentinels for the panel.
+        # # Create sentinels for the contest.
         # s = 1
-        # while s <= self.panel:
+        # while s <= self.contest:
         #     self.judges.create(
         #         award=self,
         #         category=1,
@@ -583,7 +583,7 @@ class Award(TimeStampedModel):
     #     target=STATUS.ready,
     #     conditions=[
     #         is_scheduled,
-    #         is_impaneled,
+    #         is_imcontested,
     #         has_contestants,
     #     ],
     # )
@@ -618,7 +618,7 @@ class Award(TimeStampedModel):
     #     target=STATUS.started,
     #     conditions=[
     #         # is_scheduled,
-    #         is_impaneled,
+    #         is_imcontested,
     #         has_contestants,
     #         has_awards,
     #     ],
@@ -651,17 +651,17 @@ class Award(TimeStampedModel):
     def finish(self):
         # Denormalize
         ns = Song.objects.filter(
-            performance__session__panel=self.panel,
+            performance__session__contest=self.contest,
         )
         for n in ns:
             n.save()
         ps = Performance.objects.filter(
-            session__panel=self.panel,
+            session__contest=self.contest,
         )
         for p in ps:
             p.save()
         ts = Contestant.objects.filter(
-            panel=self.panel,
+            contest=self.contest,
         )
         for t in ts:
             t.save()
@@ -748,8 +748,8 @@ class Contestant(TimeStampedModel):
         blank=True,
     )
 
-    panel = models.ForeignKey(
-        'Panel',
+    contest = models.ForeignKey(
+        'Contest',
         related_name='contestants',
     )
 
@@ -873,7 +873,7 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.panel,
+            self.contest,
             self.group,
         )
 
@@ -900,7 +900,7 @@ class Contestant(TimeStampedModel):
 
             # Calculate percentile
             try:
-                possible = self.panel.size * 2 * self.performances.count()
+                possible = self.contest.size * 2 * self.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -913,11 +913,11 @@ class Contestant(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'panel',
+            'contest',
             'group',
         )
         unique_together = (
-            ('group', 'panel',),
+            ('group', 'contest',),
         )
 
     @staticmethod
@@ -1328,7 +1328,7 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
 
-class Panel(TimeStampedModel):
+class Contest(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
@@ -1382,12 +1382,12 @@ class Panel(TimeStampedModel):
 
     convention = models.ForeignKey(
         'Convention',
-        related_name='panels',
+        related_name='contests',
     )
 
     size = models.IntegerField(
         help_text="""
-            Size of the judging panel (typically three or five.)""",
+            Size of the judging contest (typically three or five.)""",
         choices=PANEL_CHOICES,
     )
 
@@ -1399,7 +1399,7 @@ class Panel(TimeStampedModel):
 
     kind = models.IntegerField(
         help_text="""
-            The Panel is different than the award objective.""",
+            The Contest is different than the award objective.""",
         choices=KIND,
     )
 
@@ -1407,11 +1407,11 @@ class Panel(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} Panel".format(
+        self.name = u"{0} {1} Contest".format(
             self.convention,
             self.get_kind_display(),
         )
-        super(Panel, self).save(*args, **kwargs)
+        super(Contest, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
@@ -1428,7 +1428,7 @@ class Panel(TimeStampedModel):
         target=STATUS.started,
         conditions=[
             # is_scheduled,
-            # is_impaneled,
+            # is_imcontested,
             # has_contestants,
             # has_awards,
         ],
@@ -1496,14 +1496,14 @@ class Judge(TimeStampedModel):
         max_length=255,
     )
 
-    panel = models.ForeignKey(
-        'Panel',
+    contest = models.ForeignKey(
+        'Contest',
         related_name='judges',
     )
 
     person = models.ForeignKey(
         'Person',
-        related_name='panels',
+        related_name='contests',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1553,7 +1553,7 @@ class Judge(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.panel,
+            self.contest,
             self.get_kind_display(),
             self.slot,
         )
@@ -1561,10 +1561,10 @@ class Judge(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('panel', 'kind', 'slot'),
+            ('contest', 'kind', 'slot'),
         )
         ordering = (
-            'panel',
+            'contest',
             'kind',
             'slot',
         )
@@ -1756,7 +1756,7 @@ class Performance(TimeStampedModel):
 
             # Calculate percentile scores
             try:
-                possible = self.session.panel.size * 2
+                possible = self.session.contest.size * 2
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -1825,7 +1825,7 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for judge in self.session.panel.judges.scoring():
+            for judge in self.session.contest.judges.scoring():
                 song.scores.create(
                     song=song,
                     judge=judge,
@@ -2177,8 +2177,8 @@ class Session(TimeStampedModel):
         monitor='status',
     )
 
-    panel = models.ForeignKey(
-        'Panel',
+    contest = models.ForeignKey(
+        'Contest',
         related_name='sessions',
     )
 
@@ -2205,16 +2205,16 @@ class Session(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'panel',
+            'contest',
             'kind',
         )
         unique_together = (
-            ('panel', 'kind',),
+            ('contest', 'kind',),
         )
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.panel,
+            self.contest,
             self.get_kind_display(),
         )
         super(Session, self).save(*args, **kwargs)
@@ -2654,7 +2654,7 @@ class Song(TimeStampedModel):
 
             # Calculate percentile scores.
             try:
-                possible = self.performance.session.panel.size
+                possible = self.performance.session.contest.size
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -2869,7 +2869,7 @@ class Competitor(TimeStampedModel):
             agg = self.contestant.performances.filter(
                 session__num__lte=self.award.rounds,
             ).filter(
-                session__panel=self.award.panel,
+                session__contest=self.award.contest,
             ).aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
@@ -2891,7 +2891,7 @@ class Competitor(TimeStampedModel):
 
             # Calculate percentile
             try:
-                possible = self.award.panel.size * 2 * self.contestant.performances.count()
+                possible = self.award.contest.size * 2 * self.contestant.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)

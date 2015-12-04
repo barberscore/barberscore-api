@@ -76,7 +76,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'rounds',
             'year',
             'convention',
-            'panel',
+            'contest',
             'scoresheet_pdf',
             'contestants',
         )
@@ -410,7 +410,7 @@ class PersonSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    panels = serializers.SlugRelatedField(
+    contests = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -437,7 +437,7 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'catalogs',
             'choruses',
             'quartets',
-            'panels',
+            'contests',
         )
 
 
