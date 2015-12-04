@@ -340,16 +340,15 @@ class ScoreInline(admin.TabularInline):
     )
     extra = 0
     raw_id_fields = (
-        'judge',
+        'song',
     )
     readonly_fields = [
         'kind',
-        'judge',
     ]
 
     autocomplete_lookup_fields = {
         'fk': [
-            'judge',
+            'song',
         ]
     }
     can_delete = True
