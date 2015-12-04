@@ -1,5 +1,8 @@
 [![Circle CI](https://circleci.com/gh/dbinetti/barberscore.svg?style=svg)](https://circleci.com/gh/dbinetti/barberscore)
 
+[![codecov.io](https://codecov.io/github/dbinetti/barberscore/coverage.svg?branch=master)](https://codecov.io/github/dbinetti/barberscore?branch=master)
+
+
 # Barberscore
 
 Program and score tracker for the Barbershop Harmony Society International Convention.
