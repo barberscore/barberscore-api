@@ -30,7 +30,7 @@ from django.forms import (
 
 
 from apps.api.models import (
-    Contest,
+    Award,
     Session,
     Performance,
     Score,
@@ -41,7 +41,7 @@ from apps.api.models import (
 from .forms import (
     make_contestant_form,
     LoginForm,
-    ContestForm,
+    AwardForm,
     ScoreFormSet,
     # JudgeFormSet,
     SongForm,
@@ -127,44 +127,44 @@ def logout(request):
 
 @login_required
 def dashboard(request):
-    contests = Contest.objects.exclude(
-        status=Contest.STATUS.final,
+    awards = Award.objects.exclude(
+        status=Award.STATUS.final,
     )
     return render(
         request,
         'api/dashboard.html',
-        {'contests': contests},
+        {'awards': awards},
     )
 
 
 @login_required
-def contest(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def award(request, slug):
+    award = get_object_or_404(
+        Award,
         slug=slug,
     )
-    sessions = contest.sessions.all()
+    sessions = award.sessions.all()
     return render(
         request,
-        'manage/contest.html',
-        {'contest': contest, 'sessions': sessions},
+        'manage/award.html',
+        {'award': award, 'sessions': sessions},
     )
 
 
 @login_required
-def contest_build(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def award_build(request, slug):
+    award = get_object_or_404(
+        Award,
         slug=slug,
     )
     if request.method == 'POST':
-        form = ContestForm(
+        form = AwardForm(
             request.POST,
-            instance=contest,
+            instance=award,
         )
         if form.is_valid():
             form.save()
-            return redirect('website:contest_impanel', contest.slug)
+            return redirect('website:award_impanel', award.slug)
         else:
             for key in form.errors.keys():
                 for error in form.errors[key]:
@@ -173,30 +173,30 @@ def contest_build(request, slug):
                         error,
                     )
     else:
-        form = ContestForm(
-            instance=contest,
+        form = AwardForm(
+            instance=award,
         )
     return render(
         request,
-        'manage/contest_build.html',
+        'manage/award_build.html',
         {'form': form},
     )
 
 
 @login_required
-def contest_impanel(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def award_impanel(request, slug):
+    award = get_object_or_404(
+        Award,
         slug=slug,
     )
     if request.method == 'POST':
         # formset = JudgeFormSet(
         #     request.POST,
-        #     instance=contest,
+        #     instance=award,
         # )
         if formset.is_valid():
             formset.save()
-            return redirect('website:contest_fill', contest.slug)
+            return redirect('website:award_fill', award.slug)
         else:
             for form in formset:
                 for key in form.errors.keys():
@@ -207,25 +207,25 @@ def contest_impanel(request, slug):
                         )
     else:
         # formset = JudgeFormSet(
-        #     instance=contest,
+        #     instance=award,
         # )
         pass
     return render(
         request,
-        'manage/contest_impanel.html',
+        'manage/award_impanel.html',
         {'formset': formset},
     )
 
 
 @login_required
-def contest_fill(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def award_fill(request, slug):
+    award = get_object_or_404(
+        Award,
         slug=slug,
     )
-    ContestantForm = make_contestant_form(contest)
+    ContestantForm = make_contestant_form(award)
     ContestantFormSet = inlineformset_factory(
-        Contest,
+        Award,
         Contestant,
         form=ContestantForm,
         extra=50,
@@ -234,7 +234,7 @@ def contest_fill(request, slug):
     if request.method == 'POST':
         formset = ContestantFormSet(
             request.POST,
-            instance=contest,
+            instance=award,
         )
         if formset.is_valid():
             formset.save()
@@ -242,7 +242,7 @@ def contest_fill(request, slug):
                 request,
                 """Contestant(s) added.""",
             )
-            return redirect('website:contest_fill', contest.slug)
+            return redirect('website:award_fill', award.slug)
         else:
             for form in formset:
                 for key in form.errors.keys():
@@ -253,39 +253,39 @@ def contest_fill(request, slug):
                         )
     else:
         formset = ContestantFormSet(
-            instance=contest,
+            instance=award,
         )
     return render(
         request,
-        'manage/contest_fill.html',
+        'manage/award_fill.html',
         {'formset': formset},
     )
 
 
 @login_required
-def contest_start(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def award_start(request, slug):
+    award = get_object_or_404(
+        Award,
         slug=slug,
     )
-    # session = contest.sessions.get(
-    #     kind=contest.rounds,
+    # session = award.sessions.get(
+    #     kind=award.rounds,
     # )
     # performances = session.performances.order_by('position')
     # if request.method == 'POST':
-    #     form = ContestForm(request.POST, instance=contest)
-    #     form.start(contest)
+    #     form = AwardForm(request.POST, instance=award)
+    #     form.start(award)
     #     messages.success(
     #         request,
-    #         """The contest has been started!""".format(contest),
+    #         """The award has been started!""".format(award),
     #     )
     #     return redirect('website:session_score', session.slug)
     # else:
-    #     form = ContestForm(instance=contest)
+    #     form = AwardForm(instance=award)
     return render(
         request,
-        'manage/contest_start.html', {
-            'contest': contest,
+        'manage/award_start.html', {
+            'award': award,
         },
     )
 
@@ -296,17 +296,17 @@ def session_draw(request, slug):
         Session,
         slug=slug,
     )
-    # contestants = contest.contestants.order_by('name')
+    # contestants = award.contestants.order_by('name')
     # if request.method == 'POST':
-    #     form = ContestForm(request.POST, instance=contest)
-    #     form.draw(contest)
+    #     form = AwardForm(request.POST, instance=award)
+    #     form.draw(award)
     #     messages.warning(
     #         request,
-    #         """{0} has been drawn!""".format(contest),
+    #         """{0} has been drawn!""".format(award),
     #     )
-    #     return redirect('website:contest_start', contest.slug)
+    #     return redirect('website:award_start', award.slug)
     # else:
-    #     form = ContestForm(instance=contest)
+    #     form = AwardForm(instance=award)
     return render(
         request,
         'manage/session_draw.html',
@@ -322,15 +322,15 @@ def session_start(request, slug):
     )
     # performances = session.performances.order_by('position')
     # if request.method == 'POST':
-    #     form = ContestForm(request.POST, instance=contest)
-    #     form.start(contest)
+    #     form = AwardForm(request.POST, instance=award)
+    #     form.start(award)
     #     messages.success(
     #         request,
-    #         """The contest has been started!""".format(contest),
+    #         """The award has been started!""".format(award),
     #     )
     #     return redirect('website:session_score', session.slug)
     # else:
-    #     form = ContestForm(instance=contest)
+    #     form = AwardForm(instance=award)
     return render(
         request,
         'manage/session_start.html', {
@@ -394,7 +394,7 @@ def performance_score(request, slug):
                 return redirect('website:home')
             next_performance.status = Performance.STATUS.started
             next_performance.save()
-            return redirect('website:contest_score', contest.slug)
+            return redirect('website:award_score', award.slug)
         else:
             for key in songform1.errors.keys():
                 for error in songform1.errors[key]:
@@ -454,7 +454,7 @@ def performance_score(request, slug):
             'songform1': songform1,
             'songform2': songform2,
             'formsets': formsets,
-            'contest': contest,
+            'award': award,
             'session': session,
             'performance': performance,
             'contestant': contestant,
@@ -473,12 +473,12 @@ def session_end(request, slug):
 
 
 @login_required
-def contest_end(request, slug):
-    contest = Contest.objects.get(slug=slug)
+def award_end(request, slug):
+    award = Award.objects.get(slug=slug)
     return render(
         request,
         'manage/conetst_end.html',
-        {'contest': contest},
+        {'award': award},
     )
 
 
@@ -507,13 +507,13 @@ def session_oss(request, slug):
 
 
 @login_required
-def contest_oss(request, slug):
-    contest = get_object_or_404(
-        Contest,
+def award_oss(request, slug):
+    award = get_object_or_404(
+        Award,
         slug=slug,
-        # status=Contest.STATUS.final,
+        # status=Award.STATUS.final,
     )
-    contestants = contest.contestants.select_related(
+    contestants = award.contestants.select_related(
         'group',
     ).prefetch_related(
         Prefetch(
@@ -532,12 +532,12 @@ def contest_oss(request, slug):
         'place',
         # 'performances__session__kind',
     )
-    # judges = contest.judges.official
-    # competitors = contest.competitors.all()
+    # judges = award.judges.official
+    # competitors = award.competitors.all()
     return render(
         request,
-        'api/contest_oss.html', {
-            'contest': contest,
+        'api/award_oss.html', {
+            'award': award,
             'contestants': contestants,
             # 'judges': judges,
             # 'competitors': competitors,
@@ -547,16 +547,16 @@ def contest_oss(request, slug):
 
 class HelloPDFView(PDFTemplateView):
     template_name = "pdf/oss.html"
-    model = Contest
+    model = Award
 
     def get_context_data(self, **kwargs):
             context = super(HelloPDFView, self).get_context_data(**kwargs)
-            contest = get_object_or_404(
-                Contest,
+            award = get_object_or_404(
+                Award,
                 slug=self.kwargs['slug'],
-                # status=Contest.STATUS.final,
+                # status=Award.STATUS.final,
             )
-            contestants = contest.contestants.select_related(
+            contestants = award.contestants.select_related(
                 'group',
             ).prefetch_related(
                 Prefetch(
@@ -575,9 +575,9 @@ class HelloPDFView(PDFTemplateView):
                 'place',
                 # 'performances__session__kind',
             )
-            judges = contest.judges.official
-            competitors = contest.competitors.all()
-            context["contest"] = contest
+            judges = award.judges.official
+            competitors = award.competitors.all()
+            context["award"] = award
             context["contestants"] = contestants
             context["judges"] = judges
             context["competitors"] = competitors

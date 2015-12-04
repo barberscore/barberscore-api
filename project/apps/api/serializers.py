@@ -4,7 +4,7 @@ from drf_haystack.serializers import HaystackSerializer
 
 from .models import (
     Convention,
-    Contest,
+    Award,
     Contestant,
     Group,
     Person,
@@ -49,7 +49,7 @@ class CatalogSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestSerializer(serializers.ModelSerializer):
+class AwardSerializer(serializers.ModelSerializer):
     convention = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -62,7 +62,7 @@ class ContestSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Contest
+        model = Award
         fields = (
             'id',
             # 'url',
@@ -83,7 +83,7 @@ class ContestSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
+    award = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -130,7 +130,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
-            'contest',
+            'award',
             'group',
             'organization',
             'picture',
@@ -161,7 +161,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contests = serializers.SlugRelatedField(
+    awards = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -181,7 +181,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'year',
             'organization',
             # 'timezone',
-            'contests',
+            'awards',
         )
 
 
@@ -246,7 +246,7 @@ class JudgeSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='slug',
     )
-    contest = serializers.SlugRelatedField(
+    award = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -262,7 +262,7 @@ class JudgeSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'contest',
+            'award',
             'person',
             'part',
             'status',

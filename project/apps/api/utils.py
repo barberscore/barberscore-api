@@ -283,8 +283,8 @@ def merge_groups(from_group, to_group):
 
 
 def score_contestant(contestant):
-    panel = contestant.contest.panel
-    if contestant.contest.kind == 1:
+    panel = contestant.award.panel
+    if contestant.award.kind == 1:
         if contestant.quarters_points and not contestant.semis_points:
             contestant.score = round(contestant.points / (panel * 6 * 1), 1)
         elif contestant.semis_points and not contestant.finals_points:
@@ -312,7 +312,7 @@ def parse_arrangers(data):
     for row in data:
         try:
             c = Contestant.objects.get(
-                contest__name='International Quartet 2015',
+                award__name='International Quartet 2015',
                 group__name__iexact=row[0],
             )
         except c.DoesNotExist:

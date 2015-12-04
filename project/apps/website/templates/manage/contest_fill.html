@@ -5,9 +5,9 @@
   <main class="container">
     <section>
 <p class='lead'>
-  When you are done adding contestants, you can set the draw by clicking the "Draw" button below.  You will be able to make adjustments up through the official start of the contest.
+  When you are done adding contestants, you can set the draw by clicking the "Draw" button below.  You will be able to make adjustments up through the official start of the award.
 </p>
-    <a href='{% url "website:contest_draw" formset.instance.slug %}' class='btn btn-warning'>Draw</a>
+    <a href='{% url "website:award_draw" formset.instance.slug %}' class='btn btn-warning'>Draw</a>
 
 <form method="post" action="">
     {% csrf_token %}
@@ -26,7 +26,7 @@
       <h3>
         {{form.instance}}
       </h3>
-      <form id='build' role='form' class='form' action="{% url 'website:contest_build' form.instance.slug %}" method='POST'>
+      <form id='build' role='form' class='form' action="{% url 'website:award_build' form.instance.slug %}" method='POST'>
         {% csrf_token %}
         {% for field in form %}
           <div class="form-group {% if field.errors %} has-error {% endif %}">
@@ -34,7 +34,7 @@
           </div>
         {% endfor %}
         <button type="submit" class="btn btn-success">Submit</button>
-        <a href='{% url "website:contest" form.instance.slug %}' class="btn btn-default pull-right">Cancel</a>
+        <a href='{% url "website:award" form.instance.slug %}' class="btn btn-default pull-right">Cancel</a>
       </form>
       {% endcomment %}
     </section>

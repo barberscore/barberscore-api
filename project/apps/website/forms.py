@@ -5,7 +5,7 @@ from django.forms import (
 )
 
 from apps.api.models import (
-    Contest,
+    Award,
     Judge,
     Contestant,
     Score,
@@ -52,9 +52,9 @@ class LoginForm(forms.Form):
     )
 
 
-class ContestForm(forms.ModelForm):
+class AwardForm(forms.ModelForm):
     class Meta:
-        model = Contest
+        model = Award
         fields = [
             'rounds',
         ]
@@ -67,19 +67,19 @@ class ContestForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        contest = super(ContestForm, self).save(commit=False)
-        contest.build()
+        award = super(AwardForm, self).save(commit=False)
+        award.build()
         if commit:
-            contest.save()
-        return contest
+            award.save()
+        return award
 
-    def draw(self, contest):
-        contest.draw_contest()
-        return contest
+    def draw(self, award):
+        award.draw_award()
+        return award
 
-    def start(self, contest):
-        contest.start_contest()
-        return contest
+    def start(self, award):
+        award.start_award()
+        return award
 
 
 class JudgeForm(forms.ModelForm):
@@ -116,7 +116,7 @@ class JudgeForm(forms.ModelForm):
 
 
 # JudgeFormSet = inlineformset_factory(
-#     Contest,
+#     Award,
 #     Judge,
 #     form=JudgeForm,
 #     extra=0,
@@ -124,19 +124,19 @@ class JudgeForm(forms.ModelForm):
 # )
 
 
-def make_contestant_form(contest):
+def make_contestant_form(award):
     class ContestantForm(forms.ModelForm):
         group = forms.ModelChoiceField(
             queryset=Group.objects.filter(
                 status=Group.STATUS.active,
-                kind=contest.kind,
+                kind=award.kind,
             ),
         )
 
         class Meta:
             model = Contestant
             fields = [
-                'contest',
+                'award',
                 'group',
             ]
             extra = 0
@@ -146,7 +146,7 @@ def make_contestant_form(contest):
                         'class': 'form-control',
                     },
                 ),
-                'contest': forms.HiddenInput(
+                'award': forms.HiddenInput(
                 ),
             }
     return ContestantForm
