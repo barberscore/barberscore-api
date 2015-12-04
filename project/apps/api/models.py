@@ -1620,12 +1620,6 @@ class Judge(TimeStampedModel):
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
         (3, 'singing', 'Singing'),
-        (4, 'music_candidate', 'Music Candidate'),
-        (5, 'presentation_candidate', 'Presentation Candidate'),
-        (6, 'singing_candidate', 'Singing Candidate'),
-        (7, 'music_composite', 'Music Composite'),
-        (8, 'presentation_composite', 'Presentation Composite'),
-        (9, 'singing_composite', 'Singing Composite'),
     )
 
     id = models.UUIDField(
@@ -2164,12 +2158,6 @@ class Score(TimeStampedModel):
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
         (3, 'singing', 'Singing'),
-        (4, 'music_candidate', 'Music Candidate'),
-        (5, 'presentation_candidate', 'Presentation Candidate'),
-        (6, 'singing_candidate', 'Singing Candidate'),
-        (7, 'music_composite', 'Music Composite'),
-        (8, 'presentation_composite', 'Presentation Composite'),
-        (9, 'singing_composite', 'Singing Composite'),
     )
 
     id = models.UUIDField(
@@ -2212,9 +2200,6 @@ class Score(TimeStampedModel):
     judge = models.ForeignKey(
         'Judge',
         related_name='scores',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     points = models.IntegerField(
@@ -2799,6 +2784,9 @@ class Song(TimeStampedModel):
             )
 
         if self.scores.exists():
+            # Only use the Scores model when we have scores
+            # from a judging panel.  Otherwise, use what's
+            # already there (typically imported).
             self.mus_points = self.scores.filter(
                 kind__in=[1, 7]
             ).aggregate(mus=models.Sum('points'))['mus']
