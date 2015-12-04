@@ -19,21 +19,21 @@ urlpatterns = [
     ),
 
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/$', views.contest, name='contest'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/build/$', views.contest_build, name='contest_build'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/impanel/$', views.contest_impanel, name='contest_impanel'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/fill/$', views.contest_fill, name='contest_fill'),
-    # url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/start/$', views.contest_start, name='contest_start'),
+    url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/$', views.award, name='award'),
+    url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/build/$', views.award_build, name='award_build'),
+    url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/impanel/$', views.award_impanel, name='award_impanel'),
+    url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/fill/$', views.award_fill, name='award_fill'),
+    # url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/start/$', views.award_start, name='award_start'),
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/draw/$', views.session_draw, name='session_draw'),
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/start/$', views.session_start, name='session_start'),
     url(r'^performance/(?P<slug>[a-zA-Z0-9-]+)/score/$', views.performance_score, name='performance_score'),
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/end/$', views.session_end, name='session_end'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/end/$', views.contest_end, name='contest_end'),
+    url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/end/$', views.award_end, name='award_end'),
 
     # Scoresheets
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.session_oss, name='session-oss'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),
-    url(r"^contest/(?P<slug>[a-zA-Z0-9-]+)/pdf/$", views.HelloPDFView.as_view())
+    url(r'^award/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.award_oss, name='award-oss'),
+    url(r"^award/(?P<slug>[a-zA-Z0-9-]+)/pdf/$", views.HelloPDFView.as_view())
 
 ]
 
