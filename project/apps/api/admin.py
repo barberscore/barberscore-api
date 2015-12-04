@@ -419,7 +419,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 @admin.register(Judge)
-class Judge(admin.ModelAdmin):
+class JudgeAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
@@ -428,7 +428,7 @@ class Judge(admin.ModelAdmin):
         'panel',
         'person',
         'organization',
-        ('category', 'slot',),
+        ('kind', 'slot',),
     ]
 
     list_display = [
@@ -464,14 +464,18 @@ class Judge(admin.ModelAdmin):
         'name',
     ]
 
+    inlines = [
+        ScoreInline,
+    ]
+
 
 @admin.register(Organization)
-class Organization(MPTTModelAdmin):
+class OrganizationAdmin(MPTTModelAdmin):
     pass
 
 
 @admin.register(Performance)
-class Performance(FSMTransitionMixin, SuperModelAdmin):
+class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -650,7 +654,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 @admin.register(Score)
-class Score(admin.ModelAdmin):
+class ScoreAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
@@ -697,7 +701,7 @@ class Score(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class Session(FSMTransitionMixin, admin.ModelAdmin):
+class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
