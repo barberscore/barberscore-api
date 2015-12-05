@@ -780,6 +780,7 @@ class Competitor(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -809,81 +810,58 @@ class Competitor(TimeStampedModel):
         related_name='competitors',
     )
 
-    # TODO Everything below here must be protected in some way.  Different model?
+    # Denormalization
     place = models.IntegerField(
-        # help_text="""
-        #     The final placement/rank of the contestant.""",
+        help_text="""
+            The final ranking relative to this award.""",
         null=True,
         blank=True,
-    )
-
-    men = models.IntegerField(
-        # help_text="""
-        #     The number of men on stage (only for chourses).""",
-        default=4,
-        null=True,
-        blank=True,
+        editable=False,
     )
 
     mus_points = models.IntegerField(
-        # help_text="""
-        #     The total music points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_points = models.IntegerField(
-        # help_text="""
-        #     The total presentation points for this performance.""",
         null=True,
         editable=False,
         blank=True,
     )
 
     sng_points = models.IntegerField(
-        # help_text="""
-        #     The total singing points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_points = models.IntegerField(
-        # help_text="""
-        #     The total points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     mus_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_score = models.FloatField(
-        # help_text="""
-        #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     sng_score = models.FloatField(
-        # help_text="""
-        #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_score = models.FloatField(
-        # help_text="""
-        #     The total percentile score for this performance.""",
         null=True,
         blank=True,
         editable=False,
@@ -897,6 +875,18 @@ class Competitor(TimeStampedModel):
             self.award,
             self.contestant,
         )
+        super(Competitor, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('contestant', 'award',),
+        )
+        ordering = (
+            'award',
+            'contestant',
+        )
+
+    def calculate(self):
         # If there are no performances, skip.
         if self.contestant.performances.exists():
             agg = self.contestant.performances.filter(
@@ -933,16 +923,6 @@ class Competitor(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-        super(Competitor, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('contestant', 'award',),
-        )
-        ordering = (
-            'award',
-            'contestant',
-        )
 
 
 class Contest(TimeStampedModel):
@@ -1148,13 +1128,6 @@ class Contestant(TimeStampedModel):
         blank=True,
     )
 
-    place = models.IntegerField(
-        help_text="""
-            The final placement/rank of the contestant for the entire contest (ie, not a specific award).""",
-        null=True,
-        blank=True,
-    )
-
     men = models.IntegerField(
         help_text="""
             The number of men on stage.""",
@@ -1164,6 +1137,14 @@ class Contestant(TimeStampedModel):
     )
 
     # Denormalized
+    place = models.IntegerField(
+        help_text="""
+            The final placement/rank of the contestant for the entire contest (ie, not a specific award).""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     mus_points = models.IntegerField(
         null=True,
         blank=True,
@@ -1773,17 +1754,20 @@ class Performance(TimeStampedModel):
         'Position',
     )
 
-    place = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     start_time = models.DateTimeField(
         null=True,
         blank=True,
     )
 
     # Denormalized
+    place = models.IntegerField(
+        help_text="""
+            The final ranking relative to this session.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     mus_points = models.IntegerField(
         null=True,
         blank=True,
