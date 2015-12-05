@@ -2623,12 +2623,6 @@ class Singer(TimeStampedModel):
 
 
 class Song(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         # (10, 'built', 'Built',),
@@ -2642,6 +2636,12 @@ class Song(TimeStampedModel):
     ORDER = Choices(
         (1, 'first', 'First'),
         (2, 'second', 'Second'),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
     )
 
     name = models.CharField(
@@ -2676,6 +2676,16 @@ class Song(TimeStampedModel):
         choices=ORDER,
     )
 
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    arranger = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
     is_parody = models.BooleanField(
         default=False,
     )
@@ -2696,87 +2706,53 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    title = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    arranger = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    # The following need to be protected until released.
-    # Different model?
-
+    # Denormalized values
     mus_points = models.IntegerField(
-        # help_text="""
-        #     The total music points for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_points = models.IntegerField(
-        # help_text="""
-        #     The total presentation points for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     sng_points = models.IntegerField(
-        # help_text="""
-        #     The total singing points for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_points = models.IntegerField(
-        # help_text="""
-        #     The total points for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     mus_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_score = models.FloatField(
-        # help_text="""
-        #     The percentile presentation score for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     sng_score = models.FloatField(
-        # help_text="""
-        #     The percentile singing score for this song.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_score = models.FloatField(
-        # help_text="""
-        #     The total percentile score for this song.""",
         null=True,
         blank=True,
         editable=False,
-    )
-
-    penalty = models.TextField(
-        help_text="""
-            Free form for penalties (notes).""",
-        blank=True,
     )
 
     class Meta:
@@ -2797,13 +2773,9 @@ class Song(TimeStampedModel):
             'Song',
             self.order,
         )
+        super(Song, self).save(*args, **kwargs)
 
-        if self.catalog:
-            self.title = self.catalog.song_name
-            self.arranger = ", ".join(
-                [l['person__name'] for l in self.catalog.arrangers.values('person__name')]
-            )
-
+    def calculate(self):
         if self.scores.exists():
             # Only use the Scores model when we have scores
             # from a judging panel.  Otherwise, use what's
@@ -2846,8 +2818,6 @@ class Song(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-        super(Song, self).save(*args, **kwargs)
-
     # @transition(
     #     field=status,
     #     source=[
