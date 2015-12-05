@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django_fsm
-import django.db.models.deletion
+import django.utils.timezone
 import phonenumber_field.modelfields
 import uuid
 import django.core.validators
@@ -11,7 +11,7 @@ import timezone_field.fields
 import apps.api.validators
 import autoslug.fields
 import mptt.fields
-import django.utils.timezone
+import django.db.models.deletion
 import apps.api.models
 import model_utils.fields
 
@@ -52,31 +52,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Award',
-            fields=[
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=200, editable=False)),
-                ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
-                ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (10, b'Built'), (20, b'Started'), (25, b'Finished'), (30, b'Final')])),
-                ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('level', models.IntegerField(help_text=b'\n            The level of the award.  Note that this may be different than the level of the parent contest.', choices=[(1, b'International'), (2, b'District'), (3, b'Division')])),
-                ('kind', models.IntegerField(help_text=b'\n            The kind of the award.  Note that this may be different than the kind of the parent contest.', choices=[(1, b'Quartet'), (2, b'Chorus'), (3, b'Senior'), (4, b'Collegiate'), (5, b'Novice')])),
-                ('goal', models.IntegerField(help_text=b'\n            The objective of the award.', choices=[(1, b'Championship'), (2, b'Qualifier')])),
-                ('qual_score', models.FloatField(help_text=b'\n            The objective of the award.  Note that if the goal is `qualifier` then this must be set.', null=True, blank=True)),
-                ('year', models.IntegerField(choices=[(2016, 2016), (2015, 2015), (2014, 2014), (2013, 2013), (2012, 2012), (2011, 2011), (2010, 2010), (2009, 2009), (2008, 2008), (2007, 2007), (2006, 2006), (2005, 2005), (2004, 2004), (2003, 2003), (2002, 2002), (2001, 2001), (2000, 2000), (1999, 1999), (1998, 1998), (1997, 1997), (1996, 1996), (1995, 1995), (1994, 1994), (1993, 1993), (1992, 1992), (1991, 1991), (1990, 1990), (1989, 1989), (1988, 1988), (1987, 1987), (1986, 1986), (1985, 1985), (1984, 1984), (1983, 1983), (1982, 1982), (1981, 1981), (1980, 1980), (1979, 1979), (1978, 1978), (1977, 1977), (1976, 1976), (1975, 1975), (1974, 1974), (1973, 1973), (1972, 1972), (1971, 1971), (1970, 1970), (1969, 1969), (1968, 1968), (1967, 1967), (1966, 1966), (1965, 1965), (1964, 1964), (1963, 1963), (1962, 1962), (1961, 1961), (1960, 1960), (1959, 1959), (1958, 1958), (1957, 1957), (1956, 1956), (1955, 1955), (1954, 1954), (1953, 1953), (1952, 1952), (1951, 1951), (1950, 1950), (1949, 1949), (1948, 1948), (1947, 1947), (1946, 1946), (1945, 1945), (1944, 1944), (1943, 1943), (1942, 1942), (1941, 1941), (1940, 1940), (1939, 1939)])),
-                ('rounds', models.IntegerField(help_text=b'\n            The number of rounds that will be used in determining the award.  Note that this may be fewer than the total number of rounds (sessions) in the parent contest.', choices=[(3, 3), (2, 2), (1, 1)])),
-                ('history', models.IntegerField(default=0, help_text=b'Used to manage state for historical imports.', choices=[(0, b'New'), (10, b'None'), (20, b'PDF'), (30, b'Places'), (40, b'Incomplete'), (50, b'Complete')])),
-                ('history_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'History last updated', monitor=b'history')),
-                ('scoresheet_pdf', models.FileField(help_text=b'\n            PDF of the OSS.', null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
-                ('scoresheet_csv', models.FileField(help_text=b'\n            The parsed scoresheet (used for legacy imports).', null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
-            ],
-            options={
-                'ordering': ('-year', 'organization', 'level', 'kind', 'goal'),
-            },
-        ),
-        migrations.CreateModel(
             name='Catalog',
             fields=[
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
@@ -107,34 +82,9 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=255)),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
                 ('category', models.IntegerField(choices=[(0, b'Admin'), (1, b'Music'), (2, b'Presentation'), (3, b'Singing')])),
-                ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (1, b'Active'), (2, b'Candidate')])),
+                ('status', models.IntegerField(choices=[(1, b'Active'), (2, b'Candidate')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
             ],
-        ),
-        migrations.CreateModel(
-            name='Competitor',
-            fields=[
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255, editable=False)),
-                ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
-                ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New')])),
-                ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('place', models.IntegerField(help_text=b'\n            The final ranking relative to this award.', null=True, editable=False, blank=True)),
-                ('mus_points', models.IntegerField(null=True, editable=False, blank=True)),
-                ('prs_points', models.IntegerField(null=True, editable=False, blank=True)),
-                ('sng_points', models.IntegerField(null=True, editable=False, blank=True)),
-                ('total_points', models.IntegerField(null=True, editable=False, blank=True)),
-                ('mus_score', models.FloatField(null=True, editable=False, blank=True)),
-                ('prs_score', models.FloatField(null=True, editable=False, blank=True)),
-                ('sng_score', models.FloatField(null=True, editable=False, blank=True)),
-                ('total_score', models.FloatField(null=True, editable=False, blank=True)),
-                ('award', models.ForeignKey(related_name='competitors', to='api.Award')),
-            ],
-            options={
-                'ordering': ('award', 'contestant'),
-            },
         ),
         migrations.CreateModel(
             name='Contest',
@@ -142,20 +92,23 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255, editable=False)),
+                ('name', models.CharField(unique=True, max_length=200, editable=False)),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
-                ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (10, b'Built'), (20, b'Started'), (30, b'Final')])),
+                ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (10, b'Built'), (20, b'Started'), (25, b'Finished'), (30, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('size', models.IntegerField(help_text=b'\n            Size of the judging contest (typically three or five.)', choices=[(5, 5), (4, 4), (3, 3), (2, 2), (1, 1)])),
-                ('rounds', models.IntegerField(help_text=b'\n            Number of rounds', choices=[(3, 3), (2, 2), (1, 1)])),
-                ('kind', models.IntegerField(help_text=b'\n            The Contest is different than the award objective.', choices=[(1, b'Quartet'), (2, b'Chorus'), (3, b'Senior'), (4, b'Collegiate')])),
-                ('history', models.IntegerField(default=0, help_text=b'Used to manage state for historical imports.', choices=[(0, b'New'), (10, b'None'), (20, b'PDF'), (30, b'Places'), (40, b'Incomplete'), (50, b'Complete')])),
+                ('history', models.IntegerField(default=0, choices=[(0, b'New'), (10, b'None'), (20, b'PDF'), (30, b'Places'), (40, b'Incomplete'), (50, b'Complete')])),
                 ('history_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'History last updated', monitor=b'history')),
-                ('scoresheet_pdf', models.FileField(help_text=b'\n            The historical PDF OSS.', null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
+                ('level', models.IntegerField(choices=[(1, b'International'), (2, b'District'), (3, b'Division')])),
+                ('kind', models.IntegerField(choices=[(1, b'Quartet'), (2, b'Chorus'), (3, b'Senior'), (4, b'Collegiate'), (5, b'Novice')])),
+                ('goal', models.IntegerField(blank=True, help_text=b'\n            The objective of the contest', null=True, choices=[(1, b'Championship'), (2, b'Qualifier')])),
+                ('year', models.IntegerField(default=2015, choices=[(2016, 2016), (2015, 2015), (2014, 2014), (2013, 2013), (2012, 2012), (2011, 2011), (2010, 2010), (2009, 2009), (2008, 2008), (2007, 2007), (2006, 2006), (2005, 2005), (2004, 2004), (2003, 2003), (2002, 2002), (2001, 2001), (2000, 2000), (1999, 1999), (1998, 1998), (1997, 1997), (1996, 1996), (1995, 1995), (1994, 1994), (1993, 1993), (1992, 1992), (1991, 1991), (1990, 1990), (1989, 1989), (1988, 1988), (1987, 1987), (1986, 1986), (1985, 1985), (1984, 1984), (1983, 1983), (1982, 1982), (1981, 1981), (1980, 1980), (1979, 1979), (1978, 1978), (1977, 1977), (1976, 1976), (1975, 1975), (1974, 1974), (1973, 1973), (1972, 1972), (1971, 1971), (1970, 1970), (1969, 1969), (1968, 1968), (1967, 1967), (1966, 1966), (1965, 1965), (1964, 1964), (1963, 1963), (1962, 1962), (1961, 1961), (1960, 1960), (1959, 1959), (1958, 1958), (1957, 1957), (1956, 1956), (1955, 1955), (1954, 1954), (1953, 1953), (1952, 1952), (1951, 1951), (1950, 1950), (1949, 1949), (1948, 1948), (1947, 1947), (1946, 1946), (1945, 1945), (1944, 1944), (1943, 1943), (1942, 1942), (1941, 1941), (1940, 1940), (1939, 1939)])),
+                ('rounds', models.IntegerField(help_text=b'\n            Number of rounds', choices=[(3, 3), (2, 2), (1, 1)])),
+                ('qual_score', models.FloatField(null=True, blank=True)),
+                ('scoresheet_pdf', models.FileField(help_text=b'\n            PDF of the OSS.', null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
                 ('scoresheet_csv', models.FileField(help_text=b'\n            The parsed scoresheet (used for legacy imports).', null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
             ],
             options={
-                'ordering': ('convention', 'kind'),
+                'ordering': ('level', '-year', 'kind'),
             },
         ),
         migrations.CreateModel(
@@ -164,15 +117,15 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255, editable=False)),
+                ('name', models.CharField(unique=True, max_length=255)),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
                 ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (10, b'Qualified'), (20, b'Accepted'), (30, b'Declined'), (40, b'Dropped'), (50, b'Official'), (60, b'Finished'), (90, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('picture', models.ImageField(help_text=b'\n            The on-stage contest picture (as opposed to the "official" photo).', null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
-                ('seed', models.IntegerField(help_text=b'\n            The incoming rank based on prelim score.', null=True, blank=True)),
-                ('prelim', models.FloatField(help_text=b'\n            The incoming prelim score.', null=True, blank=True)),
-                ('men', models.IntegerField(default=4, help_text=b'\n            The number of men on stage.', null=True, blank=True)),
-                ('place', models.IntegerField(help_text=b'\n            The final placement/rank of the contestant for the entire contest (ie, not a specific award).', null=True, editable=False, blank=True)),
+                ('picture', models.ImageField(null=True, upload_to=apps.api.models.generate_image_filename, blank=True)),
+                ('seed', models.IntegerField(null=True, blank=True)),
+                ('prelim', models.FloatField(null=True, blank=True)),
+                ('place', models.IntegerField(null=True, blank=True)),
+                ('men', models.IntegerField(default=4, null=True, blank=True)),
                 ('mus_points', models.IntegerField(null=True, editable=False, blank=True)),
                 ('prs_points', models.IntegerField(null=True, editable=False, blank=True)),
                 ('sng_points', models.IntegerField(null=True, editable=False, blank=True)),
@@ -181,10 +134,9 @@ class Migration(migrations.Migration):
                 ('prs_score', models.FloatField(null=True, editable=False, blank=True)),
                 ('sng_score', models.FloatField(null=True, editable=False, blank=True)),
                 ('total_score', models.FloatField(null=True, editable=False, blank=True)),
-                ('contest', models.ForeignKey(related_name='contestants', to='api.Contest')),
             ],
             options={
-                'ordering': ('contest', 'group'),
+                'ordering': ('place',),
             },
         ),
         migrations.CreateModel(
@@ -197,7 +149,7 @@ class Migration(migrations.Migration):
                 ('status', models.IntegerField(default=0, help_text=b'The current status', choices=[(0, b'New'), (10, b'Built'), (20, b'Started'), (30, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
                 ('kind', models.IntegerField(help_text=b'\n            The kind of convention.', choices=[(1, b'International'), (2, b'Midwinter'), (3, b'Fall'), (4, b'Spring'), (5, b'Pacific')])),
-                ('year', models.IntegerField(choices=[(2016, 2016), (2015, 2015), (2014, 2014), (2013, 2013), (2012, 2012), (2011, 2011), (2010, 2010), (2009, 2009), (2008, 2008), (2007, 2007), (2006, 2006), (2005, 2005), (2004, 2004), (2003, 2003), (2002, 2002), (2001, 2001), (2000, 2000), (1999, 1999), (1998, 1998), (1997, 1997), (1996, 1996), (1995, 1995), (1994, 1994), (1993, 1993), (1992, 1992), (1991, 1991), (1990, 1990), (1989, 1989), (1988, 1988), (1987, 1987), (1986, 1986), (1985, 1985), (1984, 1984), (1983, 1983), (1982, 1982), (1981, 1981), (1980, 1980), (1979, 1979), (1978, 1978), (1977, 1977), (1976, 1976), (1975, 1975), (1974, 1974), (1973, 1973), (1972, 1972), (1971, 1971), (1970, 1970), (1969, 1969), (1968, 1968), (1967, 1967), (1966, 1966), (1965, 1965), (1964, 1964), (1963, 1963), (1962, 1962), (1961, 1961), (1960, 1960), (1959, 1959), (1958, 1958), (1957, 1957), (1956, 1956), (1955, 1955), (1954, 1954), (1953, 1953), (1952, 1952), (1951, 1951), (1950, 1950), (1949, 1949), (1948, 1948), (1947, 1947), (1946, 1946), (1945, 1945), (1944, 1944), (1943, 1943), (1942, 1942), (1941, 1941), (1940, 1940), (1939, 1939)])),
+                ('year', models.IntegerField(default=2015, choices=[(2016, 2016), (2015, 2015), (2014, 2014), (2013, 2013), (2012, 2012), (2011, 2011), (2010, 2010), (2009, 2009), (2008, 2008), (2007, 2007), (2006, 2006), (2005, 2005), (2004, 2004), (2003, 2003), (2002, 2002), (2001, 2001), (2000, 2000), (1999, 1999), (1998, 1998), (1997, 1997), (1996, 1996), (1995, 1995), (1994, 1994), (1993, 1993), (1992, 1992), (1991, 1991), (1990, 1990), (1989, 1989), (1988, 1988), (1987, 1987), (1986, 1986), (1985, 1985), (1984, 1984), (1983, 1983), (1982, 1982), (1981, 1981), (1980, 1980), (1979, 1979), (1978, 1978), (1977, 1977), (1976, 1976), (1975, 1975), (1974, 1974), (1973, 1973), (1972, 1972), (1971, 1971), (1970, 1970), (1969, 1969), (1968, 1968), (1967, 1967), (1966, 1966), (1965, 1965), (1964, 1964), (1963, 1963), (1962, 1962), (1961, 1961), (1960, 1960), (1959, 1959), (1958, 1958), (1957, 1957), (1956, 1956), (1955, 1955), (1954, 1954), (1953, 1953), (1952, 1952), (1951, 1951), (1950, 1950), (1949, 1949), (1948, 1948), (1947, 1947), (1946, 1946), (1945, 1945), (1944, 1944), (1943, 1943), (1942, 1942), (1941, 1941), (1940, 1940), (1939, 1939)])),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
                 ('dates', models.CharField(help_text=b'\n            The convention dates (will be replaced by start/end).', max_length=200, blank=True)),
                 ('location', models.CharField(help_text=b'\n            The location of the convention.', max_length=200, blank=True)),
@@ -250,25 +202,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Judge',
-            fields=[
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255, editable=False)),
-                ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
-                ('status', models.IntegerField(default=0, choices=[(0, b'New'), (10, b'Scheduled'), (20, b'Confirmed'), (30, b'Final')])),
-                ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('category', models.IntegerField(choices=[(0, b'Admin'), (1, b'Music'), (2, b'Presentation'), (3, b'Singing')])),
-                ('kind', models.IntegerField(choices=[(10, b'Official'), (20, b'Practice'), (30, b'Composite')])),
-                ('slot', models.IntegerField(choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])),
-                ('contest', models.ForeignKey(related_name='judges', to='api.Contest')),
-            ],
-            options={
-                'ordering': ('contest', 'kind', 'category', 'slot'),
-            },
-        ),
-        migrations.CreateModel(
             name='Organization',
             fields=[
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
@@ -300,18 +233,56 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Performance',
+            name='Panel',
             fields=[
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
                 ('name', models.CharField(unique=True, max_length=255, editable=False)),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
+                ('status', models.IntegerField(default=0, choices=[(0, b'New'), (10, b'Scheduled'), (20, b'Confirmed'), (30, b'Final')])),
+                ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
+                ('size', models.IntegerField(blank=True, help_text=b'\n            Size of the judging panel (typically three or five.)', null=True, choices=[(5, 5), (4, 4), (3, 3), (2, 2), (1, 1)])),
+                ('rounds', models.IntegerField(blank=True, help_text=b'\n            Number of rounds', null=True, choices=[(3, 3), (2, 2), (1, 1)])),
+                ('kind', models.IntegerField(blank=True, help_text=b'\n            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.', null=True, choices=[(1, b'Quartet'), (2, b'Chorus'), (3, b'Senior'), (4, b'Collegiate')])),
+                ('convention', models.ForeignKey(related_name='panels', to='api.Convention')),
+            ],
+            options={
+                'ordering': ('convention', 'kind'),
+            },
+        ),
+        migrations.CreateModel(
+            name='Panelist',
+            fields=[
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255, editable=False)),
+                ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
+                ('status', models.IntegerField(default=0, choices=[(0, b'New'), (10, b'Scheduled'), (20, b'Confirmed'), (30, b'Final')])),
+                ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
+                ('category', models.IntegerField(blank=True, null=True, choices=[(0, b'Admin'), (1, b'Music'), (2, b'Presentation'), (3, b'Singing'), (4, b'Music Candidate'), (5, b'Presentation Candidate'), (6, b'Singing Candidate'), (7, b'Music Composite'), (8, b'Presentation Composite'), (9, b'Singing Composite')])),
+                ('slot', models.IntegerField(blank=True, null=True, choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])),
+                ('organization', mptt.fields.TreeForeignKey(related_name='panelists', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='api.Organization', null=True)),
+                ('panel', models.ForeignKey(related_name='panelists', blank=True, to='api.Panel', null=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Performance',
+            fields=[
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
                 ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (20, b'Started'), (25, b'Finished'), (40, b'Confirmed'), (50, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
                 ('position', models.PositiveSmallIntegerField(verbose_name=b'Position')),
+                ('place', models.IntegerField(null=True, blank=True)),
                 ('start_time', models.DateTimeField(null=True, blank=True)),
-                ('place', models.IntegerField(help_text=b'\n            The final ranking relative to this session.', null=True, editable=False, blank=True)),
                 ('mus_points', models.IntegerField(null=True, editable=False, blank=True)),
                 ('prs_points', models.IntegerField(null=True, editable=False, blank=True)),
                 ('sng_points', models.IntegerField(null=True, editable=False, blank=True)),
@@ -320,10 +291,11 @@ class Migration(migrations.Migration):
                 ('prs_score', models.FloatField(null=True, editable=False, blank=True)),
                 ('sng_score', models.FloatField(null=True, editable=False, blank=True)),
                 ('total_score', models.FloatField(null=True, editable=False, blank=True)),
+                ('penalty', models.TextField(help_text=b'\n            Free form for penalties (notes).', blank=True)),
                 ('contestant', models.ForeignKey(related_name='performances', to='api.Contestant')),
             ],
             options={
-                'ordering': ('session', 'position'),
+                'ordering': ['position'],
             },
         ),
         migrations.CreateModel(
@@ -349,6 +321,8 @@ class Migration(migrations.Migration):
                 ('kind', models.IntegerField(default=1, help_text=b'\n            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.', choices=[(1, b'Individual'), (2, b'Team')])),
                 ('status', models.IntegerField(default=0, choices=[(0, b'New'), (10, b'Active'), (20, b'Inactive'), (30, b'Retired'), (40, b'Deceased')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
+                ('judge', models.IntegerField(blank=True, null=True, choices=[(0, b'Admin'), (1, b'Music'), (2, b'Presentation'), (3, b'Singing'), (4, b'Music Candidate'), (5, b'Presentation Candidate'), (6, b'Singing Candidate'), (7, b'Music Composite'), (8, b'Presentation Composite'), (9, b'Singing Composite')])),
+                ('judge_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Certification last updated', monitor=b'judge')),
                 ('member', models.IntegerField(null=True, blank=True)),
                 ('organization', mptt.fields.TreeForeignKey(blank=True, to='api.Organization', null=True)),
             ],
@@ -357,22 +331,34 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Ranking',
+            fields=[
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
+                ('contest', models.ForeignKey(related_name='rankings', blank=True, to='api.Contest', null=True)),
+                ('contestant', models.ForeignKey(related_name='rankings', to='api.Contestant')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Score',
             fields=[
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255, editable=False)),
+                ('name', models.CharField(unique=True, max_length=255)),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
                 ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (20, b'Entered'), (30, b'Flagged'), (35, b'Validated'), (40, b'Confirmed'), (50, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('category', models.IntegerField(choices=[(0, b'Admin'), (1, b'Music'), (2, b'Presentation'), (3, b'Singing')])),
-                ('kind', models.IntegerField(choices=[(10, b'Official'), (20, b'Practice'), (30, b'Composite')])),
-                ('points', models.IntegerField(blank=True, help_text=b'\n            The number of points awarded (0-100)', null=True, validators=[django.core.validators.MaxValueValidator(100, message=b'Points must be between 0 - 100'), django.core.validators.MinValueValidator(0, message=b'Points must be between 0 - 100')])),
-                ('judge', models.ForeignKey(related_name='scores', to='api.Judge')),
+                ('kind', models.IntegerField(blank=True, null=True, choices=[(0, b'Admin'), (1, b'Music'), (2, b'Presentation'), (3, b'Singing'), (4, b'Music Candidate'), (5, b'Presentation Candidate'), (6, b'Singing Candidate'), (7, b'Music Composite'), (8, b'Presentation Composite'), (9, b'Singing Composite')])),
+                ('points', models.IntegerField(help_text=b'\n            The number of points awarded (0-100)', null=True, blank=True)),
+                ('panelist', models.ForeignKey(related_name='scores', on_delete=django.db.models.deletion.SET_NULL, to='api.Panelist', null=True)),
+                ('performance', models.ForeignKey(related_name='scores', blank=True, to='api.Performance', null=True)),
             ],
             options={
-                'ordering': ('judge', 'song'),
+                'ordering': ('panelist', 'song__order'),
             },
         ),
         migrations.CreateModel(
@@ -381,18 +367,17 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('id', models.UUIDField(default=uuid.uuid4, serialize=False, editable=False, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255, editable=False)),
+                ('name', models.CharField(unique=True, max_length=255)),
                 ('slug', autoslug.fields.AutoSlugField(editable=False, populate_from=b'name', max_length=255, always_update=True, unique=True)),
                 ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (10, b'Built'), (15, b'Ready'), (20, b'Started'), (25, b'Finished'), (30, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
-                ('kind', models.IntegerField(choices=[(1, b'Finals'), (2, b'Semis'), (3, b'Quarters')])),
-                ('num', models.IntegerField(null=True, blank=True)),
+                ('kind', models.IntegerField(default=1, choices=[(1, b'Finals'), (2, b'Semis'), (3, b'Quarters')])),
                 ('start_date', models.DateField(null=True, blank=True)),
                 ('slots', models.IntegerField(null=True, blank=True)),
-                ('contest', models.ForeignKey(related_name='sessions', to='api.Contest')),
+                ('panel', models.ForeignKey(related_name='sessions', blank=True, to='api.Panel', null=True)),
             ],
             options={
-                'ordering': ('contest', 'kind'),
+                'ordering': ['panel', 'kind'],
             },
         ),
         migrations.CreateModel(
@@ -422,9 +407,9 @@ class Migration(migrations.Migration):
                 ('status', django_fsm.FSMIntegerField(default=0, choices=[(0, b'New'), (40, b'Confirmed'), (50, b'Final')])),
                 ('status_monitor', model_utils.fields.MonitorField(default=django.utils.timezone.now, help_text=b'Status last updated', monitor=b'status')),
                 ('order', models.IntegerField(choices=[(1, b'First'), (2, b'Second')])),
+                ('is_parody', models.BooleanField(default=False)),
                 ('title', models.CharField(max_length=255, blank=True)),
                 ('arranger', models.CharField(max_length=255, blank=True)),
-                ('is_parody', models.BooleanField(default=False)),
                 ('mus_points', models.IntegerField(null=True, editable=False, blank=True)),
                 ('prs_points', models.IntegerField(null=True, editable=False, blank=True)),
                 ('sng_points', models.IntegerField(null=True, editable=False, blank=True)),
@@ -433,6 +418,7 @@ class Migration(migrations.Migration):
                 ('prs_score', models.FloatField(null=True, editable=False, blank=True)),
                 ('sng_score', models.FloatField(null=True, editable=False, blank=True)),
                 ('total_score', models.FloatField(null=True, editable=False, blank=True)),
+                ('penalty', models.TextField(help_text=b'\n            Free form for penalties (notes).', blank=True)),
                 ('catalog', models.ForeignKey(related_name='songs', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='api.Catalog', null=True)),
                 ('performance', models.ForeignKey(related_name='songs', to='api.Performance')),
             ],
@@ -469,14 +455,9 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='performances', to='api.Session'),
         ),
         migrations.AddField(
-            model_name='judge',
-            name='organization',
-            field=mptt.fields.TreeForeignKey(related_name='judges', blank=True, to='api.Organization', null=True),
-        ),
-        migrations.AddField(
-            model_name='judge',
+            model_name='panelist',
             name='person',
-            field=models.ForeignKey(related_name='contests', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='api.Person', null=True),
+            field=models.ForeignKey(related_name='panels', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='api.Person', null=True),
         ),
         migrations.AddField(
             model_name='director',
@@ -490,23 +471,28 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='contestant',
+            name='convention',
+            field=models.ForeignKey(related_name='contestants', blank=True, to='api.Convention', null=True),
+        ),
+        migrations.AddField(
+            model_name='contestant',
             name='group',
             field=models.ForeignKey(related_name='contestants', to='api.Group'),
         ),
         migrations.AddField(
             model_name='contestant',
             name='organization',
-            field=mptt.fields.TreeForeignKey(related_name='contestants', blank=True, to='api.Organization', null=True),
+            field=mptt.fields.TreeForeignKey(related_name='contestants', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='api.Organization', null=True),
         ),
         migrations.AddField(
             model_name='contest',
             name='convention',
-            field=models.ForeignKey(related_name='contests', to='api.Convention'),
+            field=models.ForeignKey(related_name='contests', to='api.Convention', help_text=b'\n            The convention at which this contest occurred.'),
         ),
         migrations.AddField(
-            model_name='competitor',
-            name='contestant',
-            field=models.ForeignKey(related_name='competitors', to='api.Contestant'),
+            model_name='contest',
+            name='organization',
+            field=mptt.fields.TreeForeignKey(related_name='contests', to='api.Organization'),
         ),
         migrations.AddField(
             model_name='certification',
@@ -517,16 +503,6 @@ class Migration(migrations.Migration):
             model_name='catalog',
             name='tune',
             field=models.ForeignKey(related_name='catalogs', blank=True, to='api.Tune', null=True),
-        ),
-        migrations.AddField(
-            model_name='award',
-            name='contest',
-            field=models.ForeignKey(related_name='awards', to='api.Contest'),
-        ),
-        migrations.AddField(
-            model_name='award',
-            name='organization',
-            field=mptt.fields.TreeForeignKey(related_name='awards', to='api.Organization', help_text=b'\n            The organization that will confer the award.  Note that this may be different than the organization running the parent contest.'),
         ),
         migrations.AddField(
             model_name='arranger',
@@ -558,15 +534,15 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='session',
-            unique_together=set([('contest', 'kind')]),
+            unique_together=set([('panel', 'kind')]),
         ),
         migrations.AlterUniqueTogether(
-            name='performance',
-            unique_together=set([('session', 'contestant')]),
+            name='ranking',
+            unique_together=set([('contestant', 'contest')]),
         ),
         migrations.AlterUniqueTogether(
-            name='judge',
-            unique_together=set([('contest', 'kind', 'category', 'slot')]),
+            name='panel',
+            unique_together=set([('convention', 'kind')]),
         ),
         migrations.AlterUniqueTogether(
             name='director',
@@ -577,24 +553,12 @@ class Migration(migrations.Migration):
             unique_together=set([('organization', 'kind', 'year')]),
         ),
         migrations.AlterUniqueTogether(
-            name='contestant',
-            unique_together=set([('group', 'contest')]),
-        ),
-        migrations.AlterUniqueTogether(
             name='contest',
-            unique_together=set([('convention', 'kind')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='competitor',
-            unique_together=set([('contestant', 'award')]),
+            unique_together=set([('level', 'kind', 'year', 'goal', 'organization')]),
         ),
         migrations.AlterUniqueTogether(
             name='certification',
             unique_together=set([('category', 'person')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='award',
-            unique_together=set([('level', 'kind', 'year', 'goal', 'organization')]),
         ),
         migrations.AlterUniqueTogether(
             name='arranger',
