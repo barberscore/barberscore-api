@@ -23,11 +23,6 @@ class ContestantQuerySet(QuerySet):
         )
 
 
-class SessionManager(models.Manager):
-    def initial(self):
-        return self.order_by('-kind').first()
-
-
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password, **kwargs):
