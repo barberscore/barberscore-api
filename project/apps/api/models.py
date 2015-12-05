@@ -1089,6 +1089,7 @@ class Contestant(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -1108,13 +1109,6 @@ class Contestant(TimeStampedModel):
         monitor='status',
     )
 
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='contestants',
-        null=True,
-        blank=True,
-    )
-
     contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
@@ -1127,123 +1121,143 @@ class Contestant(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
-        # help_text="""
-        #     The district this contestant is representing.""",
         related_name='contestants',
         null=True,
         blank=True,
     )
 
     picture = models.ImageField(
-        # help_text="""
-        #     The song picture (as opposed to the "official" photo).""",
+        help_text="""
+            The on-stage contest picture (as opposed to the "official" photo).""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
     )
 
     seed = models.IntegerField(
-        # help_text="""
-        #     The incoming rank based on prelim score.""",
+        help_text="""
+            The incoming rank based on prelim score.""",
         null=True,
         blank=True,
     )
 
     prelim = models.FloatField(
-        # help_text="""
-        #     The incoming prelim score.""",
+        help_text="""
+            The incoming prelim score.""",
         null=True,
         blank=True,
     )
 
-    # TODO Everything below here must be protected in some way.  Different model?
     place = models.IntegerField(
-        # help_text="""
-        #     The final placement/rank of the contestant.""",
+        help_text="""
+            The final placement/rank of the contestant for the entire contest (ie, not a specific award).""",
         null=True,
         blank=True,
     )
 
     men = models.IntegerField(
-        # help_text="""
-        #     The number of men on stage (only for chourses).""",
+        help_text="""
+            The number of men on stage.""",
         default=4,
         null=True,
         blank=True,
     )
 
+    # Denormalized
     mus_points = models.IntegerField(
-        # help_text="""
-        #     The total music points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_points = models.IntegerField(
-        # help_text="""
-        #     The total presentation points for this performance.""",
         null=True,
         editable=False,
         blank=True,
     )
 
     sng_points = models.IntegerField(
-        # help_text="""
-        #     The total singing points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_points = models.IntegerField(
-        # help_text="""
-        #     The total points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     mus_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_score = models.FloatField(
-        # help_text="""
-        #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     sng_score = models.FloatField(
-        # help_text="""
-        #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_score = models.FloatField(
-        # help_text="""
-        #     The total percentile score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
+    @property
+    def delta_score(self):
+        """ The difference between qualifying score and final score.""",
+        try:
+            return self.total_score - self.prelim
+        except TypeError:
+            return None
+
+    @property
+    def delta_place(self):
+        """ The difference between qualifying rank and final rank.""",
+        try:
+            return self.seed - self.place
+        except TypeError:
+            return None
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
     objects = PassThroughManager.for_queryset_class(ContestantQuerySet)()
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def clean(self):
+        if self.singers.count() > 4:
+            raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.contest,
             self.group,
         )
+        super(Contestant, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = (
+            'contest',
+            'group',
+        )
+        unique_together = (
+            ('group', 'contest',),
+        )
+
+    def calculate(self):
         # If there are no performances, skip.
         if self.performances.exists():
             agg = self.performances.all().aggregate(
@@ -1276,34 +1290,6 @@ class Contestant(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-        super(Contestant, self).save(*args, **kwargs)
-
-    class Meta:
-        ordering = (
-            'contest',
-            'group',
-        )
-        unique_together = (
-            ('group', 'contest',),
-        )
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    @property
-    def delta_score(self):
-        try:
-            return self.total_score - self.prelim
-        except TypeError:
-            return None
-
-    @property
-    def delta_place(self):
-        try:
-            return self.seed - self.place
-        except TypeError:
-            return None
 
     @transition(field=status, source=STATUS.new, target=STATUS.qualified)
     def qualify(self):
@@ -1343,23 +1329,6 @@ class Contestant(TimeStampedModel):
     def finalize(self):
         # Send notice?
         return "{0} Finalized".format(self)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def clean(self):
-        if self.singers.count() > 4:
-            raise ValidationError('There can not be more than four persons in a quartet.')
-
-    def denorm(self):
-        ps = self.performances.all()
-        for p in ps:
-            songs = p.songs.all()
-            for song in songs:
-                song.save()
-            p.save()
-        self.save()
-        return "De-normalized record"
 
 
 class Convention(TimeStampedModel):
