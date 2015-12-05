@@ -10,53 +10,6 @@ from django.db.models.query import (
     QuerySet,
 )
 
-# from .models import (
-#     Judge,
-#     Contestant,
-# )
-
-
-class JudgeQuerySet(QuerySet):
-    def official(self):
-        return self.filter(
-            kind__in=[
-                self.model.KIND.admin,
-                self.model.KIND.music,
-                self.model.KIND.presentation,
-                self.model.KIND.singing,
-            ]
-        )
-
-    def practice(self):
-        return self.filter(
-            kind__in=[
-                self.model.KIND.music_candidate,
-                self.model.KIND.presentation_candidate,
-                self.model.KIND.singing_candidate,
-            ]
-        )
-
-    def scoring(self):
-        return self.filter(
-            kind__in=[
-                self.model.KIND.music,
-                self.model.KIND.presentation,
-                self.model.KIND.singing,
-                self.model.KIND.music_candidate,
-                self.model.KIND.presentation_candidate,
-                self.model.KIND.singing_candidate,
-            ]
-        )
-
-    def composite(self):
-        return self.filter(
-            kind__in=[
-                self.model.KIND.music_composite,
-                self.model.KIND.presentation_composite,
-                self.model.KIND.singing_composite,
-            ]
-        )
-
 
 class ContestantQuerySet(QuerySet):
     def accepted(self):

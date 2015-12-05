@@ -63,7 +63,6 @@ from nameparser import HumanName
 from .managers import (
     UserManager,
     SessionManager,
-    JudgeQuerySet,
     ContestantQuerySet,
 )
 
@@ -1652,14 +1651,6 @@ class Judge(TimeStampedModel):
         related_name='judges',
     )
 
-    person = models.ForeignKey(
-        'Person',
-        related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -1682,14 +1673,20 @@ class Judge(TimeStampedModel):
         choices=SLOT_CHOICES,
     )
 
+    person = models.ForeignKey(
+        'Person',
+        related_name='contests',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     organization = TreeForeignKey(
         'Organization',
         related_name='judges',
         null=True,
         blank=True,
     )
-
-    objects = PassThroughManager.for_queryset_class(JudgeQuerySet)()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -1706,8 +1703,9 @@ class Judge(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
+        self.name = u"{0} {1} {2} {3}".format(
             self.contest,
+            self.get_kind_display(),
             self.get_category_display(),
             self.slot,
         )
@@ -1715,10 +1713,11 @@ class Judge(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('contest', 'category', 'slot'),
+            ('contest', 'kind', 'category', 'slot'),
         )
         ordering = (
             'contest',
+            'kind',
             'category',
             'slot',
         )
@@ -2185,6 +2184,7 @@ class Score(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
