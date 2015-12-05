@@ -324,8 +324,6 @@ class Award(TimeStampedModel):
     )
 
     name = models.CharField(
-        # help_text="""
-        #     The name of the award (determined programmatically.)""",
         max_length=200,
         unique=True,
         editable=False,
@@ -348,7 +346,55 @@ class Award(TimeStampedModel):
         monitor='status',
     )
 
+    contest = models.ForeignKey(
+        'Contest',
+        related_name='awards',
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        help_text="""
+            The organization that will confer the award.  Note that this may be different than the organization running the parent contest.""",
+        related_name='awards',
+    )
+
+    level = models.IntegerField(
+        help_text="""
+            The level of the award.  Note that this may be different than the level of the parent contest.""",
+        choices=LEVEL,
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of the award.  Note that this may be different than the kind of the parent contest.""",
+        choices=KIND,
+    )
+
+    goal = models.IntegerField(
+        help_text="""
+            The objective of the award.""",
+        choices=GOAL,
+    )
+
+    qual_score = models.FloatField(
+        help_text="""
+            The objective of the award.  Note that if the goal is `qualifier` then this must be set.""",
+        null=True,
+        blank=True,
+    )
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+    )
+
+    rounds = models.IntegerField(
+        help_text="""
+            The number of rounds that will be used in determining the award.  Note that this may be fewer than the total number of rounds (sessions) in the parent contest.""",
+        choices=ROUNDS_CHOICES,
+    )
+
     history = models.IntegerField(
+        help_text="""Used to manage state for historical imports.""",
         choices=HISTORY,
         default=HISTORY.new,
     )
@@ -356,51 +402,6 @@ class Award(TimeStampedModel):
     history_monitor = MonitorField(
         help_text="""History last updated""",
         monitor='history',
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='awards',
-    )
-
-    level = models.IntegerField(
-        # help_text="""
-        #     The level of the award (currently only International is supported.)""",
-        choices=LEVEL,
-    )
-
-    kind = models.IntegerField(
-        # help_text="""
-        #     The kind of the award (quartet, chorus, senior, collegiate.)""",
-        choices=KIND,
-    )
-
-    goal = models.IntegerField(
-        help_text="""
-            The objective of the award""",
-        choices=GOAL,
-    )
-
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='awards',
-    )
-
-    rounds = models.IntegerField(
-        help_text="""
-            Number of rounds""",
-        choices=ROUNDS_CHOICES,
-    )
-
-    qual_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this performance.""",
-        null=True,
-        blank=True,
     )
 
     scoresheet_pdf = models.FileField(
@@ -424,9 +425,11 @@ class Award(TimeStampedModel):
             ('level', 'kind', 'year', 'goal', 'organization'),
         )
         ordering = (
-            'level',
             '-year',
+            'organization',
+            'level',
             'kind',
+            'goal',
         )
 
     @staticmethod
@@ -435,6 +438,10 @@ class Award(TimeStampedModel):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def clean(self):
+        if self.goal == self.GOAL.qualifier and not self.qual_score:
+            raise ValidationError('The qualification score must be set.')
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2} {3} {4}".format(
@@ -948,6 +955,15 @@ class Contest(TimeStampedModel):
     for r in reversed(range(1, 6)):
         PANEL_CHOICES.append((r, r))
 
+    HISTORY = Choices(
+        (0, 'new', 'New',),
+        (10, 'none', 'None',),
+        (20, 'pdf', 'PDF',),
+        (30, 'places', 'Places',),
+        (40, 'incomplete', 'Incomplete',),
+        (50, 'complete', 'Complete',),
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -998,6 +1014,33 @@ class Contest(TimeStampedModel):
         help_text="""
             The Contest is different than the award objective.""",
         choices=KIND,
+    )
+
+    history = models.IntegerField(
+        help_text="""Used to manage state for historical imports.""",
+        choices=HISTORY,
+        default=HISTORY.new,
+    )
+
+    history_monitor = MonitorField(
+        help_text="""History last updated""",
+        monitor='history',
+    )
+
+    scoresheet_pdf = models.FileField(
+        help_text="""
+            The historical PDF OSS.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    scoresheet_csv = models.FileField(
+        help_text="""
+            The parsed scoresheet (used for legacy imports).""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
     )
 
     def __unicode__(self):
