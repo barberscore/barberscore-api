@@ -116,7 +116,10 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
+        ('history', 'history_monitor',),
         'convention',
+        'organization',
+        'year',
         'kind',
         'size',
         'rounds',
@@ -131,6 +134,14 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'rounds',
     ]
 
+    list_filter = (
+        'status',
+        'history',
+        'kind',
+        'year',
+        'organization',
+    )
+
     raw_id_fields = (
         'convention',
     )
@@ -144,6 +155,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
+        'history_monitor',
     ]
 
     inlines = [
