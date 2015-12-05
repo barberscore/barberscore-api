@@ -62,7 +62,6 @@ from nameparser import HumanName
 
 from .managers import (
     UserManager,
-    SessionManager,
     ContestantQuerySet,
 )
 
@@ -1877,6 +1876,7 @@ class Performance(TimeStampedModel):
 
     class Meta:
         ordering = (
+            'session',
             'position',
         )
         unique_together = (
@@ -1891,7 +1891,9 @@ class Performance(TimeStampedModel):
             self.session,
             self.contestant,
         )
+        super(Performance, self).save(*args, **kwargs)
 
+    def calculate(self):
         if self.songs.exists():
             agg = self.songs.all().aggregate(
                 mus=models.Sum('mus_points'),
@@ -1923,7 +1925,6 @@ class Performance(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-        super(Performance, self).save(*args, **kwargs)
 
     def get_preceding(self):
         try:
@@ -2308,6 +2309,7 @@ class Session(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -2350,8 +2352,6 @@ class Session(TimeStampedModel):
         null=True,
         blank=True,
     )
-
-    objects = SessionManager()
 
     class Meta:
         ordering = (
