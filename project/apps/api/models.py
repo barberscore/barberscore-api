@@ -880,7 +880,7 @@ class Competitor(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.award,
-            self.contestant,
+            self.contestant.group,
         )
         super(Competitor, self).save(*args, **kwargs)
 
@@ -1007,8 +1007,6 @@ class Contest(TimeStampedModel):
         help_text="""
             The organization that will confer the award.  Note that this may be different than the organization running the parent contest.""",
         related_name='contests',
-        null=True,
-        blank=True,
     )
 
     kind = models.IntegerField(
@@ -1019,8 +1017,6 @@ class Contest(TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
-        null=True,
-        blank=True,
     )
 
     size = models.IntegerField(
@@ -1066,17 +1062,19 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} Contest".format(
-            self.convention,
+        self.name = u"{0} {1} {2}".format(
+            self.organization,
             self.get_kind_display(),
+            self.year,
         )
         super(Contest, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('convention', 'kind',),
+            ('organization', 'kind', 'year',),
         )
         ordering = (
+            '-year',
             'convention',
             'kind',
         )
@@ -1902,7 +1900,7 @@ class Performance(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.session,
-            self.contestant,
+            self.contestant.group,
         )
         super(Performance, self).save(*args, **kwargs)
 
@@ -2240,9 +2238,11 @@ class Score(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.judge,
+        self.name = u"{0} {1} {2} {3}".format(
             self.song,
+            self.get_kind_display(),
+            self.get_category_display(),
+            self.judge.slot,
         )
         super(Score, self).save(*args, **kwargs)
 
