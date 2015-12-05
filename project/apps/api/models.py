@@ -937,41 +937,6 @@ class Competitor(TimeStampedModel):
 
 
 class Contest(TimeStampedModel):
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'started', 'Started',),
-        (30, 'final', 'Final',),
-    )
-
-    KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-    )
-
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    ROUNDS_CHOICES = []
-    for r in reversed(range(1, 4)):
-        ROUNDS_CHOICES.append((r, r))
-
-    PANEL_CHOICES = []
-    for r in reversed(range(1, 6)):
-        PANEL_CHOICES.append((r, r))
-
-    HISTORY = Choices(
-        (0, 'new', 'New',),
-        (10, 'none', 'None',),
-        (20, 'pdf', 'PDF',),
-        (30, 'places', 'Places',),
-        (40, 'incomplete', 'Incomplete',),
-        (50, 'complete', 'Complete',),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -991,6 +956,13 @@ class Contest(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (20, 'started', 'Started',),
+        (30, 'final', 'Final',),
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -1006,11 +978,11 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        help_text="""
-            The organization that will confer the award.  Note that this may be different than the organization running the parent contest.""",
-        related_name='contests',
+    KIND = Choices(
+        (1, 'quartet', 'Quartet',),
+        (2, 'chorus', 'Chorus',),
+        (3, 'senior', 'Senior',),
+        (4, 'collegiate', 'Collegiate',),
     )
 
     kind = models.IntegerField(
@@ -1019,20 +991,52 @@ class Contest(TimeStampedModel):
         choices=KIND,
     )
 
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-    )
+    SIZE_CHOICES = []
+    for r in reversed(range(1, 6)):
+        SIZE_CHOICES.append((r, r))
 
     size = models.IntegerField(
         help_text="""
             Size of the judging panel (per category).""",
-        choices=PANEL_CHOICES,
+        choices=SIZE_CHOICES,
     )
+
+    ROUNDS_CHOICES = []
+    for r in reversed(range(1, 4)):
+        ROUNDS_CHOICES.append((r, r))
 
     rounds = models.IntegerField(
         help_text="""
             Number of rounds (sessions) for the contest.""",
         choices=ROUNDS_CHOICES,
+    )
+
+    # Denormalized
+    organization = TreeForeignKey(
+        'Organization',
+        help_text="""
+            The organization that will confer the award.  Note that this may be different than the organization running the parent contest.""",
+        related_name='contests',
+        editable=False,
+    )
+
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        editable=False,
+    )
+
+    # Legacy
+    HISTORY = Choices(
+        (0, 'new', 'New',),
+        (10, 'none', 'None',),
+        (20, 'pdf', 'PDF',),
+        (30, 'places', 'Places',),
+        (40, 'incomplete', 'Incomplete',),
+        (50, 'complete', 'Complete',),
     )
 
     history = models.IntegerField(
@@ -1066,16 +1070,17 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.organization,
+        self.year = self.convention.year
+        self.organization = self.convention.organization
+        self.name = u"{0} {1}".format(
+            self.convention,
             self.get_kind_display(),
-            self.year,
         )
         super(Contest, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('organization', 'kind', 'year',),
+            ('convention', 'kind',),
         )
         ordering = (
             '-year',
@@ -1392,6 +1397,7 @@ class Convention(TimeStampedModel):
         (5, 'pacific', 'Pacific',),
         (6, 'southcombo', 'Southeast and Southwest',),
         (7, 'northcombo', 'Northeast and Northwest',),
+        (8, 'district', 'District',),
     )
 
     YEAR_CHOICES = []

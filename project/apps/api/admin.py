@@ -156,6 +156,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status_monitor',
         'history_monitor',
+        'organization',
+        'year',
     ]
 
     inlines = [
