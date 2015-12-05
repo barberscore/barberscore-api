@@ -16,8 +16,8 @@ from autoslug import AutoSlugField
 
 from django.core.validators import (
     RegexValidator,
-    # MaxValueValidator,
-    # MinValueValidator,
+    MaxValueValidator,
+    MinValueValidator,
 )
 
 from django_fsm import (
@@ -2204,14 +2204,6 @@ class Score(TimeStampedModel):
         monitor='status',
     )
 
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
     song = models.ForeignKey(
         'Song',
         related_name='scores',
@@ -2222,35 +2214,44 @@ class Score(TimeStampedModel):
         related_name='scores',
     )
 
+    category = models.IntegerField(
+        choices=CATEGORY,
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
     points = models.IntegerField(
         help_text="""
             The number of points awarded (0-100)""",
         null=True,
         blank=True,
-        # validators=[
-        #     MaxValueValidator(
-        #         100,
-        #         message='Points must be between 0 - 100',
-        #     ),
-        #     MinValueValidator(
-        #         0,
-        #         message='Points must be between 0 - 100',
-        #     ),
-        # ]
+        validators=[
+            MaxValueValidator(
+                100,
+                message='Points must be between 0 - 100',
+            ),
+            MinValueValidator(
+                0,
+                message='Points must be between 0 - 100',
+            ),
+        ]
     )
 
-    # class Meta:
-    #     ordering = (
-    #         'judge',
-    #         'song__order',
-    #     )
+    class Meta:
+        ordering = (
+            'judge',
+            'song',
+        )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
+        self.name = u"{0} {1}".format(
+            self.judge,
+            self.song,
         )
         super(Score, self).save(*args, **kwargs)
 
