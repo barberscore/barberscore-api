@@ -1771,6 +1771,7 @@ class Performance(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -1814,77 +1815,53 @@ class Performance(TimeStampedModel):
         blank=True,
     )
 
-    # The following need to be protected until released.
-    # Different model?
-
+    # Denormalized
     mus_points = models.IntegerField(
-        # help_text="""
-        #     The total music points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_points = models.IntegerField(
-        # help_text="""
-        #     The total presentation points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     sng_points = models.IntegerField(
-        # help_text="""
-        #     The total singing points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_points = models.IntegerField(
-        # help_text="""
-        #     The total points for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     mus_score = models.FloatField(
-        # help_text="""
-        #     The percentile music score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     prs_score = models.FloatField(
-        # help_text="""
-        #     The percentile presentation score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     sng_score = models.FloatField(
-        # help_text="""
-        #     The percentile singing score for this performance.""",
         null=True,
         blank=True,
         editable=False,
     )
 
     total_score = models.FloatField(
-        # help_text="""
-        #     The total percentile score for this performance.""",
         null=True,
         blank=True,
         editable=False,
-    )
-
-    penalty = models.TextField(
-        help_text="""
-            Free form for penalties (notes).""",
-        blank=True,
     )
 
     @staticmethod
