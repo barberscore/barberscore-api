@@ -304,6 +304,10 @@ class Award(TimeStampedModel):
         (3, 'senior', 'Senior',),
         (4, 'collegiate', 'Collegiate',),
         (5, 'novice', 'Novice',),
+        (6, 'a', 'Plateau A',),
+        (7, 'aa', 'Plateau AA',),
+        (8, 'aaa', 'Plateau AAA',),
+        (9, 'dc', 'Dealer\'s Choice',),
     )
 
     LEVEL = Choices(
@@ -1386,6 +1390,8 @@ class Convention(TimeStampedModel):
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
         (5, 'pacific', 'Pacific',),
+        (6, 'southcombo', 'Southeast and Southwest',),
+        (7, 'northcombo', 'Northeast and Northwest',),
     )
 
     YEAR_CHOICES = []
