@@ -242,7 +242,6 @@ class CompetitorInline(admin.TabularInline):
         'name',
         'award',
         'contestant',
-        'place',
         'total_score',
     )
     ordering = (
