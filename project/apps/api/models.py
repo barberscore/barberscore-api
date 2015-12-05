@@ -947,6 +947,10 @@ class Contest(TimeStampedModel):
         (4, 'collegiate', 'Collegiate',),
     )
 
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
     ROUNDS_CHOICES = []
     for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
@@ -998,22 +1002,37 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
+    organization = TreeForeignKey(
+        'Organization',
+        help_text="""
+            The organization that will confer the award.  Note that this may be different than the organization running the parent contest.""",
+        related_name='contests',
+        null=True,
+        blank=True,
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of contest.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior contests respectively.""",
+        choices=KIND,
+    )
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        null=True,
+        blank=True,
+    )
+
     size = models.IntegerField(
         help_text="""
-            Size of the judging contest (typically three or five.)""",
+            Size of the judging panel (per category).""",
         choices=PANEL_CHOICES,
     )
 
     rounds = models.IntegerField(
         help_text="""
-            Number of rounds""",
+            Number of rounds (sessions) for the contest.""",
         choices=ROUNDS_CHOICES,
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The Contest is different than the award objective.""",
-        choices=KIND,
     )
 
     history = models.IntegerField(
@@ -1382,14 +1401,19 @@ class Convention(TimeStampedModel):
     )
 
     name = models.CharField(
-        help_text="""
-            The name of the convention (determined programmatically.)""",
-        max_length=200,
+        max_length=255,
         unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
     )
 
     status = models.IntegerField(
-        help_text="""The current status""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1397,6 +1421,12 @@ class Convention(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        help_text="""
+            The organization hosting the convention.""",
     )
 
     kind = models.IntegerField(
@@ -1407,19 +1437,6 @@ class Convention(TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        help_text="""
-            The district for the convention.  If International, this is 'BHS'.""",
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     dates = models.CharField(
