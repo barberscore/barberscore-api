@@ -426,7 +426,7 @@ class Award(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('level', 'kind', 'year', 'goal', 'organization'),
+            ('level', 'kind', 'year', 'goal', 'organization', 'contest',),
         )
         ordering = (
             '-year',
