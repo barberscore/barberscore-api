@@ -281,12 +281,13 @@ class JudgeInline(admin.TabularInline):
     fields = (
         'contest',
         'person',
-        'organization',
+        # 'organization',
         'category',
         'slot',
-        # 'is_practice',
+        'kind',
     )
     ordering = (
+        'kind',
         'category',
         'slot',
     )
