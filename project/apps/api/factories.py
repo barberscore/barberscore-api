@@ -44,7 +44,8 @@ def add_judges(contest):
         person=admin.person,
         contest=contest,
         slot=1,
-        kind=admin.category,
+        category=admin.category,
+        kind=Judge.KIND.official,
     )
     # TODO This is not very DRY...
     musics = Certification.objects.filter(
@@ -56,7 +57,8 @@ def add_judges(contest):
             person=music.person,
             contest=contest,
             slot=i,
-            kind=music.category,
+            category=music.category,
+            kind=Judge.KIND.official,
         )
         i += 1
     presentations = Certification.objects.filter(
@@ -68,7 +70,8 @@ def add_judges(contest):
             person=presentation.person,
             contest=contest,
             slot=i,
-            kind=presentation.category,
+            category=presentation.category,
+            kind=Judge.KIND.official,
         )
         i += 1
     singings = Certification.objects.filter(
@@ -80,7 +83,8 @@ def add_judges(contest):
             person=singing.person,
             contest=contest,
             slot=i,
-            kind=singing.category,
+            category=singing.category,
+            kind=Judge.KIND.official,
         )
         i += 1
     return "Judges Imcontested"
