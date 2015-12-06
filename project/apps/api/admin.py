@@ -4,69 +4,134 @@ from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
 
 from .inlines import (
+    ArrangerInline,
+    AwardInline,
+    CertificationInline,
+    CompetitorInline,
+    ContestInline,
     ContestantInline,
     DirectorInline,
-    PerformanceInline,
-    AwardInline,
-    # PlacementInline,
-    ContestInline,
     JudgeInline,
+    PerformanceInline,
     ScoreInline,
-    SongStackedInline,
-    CertificationInline,
-    # SongInline,
-    SingerInline,
     SessionInline,
-    CompetitorInline,
+    SingerInline,
+    SongStackedInline,
 )
 
 from .models import (
     Arranger,
-    Catalog,
-    Convention,
     Award,
-    Contestant,
-    Group,
-    Tune,
-    Person,
-    Song,
-    Score,
-    Contest,
-    Judge,
-    Session,
-    Performance,
-    User,
-    Organization,
+    Catalog,
     Competitor,
+    Contest,
+    Contestant,
+    Convention,
+    Group,
+    Judge,
+    Organization,
+    Performance,
+    Person,
+    Score,
+    Session,
+    Song,
+    Tune,
+    User,
 )
 
 # from grappelli.forms import GrappelliSortableHiddenMixin
 from super_inlines.admin import SuperModelAdmin
 
 
-# class ArrangersInline(admin.TabularInline):
-#     model = Arranger
-#     fields = (
-#         'song',
-#         'person',
-#         'part',
-#         # 'is_practice',
-#     )
-#     ordering = (
-#         'person',
-#     )
-#     extra = 0
-#     raw_id_fields = (
-#         'person',
-#     )
-#     autocomplete_lookup_fields = {
-#         'fk': [
-#             'person',
-#         ]
-#     }
-#     can_delete = True
-#     show_change_link = True
-#     classes = ('grp-collapse grp-closed',)
+@admin.register(Arranger)
+class ArrangerAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'catalog',
+        'person',
+    ]
+
+
+@admin.register(Award)
+class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    inlines = [
+        CompetitorInline,
+    ]
+
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    save_on_top = True
+    search_fields = (
+        'name',
+    )
+
+    list_filter = (
+        'status',
+        'history',
+        'goal',
+        'level',
+        'kind',
+        'year',
+        'organization',
+        'contest',
+    )
+
+    list_display = (
+        'name',
+        'status',
+        'contest',
+        'organization',
+        'level',
+        'kind',
+        'goal',
+        'year',
+        'rounds',
+        'qual_score',
+    )
+
+    fields = (
+        'name',
+        ('status', 'status_monitor',),
+        ('history', 'history_monitor',),
+        'contest',
+        'organization',
+        'level',
+        'kind',
+        'goal',
+        'year',
+        'rounds',
+        'qual_score',
+    )
+
+    readonly_fields = (
+        'name',
+        'status_monitor',
+        'history_monitor',
+    )
+
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == "convention":
+    #         try:
+    #             parent_obj_id = request.resolver_match.args[0]
+    #             obj = Award.objects.get(pk=parent_obj_id)
+    #             kwargs["queryset"] = Convention.objects.filter(year=obj.year)
+    #         except IndexError:
+    #             pass
+    #     return super(AwardAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+@admin.register(Catalog)
+class CatalogAdmin(admin.ModelAdmin):
+    list_display = [
+        'song_name',
+        'tune',
+        'bhs_id',
+        'bhs_songname',
+        'bhs_arranger',
+    ]
 
 
 @admin.register(Competitor)
@@ -166,97 +231,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         AwardInline,
         ContestantInline,
     ]
-
-
-@admin.register(Arranger)
-class ArrangerAdmin(admin.ModelAdmin):
-    list_display = [
-        'name',
-        'catalog',
-        'person',
-    ]
-
-
-@admin.register(Catalog)
-class CatalogAdmin(admin.ModelAdmin):
-    list_display = [
-        'song_name',
-        'tune',
-        'bhs_id',
-        'bhs_songname',
-        'bhs_arranger',
-    ]
-
-
-@admin.register(Award)
-class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    inlines = [
-        CompetitorInline,
-    ]
-
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    save_on_top = True
-    search_fields = (
-        'name',
-    )
-
-    list_filter = (
-        'status',
-        'history',
-        'goal',
-        'level',
-        'kind',
-        'year',
-        'organization',
-        'contest',
-    )
-
-    list_display = (
-        'name',
-        'status',
-        'contest',
-        'organization',
-        'level',
-        'kind',
-        'goal',
-        'year',
-        'rounds',
-        'qual_score',
-    )
-
-    fields = (
-        'name',
-        ('status', 'status_monitor',),
-        ('history', 'history_monitor',),
-        'contest',
-        'organization',
-        'level',
-        'kind',
-        'goal',
-        'year',
-        'rounds',
-        'qual_score',
-    )
-
-    readonly_fields = (
-        'name',
-        'status_monitor',
-        'history_monitor',
-    )
-
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == "convention":
-    #         try:
-    #             parent_obj_id = request.resolver_match.args[0]
-    #             obj = Award.objects.get(pk=parent_obj_id)
-    #             kwargs["queryset"] = Convention.objects.filter(year=obj.year)
-    #         except IndexError:
-    #             pass
-    #     return super(AwardAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Contestant)
@@ -552,74 +526,6 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     )
 
 
-@admin.register(Song)
-class SongAdmin(admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    save_on_top = True
-    list_display = (
-        'name',
-        'status',
-        'tune',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points'
-    )
-
-    search_fields = (
-        'name',
-    )
-
-    fields = [
-        'name',
-        ('status', 'status_monitor',),
-        'order',
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-        'tune',
-        'catalog',
-    ]
-
-    inlines = [
-        # ArrangersInline,
-        ScoreInline,
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    readonly_fields = (
-        'name',
-        'order',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-        'status_monitor',
-    )
-    raw_id_fields = (
-        'performance',
-        'tune',
-        'catalog',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'performance',
-            'tune',
-        ]
-    }
-
-    ordering = (
-        'name',
-        'order',
-    )
-
-
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     search_fields = (
@@ -664,6 +570,7 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         DirectorInline,
         SingerInline,
+        ArrangerInline,
         CertificationInline,
     ]
 
@@ -765,6 +672,74 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'name',
     ]
+
+
+@admin.register(Song)
+class SongAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    save_on_top = True
+    list_display = (
+        'name',
+        'status',
+        'tune',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points'
+    )
+
+    search_fields = (
+        'name',
+    )
+
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        'order',
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+        'tune',
+        'catalog',
+    ]
+
+    inlines = [
+        # ArrangersInline,
+        ScoreInline,
+    ]
+
+    list_filter = (
+        'status',
+    )
+
+    readonly_fields = (
+        'name',
+        'order',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
+        'status_monitor',
+    )
+    raw_id_fields = (
+        'performance',
+        'tune',
+        'catalog',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'performance',
+            'tune',
+        ]
+    }
+
+    ordering = (
+        'name',
+        'order',
+    )
 
 
 @admin.register(Tune)
