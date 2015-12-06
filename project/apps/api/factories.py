@@ -9,14 +9,14 @@ from factory.django import (
 )
 
 from .models import (
-    Group,
-    Contestant,
-    Contest,
     Certification,
-    Tune,
-    Judge,
     Competitor,
+    Contest,
+    Contestant,
+    Group,
+    Judge,
     Session,
+    Tune,
 )
 
 

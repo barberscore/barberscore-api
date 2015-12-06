@@ -50,15 +50,34 @@ from .serializers import (
 )
 
 
-class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.select_related(
+class AwardViewSet(viewsets.ModelViewSet):
+    queryset = Award.objects.select_related(
+        'contest',
         'organization',
-    ).exclude(
-        status=Convention.STATUS.new,
+    ).filter(
+        # history=Contest.HISTORY.complete,
     ).prefetch_related(
-        'contests',
+        'competitors',
     )
-    serializer_class = ConventionSerializer
+    serializer_class = AwardSerializer
+    lookup_field = 'slug'
+
+
+class CatalogViewSet(viewsets.ModelViewSet):
+    queryset = Catalog.objects.select_related(
+        'tune',
+        'person',
+    )
+    serializer_class = CatalogSerializer
+    lookup_field = 'slug'
+
+
+class CompetitorViewSet(viewsets.ModelViewSet):
+    queryset = Competitor.objects.select_related(
+        'award',
+        'contestant',
+    )
+    serializer_class = CompetitorSerializer
     lookup_field = 'slug'
 
 
@@ -77,28 +96,6 @@ class ContestViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
-        'contest',
-        'organization',
-    ).filter(
-        # history=Contest.HISTORY.complete,
-    ).prefetch_related(
-        'competitors',
-    )
-    serializer_class = AwardSerializer
-    lookup_field = 'slug'
-
-
-class CompetitorViewSet(viewsets.ModelViewSet):
-    queryset = Competitor.objects.select_related(
-        'award',
-        'contestant',
-    )
-    serializer_class = CompetitorSerializer
-    lookup_field = 'slug'
-
-
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'contest',
@@ -113,13 +110,24 @@ class ContestantViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class SessionViewSet(viewsets.ModelViewSet):
-    queryset = Session.objects.select_related(
-        'contest',
+class ConventionViewSet(viewsets.ModelViewSet):
+    queryset = Convention.objects.select_related(
+        'organization',
+    ).exclude(
+        status=Convention.STATUS.new,
     ).prefetch_related(
-        'performances',
+        'contests',
     )
-    serializer_class = SessionSerializer
+    serializer_class = ConventionSerializer
+    lookup_field = 'slug'
+
+
+class DirectorViewSet(viewsets.ModelViewSet):
+    queryset = Director.objects.select_related(
+        'person',
+        'contestant',
+    )
+    serializer_class = DirectorSerializer
     lookup_field = 'slug'
 
 
@@ -131,31 +139,21 @@ class GroupViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class PersonViewSet(viewsets.ModelViewSet):
-    queryset = Person.objects.prefetch_related(
-        # 'catalogs',
-        'choruses',
-        'quartets',
-        'contests',
+class JudgeViewSet(viewsets.ModelViewSet):
+    queryset = Judge.objects.select_related(
+        'contest',
+        'person',
+        'organization',
+    ).prefetch_related(
+        'scores',
     )
-    serializer_class = PersonSerializer
+    serializer_class = JudgeSerializer
     lookup_field = 'slug'
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
-    lookup_field = 'slug'
-
-
-class SongViewSet(viewsets.ModelViewSet):
-    queryset = Song.objects.select_related(
-        'catalog',
-        'performance',
-    ).prefetch_related(
-        'scores',
-    )
-    serializer_class = SongSerializer
     lookup_field = 'slug'
 
 
@@ -170,30 +168,14 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class SingerViewSet(viewsets.ModelViewSet):
-    queryset = Singer.objects.select_related(
-        'person',
-        'contestant',
-    )
-    serializer_class = SingerSerializer
-    lookup_field = 'slug'
-
-
-class DirectorViewSet(viewsets.ModelViewSet):
-    queryset = Director.objects.select_related(
-        'person',
-        'contestant',
-    )
-    serializer_class = DirectorSerializer
-    lookup_field = 'slug'
-
-
-class TuneViewSet(viewsets.ModelViewSet):
-    queryset = Tune.objects.prefetch_related(
+class PersonViewSet(viewsets.ModelViewSet):
+    queryset = Person.objects.prefetch_related(
         # 'catalogs',
-        'songs',
+        'choruses',
+        'quartets',
+        'contests',
     )
-    serializer_class = TuneSerializer
+    serializer_class = PersonSerializer
     lookup_field = 'slug'
 
 
@@ -208,26 +190,44 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ]
 
 
-class CatalogViewSet(viewsets.ModelViewSet):
-    queryset = Catalog.objects.select_related(
-        'tune',
-        'person',
-    )
-    serializer_class = CatalogSerializer
-    lookup_field = 'slug'
-
-
 class SearchViewSet(HaystackViewSet):
     serializer_class = SearchSerializer
 
 
-class JudgeViewSet(viewsets.ModelViewSet):
-    queryset = Judge.objects.select_related(
+class SessionViewSet(viewsets.ModelViewSet):
+    queryset = Session.objects.select_related(
         'contest',
+    ).prefetch_related(
+        'performances',
+    )
+    serializer_class = SessionSerializer
+    lookup_field = 'slug'
+
+
+class SingerViewSet(viewsets.ModelViewSet):
+    queryset = Singer.objects.select_related(
         'person',
-        'organization',
+        'contestant',
+    )
+    serializer_class = SingerSerializer
+    lookup_field = 'slug'
+
+
+class SongViewSet(viewsets.ModelViewSet):
+    queryset = Song.objects.select_related(
+        'catalog',
+        'performance',
     ).prefetch_related(
         'scores',
     )
-    serializer_class = JudgeSerializer
+    serializer_class = SongSerializer
+    lookup_field = 'slug'
+
+
+class TuneViewSet(viewsets.ModelViewSet):
+    queryset = Tune.objects.prefetch_related(
+        # 'catalogs',
+        'songs',
+    )
+    serializer_class = TuneSerializer
     lookup_field = 'slug'
