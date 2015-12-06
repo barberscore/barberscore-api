@@ -467,7 +467,7 @@ class Award(TimeStampedModel):
         r = 1
         while r <= self.rounds:
             self.sessions.create(
-                award=self,
+                contest=self,
                 kind=r,
             )
             r += 1

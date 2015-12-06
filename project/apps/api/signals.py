@@ -9,7 +9,12 @@ from rest_framework.authtoken.models import Token
 from django.conf import settings
 
 from .models import (
-    Award,
+    Contest,
+)
+
+from .factories import (
+    add_sessions,
+    add_judges,
 )
 
 
@@ -19,9 +24,12 @@ def user_post_save(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-# @receiver(post_save, sender=Award)
-# def award_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-#     if not raw:
-#         if created:
-#             instance.build()
-#             instance.save()
+@receiver(post_save, sender=Contest)
+def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    if not raw:
+        if created:
+            add_sessions(instance)
+            add_judges(instance)
+            instance.save()
+            # instance.build()
+            # instance.save()
