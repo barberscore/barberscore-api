@@ -52,6 +52,17 @@ class ArrangerAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Catalog)
+class CatalogAdmin(admin.ModelAdmin):
+    list_display = [
+        'song_name',
+        'tune',
+        'bhs_id',
+        'bhs_songname',
+        'bhs_arranger',
+    ]
+
+
 @admin.register(Contest)
 class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
@@ -123,17 +134,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     #     return super(ContestAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-@admin.register(Catalog)
-class CatalogAdmin(admin.ModelAdmin):
-    list_display = [
-        'song_name',
-        'tune',
-        'bhs_id',
-        'bhs_songname',
-        'bhs_arranger',
-    ]
-
-
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -168,143 +168,6 @@ class ContestantAdmin(admin.ModelAdmin):
         'performer',
         'contest',
     ]
-
-
-@admin.register(Session)
-class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    save_on_top = True
-    fields = [
-        'name',
-        ('status', 'status_monitor',),
-        ('history', 'history_monitor',),
-        'convention',
-        'organization',
-        'year',
-        'kind',
-        'size',
-        'num_rounds',
-    ]
-
-    list_display = [
-        'name',
-        'status',
-        'convention',
-        'kind',
-        'size',
-        'num_rounds',
-    ]
-
-    list_filter = (
-        'status',
-        'history',
-        'kind',
-        'year',
-        'organization',
-    )
-
-    raw_id_fields = (
-        'convention',
-    )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'convention',
-        ]
-    }
-
-    readonly_fields = [
-        'name',
-        'status_monitor',
-        'history_monitor',
-        'organization',
-        'year',
-    ]
-
-    inlines = [
-        RoundInline,
-        JudgeInline,
-        ContestInline,
-        PerformerInline,
-    ]
-
-
-@admin.register(Performer)
-class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    change_list_template = "admin/change_list_filter_sidebar.html"
-
-    inlines = [
-        SingerInline,
-        DirectorInline,
-        PerformanceInline,
-        ContestantInline,
-    ]
-
-    list_display = (
-        'name',
-        'status',
-        'seed',
-        'prelim',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-        'men',
-        'place',
-    )
-
-    search_fields = (
-        'name',
-    )
-
-    list_filter = (
-        'status',
-    )
-
-    raw_id_fields = (
-        'session',
-        'group',
-    )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'session',
-            'group',
-        ]
-    }
-    fields = (
-        'name',
-        ('status', 'status_monitor',),
-        'session',
-        ('group', 'organization',),
-        ('seed', 'prelim',),
-        ('place', 'men',),
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-    )
-
-    readonly_fields = (
-        'name',
-        'status_monitor',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-    )
-
-    save_on_top = True
 
 
 @admin.register(Convention)
@@ -526,6 +389,80 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     )
 
 
+@admin.register(Performer)
+class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    change_list_template = "admin/change_list_filter_sidebar.html"
+
+    inlines = [
+        SingerInline,
+        DirectorInline,
+        PerformanceInline,
+        ContestantInline,
+    ]
+
+    list_display = (
+        'name',
+        'status',
+        'seed',
+        'prelim',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
+        'men',
+        'place',
+    )
+
+    search_fields = (
+        'name',
+    )
+
+    list_filter = (
+        'status',
+    )
+
+    raw_id_fields = (
+        'session',
+        'group',
+    )
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'session',
+            'group',
+        ]
+    }
+    fields = (
+        'name',
+        ('status', 'status_monitor',),
+        'session',
+        ('group', 'organization',),
+        ('seed', 'prelim',),
+        ('place', 'men',),
+        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+    )
+
+    readonly_fields = (
+        'name',
+        'status_monitor',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
+    )
+
+    save_on_top = True
+
+
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     search_fields = (
@@ -619,6 +556,69 @@ class ScoreAdmin(admin.ModelAdmin):
     ordering = [
         'judge',
         'song',
+    ]
+
+
+@admin.register(Session)
+class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    save_on_top = True
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        ('history', 'history_monitor',),
+        'convention',
+        'organization',
+        'year',
+        'kind',
+        'size',
+        'num_rounds',
+    ]
+
+    list_display = [
+        'name',
+        'status',
+        'convention',
+        'kind',
+        'size',
+        'num_rounds',
+    ]
+
+    list_filter = (
+        'status',
+        'history',
+        'kind',
+        'year',
+        'organization',
+    )
+
+    raw_id_fields = (
+        'convention',
+    )
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'convention',
+        ]
+    }
+
+    readonly_fields = [
+        'name',
+        'status_monitor',
+        'history_monitor',
+        'organization',
+        'year',
+    ]
+
+    inlines = [
+        RoundInline,
+        JudgeInline,
+        ContestInline,
+        PerformerInline,
     ]
 
 
