@@ -11,7 +11,7 @@ from factory.django import (
 from .models import (
     Certification,
     Competitor,
-    Contest,
+    Session,
     Contestant,
     Group,
     Judge,
@@ -20,14 +20,14 @@ from .models import (
 )
 
 
-def add_rounds(contest):
+def add_rounds(session):
     # TODO Wonky.  Do these need kinds?
-    rounds = contest.rounds
+    rounds = session.rounds
     k = rounds
     i = 1
     while i <= rounds:
         Round.objects.create(
-            contest=contest,
+            session=session,
             num=i,
             kind=k,
         )
@@ -35,14 +35,14 @@ def add_rounds(contest):
         k -= 1
 
 
-def add_judges(contest):
-    size = contest.size
+def add_judges(session):
+    size = session.size
     admin = Certification.objects.filter(
         category=Certification.CATEGORY.admin,
     ).order_by('?').first()
     Judge.objects.create(
         person=admin.person,
-        contest=contest,
+        session=session,
         slot=1,
         category=admin.category,
         kind=Judge.KIND.official,
@@ -55,7 +55,7 @@ def add_judges(contest):
     for music in musics:
         Judge.objects.create(
             person=music.person,
-            contest=contest,
+            session=session,
             slot=i,
             category=music.category,
             kind=Judge.KIND.official,
@@ -68,7 +68,7 @@ def add_judges(contest):
     for presentation in presentations:
         Judge.objects.create(
             person=presentation.person,
-            contest=contest,
+            session=session,
             slot=i,
             category=presentation.category,
             kind=Judge.KIND.official,
@@ -81,17 +81,17 @@ def add_judges(contest):
     for singing in singings:
         Judge.objects.create(
             person=singing.person,
-            contest=contest,
+            session=session,
             slot=i,
             category=singing.category,
             kind=Judge.KIND.official,
         )
         i += 1
-    return "Judges Imcontested"
+    return "Judges Imsessioned"
 
 
-def add_contestants(contest, number=20):
-    if contest.kind == Contest.KIND.chorus:
+def add_contestants(session, number=20):
+    if session.kind == Session.KIND.chorus:
         kind = Group.KIND.chorus
     else:
         kind = Group.KIND.quartet
@@ -101,7 +101,7 @@ def add_contestants(contest, number=20):
     ).order_by('?')[:number]
     for group in groups:
         contestant = Contestant.objects.create(
-            contest=contest,
+            session=session,
             group=group,
             prelim=randint(700, 900) * .1,
         )
@@ -112,7 +112,7 @@ def add_contestants(contest, number=20):
 
 
 def add_competitors(award, number=10):
-    contestants = award.contest.contestants.order_by('?')[:number]
+    contestants = award.session.contestants.order_by('?')[:number]
     for contestant in contestants:
         Competitor.objects.create(
             award=award,

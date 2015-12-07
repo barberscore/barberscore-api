@@ -86,7 +86,7 @@ class JudgeForm(forms.ModelForm):
     class Meta:
         model = Judge
         fields = [
-            'contest',
+            'session',
             'person',
             'category',
             'slot',
@@ -110,7 +110,7 @@ class JudgeForm(forms.ModelForm):
                     'readonly': 'readonly',
                 },
             ),
-            'contest': forms.HiddenInput(
+            'session': forms.HiddenInput(
             ),
         }
 

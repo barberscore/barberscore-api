@@ -4,7 +4,7 @@ from drf_haystack.serializers import HaystackSerializer
 
 from .models import (
     Convention,
-    Contest,
+    Session,
     Award,
     Competitor,
     Contestant,
@@ -30,7 +30,7 @@ from .search_indexes import (
 
 
 class AwardSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
+    session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -61,7 +61,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'year',
             'rounds',
             'qual_score',
-            'contest',
+            'session',
             'competitors',
         )
 
@@ -124,7 +124,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestSerializer(serializers.ModelSerializer):
+class SessionSerializer(serializers.ModelSerializer):
     convention = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -155,7 +155,7 @@ class ContestSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Contest
+        model = Session
         fields = (
             'id',
             # 'url',
@@ -174,7 +174,7 @@ class ContestSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
+    session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -232,7 +232,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'total_score',
             'delta_score',
             'delta_place',
-            'contest',
+            'session',
             'performances',
             'directors',
             'singers',
@@ -246,7 +246,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contests = serializers.SlugRelatedField(
+    sessions = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -266,7 +266,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'year',
             'organization',
             # 'timezone',
-            'contests',
+            'sessions',
         )
 
 
@@ -331,7 +331,7 @@ class JudgeSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='slug',
     )
-    contest = serializers.SlugRelatedField(
+    session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -350,7 +350,7 @@ class JudgeSerializer(serializers.ModelSerializer):
             'person',
             'kind',
             'status',
-            'contest',
+            'session',
             'scores',
         )
 
@@ -450,7 +450,7 @@ class PersonSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contests = serializers.SlugRelatedField(
+    sessions = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -477,7 +477,7 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'catalogs',
             'choruses',
             'quartets',
-            'contests',
+            'sessions',
         )
 
 
@@ -528,7 +528,7 @@ class SearchSerializer(HaystackSerializer):
 
 
 class RoundSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
+    session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -548,7 +548,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'slots',
-            'contest',
+            'session',
             'performances',
         )
 

@@ -91,7 +91,7 @@ def validate_trimmed(value):
         )
 
 
-def is_imcontested(award):
+def is_imsessioned(award):
     for judge in award.judges.official():
         if not judge.person:
             return False
