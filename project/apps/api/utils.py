@@ -283,8 +283,8 @@ def merge_groups(from_group, to_group):
 
 
 def score_performer(performer):
-    session = performer.award.session
-    if performer.award.kind == 1:
+    session = performer.contest.session
+    if performer.contest.kind == 1:
         if performer.quarters_points and not performer.semis_points:
             performer.score = round(performer.points / (session * 6 * 1), 1)
         elif performer.semis_points and not performer.finals_points:
@@ -312,7 +312,7 @@ def parse_arrangers(data):
     for row in data:
         try:
             c = Performer.objects.get(
-                award__name='International Quartet 2015',
+                contest__name='International Quartet 2015',
                 group__name__iexact=row[0],
             )
         except c.DoesNotExist:

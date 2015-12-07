@@ -91,30 +91,30 @@ def validate_trimmed(value):
         )
 
 
-def is_imsessioned(award):
-    for judge in award.judges.official():
+def is_imsessioned(contest):
+    for judge in contest.judges.official():
         if not judge.person:
             return False
     return True
 
 
-def is_scheduled(award):
-    for round in award.rounds.all():
+def is_scheduled(contest):
+    for round in contest.rounds.all():
         if not round.start_date:
             return False
     return True
 
 
-def has_performers(award):
-    return award.performers.exists()
+def has_performers(contest):
+    return contest.performers.exists()
 
 
-def has_awards(award):
-    return award.awards.exists()
+def has_contests(contest):
+    return contest.contests.exists()
 
 
-def award_started(round):
-    if round.award.status == round.award.STATUS.started:
+def contest_started(round):
+    if round.contest.status == round.contest.STATUS.started:
         return True
     else:
         return False
@@ -127,8 +127,8 @@ def round_scheduled(round):
     return True
 
 
-def rounds_finished(award):
-    rounds = award.rounds.all()
+def rounds_finished(contest):
+    rounds = contest.rounds.all()
     for round in rounds:
         if round.status != round.STATUS.finished:
             return False
