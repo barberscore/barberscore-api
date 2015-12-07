@@ -8,7 +8,7 @@ from .models import (
     Award,
     Competitor,
     Contestant,
-    Session,
+    Round,
     Group,
     Person,
     Tune,
@@ -136,7 +136,7 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    sessions = serializers.SlugRelatedField(
+    rounds = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -167,7 +167,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'size',
             'convention',
             'awards',
-            'sessions',
+            'rounds',
             'contestants',
             'judges',
         )
@@ -397,7 +397,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    session = serializers.SlugRelatedField(
+    round = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -426,7 +426,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
-            'session',
+            'round',
             'contestant',
             'songs',
         )
@@ -527,7 +527,7 @@ class SearchSerializer(HaystackSerializer):
         ]
 
 
-class SessionSerializer(serializers.ModelSerializer):
+class RoundSerializer(serializers.ModelSerializer):
     contest = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -539,7 +539,7 @@ class SessionSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Session
+        model = Round
         fields = (
             'id',
             # 'url',

@@ -5,7 +5,7 @@ from .views import (
     ContestViewSet,
     AwardViewSet,
     CompetitorViewSet,
-    SessionViewSet,
+    RoundViewSet,
     GroupViewSet,
     ContestantViewSet,
     TuneViewSet,
@@ -37,7 +37,7 @@ router.register(r'organization', OrganizationViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'score', ScoreViewSet)
-router.register(r'session', SessionViewSet)
+router.register(r'round', RoundViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'tune', TuneViewSet)
 router.register(r'search', SearchViewSet, base_name='search')

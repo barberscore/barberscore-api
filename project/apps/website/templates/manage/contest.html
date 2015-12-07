@@ -16,8 +16,8 @@
         {# <li><a href='{% url "website:award_draw" award.slug %}'>Draw</a></li> #}
         {# <li><a href='{% url "website:award_start" award.slug %}'>Start</a></li> #}
         <ul>
-          {% for session in sessions %}
-            {# <li><a href='{% url "website:session_score" session.slug %}'>Score {{session.kind}}</a></li> #}
+          {% for round in rounds %}
+            {# <li><a href='{% url "website:round_score" round.slug %}'>Score {{round.kind}}</a></li> #}
           {% endfor %}
         </ul>
         <li><a href='{% url "website:award_end" award.slug %}'>End</a></li>
