@@ -1698,6 +1698,7 @@ class Judge(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        # limit_choices_to={'certifications': False},
     )
 
     organization = TreeForeignKey(
@@ -2122,7 +2123,7 @@ class Person(Common):
 
     @property
     def is_judge(self):
-        return bool(self.judge)
+        return bool(self.certifications.exists())
 
     @property
     def first_name(self):
