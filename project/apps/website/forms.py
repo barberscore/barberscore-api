@@ -5,7 +5,7 @@ from django.forms import (
 )
 
 from apps.api.models import (
-    Award,
+    Contest,
     Judge,
     Performer,
     Score,
@@ -52,9 +52,9 @@ class LoginForm(forms.Form):
     )
 
 
-class AwardForm(forms.ModelForm):
+class ContestForm(forms.ModelForm):
     class Meta:
-        model = Award
+        model = Contest
         fields = [
             'rounds',
         ]
@@ -67,19 +67,19 @@ class AwardForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        award = super(AwardForm, self).save(commit=False)
-        award.build()
+        contest = super(ContestForm, self).save(commit=False)
+        contest.build()
         if commit:
-            award.save()
-        return award
+            contest.save()
+        return contest
 
-    def draw(self, award):
-        award.draw_award()
-        return award
+    def draw(self, contest):
+        contest.draw_contest()
+        return contest
 
-    def start(self, award):
-        award.start_award()
-        return award
+    def start(self, contest):
+        contest.start_contest()
+        return contest
 
 
 class JudgeForm(forms.ModelForm):
@@ -116,7 +116,7 @@ class JudgeForm(forms.ModelForm):
 
 
 # JudgeFormSet = inlineformset_factory(
-#     Award,
+#     Contest,
 #     Judge,
 #     form=JudgeForm,
 #     extra=0,
@@ -124,19 +124,19 @@ class JudgeForm(forms.ModelForm):
 # )
 
 
-def make_performer_form(award):
+def make_performer_form(contest):
     class PerformerForm(forms.ModelForm):
         group = forms.ModelChoiceField(
             queryset=Group.objects.filter(
                 status=Group.STATUS.active,
-                kind=award.kind,
+                kind=contest.kind,
             ),
         )
 
         class Meta:
             model = Performer
             fields = [
-                'award',
+                'contest',
                 'group',
             ]
             extra = 0
@@ -146,7 +146,7 @@ def make_performer_form(award):
                         'class': 'form-control',
                     },
                 ),
-                'award': forms.HiddenInput(
+                'contest': forms.HiddenInput(
                 ),
             }
     return PerformerForm

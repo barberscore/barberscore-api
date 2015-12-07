@@ -8,7 +8,7 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Award,
+    Contest,
 )
 
 
@@ -27,10 +27,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            award = Award.objects.get(
+            contest = Contest.objects.get(
                 slug=options['slug'],
             )
-        except Award.DoesNotExist:
-            raise CommandError("Award does not exist.")
-        result = add_performers(award, options['number'])
+        except Contest.DoesNotExist:
+            raise CommandError("Contest does not exist.")
+        result = add_performers(contest, options['number'])
         self.stdout.write("{0}".format(result))
