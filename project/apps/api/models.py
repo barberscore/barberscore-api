@@ -271,6 +271,158 @@ class Arranger(TimeStampedModel):
         )
 
 
+class Catalog(TimeStampedModel):
+    TEMPO = Choices(
+        (1, "Ballad"),
+        (2, "Uptune"),
+        (3, "Mixed"),
+    )
+
+    DIFFICULTY = Choices(
+        (1, "Very Easy"),
+        (2, "Easy"),
+        (3, "Medium"),
+        (4, "Hard"),
+        (5, "Very Hard"),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    tune = models.ForeignKey(
+        'Tune',
+        null=True,
+        blank=True,
+        related_name='catalogs',
+    )
+
+    song_name = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_published = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_songname = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_fee = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_difficulty = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=DIFFICULTY
+    )
+
+    bhs_tempo = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=TEMPO,
+    )
+
+    bhs_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+
+class Certification(TimeStampedModel):
+    """Certification"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New'),
+        (1, 'active', 'Active'),
+        (2, 'candidate', 'Candidate'),
+        (3, 'inactive', 'Inactive'),
+    )
+
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='certifications',
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.person,
+            self.get_category_display(),
+        )
+        super(Certification, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('category', 'person',),
+        )
+
+
 class Contest(TimeStampedModel):
 
     STATUS = Choices(
@@ -626,158 +778,6 @@ class Contest(TimeStampedModel):
         return "{0} Ready".format(self)
 
 
-class Catalog(TimeStampedModel):
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    tune = models.ForeignKey(
-        'Tune',
-        null=True,
-        blank=True,
-        related_name='catalogs',
-    )
-
-    song_name = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_published = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_songname = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_arranger = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_fee = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_difficulty = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DIFFICULTY
-    )
-
-    bhs_tempo = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=TEMPO,
-    )
-
-    bhs_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-
-class Certification(TimeStampedModel):
-    """Certification"""
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New'),
-        (1, 'active', 'Active'),
-        (2, 'candidate', 'Candidate'),
-        (3, 'inactive', 'Inactive'),
-    )
-
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='certifications',
-    )
-
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.person,
-            self.get_category_display(),
-        )
-        super(Certification, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('category', 'person',),
-        )
-
-
 class Contestant(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -935,452 +935,6 @@ class Contestant(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-
-
-class Session(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'started', 'Started',),
-        (30, 'final', 'Final',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='sessions',
-    )
-
-    KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
-        choices=KIND,
-    )
-
-    SIZE_CHOICES = []
-    for r in reversed(range(1, 6)):
-        SIZE_CHOICES.append((r, r))
-
-    size = models.IntegerField(
-        help_text="""
-            Size of the judging panel (per category).""",
-        choices=SIZE_CHOICES,
-    )
-
-    ROUNDS_CHOICES = []
-    for r in reversed(range(1, 4)):
-        ROUNDS_CHOICES.append((r, r))
-
-    num_rounds = models.IntegerField(
-        help_text="""
-            Number of rounds (rounds) for the session.""",
-        choices=ROUNDS_CHOICES,
-        default=1,
-    )
-
-    # Denormalized
-    organization = TreeForeignKey(
-        'Organization',
-        help_text="""
-            The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
-        related_name='sessions',
-        editable=False,
-    )
-
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-        editable=False,
-    )
-
-    # Legacy
-    HISTORY = Choices(
-        (0, 'new', 'New',),
-        (10, 'none', 'None',),
-        (20, 'pdf', 'PDF',),
-        (30, 'places', 'Places',),
-        (40, 'incomplete', 'Incomplete',),
-        (50, 'complete', 'Complete',),
-    )
-
-    history = models.IntegerField(
-        help_text="""Used to manage state for historical imports.""",
-        choices=HISTORY,
-        default=HISTORY.new,
-    )
-
-    history_monitor = MonitorField(
-        help_text="""History last updated""",
-        monitor='history',
-    )
-
-    scoresheet_pdf = models.FileField(
-        help_text="""
-            The historical PDF OSS.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    scoresheet_csv = models.FileField(
-        help_text="""
-            The parsed scoresheet (used for legacy imports).""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.year = self.convention.year
-        self.organization = self.convention.organization
-        self.name = u"{0} {1}".format(
-            self.convention,
-            self.get_kind_display(),
-        )
-        super(Session, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('convention', 'kind',),
-        )
-        ordering = (
-            '-year',
-            'convention',
-            'kind',
-        )
-
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.started,
-        conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
-        ],
-    )
-    def start(self):
-        # Triggered in UI
-        # TODO seed performers?
-        round = self.rounds.get(num=1)
-        p = 0
-        for performer in self.performers.accepted().order_by('?'):
-            performer.register()
-            performer.save()
-            round.performances.create(
-                round=round,
-                performer=performer,
-                position=p,
-            )
-            p += 1
-        return "{0} Started".format(self)
-
-
-class Performer(TimeStampedModel):
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
-        (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
-        (50, 'official', 'Official',),
-        (60, 'finished', 'Finished',),
-        (90, 'final', 'Final',),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='performers',
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        related_name='performers',
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='performers',
-        null=True,
-        blank=True,
-    )
-
-    picture = models.ImageField(
-        help_text="""
-            The on-stage session picture (as opposed to the "official" photo).""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    seed = models.IntegerField(
-        help_text="""
-            The incoming rank based on prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    men = models.IntegerField(
-        help_text="""
-            The number of men on stage.""",
-        default=4,
-        null=True,
-        blank=True,
-    )
-
-    # Denormalized
-    place = models.IntegerField(
-        help_text="""
-            The final placement/rank of the performer for the entire session (ie, not a specific contest).""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    prs_points = models.IntegerField(
-        null=True,
-        editable=False,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    @property
-    def delta_score(self):
-        """ The difference between qualifying score and final score.""",
-        try:
-            return self.total_score - self.prelim
-        except TypeError:
-            return None
-
-    @property
-    def delta_place(self):
-        """ The difference between qualifying rank and final rank.""",
-        try:
-            return self.seed - self.place
-        except TypeError:
-            return None
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    objects = PassThroughManager.for_queryset_class(PerformerQuerySet)()
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def clean(self):
-        if self.singers.count() > 4:
-            raise ValidationError('There can not be more than four persons in a quartet.')
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.session,
-            self.group,
-        )
-        super(Performer, self).save(*args, **kwargs)
-
-    class Meta:
-        ordering = (
-            'session',
-            'group',
-        )
-        unique_together = (
-            ('group', 'session',),
-        )
-
-    def calculate(self):
-        # If there are no performances, skip.
-        if self.performances.exists():
-            agg = self.performances.all().aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
-
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
-
-            # Calculate percentile
-            try:
-                possible = self.session.size * 2 * self.performances.count()
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
-
-    @transition(field=status, source=STATUS.new, target=STATUS.qualified)
-    def qualify(self):
-        # Send notice?
-        return "{0} Qualified".format(self)
-
-    @transition(field=status, source=[STATUS.qualified, STATUS.declined], target=STATUS.accepted)
-    def accept(self):
-        # Send notice?
-        return "{0} Accepted".format(self)
-
-    @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
-    def decline(self):
-        # Send notice?
-        return "{0} Declined".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.accepted,
-        target=STATUS.official,
-    )
-    def register(self):
-        # Triggered by contest start
-        return "{0} Official".format(self)
-
-    @transition(field=status, source=STATUS.official, target=STATUS.dropped)
-    def drop(self):
-        # Send notice?
-        return "{0} Dropped".format(self)
-
-    @transition(field=status, source=STATUS.official, target=STATUS.finished)
-    def finish(self):
-        # Send notice?
-        return "{0} Finished".format(self)
-
-    @transition(field=status, source=STATUS.finished, target=STATUS.final)
-    def finalize(self):
-        # Send notice?
-        return "{0} Finalized".format(self)
 
 
 class Convention(TimeStampedModel):
@@ -2054,6 +1608,271 @@ class Performance(TimeStampedModel):
         return
 
 
+class Performer(TimeStampedModel):
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'accepted', 'Accepted',),
+        (30, 'declined', 'Declined',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'official', 'Official',),
+        (60, 'finished', 'Finished',),
+        (90, 'final', 'Final',),
+    )
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='performers',
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='performers',
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='performers',
+        null=True,
+        blank=True,
+    )
+
+    picture = models.ImageField(
+        help_text="""
+            The on-stage session picture (as opposed to the "official" photo).""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    seed = models.IntegerField(
+        help_text="""
+            The incoming rank based on prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    men = models.IntegerField(
+        help_text="""
+            The number of men on stage.""",
+        default=4,
+        null=True,
+        blank=True,
+    )
+
+    # Denormalized
+    place = models.IntegerField(
+        help_text="""
+            The final placement/rank of the performer for the entire session (ie, not a specific contest).""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        editable=False,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    @property
+    def delta_score(self):
+        """ The difference between qualifying score and final score.""",
+        try:
+            return self.total_score - self.prelim
+        except TypeError:
+            return None
+
+    @property
+    def delta_place(self):
+        """ The difference between qualifying rank and final rank.""",
+        try:
+            return self.seed - self.place
+        except TypeError:
+            return None
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
+    objects = PassThroughManager.for_queryset_class(PerformerQuerySet)()
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def clean(self):
+        if self.singers.count() > 4:
+            raise ValidationError('There can not be more than four persons in a quartet.')
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.session,
+            self.group,
+        )
+        super(Performer, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = (
+            'session',
+            'group',
+        )
+        unique_together = (
+            ('group', 'session',),
+        )
+
+    def calculate(self):
+        # If there are no performances, skip.
+        if self.performances.exists():
+            agg = self.performances.all().aggregate(
+                mus=models.Sum('mus_points'),
+                prs=models.Sum('prs_points'),
+                sng=models.Sum('sng_points'),
+            )
+            self.mus_points = agg['mus']
+            self.prs_points = agg['prs']
+            self.sng_points = agg['sng']
+
+            # Calculate total points.
+            try:
+                self.total_points = sum([
+                    self.mus_points,
+                    self.prs_points,
+                    self.sng_points,
+                ])
+            except TypeError:
+                self.total_points = None
+
+            # Calculate percentile
+            try:
+                possible = self.session.size * 2 * self.performances.count()
+                self.mus_score = round(self.mus_points / possible, 1)
+                self.prs_score = round(self.prs_points / possible, 1)
+                self.sng_score = round(self.sng_points / possible, 1)
+                self.total_score = round(self.total_points / (possible * 3), 1)
+            except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
+
+    @transition(field=status, source=STATUS.new, target=STATUS.qualified)
+    def qualify(self):
+        # Send notice?
+        return "{0} Qualified".format(self)
+
+    @transition(field=status, source=[STATUS.qualified, STATUS.declined], target=STATUS.accepted)
+    def accept(self):
+        # Send notice?
+        return "{0} Accepted".format(self)
+
+    @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
+    def decline(self):
+        # Send notice?
+        return "{0} Declined".format(self)
+
+    @transition(
+        field=status,
+        source=STATUS.accepted,
+        target=STATUS.official,
+    )
+    def register(self):
+        # Triggered by contest start
+        return "{0} Official".format(self)
+
+    @transition(field=status, source=STATUS.official, target=STATUS.dropped)
+    def drop(self):
+        # Send notice?
+        return "{0} Dropped".format(self)
+
+    @transition(field=status, source=STATUS.official, target=STATUS.finished)
+    def finish(self):
+        # Send notice?
+        return "{0} Finished".format(self)
+
+    @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    def finalize(self):
+        # Send notice?
+        return "{0} Finalized".format(self)
+
+
 class Person(Common):
 
     STATUS = Choices(
@@ -2299,6 +2118,187 @@ class Score(TimeStampedModel):
     )
     def finalize(self):
         return
+
+
+class Session(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (20, 'started', 'Started',),
+        (30, 'final', 'Final',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='sessions',
+    )
+
+    KIND = Choices(
+        (1, 'quartet', 'Quartet',),
+        (2, 'chorus', 'Chorus',),
+        (3, 'senior', 'Senior',),
+        (4, 'collegiate', 'Collegiate',),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
+        choices=KIND,
+    )
+
+    SIZE_CHOICES = []
+    for r in reversed(range(1, 6)):
+        SIZE_CHOICES.append((r, r))
+
+    size = models.IntegerField(
+        help_text="""
+            Size of the judging panel (per category).""",
+        choices=SIZE_CHOICES,
+    )
+
+    ROUNDS_CHOICES = []
+    for r in reversed(range(1, 4)):
+        ROUNDS_CHOICES.append((r, r))
+
+    num_rounds = models.IntegerField(
+        help_text="""
+            Number of rounds (rounds) for the session.""",
+        choices=ROUNDS_CHOICES,
+        default=1,
+    )
+
+    # Denormalized
+    organization = TreeForeignKey(
+        'Organization',
+        help_text="""
+            The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
+        related_name='sessions',
+        editable=False,
+    )
+
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        editable=False,
+    )
+
+    # Legacy
+    HISTORY = Choices(
+        (0, 'new', 'New',),
+        (10, 'none', 'None',),
+        (20, 'pdf', 'PDF',),
+        (30, 'places', 'Places',),
+        (40, 'incomplete', 'Incomplete',),
+        (50, 'complete', 'Complete',),
+    )
+
+    history = models.IntegerField(
+        help_text="""Used to manage state for historical imports.""",
+        choices=HISTORY,
+        default=HISTORY.new,
+    )
+
+    history_monitor = MonitorField(
+        help_text="""History last updated""",
+        monitor='history',
+    )
+
+    scoresheet_pdf = models.FileField(
+        help_text="""
+            The historical PDF OSS.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    scoresheet_csv = models.FileField(
+        help_text="""
+            The parsed scoresheet (used for legacy imports).""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.year = self.convention.year
+        self.organization = self.convention.organization
+        self.name = u"{0} {1}".format(
+            self.convention,
+            self.get_kind_display(),
+        )
+        super(Session, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('convention', 'kind',),
+        )
+        ordering = (
+            '-year',
+            'convention',
+            'kind',
+        )
+
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.started,
+        conditions=[
+            # is_scheduled,
+            # is_imsessioned,
+            # has_performers,
+            # has_contests,
+        ],
+    )
+    def start(self):
+        # Triggered in UI
+        # TODO seed performers?
+        round = self.rounds.get(num=1)
+        p = 0
+        for performer in self.performers.accepted().order_by('?'):
+            performer.register()
+            performer.save()
+            round.performances.create(
+                round=round,
+                performer=performer,
+                position=p,
+            )
+            p += 1
+        return "{0} Started".format(self)
 
 
 class Round(TimeStampedModel):
