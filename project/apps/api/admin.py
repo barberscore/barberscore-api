@@ -161,6 +161,7 @@ class ContestantAdmin(admin.ModelAdmin):
     readonly_fields = [
         'name',
         'status_monitor',
+        'place',
     ]
 
     raw_id_fields = [
