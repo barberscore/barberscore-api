@@ -111,11 +111,11 @@ def add_performers(session, number=20):
     return "Performers Added"
 
 
-def add_contestants(award, number=10):
-    performers = award.session.performers.order_by('?')[:number]
+def add_contestants(contest, number=10):
+    performers = contest.session.performers.order_by('?')[:number]
     for performer in performers:
         Contestant.objects.create(
-            award=award,
+            contest=contest,
             performer=performer,
         )
     return "Contestants Added"

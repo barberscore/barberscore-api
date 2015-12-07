@@ -8,7 +8,7 @@ from super_inlines.admin import SuperInlineModelAdmin
 
 from .models import (
     Arranger,
-    Award,
+    Contest,
     Certification,
     Contestant,
     Session,
@@ -48,12 +48,12 @@ class ArrangerInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class AwardInline(admin.TabularInline):
+class ContestInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_award_change',
+                    'admin:api_contest_change',
                     args=(
                         obj.id.hex,
                     )
@@ -75,7 +75,7 @@ class AwardInline(admin.TabularInline):
     )
     show_change_link = True
 
-    model = Award
+    model = Contest
     extra = 0
     raw_id_fields = (
         'session',
@@ -130,7 +130,7 @@ class ContestantInline(admin.TabularInline):
     fields = (
         'link',
         'name',
-        'award',
+        'contest',
         'performer',
         'total_score',
     )
@@ -410,11 +410,11 @@ class RoundInline(admin.TabularInline):
     model = Round
     extra = 0
     # raw_id_fields = (
-    #     'award',
+    #     'contest',
     # )
     # autocomplete_lookup_fields = {
     #     'fk': [
-    #         'award',
+    #         'contest',
     #     ]
     # }
     classes = ('grp-collapse grp-closed',)

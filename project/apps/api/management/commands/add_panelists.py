@@ -28,6 +28,6 @@ class Command(BaseCommand):
                     slug=slug,
                 )
             except Session.DoesNotExist:
-                raise CommandError("Award does not exist.")
+                raise CommandError("Contest does not exist.")
             result = add_judges(session)
             self.stdout.write("{0}".format(result))

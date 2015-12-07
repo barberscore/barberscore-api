@@ -47,7 +47,7 @@
 {% block page_header %}
   <div id='page-header'>
     <h4>
-      Official Scoring Summary: {{award}}<br>
+      Official Scoring Summary: {{contest}}<br>
     </h4>
   </div>
 {% endblock page_header %}
@@ -162,10 +162,10 @@
         </tbody>
       </table>
       {% comment %}
-      <h4>Awards</h4>
+      <h4>Contests</h4>
       <ul class='list-unstyled'>
       {% for contestant in contestants %}
-        <li>{{contestant.award.name}}: {{contestant.performer.group.name}}</li>
+        <li>{{contestant.contest.name}}: {{contestant.performer.group.name}}</li>
       {% endfor %}
       </ul>
       {% endcomment %}
