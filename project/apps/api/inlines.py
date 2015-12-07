@@ -179,7 +179,7 @@ class SessionInline(admin.TabularInline):
         'convention',
         'kind',
         'size',
-        'rounds',
+        'num_rounds',
     )
     show_change_link = True
 
