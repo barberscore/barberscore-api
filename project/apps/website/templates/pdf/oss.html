@@ -73,20 +73,20 @@
           </tr>
         </thead>
         <tbody>
-          {% for contestant in contestants %}
+          {% for performer in performers %}
               <tr>
                 <td style='vertical-align:top; width:1.2cm; text-align:right' >
-                  {{contestant.place}}
+                  {{performer.place}}
                 </td>
                 <td style='vertical-align:top; width:2.0cm; text-align:right' >
-                  {{contestant.total_points}}<br>
-                  {{contestant.total_score}}
+                  {{performer.total_points}}<br>
+                  {{performer.total_score}}
                 </td>
                 <td style='width:10cm; text-align:left' >
-                  {{contestant.group.name}}
+                  {{performer.group.name}}
                 </td>
                 <td style='vertical-align:top; width:20cm; text-align:left' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.tune.name}}<br>
                     {% endfor %}
@@ -94,68 +94,68 @@
                   {# <em>Totals</em> #}
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.mus_points}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.mus_points}}</em><br>
+                    <em>{{performer.mus_points}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.prs_points}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.prs_points}}</em><br>
+                    <em>{{performer.prs_points}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.sng_points}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.sng_points}}</em><br>
+                    <em>{{performer.sng_points}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.total_points}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.total_points}}</em><br>
+                    <em>{{performer.total_points}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.mus_score}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.mus_score}}</em><br>
+                    <em>{{performer.mus_score}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.prs_score}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.prs_score}}</em><br>
+                    <em>{{performer.prs_score}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.sng_score}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.sng_score}}</em><br>
+                    <em>{{performer.sng_score}}</em><br>
                 </td>
                 <td style='vertical-align:top; width:2cm; text-align:right' >
-                  {% for performance in contestant.performances.all %}
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.total_score}}<br>
                     {% endfor %}
                   {% endfor %}
-                    <em>{{contestant.total_score}}</em><br>
+                    <em>{{performer.total_score}}</em><br>
                 </td>
               </tr>
           {% endfor %}
@@ -165,7 +165,7 @@
       <h4>Awards</h4>
       <ul class='list-unstyled'>
       {% for competitor in competitors %}
-        <li>{{competitor.award.name}}: {{competitor.contestant.group.name}}</li>
+        <li>{{competitor.award.name}}: {{competitor.performer.group.name}}</li>
       {% endfor %}
       </ul>
       {% endcomment %}

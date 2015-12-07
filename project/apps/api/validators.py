@@ -105,8 +105,8 @@ def is_scheduled(award):
     return True
 
 
-def has_contestants(award):
-    return award.contestants.exists()
+def has_performers(award):
+    return award.performers.exists()
 
 
 def has_awards(award):

@@ -4,7 +4,7 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    add_contestants,
+    add_performers,
 )
 
 from apps.api.models import (
@@ -37,5 +37,5 @@ class Command(BaseCommand):
             )
         except Session.DoesNotExist:
             raise CommandError("Session does not exist.")
-        result = add_contestants(session, options['number'])
+        result = add_performers(session, options['number'])
         self.stdout.write("{0}".format(result))

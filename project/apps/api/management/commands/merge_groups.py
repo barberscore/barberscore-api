@@ -46,18 +46,18 @@ class Command(BaseCommand):
             raise CommandError("Subject group does not exist.")
 
         # perform de-dup
-        contestants = old_group.contestants.all()
-        if not contestants:
+        performers = old_group.performers.all()
+        if not performers:
             old_group.delete()
             return 'No contesants to move.'
 
-        for contestant in contestants:
-            contestant.group = new_group
+        for performer in performers:
+            performer.group = new_group
             try:
-                contestant.save()
+                performer.save()
             except IntegrityError:
                 raise CommandError(
-                    "Contestant {0} already exists.  Merge manually".format(contestant)
+                    "Performer {0} already exists.  Merge manually".format(performer)
                 )
 
         # remove redundant group
