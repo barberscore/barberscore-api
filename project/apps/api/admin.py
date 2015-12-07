@@ -187,7 +187,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'year',
         'kind',
         'size',
-        'rounds',
+        'num_rounds',
     ]
 
     list_display = [
@@ -196,7 +196,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention',
         'kind',
         'size',
-        'rounds',
+        'num_rounds',
     ]
 
     list_filter = (
