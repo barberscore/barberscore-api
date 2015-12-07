@@ -314,6 +314,17 @@ class GroupAdmin(admin.ModelAdmin):
     readonly_fields = (
         'status_monitor',
     )
+
+    raw_id_fields = [
+        'chapter',
+    ]
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'chapter',
+        ]
+    }
+
     save_on_top = True
 
 

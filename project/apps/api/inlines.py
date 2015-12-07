@@ -187,7 +187,20 @@ class DirectorInline(admin.TabularInline):
 
 
 class GroupInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_group_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
     fields = (
+        'link',
         'name',
         'status',
     )
@@ -198,18 +211,16 @@ class GroupInline(admin.TabularInline):
     extra = 0
     readonly_fields = (
         'name',
-        'status',
+        'link',
     )
-    # raw_id_fields = (
-    #     'person',
-    #     'performer',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'person',
-    #         'performer',
-    #     ]
-    # }
+    raw_id_fields = (
+        'chapter',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'chapter',
+        ]
+    }
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
