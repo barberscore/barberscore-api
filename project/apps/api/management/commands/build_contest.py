@@ -4,7 +4,7 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    add_contestants,
+    add_performers,
 )
 
 from apps.api.models import (
@@ -32,5 +32,5 @@ class Command(BaseCommand):
             )
         except Award.DoesNotExist:
             raise CommandError("Award does not exist.")
-        result = add_contestants(award, options['number'])
+        result = add_performers(award, options['number'])
         self.stdout.write("{0}".format(result))

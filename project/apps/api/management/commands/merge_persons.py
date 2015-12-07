@@ -58,13 +58,13 @@
 #         for director in old_person.choruses.all():
 #             Director.objects.create(
 #                 person=new_person,
-#                 contestant=director.contestant,
+#                 performer=director.performer,
 #                 part=director.part,
 #             )
 #         for singer in old_person.quartets.all():
 #             Singer.objects.create(
 #                 person=new_person,
-#                 contestant=singer.contestant,
+#                 performer=singer.performer,
 #                 part=singer.part,
 #             )
 

@@ -53,52 +53,52 @@ class Command(BaseCommand):
         except Singer.DoesNotExist:
             raise CommandError("Old singer does not exist.")
 
-        # Move contestants
-        contestants_tenor = old_singer.contestants_tenor.all()
-        contestants_lead = old_singer.contestants_lead.all()
-        contestants_baritone = old_singer.contestants_baritone.all()
-        contestants_bass = old_singer.contestants_bass.all()
-        if not bool(contestants_tenor or contestants_lead or contestants_baritone or contestants_bass):
+        # Move performers
+        performers_tenor = old_singer.performers_tenor.all()
+        performers_lead = old_singer.performers_lead.all()
+        performers_baritone = old_singer.performers_baritone.all()
+        performers_bass = old_singer.performers_bass.all()
+        if not bool(performers_tenor or performers_lead or performers_baritone or performers_bass):
             return 'No contesants to move.'
 
-        if contestants_tenor:
-            for contestant in contestants_tenor:
-                contestant.singer = new_singer
+        if performers_tenor:
+            for performer in performers_tenor:
+                performer.singer = new_singer
                 try:
-                    contestant.save()
+                    performer.save()
                 except IntegrityError:
                     raise CommandError(
-                        "Contestant {0} already exists.  Merge manually".format(contestant)
+                        "Performer {0} already exists.  Merge manually".format(performer)
                     )
 
-        if contestants_lead:
-            for contestant in contestants_lead:
-                contestant.singer = new_singer
+        if performers_lead:
+            for performer in performers_lead:
+                performer.singer = new_singer
                 try:
-                    contestant.save()
+                    performer.save()
                 except IntegrityError:
                     raise CommandError(
-                        "Contestant {0} already exists.  Merge manually".format(contestant)
+                        "Performer {0} already exists.  Merge manually".format(performer)
                     )
 
-        if contestants_baritone:
-            for contestant in contestants_baritone:
-                contestant.singer = new_singer
+        if performers_baritone:
+            for performer in performers_baritone:
+                performer.singer = new_singer
                 try:
-                    contestant.save()
+                    performer.save()
                 except IntegrityError:
                     raise CommandError(
-                        "Contestant {0} already exists.  Merge manually".format(contestant)
+                        "Performer {0} already exists.  Merge manually".format(performer)
                     )
 
-        if contestants_bass:
-            for contestant in contestants_bass:
-                contestant.singer = new_singer
+        if performers_bass:
+            for performer in performers_bass:
+                performer.singer = new_singer
                 try:
-                    contestant.save()
+                    performer.save()
                 except IntegrityError:
                     raise CommandError(
-                        "Contestant {0} already exists.  Merge manually".format(contestant)
+                        "Performer {0} already exists.  Merge manually".format(performer)
                     )
 
         # remove redundant singer

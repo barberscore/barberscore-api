@@ -54,18 +54,18 @@ class Command(BaseCommand):
             raise CommandError("Subject director does not exist.")
 
         # perform de-dup
-        contestants = old_director.contestants.all()
-        if not contestants:
+        performers = old_director.performers.all()
+        if not performers:
             old_director.delete()
             return 'No contesants to move.'
 
-        for contestant in contestants:
-            contestant.director = new_director
+        for performer in performers:
+            performer.director = new_director
             try:
-                contestant.save()
+                performer.save()
             except IntegrityError:
                 raise CommandError(
-                    "Contestant {0} already exists.  Merge manually".format(contestant)
+                    "Performer {0} already exists.  Merge manually".format(performer)
                 )
 
         # remove redundant director
