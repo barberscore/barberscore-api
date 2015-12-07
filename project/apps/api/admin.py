@@ -11,6 +11,7 @@ from .inlines import (
     SessionInline,
     PerformerInline,
     DirectorInline,
+    GroupInline,
     JudgeInline,
     PerformanceInline,
     ScoreInline,
@@ -23,6 +24,7 @@ from .models import (
     Arranger,
     Contest,
     Catalog,
+    Chapter,
     Contestant,
     Session,
     Performer,
@@ -61,6 +63,53 @@ class CatalogAdmin(admin.ModelAdmin):
         'bhs_songname',
         'bhs_arranger',
     ]
+
+
+@admin.register(Chapter)
+class ChapterAdmin(admin.ModelAdmin):
+    search_fields = (
+        'name',
+    )
+
+    list_display = (
+        'name',
+        'status',
+        'status_monitor',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'code',
+        'picture',
+    )
+
+    fields = (
+        'name',
+        ('status', 'status_monitor',),
+        ('start_date', 'end_date',),
+        'organization',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        'code',
+        'notes',
+    )
+
+    inlines = [
+        GroupInline,
+    ]
+
+    readonly_fields = (
+        'status_monitor',
+    )
+    save_on_top = True
 
 
 @admin.register(Contest)
@@ -245,6 +294,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'kind',
         ('start_date', 'end_date',),
+        'chapter',
         'location',
         'website',
         'facebook',

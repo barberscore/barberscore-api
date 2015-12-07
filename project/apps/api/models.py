@@ -423,6 +423,51 @@ class Certification(TimeStampedModel):
         )
 
 
+class Chapter(Common):
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    code = models.CharField(
+        help_text="""
+            The chapter code (only for choruses).""",
+        max_length=200,
+        blank=True,
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='chapters',
+        null=True,
+        blank=True,
+    )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    class Meta:
+        ordering = (
+            'name',
+        )
+
+
 class Contest(TimeStampedModel):
 
     STATUS = Choices(
@@ -1136,6 +1181,13 @@ class Group(Common):
             The kind of group; choices are Quartet or Chorus.""",
         choices=KIND,
         default=KIND.quartet,
+    )
+
+    chapter = models.ForeignKey(
+        'Chapter',
+        related_name='groups',
+        null=True,
+        blank=True,
     )
 
     chapter_name = models.CharField(
