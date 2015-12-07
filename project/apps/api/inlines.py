@@ -217,7 +217,6 @@ class PerformerInline(admin.TabularInline):
         'organization',
         'seed',
         'prelim',
-        'place',
         'total_score',
         'men',
     )
@@ -231,21 +230,18 @@ class PerformerInline(admin.TabularInline):
     model = Performer
     extra = 0
     raw_id_fields = (
-        'session',
         'group',
     )
     readonly_fields = [
-        'place',
         'total_score',
         'link',
     ]
 
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         # 'session',
-    #         'group',
-    #     ]
-    # }
+    autocomplete_lookup_fields = {
+        'fk': [
+            'group',
+        ]
+    }
     can_delete = True
     classes = ('grp-collapse grp-closed',)
 
