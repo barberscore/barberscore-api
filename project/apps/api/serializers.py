@@ -6,7 +6,7 @@ from .models import (
     Convention,
     Session,
     Award,
-    Competitor,
+    Contestant,
     Performer,
     Round,
     Group,
@@ -40,7 +40,7 @@ class AwardSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    competitors = serializers.SlugRelatedField(
+    contestants = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -62,7 +62,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'rounds',
             'qual_score',
             'session',
-            'competitors',
+            'contestants',
         )
 
 
@@ -89,7 +89,7 @@ class CatalogSerializer(serializers.ModelSerializer):
         )
 
 
-class CompetitorSerializer(serializers.ModelSerializer):
+class ContestantSerializer(serializers.ModelSerializer):
     award = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -101,7 +101,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Competitor
+        model = Contestant
         fields = (
             'id',
             # 'url',
@@ -202,7 +202,7 @@ class PerformerSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    competitors = serializers.SlugRelatedField(
+    contestants = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -236,7 +236,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'performances',
             'directors',
             'singers',
-            'competitors',
+            'contestants',
         )
 
 
