@@ -14,7 +14,7 @@ from apps.api.models import (
 
 
 class Command(BaseCommand):
-    help = "Create sample contest."
+    help = "Create sample session."
 
     def add_arguments(self, parser):
         parser.add_argument(

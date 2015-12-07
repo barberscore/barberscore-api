@@ -164,7 +164,7 @@ def award_build(request, slug):
         )
         if form.is_valid():
             form.save()
-            return redirect('website:award_imcontest', award.slug)
+            return redirect('website:award_imsession', award.slug)
         else:
             for key in form.errors.keys():
                 for error in form.errors[key]:
@@ -184,7 +184,7 @@ def award_build(request, slug):
 
 
 @login_required
-def award_imcontest(request, slug):
+def award_imsession(request, slug):
     award = get_object_or_404(
         Award,
         slug=slug,
@@ -212,7 +212,7 @@ def award_imcontest(request, slug):
         pass
     return render(
         request,
-        'manage/award_imcontest.html',
+        'manage/award_imsession.html',
         {'formset': formset},
     )
 

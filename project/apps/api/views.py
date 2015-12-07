@@ -10,7 +10,7 @@ from drf_haystack.viewsets import HaystackViewSet
 
 from .models import (
     Convention,
-    Contest,
+    Session,
     Award,
     Competitor,
     Round,
@@ -30,7 +30,7 @@ from .models import (
 
 from .serializers import (
     ConventionSerializer,
-    ContestSerializer,
+    SessionSerializer,
     AwardSerializer,
     CompetitorSerializer,
     RoundSerializer,
@@ -52,10 +52,10 @@ from .serializers import (
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
-        'contest',
+        'session',
         'organization',
     ).filter(
-        # history=Contest.HISTORY.complete,
+        # history=Session.HISTORY.complete,
     ).prefetch_related(
         'competitors',
     )
@@ -81,24 +81,24 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.select_related(
+class SessionViewSet(viewsets.ModelViewSet):
+    queryset = Session.objects.select_related(
         'convention',
     ).filter(
-        # history=Contest.HISTORY.complete,
+        # history=Session.HISTORY.complete,
     ).prefetch_related(
         'awards',
         'contestants',
         'rounds',
         'judges',
     )
-    serializer_class = ContestSerializer
+    serializer_class = SessionSerializer
     lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
-        'contest',
+        'session',
         'organization',
     ).prefetch_related(
         'performances',
@@ -116,7 +116,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
     ).exclude(
         status=Convention.STATUS.new,
     ).prefetch_related(
-        'contests',
+        'sessions',
     )
     serializer_class = ConventionSerializer
     lookup_field = 'slug'
@@ -141,7 +141,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class JudgeViewSet(viewsets.ModelViewSet):
     queryset = Judge.objects.select_related(
-        'contest',
+        'session',
         'person',
         'organization',
     ).prefetch_related(
@@ -173,7 +173,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         # 'catalogs',
         'choruses',
         'quartets',
-        'contests',
+        'sessions',
     )
     serializer_class = PersonSerializer
     lookup_field = 'slug'
@@ -196,7 +196,7 @@ class SearchViewSet(HaystackViewSet):
 
 class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
-        'contest',
+        'session',
     ).prefetch_related(
         'performances',
     )
