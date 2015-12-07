@@ -5,7 +5,7 @@ from drf_haystack.serializers import HaystackSerializer
 from .models import (
     Convention,
     Session,
-    Award,
+    Contest,
     Contestant,
     Performer,
     Round,
@@ -29,7 +29,7 @@ from .search_indexes import (
 )
 
 
-class AwardSerializer(serializers.ModelSerializer):
+class ContestSerializer(serializers.ModelSerializer):
     session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -47,7 +47,7 @@ class AwardSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Award
+        model = Contest
         fields = (
             'id',
             # 'url',
@@ -90,7 +90,7 @@ class CatalogSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    award = serializers.SlugRelatedField(
+    contest = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -119,7 +119,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
-            'award',
+            'contest',
             'performer',
         )
 
@@ -130,7 +130,7 @@ class SessionSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    awards = serializers.SlugRelatedField(
+    contests = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -166,7 +166,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'rounds',
             'size',
             'convention',
-            'awards',
+            'contests',
             'rounds',
             'performers',
             'judges',

@@ -11,7 +11,7 @@ from drf_haystack.viewsets import HaystackViewSet
 from .models import (
     Convention,
     Session,
-    Award,
+    Contest,
     Contestant,
     Round,
     Group,
@@ -31,7 +31,7 @@ from .models import (
 from .serializers import (
     ConventionSerializer,
     SessionSerializer,
-    AwardSerializer,
+    ContestSerializer,
     ContestantSerializer,
     RoundSerializer,
     GroupSerializer,
@@ -50,8 +50,8 @@ from .serializers import (
 )
 
 
-class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
+class ContestViewSet(viewsets.ModelViewSet):
+    queryset = Contest.objects.select_related(
         'session',
         'organization',
     ).filter(
@@ -59,7 +59,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'contestants',
     )
-    serializer_class = AwardSerializer
+    serializer_class = ContestSerializer
     lookup_field = 'slug'
 
 
@@ -74,7 +74,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
 
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
-        'award',
+        'contest',
         'performer',
     )
     serializer_class = ContestantSerializer
@@ -87,7 +87,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     ).filter(
         # history=Session.HISTORY.complete,
     ).prefetch_related(
-        'awards',
+        'contests',
         'performers',
         'rounds',
         'judges',

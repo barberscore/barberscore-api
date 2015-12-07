@@ -72,9 +72,9 @@ from .validators import (
     is_imsessioned,
     # is_scheduled,
     has_performers,
-    has_awards,
+    has_contests,
     # round_scheduled,
-    award_started,
+    contest_started,
     scores_entered,
     songs_entered,
     rounds_finished,
@@ -271,7 +271,7 @@ class Arranger(TimeStampedModel):
         )
 
 
-class Award(TimeStampedModel):
+class Contest(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -352,37 +352,37 @@ class Award(TimeStampedModel):
 
     session = models.ForeignKey(
         'Session',
-        related_name='awards',
+        related_name='contests',
     )
 
     organization = TreeForeignKey(
         'Organization',
         help_text="""
-            The organization that will confer the award.  Note that this may be different than the organization running the parent session.""",
-        related_name='awards',
+            The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
+        related_name='contests',
     )
 
     level = models.IntegerField(
         help_text="""
-            The level of the award.  Note that this may be different than the level of the parent session.""",
+            The level of the contest.  Note that this may be different than the level of the parent session.""",
         choices=LEVEL,
     )
 
     kind = models.IntegerField(
         help_text="""
-            The kind of the award.  Note that this may be different than the kind of the parent session.""",
+            The kind of the contest.  Note that this may be different than the kind of the parent session.""",
         choices=KIND,
     )
 
     goal = models.IntegerField(
         help_text="""
-            The objective of the award.""",
+            The objective of the contest.""",
         choices=GOAL,
     )
 
     qual_score = models.FloatField(
         help_text="""
-            The objective of the award.  Note that if the goal is `qualifier` then this must be set.""",
+            The objective of the contest.  Note that if the goal is `qualifier` then this must be set.""",
         null=True,
         blank=True,
     )
@@ -393,7 +393,7 @@ class Award(TimeStampedModel):
 
     rounds = models.IntegerField(
         help_text="""
-            The number of rounds that will be used in determining the award.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
+            The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
         choices=ROUNDS_CHOICES,
     )
 
@@ -455,7 +455,7 @@ class Award(TimeStampedModel):
             self.get_goal_display(),
             self.year,
         )
-        super(Award, self).save(*args, **kwargs)
+        super(Contest, self).save(*args, **kwargs)
 
     @transition(
         field=status,
@@ -463,7 +463,7 @@ class Award(TimeStampedModel):
         target=STATUS.built,
     )
     def build(self):
-        # Triggered by award post_save signal if created
+        # Triggered by contest post_save signal if created
         r = 1
         while r <= self.rounds:
             self.rounds.create(
@@ -474,7 +474,7 @@ class Award(TimeStampedModel):
 
         # # Create an adminstrator sentinel
         # self.judges.create(
-        #     award=self,
+        #     contest=self,
         #     category=0,
         #     slot=1,
         # )
@@ -483,17 +483,17 @@ class Award(TimeStampedModel):
         # s = 1
         # while s <= self.session:
         #     self.judges.create(
-        #         award=self,
+        #         contest=self,
         #         category=1,
         #         slot=s,
         #     )
         #     self.judges.create(
-        #         award=self,
+        #         contest=self,
         #         category=2,
         #         slot=s,
         #     )
         #     self.judges.create(
-        #         award=self,
+        #         contest=self,
         #         category=3,
         #         slot=s,
         #     )
@@ -546,7 +546,7 @@ class Award(TimeStampedModel):
     #         # is_scheduled,
     #         is_imsessioned,
     #         has_performers,
-    #         has_awards,
+    #         has_contests,
     #     ],
     # )
     # def start(self):
@@ -592,7 +592,7 @@ class Award(TimeStampedModel):
         for t in ts:
             t.save()
         rs = Contestant.objects.filter(
-            award=self,
+            contest=self,
         )
         for r in rs:
             r.save()
@@ -817,15 +817,15 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
-    award = models.ForeignKey(
-        'Award',
+    contest = models.ForeignKey(
+        'Contest',
         related_name='contestants',
     )
 
     # Denormalization
     place = models.IntegerField(
         help_text="""
-            The final ranking relative to this award.""",
+            The final ranking relative to this contest.""",
         null=True,
         blank=True,
         editable=False,
@@ -884,17 +884,17 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.award,
+            self.contest,
             self.performer.group,
         )
         super(Contestant, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('performer', 'award',),
+            ('performer', 'contest',),
         )
         ordering = (
-            'award',
+            'contest',
             'performer',
         )
 
@@ -902,9 +902,9 @@ class Contestant(TimeStampedModel):
         # If there are no performances, skip.
         if self.performer.performances.exists():
             agg = self.performer.performances.filter(
-                round__num__lte=self.award.rounds,
+                round__num__lte=self.contest.rounds,
             ).filter(
-                round__session=self.award.session,
+                round__session=self.contest.session,
             ).aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
@@ -926,7 +926,7 @@ class Contestant(TimeStampedModel):
 
             # Calculate percentile
             try:
-                possible = self.award.session.size * 2 * self.performer.performances.count()
+                possible = self.contest.session.size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -1017,7 +1017,7 @@ class Session(TimeStampedModel):
     organization = TreeForeignKey(
         'Organization',
         help_text="""
-            The organization that will confer the award.  Note that this may be different than the organization running the parent session.""",
+            The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
         related_name='sessions',
         editable=False,
     )
@@ -1098,7 +1098,7 @@ class Session(TimeStampedModel):
             # is_scheduled,
             # is_imsessioned,
             # has_performers,
-            # has_awards,
+            # has_contests,
         ],
     )
     def start(self):
@@ -1210,7 +1210,7 @@ class Performer(TimeStampedModel):
     # Denormalized
     place = models.IntegerField(
         help_text="""
-            The final placement/rank of the performer for the entire session (ie, not a specific award).""",
+            The final placement/rank of the performer for the entire session (ie, not a specific contest).""",
         null=True,
         blank=True,
         editable=False,
@@ -1364,7 +1364,7 @@ class Performer(TimeStampedModel):
         target=STATUS.official,
     )
     def register(self):
-        # Triggered by award start
+        # Triggered by contest start
         return "{0} Official".format(self)
 
     @transition(field=status, source=STATUS.official, target=STATUS.dropped)
@@ -1622,7 +1622,7 @@ class Group(Common):
 
 
 class Judge(TimeStampedModel):
-    """Award Judge"""
+    """Contest Judge"""
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -2144,7 +2144,7 @@ class Person(Common):
 class Score(TimeStampedModel):
     """
         The Score is never released publicly.  These are the actual
-        Judge's scores from the award.
+        Judge's scores from the contest.
     """
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -2217,7 +2217,7 @@ class Score(TimeStampedModel):
 
     points = models.IntegerField(
         help_text="""
-            The number of points awarded (0-100)""",
+            The number of points contested (0-100)""",
         null=True,
         blank=True,
         validators=[
@@ -2396,7 +2396,7 @@ class Round(TimeStampedModel):
     def get_preceding(self):
         try:
             obj = self.__class__.objects.get(
-                award=self.award,
+                contest=self.contest,
                 kind=self.kind + 1,
             )
             return obj
@@ -2406,7 +2406,7 @@ class Round(TimeStampedModel):
     def get_next(self):
         try:
             obj = self.__class__.objects.get(
-                award=self.award,
+                contest=self.contest,
                 kind=self.kind - 1,
             )
             return obj
@@ -2434,12 +2434,12 @@ class Round(TimeStampedModel):
     #     source=STATUS.built,
     #     target=STATUS.ready,
     #     # conditions=[
-    #     #     award_started,
+    #     #     contest_started,
     #     # ]
     # )
     # def prep(self):
     #     p = 0
-    #     for performer in self.award.performers.official().order_by('?'):
+    #     for performer in self.contest.performers.official().order_by('?'):
     #         self.performances.create(
     #             round=self,
     #             performer=performer,
@@ -2455,7 +2455,7 @@ class Round(TimeStampedModel):
         conditions=[
             # round_drawn,
             # round_scheduled,
-            # award_started,
+            # contest_started,
             # preceding_round_finished,
         ]
     )
@@ -2503,7 +2503,7 @@ class Round(TimeStampedModel):
         # # TODO Some validation
         # try:
         #     # TODO This is an awful lot to be in a try/except; refactor?
-        #     next_round = self.award.rounds.get(
+        #     next_round = self.contest.rounds.get(
         #         kind=(self.kind - 1),
         #     )
         #     qualifiers = self.performances.filter(
@@ -2519,7 +2519,7 @@ class Round(TimeStampedModel):
         #         p += 1
         #         p1 = l.songs.create(performance=l, order=1)
         #         p2 = l.songs.create(performance=l, order=2)
-        #         for j in self.award.judges.scoring():
+        #         for j in self.contest.judges.scoring():
         #             p1.scores.create(
         #                 song=p1,
         #                 judge=j,
@@ -2531,7 +2531,7 @@ class Round(TimeStampedModel):
         # except self.DoesNotExist:
         #     pass
         # return 'Round Confirmed'
-    # def draw_award(self):
+    # def draw_contest(self):
     #     cs = self.performers.order_by('?')
     #     round = self.rounds.get(kind=self.rounds)
     #     p = 0
