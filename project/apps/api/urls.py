@@ -2,7 +2,7 @@ from rest_framework import routers
 
 from .views import (
     ConventionViewSet,
-    ContestViewSet,
+    SessionViewSet,
     AwardViewSet,
     CompetitorViewSet,
     RoundViewSet,
@@ -26,7 +26,7 @@ router = routers.DefaultRouter()
 router.register(r'award', AwardViewSet)
 router.register(r'catalog', CatalogViewSet)
 router.register(r'competitor', CompetitorViewSet)
-router.register(r'contest', ContestViewSet)
+router.register(r'session', SessionViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'director', DirectorViewSet)

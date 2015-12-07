@@ -11,7 +11,7 @@ from .models import (
     Award,
     Certification,
     Competitor,
-    Contest,
+    Session,
     Contestant,
     Director,
     Judge,
@@ -64,7 +64,7 @@ class AwardInline(admin.TabularInline):
     fields = (
         'link',
         'name',
-        'contest',
+        'session',
         'organization',
         'level',
         'kind',
@@ -78,7 +78,7 @@ class AwardInline(admin.TabularInline):
     model = Award
     extra = 0
     raw_id_fields = (
-        'contest',
+        'session',
     )
     readonly_fields = [
         'link',
@@ -159,12 +159,12 @@ class CompetitorInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class ContestInline(admin.TabularInline):
+class SessionInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_contest_change',
+                    'admin:api_session_change',
                     args=(
                         obj.id.hex,
                     )
@@ -183,7 +183,7 @@ class ContestInline(admin.TabularInline):
     )
     show_change_link = True
 
-    model = Contest
+    model = Session
     extra = 0
     raw_id_fields = (
         'convention',
@@ -212,7 +212,7 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        'contest',
+        'session',
         'group',
         'organization',
         'seed',
@@ -231,7 +231,7 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     extra = 0
     raw_id_fields = (
-        'contest',
+        'session',
         'group',
     )
     readonly_fields = [
@@ -242,7 +242,7 @@ class ContestantInline(admin.TabularInline):
 
     # autocomplete_lookup_fields = {
     #     'fk': [
-    #         # 'contest',
+    #         # 'session',
     #         'group',
     #     ]
     # }
@@ -279,7 +279,7 @@ class DirectorInline(admin.TabularInline):
 class JudgeInline(admin.TabularInline):
     model = Judge
     fields = (
-        'contest',
+        'session',
         'person',
         # 'organization',
         'category',
@@ -395,7 +395,7 @@ class RoundInline(admin.TabularInline):
 
     fields = (
         'link',
-        'contest',
+        'session',
         'kind',
         'status',
         'start_date',
@@ -403,7 +403,7 @@ class RoundInline(admin.TabularInline):
         'slots',
     )
     ordering = (
-        'contest',
+        'session',
         'kind',
     )
 

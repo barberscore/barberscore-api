@@ -8,12 +8,12 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Contest,
+    Session,
 )
 
 
 class Command(BaseCommand):
-    help = "Create sample contest."
+    help = "Create sample session."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -24,10 +24,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for slug in options['slug']:
             try:
-                contest = Contest.objects.get(
+                session = Session.objects.get(
                     slug=slug,
                 )
-            except Contest.DoesNotExist:
+            except Session.DoesNotExist:
                 raise CommandError("Award does not exist.")
-            result = add_judges(contest)
+            result = add_judges(session)
             self.stdout.write("{0}".format(result))
