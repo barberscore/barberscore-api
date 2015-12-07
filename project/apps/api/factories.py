@@ -10,7 +10,7 @@ from factory.django import (
 
 from .models import (
     Certification,
-    Competitor,
+    Contestant,
     Session,
     Performer,
     Group,
@@ -111,14 +111,14 @@ def add_performers(session, number=20):
     return "Performers Added"
 
 
-def add_competitors(award, number=10):
+def add_contestants(award, number=10):
     performers = award.session.performers.order_by('?')[:number]
     for performer in performers:
-        Competitor.objects.create(
+        Contestant.objects.create(
             award=award,
             performer=performer,
         )
-    return "Competitors Added"
+    return "Contestants Added"
 
 
 def score_performance(performance):
