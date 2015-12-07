@@ -7,7 +7,7 @@ from .models import (
     Session,
     Award,
     Competitor,
-    Contestant,
+    Performer,
     Round,
     Group,
     Person,
@@ -95,7 +95,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contestant = serializers.SlugRelatedField(
+    performer = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -120,7 +120,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'award',
-            'contestant',
+            'performer',
         )
 
 
@@ -148,7 +148,7 @@ class SessionSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    contestants = serializers.SlugRelatedField(
+    performers = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -168,12 +168,12 @@ class SessionSerializer(serializers.ModelSerializer):
             'convention',
             'awards',
             'rounds',
-            'contestants',
+            'performers',
             'judges',
         )
 
 
-class ContestantSerializer(serializers.ModelSerializer):
+class PerformerSerializer(serializers.ModelSerializer):
     session = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
@@ -209,7 +209,7 @@ class ContestantSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Contestant
+        model = Performer
         fields = (
             'id',
             # 'url',
@@ -271,7 +271,7 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class DirectorSerializer(serializers.ModelSerializer):
-    contestant = serializers.SlugRelatedField(
+    performer = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -287,7 +287,7 @@ class DirectorSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'contestant',
+            'performer',
             'person',
             'part',
         )
@@ -295,7 +295,7 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
-    contestants = serializers.SlugRelatedField(
+    performers = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='slug',
@@ -321,7 +321,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'chapter_name',
             'chapter_code',
-            'contestants',
+            'performers',
         )
 
 
@@ -387,12 +387,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'long_name',
             'parent',
             'children',
-            # 'contestants',
+            # 'performers',
         )
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    contestant = serializers.SlugRelatedField(
+    performer = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -427,7 +427,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'round',
-            'contestant',
+            'performer',
             'songs',
         )
 
@@ -554,7 +554,7 @@ class RoundSerializer(serializers.ModelSerializer):
 
 
 class SingerSerializer(serializers.ModelSerializer):
-    contestant = serializers.SlugRelatedField(
+    performer = serializers.SlugRelatedField(
         read_only=True,
         slug_field='slug',
     )
@@ -570,7 +570,7 @@ class SingerSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'contestant',
+            'performer',
             'person',
             'part',
         )

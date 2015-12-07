@@ -11,7 +11,7 @@ from django.db.models.query import (
 )
 
 
-class ContestantQuerySet(QuerySet):
+class PerformerQuerySet(QuerySet):
     def accepted(self):
         return self.filter(
             status=self.model.STATUS.accepted,

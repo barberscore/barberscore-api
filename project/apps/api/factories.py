@@ -12,7 +12,7 @@ from .models import (
     Certification,
     Competitor,
     Session,
-    Contestant,
+    Performer,
     Group,
     Judge,
     Round,
@@ -90,7 +90,7 @@ def add_judges(session):
     return "Judges Imsessioned"
 
 
-def add_contestants(session, number=20):
+def add_performers(session, number=20):
     if session.kind == Session.KIND.chorus:
         kind = Group.KIND.chorus
     else:
@@ -100,23 +100,23 @@ def add_contestants(session, number=20):
         status=Group.STATUS.active,
     ).order_by('?')[:number]
     for group in groups:
-        contestant = Contestant.objects.create(
+        performer = Performer.objects.create(
             session=session,
             group=group,
             prelim=randint(700, 900) * .1,
         )
-        contestant.qualify()
-        contestant.accept()
-        contestant.save()
-    return "Contestants Added"
+        performer.qualify()
+        performer.accept()
+        performer.save()
+    return "Performers Added"
 
 
 def add_competitors(award, number=10):
-    contestants = award.session.contestants.order_by('?')[:number]
-    for contestant in contestants:
+    performers = award.session.performers.order_by('?')[:number]
+    for performer in performers:
         Competitor.objects.create(
             award=award,
-            contestant=contestant,
+            performer=performer,
         )
     return "Competitors Added"
 

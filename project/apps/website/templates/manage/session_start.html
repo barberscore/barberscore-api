@@ -14,7 +14,7 @@
 
       <ul class='list-unstyled'>
       {% for performance in performances %}
-        <li>{{performance.draw}} {{performance.contestant.group.name}}</li>
+        <li>{{performance.draw}} {{performance.performer.group.name}}</li>
       {% endfor %}
       </ul>
 
@@ -22,7 +22,7 @@
       <form id='draw' role='form' class='form' action='' method='POST'>
         {% csrf_token %}
         <fieldset class='form-group'>
-          <p><span class='fa fa-check-square-o'></span>&nbsp;Yes, start the award with these contestants.</p>
+          <p><span class='fa fa-check-square-o'></span>&nbsp;Yes, start the award with these performers.</p>
         </fieldset>
         <button class='btn btn-success btn-lg' type='submit'>Start</button>
         {# <a id='cancel' class="btn btn-default" href="{%url 'website:portfolio' portfolio.slug %}">Cancel</a> #}

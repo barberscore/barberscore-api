@@ -62,7 +62,7 @@ from nameparser import HumanName
 
 from .managers import (
     UserManager,
-    ContestantQuerySet,
+    PerformerQuerySet,
 )
 
 
@@ -71,7 +71,7 @@ from .validators import (
     dixon,
     is_imsessioned,
     # is_scheduled,
-    has_contestants,
+    has_performers,
     has_awards,
     # round_scheduled,
     award_started,
@@ -510,32 +510,32 @@ class Award(TimeStampedModel):
     #     conditions=[
     #         is_scheduled,
     #         is_imsessioned,
-    #         has_contestants,
+    #         has_performers,
     #     ],
     # )
     # def prep(self):
-    #     # Seed contestants
+    #     # Seed performers
     #     marker = []
     #     i = 1
-    #     for contestant in self.contestants.accepted().order_by('-prelim'):
+    #     for performer in self.performers.accepted().order_by('-prelim'):
     #         try:
-    #             match = contestant.prelim == marker[0].prelim
+    #             match = performer.prelim == marker[0].prelim
     #         except IndexError:
-    #             contestant.seed = i
-    #             contestant.save()
-    #             marker.append(contestant)
+    #             performer.seed = i
+    #             performer.save()
+    #             marker.append(performer)
     #             continue
     #         if match:
-    #             contestant.seed = i
+    #             performer.seed = i
     #             i += len(marker)
-    #             contestant.save()
-    #             marker.append(contestant)
+    #             performer.save()
+    #             marker.append(performer)
     #             continue
     #         else:
     #             i += 1
-    #             contestant.seed = i
-    #             contestant.save()
-    #             marker = [contestant]
+    #             performer.seed = i
+    #             performer.save()
+    #             marker = [performer]
     #     return "{0} Ready".format(self)
 
     # @transition(
@@ -545,21 +545,21 @@ class Award(TimeStampedModel):
     #     conditions=[
     #         # is_scheduled,
     #         is_imsessioned,
-    #         has_contestants,
+    #         has_performers,
     #         has_awards,
     #     ],
     # )
     # def start(self):
     #     # Triggered in UI
-    #     # TODO seed contestants?
+    #     # TODO seed performers?
     #     round = self.rounds.initial()
     #     p = 0
-    #     for contestant in self.contestants.accepted().order_by('?'):
-    #         contestant.register()
-    #         contestant.save()
+    #     for performer in self.performers.accepted().order_by('?'):
+    #         performer.register()
+    #         performer.save()
     #         round.performances.create(
     #             round=round,
-    #             contestant=contestant,
+    #             performer=performer,
     #             position=p,
     #         )
     #         p += 1
@@ -586,7 +586,7 @@ class Award(TimeStampedModel):
         )
         for p in ps:
             p.save()
-        ts = Contestant.objects.filter(
+        ts = Performer.objects.filter(
             session=self.session,
         )
         for t in ts:
@@ -812,8 +812,8 @@ class Competitor(TimeStampedModel):
         monitor='status',
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
+    performer = models.ForeignKey(
+        'Performer',
         related_name='competitors',
     )
 
@@ -885,23 +885,23 @@ class Competitor(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.award,
-            self.contestant.group,
+            self.performer.group,
         )
         super(Competitor, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('contestant', 'award',),
+            ('performer', 'award',),
         )
         ordering = (
             'award',
-            'contestant',
+            'performer',
         )
 
     def calculate(self):
         # If there are no performances, skip.
-        if self.contestant.performances.exists():
-            agg = self.contestant.performances.filter(
+        if self.performer.performances.exists():
+            agg = self.performer.performances.filter(
                 round__num__lte=self.award.rounds,
             ).filter(
                 round__session=self.award.session,
@@ -926,7 +926,7 @@ class Competitor(TimeStampedModel):
 
             # Calculate percentile
             try:
-                possible = self.award.session.size * 2 * self.contestant.performances.count()
+                possible = self.award.session.size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -1097,28 +1097,28 @@ class Session(TimeStampedModel):
         conditions=[
             # is_scheduled,
             # is_imsessioned,
-            # has_contestants,
+            # has_performers,
             # has_awards,
         ],
     )
     def start(self):
         # Triggered in UI
-        # TODO seed contestants?
+        # TODO seed performers?
         round = self.rounds.get(num=1)
         p = 0
-        for contestant in self.contestants.accepted().order_by('?'):
-            contestant.register()
-            contestant.save()
+        for performer in self.performers.accepted().order_by('?'):
+            performer.register()
+            performer.save()
             round.performances.create(
                 round=round,
-                contestant=contestant,
+                performer=performer,
                 position=p,
             )
             p += 1
         return "{0} Started".format(self)
 
 
-class Contestant(TimeStampedModel):
+class Performer(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -1162,17 +1162,17 @@ class Contestant(TimeStampedModel):
 
     session = models.ForeignKey(
         'Session',
-        related_name='contestants',
+        related_name='performers',
     )
 
     group = models.ForeignKey(
         'Group',
-        related_name='contestants',
+        related_name='performers',
     )
 
     organization = TreeForeignKey(
         'Organization',
-        related_name='contestants',
+        related_name='performers',
         null=True,
         blank=True,
     )
@@ -1210,7 +1210,7 @@ class Contestant(TimeStampedModel):
     # Denormalized
     place = models.IntegerField(
         help_text="""
-            The final placement/rank of the contestant for the entire session (ie, not a specific award).""",
+            The final placement/rank of the performer for the entire session (ie, not a specific award).""",
         null=True,
         blank=True,
         editable=False,
@@ -1284,7 +1284,7 @@ class Contestant(TimeStampedModel):
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
 
-    objects = PassThroughManager.for_queryset_class(ContestantQuerySet)()
+    objects = PassThroughManager.for_queryset_class(PerformerQuerySet)()
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1298,7 +1298,7 @@ class Contestant(TimeStampedModel):
             self.session,
             self.group,
         )
-        super(Contestant, self).save(*args, **kwargs)
+        super(Performer, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
@@ -1518,8 +1518,8 @@ class Director(TimeStampedModel):
         max_length=255,
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
+    performer = models.ForeignKey(
+        'Performer',
         related_name='directors',
     )
 
@@ -1538,19 +1538,19 @@ class Director(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.contestant,
+            self.performer,
             self.get_part_display(),
             self.person,
         )
         super(Director, self).save(*args, **kwargs)
 
     def clean(self):
-        if self.contestant.group.kind == Group.KIND.quartet:
+        if self.performer.group.kind == Group.KIND.quartet:
             raise ValidationError('Quartets do not have directors.')
 
     class Meta:
         unique_together = (
-            ('contestant', 'person',),
+            ('performer', 'person',),
         )
 
 
@@ -1815,8 +1815,8 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
+    performer = models.ForeignKey(
+        'Performer',
         related_name='performances',
     )
 
@@ -1903,7 +1903,7 @@ class Performance(TimeStampedModel):
             'position',
         )
         unique_together = (
-            ('round', 'contestant',),
+            ('round', 'performer',),
         )
 
     def __unicode__(self):
@@ -1912,7 +1912,7 @@ class Performance(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.round,
-            self.contestant.group,
+            self.performer.group,
         )
         super(Performance, self).save(*args, **kwargs)
 
@@ -2439,10 +2439,10 @@ class Round(TimeStampedModel):
     # )
     # def prep(self):
     #     p = 0
-    #     for contestant in self.award.contestants.official().order_by('?'):
+    #     for performer in self.award.performers.official().order_by('?'):
     #         self.performances.create(
     #             round=self,
-    #             contestant=contestant,
+    #             performer=performer,
     #             position=p,
     #         )
     #         p += 1
@@ -2512,7 +2512,7 @@ class Round(TimeStampedModel):
         #     p = 0
         #     for qualifier in qualifiers:
         #         l = next_round.performances.create(
-        #             contestant=qualifier.contestant,
+        #             performer=qualifier.performer,
         #             position=p,
         #             # start=next_round.start,
         #         )
@@ -2532,12 +2532,12 @@ class Round(TimeStampedModel):
         #     pass
         # return 'Round Confirmed'
     # def draw_award(self):
-    #     cs = self.contestants.order_by('?')
+    #     cs = self.performers.order_by('?')
     #     round = self.rounds.get(kind=self.rounds)
     #     p = 0
     #     for c in cs:
     #         round.performances.create(
-    #             contestant=c,
+    #             performer=c,
     #             position=p,
     #             start=round.start,
     #         )
@@ -2573,8 +2573,8 @@ class Singer(TimeStampedModel):
         max_length=255,
     )
 
-    contestant = models.ForeignKey(
-        'Contestant',
+    performer = models.ForeignKey(
+        'Performer',
         related_name='singers',
     )
 
@@ -2591,17 +2591,17 @@ class Singer(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def clean(self):
-        # if self.contestant.group.kind == Group.CHORUS:
+        # if self.performer.group.kind == Group.CHORUS:
         #     raise ValidationError('Choruses do not have quartet singers.')
         if self.part:
-            if [s['part'] for s in self.contestant.singers.values(
+            if [s['part'] for s in self.performer.singers.values(
                 'part'
             )].count(self.part) > 1:
                 raise ValidationError('There can not be more than one of the same part in a quartet.')
 
     class Meta:
         unique_together = (
-            ('contestant', 'person',),
+            ('performer', 'person',),
         )
         ordering = (
             '-name',
@@ -2609,7 +2609,7 @@ class Singer(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.contestant,
+            self.performer,
             self.get_part_display(),
             self.person,
         )
