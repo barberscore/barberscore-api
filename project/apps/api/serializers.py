@@ -270,8 +270,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'kind',
-            'chapter_name',
-            'chapter_code',
             'performers',
         )
 

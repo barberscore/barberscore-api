@@ -271,7 +271,6 @@ class ConventionAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
-        'chapter_name',
     )
 
     list_display = (
@@ -284,8 +283,6 @@ class GroupAdmin(admin.ModelAdmin):
         'twitter',
         'email',
         'phone',
-        'chapter_name',
-        'chapter_code',
         'picture',
     )
 
@@ -303,7 +300,6 @@ class GroupAdmin(admin.ModelAdmin):
         'phone',
         'picture',
         'description',
-        ('chapter_name', 'chapter_code',),
         'notes',
     )
 
