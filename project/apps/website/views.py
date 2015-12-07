@@ -35,11 +35,11 @@ from apps.api.models import (
     Performance,
     Score,
     Song,
-    Contestant,
+    Performer,
 )
 
 from .forms import (
-    make_contestant_form,
+    make_performer_form,
     LoginForm,
     AwardForm,
     ScoreFormSet,
@@ -223,16 +223,16 @@ def award_fill(request, slug):
         Award,
         slug=slug,
     )
-    ContestantForm = make_contestant_form(award)
-    ContestantFormSet = inlineformset_factory(
+    PerformerForm = make_performer_form(award)
+    PerformerFormSet = inlineformset_factory(
         Award,
-        Contestant,
-        form=ContestantForm,
+        Performer,
+        form=PerformerForm,
         extra=50,
         can_delete=False,
     )
     if request.method == 'POST':
-        formset = ContestantFormSet(
+        formset = PerformerFormSet(
             request.POST,
             instance=award,
         )
@@ -240,7 +240,7 @@ def award_fill(request, slug):
             formset.save()
             messages.success(
                 request,
-                """Contestant(s) added.""",
+                """Performer(s) added.""",
             )
             return redirect('website:award_fill', award.slug)
         else:
@@ -252,7 +252,7 @@ def award_fill(request, slug):
                             error,
                         )
     else:
-        formset = ContestantFormSet(
+        formset = PerformerFormSet(
             instance=award,
         )
     return render(
@@ -296,7 +296,7 @@ def round_draw(request, slug):
         Round,
         slug=slug,
     )
-    # contestants = award.contestants.order_by('name')
+    # performers = award.performers.order_by('name')
     # if request.method == 'POST':
     #     form = AwardForm(request.POST, instance=award)
     #     form.draw(award)
@@ -348,7 +348,7 @@ def performance_score(request, slug):
     performance = round.performances.get(
         status=Performance.STATUS.started,
     )
-    contestant = performance.contestant
+    performer = performance.performer
     song1 = performance.songs.get(order=1)
     song2 = performance.songs.get(order=2)
     if request.method == 'POST':
@@ -457,7 +457,7 @@ def performance_score(request, slug):
             'award': award,
             'round': round,
             'performance': performance,
-            'contestant': contestant,
+            'performer': performer,
         },
     )
 
@@ -490,7 +490,7 @@ def round_oss(request, slug):
         # status=Round.STATUS.final,
     )
     performances = round.performances.select_related(
-        'contestant__group',
+        'performer__group',
     ).prefetch_related(
         'songs',
         'songs__tune',
@@ -513,7 +513,7 @@ def award_oss(request, slug):
         slug=slug,
         # status=Award.STATUS.final,
     )
-    contestants = award.contestants.select_related(
+    performers = award.performers.select_related(
         'group',
     ).prefetch_related(
         Prefetch(
@@ -538,7 +538,7 @@ def award_oss(request, slug):
         request,
         'api/award_oss.html', {
             'award': award,
-            'contestants': contestants,
+            'performers': performers,
             # 'judges': judges,
             # 'competitors': competitors,
         },
@@ -556,7 +556,7 @@ class HelloPDFView(PDFTemplateView):
                 slug=self.kwargs['slug'],
                 # status=Award.STATUS.final,
             )
-            contestants = award.contestants.select_related(
+            performers = award.performers.select_related(
                 'group',
             ).prefetch_related(
                 Prefetch(
@@ -578,7 +578,7 @@ class HelloPDFView(PDFTemplateView):
             judges = award.judges.official
             competitors = award.competitors.all()
             context["award"] = award
-            context["contestants"] = contestants
+            context["performers"] = performers
             context["judges"] = judges
             context["competitors"] = competitors
             return context

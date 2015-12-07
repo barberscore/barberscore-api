@@ -7,7 +7,7 @@ from django.forms import (
 from apps.api.models import (
     Award,
     Judge,
-    Contestant,
+    Performer,
     Score,
     Group,
     Song,
@@ -124,8 +124,8 @@ class JudgeForm(forms.ModelForm):
 # )
 
 
-def make_contestant_form(award):
-    class ContestantForm(forms.ModelForm):
+def make_performer_form(award):
+    class PerformerForm(forms.ModelForm):
         group = forms.ModelChoiceField(
             queryset=Group.objects.filter(
                 status=Group.STATUS.active,
@@ -134,7 +134,7 @@ def make_contestant_form(award):
         )
 
         class Meta:
-            model = Contestant
+            model = Performer
             fields = [
                 'award',
                 'group',
@@ -149,7 +149,7 @@ def make_contestant_form(award):
                 'award': forms.HiddenInput(
                 ),
             }
-    return ContestantForm
+    return PerformerForm
 
 
 class ScoreForm(forms.ModelForm):

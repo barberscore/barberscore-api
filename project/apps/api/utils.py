@@ -249,53 +249,53 @@ def parse_finals(path):
     return
 
 
-def place_round(contestants):
+def place_round(performers):
     draw = []
     i = 1
-    for contestant in contestants:
+    for performer in performers:
         try:
-            match = contestant.points == draw[0].points
+            match = performer.points == draw[0].points
         except IndexError:
-            contestant.place = i
-            contestant.save()
-            draw.append(contestant)
+            performer.place = i
+            performer.save()
+            draw.append(performer)
             continue
         if match:
-            contestant.place = i
+            performer.place = i
             i += len(draw)
-            contestant.save()
-            draw.append(contestant)
+            performer.save()
+            draw.append(performer)
             continue
         else:
             i += 1
-            contestant.place = i
-            contestant.save()
-            draw = [contestant]
+            performer.place = i
+            performer.save()
+            draw = [performer]
     return
 
 
 def merge_groups(from_group, to_group):
-    cs = from_group.contestants.all()
+    cs = from_group.performers.all()
     for c in cs:
         c.group = to_group
         c.save()
     from_group.delete()
 
 
-def score_contestant(contestant):
-    session = contestant.award.session
-    if contestant.award.kind == 1:
-        if contestant.quarters_points and not contestant.semis_points:
-            contestant.score = round(contestant.points / (session * 6 * 1), 1)
-        elif contestant.semis_points and not contestant.finals_points:
-            contestant.score = round(contestant.points / (session * 6 * 2), 1)
-        elif contestant.finals_points:
-            contestant.score = round(contestant.points / (session * 6 * 3), 1)
+def score_performer(performer):
+    session = performer.award.session
+    if performer.award.kind == 1:
+        if performer.quarters_points and not performer.semis_points:
+            performer.score = round(performer.points / (session * 6 * 1), 1)
+        elif performer.semis_points and not performer.finals_points:
+            performer.score = round(performer.points / (session * 6 * 2), 1)
+        elif performer.finals_points:
+            performer.score = round(performer.points / (session * 6 * 3), 1)
         else:
-            contestant.score = None
+            performer.score = None
     else:
-        contestant.score = round(contestant.points / (session * 6 * 1), 1)
-    contestant.save()
+        performer.score = round(performer.points / (session * 6 * 1), 1)
+    performer.save()
     return
 
 
@@ -311,7 +311,7 @@ def parse_arrangers(data):
 
     for row in data:
         try:
-            c = Contestant.objects.get(
+            c = Performer.objects.get(
                 award__name='International Quartet 2015',
                 group__name__iexact=row[0],
             )

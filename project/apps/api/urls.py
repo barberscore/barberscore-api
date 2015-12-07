@@ -7,7 +7,7 @@ from .views import (
     CompetitorViewSet,
     RoundViewSet,
     GroupViewSet,
-    ContestantViewSet,
+    PerformerViewSet,
     TuneViewSet,
     PersonViewSet,
     SearchViewSet,
@@ -27,7 +27,7 @@ router.register(r'award', AwardViewSet)
 router.register(r'catalog', CatalogViewSet)
 router.register(r'competitor', CompetitorViewSet)
 router.register(r'session', SessionViewSet)
-router.register(r'contestant', ContestantViewSet)
+router.register(r'performer', PerformerViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'director', DirectorViewSet)
 router.register(r'group', GroupViewSet)

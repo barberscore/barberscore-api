@@ -15,7 +15,7 @@ from .models import (
     Competitor,
     Round,
     Group,
-    Contestant,
+    Performer,
     Tune,
     Person,
     Song,
@@ -35,7 +35,7 @@ from .serializers import (
     CompetitorSerializer,
     RoundSerializer,
     GroupSerializer,
-    ContestantSerializer,
+    PerformerSerializer,
     TuneSerializer,
     PersonSerializer,
     SearchSerializer,
@@ -75,7 +75,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
 class CompetitorViewSet(viewsets.ModelViewSet):
     queryset = Competitor.objects.select_related(
         'award',
-        'contestant',
+        'performer',
     )
     serializer_class = CompetitorSerializer
     lookup_field = 'slug'
@@ -88,7 +88,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         # history=Session.HISTORY.complete,
     ).prefetch_related(
         'awards',
-        'contestants',
+        'performers',
         'rounds',
         'judges',
     )
@@ -96,8 +96,8 @@ class SessionViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.select_related(
+class PerformerViewSet(viewsets.ModelViewSet):
+    queryset = Performer.objects.select_related(
         'session',
         'organization',
     ).prefetch_related(
@@ -106,7 +106,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'directors',
         'singers',
     )
-    serializer_class = ContestantSerializer
+    serializer_class = PerformerSerializer
     lookup_field = 'slug'
 
 
@@ -125,7 +125,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
 class DirectorViewSet(viewsets.ModelViewSet):
     queryset = Director.objects.select_related(
         'person',
-        'contestant',
+        'performer',
     )
     serializer_class = DirectorSerializer
     lookup_field = 'slug'
@@ -133,7 +133,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().prefetch_related(
-        'contestants',
+        'performers',
     )
     serializer_class = GroupSerializer
     lookup_field = 'slug'
@@ -160,7 +160,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.select_related(
         'round',
-        'contestant',
+        'performer',
     ).prefetch_related(
         'songs',
     )
@@ -207,7 +207,7 @@ class RoundViewSet(viewsets.ModelViewSet):
 class SingerViewSet(viewsets.ModelViewSet):
     queryset = Singer.objects.select_related(
         'person',
-        'contestant',
+        'performer',
     )
     serializer_class = SingerSerializer
     lookup_field = 'slug'

@@ -12,7 +12,7 @@ from .models import (
     Certification,
     Competitor,
     Session,
-    Contestant,
+    Performer,
     Director,
     Judge,
     Performance,
@@ -104,7 +104,7 @@ class CertificationInline(admin.TabularInline):
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'person',
-    #         'contestant',
+    #         'performer',
     #     ]
     # }
     readonly_fields = [
@@ -131,7 +131,7 @@ class CompetitorInline(admin.TabularInline):
         'link',
         'name',
         'award',
-        'contestant',
+        'performer',
         'total_score',
     )
     ordering = (
@@ -143,11 +143,11 @@ class CompetitorInline(admin.TabularInline):
     model = Competitor
     extra = 0
     raw_id_fields = (
-        'contestant',
+        'performer',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'contestant',
+            'performer',
         ]
     }
     readonly_fields = [
@@ -197,12 +197,12 @@ class SessionInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class ContestantInline(admin.TabularInline):
+class PerformerInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_contestant_change',
+                    'admin:api_performer_change',
                     args=(
                         obj.id.hex,
                     )
@@ -228,7 +228,7 @@ class ContestantInline(admin.TabularInline):
 
     show_change_link = True
 
-    model = Contestant
+    model = Performer
     extra = 0
     raw_id_fields = (
         'session',
@@ -252,24 +252,24 @@ class ContestantInline(admin.TabularInline):
 
 class DirectorInline(admin.TabularInline):
     fields = (
-        'contestant',
+        'performer',
         'person',
         'part',
     )
     ordering = (
         'part',
-        'contestant',
+        'performer',
     )
     model = Director
     extra = 0
     raw_id_fields = (
         'person',
-        'contestant',
+        'performer',
     )
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'person',
-    #         'contestant',
+    #         'performer',
     #     ]
     # }
     can_delete = True
@@ -321,7 +321,7 @@ class PerformanceInline(admin.TabularInline):
 
     fields = (
         'link',
-        'contestant',
+        'performer',
         'status',
         'position',
         'draw',
@@ -332,15 +332,15 @@ class PerformanceInline(admin.TabularInline):
     model = Performance
     extra = 0
     # raw_id_fields = (
-    #     'contestant',
+    #     'performer',
     # )
     # autocomplete_lookup_fields = {
     #     'fk': [
-    #         'contestant',
+    #         'performer',
     #     ]
     # }
     readonly_fields = (
-        'contestant',
+        'performer',
         'draw',
         # 'start',
         'link',
@@ -426,23 +426,23 @@ class RoundInline(admin.TabularInline):
 class SingerInline(admin.TabularInline):
     model = Singer
     fields = (
-        'contestant',
+        'performer',
         'person',
         'part',
     )
     ordering = (
         'part',
-        'contestant',
+        'performer',
     )
     extra = 0
     raw_id_fields = (
         'person',
-        'contestant',
+        'performer',
     )
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'person',
-    #         # 'contestant',
+    #         # 'performer',
     #     ]
     # }
     can_delete = True

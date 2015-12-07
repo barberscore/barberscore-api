@@ -9,7 +9,7 @@ from .inlines import (
     CertificationInline,
     CompetitorInline,
     SessionInline,
-    ContestantInline,
+    PerformerInline,
     DirectorInline,
     JudgeInline,
     PerformanceInline,
@@ -25,7 +25,7 @@ from .models import (
     Catalog,
     Competitor,
     Session,
-    Contestant,
+    Performer,
     Convention,
     Group,
     Judge,
@@ -143,7 +143,7 @@ class CompetitorAdmin(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'contestant',
+        'performer',
         'award',
         'place',
         'men',
@@ -155,7 +155,7 @@ class CompetitorAdmin(admin.ModelAdmin):
 
     autocomplete_lookup_fields = {
         'fk': [
-            'contestant',
+            'performer',
             'award',
         ]
     }
@@ -165,7 +165,7 @@ class CompetitorAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = [
-        'contestant',
+        'performer',
         'award',
     ]
 
@@ -229,12 +229,12 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         RoundInline,
         JudgeInline,
         AwardInline,
-        ContestantInline,
+        PerformerInline,
     ]
 
 
-@admin.register(Contestant)
-class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
+@admin.register(Performer)
+class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -345,7 +345,7 @@ class ConventionAdmin(admin.ModelAdmin):
     inlines = [
         # AwardInline,
         SessionInline,
-        # ContestantInline,
+        # PerformerInline,
     ]
 
     readonly_fields = (
@@ -398,7 +398,7 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        ContestantInline,
+        PerformerInline,
     ]
 
     readonly_fields = (
@@ -492,7 +492,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'contestant',
+        'performer',
         ('draw', 'start_time',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
@@ -513,11 +513,11 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     ]
 
     raw_id_fields = (
-        'contestant',
+        'performer',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'contestant',
+            'performer',
         ]
     }
 
