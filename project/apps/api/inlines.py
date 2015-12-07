@@ -14,6 +14,7 @@ from .models import (
     Session,
     Performer,
     Director,
+    Group,
     Judge,
     Performance,
     Score,
@@ -175,6 +176,34 @@ class DirectorInline(admin.TabularInline):
         'person',
         'performer',
     )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'person',
+    #         'performer',
+    #     ]
+    # }
+    can_delete = True
+    classes = ('grp-collapse grp-closed',)
+
+
+class GroupInline(admin.TabularInline):
+    fields = (
+        'name',
+        'status',
+    )
+    ordering = (
+        'name',
+    )
+    model = Group
+    extra = 0
+    readonly_fields = (
+        'name',
+        'status',
+    )
+    # raw_id_fields = (
+    #     'person',
+    #     'performer',
+    # )
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'person',
