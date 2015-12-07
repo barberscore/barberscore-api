@@ -73,18 +73,18 @@ from .validators import (
     # is_scheduled,
     has_contestants,
     has_awards,
-    # session_scheduled,
+    # round_scheduled,
     award_started,
     scores_entered,
     songs_entered,
-    sessions_finished,
-    # session_finished,
+    rounds_finished,
+    # round_finished,
     performances_finished,
     scores_validated,
     song_entered,
     score_entered,
     preceding_finished,
-    preceding_session_finished,
+    preceding_round_finished,
 )
 
 
@@ -393,7 +393,7 @@ class Award(TimeStampedModel):
 
     rounds = models.IntegerField(
         help_text="""
-            The number of rounds that will be used in determining the award.  Note that this may be fewer than the total number of rounds (sessions) in the parent contest.""",
+            The number of rounds that will be used in determining the award.  Note that this may be fewer than the total number of rounds (rounds) in the parent contest.""",
         choices=ROUNDS_CHOICES,
     )
 
@@ -466,7 +466,7 @@ class Award(TimeStampedModel):
         # Triggered by award post_save signal if created
         r = 1
         while r <= self.rounds:
-            self.sessions.create(
+            self.rounds.create(
                 contest=self,
                 kind=r,
             )
@@ -552,13 +552,13 @@ class Award(TimeStampedModel):
     # def start(self):
     #     # Triggered in UI
     #     # TODO seed contestants?
-    #     session = self.sessions.initial()
+    #     round = self.rounds.initial()
     #     p = 0
     #     for contestant in self.contestants.accepted().order_by('?'):
     #         contestant.register()
     #         contestant.save()
-    #         session.performances.create(
-    #             session=session,
+    #         round.performances.create(
+    #             round=round,
     #             contestant=contestant,
     #             position=p,
     #         )
@@ -570,19 +570,19 @@ class Award(TimeStampedModel):
         source=STATUS.started,
         target=STATUS.finished,
         conditions=[
-            # sessions_finished,
+            # rounds_finished,
         ],
     )
     # Check everything is done.
     def finish(self):
         # Denormalize
         ns = Song.objects.filter(
-            performance__session__contest=self.contest,
+            performance__round__contest=self.contest,
         )
         for n in ns:
             n.save()
         ps = Performance.objects.filter(
-            session__contest=self.contest,
+            round__contest=self.contest,
         )
         for p in ps:
             p.save()
@@ -902,9 +902,9 @@ class Competitor(TimeStampedModel):
         # If there are no performances, skip.
         if self.contestant.performances.exists():
             agg = self.contestant.performances.filter(
-                session__num__lte=self.award.rounds,
+                round__num__lte=self.award.rounds,
             ).filter(
-                session__contest=self.award.contest,
+                round__contest=self.award.contest,
             ).aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
@@ -1006,10 +1006,11 @@ class Contest(TimeStampedModel):
     for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
 
-    rounds = models.IntegerField(
+    num_rounds = models.IntegerField(
         help_text="""
-            Number of rounds (sessions) for the contest.""",
+            Number of rounds (rounds) for the contest.""",
         choices=ROUNDS_CHOICES,
+        default=1,
     )
 
     # Denormalized
@@ -1103,13 +1104,13 @@ class Contest(TimeStampedModel):
     def start(self):
         # Triggered in UI
         # TODO seed contestants?
-        session = self.sessions.get(num=1)
+        round = self.rounds.get(num=1)
         p = 0
         for contestant in self.contestants.accepted().order_by('?'):
             contestant.register()
             contestant.save()
-            session.performances.create(
-                session=session,
+            round.performances.create(
+                round=round,
                 contestant=contestant,
                 position=p,
             )
@@ -1809,8 +1810,8 @@ class Performance(TimeStampedModel):
         monitor='status',
     )
 
-    session = models.ForeignKey(
-        'Session',
+    round = models.ForeignKey(
+        'Round',
         related_name='performances',
     )
 
@@ -1831,7 +1832,7 @@ class Performance(TimeStampedModel):
     # Denormalized
     place = models.IntegerField(
         help_text="""
-            The final ranking relative to this session.""",
+            The final ranking relative to this round.""",
         null=True,
         blank=True,
         editable=False,
@@ -1898,11 +1899,11 @@ class Performance(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'session',
+            'round',
             'position',
         )
         unique_together = (
-            ('session', 'contestant',),
+            ('round', 'contestant',),
         )
 
     def __unicode__(self):
@@ -1910,7 +1911,7 @@ class Performance(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.session,
+            self.round,
             self.contestant.group,
         )
         super(Performance, self).save(*args, **kwargs)
@@ -1938,7 +1939,7 @@ class Performance(TimeStampedModel):
 
             # Calculate percentile scores
             try:
-                possible = self.session.contest.size * 2
+                possible = self.round.contest.size * 2
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
@@ -1951,7 +1952,7 @@ class Performance(TimeStampedModel):
     def get_preceding(self):
         try:
             obj = self.__class__.objects.get(
-                session=self.session,
+                round=self.round,
                 position=self.position - 1,
             )
             return obj
@@ -1961,7 +1962,7 @@ class Performance(TimeStampedModel):
     def get_next(self):
         try:
             obj = self.__class__.objects.get(
-                session=self.session,
+                round=self.round,
                 position=self.position + 1,
             )
             return obj
@@ -2006,7 +2007,7 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for judge in self.session.contest.judges.scoring():
+            for judge in self.round.contest.judges.scoring():
                 song.scores.create(
                     song=song,
                     judge=judge,
@@ -2036,7 +2037,7 @@ class Performance(TimeStampedModel):
         source=STATUS.finished,
         target=STATUS.confirmed,
         # conditions=[
-        #     session_finished,
+        #     round_finished,
         # ]
     )
     def confirm(self):
@@ -2300,7 +2301,7 @@ class Score(TimeStampedModel):
         return
 
 
-class Session(TimeStampedModel):
+class Round(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2347,7 +2348,7 @@ class Session(TimeStampedModel):
 
     contest = models.ForeignKey(
         'Contest',
-        related_name='sessions',
+        related_name='rounds',
     )
 
     kind = models.IntegerField(
@@ -2383,7 +2384,7 @@ class Session(TimeStampedModel):
             self.contest,
             self.get_kind_display(),
         )
-        super(Session, self).save(*args, **kwargs)
+        super(Round, self).save(*args, **kwargs)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -2440,7 +2441,7 @@ class Session(TimeStampedModel):
     #     p = 0
     #     for contestant in self.award.contestants.official().order_by('?'):
     #         self.performances.create(
-    #             session=self,
+    #             round=self,
     #             contestant=contestant,
     #             position=p,
     #         )
@@ -2452,10 +2453,10 @@ class Session(TimeStampedModel):
         source=STATUS.new,
         target=STATUS.started,
         conditions=[
-            # session_drawn,
-            # session_scheduled,
+            # round_drawn,
+            # round_scheduled,
             # award_started,
-            # preceding_session_finished,
+            # preceding_round_finished,
         ]
     )
     def start(self):
@@ -2494,7 +2495,7 @@ class Session(TimeStampedModel):
                 performance.place = i
                 performance.save()
                 cursor = [performance]
-        return "Session Ended"
+        return "Round Ended"
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
     def finalize(self):
@@ -2502,18 +2503,18 @@ class Session(TimeStampedModel):
         # # TODO Some validation
         # try:
         #     # TODO This is an awful lot to be in a try/except; refactor?
-        #     next_session = self.award.sessions.get(
+        #     next_round = self.award.rounds.get(
         #         kind=(self.kind - 1),
         #     )
         #     qualifiers = self.performances.filter(
-        #         place__lte=next_session.slots,
+        #         place__lte=next_round.slots,
         #     ).order_by('?')
         #     p = 0
         #     for qualifier in qualifiers:
-        #         l = next_session.performances.create(
+        #         l = next_round.performances.create(
         #             contestant=qualifier.contestant,
         #             position=p,
-        #             # start=next_session.start,
+        #             # start=next_round.start,
         #         )
         #         p += 1
         #         p1 = l.songs.create(performance=l, order=1)
@@ -2529,16 +2530,16 @@ class Session(TimeStampedModel):
         #             )
         # except self.DoesNotExist:
         #     pass
-        # return 'Session Confirmed'
+        # return 'Round Confirmed'
     # def draw_award(self):
     #     cs = self.contestants.order_by('?')
-    #     session = self.sessions.get(kind=self.rounds)
+    #     round = self.rounds.get(kind=self.rounds)
     #     p = 0
     #     for c in cs:
-    #         session.performances.create(
+    #         round.performances.create(
     #             contestant=c,
     #             position=p,
-    #             start=session.start,
+    #             start=round.start,
     #         )
     #         p += 1
     #     self.status = self.STATUS.ready
@@ -2802,7 +2803,7 @@ class Song(TimeStampedModel):
 
             # Calculate percentile scores.
             try:
-                possible = self.performance.session.contest.size
+                possible = self.performance.round.contest.size
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)

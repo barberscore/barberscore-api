@@ -14,7 +14,7 @@ from .models import (
 )
 
 from .factories import (
-    add_sessions,
+    add_rounds,
     add_judges,
 )
 
@@ -29,7 +29,7 @@ def user_post_save(sender, instance=None, created=False, **kwargs):
 def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     if not raw:
         if created:
-            add_sessions(instance)
+            add_rounds(instance)
             add_judges(instance)
             instance.save()
             # instance.build()

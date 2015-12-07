@@ -15,18 +15,18 @@ from .models import (
     Contestant,
     Group,
     Judge,
-    Session,
+    Round,
     Tune,
 )
 
 
-def add_sessions(contest):
+def add_rounds(contest):
     # TODO Wonky.  Do these need kinds?
     rounds = contest.rounds
     k = rounds
     i = 1
     while i <= rounds:
-        Session.objects.create(
+        Round.objects.create(
             contest=contest,
             num=i,
             kind=k,
@@ -136,8 +136,8 @@ def score_performance(performance):
     return "Performance Scored"
 
 
-def schedule_performances(session):
-    performances = session.performances.all()
+def schedule_performances(round):
+    performances = round.performances.all()
     for performance in performances:
         performance.start_time = timezone.now()
         performance.prep()

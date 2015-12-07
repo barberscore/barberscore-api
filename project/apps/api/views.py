@@ -13,7 +13,7 @@ from .models import (
     Contest,
     Award,
     Competitor,
-    Session,
+    Round,
     Group,
     Contestant,
     Tune,
@@ -33,7 +33,7 @@ from .serializers import (
     ContestSerializer,
     AwardSerializer,
     CompetitorSerializer,
-    SessionSerializer,
+    RoundSerializer,
     GroupSerializer,
     ContestantSerializer,
     TuneSerializer,
@@ -89,7 +89,7 @@ class ContestViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'awards',
         'contestants',
-        'sessions',
+        'rounds',
         'judges',
     )
     serializer_class = ContestSerializer
@@ -159,7 +159,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.select_related(
-        'session',
+        'round',
         'contestant',
     ).prefetch_related(
         'songs',
@@ -194,13 +194,13 @@ class SearchViewSet(HaystackViewSet):
     serializer_class = SearchSerializer
 
 
-class SessionViewSet(viewsets.ModelViewSet):
-    queryset = Session.objects.select_related(
+class RoundViewSet(viewsets.ModelViewSet):
+    queryset = Round.objects.select_related(
         'contest',
     ).prefetch_related(
         'performances',
     )
-    serializer_class = SessionSerializer
+    serializer_class = RoundSerializer
     lookup_field = 'slug'
 
 

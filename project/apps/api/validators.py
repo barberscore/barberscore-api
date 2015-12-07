@@ -99,8 +99,8 @@ def is_imcontested(award):
 
 
 def is_scheduled(award):
-    for session in award.sessions.all():
-        if not session.start_date:
+    for round in award.rounds.all():
+        if not round.start_date:
             return False
     return True
 
@@ -113,52 +113,52 @@ def has_awards(award):
     return award.awards.exists()
 
 
-def award_started(session):
-    if session.award.status == session.award.STATUS.started:
+def award_started(round):
+    if round.award.status == round.award.STATUS.started:
         return True
     else:
         return False
 
 
-def session_scheduled(session):
-    for performance in session.performances.all():
+def round_scheduled(round):
+    for performance in round.performances.all():
         if not performance.start_time:
             return False
     return True
 
 
-def sessions_finished(award):
-    sessions = award.sessions.all()
-    for session in sessions:
-        if session.status != session.STATUS.finished:
+def rounds_finished(award):
+    rounds = award.rounds.all()
+    for round in rounds:
+        if round.status != round.STATUS.finished:
             return False
     return True
 
 
-# def session_finished(performance):
-#     session = performance.session
-#     if session.status != session.STATUS.finished:
+# def round_finished(performance):
+#     round = performance.round
+#     if round.status != round.STATUS.finished:
 #         return False
 #     return True
 
 
-def performances_finished(session):
-    performances = session.performances.all()
+def performances_finished(round):
+    performances = round.performances.all()
     for performance in performances:
         if performance.status != performance.STATUS.finished:
             return False
     return True
 
 
-def scores_validated(session):
-    for performance in session.performances.all():
+def scores_validated(round):
+    for performance in round.performances.all():
         for song in performance.songs.all():
             for score in song.scores.all():
                 if score.status == score.STATUS.flagged:
                     return False
     return True
     # scores = Score.objects.filter(
-    #     song__performance__session=session,
+    #     song__performance__round=round,
     #     status=Score.STATUS.flagged,
     # )
     # if scores:
@@ -208,10 +208,10 @@ def preceding_finished(performance):
     return True
 
 
-def preceding_session_finished(session):
-    preceding = session.get_preceding()
+def preceding_round_finished(round):
+    preceding = round.get_preceding()
     if preceding:
-        if preceding.status == session.STATUS.finished:
+        if preceding.status == round.STATUS.finished:
             return True
         else:
             return False
