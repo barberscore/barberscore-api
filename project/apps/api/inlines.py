@@ -17,7 +17,7 @@ from .models import (
     Judge,
     Performance,
     Score,
-    Session,
+    Round,
     Singer,
     Song,
 )
@@ -380,12 +380,12 @@ class ScoreInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-class SessionInline(admin.TabularInline):
+class RoundInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
                 reverse(
-                    'admin:api_session_change',
+                    'admin:api_round_change',
                     args=(
                         obj.id.hex,
                     )
@@ -407,7 +407,7 @@ class SessionInline(admin.TabularInline):
         'kind',
     )
 
-    model = Session
+    model = Round
     extra = 0
     # raw_id_fields = (
     #     'award',

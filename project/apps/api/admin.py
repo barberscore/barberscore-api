@@ -14,7 +14,7 @@ from .inlines import (
     JudgeInline,
     PerformanceInline,
     ScoreInline,
-    SessionInline,
+    RoundInline,
     SingerInline,
     SongStackedInline,
 )
@@ -33,7 +33,7 @@ from .models import (
     Performance,
     Person,
     Score,
-    Session,
+    Round,
     Song,
     Tune,
     User,
@@ -226,7 +226,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        SessionInline,
+        RoundInline,
         JudgeInline,
         AwardInline,
         ContestantInline,
@@ -474,7 +474,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     inlines = [
         SongStackedInline,
-        # SessionInline,
+        # RoundInline,
     ]
     list_display = [
         'name',
@@ -486,7 +486,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     ]
     list_filter = [
         'status',
-        'session',
+        'round',
     ]
 
     fields = [
@@ -622,8 +622,8 @@ class ScoreAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Session)
-class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+@admin.register(Round)
+class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
