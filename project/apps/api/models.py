@@ -1698,7 +1698,8 @@ class Judge(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        # limit_choices_to={'certifications': False},
+        limit_choices_to={'is_judge': True},
+        # limit_choices_to=models.Q(certifications__isnull=False),
     )
 
     organization = TreeForeignKey(
@@ -1707,10 +1708,6 @@ class Judge(TimeStampedModel):
         null=True,
         blank=True,
     )
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains", "person__icontains",)
 
     @property
     def designation(self):
@@ -2070,19 +2067,6 @@ class Person(Common):
         (2, 'team', "Team"),
     )
 
-    JUDGE = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-        (4, 'music_candidate', 'Music Candidate'),
-        (5, 'presentation_candidate', 'Presentation Candidate'),
-        (6, 'singing_candidate', 'Singing Candidate'),
-        (7, 'music_composite', 'Music Composite'),
-        (8, 'presentation_composite', 'Presentation Composite'),
-        (9, 'singing_composite', 'Singing Composite'),
-    )
-
     kind = models.IntegerField(
         help_text="""
             Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
@@ -2111,6 +2095,11 @@ class Person(Common):
         blank=True,
     )
 
+    # Denormalization to make autocomplete work
+    is_judge = models.BooleanField(
+        default=False,
+    )
+
     class Meta:
         ordering = ['name']
 
@@ -2120,10 +2109,6 @@ class Person(Common):
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
-
-    @property
-    def is_judge(self):
-        return bool(self.certifications.exists())
 
     @property
     def first_name(self):
@@ -2148,6 +2133,10 @@ class Person(Common):
             return name.nickname
         else:
             return None
+
+    def save(self, *args, **kwargs):
+        self.is_judge = self.certifications.exists()
+        super(Person, self).save(*args, **kwargs)
 
 
 class Score(TimeStampedModel):

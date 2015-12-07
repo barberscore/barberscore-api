@@ -10,6 +10,7 @@ from django.conf import settings
 
 from .models import (
     Contest,
+    Certification,
 )
 
 from .factories import (
@@ -33,3 +34,11 @@ def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs)
             instance.save()
             # instance.build()
             # instance.save()
+
+
+@receiver(post_save, sender=Certification)
+def certification_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """ Denormalization to make autocomplete work as expected """
+    if not raw:
+        if created:
+            instance.person.save()
