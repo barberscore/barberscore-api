@@ -26,7 +26,7 @@ from .models import (
 class ArrangerInline(admin.TabularInline):
     model = Arranger
     fields = (
-        'song',
+        # 'song',
         'person',
         'part',
         # 'is_practice',
