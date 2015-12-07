@@ -146,7 +146,6 @@ class ContestantAdmin(admin.ModelAdmin):
         'performer',
         'contest',
         'place',
-        'men',
     ]
     list_filter = (
         'status',
@@ -346,7 +345,6 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
         'draw',
         'start_time',
         'total_score',
-        'place',
     ]
     list_filter = [
         'status',
@@ -415,7 +413,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'sng_score',
         'total_score',
         'men',
-        'place',
     )
 
     search_fields = (
@@ -443,7 +440,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         ('group', 'organization',),
         ('seed', 'prelim',),
-        ('place', 'men',),
+        ('men',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
