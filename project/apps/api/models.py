@@ -721,6 +721,7 @@ class Certification(TimeStampedModel):
         (0, 'new', 'New'),
         (1, 'active', 'Active'),
         (2, 'candidate', 'Candidate'),
+        (3, 'inactive', 'Inactive'),
     )
 
     CATEGORY = Choices(
