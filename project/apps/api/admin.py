@@ -222,6 +222,7 @@ class ConventionAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
+        'chapter_name',
     )
 
     list_display = (
