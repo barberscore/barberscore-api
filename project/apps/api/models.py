@@ -591,7 +591,7 @@ class Award(TimeStampedModel):
         )
         for t in ts:
             t.save()
-        rs = Competitor.objects.filter(
+        rs = Contestant.objects.filter(
             award=self,
         )
         for r in rs:
@@ -599,25 +599,25 @@ class Award(TimeStampedModel):
         # Rank results
         cursor = []
         i = 1
-        for competitor in self.competitors.order_by('-total_points'):
+        for contestant in self.contestants.order_by('-total_points'):
             try:
-                match = competitor.total_points == cursor[0].total_points
+                match = contestant.total_points == cursor[0].total_points
             except IndexError:
-                competitor.place = i
-                competitor.save()
-                cursor.append(competitor)
+                contestant.place = i
+                contestant.save()
+                cursor.append(contestant)
                 continue
             if match:
-                competitor.place = i
+                contestant.place = i
                 i += len(cursor)
-                competitor.save()
-                cursor.append(competitor)
+                contestant.save()
+                cursor.append(contestant)
                 continue
             else:
                 i += 1
-                competitor.place = i
-                competitor.save()
-                cursor = [competitor]
+                contestant.place = i
+                contestant.save()
+                cursor = [contestant]
         return "{0} Ready for Review".format(self)
 
     @transition(field=status, source=STATUS.finished, target=STATUS.final)
@@ -778,7 +778,7 @@ class Certification(TimeStampedModel):
         )
 
 
-class Competitor(TimeStampedModel):
+class Contestant(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
     )
@@ -814,12 +814,12 @@ class Competitor(TimeStampedModel):
 
     performer = models.ForeignKey(
         'Performer',
-        related_name='competitors',
+        related_name='contestants',
     )
 
     award = models.ForeignKey(
         'Award',
-        related_name='competitors',
+        related_name='contestants',
     )
 
     # Denormalization
@@ -887,7 +887,7 @@ class Competitor(TimeStampedModel):
             self.award,
             self.performer.group,
         )
-        super(Competitor, self).save(*args, **kwargs)
+        super(Contestant, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (

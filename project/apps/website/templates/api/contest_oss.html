@@ -121,8 +121,8 @@
     <section>
       <h4>Awards</h4>
       <ul class='list-unstyled'>
-      {% for competitor in award.competitors.all %}
-        <li>{{competitor.award.name}}: {{competitor.performer.group.name}}</li>
+      {% for contestant in award.contestants.all %}
+        <li>{{contestant.award.name}}: {{contestant.performer.group.name}}</li>
       {% endfor %}
       </ul>
     </section>

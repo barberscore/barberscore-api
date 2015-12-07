@@ -12,7 +12,7 @@ from .models import (
     Convention,
     Session,
     Award,
-    Competitor,
+    Contestant,
     Round,
     Group,
     Performer,
@@ -32,7 +32,7 @@ from .serializers import (
     ConventionSerializer,
     SessionSerializer,
     AwardSerializer,
-    CompetitorSerializer,
+    ContestantSerializer,
     RoundSerializer,
     GroupSerializer,
     PerformerSerializer,
@@ -57,7 +57,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     ).filter(
         # history=Session.HISTORY.complete,
     ).prefetch_related(
-        'competitors',
+        'contestants',
     )
     serializer_class = AwardSerializer
     lookup_field = 'slug'
@@ -72,12 +72,12 @@ class CatalogViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class CompetitorViewSet(viewsets.ModelViewSet):
-    queryset = Competitor.objects.select_related(
+class ContestantViewSet(viewsets.ModelViewSet):
+    queryset = Contestant.objects.select_related(
         'award',
         'performer',
     )
-    serializer_class = CompetitorSerializer
+    serializer_class = ContestantSerializer
     lookup_field = 'slug'
 
 
@@ -102,7 +102,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'organization',
     ).prefetch_related(
         'performances',
-        'competitors',
+        'contestants',
         'directors',
         'singers',
     )
