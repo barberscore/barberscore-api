@@ -11,7 +11,7 @@ from apps.api.models import (
     # Singer,
     # Director,
     # Judge,
-    Competitor,
+    Contestant,
     Round,
     Session,
 )
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         cs = Performer.objects.all()
         for c in cs:
             c.save()
-        rs = Competitor.objects.all()
+        rs = Contestant.objects.all()
         for r in rs:
             r.save()
         ss = Round.objects.all()

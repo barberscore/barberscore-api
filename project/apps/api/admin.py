@@ -7,7 +7,7 @@ from .inlines import (
     ArrangerInline,
     AwardInline,
     CertificationInline,
-    CompetitorInline,
+    ContestantInline,
     SessionInline,
     PerformerInline,
     DirectorInline,
@@ -23,7 +23,7 @@ from .models import (
     Arranger,
     Award,
     Catalog,
-    Competitor,
+    Contestant,
     Session,
     Performer,
     Convention,
@@ -59,7 +59,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        CompetitorInline,
+        ContestantInline,
     ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -134,8 +134,8 @@ class CatalogAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Competitor)
-class CompetitorAdmin(admin.ModelAdmin):
+@admin.register(Contestant)
+class ContestantAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = [
         'name',
@@ -245,7 +245,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         SingerInline,
         DirectorInline,
         PerformanceInline,
-        CompetitorInline,
+        ContestantInline,
     ]
 
     list_display = (

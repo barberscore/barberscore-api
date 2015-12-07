@@ -164,8 +164,8 @@
       {% comment %}
       <h4>Awards</h4>
       <ul class='list-unstyled'>
-      {% for competitor in competitors %}
-        <li>{{competitor.award.name}}: {{competitor.performer.group.name}}</li>
+      {% for contestant in contestants %}
+        <li>{{contestant.award.name}}: {{contestant.performer.group.name}}</li>
       {% endfor %}
       </ul>
       {% endcomment %}
