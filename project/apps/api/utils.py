@@ -55,7 +55,7 @@ def parse_chorus(path):
         row.extend([row[9].split('[', 1)[1].split(']', 1)[0]])
         row[0] = row[0].split(' ', 1)[1]
         row[9] = row[9].split('[', 1)[0]
-        # Add session
+        # Add round
         row.extend(['1'])
         output.append(row)
     # Strip space
@@ -85,7 +85,7 @@ def parse_chorus_nd(path):
         # row.extend([row[8].split('(', 1)[1].split(')', 1)[0]])
         row[0] = row[0].split(' ', 1)[1]
         # row[8] = row[8].split('(', 1)[0]
-        # Add session
+        # Add round
         row.extend(['1'])
         output.append(row)
     # Strip space
@@ -115,7 +115,7 @@ def parse_district_chorus(path, district):
         row.extend([row[9].split('(', 1)[0]])
         row[0] = row[0].split(' ', 1)[1]
         row[9] = row[9].split('(', 1)[0]
-        # Add session
+        # Add round
         row.extend(['1'])
         # Overwrite district
         row[19] = district
@@ -158,7 +158,7 @@ def parse_quarters(path):
         row.extend([row[7].split('[', 1)[1].split(']', 1)[0]])
         row[0] = row[0].split(' ', 1)[1]
         row[7] = row[7].split('[', 1)[0]
-        # Add session
+        # Add round
         row.extend(['3'])
         output.append(row)
     # Strip space
@@ -188,7 +188,7 @@ def parse_semis(path):
         row.extend([row[9].split('[', 1)[1].split(']', 1)[0]])
         row[0] = row[0].split(' ', 1)[1]
         row[9] = row[9].split('[', 1)[0]
-        # Add session
+        # Add round
         row.extend(['2'])
         output.append(row)
     # Strip space
@@ -218,7 +218,7 @@ def parse_finals(path):
         row.extend([row[9].split('[', 1)[1].split(']', 1)[0]])
         row[0] = row[0].split(' ', 1)[1]
         row[9] = row[9].split('[', 1)[0]
-        # Add session
+        # Add round
         row.extend(['1'])
         output.append(row)
     # Strip space
@@ -249,7 +249,7 @@ def parse_finals(path):
     return
 
 
-def place_session(contestants):
+def place_round(contestants):
     draw = []
     i = 1
     for contestant in contestants:

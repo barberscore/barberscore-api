@@ -8,7 +8,7 @@ from django.core.management.base import (
 # )
 
 from apps.api.models import (
-    Session,
+    Round,
     Score,
 )
 
@@ -25,13 +25,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for slug in options['slug']:
             try:
-                session = Session.objects.get(
+                round = Round.objects.get(
                     slug=slug,
                 )
-            except Session.DoesNotExist:
-                raise CommandError("Session does not exist.")
+            except Round.DoesNotExist:
+                raise CommandError("Round does not exist.")
             scores = Score.objects.filter(
-                song__performance__session=session,
+                song__performance__round=round,
                 status=Score.STATUS.flagged,
             )
             for score in scores:

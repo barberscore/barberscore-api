@@ -8,12 +8,12 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Session,
+    Round,
 )
 
 
 class Command(BaseCommand):
-    help = "Schedule performances for session."
+    help = "Schedule performances for round."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -24,10 +24,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for slug in options['slug']:
             try:
-                session = Session.objects.get(
+                round = Round.objects.get(
                     slug=slug,
                 )
-            except Session.DoesNotExist:
-                raise CommandError("Session does not exist.")
-            result = schedule_performances(session)
+            except Round.DoesNotExist:
+                raise CommandError("Round does not exist.")
+            result = schedule_performances(round)
             self.stdout.write("{0}".format(result))

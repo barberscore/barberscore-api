@@ -8,7 +8,7 @@ from apps.api.factories import (
 )
 
 from apps.api.models import (
-    Session,
+    Round,
 )
 
 
@@ -24,13 +24,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for slug in options['slug']:
             try:
-                session = Session.objects.get(
+                round = Round.objects.get(
                     slug=slug,
                 )
-            except Session.DoesNotExist:
-                raise CommandError("Session does not exist.")
-            performances = session.performances.filter(
-                status=session.performances.model.STATUS.new,
+            except Round.DoesNotExist:
+                raise CommandError("Round does not exist.")
+            performances = round.performances.filter(
+                status=round.performances.model.STATUS.new,
             ).order_by('position')
             for performance in performances:
                 performance.start()
@@ -38,4 +38,4 @@ class Command(BaseCommand):
                 score_performance(performance)
                 performance.finish()
                 performance.save()
-            self.stdout.write("Filled Session")
+            self.stdout.write("Filled Round")

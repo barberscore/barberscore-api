@@ -31,7 +31,7 @@ from django.forms import (
 
 from apps.api.models import (
     Award,
-    Session,
+    Round,
     Performance,
     Score,
     Song,
@@ -143,11 +143,11 @@ def award(request, slug):
         Award,
         slug=slug,
     )
-    sessions = award.sessions.all()
+    rounds = award.rounds.all()
     return render(
         request,
         'manage/award.html',
-        {'award': award, 'sessions': sessions},
+        {'award': award, 'rounds': rounds},
     )
 
 
@@ -268,10 +268,10 @@ def award_start(request, slug):
         Award,
         slug=slug,
     )
-    # session = award.sessions.get(
+    # round = award.rounds.get(
     #     kind=award.rounds,
     # )
-    # performances = session.performances.order_by('position')
+    # performances = round.performances.order_by('position')
     # if request.method == 'POST':
     #     form = AwardForm(request.POST, instance=award)
     #     form.start(award)
@@ -279,7 +279,7 @@ def award_start(request, slug):
     #         request,
     #         """The award has been started!""".format(award),
     #     )
-    #     return redirect('website:session_score', session.slug)
+    #     return redirect('website:round_score', round.slug)
     # else:
     #     form = AwardForm(instance=award)
     return render(
@@ -291,9 +291,9 @@ def award_start(request, slug):
 
 
 @login_required
-def session_draw(request, slug):
-    session = get_object_or_404(
-        Session,
+def round_draw(request, slug):
+    round = get_object_or_404(
+        Round,
         slug=slug,
     )
     # contestants = award.contestants.order_by('name')
@@ -309,18 +309,18 @@ def session_draw(request, slug):
     #     form = AwardForm(instance=award)
     return render(
         request,
-        'manage/session_draw.html',
-        {'session': session},
+        'manage/round_draw.html',
+        {'round': round},
     )
 
 
 @login_required
-def session_start(request, slug):
-    session = get_object_or_404(
-        Session,
+def round_start(request, slug):
+    round = get_object_or_404(
+        Round,
         slug=slug,
     )
-    # performances = session.performances.order_by('position')
+    # performances = round.performances.order_by('position')
     # if request.method == 'POST':
     #     form = AwardForm(request.POST, instance=award)
     #     form.start(award)
@@ -328,24 +328,24 @@ def session_start(request, slug):
     #         request,
     #         """The award has been started!""".format(award),
     #     )
-    #     return redirect('website:session_score', session.slug)
+    #     return redirect('website:round_score', round.slug)
     # else:
     #     form = AwardForm(instance=award)
     return render(
         request,
-        'manage/session_start.html', {
-            'session': session,
+        'manage/round_start.html', {
+            'round': round,
         },
     )
 
 
 @login_required
 def performance_score(request, slug):
-    session = get_object_or_404(
-        Session,
+    round = get_object_or_404(
+        Round,
         slug=slug,
     )
-    performance = session.performances.get(
+    performance = round.performances.get(
         status=Performance.STATUS.started,
     )
     contestant = performance.contestant
@@ -386,11 +386,11 @@ def performance_score(request, slug):
             performance.end_performance()
             try:
                 next_performance = Performance.objects.get(
-                    session=session,
+                    round=round,
                     position=performance.position + 1,
                 )
             except Performance.DoesNotExist:
-                session.end_session()
+                round.end_round()
                 return redirect('website:home')
             next_performance.status = Performance.STATUS.started
             next_performance.save()
@@ -455,7 +455,7 @@ def performance_score(request, slug):
             'songform2': songform2,
             'formsets': formsets,
             'award': award,
-            'session': session,
+            'round': round,
             'performance': performance,
             'contestant': contestant,
         },
@@ -463,12 +463,12 @@ def performance_score(request, slug):
 
 
 @login_required
-def session_end(request, slug):
-    session = Session.objects.get(slug=slug)
+def round_end(request, slug):
+    round = Round.objects.get(slug=slug)
     return render(
         request,
-        'manage/session_end.html',
-        {'session': session},
+        'manage/round_end.html',
+        {'round': round},
     )
 
 
@@ -483,13 +483,13 @@ def award_end(request, slug):
 
 
 @login_required
-def session_oss(request, slug):
-    session = get_object_or_404(
-        Session,
+def round_oss(request, slug):
+    round = get_object_or_404(
+        Round,
         slug=slug,
-        # status=Session.STATUS.final,
+        # status=Round.STATUS.final,
     )
-    performances = session.performances.select_related(
+    performances = round.performances.select_related(
         'contestant__group',
     ).prefetch_related(
         'songs',
@@ -501,8 +501,8 @@ def session_oss(request, slug):
     )
     return render(
         request,
-        'api/session_oss.html',
-        {'session': session, 'performances': performances},
+        'api/round_oss.html',
+        {'round': round, 'performances': performances},
     )
 
 
@@ -518,10 +518,10 @@ def award_oss(request, slug):
     ).prefetch_related(
         Prefetch(
             'performances',
-            queryset=Performance.objects.order_by('session__kind'),
+            queryset=Performance.objects.order_by('round__kind'),
         ),
         Prefetch(
-            'performances__session',
+            'performances__round',
         ),
         Prefetch(
             'performances__songs',
@@ -530,7 +530,7 @@ def award_oss(request, slug):
         Prefetch('performances__songs__tune'),
     ).order_by(
         'place',
-        # 'performances__session__kind',
+        # 'performances__round__kind',
     )
     # judges = award.judges.official
     # competitors = award.competitors.all()
@@ -561,10 +561,10 @@ class HelloPDFView(PDFTemplateView):
             ).prefetch_related(
                 Prefetch(
                     'performances',
-                    queryset=Performance.objects.order_by('session__kind'),
+                    queryset=Performance.objects.order_by('round__kind'),
                 ),
                 Prefetch(
-                    'performances__session',
+                    'performances__round',
                 ),
                 Prefetch(
                     'performances__songs',
@@ -573,7 +573,7 @@ class HelloPDFView(PDFTemplateView):
                 Prefetch('performances__songs__tune'),
             ).order_by(
                 'place',
-                # 'performances__session__kind',
+                # 'performances__round__kind',
             )
             judges = award.judges.official
             competitors = award.competitors.all()
