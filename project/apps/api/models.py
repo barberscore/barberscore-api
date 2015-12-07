@@ -1190,36 +1190,12 @@ class Group(Common):
         blank=True,
     )
 
-    chapter_name = models.CharField(
-        help_text="""
-            The chapter name (only for choruses).""",
-        max_length=200,
-        blank=True,
-    )
-
-    chapter_code = models.CharField(
-        help_text="""
-            The chapter code (only for choruses).""",
-        max_length=200,
-        blank=True,
-    )
-
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
-
-    def clean(self):
-        if self.kind == self.KIND.quartet and self.chapter_name:
-            raise ValidationError(
-                {'chapter_name': 'Chapter names are only for choruses.'}
-            )
-        if self.kind == self.KIND.quartet and self.chapter_code:
-            raise ValidationError(
-                {'chapter_code': 'Chapter codes are only for choruses.'}
-            )
 
     class Meta:
         ordering = (
