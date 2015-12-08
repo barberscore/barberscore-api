@@ -10,6 +10,7 @@ from .inlines import (
     ContestantInline,
     SessionInline,
     PerformerInline,
+    PerformerStackedInline,
     DirectorInline,
     GroupInline,
     JudgeInline,
@@ -616,7 +617,7 @@ class ScoreAdmin(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -674,7 +675,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         RoundInline,
         JudgeInline,
         ContestInline,
-        PerformerInline,
+        PerformerStackedInline,
     ]
 
 

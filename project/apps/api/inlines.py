@@ -157,7 +157,7 @@ class ContestantInline(admin.TabularInline):
         'total_score',
     ]
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    # classes = ('grp-collapse grp-open',)
 
 
 class DirectorInline(admin.TabularInline):
@@ -443,41 +443,6 @@ class SingerInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
-    fields = (
-        'performance',
-        'order',
-        'status',
-        'title',
-        # 'tune',
-        ('mus_points', 'prs_points', 'sng_points',),
-    )
-    ordering = (
-        'performance',
-        'order',
-    )
-    model = Song
-    extra = 0
-    raw_id_fields = (
-        'tune',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'tune',
-        ]
-    }
-    inlines = (
-        ScoreInline,
-    )
-    readonly_fields = [
-        'mus_points',
-        'prs_points',
-        'sng_points',
-    ]
-    show_change_link = True
-    classes = ('grp-collapse grp-open',)
-
-
 class RoundInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
@@ -519,3 +484,91 @@ class RoundInline(admin.TabularInline):
     readonly_fields = [
         'link',
     ]
+
+
+class PerformerStackedInline(SuperInlineModelAdmin, admin.StackedInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_performer_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'session',
+        'group',
+        'organization',
+        'seed',
+        'prelim',
+        'total_score',
+        'men',
+    )
+    ordering = (
+        'group__kind',
+        'group',
+    )
+
+    show_change_link = True
+
+    model = Performer
+    extra = 0
+    raw_id_fields = (
+        'group',
+    )
+    readonly_fields = [
+        'total_score',
+        'link',
+    ]
+
+    inlines = [
+        ContestantInline,
+    ]
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'group',
+        ]
+    }
+    can_delete = True
+    # classes = ('grp-collapse grp-open',)
+
+
+class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
+    fields = (
+        'performance',
+        'order',
+        'status',
+        'title',
+        # 'tune',
+        ('mus_points', 'prs_points', 'sng_points',),
+    )
+    ordering = (
+        'performance',
+        'order',
+    )
+    model = Song
+    extra = 0
+    raw_id_fields = (
+        'tune',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'tune',
+        ]
+    }
+    inlines = (
+        ScoreInline,
+    )
+    readonly_fields = [
+        'mus_points',
+        'prs_points',
+        'sng_points',
+    ]
+    show_change_link = True
+    classes = ('grp-collapse grp-open',)
