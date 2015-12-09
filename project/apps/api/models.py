@@ -914,7 +914,7 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
-    contest = models.ForeignKey(
+    contest = TreeForeignKey(
         'Contest',
         related_name='contestants',
     )
