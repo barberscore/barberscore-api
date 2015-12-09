@@ -66,6 +66,7 @@ from .managers import (
     PerformerQuerySet,
 )
 
+# from .signals import session_post_save
 
 from .validators import (
     validate_trimmed,
@@ -625,6 +626,11 @@ class Contest(TimeStampedModel):
         null=True,
     )
 
+    subsession_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         unique_together = (
             ('level', 'kind', 'year', 'goal', 'organization', 'session',),
@@ -1105,6 +1111,7 @@ class Convention(TimeStampedModel):
         super(Convention, self).save(*args, **kwargs)
 
     def stix(self):
+        # models.signals.post_save.disconnect(session_post_save)
         reader = csv.reader(self.stix_file, skipinitialspace=True)
         reader.next()
         reader.next()
@@ -1127,6 +1134,7 @@ class Convention(TimeStampedModel):
                 session, created = self.sessions.get_or_create(
                     convention=self,
                     kind=kind,
+                    size=0,
                 )
                 # Create contests from same row
                 contest_list = row[1:]
@@ -1135,7 +1143,7 @@ class Convention(TimeStampedModel):
                 for c in contest_list:
                     # Parse contest components
                     parts = c.partition('=')
-                    contest_number = parts[0]
+                    contest_number = int(parts[0].strip())
                     contest_text = parts[2]
                     # build the contests dict for future use
                     contest_data = {}
@@ -1196,9 +1204,12 @@ class Convention(TimeStampedModel):
                         year=self.year,
                         session=session,
                     )
+                    contest.subsession_id = contest_number
+                    contest.save()
                     contests[contest_number] = contest_data
                 cts.append(contests)
-            if row[0].startswith('Panel'):
+            # Explode first on session
+            elif row[0].startswith('Panel'):
                 parts = row[0].partition('-')
                 # Parse panel kind and create
                 panel_text = parts[2]
@@ -1262,7 +1273,66 @@ class Convention(TimeStampedModel):
                     )
                     judge.panel_id = panel_id
                     judge.save()
-        return cts, session, panel_list
+            elif row[0].startswith('Judge'):
+                pass
+            elif row[0].startswith('Session'):
+                if 'Chorus' in row[0]:
+                    session = self.sessions.get(
+                        kind=self.sessions.model.KIND.chorus,
+                    )
+                elif 'Quartet' in row[0]:
+                    session = self.sessions.get(
+                        kind=self.sessions.model.KIND.quartet,
+                    )
+                else:
+                    raise RuntimeError("Can't determine session")
+                group_name = row[1].partition(":")[2].strip()
+                if session.kind == session.KIND.chorus:
+                    from .models import Group
+                    try:
+                        group = Chapter.objects.get(
+                            name=group_name,
+                            status=Chapter.STATUS.active,
+                        ).first()
+                    except Chapter.DoesNotExist:
+                        log.error("No Chapter: {0}".format(group_name))
+                        continue
+                    except Chapter.MultipleObjectsReturned:
+                        log.error("Many Chapters: {0}".format(group_name))
+                        continue
+                else:
+                    from .models import Group
+                    try:
+                        group = Group.objects.get(
+                            name=group_name,
+                            status=Group.STATUS.active,
+                        )
+                    except Group.DoesNotExist:
+                        log.error("No Group: {0}".format(group_name))
+                        continue
+                    except Group.MultipleObjectsReturned:
+                        log.error("Many Groups: {0}".format(group_name))
+                        continue
+                    except UnicodeDecodeError:
+                        log.error("Unicode {0}".format(group_name))
+                        continue
+                performer, created = session.performers.get_or_create(
+                    group=group,
+                    session=session,
+                )
+                subsessions_list = row[2].partition(":")[2].split(",")
+                subsessions = [int(s) for s in subsessions_list]
+                for subsession in subsessions:
+                    contest = session.contests.get(
+                        subsession_id=subsession,
+                    )
+                    contestant, created = contest.objects.get_or_create(
+                        performer=performer,
+                    )
+            else:
+                raise RuntimeError("Unexpected row!")
+        # models.signals.post_save.connect(session_post_save)
+        return
 
 
 class Director(TimeStampedModel):
