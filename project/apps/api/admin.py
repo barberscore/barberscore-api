@@ -114,7 +114,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(MPTTModelAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -148,6 +148,7 @@ class ContestAdmin(MPTTModelAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'kind',
         'goal',
+        'parent',
         'year',
         'rounds',
         'qual_score',
@@ -172,6 +173,15 @@ class ContestAdmin(MPTTModelAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status_monitor',
         'history_monitor',
+    )
+
+    ordering = (
+        # 'tree_id',
+        '-year',
+        'organization',
+        'level',
+        'kind',
+        'goal',
     )
 
     # def formfield_for_foreignkey(self, db_field, request, **kwargs):
