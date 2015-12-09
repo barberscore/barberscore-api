@@ -413,7 +413,7 @@ class SessionInline(admin.TabularInline):
     ]
 
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class SingerInline(admin.TabularInline):
