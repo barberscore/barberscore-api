@@ -641,19 +641,19 @@ class Contest(MPTTModel, TimeStampedModel):
 
     class MPTTMeta:
         level_attr = 'goal'
-        unique_together = (
-            ('level', 'kind', 'year', 'goal', 'organization', 'session',),
-        )
+        unique_together = ((
+            'level',
+            'kind',
+            'year',
+            'goal',
+            'organization',
+            'session',
+        ))
         order_insertion_by = [
             'name',
         ]
         ordering = (
             'tree_id',
-            # '-year',
-            # 'organization',
-            # 'level',
-            # 'kind',
-            # 'goal',
         )
 
     @staticmethod
@@ -674,7 +674,7 @@ class Contest(MPTTModel, TimeStampedModel):
             self.get_kind_display(),
             self.get_goal_display(),
             self.year,
-            self.session,
+            # self.session,
         )
         super(Contest, self).save(*args, **kwargs)
 
