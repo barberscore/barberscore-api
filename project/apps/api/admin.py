@@ -246,6 +246,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'organization',
         'kind',
         'year',
+        'stix_file',
     )
 
     list_filter = (
