@@ -1691,6 +1691,10 @@ class Organization(MPTTModel, Common):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
+    def save(self, *args, **kwargs):
+        self.name = u" ".join([r.name for r in self.get_ancestors(include_self=True)])
+        super(Organization, self).save(*args, **kwargs)
+
 
 class Performance(TimeStampedModel):
     id = models.UUIDField(
