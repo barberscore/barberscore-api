@@ -114,7 +114,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class ContestAdmin(MPTTModelAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
