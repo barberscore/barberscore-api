@@ -1116,7 +1116,9 @@ class Convention(TimeStampedModel):
         reader.next()
         reader.next()
         rows = [row for row in reader]
-        cts = []
+        for row in rows:
+            if row[0].startswith('Judge'):
+                judge_count = int(row[0].partition(":")[2].strip())
         for row in rows:
             # Explode first on session
             if row[0].startswith('Subsessions:'):
@@ -1131,23 +1133,32 @@ class Convention(TimeStampedModel):
                     kind = self.sessions.model.KIND.quartet
                 else:
                     raise RuntimeError("Can't determine judging panel kind")
+                # Get or create the session for indempodence
                 session, created = self.sessions.get_or_create(
                     convention=self,
                     kind=kind,
-                    size=0,
+                    size=judge_count / 3,
                 )
+
+                # TODO  HACK HACK HACK!!! WARNING!!!!
+                rnd, created = session.rounds.get_or_create(
+                    num=1,
+                    kind=1,
+                )
+
                 # Create contests from same row
                 contest_list = row[1:]
-                # Instantiate the dictionary we'll use to build the contest objects
-                contests = {}
                 for c in contest_list:
                     # Parse contest components
                     parts = c.partition('=')
                     contest_number = int(parts[0].strip())
                     contest_text = parts[2]
-                    # build the contests dict for future use
-                    contest_data = {}
-                    contest_data['title'] = contest_text
+                    # skip if it's a "most improved" award
+                    if "Most-Improved" in contest_text:
+                        continue
+                    # skip if it's a "out-of-division" award
+                    if "Out of Division" in contest_text:
+                        continue
                     # parse goal
                     qualification_markers = ['Qualification', 'Preliminary']
                     if any(substring in contest_text for substring in qualification_markers):
@@ -1171,26 +1182,27 @@ class Convention(TimeStampedModel):
                             # else:
                             #     raise RuntimeError("No marker match! {0} {1}".format(contest_text, marker))
                         level = getattr(session.contests.model.LEVEL, subtext)
-                        if level == 2:
+                        if contest_text.startswith('Far Western District'):
                             organization = self.organization
                         else:
-                            organization = self.organization.parent
+                            organization_text = contest_text.split(" ", 1)[0]
+                            organization = self.organization.children.get(long_name=organization_text)
                     # parse kind
                     KIND = session.contests.model.KIND
-                    if 'Chorus' in contest_text:
-                        kind = KIND.chorus
-                    elif 'Novice' in contest_text:
+                    if 'Novice' in contest_text:
                         kind = KIND.novice
                     elif 'Senior' in contest_text:
                         kind = KIND.senior
                     elif 'Collegiate' in contest_text:
                         kind = KIND.collegiate
-                    elif 'Plateau A$' in contest_text:
+                    elif 'Plateau A Chorus' in contest_text:
                         kind = KIND.a
-                    elif 'Plateau AA$' in contest_text:
+                    elif 'Plateau AA Chorus' in contest_text:
                         kind = KIND.aa
-                    elif 'Plateau AAA$' in contest_text:
+                    elif 'Plateau AAA Chorus' in contest_text:
                         kind = KIND.aaa
+                    elif 'Chorus' in contest_text:
+                        kind = KIND.chorus
                     elif 'Quartet' in contest_text:
                         kind = KIND.quartet
                     else:
@@ -1206,8 +1218,6 @@ class Convention(TimeStampedModel):
                     )
                     contest.subsession_id = contest_number
                     contest.save()
-                    contests[contest_number] = contest_data
-                cts.append(contests)
             # Explode first on session
             elif row[0].startswith('Panel'):
                 parts = row[0].partition('-')
@@ -1293,7 +1303,7 @@ class Convention(TimeStampedModel):
                         group = Chapter.objects.get(
                             name=group_name,
                             status=Chapter.STATUS.active,
-                        ).first()
+                        ).groups.first()
                     except Chapter.DoesNotExist:
                         log.error("No Chapter: {0}".format(group_name))
                         continue
@@ -1303,7 +1313,7 @@ class Convention(TimeStampedModel):
                 else:
                     from .models import Group
                     try:
-                        group = Group.objects.get(
+                        group, created = Group.objects.get_or_create(
                             name=group_name,
                             status=Group.STATUS.active,
                         )
@@ -1323,14 +1333,52 @@ class Convention(TimeStampedModel):
                 subsessions_list = row[2].partition(":")[2].split(",")
                 subsessions = [int(s) for s in subsessions_list]
                 for subsession in subsessions:
-                    contest = session.contests.get(
-                        subsession_id=subsession,
-                    )
-                    contestant, created = contest.objects.get_or_create(
+                    try:
+                        contest = session.contests.get(
+                            subsession_id=subsession,
+                        )
+                    except session.contests.model.DoesNotExist:
+                        continue
+                    contestant, created = contest.contestants.get_or_create(
                         performer=performer,
                     )
+                oa_raw = int(row[3].partition(":")[2].strip())
+                round = session.rounds.first()
+                performance, created = performer.performances.get_or_create(
+                    position=oa_raw - 1,
+                    round=round,
+                )
+                song_order = int(row[4].partition(":")[2].strip())
+                song_title = row[5].partition(":")[2].strip()
+                song, created = performance.songs.get_or_create(
+                    performance=performance,
+                    title=song_title,
+                    order=song_order,
+                )
+                scores_raw = row[-judge_count:]
+                i = 1
+                for score in scores_raw:
+                    judge = performance.round.session.judges.get(panel_id=i)
+                    score, created = song.scores.get_or_create(
+                        points=int(score),
+                        judge=judge,
+                        category=judge.category,
+                        kind=judge.kind,
+                    )
+                    i += 1
             else:
                 raise RuntimeError("Unexpected row!")
+        for session in self.sessions.all():
+            for performer in session.performers.all():
+                for performance in performer.performances.all():
+                    for song in performance.songs.all():
+                        song.calculate()
+                        song.save()
+                    performance.calculate()
+                    performance.save()
+                performer.calculate()
+                performer.save()
+
         # models.signals.post_save.connect(session_post_save)
         return
 
