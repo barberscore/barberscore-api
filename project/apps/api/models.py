@@ -1155,9 +1155,9 @@ class Convention(TimeStampedModel):
                 # Parse session kind and create
                 session_text = parts[2]
                 # Identify session by kind
-                if 'Chorus' in session_text:
+                if 'Chorus Finals' in session_text:
                     kind = self.sessions.model.KIND.chorus
-                elif 'Quartet' in session_text:
+                elif 'Quartet Finals' in session_text:
                     kind = self.sessions.model.KIND.quartet
                 else:
                     raise RuntimeError("Can't determine judging panel kind")
