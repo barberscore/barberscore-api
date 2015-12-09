@@ -473,7 +473,7 @@ class Chapter(Common):
         )
 
 
-class Contest(TimeStampedModel):
+class Contest(MPTTModel, TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -631,22 +631,29 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    parent = models.ForeignKey(
+    parent = TreeForeignKey(
         'self',
         null=True,
         blank=True,
+        related_name='children',
+        db_index=True,
     )
 
-    class Meta:
+    class MPTTMeta:
+        level_attr = 'goal'
         unique_together = (
             ('level', 'kind', 'year', 'goal', 'organization', 'session',),
         )
+        order_insertion_by = [
+            'name',
+        ]
         ordering = (
-            '-year',
-            'organization',
-            'level',
-            'kind',
-            'goal',
+            'tree_id',
+            # '-year',
+            # 'organization',
+            # 'level',
+            # 'kind',
+            # 'goal',
         )
 
     @staticmethod
