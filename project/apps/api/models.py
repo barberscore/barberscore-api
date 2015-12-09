@@ -632,13 +632,6 @@ class Contest(TimeStampedModel):
     )
 
     class Meta:
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        # related_name='children',
-        # db_index=True,
-    )
         unique_together = (
             ('level', 'kind', 'year', 'goal', 'organization', 'session',),
         )
