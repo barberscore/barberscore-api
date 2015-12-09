@@ -447,6 +447,9 @@ class Chapter(Common):
             The chapter code (only for choruses).""",
         max_length=200,
         blank=True,
+        validators=[
+            validate_trimmed,
+        ],
     )
 
     organization = TreeForeignKey(
