@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 import uuid
 
 import os
+import csv
 import datetime
 
 from django.db import (
@@ -69,22 +70,22 @@ from .managers import (
 from .validators import (
     validate_trimmed,
     dixon,
-    is_imsessioned,
+    # is_imsessioned,
     # is_scheduled,
-    has_performers,
-    has_contests,
+    # has_performers,
+    # has_contests,
     # round_scheduled,
-    contest_started,
+    # contest_started,
     scores_entered,
     songs_entered,
-    rounds_finished,
+    # rounds_finished,
     # round_finished,
     performances_finished,
     scores_validated,
     song_entered,
     score_entered,
     preceding_finished,
-    preceding_round_finished,
+    # preceding_round_finished,
 )
 
 
@@ -645,12 +646,13 @@ class Contest(TimeStampedModel):
             raise ValidationError('The qualification score must be set.')
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3} {4}".format(
+        self.name = u"{0} {1} {2} {3} {4} {5}".format(
             self.organization,
             self.get_level_display(),
             self.get_kind_display(),
             self.get_goal_display(),
             self.year,
+            self.session,
         )
         super(Contest, self).save(*args, **kwargs)
 
@@ -1070,6 +1072,14 @@ class Convention(TimeStampedModel):
         default='US/Pacific',
     )
 
+    stix_file = models.FileField(
+        help_text="""
+            The bbstix file.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         ordering = [
             '-year',
@@ -1090,6 +1100,166 @@ class Convention(TimeStampedModel):
             self.year,
         )
         super(Convention, self).save(*args, **kwargs)
+
+    def stix(self):
+        reader = csv.reader(self.stix_file, skipinitialspace=True)
+        reader.next()
+        reader.next()
+        rows = [row for row in reader]
+        cts = []
+        for row in rows:
+            # Explode first on session
+            if row[0].startswith('Subsessions:'):
+                # Parse session into components
+                parts = row[0].partition(':')
+                # Parse session kind and create
+                session_text = parts[2]
+                # Identify session by kind
+                if 'Chorus' in session_text:
+                    kind = self.sessions.model.KIND.chorus
+                elif 'Quartet' in session_text:
+                    kind = self.sessions.model.KIND.quartet
+                else:
+                    raise RuntimeError("Can't determine judging panel kind")
+                session, created = self.sessions.get_or_create(
+                    convention=self,
+                    kind=kind,
+                )
+                # Create contests from same row
+                contest_list = row[1:]
+                # Instantiate the dictionary we'll use to build the contest objects
+                contests = {}
+                for c in contest_list:
+                    # Parse contest components
+                    parts = c.partition('=')
+                    contest_number = parts[0]
+                    contest_text = parts[2]
+                    # build the contests dict for future use
+                    contest_data = {}
+                    contest_data['title'] = contest_text
+                    # parse goal
+                    qualification_markers = ['Qualification', 'Preliminary']
+                    if any(substring in contest_text for substring in qualification_markers):
+                        goal = 2
+                    else:
+                        goal = 1
+                    # parse organization and level
+                    if goal == 1:
+                        if any(substring in contest_text for substring in ['Division', ]):
+                            child = contest_text.split('Division', 1)[0].strip()
+                            organization = self.organization.children.get(
+                                long_name=child,
+                            )
+                        else:
+                            organization = self.organization
+                        level = organization.level + 1
+                    else:
+                        for marker in qualification_markers:
+                            if marker in contest_text:
+                                subtext = contest_text.partition(marker)[0].strip().rsplit(" ", 1)[1].lower()
+                            # else:
+                            #     raise RuntimeError("No marker match! {0} {1}".format(contest_text, marker))
+                        level = getattr(session.contests.model.LEVEL, subtext)
+                        if level == 2:
+                            organization = self.organization
+                        else:
+                            organization = self.organization.parent
+                    # parse kind
+                    KIND = session.contests.model.KIND
+                    if 'Chorus' in contest_text:
+                        kind = KIND.chorus
+                    elif 'Novice' in contest_text:
+                        kind = KIND.novice
+                    elif 'Senior' in contest_text:
+                        kind = KIND.senior
+                    elif 'Collegiate' in contest_text:
+                        kind = KIND.collegiate
+                    elif 'Plateau A$' in contest_text:
+                        kind = KIND.a
+                    elif 'Plateau AA$' in contest_text:
+                        kind = KIND.aa
+                    elif 'Plateau AAA$' in contest_text:
+                        kind = KIND.aaa
+                    elif 'Quartet' in contest_text:
+                        kind = KIND.quartet
+                    else:
+                        raise RuntimeError("parse fail!")
+                    contest, created = session.contests.get_or_create(
+                        goal=goal,
+                        kind=kind,
+                        level=level,
+                        organization=organization,
+                        rounds=1,  # TODO How to do this?
+                        year=self.year,
+                        session=session,
+                    )
+                    contests[contest_number] = contest_data
+                cts.append(contests)
+            if row[0].startswith('Panel'):
+                parts = row[0].partition('-')
+                # Parse panel kind and create
+                panel_text = parts[2]
+                # Identify panel by kind
+                if 'Chorus' in panel_text:
+                    kind = self.sessions.model.KIND.chorus
+                elif 'Quartet' in panel_text:
+                    kind = self.sessions.model.KIND.quartet
+                else:
+                    raise RuntimeError("Can't determine judging panel kind")
+                session = self.sessions.get(
+                    convention=self,
+                    kind=kind,
+                )
+                # Create judges from same row
+                panel_list = row[1:]
+                mus_slot = 1
+                prs_slot = 1
+                sng_slot = 1
+                for panel in panel_list:
+                    # Partition into components
+                    parts = panel.partition('=')
+                    name = HumanName(parts[2])
+                    # And sub partition the first partition
+                    subparts = parts[0].partition('(')
+                    # Find the panel_id number
+                    panel_id = int(subparts[0].strip())
+                    # And the category by abbreviation
+                    if panel_id < 50:
+                        kind = session.judges.model.KIND.official
+                    else:
+                        kind = session.judges.model.KIND.practice
+                    category_raw = subparts[2][:3]
+                    # Get the person
+                    from .models import Person
+                    person = Person.objects.get(
+                        name=str(name),
+                    )
+                    # Now create judge by category, incrementing each
+                    # slot accordingly
+                    judge_dict = {
+                        'kind': kind,
+                        'person': person,
+                    }
+                    if category_raw == 'MUS':
+                        judge_dict['category'] = session.judges.model.CATEGORY.music
+                        judge_dict['slot'] = mus_slot
+                        mus_slot += 1
+                    elif category_raw == 'PRS':
+                        judge_dict['category'] = session.judges.model.CATEGORY.presentation
+                        judge_dict['slot'] = prs_slot
+                        prs_slot += 1
+                    elif category_raw == 'SNG':
+                        judge_dict['category'] = session.judges.model.CATEGORY.singing
+                        judge_dict['slot'] = sng_slot
+                        sng_slot += 1
+                    else:
+                        raise RuntimeError("Unknown category!")
+                    judge, created = session.judges.get_or_create(
+                        **judge_dict
+                    )
+                    judge.panel_id = panel_id
+                    judge.save()
+        return cts, session, panel_list
 
 
 class Director(TimeStampedModel):
@@ -1289,6 +1459,11 @@ class Judge(TimeStampedModel):
     organization = TreeForeignKey(
         'Organization',
         related_name='judges',
+        null=True,
+        blank=True,
+    )
+
+    panel_id = models.IntegerField(
         null=True,
         blank=True,
     )
