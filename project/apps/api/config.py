@@ -9,5 +9,10 @@ class ApiConfig(AppConfig):
     name = 'apps.api'
 
     def ready(self):
-        import apps.api.signals
+        # import apps.api.signals
+        from apps.api.signals import (
+            user_post_save,
+            # session_post_save,
+            certification_post_save,
+        )
         pass

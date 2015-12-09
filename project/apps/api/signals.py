@@ -25,13 +25,13 @@ def user_post_save(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-@receiver(post_save, sender=Session)
-def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    if not raw:
-        if created:
-            add_rounds(instance)
-            add_judges(instance)
-            instance.save()
+# @receiver(post_save, sender=Session)
+# def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+#     if not raw:
+#         if created:
+#             add_rounds(instance)
+#             add_judges(instance)
+#             instance.save()
             # instance.build()
             # instance.save()
 
