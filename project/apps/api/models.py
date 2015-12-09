@@ -665,6 +665,34 @@ class Contest(TimeStampedModel):
         )
         super(Contest, self).save(*args, **kwargs)
 
+    def rank(self):
+        contestants = self.contestants.all()
+        for contestant in contestants:
+            contestant.calculate()
+            contestant.save()
+        cursor = []
+        i = 1
+        for contestant in self.contestants.order_by('-total_points'):
+            try:
+                match = contestant.total_points == cursor[0].total_points
+            except IndexError:
+                contestant.place = i
+                contestant.save()
+                cursor.append(contestant)
+                continue
+            if match:
+                contestant.place = i
+                i += len(cursor)
+                contestant.save()
+                cursor.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.place = i
+                contestant.save()
+                cursor = [contestant]
+        return "{0} Ready for Review".format(self)
+
     @transition(
         field=status,
         source=STATUS.new,
@@ -1378,7 +1406,10 @@ class Convention(TimeStampedModel):
                     performance.save()
                 performer.calculate()
                 performer.save()
-
+        for session in self.sessions.all():
+            for contest in session.contests.all():
+                contest.rank()
+                contest.save()
         # models.signals.post_save.connect(session_post_save)
         return
 
