@@ -519,8 +519,8 @@ class Contest(MPTTModel, TimeStampedModel):
     )
 
     GOAL = Choices(
-        (1, 'championship', "Championship"),
-        (2, 'qualifier', "Qualifier"),
+        (0, 'championship', "Championship"),
+        (1, 'qualifier', "Qualifier"),
     )
 
     id = models.UUIDField(
