@@ -165,7 +165,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'year',
         'rounds',
         'qual_score',
-        'parent',
     )
 
     readonly_fields = (
