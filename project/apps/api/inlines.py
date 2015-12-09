@@ -134,6 +134,7 @@ class ContestantInline(admin.TabularInline):
         'contest',
         'performer',
         'total_score',
+        'place',
     )
     ordering = (
         'place',
@@ -155,6 +156,7 @@ class ContestantInline(admin.TabularInline):
         'link',
         'name',
         'total_score',
+        'place',
     ]
     can_delete = True
     # classes = ('grp-collapse grp-open',)
