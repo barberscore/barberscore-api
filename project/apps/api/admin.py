@@ -175,14 +175,13 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         'history_monitor',
     )
 
-    ordering = (
-        # 'tree_id',
-        '-year',
-        'organization',
-        'level',
-        'kind',
-        'goal',
-    )
+    # ordering = (
+    #     '-year',
+    #     '-tree_id',
+    #     'level',
+    #     'kind',
+    #     'goal',
+    # )
 
     # def formfield_for_foreignkey(self, db_field, request, **kwargs):
     #     if db_field.name == "convention":
