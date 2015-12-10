@@ -1715,9 +1715,9 @@ class Organization(MPTTModel, TimeStampedModel):
     )
 
     LEVEL = Choices(
-        (1, 'international', "International"),
-        (2, 'district', "District"),
-        (3, 'division', "Division"),
+        (0, 'international', "International"),
+        (1, 'district', "District"),
+        (2, 'division', "Division"),
     )
 
     lvl = models.IntegerField(
