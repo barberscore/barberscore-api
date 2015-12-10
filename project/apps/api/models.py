@@ -1664,7 +1664,126 @@ class Judge(TimeStampedModel):
         )
 
 
-class Organization(MPTTModel, Common):
+class Organization(MPTTModel, TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.""",
+        max_length=200,
+        validators=[
+            validate_trimmed,
+        ],
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        # unique=True,
+        max_length=255,
+    )
+
+    start_date = models.DateField(
+        help_text="""
+            The founding/birth date of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    end_date = models.DateField(
+        help_text="""
+            The retirement/deceased date of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=200,
+        blank=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+    )
+
+    twitter = models.CharField(
+        help_text="""
+            The twitter handle (in form @twitter_handle) of the resource.""",
+        blank=True,
+        max_length=16,
+        validators=[
+            RegexValidator(
+                regex=r'@([A-Za-z0-9_]+)',
+                message="""
+                    Must be a single Twitter handle
+                    in the form `@twitter_handle`.
+                """,
+            ),
+        ],
+    )
+
+    email = models.EmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+    )
+
+    phone = PhoneNumberField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        blank=True,
+        null=True,
+    )
+
+    picture = models.ImageField(
+        upload_to=generate_image_filename,
+        help_text="""
+            The picture/logo of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A description/bio of the resource.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        help_text="""
+            A boolean for active/living resources.""",
+        default=True,
+    )
+
+    short_name = models.CharField(
+        help_text="""
+            A short-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
     long_name = models.CharField(
         help_text="""
             A long-form name for the resource.""",
@@ -1692,7 +1811,7 @@ class Organization(MPTTModel, Common):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u" ".join([r.name for r in self.get_ancestors(include_self=True)])
+        self.name = u" ".join([p.short_name for p in self.get_ancestors(include_self=True)])
         super(Organization, self).save(*args, **kwargs)
 
 
