@@ -662,9 +662,9 @@ class Contest(MPTTModel, TimeStampedModel):
         order_insertion_by = [
             'name',
         ]
-        ordering = (
-            'tree_id',
-        )
+        # ordering = (
+        #     '-tree_id',
+        # )
 
     @staticmethod
     def autocomplete_search_fields():
@@ -678,14 +678,25 @@ class Contest(MPTTModel, TimeStampedModel):
             raise ValidationError('The qualification score must be set.')
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3} {4} {5}".format(
-            self.organization,
-            self.get_level_display(),
-            self.get_kind_display(),
-            self.get_goal_display(),
-            self.year,
-            # self.session,
-        )
+        if self.goal == self.GOAL.qualifier:
+            self.name = u"{0} {1} {2}".format(
+                self.parent,
+                self.session,
+                self.get_goal_display()
+                # self.get_level_display(),
+                # self.get_kind_display(),
+                # self.get_goal_display(),
+                # self.year,
+                # self.parent,
+            )
+        else:
+            self.name = u"{0} {1} {2} {3}".format(
+                self.organization,
+                # self.get_level_display(),
+                self.get_kind_display(),
+                self.get_goal_display(),
+                self.year,
+            )
         super(Contest, self).save(*args, **kwargs)
 
     def rank(self):
