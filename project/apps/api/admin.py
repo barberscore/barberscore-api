@@ -395,11 +395,10 @@ class JudgeAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(MPTTModelAdmin):
     fields = [
+        'long_name',
         'name',
         'short_name',
-        'long_name',
     ]
-
 
     list_filter = [
         'level',
