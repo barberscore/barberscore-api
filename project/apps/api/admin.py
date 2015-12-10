@@ -394,7 +394,19 @@ class JudgeAdmin(admin.ModelAdmin):
 
 @admin.register(Organization)
 class OrganizationAdmin(MPTTModelAdmin):
-    pass
+    fields = [
+        'name',
+        'short_name',
+        'long_name',
+    ]
+
+
+    list_filter = [
+        'level',
+    ]
+    readonly_fields = [
+        'name',
+    ]
 
 
 @admin.register(Performance)
