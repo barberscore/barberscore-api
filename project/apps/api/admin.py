@@ -427,6 +427,10 @@ class OrganizationAdmin(MPTTModelAdmin):
         'status',
     ]
 
+    ordering = [
+        'tree_id',
+    ]
+
 
 @admin.register(Performance)
 class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
