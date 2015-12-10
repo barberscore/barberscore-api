@@ -74,8 +74,8 @@ class ChapterAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'status',
-        'status_monitor',
+        # 'status',
+        # 'status_monitor',
         'location',
         'website',
         'facebook',
@@ -88,7 +88,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
-        ('status', 'status_monitor',),
+        # ('status', 'status_monitor',),
         ('start_date', 'end_date',),
         'organization',
         'location',
@@ -108,7 +108,7 @@ class ChapterAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = (
-        'status_monitor',
+        # 'status_monitor',
     )
     save_on_top = True
 
