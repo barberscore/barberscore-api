@@ -395,16 +395,36 @@ class JudgeAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(MPTTModelAdmin):
     fields = [
-        'long_name',
         'name',
+        ('status', 'status_monitor',),
+        'parent',
         'short_name',
+        'long_name',
+        ('start_date', 'end_date',),
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        'notes',
     ]
 
     list_filter = [
         'level',
     ]
+
     readonly_fields = [
         'name',
+        'status_monitor',
+    ]
+
+    list_display = [
+        'long_name',
+        'name',
+        'status',
     ]
 
 
