@@ -122,6 +122,22 @@ class Common(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    sts = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    sts_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='sts',
+    )
+
     start_date = models.DateField(
         help_text="""
             The founding/birth date of the resource.""",
@@ -203,12 +219,6 @@ class Common(TimeStampedModel):
         help_text="""
             Notes (for internal use only).""",
         blank=True,
-    )
-
-    is_active = models.BooleanField(
-        help_text="""
-            A boolean for active/living resources.""",
-        default=True,
     )
 
     class Meta:
@@ -475,54 +485,6 @@ class Chapter(Common):
 
 class Contest(MPTTModel, TimeStampedModel):
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (30, 'final', 'Final',),
-    )
-
-    HISTORY = Choices(
-        (0, 'new', 'New',),
-        (10, 'none', 'None',),
-        (20, 'pdf', 'PDF',),
-        (30, 'places', 'Places',),
-        (40, 'incomplete', 'Incomplete',),
-        (50, 'complete', 'Complete',),
-    )
-
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    ROUNDS_CHOICES = []
-    for r in reversed(range(1, 4)):
-        ROUNDS_CHOICES.append((r, r))
-
-    KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-        (5, 'novice', 'Novice',),
-        (6, 'a', 'Plateau A',),
-        (7, 'aa', 'Plateau AA',),
-        (8, 'aaa', 'Plateau AAA',),
-        (9, 'dc', 'Dealer\'s Choice',),
-    )
-
-    LEVEL = Choices(
-        (1, 'international', "International"),
-        (2, 'district', "District"),
-        (3, 'division', "Division"),
-    )
-
-    GOAL = Choices(
-        (0, 'championship', "Championship"),
-        (1, 'qualifier', "Qualifier"),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -540,6 +502,14 @@ class Contest(MPTTModel, TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
+        (30, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -564,16 +534,39 @@ class Contest(MPTTModel, TimeStampedModel):
         related_name='contests',
     )
 
+    LEVEL = Choices(
+        (1, 'international', "International"),
+        (2, 'district', "District"),
+        (3, 'division', "Division"),
+    )
+
     level = models.IntegerField(
         help_text="""
             The level of the contest.  Note that this may be different than the level of the parent session.""",
         choices=LEVEL,
     )
 
+    KIND = Choices(
+        (1, 'quartet', 'Quartet',),
+        (2, 'chorus', 'Chorus',),
+        (3, 'senior', 'Senior',),
+        (4, 'collegiate', 'Collegiate',),
+        (5, 'novice', 'Novice',),
+        (6, 'a', 'Plateau A',),
+        (7, 'aa', 'Plateau AA',),
+        (8, 'aaa', 'Plateau AAA',),
+        (9, 'dc', 'Dealer\'s Choice',),
+    )
+
     kind = models.IntegerField(
         help_text="""
             The kind of the contest.  Note that this may be different than the kind of the parent session.""",
         choices=KIND,
+    )
+
+    GOAL = Choices(
+        (0, 'championship', "Championship"),
+        (1, 'qualifier', "Qualifier"),
     )
 
     goal = models.IntegerField(
@@ -589,14 +582,31 @@ class Contest(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
     year = models.IntegerField(
         choices=YEAR_CHOICES,
     )
+
+    ROUNDS_CHOICES = []
+    for r in reversed(range(1, 4)):
+        ROUNDS_CHOICES.append((r, r))
 
     rounds = models.IntegerField(
         help_text="""
             The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
         choices=ROUNDS_CHOICES,
+    )
+
+    HISTORY = Choices(
+        (0, 'new', 'New',),
+        (10, 'none', 'None',),
+        (20, 'pdf', 'PDF',),
+        (30, 'places', 'Places',),
+        (40, 'incomplete', 'Incomplete',),
+        (50, 'complete', 'Complete',),
     )
 
     history = models.IntegerField(
@@ -1688,6 +1698,36 @@ class Organization(MPTTModel, TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    LEVEL = Choices(
+        (1, 'international', "International"),
+        (2, 'district', "District"),
+        (3, 'division', "Division"),
+    )
+
+    lvl = models.IntegerField(
+        help_text="""
+            The level of the contest.  Note that this may be different than the level of the parent session.""",
+        choices=LEVEL,
+        null=True,
+        blank=True,
+    )
+
     start_date = models.DateField(
         help_text="""
             The founding/birth date of the resource.""",
@@ -1769,12 +1809,6 @@ class Organization(MPTTModel, TimeStampedModel):
         help_text="""
             Notes (for internal use only).""",
         blank=True,
-    )
-
-    is_active = models.BooleanField(
-        help_text="""
-            A boolean for active/living resources.""",
-        default=True,
     )
 
     short_name = models.CharField(
