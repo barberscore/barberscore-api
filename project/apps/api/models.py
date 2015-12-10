@@ -437,6 +437,22 @@ class Certification(TimeStampedModel):
 
 class Chapter(Common):
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
     code = models.CharField(
         help_text="""
             The chapter code.""",
@@ -1490,11 +1506,6 @@ class Group(Common):
         (20, 'inactive', 'Inactive',),
     )
 
-    KIND = Choices(
-        (1, 'quartet', 'Quartet'),
-        (2, 'chorus', 'Chorus'),
-    )
-
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -1503,6 +1514,11 @@ class Group(Common):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    KIND = Choices(
+        (1, 'quartet', 'Quartet'),
+        (2, 'chorus', 'Chorus'),
     )
 
     kind = models.IntegerField(
@@ -1704,7 +1720,7 @@ class Organization(MPTTModel, TimeStampedModel):
         (2, 'division', "Division"),
     )
 
-    lvl = models.IntegerField(
+    level = models.IntegerField(
         help_text="""
             The level of the contest.  Note that this may be different than the level of the parent session.""",
         choices=LEVEL,
