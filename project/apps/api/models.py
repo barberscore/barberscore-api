@@ -437,25 +437,9 @@ class Certification(TimeStampedModel):
 
 class Chapter(Common):
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     code = models.CharField(
         help_text="""
-            The chapter code (only for choruses).""",
+            The chapter code.""",
         max_length=200,
         blank=True,
         validators=[
