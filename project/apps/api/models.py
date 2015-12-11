@@ -1941,7 +1941,8 @@ class Organization(MPTTModel, TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u" ".join([p.short_name for p in self.get_ancestors(include_self=True)])
+        self.name = "{0}".format(self.id.hex)
+        # self.name = u" ".join([p.short_name for p in self.get_ancestors(include_self=True)])
         super(Organization, self).save(*args, **kwargs)
 
 
