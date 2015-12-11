@@ -1905,6 +1905,13 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='performances',
+        null=True,
+        blank=True,
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='performances',
