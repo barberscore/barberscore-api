@@ -1063,7 +1063,7 @@ class Convention(TimeStampedModel):
         (30, 'final', 'Final',),
     )
 
-    KIND = Choices(
+    SEASON = Choices(
         (1, 'international', 'International',),
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
@@ -1113,10 +1113,10 @@ class Convention(TimeStampedModel):
             The organization hosting the convention.""",
     )
 
-    kind = models.IntegerField(
+    season = models.IntegerField(
         help_text="""
             The kind of convention.""",
-        choices=KIND,
+        choices=SEASON,
     )
 
     year = models.IntegerField(
@@ -1158,7 +1158,7 @@ class Convention(TimeStampedModel):
         ]
 
         unique_together = (
-            ('organization', 'kind', 'year',),
+            ('organization', 'season', 'year',),
         )
 
     def __unicode__(self):
@@ -1167,7 +1167,7 @@ class Convention(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
             self.organization,
-            self.get_kind_display(),
+            self.get_season_display(),
             self.year,
         )
         super(Convention, self).save(*args, **kwargs)
