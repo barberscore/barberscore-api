@@ -109,6 +109,7 @@ class ContestInline(admin.TabularInline):
     readonly_fields = [
         'link',
         'name',
+        'year',
     ]
 
     can_delete = True
@@ -412,6 +413,7 @@ class SessionInline(admin.TabularInline):
     readonly_fields = [
         'link',
         'name',
+        'year',
     ]
 
     can_delete = True
