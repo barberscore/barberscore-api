@@ -138,7 +138,6 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         'year',
         'organization',
         'session',
-        'round',
     )
 
     list_display = (
@@ -149,11 +148,10 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         'level',
         'kind',
         'goal',
-        'qual',
-        'round',
         'parent',
-        'cutoff',
-
+        'year',
+        'rounds',
+        'qual_score',
     )
 
     fields = (
@@ -165,9 +163,9 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         'level',
         'kind',
         'goal',
-        'qual',
-        'cutoff',
-        'round',
+        'year',
+        'rounds',
+        'qual_score',
         'parent',
     )
 
