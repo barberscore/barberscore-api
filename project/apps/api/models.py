@@ -1107,12 +1107,63 @@ class Convention(TimeStampedModel):
         (6, 'southcombo', 'Southeast and Southwest',),
         (7, 'northcombo', 'Northeast and Northwest',),
         (8, 'district', 'District',),
+        (9, 'video', 'Video',),
     )
 
     season = models.IntegerField(
         help_text="""
             The kind of convention.""",
         choices=SEASON,
+    )
+
+    KIND = Choices(
+        ('International', [
+            (10, 'international', "International"),
+            (15, 'midwinter', "Midwinter"),
+        ]),
+        ('District', [
+            (20, 'car', "CAR"),
+            (30, 'csd', "CSD"),
+            (40, 'dix', "DIX"),
+            (50, 'evg', "EVG"),
+            (60, 'fwd', "FWD"),
+            (70, 'ill', "ILL"),
+            (80, 'jad', "JAD"),
+            (90, 'lol', "LOL"),
+            (100, 'mad', "MAD"),
+            (110, 'ned', "NED"),
+            (120, 'nsc', "NSC"),
+            (130, 'ont', "ONT"),
+            (140, 'pio', "PIO"),
+            (150, 'rmd', "RMD"),
+            (160, 'sld', "SLD"),
+            (170, 'sun', "SUN"),
+            (180, 'swd', "SWD"),
+        ]),
+        ('Division', [
+            (200, 'evgd1', "Evergreen District Division I"),
+            (210, 'evgd2', "Evergreen District Division II"),
+            (220, 'evgd3', "Evergreen District Division III"),
+            (230, 'evgd4', "Evergreen District Division IV"),
+            (240, 'evgd5', "Evergreen District Division V"),
+            (250, 'fwdaz', "Far Western District Arizona Division"),
+            (260, 'fwdnenw', "Far Western District NE/NW Division"),
+            (270, 'fwdsesw', "Far Western District SE/SW Division"),
+            (280, 'lolp1', "Land O' Lakes District Division One/Packerland Division"),
+            (290, 'lolnp', "Land O' Lakes District Northern Plains Division"),
+            (300, 'lol10sw', "Land O' Lakes District 10,000 Lakes and Southwest Division"),
+            (310, 'madatl', "Mid-Atlantic District Atlantic Division"),
+            (320, 'madnw', "Mid-Atlantic District Northern and Western Division"),
+            (330, 'madsth', "Mid-Atlantic District Southern Division"),
+        ]),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
+        choices=KIND,
+        null=True,
+        blank=True,
     )
 
     YEAR_CHOICES = []
