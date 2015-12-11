@@ -243,7 +243,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'status_monitor',
         'location',
         'dates',
-        'season',
+        'kind',
         'year',
         'organization',
         'combo',
@@ -255,7 +255,7 @@ class ConventionAdmin(admin.ModelAdmin):
         ('location', 'timezone',),
         'dates',
         'organization',
-        'season',
+        'kind',
         'year',
         'stix_file',
         'combo',
@@ -263,7 +263,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'season',
+        'kind',
         'year',
         'organization',
         'combo',
