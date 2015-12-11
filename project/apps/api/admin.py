@@ -173,7 +173,6 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         'name',
         'status_monitor',
         'history_monitor',
-        'year',
     )
 
     # ordering = (
