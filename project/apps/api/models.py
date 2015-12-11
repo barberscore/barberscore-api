@@ -2777,20 +2777,6 @@ class Session(TimeStampedModel):
         choices=SIZE_CHOICES,
     )
 
-    LEVEL = Choices(
-        (1, 'finals', "Finals"),
-        (2, 'semis', "Semis"),
-        (3, 'quarters', "Quarters"),
-    )
-
-    level = models.IntegerField(
-        help_text="""
-            The contest round.""",
-        choices=LEVEL,
-        null=True,
-        blank=True,
-    )
-
     ROUNDS_CHOICES = []
     for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
@@ -2857,42 +2843,27 @@ class Session(TimeStampedModel):
         null=True,
     )
 
-    parent = TreeForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-    )
-
-    class MPTTMeta:
-        unique_together = (
-            ('convention', 'kind', 'level',),
-        )
-        order_insertion_by = [
-            'name',
-        ]
-        ordering = (
-            '-tree_id',
-        )
-        # ordering = (
-        #     '-year',
-        #     'convention',
-        #     'kind',
-        # )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.year = self.convention.year
         self.organization = self.convention.organization
-        self.name = u"{0} {1} {2}".format(
+        self.name = u"{0} {1}".format(
             self.convention,
             self.get_kind_display(),
-            self.get_level_display(),
         )
         super(Session, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('convention', 'kind',),
+        )
+        ordering = (
+            '-year',
+            'convention',
+            'kind',
+        )
 
     @transition(
         field=status,
