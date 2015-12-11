@@ -2712,7 +2712,7 @@ class Score(TimeStampedModel):
         return
 
 
-class Session(TimeStampedModel):
+class Session(MPTTModel, TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
