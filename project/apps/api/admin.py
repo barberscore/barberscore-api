@@ -246,7 +246,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'season',
         'year',
         'organization',
-        'kind',
+        'combo',
     )
 
     fields = (
@@ -258,7 +258,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'season',
         'year',
         'stix_file',
-        'kind',
+        'combo',
     )
 
     list_filter = (
@@ -266,7 +266,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'season',
         'year',
         'organization',
-        'kind',
+        'combo',
     )
 
     inlines = [
