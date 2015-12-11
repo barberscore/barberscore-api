@@ -1187,16 +1187,19 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = ' '.join(
-            filter(
-                None, [
-                    u"{0}".format(self.organization),
-                    u"{0}".format(self.get_kind_display()),
-                    u"{0}".format(self.get_combo_display()),
-                    u"{0}".format(self.year),
-                ]
+        if self.combo:
+            self.name = u"{0} {1} {2} {3}".format(
+                self.organization,
+                self.get_kind_display(),
+                self.get_combo_display(),
+                self.year,
             )
-        )
+        else:
+            self.name = u"{0} {1} {2}".format(
+                self.organization,
+                self.get_kind_display(),
+                self.year,
+            )
         super(Convention, self).save(*args, **kwargs)
 
     def stix(self):
