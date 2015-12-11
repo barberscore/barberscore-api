@@ -1056,28 +1056,6 @@ class Contestant(TimeStampedModel):
 
 
 class Convention(TimeStampedModel):
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'started', 'Started',),
-        (30, 'final', 'Final',),
-    )
-
-    SEASON = Choices(
-        (1, 'international', 'International',),
-        (2, 'midwinter', 'Midwinter',),
-        (3, 'fall', 'Fall',),
-        (4, 'spring', 'Spring',),
-        (5, 'pacific', 'Pacific',),
-        (6, 'southcombo', 'Southeast and Southwest',),
-        (7, 'northcombo', 'Northeast and Northwest',),
-        (8, 'district', 'District',),
-    )
-
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1097,6 +1075,13 @@ class Convention(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (20, 'started', 'Started',),
+        (30, 'final', 'Final',),
+    )
+
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -1113,11 +1098,26 @@ class Convention(TimeStampedModel):
             The organization hosting the convention.""",
     )
 
+    SEASON = Choices(
+        (1, 'international', 'International',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+        (5, 'pacific', 'Pacific',),
+        (6, 'southcombo', 'Southeast and Southwest',),
+        (7, 'northcombo', 'Northeast and Northwest',),
+        (8, 'district', 'District',),
+    )
+
     season = models.IntegerField(
         help_text="""
             The kind of convention.""",
         choices=SEASON,
     )
+
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
