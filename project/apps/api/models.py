@@ -591,9 +591,9 @@ class Contest(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
-    qual_score = models.FloatField(
+    cutoff = models.FloatField(
         help_text="""
-            If the qual type is 'score', enter the cutoff  in percentile.""",
+            If the qual type is 'score', enter the cutoff  as percentile.  If it is 'rank', enter as integer.""",
         null=True,
         blank=True,
     )
@@ -615,6 +615,8 @@ class Contest(MPTTModel, TimeStampedModel):
         help_text="""
             The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
         choices=ROUNDS_CHOICES,
+        null=True,
+        blank=True,
     )
 
     ROUND = Choices(
@@ -708,7 +710,7 @@ class Contest(MPTTModel, TimeStampedModel):
         if self.goal == self.GOAL.qualifier and not self.qual:
             raise ValidationError('You must choose a qualification method.')
 
-        if self.qual == self.QUAL.score and not self.qual_score:
+        if self.qual == self.QUAL.score and not self.cutoff:
             raise ValidationError('The qualification score must be set.')
 
     def save(self, *args, **kwargs):
