@@ -1208,41 +1208,81 @@ class Convention(TimeStampedModel):
 
     def stix(self):
         # models.signals.post_save.disconnect(session_post_save)
+
+        # Load data and skip first two header rows
         reader = csv.reader(self.stix_file, skipinitialspace=True)
         reader.next()
         reader.next()
         rows = [row for row in reader]
+
+        # Determine meta-data
+        chorus_count = 0
+        quartet_count = 0
         for row in rows:
+            if row[0].startswith('Subsessions:'):
+                # Parse session into components
+                parts = row[0].partition(':')
+                # Parse session meta-data
+                session_text = parts[2]
+                if session_text.startswith('Chorus'):
+                    chorus_count += 1
+                elif session_text.startswith('Quartet'):
+                    quartet_count += 1
+                else:
+                    raise RuntimeError("Can't determine session kind")
             if row[0].startswith('Judge'):
                 judge_count = int(row[0].partition(":")[2].strip())
+
+        # Build Sessions
         for row in rows:
-            # Explode first on session
             if row[0].startswith('Subsessions:'):
                 # Parse session into components
                 parts = row[0].partition(':')
                 # Parse session kind and create
                 session_text = parts[2]
                 # Identify session by kind
-                if 'Chorus Finals' in session_text:
-                    kind = self.sessions.model.KIND.chorus
-                elif 'Quartet Finals' in session_text:
-                    kind = self.sessions.model.KIND.quartet
+                if 'Chorus' in session_text:
+                    # Get or create the session for indempodence
+                    session, created = self.sessions.get_or_create(
+                        convention=self,
+                        kind=self.sessions.model.KIND.chorus,
+                        size=judge_count / 3,
+                        num_rounds=chorus_count,
+                    )
+                    # This is a little hacky, but instantiate the rounds,
+                    # including increment and kind.
+                    i = 0
+                    j = chorus_count
+                    while i <= chorus_count:
+                        rnd, created = session.rounds.get_or_create(
+                            num=i,
+                            kind=j,
+                        )
+                        i += 1
+                        j -= 1
+                elif 'Quartet' in session_text:
+                    # Get or create the session for indempodence
+                    session, created = self.sessions.get_or_create(
+                        convention=self,
+                        kind=self.sessions.model.KIND.quartet,
+                        size=judge_count / 3,
+                        num_rounds=quartet_count,
+                    )
+                    # This is a little hacky, but instantiate the rounds,
+                    # including increment and kind.
+                    i = 0
+                    j = quartet_count
+                    while i <= quartet_count:
+                        rnd, created = session.rounds.get_or_create(
+                            num=i,
+                            kind=j,
+                        )
+                        i += 1
+                        j -= 1
                 else:
-                    raise RuntimeError("Can't determine judging panel kind")
-                # Get or create the session for indempodence
-                session, created = self.sessions.get_or_create(
-                    convention=self,
-                    kind=kind,
-                    size=judge_count / 3,
-                )
+                    raise RuntimeError("Can't determine session kind")
 
-                # TODO  HACK HACK HACK!!! WARNING!!!!
-                rnd, created = session.rounds.get_or_create(
-                    num=1,
-                    kind=1,
-                )
-
-                # Create contests from same row
+                # Create Contests
                 contest_list = row[1:]
                 for c in contest_list:
                     # Parse contest components
@@ -1314,8 +1354,9 @@ class Convention(TimeStampedModel):
                     )
                     contest.subsession_id = contest_number
                     contest.save()
-            # Explode first on session
-            elif row[0].startswith('Panel'):
+        # Determine Panel
+        for row in rows:
+            if row[0].startswith('Panel'):
                 parts = row[0].partition('-')
                 # Parse panel kind and create
                 panel_text = parts[2]
@@ -1379,9 +1420,15 @@ class Convention(TimeStampedModel):
                     )
                     judge.panel_id = panel_id
                     judge.save()
-            elif row[0].startswith('Judge'):
+
+        # Determine Judge
+        for row in rows:
+            if row[0].startswith('Judge'):
                 pass
-            elif row[0].startswith('Session'):
+
+            # Determine Performances
+        for row in rows:
+            if row[0].startswith('Session'):
                 if 'Chorus' in row[0]:
                     session = self.sessions.get(
                         kind=self.sessions.model.KIND.chorus,
@@ -1462,8 +1509,8 @@ class Convention(TimeStampedModel):
                         kind=judge.kind,
                     )
                     i += 1
-            else:
-                raise RuntimeError("Unexpected row!")
+
+        # Denormalize
         for session in self.sessions.all():
             for performer in session.performers.all():
                 for performance in performer.performances.all():
