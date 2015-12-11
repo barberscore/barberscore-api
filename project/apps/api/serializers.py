@@ -83,7 +83,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'goal',
             'year',
             'rounds',
-            'cutoff',
+            'qual_score',
             'session',
             'contestants',
         )
