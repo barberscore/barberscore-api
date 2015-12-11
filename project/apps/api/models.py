@@ -1092,18 +1092,6 @@ class Convention(TimeStampedModel):
         monitor='status',
     )
 
-    LEVEL = Choices(
-        (1, 'convention', "Convention"),
-        (2, 'session', "Session"),
-        (3, 'round', "Round"),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-        null=True,
-        blank=True,
-    )
-
     organization = TreeForeignKey(
         'Organization',
         help_text="""
