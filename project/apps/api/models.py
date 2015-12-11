@@ -1112,53 +1112,27 @@ class Convention(TimeStampedModel):
         choices=SEASON,
     )
 
-    KIND = Choices(
-        ('International', [
-            (10, 'international', "International"),
-            (15, 'midwinter', "Midwinter"),
-        ]),
-        ('District', [
-            (20, 'car', "CAR"),
-            (30, 'csd', "CSD"),
-            (40, 'dix', "DIX"),
-            (50, 'evg', "EVG"),
-            (60, 'fwd', "FWD"),
-            (70, 'ill', "ILL"),
-            (80, 'jad', "JAD"),
-            (90, 'lol', "LOL"),
-            (100, 'mad', "MAD"),
-            (110, 'ned', "NED"),
-            (120, 'nsc', "NSC"),
-            (130, 'ont', "ONT"),
-            (140, 'pio', "PIO"),
-            (150, 'rmd', "RMD"),
-            (160, 'sld', "SLD"),
-            (170, 'sun', "SUN"),
-            (180, 'swd', "SWD"),
-            (190, 'district', "District"),
-        ]),
-        ('Division', [
-            (200, 'evgd1', "Evergreen District Division I"),
-            (210, 'evgd2', "Evergreen District Division II"),
-            (220, 'evgd3', "Evergreen District Division III"),
-            (230, 'evgd4', "Evergreen District Division IV"),
-            (240, 'evgd5', "Evergreen District Division V"),
-            (250, 'fwdaz', "Far Western District Arizona Division"),
-            (260, 'fwdnenw', "Far Western District NE/NW Division"),
-            (270, 'fwdsesw', "Far Western District SE/SW Division"),
-            (280, 'lolp1', "Land O' Lakes District Division One/Packerland Division"),
-            (290, 'lolnp', "Land O' Lakes District Northern Plains Division"),
-            (300, 'lol10sw', "Land O' Lakes District 10,000 Lakes and Southwest Division"),
-            (310, 'madatl', "Mid-Atlantic District Atlantic Division"),
-            (320, 'madnw', "Mid-Atlantic District Northern and Western Division"),
-            (330, 'madsth', "Mid-Atlantic District Southern Division"),
-        ]),
+    COMBO = Choices(
+        (200, 'evgd1', "Division I"),
+        (210, 'evgd2', "Division II"),
+        (220, 'evgd3', "Division III"),
+        (230, 'evgd4', "Division IV"),
+        (240, 'evgd5', "Division V"),
+        (250, 'fwdaz', "Arizona Division"),
+        (260, 'fwdnenw', "NE/NW Division"),
+        (270, 'fwdsesw', "SE/SW Division"),
+        (280, 'lolp1', "Division One/Packerland Division"),
+        (290, 'lolnp', "Northern Plains Division"),
+        (300, 'lol10sw', "10,000 Lakes and Southwest Division"),
+        (310, 'madatl', "Atlantic Division"),
+        (320, 'madnw', "Northern and Western Division"),
+        (330, 'madsth', "Southern Division"),
     )
 
-    kind = models.IntegerField(
+    combo = models.IntegerField(
         help_text="""
-            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
-        choices=KIND,
+            This is a combo convention of Divisions.""",
+        choices=COMBO,
         null=True,
         blank=True,
     )
