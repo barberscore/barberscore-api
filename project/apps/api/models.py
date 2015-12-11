@@ -1187,11 +1187,12 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.organization,
-            self.get_season_display(),
-            self.get_kind_display(),
-            self.year,
+        self.name = u"{0}".format(
+            self.id.hex,
+            # self.organization,
+            # self.get_season_display(),
+            # self.get_com_display(),
+            # self.year,
         )
         super(Convention, self).save(*args, **kwargs)
 
