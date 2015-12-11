@@ -617,18 +617,6 @@ class Contest(MPTTModel, TimeStampedModel):
         choices=ROUNDS_CHOICES,
     )
 
-    ROUND = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
-    )
-
-    round = models.IntegerField(
-        choices=ROUND,
-        null=True,
-        blank=True,
-    )
-
     HISTORY = Choices(
         (0, 'new', 'New',),
         (10, 'none', 'None',),
@@ -688,7 +676,6 @@ class Contest(MPTTModel, TimeStampedModel):
             'goal',
             'organization',
             'session',
-            'round',
         ))
         order_insertion_by = [
             'name',
@@ -724,12 +711,11 @@ class Contest(MPTTModel, TimeStampedModel):
                 # self.parent,
             )
         else:
-            self.name = u"{0} {1} {2} {3} {4}".format(
+            self.name = u"{0} {1} {2} {3}".format(
                 self.organization,
                 # self.get_level_display(),
                 self.get_kind_display(),
                 self.get_goal_display(),
-                self.get_round_display(),
                 self.year,
             )
         self.year = self.session.year
@@ -2963,6 +2949,21 @@ class Round(TimeStampedModel):
         editable=False,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (15, 'ready', 'Ready',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
+        (30, 'final', 'Final',),
+    )
+
+    KIND = Choices(
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semis'),
+        (3, 'quarters', 'Quarters'),
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -2974,15 +2975,6 @@ class Round(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (30, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -2998,12 +2990,6 @@ class Round(TimeStampedModel):
     session = models.ForeignKey(
         'Session',
         related_name='rounds',
-    )
-
-    KIND = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
     )
 
     kind = models.IntegerField(
