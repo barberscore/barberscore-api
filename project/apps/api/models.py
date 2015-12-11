@@ -255,6 +255,7 @@ class Arranger(TimeStampedModel):
         related_name='arrangers',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     person = models.ForeignKey(
@@ -309,6 +310,7 @@ class Catalog(TimeStampedModel):
         null=True,
         blank=True,
         related_name='catalogs',
+        on_delete=models.SET_NULL,
     )
 
     song_name = models.CharField(
@@ -468,6 +470,7 @@ class Chapter(Common):
         related_name='chapters',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     @staticmethod
@@ -647,6 +650,7 @@ class Contest(MPTTModel, TimeStampedModel):
         blank=True,
         related_name='children',
         db_index=True,
+        on_delete=models.SET_NULL,
     )
 
     class MPTTMeta:
@@ -1574,6 +1578,7 @@ class Group(Common):
         related_name='groups',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     @staticmethod
@@ -1677,6 +1682,7 @@ class Judge(TimeStampedModel):
         related_name='judges',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     panel_id = models.IntegerField(
@@ -1872,6 +1878,7 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
         related_name='children',
         db_index=True,
+        on_delete=models.SET_NULL,
     )
 
     class MPTTMeta:
@@ -1933,20 +1940,6 @@ class Performance(TimeStampedModel):
     round = models.ForeignKey(
         'Round',
         related_name='performances',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='performances',
-        null=True,
-        blank=True,
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='performances',
-        null=True,
-        blank=True,
     )
 
     performer = models.ForeignKey(
@@ -2245,6 +2238,7 @@ class Performer(TimeStampedModel):
         related_name='performers',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     picture = models.ImageField(
@@ -2489,6 +2483,7 @@ class Person(Common):
         'Organization',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     member = models.IntegerField(
