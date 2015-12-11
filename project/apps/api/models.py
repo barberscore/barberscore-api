@@ -2802,6 +2802,16 @@ class Session(TimeStampedModel):
         default=1,
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    slots = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # Denormalized
     organization = TreeForeignKey(
         'Organization',
