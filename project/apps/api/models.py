@@ -578,22 +578,9 @@ class Contest(MPTTModel, TimeStampedModel):
         choices=GOAL,
     )
 
-    QUAL = Choices(
-        (1, 'score', "Score"),
-        (2, 'rank', "Rank"),
-    )
-
-    qual = models.IntegerField(
-        help_text="""
-            How is qualification determined?  By absolute score or relative rank?""",
-        choices=QUAL,
-        null=True,
-        blank=True,
-    )
-
     qual_score = models.FloatField(
         help_text="""
-            If the qual type is 'score', enter the cutoff  in percentile.""",
+            The objective of the contest.  Note that if the goal is `qualifier` then this must be set.""",
         null=True,
         blank=True,
     )
@@ -604,7 +591,6 @@ class Contest(MPTTModel, TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
-        editable=False,
     )
 
     ROUNDS_CHOICES = []
@@ -692,10 +678,7 @@ class Contest(MPTTModel, TimeStampedModel):
         return u"{0}".format(self.name)
 
     def clean(self):
-        if self.goal == self.GOAL.qualifier and not self.qual:
-            raise ValidationError('You must choose a qualification method.')
-
-        if self.qual == self.QUAL.score and not self.qual_score:
+        if self.goal == self.GOAL.qualifier and not self.qual_score:
             raise ValidationError('The qualification score must be set.')
 
     def save(self, *args, **kwargs):
@@ -718,7 +701,6 @@ class Contest(MPTTModel, TimeStampedModel):
                 self.get_goal_display(),
                 self.year,
             )
-        self.year = self.session.year
         super(Contest, self).save(*args, **kwargs)
 
     def rank(self):
@@ -1226,81 +1208,41 @@ class Convention(TimeStampedModel):
 
     def stix(self):
         # models.signals.post_save.disconnect(session_post_save)
-
-        # Load data and skip first two header rows
         reader = csv.reader(self.stix_file, skipinitialspace=True)
         reader.next()
         reader.next()
         rows = [row for row in reader]
-
-        # Determine meta-data
-        chorus_count = 0
-        quartet_count = 0
         for row in rows:
-            if row[0].startswith('Subsessions:'):
-                # Parse session into components
-                parts = row[0].partition(':')
-                # Parse session meta-data
-                session_text = parts[2]
-                if session_text.startswith('Chorus'):
-                    chorus_count += 1
-                elif session_text.startswith('Quartet'):
-                    quartet_count += 1
-                else:
-                    raise RuntimeError("Can't determine session kind")
             if row[0].startswith('Judge'):
                 judge_count = int(row[0].partition(":")[2].strip())
-
-        # Build Sessions
         for row in rows:
+            # Explode first on session
             if row[0].startswith('Subsessions:'):
                 # Parse session into components
                 parts = row[0].partition(':')
                 # Parse session kind and create
                 session_text = parts[2]
                 # Identify session by kind
-                if 'Chorus' in session_text:
-                    # Get or create the session for indempodence
-                    session, created = self.sessions.get_or_create(
-                        convention=self,
-                        kind=self.sessions.model.KIND.chorus,
-                        size=judge_count / 3,
-                        num_rounds=chorus_count,
-                    )
-                    # This is a little hacky, but instantiate the rounds,
-                    # including increment and kind.
-                    i = 0
-                    j = chorus_count
-                    while i <= chorus_count:
-                        rnd, created = session.rounds.get_or_create(
-                            num=i,
-                            kind=j,
-                        )
-                        i += 1
-                        j -= 1
-                elif 'Quartet' in session_text:
-                    # Get or create the session for indempodence
-                    session, created = self.sessions.get_or_create(
-                        convention=self,
-                        kind=self.sessions.model.KIND.quartet,
-                        size=judge_count / 3,
-                        num_rounds=quartet_count,
-                    )
-                    # This is a little hacky, but instantiate the rounds,
-                    # including increment and kind.
-                    i = 0
-                    j = quartet_count
-                    while i <= quartet_count:
-                        rnd, created = session.rounds.get_or_create(
-                            num=i,
-                            kind=j,
-                        )
-                        i += 1
-                        j -= 1
+                if 'Chorus Finals' in session_text:
+                    kind = self.sessions.model.KIND.chorus
+                elif 'Quartet Finals' in session_text:
+                    kind = self.sessions.model.KIND.quartet
                 else:
-                    raise RuntimeError("Can't determine session kind")
+                    raise RuntimeError("Can't determine judging panel kind")
+                # Get or create the session for indempodence
+                session, created = self.sessions.get_or_create(
+                    convention=self,
+                    kind=kind,
+                    size=judge_count / 3,
+                )
 
-                # Create Contests
+                # TODO  HACK HACK HACK!!! WARNING!!!!
+                rnd, created = session.rounds.get_or_create(
+                    num=1,
+                    kind=1,
+                )
+
+                # Create contests from same row
                 contest_list = row[1:]
                 for c in contest_list:
                     # Parse contest components
@@ -1372,9 +1314,8 @@ class Convention(TimeStampedModel):
                     )
                     contest.subsession_id = contest_number
                     contest.save()
-        # Determine Panel
-        for row in rows:
-            if row[0].startswith('Panel'):
+            # Explode first on session
+            elif row[0].startswith('Panel'):
                 parts = row[0].partition('-')
                 # Parse panel kind and create
                 panel_text = parts[2]
@@ -1438,15 +1379,9 @@ class Convention(TimeStampedModel):
                     )
                     judge.panel_id = panel_id
                     judge.save()
-
-        # Determine Judge
-        for row in rows:
-            if row[0].startswith('Judge'):
+            elif row[0].startswith('Judge'):
                 pass
-
-            # Determine Performances
-        for row in rows:
-            if row[0].startswith('Session'):
+            elif row[0].startswith('Session'):
                 if 'Chorus' in row[0]:
                     session = self.sessions.get(
                         kind=self.sessions.model.KIND.chorus,
@@ -1527,8 +1462,8 @@ class Convention(TimeStampedModel):
                         kind=judge.kind,
                     )
                     i += 1
-
-        # Denormalize
+            else:
+                raise RuntimeError("Unexpected row!")
         for session in self.sessions.all():
             for performer in session.performers.all():
                 for performance in performer.performances.all():
@@ -2559,7 +2494,6 @@ class Person(Common):
     # Denormalization to make autocomplete work
     is_judge = models.BooleanField(
         default=False,
-        editable=False,
     )
 
     class Meta:
