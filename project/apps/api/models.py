@@ -568,8 +568,8 @@ class Contest(MPTTModel, TimeStampedModel):
     )
 
     GOAL = Choices(
-        (0, 'championship', "Championship"),
-        (1, 'qualifier', "Qualifier"),
+        (1, 'championship', "Championship"),
+        (2, 'qualifier', "Qualifier"),
     )
 
     goal = models.IntegerField(
@@ -682,25 +682,26 @@ class Contest(MPTTModel, TimeStampedModel):
             raise ValidationError('The qualification score must be set.')
 
     def save(self, *args, **kwargs):
-        if self.goal == self.GOAL.qualifier:
-            self.name = u"{0} {1} {2}".format(
-                self.parent,
-                self.session,
-                self.get_goal_display()
-                # self.get_level_display(),
-                # self.get_kind_display(),
-                # self.get_goal_display(),
-                # self.year,
-                # self.parent,
-            )
-        else:
-            self.name = u"{0} {1} {2} {3}".format(
-                self.organization,
-                # self.get_level_display(),
-                self.get_kind_display(),
-                self.get_goal_display(),
-                self.year,
-            )
+        self.name = "{0}".format(self.id.hex)
+        # if self.goal == self.GOAL.qualifier:
+        #     self.name = u"{0} {1} {2}".format(
+        #         self.parent,
+        #         self.session,
+        #         self.get_goal_display()
+        #         # self.get_level_display(),
+        #         # self.get_kind_display(),
+        #         # self.get_goal_display(),
+        #         # self.year,
+        #         # self.parent,
+        #     )
+        # else:
+        #     self.name = u"{0} {1} {2} {3}".format(
+        #         self.organization,
+        #         # self.get_level_display(),
+        #         self.get_kind_display(),
+        #         self.get_goal_display(),
+        #         self.year,
+        #     )
         super(Contest, self).save(*args, **kwargs)
 
     def rank(self):
@@ -1809,9 +1810,9 @@ class Organization(MPTTModel, TimeStampedModel):
     )
 
     LEVEL = Choices(
-        (0, 'international', "International"),
-        (1, 'district', "District"),
-        (2, 'division', "Division"),
+        (1, 'international', "International"),
+        (2, 'district', "District"),
+        (3, 'division', "Division"),
     )
 
     level = models.IntegerField(
