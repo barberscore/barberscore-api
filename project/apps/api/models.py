@@ -1103,10 +1103,6 @@ class Convention(TimeStampedModel):
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
-        (5, 'pacific', 'Pacific',),
-        (6, 'southcombo', 'Southeast and Southwest',),
-        (7, 'northcombo', 'Northeast and Northwest',),
-        (8, 'district', 'District',),
         (9, 'video', 'Video',),
     )
 
@@ -1139,6 +1135,7 @@ class Convention(TimeStampedModel):
             (160, 'sld', "SLD"),
             (170, 'sun', "SUN"),
             (180, 'swd', "SWD"),
+            (190, 'district', "District"),
         ]),
         ('Division', [
             (200, 'evgd1', "Evergreen District Division I"),
@@ -1219,6 +1216,7 @@ class Convention(TimeStampedModel):
         self.name = u"{0} {1} {2}".format(
             self.organization,
             self.get_season_display(),
+            self.get_kind_display(),
             self.year,
         )
         super(Convention, self).save(*args, **kwargs)
