@@ -1222,7 +1222,7 @@ class Convention(TimeStampedModel):
                 # Parse session into components
                 parts = row[0].partition(':')
                 # Parse session meta-data
-                session_text = parts[2]
+                session_text = parts[2].strip()
                 if session_text.startswith('Chorus'):
                     chorus_count += 1
                 elif session_text.startswith('Quartet'):
@@ -1252,7 +1252,7 @@ class Convention(TimeStampedModel):
                     # including increment and kind.
                     i = 0
                     j = chorus_count
-                    while i <= chorus_count:
+                    while i < chorus_count:
                         rnd, created = session.rounds.get_or_create(
                             num=i,
                             kind=j,
@@ -1295,6 +1295,7 @@ class Convention(TimeStampedModel):
                         # if any(substring in contest_text for substring in qualification_markers):
                         # Check for prelims
                         parent = None
+                        year = self.year
                         if "Preliminary" in contest_text:
                             # Find year, based on district
                             year = self.year + 1
@@ -1313,21 +1314,21 @@ class Convention(TimeStampedModel):
                             year = self.year
                             try:
                                 parent = Contest.objects.get(
-                                    level=Contest.LEVEL.international,
+                                    level=Contest.LEVEL.district,
                                     kind=Contest.KIND.chorus,
-                                    organization=self.organization.parent,
+                                    organization=self.organization,
                                     year=year,
                                 )
                             except Exception as e:
-                                raise ("Error finding parent: {0} {1}".format(contest_text, e))
-
+                                log.error("Error finding parent: {0}".format(contest_text))
+                                raise e
                         # Determine Level
                         # TODO Not sure this adds value...
                         level = organization.level + 1
 
                         # Determine Rounds
                         # This is assumed to be constant for Chorus comps.
-                        num_rounds = 1
+                        rounds = 1
 
                         # Determine the Kind
                         # TODO Really need a better parser here
@@ -1346,7 +1347,7 @@ class Convention(TimeStampedModel):
                             level=level,
                             organization=organization,
                             year=year,
-                            num_rounds=num_rounds,
+                            rounds=rounds,
                             session=session,
                             parent=parent,
                         )
@@ -1359,7 +1360,7 @@ class Convention(TimeStampedModel):
                         convention=self,
                         kind=self.sessions.model.KIND.quartet,
                         size=judge_count / 3,
-                        num_rounds=quartet_count,
+                        rounds=quartet_count,
                     )
                     # This is a little hacky, but instantiate the rounds,
                     # including increment and kind.
@@ -1592,17 +1593,35 @@ class Convention(TimeStampedModel):
                     title=song_title,
                     order=song_order,
                 )
+
                 scores_raw = row[-judge_count:]
-                i = 1
-                for score in scores_raw:
-                    judge = performance.round.session.judges.get(panel_id=i)
+
+                judges = session.judges.order_by('panel_id')
+                i = 0
+                for judge in judges:
                     score, created = song.scores.get_or_create(
-                        points=int(score),
+                        points=int(scores_raw[i]),
                         judge=judge,
                         category=judge.category,
                         kind=judge.kind,
                     )
                     i += 1
+
+                # i = 1
+                # for in scores_raw:
+                #     try:
+                #         judge = performance.round.session.judges.get(panel_id=i)
+                #     except Exception as e:
+                #         log.error(panel_id)
+                #         log.error(performance.round.session.judges.all())
+                #         raise e
+                #     score, created = song.scores.get_or_create(
+                #         points=int(score),
+                #         judge=judge,
+                #         category=judge.category,
+                #         kind=judge.kind,
+                #     )
+                #     i += 1
 
         # Denormalize
         for session in self.sessions.all():
