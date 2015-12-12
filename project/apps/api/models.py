@@ -558,7 +558,6 @@ class Contest(MPTTModel, TimeStampedModel):
         (6, 'a', 'Plateau A',),
         (7, 'aa', 'Plateau AA',),
         (8, 'aaa', 'Plateau AAA',),
-        (9, 'dc', 'Dealer\'s Choice',),
     )
 
     kind = models.IntegerField(
@@ -1260,6 +1259,100 @@ class Convention(TimeStampedModel):
                         )
                         i += 1
                         j -= 1
+
+                    # build a list of the contests (called subsessions here)
+                    contest_list = row[1:]
+                    for c in contest_list:
+                        # Parse each list item for id, name
+                        parts = c.partition('=')
+                        contest_number = int(parts[0].strip())
+                        contest_text = parts[2]
+                        # skip if it's a "most improved" award
+                        if "Most-Improved" in contest_text:
+                            log.error("Skipping most improved: {0}".format(contest_text))
+                            continue
+                        # Determine the organization
+                        if contest_text.startswith(self.organization.long_name):
+                            #  If the subsession matches the convention, stop
+                            organization = self.organization
+                        else:
+                            # match according to the related division name, or throw exception
+                            divisions = self.organization.children.all()
+                            organization = None
+                            for div in divisions:
+                                # TODO might need regex here
+                                if contest_text.startswith("{0} ".format(div.long_name)):
+                                    organization = div
+                                    continue
+                            if not organization:
+                                raise RuntimeError("No match on subsession")
+
+                        # Determine the parent (if any)
+                        # # Check for qualifiers from this list
+                        # qualification_markers = [
+                        #     'Preliminary',
+                        # ]
+                        # if any(substring in contest_text for substring in qualification_markers):
+                        # Check for prelims
+                        parent = None
+                        if "Preliminary" in contest_text:
+                            # Find year, based on district
+                            year = self.year + 1
+                            try:
+                                parent = Contest.objects.get(
+                                    level=Contest.LEVEL.international,
+                                    kind=Contest.KIND.chorus,
+                                    organization=self.organization.parent,
+                                    year=year,
+                                )
+                            except Exception as e:
+                                raise ("Error finding parent: {0} {1}".format(contest_text, e))
+
+                        if "Qualification" in contest_text:
+                            # Find year, based on district
+                            year = self.year
+                            try:
+                                parent = Contest.objects.get(
+                                    level=Contest.LEVEL.international,
+                                    kind=Contest.KIND.chorus,
+                                    organization=self.organization.parent,
+                                    year=year,
+                                )
+                            except Exception as e:
+                                raise ("Error finding parent: {0} {1}".format(contest_text, e))
+
+                        # Determine Level
+                        # TODO Not sure this adds value...
+                        level = organization.level + 1
+
+                        # Determine Rounds
+                        # This is assumed to be constant for Chorus comps.
+                        num_rounds = 1
+
+                        # Determine the Kind
+                        # TODO Really need a better parser here
+                        KIND = session.contests.model.KIND
+                        if 'Plateau A Chorus' in contest_text:
+                            kind = KIND.a
+                        elif 'Plateau AA Chorus' in contest_text:
+                            kind = KIND.aa
+                        elif 'Plateau AAA Chorus' in contest_text:
+                            kind = KIND.aaa
+                        else:
+                            kind = KIND.chorus
+                            # raise RuntimeError("parse fail!")
+                        contest, created = session.contests.get_or_create(
+                            kind=kind,
+                            level=level,
+                            organization=organization,
+                            year=year,
+                            num_rounds=num_rounds,
+                            session=session,
+                            parent=parent,
+                        )
+                        contest.subsession_id = contest_number
+                        contest.save()
+
                 elif 'Quartet' in session_text:
                     # Get or create the session for indempodence
                     session, created = self.sessions.get_or_create(
@@ -1279,81 +1372,82 @@ class Convention(TimeStampedModel):
                         )
                         i += 1
                         j -= 1
+                    # Create Contests
+                    contest_list = row[1:]
+                    for c in contest_list:
+                        # Parse contest components
+                        parts = c.partition('=')
+                        contest_number = int(parts[0].strip())
+                        contest_text = parts[2]
+                        # skip if it's a "most improved" award
+                        if "Most-Improved" in contest_text:
+                            continue
+                        # skip if it's a "out-of-division" award
+                        if "Out of Division" in contest_text:
+                            continue
+                        # parse goal
+                        qualification_markers = ['Qualification', 'Preliminary']
+                        if any(substring in contest_text for substring in qualification_markers):
+                            goal = 2
+                        else:
+                            goal = 1
+                        # parse organization and level
+                        if goal == 1:
+                            if any(substring in contest_text for substring in ['Division', ]):
+                                child = contest_text.split('Division', 1)[0].strip()
+                                organization = self.organization.children.get(
+                                    long_name=child,
+                                )
+                            else:
+                                organization = self.organization
+                            level = organization.level + 1
+                        else:
+                            for marker in qualification_markers:
+                                if marker in contest_text:
+                                    subtext = contest_text.partition(marker)[0].strip().rsplit(" ", 1)[1].lower()
+                                # else:
+                                #     raise RuntimeError("No marker match! {0} {1}".format(contest_text, marker))
+                            level = getattr(session.contests.model.LEVEL, subtext)
+                            if contest_text.startswith('Far Western District'):
+                                organization = self.organization
+                            else:
+                                organization_text = contest_text.split(" ", 1)[0]
+                                organization = self.organization.children.get(long_name=organization_text)
+                        # parse kind
+                        KIND = session.contests.model.KIND
+                        if 'Novice' in contest_text:
+                            kind = KIND.novice
+                        elif 'Senior' in contest_text:
+                            kind = KIND.senior
+                        elif 'Collegiate' in contest_text:
+                            kind = KIND.collegiate
+                        elif 'Plateau A Chorus' in contest_text:
+                            kind = KIND.a
+                        elif 'Plateau AA Chorus' in contest_text:
+                            kind = KIND.aa
+                        elif 'Plateau AAA Chorus' in contest_text:
+                            kind = KIND.aaa
+                        elif 'Chorus' in contest_text:
+                            kind = KIND.chorus
+                        elif 'Quartet' in contest_text:
+                            kind = KIND.quartet
+                        else:
+                            raise RuntimeError("parse fail!")
+                        contest, created = session.contests.get_or_create(
+                            goal=goal,
+                            kind=kind,
+                            level=level,
+                            organization=organization,
+                            rounds=1,  # TODO How to do this?
+                            year=self.year,
+                            session=session,
+                        )
+                        contest.subsession_id = contest_number
+                        contest.save()
+
                 else:
                     raise RuntimeError("Can't determine session kind")
 
-                # Create Contests
-                contest_list = row[1:]
-                for c in contest_list:
-                    # Parse contest components
-                    parts = c.partition('=')
-                    contest_number = int(parts[0].strip())
-                    contest_text = parts[2]
-                    # skip if it's a "most improved" award
-                    if "Most-Improved" in contest_text:
-                        continue
-                    # skip if it's a "out-of-division" award
-                    if "Out of Division" in contest_text:
-                        continue
-                    # parse goal
-                    qualification_markers = ['Qualification', 'Preliminary']
-                    if any(substring in contest_text for substring in qualification_markers):
-                        goal = 2
-                    else:
-                        goal = 1
-                    # parse organization and level
-                    if goal == 1:
-                        if any(substring in contest_text for substring in ['Division', ]):
-                            child = contest_text.split('Division', 1)[0].strip()
-                            organization = self.organization.children.get(
-                                long_name=child,
-                            )
-                        else:
-                            organization = self.organization
-                        level = organization.level + 1
-                    else:
-                        for marker in qualification_markers:
-                            if marker in contest_text:
-                                subtext = contest_text.partition(marker)[0].strip().rsplit(" ", 1)[1].lower()
-                            # else:
-                            #     raise RuntimeError("No marker match! {0} {1}".format(contest_text, marker))
-                        level = getattr(session.contests.model.LEVEL, subtext)
-                        if contest_text.startswith('Far Western District'):
-                            organization = self.organization
-                        else:
-                            organization_text = contest_text.split(" ", 1)[0]
-                            organization = self.organization.children.get(long_name=organization_text)
-                    # parse kind
-                    KIND = session.contests.model.KIND
-                    if 'Novice' in contest_text:
-                        kind = KIND.novice
-                    elif 'Senior' in contest_text:
-                        kind = KIND.senior
-                    elif 'Collegiate' in contest_text:
-                        kind = KIND.collegiate
-                    elif 'Plateau A Chorus' in contest_text:
-                        kind = KIND.a
-                    elif 'Plateau AA Chorus' in contest_text:
-                        kind = KIND.aa
-                    elif 'Plateau AAA Chorus' in contest_text:
-                        kind = KIND.aaa
-                    elif 'Chorus' in contest_text:
-                        kind = KIND.chorus
-                    elif 'Quartet' in contest_text:
-                        kind = KIND.quartet
-                    else:
-                        raise RuntimeError("parse fail!")
-                    contest, created = session.contests.get_or_create(
-                        goal=goal,
-                        kind=kind,
-                        level=level,
-                        organization=organization,
-                        rounds=1,  # TODO How to do this?
-                        year=self.year,
-                        session=session,
-                    )
-                    contest.subsession_id = contest_number
-                    contest.save()
         # Determine Panel
         for row in rows:
             if row[0].startswith('Panel'):
