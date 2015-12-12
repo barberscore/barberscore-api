@@ -339,7 +339,6 @@ class Award(TimeStampedModel):
 
     long_name = models.CharField(
         max_length=200,
-        unique=True,
     )
 
     is_championship = models.BooleanField(
