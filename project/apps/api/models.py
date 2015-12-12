@@ -284,6 +284,91 @@ class Arranger(TimeStampedModel):
         )
 
 
+class Award(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
+        related_name='awards',
+    )
+
+    KIND = Choices(
+        (1, 'quartet', 'Quartet',),
+        (2, 'chorus', 'Chorus',),
+        (3, 'senior', 'Senior',),
+        (4, 'collegiate', 'Collegiate',),
+        (4, 'novice', 'Novice',),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    long_name = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    is_championship = models.BooleanField(
+        help_text="""
+            Championships are awards with only one winner.""",
+        default=True,
+    )
+
+    class Meta:
+        ordering = (
+            'organization',
+            'kind',
+        )
+        unique_together = (
+            ('organization', 'long_name', 'kind',),
+        )
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1} {2}".format(
+            self.organization,
+            self.long_name,
+            self.get_kind_display(),
+        )
+        super(Award, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+
 class Catalog(TimeStampedModel):
     TEMPO = Choices(
         (1, "Ballad"),
