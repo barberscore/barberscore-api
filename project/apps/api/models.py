@@ -330,7 +330,7 @@ class Award(TimeStampedModel):
         (2, 'chorus', 'Chorus',),
         (3, 'senior', 'Senior',),
         (4, 'collegiate', 'Collegiate',),
-        (4, 'novice', 'Novice',),
+        (5, 'novice', 'Novice',),
     )
 
     kind = models.IntegerField(
