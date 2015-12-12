@@ -2044,6 +2044,23 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
+    KIND = Choices(
+        (0, 'international', "International"),
+        (10, 'district', "District"),
+        (20, 'noncomp', "Noncompetitive"),
+        (30, 'affiliate', "Affiliate"),
+        (40, 'division', "Division"),
+        (50, 'hi', "Harmony International"),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of organization.""",
+        choices=KIND,
+        null=True,
+        blank=True,
+    )
+
     start_date = models.DateField(
         help_text="""
             The founding/birth date of the resource.""",
