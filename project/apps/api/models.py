@@ -2032,7 +2032,7 @@ class Organization(MPTTModel, TimeStampedModel):
 
     LEVEL = Choices(
         (0, 'international', "International"),
-        (1, 'district', "District"),
+        (1, 'district', "District/Affiliates"),
         (2, 'division', "Division"),
     )
 
@@ -2045,12 +2045,18 @@ class Organization(MPTTModel, TimeStampedModel):
     )
 
     KIND = Choices(
-        (0, 'international', "International"),
-        (10, 'district', "District"),
-        (20, 'noncomp', "Noncompetitive"),
-        (30, 'affiliate', "Affiliate"),
-        (40, 'division', "Division"),
-        (50, 'hi', "Harmony International"),
+        ('International', [
+            (0, 'international', "International"),
+            (50, 'hi', "Harmony Incorporated"),
+        ]),
+        ('District', [
+            (10, 'district', "District"),
+            (20, 'noncomp', "Noncompetitive"),
+            (30, 'affiliate', "Affiliate"),
+        ]),
+        ('Division', [
+            (40, 'division', "Division"),
+        ]),
     )
 
     kind = models.IntegerField(
