@@ -320,7 +320,7 @@ class Award(TimeStampedModel):
         monitor='status',
     )
 
-    organization = models.ForeignKey(
+    organization = TreeForeignKey(
         'Organization',
         related_name='awards',
     )
@@ -358,7 +358,7 @@ class Award(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
-            self.organization,
+            self.organization.long_name,
             self.long_name,
             self.get_kind_display(),
         )
