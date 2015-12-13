@@ -2004,7 +2004,6 @@ class Organization(MPTTModel, TimeStampedModel):
         validators=[
             validate_trimmed,
         ],
-        editable=False,
     )
 
     slug = AutoSlugField(
@@ -2175,18 +2174,15 @@ class Organization(MPTTModel, TimeStampedModel):
 
     class MPTTMeta:
         order_insertion_by = [
-            'name',
+            'kind',
+            'short_name',
         ]
-        ordering = [
-            'tree_id',
-        ]
+        # ordering = [
+        #     'tree_id',
+        # ]
 
     def __unicode__(self):
         return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u" ".join([p.short_name for p in self.get_ancestors(include_self=True)])
-        super(Organization, self).save(*args, **kwargs)
 
 
 class Performance(TimeStampedModel):
