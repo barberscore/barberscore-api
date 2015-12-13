@@ -416,6 +416,7 @@ class OrganizationAdmin(MPTTModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'parent',
+        'kind',
         'short_name',
         'long_name',
         ('start_date', 'end_date',),
@@ -431,7 +432,9 @@ class OrganizationAdmin(MPTTModelAdmin):
     ]
 
     list_filter = [
+        'status',
         'level',
+        'kind',
     ]
 
     readonly_fields = [
@@ -440,9 +443,10 @@ class OrganizationAdmin(MPTTModelAdmin):
     ]
 
     list_display = [
-        'long_name',
         'name',
+        'long_name',
         'status',
+        'kind',
     ]
 
     ordering = [
