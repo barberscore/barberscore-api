@@ -23,6 +23,7 @@ from .inlines import (
 
 from .models import (
     Arranger,
+    Award,
     Contest,
     Catalog,
     Chapter,
@@ -52,6 +53,21 @@ class ArrangerAdmin(admin.ModelAdmin):
         'name',
         'catalog',
         'person',
+    ]
+
+
+@admin.register(Award)
+class AwardAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    list_display = [
+        'name',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+        'organization',
+        'is_championship',
     ]
 
 
