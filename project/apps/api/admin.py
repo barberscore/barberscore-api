@@ -438,20 +438,20 @@ class OrganizationAdmin(MPTTModelAdmin):
     ]
 
     readonly_fields = [
-        'name',
         'status_monitor',
     ]
 
     list_display = [
         'name',
+        'short_name',
         'long_name',
         'status',
         'kind',
     ]
 
-    ordering = [
-        'tree_id',
-    ]
+    # ordering = [
+    #     'tree_id',
+    # ]
 
 
 @admin.register(Performance)
