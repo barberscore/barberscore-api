@@ -7,6 +7,7 @@ log = logging.getLogger(__name__)
 from .models import (
     Organization,
     Convention,
+    Session,
 )
 
 
@@ -52,6 +53,87 @@ def import_convention(path, kind, division=False):
             convention.stix_div = division
             convention.division = getattr(Convention.DIVISION, division)
     return convention
+
+
+def extract_sessions(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    quartet = False
+    chorus = False
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith('Subsessions:'):
+            if 'Quartet' in row[0]:
+                quartet = True
+            if 'Chorus' in row[0]:
+                chorus = True
+    if quartet:
+        quartet = Session.objects.create(
+            convention=convention,
+            year=convention.year,
+            kind=Session.KIND.quartet,
+        )
+
+    if chorus:
+        chorus = Session.objects.create(
+            convention=convention,
+            year=convention.year,
+            kind=Session.KIND.chorus,
+        )
+
+    quartet_semis = False
+    chorus_semis = False
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith("Subsessions:"):
+            if "Quartet Semi-Finals" in row[0]:
+                quartet_semis = True
+            if "Chorus Semi-Finals" in row[0]:
+                chorus_semis = True
+
+    # TODO This is super kludgy
+    if quartet:
+        if quartet_semis:
+            quartet.rounds.create(
+                kind=quartet.rounds.model.KIND.semis,
+                num=1,
+            )
+            quartet.rounds.create(
+                kind=quartet.rounds.model.KIND.finals,
+                num=2,
+            )
+        else:
+            quartet.rounds.create(
+                kind=quartet.rounds.model.KIND.finals,
+                num=1,
+            )
+
+    if chorus:
+        if chorus_semis:
+            chorus.rounds.create(
+                kind=chorus.rounds.model.KIND.semis,
+                num=1,
+            )
+            chorus.rounds.create(
+                kind=chorus.rounds.model.KIND.finals,
+                num=2,
+            )
+        else:
+            chorus.rounds.create(
+                kind=chorus.rounds.model.KIND.finals,
+                num=1,
+            )
+
+
+# def extract_contests(convention):
+#     reader = csv.reader(convention.stix_file, skipinitialspace=True)
+#     rows = [row.strip() for row in reader]
+#     for row in rows:
+#         if row[0].startswith('Subsession:'):
+#             convention.
+
 
 
 def deinterlace(path):
