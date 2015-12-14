@@ -3078,6 +3078,8 @@ class Session(TimeStampedModel):
         help_text="""
             Size of the judging panel (per category).""",
         choices=SIZE_CHOICES,
+        null=True,
+        blank=True,
     )
 
     ROUNDS_CHOICES = []
@@ -3089,6 +3091,8 @@ class Session(TimeStampedModel):
             Number of rounds (rounds) for the session.""",
         choices=ROUNDS_CHOICES,
         default=1,
+        null=True,
+        blank=True,
     )
 
     # Denormalized
