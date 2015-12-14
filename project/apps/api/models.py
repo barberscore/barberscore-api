@@ -3150,6 +3150,12 @@ class Session(TimeStampedModel):
         null=True,
     )
 
+    stix_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
