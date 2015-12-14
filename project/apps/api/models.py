@@ -53,6 +53,7 @@ from model_utils.managers import (
 from mptt.models import (
     MPTTModel,
     TreeForeignKey,
+    TreeManyToManyField,
 )
 
 from timezone_field import TimeZoneField
@@ -1185,7 +1186,20 @@ class Convention(TimeStampedModel):
             The organization hosting the convention.""",
     )
 
+    # orgs = TreeManyToManyField(
+    #     'Organization',
+    #     help_text="""
+    #         The organization hosting the convention.""",
+    #     related_name='orgs',
+    # )
+
     stix_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+
+    stix_div = models.CharField(
         max_length=200,
         null=True,
         blank=True,
@@ -1205,7 +1219,7 @@ class Convention(TimeStampedModel):
         choices=KIND,
     )
 
-    COMBO = Choices(
+    DIVISION = Choices(
         (200, 'evgd1', "Division I"),
         (210, 'evgd2', "Division II"),
         (220, 'evgd3', "Division III"),
@@ -1220,12 +1234,13 @@ class Convention(TimeStampedModel):
         (310, 'madatl', "Atlantic Division"),
         (320, 'madnw', "Northern and Western Division"),
         (330, 'madsth', "Southern Division"),
+        (340, 'nedsun', "Sunrise Division"),
     )
 
-    combo = models.IntegerField(
+    division = models.IntegerField(
         help_text="""
-            This is a combo convention of Divisions.""",
-        choices=COMBO,
+            This is a division convention of Divisions.""",
+        choices=DIVISION,
         null=True,
         blank=True,
     )
@@ -1273,31 +1288,31 @@ class Convention(TimeStampedModel):
         ]
 
         unique_together = (
-            ('organization', 'kind', 'year', 'combo', 'stix_name',),
+            ('organization', 'kind', 'year', 'division',),
         )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}; {1}; {2}".format(
-            self.stix_name,
-            self.location,
-            self.dates,
-        )
-        # if self.combo:
-        #     self.name = u"{0} {1} {2} {3}".format(
-        #         self.organization,
-        #         self.get_kind_display(),
-        #         self.get_combo_display(),
-        #         self.year,
-        #     )
-        # else:
-        #     self.name = u"{0} {1} {2}".format(
-        #         self.organization,
-        #         self.get_kind_display(),
-        #         self.year,
-        #     )
+        # self.name = u"{0}; {1}; {2}".format(
+        #     self.stix_name,
+        #     self.location,
+        #     self.dates,
+        # )
+        if self.division:
+            self.name = u"{0} {1} {2} {3}".format(
+                self.organization,
+                self.get_kind_display(),
+                self.get_division_display(),
+                self.year,
+            )
+        else:
+            self.name = u"{0} {1} {2}".format(
+                self.organization,
+                self.get_kind_display(),
+                self.year,
+            )
         super(Convention, self).save(*args, **kwargs)
 
     def stix(self):

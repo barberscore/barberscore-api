@@ -259,30 +259,33 @@ class ConventionAdmin(admin.ModelAdmin):
         'status_monitor',
         'location',
         'dates',
-        'kind',
         'year',
         'organization',
-        'combo',
+        'kind',
+        'division',
+        'stix_div',
     )
 
     fields = (
         'name',
         ('status', 'status_monitor',),
+        'stix_name',
+        'stix_div',
         ('location', 'timezone',),
         'dates',
         'organization',
         'kind',
         'year',
         'stix_file',
-        'combo',
+        'division',
     )
 
     list_filter = (
         'status',
         'kind',
         'year',
-        'organization',
-        'combo',
+        'organization__level',
+        'division',
     )
 
     inlines = [
