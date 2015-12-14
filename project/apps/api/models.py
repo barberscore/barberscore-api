@@ -359,8 +359,8 @@ class Award(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
             self.organization.long_name,
-            self.long_name,
             self.get_kind_display(),
+            self.long_name,
         )
         super(Award, self).save(*args, **kwargs)
 
@@ -1185,6 +1185,12 @@ class Convention(TimeStampedModel):
             The organization hosting the convention.""",
     )
 
+    stix_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+
     KIND = Choices(
         (1, 'international', 'International',),
         (2, 'midwinter', 'Midwinter',),
@@ -1267,26 +1273,31 @@ class Convention(TimeStampedModel):
         ]
 
         unique_together = (
-            ('organization', 'kind', 'year', 'combo',),
+            ('organization', 'kind', 'year', 'combo', 'stix_name',),
         )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.combo:
-            self.name = u"{0} {1} {2} {3}".format(
-                self.organization,
-                self.get_kind_display(),
-                self.get_combo_display(),
-                self.year,
-            )
-        else:
-            self.name = u"{0} {1} {2}".format(
-                self.organization,
-                self.get_kind_display(),
-                self.year,
-            )
+        self.name = u"{0}; {1}; {2}".format(
+            self.stix_name,
+            self.location,
+            self.dates,
+        )
+        # if self.combo:
+        #     self.name = u"{0} {1} {2} {3}".format(
+        #         self.organization,
+        #         self.get_kind_display(),
+        #         self.get_combo_display(),
+        #         self.year,
+        #     )
+        # else:
+        #     self.name = u"{0} {1} {2}".format(
+        #         self.organization,
+        #         self.get_kind_display(),
+        #         self.year,
+        #     )
         super(Convention, self).save(*args, **kwargs)
 
     def stix(self):

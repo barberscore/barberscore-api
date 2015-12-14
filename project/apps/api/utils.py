@@ -4,6 +4,42 @@ import csv
 import logging
 log = logging.getLogger(__name__)
 
+from .models import (
+    Organization,
+    Convention,
+)
+
+
+def import_convention(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        row_one = rows[0]
+        row_two = rows[1]
+        stix_name = row_one[2]
+        try:
+            district = row_two[0].strip()
+            location = ", ".join([row_two[1], row_two[2]])
+            dates = ", ".join([row_two[3], row_two[4]])
+            year = int(row_two[4])
+        except IndexError:
+            log.error("Could not build: {0}".format(row_two))
+    try:
+        organization = Organization.objects.get(
+            long_name=district,
+        )
+    except Organization.DoesNotExist:
+        raise RuntimeError("No Match for: {0}".format(district))
+    convention = Convention(
+        stix_name=stix_name,
+        location=location,
+        dates=dates,
+        year=year,
+        organization=organization,
+        kind=Convention.KIND.fall,
+    )
+    return convention
+
 
 def deinterlace(path):
     with open(path) as csvfile:
