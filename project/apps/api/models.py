@@ -728,6 +728,12 @@ class Contest(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
+    subsession_text = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     parent = TreeForeignKey(
         'self',
         null=True,
