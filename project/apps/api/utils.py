@@ -127,13 +127,20 @@ def extract_sessions(convention):
             )
 
 
-# def extract_contests(convention):
-#     reader = csv.reader(convention.stix_file, skipinitialspace=True)
-#     rows = [row.strip() for row in reader]
-#     for row in rows:
-#         if row[0].startswith('Subsession:'):
-#             convention.
-
+def extract_contests(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    l = []
+    for row in rows:
+        if row[0].startswith('Subsessions:'):
+            contest_list = row[1:]
+            for c in contest_list:
+                # Parse each list item for id, name
+                parts = c.partition('=')
+                contest_number = int(parts[0].strip())
+                contest_text = parts[2]
+                l.append([contest_number, contest_text])
+    return l
 
 
 def deinterlace(path):
