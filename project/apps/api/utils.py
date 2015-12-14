@@ -10,34 +10,47 @@ from .models import (
 )
 
 
-def import_convention(path):
+def import_convention(path, kind, division=False):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
         row_one = rows[0]
         row_two = rows[1]
         stix_name = row_one[2]
+        if division:
+            try:
+                district = row_two[0].strip()
+                division = row_two[1].strip()
+                location = ", ".join([row_two[2], row_two[3]])
+                dates = ", ".join([row_two[4], row_two[5]])
+                year = int(row_two[5])
+            except IndexError:
+                log.error("Could not build: {0}".format(row_two))
+        else:
+            try:
+                district = row_two[0].strip()
+                location = ", ".join([row_two[1], row_two[2]])
+                dates = ", ".join([row_two[3], row_two[4]])
+                year = int(row_two[4])
+            except IndexError:
+                log.error("Could not build: {0}".format(row_two))
         try:
-            district = row_two[0].strip()
-            location = ", ".join([row_two[1], row_two[2]])
-            dates = ", ".join([row_two[3], row_two[4]])
-            year = int(row_two[4])
-        except IndexError:
-            log.error("Could not build: {0}".format(row_two))
-    try:
-        organization = Organization.objects.get(
-            long_name=district,
+            organization = Organization.objects.get(
+                long_name=district,
+            )
+        except Organization.DoesNotExist:
+            raise RuntimeError("No Match for: {0}".format(district))
+        convention = Convention(
+            stix_name=stix_name,
+            location=location,
+            dates=dates,
+            year=year,
+            organization=organization,
+            kind=getattr(Convention.KIND, kind),
         )
-    except Organization.DoesNotExist:
-        raise RuntimeError("No Match for: {0}".format(district))
-    convention = Convention(
-        stix_name=stix_name,
-        location=location,
-        dates=dates,
-        year=year,
-        organization=organization,
-        kind=Convention.KIND.fall,
-    )
+        if division:
+            convention.stix_div = division
+            convention.division = getattr(Convention.DIVISION, division)
     return convention
 
 
