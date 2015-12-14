@@ -66,10 +66,12 @@ def extract_sessions(convention):
         if row[0].startswith('Subsessions:'):
             if 'Quartet' in row[0]:
                 quartet = True
+                parts = row[0].partition(":")
+                stix_name = parts[2].strip()
             if 'Chorus' in row[0]:
                 chorus = True
-            parts = row[0].partition(":")
-            stix_name = parts[2].strip()
+                parts = row[0].partition(":")
+                stix_name = parts[2].strip()
     if quartet:
         quartet = Session.objects.create(
             convention=convention,
