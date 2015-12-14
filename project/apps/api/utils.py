@@ -138,14 +138,19 @@ def extract_contests(convention):
     rows = [row for row in reader]
     l = []
     for row in rows:
+        if len(row) == 0:
+            continue
         if row[0].startswith('Subsessions:'):
+            stix_name = row[0].partition(":")[2].strip()
+            session = Session.objects.get(
+                stix_name=stix_name,
+            )
             contest_list = row[1:]
             for c in contest_list:
                 # Parse each list item for id, name
                 parts = c.partition('=')
-                contest_number = int(parts[0].strip())
                 contest_text = parts[2]
-                l.append([contest_number, contest_text])
+                l.append([session, contest_text])
     return l
 
 
