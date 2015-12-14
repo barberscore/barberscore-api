@@ -68,11 +68,14 @@ def extract_sessions(convention):
                 quartet = True
             if 'Chorus' in row[0]:
                 chorus = True
+            parts = row[0].partition(":")
+            stix_name = parts[2].strip()
     if quartet:
         quartet = Session.objects.create(
             convention=convention,
             year=convention.year,
             kind=Session.KIND.quartet,
+            stix_name=stix_name,
         )
 
     if chorus:
@@ -80,6 +83,7 @@ def extract_sessions(convention):
             convention=convention,
             year=convention.year,
             kind=Session.KIND.chorus,
+            stix_name=stix_name,
         )
 
     quartet_semis = False
