@@ -67,7 +67,10 @@ def extract_sessions(convention):
         if row[0].startswith('Subsessions:'):
             parts = row[0].partition(":")
             contest_name = parts[2].strip()
-            kind = contest_name.partition(" ")[0].lower()
+            if 'Collegiate' in contest_name:
+                kind = 'collegiate'
+            else:
+                kind = contest_name.partition(" ")[0].lower()
             sessions[kind] = True
     for key, value in sessions.viewitems():
         Session.objects.create(
@@ -84,6 +87,7 @@ def extract_rounds(convention):
     rows = [row for row in reader]
     # Determine meta-data
     counts = {}
+    counts['collegiate'] = 0
     counts['chorus'] = 0
     counts['quartet'] = 0
     for row in rows:
@@ -94,7 +98,9 @@ def extract_rounds(convention):
             parts = row[0].partition(':')
             # Parse session meta-data
             session_text = parts[2].strip()
-            if session_text.startswith('Chorus'):
+            if 'Collegiate' in session_text:
+                counts['collegiate'] += 1
+            elif session_text.startswith('Chorus'):
                 counts['chorus'] += 1
             elif session_text.startswith('Quartet'):
                 counts['quartet'] += 1
@@ -124,6 +130,21 @@ def extract_awards(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
     sessions = convention.sessions.all()
+    districts = Organization.objects.filter(
+        kind=Organization.KIND.district,
+    )
+    divisions = Organization.objects.filter(
+        kind=Organization.KIND.division,
+    )
+    excludes = [
+        "Evaluation",
+        "Preliminary",
+        "Qualification",
+        "Out Of District",
+        "Out Of Division",
+        "Out of Division",
+    ]
+    contests = []
     for session in sessions:
         contest = {}
         for row in rows:
@@ -136,14 +157,23 @@ def extract_awards(convention):
                     for c in contest_list:
                         # Parse each list item for id, name
                         parts = c.partition('=')
-                        contest[parts[0]] = parts[2]
-        for key, value in contest.viewitems():
-            Award.objects.create(
-                organization=session.convention.organization,
-                stix_num=key,
-                stix_name=value,
-            )
-    return
+                        contest_num = parts[0]
+                        contest_name = parts[2]
+                        # Skip qualifications
+                        if any([string in contest_name for string in excludes]):
+                            continue
+                        contest[contest_num] = contest_name
+    for key, value in contest.viewitems():
+        foo = []
+        foo.append(key)
+        foo.append(value)
+        foo.append("Org")
+        for district in districts:
+            if district.long_name in value:
+                foo[2] = district
+                continue
+        contests.append(foo)
+    return contests
 
 
 def deinterlace(path):
