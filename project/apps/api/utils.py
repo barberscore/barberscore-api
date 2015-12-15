@@ -8,6 +8,7 @@ from .models import (
     Organization,
     Convention,
     Session,
+    Round,
 )
 
 
@@ -58,79 +59,64 @@ def import_convention(path, kind, division=False):
 def extract_sessions(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
-    quartet = False
-    chorus = False
+    sessions = {}
     for row in rows:
         if len(row) == 0:
             continue
         if row[0].startswith('Subsessions:'):
-            if 'Quartet' in row[0]:
-                quartet = True
-                parts = row[0].partition(":")
-                stix_name = parts[2].strip()
-            if 'Chorus' in row[0]:
-                chorus = True
-                parts = row[0].partition(":")
-                stix_name = parts[2].strip()
-    if quartet:
-        quartet = Session.objects.create(
+            parts = row[0].partition(":")
+            contest_name = parts[2].strip()
+            kind = contest_name.partition(" ")[0].lower()
+            sessions[kind] = True
+    for key, value in sessions.viewitems():
+        Session.objects.create(
             convention=convention,
             year=convention.year,
-            kind=Session.KIND.quartet,
-            stix_name=stix_name,
+            kind=getattr(Session.KIND, key),
+            stix_name=contest_name,
         )
+    return
 
-    if chorus:
-        chorus = Session.objects.create(
-            convention=convention,
-            year=convention.year,
-            kind=Session.KIND.chorus,
-            stix_name=stix_name,
-        )
 
-    quartet_semis = False
-    chorus_semis = False
+def extract_rounds(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    # Determine meta-data
+    counts = {}
+    counts['chorus'] = 0
+    counts['quartet'] = 0
     for row in rows:
         if len(row) == 0:
             continue
-        if row[0].startswith("Subsessions:"):
-            if "Quartet Semi-Finals" in row[0]:
-                quartet_semis = True
-            if "Chorus Semi-Finals" in row[0]:
-                chorus_semis = True
-
-    # TODO This is super kludgy
-    if quartet:
-        if quartet_semis:
-            quartet.rounds.create(
-                kind=quartet.rounds.model.KIND.semis,
-                num=1,
-            )
-            quartet.rounds.create(
-                kind=quartet.rounds.model.KIND.finals,
-                num=2,
-            )
-        else:
-            quartet.rounds.create(
-                kind=quartet.rounds.model.KIND.finals,
-                num=1,
-            )
-
-    if chorus:
-        if chorus_semis:
-            chorus.rounds.create(
-                kind=chorus.rounds.model.KIND.semis,
-                num=1,
-            )
-            chorus.rounds.create(
-                kind=chorus.rounds.model.KIND.finals,
-                num=2,
-            )
-        else:
-            chorus.rounds.create(
-                kind=chorus.rounds.model.KIND.finals,
-                num=1,
-            )
+        if row[0].startswith('Subsessions:'):
+            # Parse session into components
+            parts = row[0].partition(':')
+            # Parse session meta-data
+            session_text = parts[2].strip()
+            if session_text.startswith('Chorus'):
+                counts['chorus'] += 1
+            elif session_text.startswith('Quartet'):
+                counts['quartet'] += 1
+            else:
+                raise RuntimeError("Can't determine session kind")
+    for key, value in counts.viewitems():
+        if value:
+            i = 1
+            j = value
+            while i <= value:
+                try:
+                    session = convention.sessions.get(
+                        kind=getattr(Session.KIND, key),
+                    )
+                except Session.DoesNotExist:
+                    print "No session: {0} {1}".format(key, value)
+                rnd, created = session.rounds.get_or_create(
+                    num=i,
+                    kind=j,
+                )
+                i += 1
+                j -= 1
+    return
 
 
 def extract_contests(convention):
@@ -142,15 +128,23 @@ def extract_contests(convention):
             continue
         if row[0].startswith('Subsessions:'):
             stix_name = row[0].partition(":")[2].strip()
-            session = Session.objects.get(
-                stix_name=stix_name,
-            )
-            contest_list = row[1:]
-            for c in contest_list:
-                # Parse each list item for id, name
-                parts = c.partition('=')
-                contest_text = parts[2]
-                l.append([session, contest_text])
+            l.append(stix_name)
+            # try:
+            #     session = convention.sessions.get(
+            #         stix_name=stix_name,
+            #     )
+            # except Session.DoesNotExist:
+            #     print "SESSION DOES NOT EXIST: {0}".format(row)
+            #     continue
+            # except Session.MultipleObjectsReturned:
+            #     print "MULTIPLE SESSIONS: {0}".format(row)
+            #     continue
+            # contest_list = row[1:]
+            # for c in contest_list:
+            #     # Parse each list item for id, name
+            #     parts = c.partition('=')
+            #     contest_text = parts[2]
+            #     l.append([session, contest_text])
     return l
 
 
