@@ -9,6 +9,7 @@ from .models import (
     Convention,
     Session,
     Round,
+    Award,
 )
 
 
@@ -119,33 +120,30 @@ def extract_rounds(convention):
     return
 
 
-def extract_contests(convention):
+def extract_awards(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
-    l = []
-    for row in rows:
-        if len(row) == 0:
-            continue
-        if row[0].startswith('Subsessions:'):
-            stix_name = row[0].partition(":")[2].strip()
-            l.append(stix_name)
-            # try:
-            #     session = convention.sessions.get(
-            #         stix_name=stix_name,
-            #     )
-            # except Session.DoesNotExist:
-            #     print "SESSION DOES NOT EXIST: {0}".format(row)
-            #     continue
-            # except Session.MultipleObjectsReturned:
-            #     print "MULTIPLE SESSIONS: {0}".format(row)
-            #     continue
-            # contest_list = row[1:]
-            # for c in contest_list:
-            #     # Parse each list item for id, name
-            #     parts = c.partition('=')
-            #     contest_text = parts[2]
-            #     l.append([session, contest_text])
-    return l
+    sessions = convention.sessions.all()
+    for session in sessions:
+        contest = {}
+        for row in rows:
+            if len(row) == 0:
+                continue
+            if row[0].startswith('Subsessions:'):
+                kind = row[0].partition(":")[2].strip().partition(" ")[0].strip().lower()
+                if session.kind == getattr(Session.KIND, kind):
+                    contest_list = row[1:]
+                    for c in contest_list:
+                        # Parse each list item for id, name
+                        parts = c.partition('=')
+                        contest[parts[0]] = parts[2]
+        for key, value in contest.viewitems():
+            Award.objects.create(
+                organization=session.convention.organization,
+                stix_num=key,
+                stix_name=value,
+            )
+    return
 
 
 def deinterlace(path):
