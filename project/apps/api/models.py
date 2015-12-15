@@ -340,6 +340,11 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    rounds = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     long_name = models.CharField(
         max_length=200,
     )
