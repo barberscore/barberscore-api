@@ -336,10 +336,23 @@ class Award(TimeStampedModel):
 
     kind = models.IntegerField(
         choices=KIND,
+        null=True,
+        blank=True,
     )
 
     long_name = models.CharField(
         max_length=200,
+    )
+
+    stix_num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    stix_name = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
     )
 
     is_championship = models.BooleanField(
@@ -353,15 +366,14 @@ class Award(TimeStampedModel):
             'organization',
             'kind',
         )
-        unique_together = (
-            ('organization', 'long_name', 'kind',),
-        )
+        # unique_together = (
+        #     ('organization', 'long_name', 'kind',),
+        # )
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
+        self.name = u"{0} {1}".format(
             self.organization.long_name,
-            self.get_kind_display(),
-            self.long_name,
+            self.stix_name,
         )
         super(Award, self).save(*args, **kwargs)
 
