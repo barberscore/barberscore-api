@@ -130,12 +130,6 @@ def extract_awards(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
     sessions = convention.sessions.all()
-    districts = Organization.objects.filter(
-        kind=Organization.KIND.district,
-    )
-    divisions = Organization.objects.filter(
-        kind=Organization.KIND.division,
-    )
     excludes = [
         "Evaluation",
         "Preliminary",
@@ -146,6 +140,7 @@ def extract_awards(convention):
     ]
     contests = []
     for session in sessions:
+        parent = session.convention.organization
         contest = {}
         for row in rows:
             if len(row) == 0:
@@ -163,16 +158,41 @@ def extract_awards(convention):
                         if any([string in contest_name for string in excludes]):
                             continue
                         contest[contest_num] = contest_name
-    for key, value in contest.viewitems():
-        foo = []
-        foo.append(key)
-        foo.append(value)
-        foo.append("Org")
-        for district in districts:
-            if district.long_name in value:
-                foo[2] = district
-                continue
-        contests.append(foo)
+        for key, value in contest.viewitems():
+            foo = []
+            foo.append(parent)
+            if parent.long_name in value:
+                foo.append(None)
+            else:
+                if not value.startswith("Division "):
+                    try:
+                        child = parent.children.get(
+                            long_name=value.partition(" Division")[0],
+                        )
+                        foo.append(child)
+                    except parent.DoesNotExist:
+                        foo.append('NO EXIST')
+                    except parent.MultipleObjectsReturned:
+                        foo.append("MULTI")
+                else:
+                    try:
+                        child = parent.children.get(
+                            long_name=value.partition(" Division")[0],
+                        )
+                        foo.append(child)
+                    except parent.DoesNotExist:
+                        foo.append('NO EXIST')
+                    except parent.MultipleObjectsReturned:
+                        foo.append("MULTI")
+                # for child in parent.get_children():
+                #     if "{0} ".format(child.long_name) in value:
+                #         foo.append(child)
+                #         continue
+                #     else:
+                # foo.append("DIVISION")
+            foo.append(key)
+            foo.append(value)
+            contests.append(foo)
     return contests
 
 

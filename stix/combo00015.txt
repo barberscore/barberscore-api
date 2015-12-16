@@ -1,7 +1,7 @@
 BBSTIX, BHS, Division III Quartet and Chorus Convention
 Evergreen District, evgd3, Red Deer, Alberta, May 30, 2015
-Subsessions: Chorus Finals (4), 1=Division III Division Chorus, 2=Evergreen District Chorus District Qualification (Score), 3=Division III Most-Improved Chorus
-Subsessions: Quartet Finals (9), 1=Division III Division Quartet, 2=Evergreen District Quartet District Qualification (Overall), 3=Division III Out Of Division Quartet (Overall), 4=Division III Division Seniors Quartet, 5=Division III Novice Quartet
+Subsessions: Chorus Finals (4), 1=Division III Division Chorus, 2=Evergreen District Chorus District Qualification (Score), 3=Division III Division Most-Improved Chorus
+Subsessions: Quartet Finals (9), 1=Division III Division Division Quartet, 2=Evergreen District Quartet District Qualification (Overall), 3=Division III Division Out Of Division Quartet (Overall), 4=Division III Division Seniors Quartet, 5=Division III Division Novice Quartet
 Judge Count: 3
 Panel - Chorus Finals:, "1 (MUS)=Sgrignoli, Rod", "2 (PRS)=Fredstrom, Martin", "3 (SNG)=Hettinga, Warren"
 Panel - Quartet Finals:, "1 (MUS)=Sgrignoli, Rod", "2 (PRS)=Fredstrom, Martin", "3 (SNG)=Hettinga, Warren"
