@@ -1,7 +1,7 @@
 BBSTIX, BHS, International Chorus Preliminaries and District Quartet Convention
 Evergreen District, evgd2, Federal Way, Washington, April 18, 2015
-Subsessions: Chorus Finals (6), 1=Division II Division Chorus, 2=Division II Chorus District Qualification (Overall), 3=Division II Division Small Chorus (12-29), 4=Division II Most-Improved Chorus, 5=Division II Scores for Evaluation Only
-Subsessions: Quartet Semi-Finals (31), 1=Evergreen District International Preliminary Quartet (2 Rounds), 2=Evergreen District International Preliminary Collegiate Qt (Overall), 3=Division II Division Quartet, 4=Division II Quartet District Qualification (Overall), 5=Division II Out Of Division Quartet (Overall), 6=Division II Division Seniors Quartet, 7=Division II Novice Quartet
+Subsessions: Chorus Finals (6), 1=Division II Division Chorus, 2=Division II Division Chorus District Qualification (Overall), 3=Division II Division Small Chorus (12-29), 4=Division II Division Most-Improved Chorus, 5=Division II Division Scores for Evaluation Only
+Subsessions: Quartet Semi-Finals (31), 1=Evergreen District International Preliminary Quartet (2 Rounds), 2=Evergreen District International Preliminary Collegiate Qt (Overall), 3=Division II Division Quartet, 4=Division II Division Quartet District Qualification (Overall), 5=Division II Division Out Of Division Quartet (Overall), 6=Division II Division Seniors Quartet, 7=Division II Division Novice Quartet
 Subsessions: Quartet Finals (6), 1=Evergreen District International Preliminary Quartet (2 Rounds)
 Judge Count: 6
 Panel - Chorus Finals:, "1 (MUS)=Graham, Brent", "2 (MUS)=Sgrignoli, Rod", "3 (PRS)=Orff, Judd", "4 (PRS)=Steinkamp, Gary", "5 (SNG)=Estes, James", "6 (SNG)=Peterson, Chris"

@@ -1,7 +1,7 @@
 BBSTIX, BHS,  Division V Quartet/Chorus Convention & Festival
 Evergreen District, evgd5, Missoula, Montana, May 30, 2015
-Subsessions: Chorus Finals (7), 1=Division V Division Chorus, 2=Division V Chorus District Qualification (Overall), 3=Division V Most-Improved Chorus, 4=Division V Scores for Evaluation Only
-Subsessions: Quartet Finals (15), 1=Evergreen District International Preliminary Collegiate Qt (Overall), 2=Division V Division Quartet, 3=Division V Quartet District Qualification (Overall), 4=Division V Division Seniors Quartet, 5=Division V Novice Quartet, 6=Division V Scores for Evaluation Only
+Subsessions: Chorus Finals (7), 1=Division V Division Chorus, 2=Division V Division Chorus District Qualification (Overall), 3=Division V Division Most-Improved Chorus, 4=Division V Division Scores for Evaluation Only
+Subsessions: Quartet Finals (15), 1=Evergreen District International Preliminary Collegiate Qt (Overall), 2=Division V Division Quartet, 3=Division V Division Quartet District Qualification (Overall), 4=Division V Division Seniors Quartet, 5=Division V Division Novice Quartet, 6=Division V Division Scores for Evaluation Only
 Judge Count: 8
 Panel - Chorus Finals:, "1 (MUS)=Campbell, Rob", "2 (MUS)=Schwarzkopf, Raymond", "3 (PRS)=Connelly, Joe", "4 (PRS)=Leeder, David", "5 (SNG)=Emery, Jim", "6 (SNG)=Tautkus, Dave", "51 (SNG)=Leontovich, Adrian"
 Panel - Quartet Finals:, "1 (MUS)=Campbell, Rob", "2 (MUS)=Schwarzkopf, Raymond", "3 (PRS)=Connelly, Joe", "4 (PRS)=Leeder, David", "5 (SNG)=Emery, Jim", "6 (SNG)=Tautkus, Dave", "51 (SNG)=Leontovich, Adrian", "52 (SNG)=McKenzie, Ellen"

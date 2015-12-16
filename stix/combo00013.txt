@@ -1,7 +1,7 @@
 BBSTIX, BHS, Division IV Quartet and Chorus Convention
 Evergreen District, evgd4, Portland, Oregon, May 16, 2015
-Subsessions: Chorus Finals (5), 1=Division IV Division Chorus, 2=Division IV Chorus District Qualification (Overall), 3=Division IV Most-Improved Chorus
-Subsessions: Quartet Finals (9), 1=Division IV Division Quartet, 2=Division IV Quartet District Qualification (Overall), 3=Division IV Out Of Division Quartet (Overall), 4=Division IV Novice Quartet
+Subsessions: Chorus Finals (5), 1=Division IV Division Chorus, 2=Division IV Division Chorus District Qualification (Overall), 3=Division IV Division Most-Improved Chorus
+Subsessions: Quartet Finals (9), 1=Division IV Division Quartet, 2=Division IV Division Quartet District Qualification (Overall), 3=Division IV Division Out Of Division Quartet (Overall), 4=Division IV Division Novice Quartet
 Judge Count: 4
 Panel - Chorus Finals:, "1 (MUS)=Wigley, Paul", "2 (PRS)=Gipp, George", "3 (SNG)=Hebert, Chris", "51 (PRS)=Kelly, Michael"
 Panel - Quartet Finals:, "1 (MUS)=Wigley, Paul", "2 (PRS)=Gipp, George", "3 (SNG)=Hebert, Chris", "51 (PRS)=Kelly, Michael"
