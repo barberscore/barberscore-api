@@ -1,7 +1,7 @@
 BBSTIX, BHS, Division I Quartet and Chorus Convention
 Evergreen District, evgd1, Bellingham, WA, March 28, 2015
-Subsessions: Chorus Finals (7), 1=Division I Division Chorus, 2=Division I Chorus District Qualification (Overall), 3=Division I Division Small Chorus (12-29), 4=Division I Most-Improved Chorus
-Subsessions: Quartet Finals (13), 1=Division I Division Quartet, 2=Division I Quartet District Qualification (Overall), 3=Division I Out Of Division Quartet (Overall), 4=Division I Division Seniors Quartet, 5=Division I Seniors Qt District Qualification (Overall), 6=Division I Out Of Division Seniors Quartet (Overall), 7=Division I Novice Quartet
+Subsessions: Chorus Finals (7), 1=Division I Division Chorus, 2=Division I Division Chorus District Qualification (Overall), 3=Division I Division Small Chorus (12-29), 4=Division I Division Most-Improved Chorus
+Subsessions: Quartet Finals (13), 1=Division I Division Quartet, 2=Division I Division Quartet District Qualification (Overall), 3=Division I Division Out Of Division Quartet (Overall), 4=Division I Division Seniors Quartet, 5=Division I Division Seniors Qt District Qualification (Overall), 6=Division I Division Out Of Division Seniors Quartet (Overall), 7=Division I Division Novice Quartet
 Judge Count: 4
 Panel - Chorus Finals:, "1 (MUS)=Brockman, John", "2 (PRS)=Krause, David", "3 (SNG)=Hebert, Chris", "51 (SNG)=Leontovich, Adrian"
 Panel - Quartet Finals:, "1 (MUS)=Brockman, John", "2 (PRS)=Krause, David", "3 (SNG)=Hebert, Chris", "51 (SNG)=Leontovich, Adrian"
