@@ -4,12 +4,16 @@ import csv
 import logging
 log = logging.getLogger(__name__)
 
+from nameparser import HumanName
+
 from .models import (
     Organization,
     Convention,
     Session,
     Round,
     Award,
+    Judge,
+    Person,
 )
 
 
@@ -223,6 +227,66 @@ def extract_awards(convention):
                 award.stix_name = stix_name
                 award.save()
     return
+
+
+def extract_panel(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith('Panel'):
+            session_round = row[0].partition("-")[2].partition(":")[0]
+            round = Round.objects.get(
+                name="{0} {1}".format(
+                    convention,
+                    session_round.strip(),
+                ),
+            )
+            panelists = row[1:]
+            mus_slot = 1
+            prs_slot = 1
+            sng_slot = 1
+            for panelist in panelists:
+                parts = panelist.partition("=")
+                panel_id = int(parts[0].partition(" ")[0].strip())
+                category = parts[0].partition(" ")[2][1:4]
+                name = HumanName(parts[2])
+                if panel_id < 50:
+                    kind = Judge.KIND.official
+                else:
+                    kind = Judge.KIND.practice
+                try:
+                    person = Person.objects.get(
+                        common_name=str(name),
+                    )
+                except Person.DoesNotExist:
+                    person = Person.objects.get(
+                        name='Aaron Dale',
+                    )
+                judge_dict = {
+                    'kind': kind,
+                    'person': person,
+                    'round': round,
+                    'session': round.session,
+                    'organization': person.organization,
+                    'panel_id': panel_id,
+                }
+                if category == 'MUS':
+                    judge_dict['category'] = Judge.CATEGORY.music
+                    judge_dict['slot'] = mus_slot
+                    mus_slot += 1
+                elif category == 'PRS':
+                    judge_dict['category'] = Judge.CATEGORY.presentation
+                    judge_dict['slot'] = prs_slot
+                    prs_slot += 1
+                elif category == 'SNG':
+                    judge_dict['category'] = Judge.CATEGORY.singing
+                    judge_dict['slot'] = sng_slot
+                    sng_slot += 1
+                else:
+                    raise RuntimeError("Unknown category! {0}".format(category))
+                print judge_dict
 
 
 def deinterlace(path):

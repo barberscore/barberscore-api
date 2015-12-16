@@ -1966,6 +1966,13 @@ class Judge(TimeStampedModel):
         related_name='judges',
     )
 
+    round = models.ForeignKey(
+        'Round',
+        related_name='judges',
+        null=True,
+        blank=True,
+    )
+
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -2831,9 +2838,18 @@ class Person(Common):
         blank=True,
     )
 
+    # Denormalization for searching
+    common_name = models.CharField(
+        max_length=255,
+        blank=True,
+        editable=False,
+        default='',
+    )
+
     # Denormalization to make autocomplete work
     is_judge = models.BooleanField(
         default=False,
+        editable=False,
     )
 
     class Meta:
@@ -2865,13 +2881,21 @@ class Person(Common):
     @property
     def nick_name(self):
         if self.name:
-            name = HumanName(self.nickname)
+            name = HumanName(self.name)
             return name.nickname
         else:
             return None
 
     def save(self, *args, **kwargs):
         self.is_judge = self.certifications.exists()
+        name = HumanName(self.name)
+        if name.nickname:
+            self.common_name = " ".join([
+                name.nickname,
+                name.last
+            ]).strip()
+        else:
+            self.common_name = self.name
         super(Person, self).save(*args, **kwargs)
 
 
