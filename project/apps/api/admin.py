@@ -63,6 +63,7 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'organization',
         'kind',
+        'long_name',
         'stix_name',
     ]
 

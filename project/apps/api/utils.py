@@ -172,10 +172,11 @@ def extract_awards(convention):
             name = value.partition(
                 organization.long_name
             )[2].strip()
+            # Remove paranthetical data for District/Division
             if not organization.level == 0:
                 name = name.partition(
                     organization.get_kind_display()
-                )[2].strip()
+                )[2].strip().partition("(")[0].strip()
             if 'Srs Qt -' in name:
                 name = name.partition('Srs Qt -')[2].strip()
                 kind = Award.KIND.senior

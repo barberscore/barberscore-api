@@ -347,6 +347,8 @@ class Award(TimeStampedModel):
 
     long_name = models.CharField(
         max_length=200,
+        blank=True,
+        default='',
     )
 
     stix_num = models.IntegerField(
