@@ -138,9 +138,7 @@ def extract_awards(convention):
         "Out Of Division",
         "Out of Division",
     ]
-    contests = []
     for session in sessions:
-        parent = session.convention.organization
         contest = {}
         for row in rows:
             if len(row) == 0:
@@ -158,42 +156,24 @@ def extract_awards(convention):
                         if any([string in contest_name for string in excludes]):
                             continue
                         contest[contest_num] = contest_name
+        parent = session.convention.organization
         for key, value in contest.viewitems():
-            foo = []
-            foo.append(parent)
             if parent.long_name in value:
-                foo.append(None)
+                organization = parent
             else:
-                if not value.startswith("Division "):
-                    try:
-                        child = parent.children.get(
-                            long_name=value.partition(" Division")[0],
-                        )
-                        foo.append(child)
-                    except parent.DoesNotExist:
-                        foo.append('NO EXIST')
-                    except parent.MultipleObjectsReturned:
-                        foo.append("MULTI")
-                else:
-                    try:
-                        child = parent.children.get(
-                            long_name=value.partition(" Division")[0],
-                        )
-                        foo.append(child)
-                    except parent.DoesNotExist:
-                        foo.append('NO EXIST')
-                    except parent.MultipleObjectsReturned:
-                        foo.append("MULTI")
-                # for child in parent.get_children():
-                #     if "{0} ".format(child.long_name) in value:
-                #         foo.append(child)
-                #         continue
-                #     else:
-                # foo.append("DIVISION")
-            foo.append(key)
-            foo.append(value)
-            contests.append(foo)
-    return contests
+                organization = parent.children.get(
+                    long_name=value.partition(" Division")[0],
+                )
+            name = value.partition(
+                organization.long_name
+            )[2].strip()
+            if not organization.level == 0:
+                name = name.partition(
+                    organization.get_kind_display()
+                )[2].strip()
+            # Create Award
+            print "{0} - {1}".format(organization, name)
+    return
 
 
 def deinterlace(path):
