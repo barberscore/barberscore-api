@@ -159,46 +159,21 @@ def extract_awards(convention):
                         if any([string in contest_name for string in excludes]):
                             continue
                         contest[contest_num] = contest_name
-        parent = session.convention.organization
+        parent = convention.organization
         for key, value in contest.viewitems():
+            # Set values for legacy data
             stix_num = key
             stix_name = value
+            # Match organization
             if parent.long_name in value:
                 organization = parent
             else:
                 organization = parent.children.get(
                     long_name=value.partition(" Division")[0],
                 )
-            name = value.partition(
-                organization.long_name
-            )[2].strip()
-            # Remove paranthetical data for District/Division
-            if not organization.level == 0:
-                name = name.partition(
-                    organization.get_kind_display()
-                )[2].strip().partition("(")[0].strip()
-            if 'Srs Qt -' in name:
-                name = name.partition('Srs Qt -')[2].strip()
-                kind = Award.KIND.senior
-            if 'Novice' in name:
-                name = name.partition('Novice')[2].strip()
-                kind = Award.KIND.novice
-            elif 'Seniors' in name:
-                name = name.partition('Seniors')[2].strip()
-                kind = Award.KIND.senior
-            elif 'Collegiate' in name:
-                name = name.partition('Collegiate')[2].strip()
-                kind = Award.KIND.collegiate
-            elif 'Chorus' in name:
-                name = name.partition('Chorus')[2].strip()
-                kind = Award.KIND.chorus
-            elif 'Quartet' in name:
-                name = name.partition('Quartet')[2].strip()
-                kind = Award.KIND.chorus
-            elif "Dealer's Choice" in name:
-                kind = Award.KIND.quartet
-            else:
-                kind = None
+            # Create name variable for parsing
+            name = stix_name
+            # Identify number of rounds (if applicable)
             if "(2 Rounds)" in name:
                 rounds = 2
                 name = name.partition("(2 Rounds)")[0].strip()
@@ -207,6 +182,36 @@ def extract_awards(convention):
                 name = name.partition("(3 Rounds)")[0].strip()
             else:
                 rounds = 1
+            # Remove paranthetical data for District/Division
+            name = name.partition("(")[0].strip()
+            # Remove the redundant organization from the string
+            name = value.partition("{0} {1}".format(
+                organization.long_name,
+                organization.get_kind_display(),
+            ))[2].strip()
+            # Identify the kind by name and remove.  Order is important (for quartets)
+            if 'Srs Qt -' in name:
+                name = name.partition('Srs Qt -')[0].strip()
+                kind = Award.KIND.senior
+            if 'Novice' in name:
+                name = name.partition('Novice')[0].strip()
+                kind = Award.KIND.novice
+            elif 'Seniors' in name:
+                name = name.partition('Seniors')[0].strip()
+                kind = Award.KIND.senior
+            elif 'Collegiate' in name:
+                name = name.partition('Collegiate')[0].strip()
+                kind = Award.KIND.collegiate
+            elif 'Chorus' in name:
+                name = name.partition('Chorus')[0].strip()
+                kind = Award.KIND.chorus
+            elif 'Quartet' in name:
+                name = name.partition('Quartet')[0].strip()
+                kind = Award.KIND.quartet
+            elif "Dealer's Choice" in name:
+                kind = Award.KIND.quartet
+            else:
+                kind = None
             award, created = Award.objects.get_or_create(
                 long_name=name,
                 organization=organization,
