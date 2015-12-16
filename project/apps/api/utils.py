@@ -22,7 +22,7 @@ def import_convention(path, kind, division=False):
         stix_name = row_one[2]
         if division:
             try:
-                district = row_two[0].strip()
+                district = row_two[0].partition("District")[0].strip()
                 division = row_two[1].strip()
                 location = ", ".join([row_two[2], row_two[3]])
                 dates = ", ".join([row_two[4], row_two[5]])
@@ -31,7 +31,7 @@ def import_convention(path, kind, division=False):
                 log.error("Could not build: {0}".format(row_two))
         else:
             try:
-                district = row_two[0].strip()
+                district = row_two[0].partition("District")[0].strip()
                 location = ", ".join([row_two[1], row_two[2]])
                 dates = ", ".join([row_two[3], row_two[4]])
                 year = int(row_two[4])
@@ -144,7 +144,10 @@ def extract_awards(convention):
             if len(row) == 0:
                 continue
             if row[0].startswith('Subsessions:'):
-                kind = row[0].partition(":")[2].strip().partition(" ")[0].strip().lower()
+                if 'Collegiate' in row[0]:
+                    kind = 'collegiate'
+                else:
+                    kind = row[0].partition(":")[2].strip().partition(" ")[0].strip().lower()
                 if session.kind == getattr(Session.KIND, kind):
                     contest_list = row[1:]
                     for c in contest_list:
@@ -158,6 +161,8 @@ def extract_awards(convention):
                         contest[contest_num] = contest_name
         parent = session.convention.organization
         for key, value in contest.viewitems():
+            stix_num = key
+            stix_name = value
             if parent.long_name in value:
                 organization = parent
             else:
@@ -171,8 +176,46 @@ def extract_awards(convention):
                 name = name.partition(
                     organization.get_kind_display()
                 )[2].strip()
-            # Create Award
-            print "{0} - {1}".format(organization, name)
+            if 'Srs Qt -' in name:
+                name = name.partition('Srs Qt -')[2].strip()
+                kind = Award.KIND.senior
+            if 'Novice' in name:
+                name = name.partition('Novice')[2].strip()
+                kind = Award.KIND.novice
+            elif 'Seniors' in name:
+                name = name.partition('Seniors')[2].strip()
+                kind = Award.KIND.senior
+            elif 'Collegiate' in name:
+                name = name.partition('Collegiate')[2].strip()
+                kind = Award.KIND.collegiate
+            elif 'Chorus' in name:
+                name = name.partition('Chorus')[2].strip()
+                kind = Award.KIND.chorus
+            elif 'Quartet' in name:
+                name = name.partition('Quartet')[2].strip()
+                kind = Award.KIND.chorus
+            elif "Dealer's Choice" in name:
+                kind = Award.KIND.quartet
+            else:
+                kind = None
+            if "(2 Rounds)" in name:
+                rounds = 2
+                name = name.partition("(2 Rounds)")[0].strip()
+            elif "(3 Rounds)" in name:
+                rounds = 3
+                name = name.partition("(3 Rounds)")[0].strip()
+            else:
+                rounds = 1
+            award, created = Award.objects.get_or_create(
+                long_name=name,
+                organization=organization,
+                kind=kind,
+            )
+            if created:
+                award.rounds = rounds
+                award.stix_num = stix_num
+                award.stix_name = stix_name
+                award.save()
     return
 
 

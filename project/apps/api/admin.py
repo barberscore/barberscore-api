@@ -61,6 +61,9 @@ class AwardAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     list_display = [
         'name',
+        'organization',
+        'kind',
+        'stix_name',
     ]
 
     list_filter = [
@@ -286,6 +289,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'year',
         'organization__level',
         'division',
+        'organization',
     )
 
     inlines = [
