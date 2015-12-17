@@ -236,8 +236,10 @@ class JudgeInline(admin.TabularInline):
         'category',
         'slot',
         'kind',
+        'round',
     )
     ordering = (
+        'round',
         'kind',
         'category',
         'slot',

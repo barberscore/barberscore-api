@@ -549,6 +549,7 @@ class Chapter(Common):
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
         (20, 'inactive', 'Inactive',),
+        (50, 'dup', 'Duplicate',),
     )
 
     status = FSMIntegerField(
@@ -1871,6 +1872,7 @@ class Group(Common):
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
         (20, 'inactive', 'Inactive',),
+        (50, 'dup', 'Duplicate',),
     )
 
     status = models.IntegerField(

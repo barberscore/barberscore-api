@@ -17,6 +17,9 @@ from .models import (
     Award,
     Judge,
     Person,
+    Chapter,
+    Group,
+    Performer,
 )
 
 
@@ -67,6 +70,7 @@ def import_convention(path, kind, division=False):
 def extract_sessions(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
+    # TODO Should probably use sets.
     sessions = {}
     for row in rows:
         if len(row) == 0:
@@ -180,6 +184,7 @@ def extract_awards(convention):
         "Out of Division",
     ]
     for session in sessions:
+        # TODO Should probably use sets.
         contest = {}
         for row in rows:
             if len(row) == 0:
@@ -290,11 +295,7 @@ def extract_panel(convention):
                 parts = panelist.partition("=")
                 panel_id = int(parts[0].partition(" ")[0].strip())
                 category = parts[0].partition(" ")[2][1:4]
-                nm = parts[2]
-                try:
-                    nm = u'{0}'.format(nm)
-                except UnicodeDecodeError:
-                    nm = unidecode(nm)
+                nm = unidecode(parts[2])
                 name = str(HumanName(nm))
                 if panel_id < 50:
                     kind = Judge.KIND.official
@@ -347,6 +348,83 @@ def extract_panel(convention):
                 else:
                     raise RuntimeError("Unknown category! {0}".format(category))
                 Judge.objects.create(**judge_dict)
+
+
+def extract_performers(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    performers = []
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith("Session: "):
+            if 'Collegiate' in row[0]:
+                kind = Session.KIND.collegiate
+            elif 'Senior' in row[0]:
+                kind = Session.KIND.senior
+            elif 'Chorus' in row[0]:
+                kind = Session.KIND.chorus
+            elif 'Quartet' in row[0]:
+                kind = Session.KIND.quartet
+            else:
+                raise RuntimeError("Can't find session kind")
+            session = convention.sessions.get(
+                kind=kind,
+            )
+            contestant_text = unidecode(row[1].partition(":")[2].strip())
+            if contestant_text == '(Not Found)':
+                continue
+            if session.kind == Session.KIND.chorus:
+                try:
+                    chapter = Chapter.objects.get(
+                        name__iexact=contestant_text,
+                    )
+                except Chapter.DoesNotExist:
+                    log.info("Potential Duplicate: {0}".format(contestant_text))
+                    chapter = Chapter.objects.create(
+                        name=contestant_text,
+                        status=Chapter.STATUS.dup,
+                    )
+                try:
+                    group = chapter.groups.exclude(
+                        status=Group.STATUS.inactive,
+                    ).get(
+                        chapter=chapter,
+                    )
+                except Group.MultipleObjectsReturned:
+                    group = chapter.groups.exclude(
+                        status=Group.STATUS.inactive,
+                    ).filter(
+                        chapter=chapter,
+                    ).first()
+                    group.status = Group.STATUS.dup
+                    group.save()
+                    log.info("Check chapter groups for: {0}".format(group.chapter))
+                except Group.DoesNotExist:
+                    group = Group.objects.create(
+                        name=contestant_text,
+                        status=Group.STATUS.dup,
+                        chapter=chapter,
+                    )
+            else:
+                try:
+                    group = Group.objects.get(
+                        name__iexact=contestant_text,
+                    )
+                except Group.DoesNotExist:
+                    log.info("Potential Duplicate: {0}".format(contestant_text))
+                    group = Group.objects.create(
+                        name=contestant_text,
+                        status=Group.STATUS.dup,
+                    )
+            performers.append({
+                'session': session,
+                'group': group,
+                'status': Performer.STATUS.final,
+            })
+    for performer in performers:
+        Performer.objects.get_or_create(**performer)
+    return
 
 
 def deinterlace(path):
