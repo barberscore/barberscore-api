@@ -1,6 +1,9 @@
 import os
 import csv
 
+from django.db.models import Q
+from unidecode import unidecode
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -287,17 +290,19 @@ def extract_panel(convention):
                 parts = panelist.partition("=")
                 panel_id = int(parts[0].partition(" ")[0].strip())
                 category = parts[0].partition(" ")[2][1:4]
+                nm = parts[2]
                 try:
-                    name = str(HumanName(u"{0}".format(parts[2]).decode('utf8', 'replace')))
+                    nm = u'{0}'.format(nm)
                 except UnicodeDecodeError:
-                    continue
+                    nm = unidecode(nm)
+                name = str(HumanName(nm))
                 if panel_id < 50:
                     kind = Judge.KIND.official
                 else:
                     kind = Judge.KIND.practice
                 try:
                     person = Person.objects.get(
-                        common_name=name,
+                        Q(formal_name=name) | Q(common_name=name) | Q(full_name=name)
                     )
                 except Person.DoesNotExist:
                     person = Person.objects.create(
@@ -305,7 +310,7 @@ def extract_panel(convention):
                     )
                 except Person.MultipleObjectsReturned:
                     persons = Person.objects.filter(
-                        common_name=name,
+                        Q(formal_name=name) | Q(common_name=name) | Q(full_name=name)
                     )
                     for person in persons:
                         person.status = Person.STATUS.dup

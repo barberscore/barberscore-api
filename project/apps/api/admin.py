@@ -647,6 +647,10 @@ class PersonAdmin(admin.ModelAdmin):
         'notes',
     )
 
+    list_filter = [
+        'status',
+    ]
+
     readonly_fields = (
         'status_monitor',
     )

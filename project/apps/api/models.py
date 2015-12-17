@@ -2849,6 +2849,22 @@ class Person(Common):
         default='',
     )
 
+    # Denormalization for searching
+    full_name = models.CharField(
+        max_length=255,
+        blank=True,
+        editable=False,
+        default='',
+    )
+
+    # Denormalization for searching
+    formal_name = models.CharField(
+        max_length=255,
+        blank=True,
+        editable=False,
+        default='',
+    )
+
     # Denormalization to make autocomplete work
     is_judge = models.BooleanField(
         default=False,
@@ -2893,12 +2909,18 @@ class Person(Common):
         self.is_judge = self.certifications.exists()
         name = HumanName(self.name)
         if name.nickname:
-            self.common_name = " ".join([
-                name.nickname,
-                name.last
-            ]).strip()
+            self.common_name = " ".join(filter(None, [
+                u"{0}".format(name.nickname),
+                u"{0}".format(name.last),
+                u"{0}".format(name.suffix),
+            ]))
         else:
-            self.common_name = self.name
+            self.common_name = u'{0}'.format(self.name)
+        self.formal_name = " ".join(filter(None, [
+            u'{0}'.format(name.first),
+            u'{0}'.format(name.last),
+            u'{0}'.format(name.suffix),
+        ]))
         super(Person, self).save(*args, **kwargs)
 
 
