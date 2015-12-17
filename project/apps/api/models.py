@@ -107,6 +107,7 @@ class Common(TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=200,
+        blank=False,
         unique=True,
         validators=[
             validate_trimmed,
@@ -2030,7 +2031,7 @@ class Judge(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2} {3}".format(
-            self.session,
+            self.round,
             self.get_kind_display(),
             self.get_category_display(),
             self.slot,
@@ -2039,10 +2040,10 @@ class Judge(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('session', 'kind', 'category', 'slot'),
+            ('round', 'kind', 'category', 'slot'),
         )
         ordering = (
-            'session',
+            'round',
             'kind',
             'category',
             'slot',
@@ -2802,6 +2803,8 @@ class Person(Common):
         (20, 'inactive', 'Inactive',),
         (30, 'retired', 'Retired',),
         (40, 'deceased', 'Deceased',),
+        (50, 'stix', 'Stix Issue',),
+        (60, 'dup', 'Possible Duplicate',),
     )
 
     KIND = Choices(
@@ -3194,12 +3197,6 @@ class Session(TimeStampedModel):
         null=True,
     )
 
-    stix_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3268,8 +3265,8 @@ class Round(TimeStampedModel):
 
     KIND = Choices(
         (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semis'),
-        (3, 'quarters', 'Quarters'),
+        (2, 'semis', 'Semi-Finals'),
+        (3, 'quarters', 'Quarter-Finals'),
     )
 
     name = models.CharField(
@@ -3317,6 +3314,12 @@ class Round(TimeStampedModel):
     slots = models.IntegerField(
         null=True,
         blank=True,
+    )
+
+    stix_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
     )
 
     class Meta:

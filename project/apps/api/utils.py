@@ -73,6 +73,8 @@ def extract_sessions(convention):
             contest_name = parts[2].strip()
             if 'Collegiate' in contest_name:
                 kind = 'collegiate'
+            elif 'Senior' in contest_name:
+                kind = 'senior'
             else:
                 kind = contest_name.partition(" ")[0].lower()
             sessions[kind] = True
@@ -81,7 +83,6 @@ def extract_sessions(convention):
             convention=convention,
             year=convention.year,
             kind=getattr(Session.KIND, key),
-            stix_name=contest_name,
         )
     return
 
@@ -89,45 +90,78 @@ def extract_sessions(convention):
 def extract_rounds(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
-    # Determine meta-data
-    counts = {}
-    counts['collegiate'] = 0
-    counts['chorus'] = 0
-    counts['quartet'] = 0
     for row in rows:
         if len(row) == 0:
             continue
-        if row[0].startswith('Subsessions:'):
-            # Parse session into components
-            parts = row[0].partition(':')
-            # Parse session meta-data
-            session_text = parts[2].strip()
-            if 'Collegiate' in session_text:
-                counts['collegiate'] += 1
-            elif session_text.startswith('Chorus'):
-                counts['chorus'] += 1
-            elif session_text.startswith('Quartet'):
-                counts['quartet'] += 1
-            else:
-                raise RuntimeError("Can't determine session kind")
-    for key, value in counts.viewitems():
-        if value:
-            i = 1
-            j = value
-            while i <= value:
-                try:
-                    session = convention.sessions.get(
-                        kind=getattr(Session.KIND, key),
-                    )
-                except Session.DoesNotExist:
-                    print "No session: {0} {1}".format(key, value)
-                rnd, created = session.rounds.get_or_create(
-                    num=i,
-                    kind=j,
-                )
-                i += 1
-                j -= 1
+        if row[0].startswith("Subsessions:"):
+            subsession_text = row[0].partition(":")[2].strip()
+            # Strip parantheticals
+            subsession_text = subsession_text.partition("(")[0].strip()
+            # Catch Collegiate
+            if 'Collegiate' in subsession_text:
+                subsession_text = "Collegiate Finals"
+            if 'Seniors' in subsession_text:
+                subsession_text = "Senior Finals"
+            # Split the subsession
+            parts = subsession_text.partition(" ")
+            session_kind = parts[0].strip().lower()
+            round_kind = parts[2].strip()
+            # print session_kind
+            # print round_kind
+            # continue
+            session = convention.sessions.get(
+                kind=getattr(Session.KIND, session_kind),
+            )
+            if round_kind == 'Finals':
+                kind = 'finals'
+            elif round_kind == 'Semi-Finals':
+                kind = 'semis'
+            elif round_kind == 'Quarter-Finals':
+                kind = 'quarters'
+            session.rounds.create(
+                kind=getattr(Round.KIND, kind),
+                stix_name=subsession_text,
+            )
     return
+    # Determine meta-data
+    # counts = {}
+    # counts['collegiate'] = 0
+    # counts['chorus'] = 0
+    # counts['quartet'] = 0
+    # for row in rows:
+    #     if len(row) == 0:
+    #         continue
+    #     if row[0].startswith('Subsessions:'):
+    #         # Parse session into components
+    #         parts = row[0].partition(':')
+    #         # Parse session meta-data
+    #         session_text = parts[2].strip()
+    #         if 'Collegiate' in session_text:
+    #             counts['collegiate'] += 1
+    #         elif session_text.startswith('Chorus'):
+    #             counts['chorus'] += 1
+    #         elif session_text.startswith('Quartet'):
+    #             counts['quartet'] += 1
+    #         else:
+    #             raise RuntimeError("Can't determine session kind")
+    # for key, value in counts.viewitems():
+    #     if value:
+    #         i = 1
+    #         j = value
+    #         while i <= value:
+    #             try:
+    #                 session = convention.sessions.get(
+    #                     kind=getattr(Session.KIND, key),
+    #                 )
+    #             except Session.DoesNotExist:
+    #                 print "No session: {0} {1}".format(key, value)
+    #             rnd, created = session.rounds.get_or_create(
+    #                 num=i,
+    #                 kind=j,
+    #                 stix_name=session_text.partition("(")[0].strip(),
+    #             )
+    #             i += 1
+    #             j -= 1
 
 
 def extract_awards(convention):
@@ -236,12 +270,14 @@ def extract_panel(convention):
         if len(row) == 0:
             continue
         if row[0].startswith('Panel'):
-            session_round = row[0].partition("-")[2].partition(":")[0]
+            subsession = row[0].partition("-")[2].partition(":")[0].strip()
+            if 'Collegiate' in subsession:
+                subsession = "Collegiate Finals"
+            if 'Seniors' in subsession:
+                subsession = "Senior Finals"
             round = Round.objects.get(
-                name="{0} {1}".format(
-                    convention,
-                    session_round.strip(),
-                ),
+                session__convention=convention,
+                stix_name=subsession,
             )
             panelists = row[1:]
             mus_slot = 1
@@ -251,25 +287,44 @@ def extract_panel(convention):
                 parts = panelist.partition("=")
                 panel_id = int(parts[0].partition(" ")[0].strip())
                 category = parts[0].partition(" ")[2][1:4]
-                name = HumanName(parts[2])
+                try:
+                    name = str(HumanName(u"{0}".format(parts[2]).decode('utf8', 'replace')))
+                except UnicodeDecodeError:
+                    continue
                 if panel_id < 50:
                     kind = Judge.KIND.official
                 else:
                     kind = Judge.KIND.practice
                 try:
                     person = Person.objects.get(
-                        common_name=str(name),
+                        common_name=name,
                     )
                 except Person.DoesNotExist:
-                    person = Person.objects.get(
-                        name='Aaron Dale',
+                    person = Person.objects.create(
+                        name=name,
                     )
+                except Person.MultipleObjectsReturned:
+                    persons = Person.objects.filter(
+                        common_name=name,
+                    )
+                    for person in persons:
+                        person.status = Person.STATUS.dup
+                        person.save()
+                    person = persons.order_by('-is_judge').first()
+                    person.save()
+                if not person.is_judge:
+                    person.status = Person.STATUS.stix
+                    person.save()
+                if person.organization:
+                    organization = person.organization
+                else:
+                    organization = Organization.objects.get(name='BHS FHT')
                 judge_dict = {
                     'kind': kind,
                     'person': person,
                     'round': round,
+                    'organization': organization,
                     'session': round.session,
-                    'organization': person.organization,
                     'panel_id': panel_id,
                 }
                 if category == 'MUS':
@@ -286,7 +341,7 @@ def extract_panel(convention):
                     sng_slot += 1
                 else:
                     raise RuntimeError("Unknown category! {0}".format(category))
-                print judge_dict
+                Judge.objects.create(**judge_dict)
 
 
 def deinterlace(path):
