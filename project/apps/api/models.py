@@ -377,11 +377,11 @@ class Award(TimeStampedModel):
         )
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
+        self.name = " ".join(filter(None, [
             self.organization,
             self.get_kind_display(),
             self.long_name,
-        )
+        ]))
         super(Award, self).save(*args, **kwargs)
 
     def __unicode__(self):

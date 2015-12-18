@@ -385,12 +385,33 @@ def extract_contests(convention):
             contest_list = row[1:]
             for item in contest_list:
                 parts = item.partition("=")
-                award = Award.objects.get(
-                    stix_name=parts[2],
-                )
+                stix_name = parts[2].strip()
+                # Identify the organization
+                parent = convention.organization
+                if parent.long_name in stix_name:
+                    organization = parent
+                else:
+                    try:
+                        organization = parent.children.get(
+                            long_name=stix_name.partition(" Division")[0],
+                        )
+                    except Organization.DoesNotExist:
+                        log.info("Can't find Org: {0}".format(stix_name.partition(" Division")[0]))
+                        continue
+                try:
+                    award = Award.objects.get(
+                        organization=organization,
+                        stix_name=stix_name,
+                    )
+                except Award.DoesNotExist:
+                    log.info("No award for: {0}".format(stix_name))
+                    continue
+                except Award.MultipleObjectsReturned:
+                    log.info("Multi awards for: {0}".format(stix_name))
+                    continue
                 contest = {
                     'session': session,
                     'award': award,
                 }
-        contests.append(contest)
+                contests.append(contest)
     return contests

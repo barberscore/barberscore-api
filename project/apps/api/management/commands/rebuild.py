@@ -12,6 +12,7 @@ from apps.api.utils import (
     extract_rounds,
     extract_panel,
     extract_performers,
+    extract_contests,
 )
 
 from django.core.files import File
@@ -120,5 +121,9 @@ class Command(BaseCommand):
         for v in vs:
             extract_performers(v)
         self.stdout.write("Performers Extracted")
+
+        # for v in vs:
+        #     extract_contests(v)
+        # self.stdout.write("Contests Extracted")
 
         return "Rebuild Complete"
