@@ -13,6 +13,7 @@ from apps.api.utils import (
     extract_panel,
     extract_performers,
     extract_contests,
+    extract_contestants,
 )
 
 from django.core.files import File
@@ -125,5 +126,9 @@ class Command(BaseCommand):
         for v in vs:
             extract_contests(v)
         self.stdout.write("Contests Extracted")
+
+        for v in vs:
+            extract_contestants(v)
+        self.stdout.write("Contestants Extracted")
 
         return "Rebuild Complete"

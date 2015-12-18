@@ -243,6 +243,7 @@ class ContestantAdmin(admin.ModelAdmin):
     list_filter = (
         'status',
         'contest__session__convention',
+        'contest__session__convention__year',
     )
 
     autocomplete_lookup_fields = {
@@ -323,10 +324,12 @@ class ConventionAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
+        'chapter__name',
     )
 
     list_display = (
         'name',
+        'chapter',
         'status',
         'status_monitor',
         'location',

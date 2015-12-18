@@ -20,6 +20,7 @@ from .models import (
     Group,
     Performer,
     Contest,
+    Contestant,
 )
 
 
@@ -386,6 +387,7 @@ def extract_contests(convention):
             contest_list = row[1:]
             for item in contest_list:
                 parts = item.partition("=")
+                stix_num = parts[0].strip()
                 stix_name = parts[2].strip()
                 # Identify the organization
                 parent = convention.organization
@@ -415,8 +417,60 @@ def extract_contests(convention):
                     'session': session,
                     'award': award,
                     'goal': 1,
+                    'subsession_id': stix_num,
                 }
                 contests.append(contest)
     for contest in contests:
         Contest.objects.get_or_create(**contest)
     return contests
+
+
+def extract_contestants(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    contestants = []
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith("Session: "):
+            # first retrieve the performer
+            kind = get_session_kind(row[0])
+            session = convention.sessions.get(
+                kind=getattr(Session.KIND, kind),
+            )
+            performer_text = unidecode(row[1].partition(":")[2].strip())
+
+            if performer_text == '(Not Found)':
+                continue
+
+            if session.kind == Session.KIND.chorus:
+                performer = session.performers.get(
+                    group__chapter__name__iexact=performer_text,
+                )
+            else:
+                performer = session.performers.get(
+                    group__name__iexact=performer_text,
+                    # group__kind=session.kind,
+                )
+
+            # Now get contest
+            contest_list = row[2].partition(":")[2].strip().split(",")
+            for contest in contest_list:
+                stix_num = int(contest)
+                try:
+                    contest = session.contests.get(
+                        subsession_id=stix_num,
+                    )
+                except Contest.DoesNotExist:
+                    continue
+                contestants.append({
+                    'contest': contest,
+                    'performer': performer,
+                })
+    for contestant in contestants:
+        try:
+            Contestant.objects.get_or_create(**contestant)
+        except ValueError:
+            log.error("Can't create: {0}".format(contestant))
+            # TODO This could also be used to capture qualifiers
+    return
