@@ -21,6 +21,8 @@ from .models import (
     Performer,
     Contest,
     Contestant,
+    Performance,
+    Song,
 )
 
 
@@ -472,4 +474,102 @@ def extract_contestants(convention):
         except ValueError:
             log.error("Can't create: {0}".format(contestant))
             # TODO This could also be used to capture qualifiers
+    return
+
+
+def extract_performances(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    performances = []
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith("Session: "):
+            # first retrieve the performer
+            kind = get_session_kind(row[0])
+            session = convention.sessions.get(
+                kind=getattr(Session.KIND, kind),
+            )
+            performer_text = unidecode(row[1].partition(":")[2].strip())
+
+            if performer_text == '(Not Found)':
+                continue
+
+            if session.kind == Session.KIND.chorus:
+                performer = session.performers.get(
+                    group__chapter__name__iexact=performer_text,
+                )
+            else:
+                performer = session.performers.get(
+                    group__name__iexact=performer_text,
+                )
+            # now get the order appearance
+            order = int(row[3].partition(":")[2].strip()) - 1
+
+            # And the Round.
+            kind = get_round_kind(row[0])
+            round = session.rounds.get(
+                kind=getattr(Round.KIND, kind),
+            )
+            # And put together.
+            performances.append({
+                'round': round,
+                'position': order,
+                'performer': performer,
+            })
+    for performance in performances:
+        Performance.objects.get_or_create(**performance)
+    return
+
+
+def extract_songs(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    songs = []
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith("Session: "):
+            # first retrieve the performance
+            kind = get_session_kind(row[0])
+            session = convention.sessions.get(
+                kind=getattr(Session.KIND, kind),
+            )
+            performer_text = unidecode(row[1].partition(":")[2].strip())
+
+            if performer_text == '(Not Found)':
+                continue
+
+            if session.kind == Session.KIND.chorus:
+                performer = session.performers.get(
+                    group__chapter__name__iexact=performer_text,
+                )
+            else:
+                performer = session.performers.get(
+                    group__name__iexact=performer_text,
+                )
+            order = int(row[3].partition(":")[2].strip()) - 1
+            kind = get_round_kind(row[0])
+            round = session.rounds.get(
+                kind=getattr(Round.KIND, kind),
+            )
+            performance = Performance.objects.get(
+                round=round,
+                performer=performer,
+                position=order,
+            )
+
+            # Next, get the song number
+            number = int(row[4].partition(":")[2].strip())
+
+            # Next, get the song title
+            title = unidecode(row[5].partition(":")[2].strip())
+
+            songs.append({
+                'performance': performance,
+                'order': number,
+                'title': title,
+            })
+    for song in songs:
+        Song.objects.get_or_create(**song)
     return

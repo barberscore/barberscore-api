@@ -14,6 +14,8 @@ from apps.api.utils import (
     extract_performers,
     extract_contests,
     extract_contestants,
+    extract_performances,
+    extract_songs,
 )
 
 from django.core.files import File
@@ -130,5 +132,13 @@ class Command(BaseCommand):
         for v in vs:
             extract_contestants(v)
         self.stdout.write("Contestants Extracted")
+
+        for v in vs:
+            extract_performances(v)
+        self.stdout.write("Performances Extracted")
+
+        for v in vs:
+            extract_songs(v)
+        self.stdout.write("Songs Extracted")
 
         return "Rebuild Complete"
