@@ -82,13 +82,12 @@ def get_session_kind(name):
     elif "Srs Qt - Oldest Qt Cumulative Yrs" in name:
         kind = 'seniors'
     else:
-        log.error("Could not determine KIND: {0}".format(name))
+        log.error("Could not determine Session.KIND: {0}".format(name))
         return None
     return kind
 
 
-def get_round_kind(row):
-    name = row[0].partition(":")[2].strip().partition("(")[0].strip()
+def get_round_kind(name):
     if ' Quarter-Finals' in name:
         kind = 'quarters'
     elif ' Semi-Finals' in name:
@@ -96,7 +95,8 @@ def get_round_kind(row):
     elif ' Finals' in name:
         kind = 'finals'
     else:
-        raise RuntimeError("Could not determine KIND: {0}".format(name))
+        log.error("Could not determine Round.KIND: {0}".format(name))
+        return None
     return kind
 
 
@@ -125,7 +125,7 @@ def extract_rounds(convention):
             session = convention.sessions.get(
                 kind=getattr(Session.KIND, session_kind),
             )
-            round_kind = get_round_kind(row)
+            round_kind = get_round_kind(row[0])
             session.rounds.create(
                 kind=getattr(Round.KIND, round_kind),
                 stix_name=row[0],
@@ -155,7 +155,7 @@ def create_awards(convention):
 
                 # Parse each list item for id, name
                 parts = contest.partition('=')
-                stix_num = parts[0]
+                # stix_num = parts[0]
                 stix_name = parts[2]
 
                 # Skip qualifications
@@ -215,15 +215,6 @@ def create_awards(convention):
                 })
 
     for award in awards:
-        # Exceptions:
-        # if any([
-        #     award['stix_name'] == 'Central States District Plateau A Chorus',
-        #     award['stix_name'] == 'Central States District Plateau B Chorus',
-        #     award['stix_name'] == 'Far Western District Super Seniors Quartet',
-
-        # ]):
-        #     continue
-        print award
         Award.objects.get_or_create(**award)
     return
 
@@ -239,10 +230,14 @@ def extract_panel(convention):
             session = convention.sessions.get(
                 kind=getattr(Session.KIND, session_kind),
             )
-            round_kind = get_round_kind(row)
-            round = session.rounds.get(
-                kind=getattr(Round.KIND, round_kind),
-            )
+            round_kind = get_round_kind(row[0])
+            try:
+                round = session.rounds.get(
+                    kind=getattr(Round.KIND, round_kind),
+                )
+            except TypeError:
+                log.error("Can't find Panel: {0}".format(row[0]))
+                continue
             panelists = row[1:]
             mus_slot = 1
             prs_slot = 1
@@ -259,7 +254,7 @@ def extract_panel(convention):
                     kind = Judge.KIND.practice
                 try:
                     person = Person.objects.get(
-                        Q(formal_name=name) | Q(common_name=name) | Q(full_name=name)
+                        Q(formal_name=name) | Q(common_name=name) | Q(full_name=name) | Q(name=name)
                     )
                 except Person.DoesNotExist:
                     person = Person.objects.create(
@@ -267,7 +262,7 @@ def extract_panel(convention):
                     )
                 except Person.MultipleObjectsReturned:
                     persons = Person.objects.filter(
-                        Q(formal_name=name) | Q(common_name=name) | Q(full_name=name)
+                        Q(formal_name=name) | Q(common_name=name) | Q(full_name=name) | Q(name=name)
                     )
                     for person in persons:
                         person.status = Person.STATUS.dup
