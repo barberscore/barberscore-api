@@ -450,7 +450,6 @@ def extract_contestants(convention):
             else:
                 performer = session.performers.get(
                     group__name__iexact=performer_text,
-                    # group__kind=session.kind,
                 )
 
             # Now get contest
