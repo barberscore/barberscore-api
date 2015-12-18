@@ -6,7 +6,6 @@ log = logging.getLogger(__name__)
 import uuid
 
 import os
-import csv
 import datetime
 
 from django.db import (
@@ -53,7 +52,6 @@ from model_utils.managers import (
 from mptt.models import (
     MPTTModel,
     TreeForeignKey,
-    TreeManyToManyField,
 )
 
 from timezone_field import TimeZoneField
@@ -330,9 +328,9 @@ class Award(TimeStampedModel):
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-        (5, 'novice', 'Novice',),
+        (3, 'seniors', 'Seniors Quartet',),
+        (4, 'collegiate', 'Collegiate Quartet',),
+        (5, 'novice', 'Novice Quartet',),
     )
 
     kind = models.IntegerField(
@@ -593,7 +591,7 @@ class Chapter(Common):
         )
 
 
-class Contest(MPTTModel, TimeStampedModel):
+class Contest(TimeStampedModel):
 
     id = models.UUIDField(
         primary_key=True,
@@ -637,11 +635,20 @@ class Contest(MPTTModel, TimeStampedModel):
         related_name='contests',
     )
 
+    award = models.ForeignKey(
+        'Award',
+        related_name='contests',
+        null=True,
+        blank=True,
+    )
+
     organization = TreeForeignKey(
         'Organization',
         help_text="""
             The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
         related_name='contests',
+        null=True,
+        blank=True,
     )
 
     LEVEL = Choices(
@@ -654,12 +661,14 @@ class Contest(MPTTModel, TimeStampedModel):
         help_text="""
             The level of the contest.  Note that this may be different than the level of the parent session.""",
         choices=LEVEL,
+        null=True,
+        blank=True,
     )
 
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
+        (3, 'seniors', 'Senior',),
         (4, 'collegiate', 'Collegiate',),
         (5, 'novice', 'Novice',),
         (6, 'a', 'Plateau A',),
@@ -671,11 +680,13 @@ class Contest(MPTTModel, TimeStampedModel):
         help_text="""
             The kind of the contest.  Note that this may be different than the kind of the parent session.""",
         choices=KIND,
+        null=True,
+        blank=True,
     )
 
     GOAL = Choices(
-        (0, 'championship', "Championship"),
-        (1, 'qualifier', "Qualifier"),
+        (1, 'championship', "Championship"),
+        (2, 'qualifier', "Qualifier"),
     )
 
     goal = models.IntegerField(
@@ -697,6 +708,8 @@ class Contest(MPTTModel, TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
+        null=True,
+        blank=True,
     )
 
     ROUNDS_CHOICES = []
@@ -707,6 +720,8 @@ class Contest(MPTTModel, TimeStampedModel):
         help_text="""
             The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
         choices=ROUNDS_CHOICES,
+        null=True,
+        blank=True,
     )
 
     HISTORY = Choices(
@@ -756,31 +771,15 @@ class Contest(MPTTModel, TimeStampedModel):
         default='',
     )
 
-    parent = TreeForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
-    class MPTTMeta:
-        level_attr = 'goal'
-        unique_together = ((
-            'level',
-            'kind',
-            'year',
-            'goal',
-            'organization',
+    class Meta:
+        unique_together = (
+            ('session', 'award', 'goal',)
+        )
+        ordering = (
             'session',
-        ))
-        order_insertion_by = [
-            'name',
-        ]
-        # ordering = (
-        #     '-tree_id',
-        # )
+            'award',
+            'goal',
+        )
 
     @staticmethod
     def autocomplete_search_fields():
@@ -789,30 +788,12 @@ class Contest(MPTTModel, TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def clean(self):
-        if self.goal == self.GOAL.qualifier and not self.qual_score:
-            raise ValidationError('The qualification score must be set.')
-
     def save(self, *args, **kwargs):
-        if self.goal == self.GOAL.qualifier:
-            self.name = u"{0} {1} {2}".format(
-                self.parent,
-                self.session,
-                self.get_goal_display()
-                # self.get_level_display(),
-                # self.get_kind_display(),
-                # self.get_goal_display(),
-                # self.year,
-                # self.parent,
-            )
-        else:
-            self.name = u"{0} {1} {2} {3}".format(
-                self.organization,
-                # self.get_level_display(),
-                self.get_kind_display(),
-                self.get_goal_display(),
-                self.year,
-            )
+        self.name = u"{0} {1} {2}".format(
+            self.session,
+            self.award,
+            self.get_goal_display()
+        )
         super(Contest, self).save(*args, **kwargs)
 
     def rank(self):
@@ -1051,7 +1032,7 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
-    contest = TreeForeignKey(
+    contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
     )
@@ -1343,466 +1324,463 @@ class Convention(TimeStampedModel):
             )
         super(Convention, self).save(*args, **kwargs)
 
-    def stix(self):
-        # models.signals.post_save.disconnect(session_post_save)
+    # def stix(self):
+    #     # models.signals.post_save.disconnect(session_post_save)
 
-        # Load data and skip first two header rows
-        reader = csv.reader(self.stix_file, skipinitialspace=True)
-        reader.next()
-        reader.next()
-        rows = [row for row in reader]
+    #     # Load data and skip first two header rows
+    #     reader = csv.reader(self.stix_file, skipinitialspace=True)
+    #     reader.next()
+    #     reader.next()
+    #     rows = [row for row in reader]
 
-        # Determine meta-data
-        chorus_count = 0
-        quartet_count = 0
-        for row in rows:
-            if row[0].startswith('Subsessions:'):
-                # Parse session into components
-                parts = row[0].partition(':')
-                # Parse session meta-data
-                session_text = parts[2].strip()
-                if session_text.startswith('Chorus'):
-                    chorus_count += 1
-                elif session_text.startswith('Quartet'):
-                    quartet_count += 1
-                else:
-                    raise RuntimeError("Can't determine session kind")
-            if row[0].startswith('Judge'):
-                # TODO Parse from panel meta data
-                judge_count = int(row[0].partition(":")[2].strip())
-        # Build Sessions
-        for row in rows:
-            if row[0].startswith('Subsessions:'):
-                # Parse session into components
-                parts = row[0].partition(':')
-                # Parse session kind and create
-                session_text = parts[2]
-                # Identify session by kind
-                if 'Chorus' in session_text:
-                    # Get or create the session for indempodence
-                    session, created = self.sessions.get_or_create(
-                        convention=self,
-                        kind=self.sessions.model.KIND.chorus,
-                        size=2,   #  WARNING   CONSTANT!! !  HACK
-                        num_rounds=chorus_count,
-                    )
-                    # This is a little hacky, but instantiate the rounds,
-                    # including increment and kind.
-                    i = 0
-                    j = chorus_count
-                    while i < chorus_count:
-                        rnd, created = session.rounds.get_or_create(
-                            num=i,
-                            kind=j,
-                        )
-                        i += 1
-                        j -= 1
+    #     # Determine meta-data
+    #     chorus_count = 0
+    #     quartet_count = 0
+    #     for row in rows:
+    #         if row[0].startswith('Subsessions:'):
+    #             # Parse session into components
+    #             parts = row[0].partition(':')
+    #             # Parse session meta-data
+    #             session_text = parts[2].strip()
+    #             if session_text.startswith('Chorus'):
+    #                 chorus_count += 1
+    #             elif session_text.startswith('Quartet'):
+    #                 quartet_count += 1
+    #             else:
+    #                 raise RuntimeError("Can't determine session kind")
+    #         if row[0].startswith('Judge'):
+    #             # TODO Parse from panel meta data
+    #             judge_count = int(row[0].partition(":")[2].strip())
+    #     # Build Sessions
+    #     for row in rows:
+    #         if row[0].startswith('Subsessions:'):
+    #             # Parse session into components
+    #             parts = row[0].partition(':')
+    #             # Parse session kind and create
+    #             session_text = parts[2]
+    #             # Identify session by kind
+    #             if 'Chorus' in session_text:
+    #                 # Get or create the session for indempodence
+    #                 session, created = self.sessions.get_or_create(
+    #                     convention=self,
+    #                     kind=self.sessions.model.KIND.chorus,
+    #                     size=2,   #  WARNING   CONSTANT!! !  HACK
+    #                     num_rounds=chorus_count,
+    #                 )
+    #                 # This is a little hacky, but instantiate the rounds,
+    #                 # including increment and kind.
+    #                 i = 0
+    #                 j = chorus_count
+    #                 while i < chorus_count:
+    #                     rnd, created = session.rounds.get_or_create(
+    #                         num=i,
+    #                         kind=j,
+    #                     )
+    #                     i += 1
+    #                     j -= 1
 
-                    # build a list of the contests (called subsessions here)
-                    contest_list = row[1:]
-                    for c in contest_list:
-                        # Parse each list item for id, name
-                        parts = c.partition('=')
-                        contest_number = int(parts[0].strip())
-                        contest_text = parts[2]
-                        # skip if it's a "most improved" award
-                        if "Most-Improved" in contest_text:
-                            log.error("Skipping most improved: {0}".format(contest_text))
-                            continue
-                        # Determine the organization
-                        if contest_text.startswith(self.organization.long_name):
-                            #  If the subsession matches the convention, stop
-                            organization = self.organization
-                        else:
-                            # match according to the related division name, or throw exception
-                            divisions = self.organization.children.all()
-                            organization = None
-                            for div in divisions:
-                                # TODO might need regex here
-                                if contest_text.startswith("{0} ".format(div.long_name)):
-                                    organization = div
-                                    continue
-                            if not organization:
-                                raise RuntimeError("No match on subsession")
+    #                 # build a list of the contests (called subsessions here)
+    #                 contest_list = row[1:]
+    #                 for c in contest_list:
+    #                     # Parse each list item for id, name
+    #                     parts = c.partition('=')
+    #                     contest_number = int(parts[0].strip())
+    #                     contest_text = parts[2]
+    #                     # skip if it's a "most improved" award
+    #                     if "Most-Improved" in contest_text:
+    #                         log.error("Skipping most improved: {0}".format(contest_text))
+    #                         continue
+    #                     # Determine the organization
+    #                     if contest_text.startswith(self.organization.long_name):
+    #                         #  If the subsession matches the convention, stop
+    #                         organization = self.organization
+    #                     else:
+    #                         # match according to the related division name, or throw exception
+    #                         divisions = self.organization.children.all()
+    #                         organization = None
+    #                         for div in divisions:
+    #                             # TODO might need regex here
+    #                             if contest_text.startswith("{0} ".format(div.long_name)):
+    #                                 organization = div
+    #                                 continue
+    #                         if not organization:
+    #                             raise RuntimeError("No match on subsession")
 
-                        # Determine the parent (if any)
-                        # # Check for qualifiers from this list
-                        # qualification_markers = [
-                        #     'Preliminary',
-                        # ]
-                        # if any(substring in contest_text for substring in qualification_markers):
-                        # Check for prelims
-                        parent = None
-                        year = self.year
-                        if "Preliminary" in contest_text:
-                            # Find year, based on district
-                            year = self.year + 1
-                            try:
-                                parent = Contest.objects.get(
-                                    level=Contest.LEVEL.international,
-                                    kind=Contest.KIND.chorus,
-                                    organization=self.organization.parent,
-                                    year=year,
-                                )
-                            except Exception as e:
-                                raise ("Error finding parent: {0} {1}".format(contest_text, e))
+    #                     # Determine the parent (if any)
+    #                     # # Check for qualifiers from this list
+    #                     # qualification_markers = [
+    #                     #     'Preliminary',
+    #                     # ]
+    #                     # if any(substring in contest_text for substring in qualification_markers):
+    #                     # Check for prelims
+    #                     parent = None
+    #                     year = self.year
+    #                     if "Preliminary" in contest_text:
+    #                         # Find year, based on district
+    #                         year = self.year + 1
+    #                         try:
+    #                             parent = Contest.objects.get(
+    #                                 level=Contest.LEVEL.international,
+    #                                 kind=Contest.KIND.chorus,
+    #                                 organization=self.organization.parent,
+    #                                 year=year,
+    #                             )
+    #                         except Exception as e:
+    #                             raise ("Error finding parent: {0} {1}".format(contest_text, e))
 
-                        if "Qualification" in contest_text:
-                            # Find year, based on district
-                            year = self.year
-                            try:
-                                parent = Contest.objects.get(
-                                    level=Contest.LEVEL.district,
-                                    kind=Contest.KIND.chorus,
-                                    organization=self.organization,
-                                    year=year,
-                                )
-                            except Exception as e:
-                                log.error("Error finding parent: {0}".format(contest_text))
-                                raise e
-                        # Determine Level
-                        # TODO Not sure this adds value...
-                        level = organization.level + 1
+    #                     if "Qualification" in contest_text:
+    #                         # Find year, based on district
+    #                         year = self.year
+    #                         try:
+    #                             parent = Contest.objects.get(
+    #                                 level=Contest.LEVEL.district,
+    #                                 kind=Contest.KIND.chorus,
+    #                                 organization=self.organization,
+    #                                 year=year,
+    #                             )
+    #                         except Exception as e:
+    #                             log.error("Error finding parent: {0}".format(contest_text))
+    #                             raise e
+    #                     # Determine Level
+    #                     # TODO Not sure this adds value...
+    #                     level = organization.level + 1
 
-                        # Determine Rounds
-                        # This is assumed to be constant for Chorus comps.
-                        rounds = 1
+    #                     # Determine Rounds
+    #                     # This is assumed to be constant for Chorus comps.
+    #                     rounds = 1
 
-                        # Determine the Kind
-                        # TODO Really need a better parser here
-                        KIND = session.contests.model.KIND
-                        if 'Plateau A Chorus' in contest_text:
-                            kind = KIND.a
-                        elif 'Plateau AA Chorus' in contest_text:
-                            kind = KIND.aa
-                        elif 'Plateau AAA Chorus' in contest_text:
-                            kind = KIND.aaa
-                        else:
-                            kind = KIND.chorus
-                            # raise RuntimeError("parse fail!")
-                        contest, created = session.contests.get_or_create(
-                            kind=kind,
-                            level=level,
-                            organization=organization,
-                            year=year,
-                            rounds=rounds,
-                            session=session,
-                            parent=parent,
-                        )
-                        contest.subsession_id = contest_number
-                        contest.save()
+    #                     # Determine the Kind
+    #                     # TODO Really need a better parser here
+    #                     KIND = session.contests.model.KIND
+    #                     if 'Plateau A Chorus' in contest_text:
+    #                         kind = KIND.a
+    #                     elif 'Plateau AA Chorus' in contest_text:
+    #                         kind = KIND.aa
+    #                     elif 'Plateau AAA Chorus' in contest_text:
+    #                         kind = KIND.aaa
+    #                     else:
+    #                         kind = KIND.chorus
+    #                         # raise RuntimeError("parse fail!")
+    #                     contest, created = session.contests.get_or_create(
+    #                         kind=kind,
+    #                         level=level,
+    #                         organization=organization,
+    #                         year=year,
+    #                         rounds=rounds,
+    #                         session=session,
+    #                         parent=parent,
+    #                     )
+    #                     contest.subsession_id = contest_number
+    #                     contest.save()
 
-                # Identify session by kind
-                if 'Quartet' in session_text:
-                    # Get or create the session for indempodence
-                    session, created = self.sessions.get_or_create(
-                        convention=self,
-                        kind=self.sessions.model.KIND.quartet,
-                        size=2,   #  WARNING   CONSTANT!! !  HACK
-                        num_rounds=quartet_count,
-                    )
-                    # This is a little hacky, but instantiate the rounds,
-                    # including increment and kind.
-                    i = 0
-                    j = quartet_count
-                    while i < quartet_count:
-                        rnd, created = session.rounds.get_or_create(
-                            num=i,
-                            kind=j,
-                        )
-                        i += 1
-                        j -= 1
+    #             # Identify session by kind
+    #             if 'Quartet' in session_text:
+    #                 # Get or create the session for indempodence
+    #                 session, created = self.sessions.get_or_create(
+    #                     convention=self,
+    #                     kind=self.sessions.model.KIND.quartet,
+    #                     size=2,   #  WARNING   CONSTANT!! !  HACK
+    #                     num_rounds=quartet_count,
+    #                 )
+    #                 # This is a little hacky, but instantiate the rounds,
+    #                 # including increment and kind.
+    #                 i = 0
+    #                 j = quartet_count
+    #                 while i < quartet_count:
+    #                     rnd, created = session.rounds.get_or_create(
+    #                         num=i,
+    #                         kind=j,
+    #                     )
+    #                     i += 1
+    #                     j -= 1
 
-                    # build a list of the contests (called subsessions here)
-                    contest_list = row[1:]
-                    for c in contest_list:
+    #                 # build a list of the contests (called subsessions here)
+    #                 contest_list = row[1:]
+    #                 for c in contest_list:
 
+    #                     # There's something wrong with who and how is being skipped and defaulted to
 
-                        # There's something wrong with who and how is being skipped and defaulted to
+    #                     # skip if it's a "most improved" award
+    #                     if any([
+    #                         "Out of Division" in c,
+    #                         "Super Seniors" in c,
+    #                     ]):
+    #                         log.error("Skipping out of division: {0}".format(contest_text))
+    #                         continue
+    #                     # Parse each list item for id, name
+    #                     parts = c.partition('=')
+    #                     log.debug(contest_list)
+    #                     log.debug(parts)
+    #                     contest_number = int(parts[0].strip())
+    #                     contest_text = parts[2]
+    #                     # Determine the organization
+    #                     if contest_text.startswith(self.organization.long_name):
+    #                         #  If the subsession matches the convention, stop
+    #                         organization = self.organization
+    #                     else:
+    #                         # match according to the related division name, or throw exception
+    #                         divisions = self.organization.children.all()
+    #                         organization = None
+    #                         for div in divisions:
+    #                             # TODO might need regex here
+    #                             if contest_text.startswith("{0} ".format(div.long_name)):
+    #                                 organization = div
+    #                                 continue
+    #                         if not organization:
+    #                             raise RuntimeError("No match on subsession")
 
+    #                     # Determine the Kind
+    #                     # TODO Really need a better parser here
+    #                     KIND = session.contests.model.KIND
+    #                     if 'Novice Quartet' in contest_text:
+    #                         kind = KIND.novice
+    #                     if 'Seniors Quartet' in contest_text:
+    #                         kind = KIND.seniors
+    #                     else:
+    #                         kind = KIND.quartet
 
+    #                     # Determine the parent (if any)
+    #                     # # Check for qualifiers from this list
+    #                     # qualification_markers = [
+    #                     #     'Preliminary',
+    #                     # ]
+    #                     # if any(substring in contest_text for substring in qualification_markers):
+    #                     # Check for prelims
+    #                     parent = None
+    #                     year = self.year
+    #                     if "Qualification" in contest_text:
+    #                         # Find year, based on district
+    #                         year = self.year
+    #                         try:
+    #                             parent = Contest.objects.get(
+    #                                 level=Contest.LEVEL.district,
+    #                                 kind=kind,
+    #                                 organization=self.organization,
+    #                                 year=year,
+    #                             )
+    #                         except Exception as e:
+    #                             log.error("Error finding parent: {0}".format(contest_text))
+    #                             raise e
 
-                        # skip if it's a "most improved" award
-                        if any([
-                            "Out of Division" in c,
-                            "Super Seniors" in c,
-                        ]):
-                            log.error("Skipping out of division: {0}".format(contest_text))
-                            continue
-                        # Parse each list item for id, name
-                        parts = c.partition('=')
-                        log.debug(contest_list)
-                        log.debug(parts)
-                        contest_number = int(parts[0].strip())
-                        contest_text = parts[2]
-                        # Determine the organization
-                        if contest_text.startswith(self.organization.long_name):
-                            #  If the subsession matches the convention, stop
-                            organization = self.organization
-                        else:
-                            # match according to the related division name, or throw exception
-                            divisions = self.organization.children.all()
-                            organization = None
-                            for div in divisions:
-                                # TODO might need regex here
-                                if contest_text.startswith("{0} ".format(div.long_name)):
-                                    organization = div
-                                    continue
-                            if not organization:
-                                raise RuntimeError("No match on subsession")
+    #                     # Determine Level
+    #                     # TODO Not sure this adds value...
+    #                     level = organization.level + 1
 
-                        # Determine the Kind
-                        # TODO Really need a better parser here
-                        KIND = session.contests.model.KIND
-                        if 'Novice' in contest_text:
-                            kind = KIND.novice
-                        if 'Seniors' in contest_text:
-                            kind = KIND.senior
-                        else:
-                            kind = KIND.quartet
+    #                     # Determine Rounds
+    #                     if "(2 Rounds)" in contest_text:
+    #                         rounds = 2
+    #                     else:
+    #                         rounds = 1
 
-                        # Determine the parent (if any)
-                        # # Check for qualifiers from this list
-                        # qualification_markers = [
-                        #     'Preliminary',
-                        # ]
-                        # if any(substring in contest_text for substring in qualification_markers):
-                        # Check for prelims
-                        parent = None
-                        year = self.year
-                        if "Qualification" in contest_text:
-                            # Find year, based on district
-                            year = self.year
-                            try:
-                                parent = Contest.objects.get(
-                                    level=Contest.LEVEL.district,
-                                    kind=kind,
-                                    organization=self.organization,
-                                    year=year,
-                                )
-                            except Exception as e:
-                                log.error("Error finding parent: {0}".format(contest_text))
-                                raise e
+    #                         # raise RuntimeError("parse fail!")
+    #                     contest, created = session.contests.get_or_create(
+    #                         kind=kind,
+    #                         level=level,
+    #                         organization=organization,
+    #                         year=year,
+    #                         rounds=rounds,
+    #                         session=session,
+    #                         parent=parent,
+    #                     )
+    #                     contest.subsession_id = contest_number
+    #                     contest.save()
+    #             else:
+    #                 raise RuntimeError("Can't determine session kind")
 
-                        # Determine Level
-                        # TODO Not sure this adds value...
-                        level = organization.level + 1
+    #     # Determine Panel
+    #     for row in rows:
+    #         if row[0].startswith('Panel'):
+    #             parts = row[0].partition('-')
+    #             # Parse panel kind and create
+    #             panel_text = parts[2]
+    #             # Identify panel by kind
+    #             if 'Chorus' in panel_text:
+    #                 kind = self.sessions.model.KIND.chorus
+    #             elif 'Quartet' in panel_text:
+    #                 kind = self.sessions.model.KIND.quartet
+    #             else:
+    #                 raise RuntimeError("Can't determine judging panel kind")
+    #             session = self.sessions.get(
+    #                 convention=self,
+    #                 kind=kind,
+    #             )
+    #             # Create judges from same row
+    #             panel_list = row[1:]
+    #             mus_slot = 1
+    #             prs_slot = 1
+    #             sng_slot = 1
+    #             for panel in panel_list:
+    #                 # Partition into components
+    #                 parts = panel.partition('=')
+    #                 name = HumanName(parts[2])
+    #                 # And sub partition the first partition
+    #                 subparts = parts[0].partition('(')
+    #                 # Find the panel_id number
+    #                 panel_id = int(subparts[0].strip())
+    #                 # And the category by abbreviation
+    #                 if panel_id < 50:
+    #                     kind = session.judges.model.KIND.official
+    #                 else:
+    #                     kind = session.judges.model.KIND.practice
+    #                 category_raw = subparts[2][:3]
+    #                 # Get the person
+    #                 from .models import Person
+    #                 person = Person.objects.get(
+    #                     name=str(name),
+    #                 )
+    #                 # Now create judge by category, incrementing each
+    #                 # slot accordingly
+    #                 judge_dict = {
+    #                     'kind': kind,
+    #                     'person': person,
+    #                 }
+    #                 if category_raw == 'MUS':
+    #                     judge_dict['category'] = session.judges.model.CATEGORY.music
+    #                     judge_dict['slot'] = mus_slot
+    #                     mus_slot += 1
+    #                 elif category_raw == 'PRS':
+    #                     judge_dict['category'] = session.judges.model.CATEGORY.presentation
+    #                     judge_dict['slot'] = prs_slot
+    #                     prs_slot += 1
+    #                 elif category_raw == 'SNG':
+    #                     judge_dict['category'] = session.judges.model.CATEGORY.singing
+    #                     judge_dict['slot'] = sng_slot
+    #                     sng_slot += 1
+    #                 else:
+    #                     raise RuntimeError("Unknown category!")
+    #                 judge, created = session.judges.get_or_create(
+    #                     **judge_dict
+    #                 )
+    #                 judge.panel_id = panel_id
+    #                 judge.save()
 
-                        # Determine Rounds
-                        if "(2 Rounds)" in contest_text:
-                            rounds = 2
-                        else:
-                            rounds = 1
+    #     # Determine Judge
+    #     for row in rows:
+    #         if row[0].startswith('Judge'):
+    #             pass
 
-                            # raise RuntimeError("parse fail!")
-                        contest, created = session.contests.get_or_create(
-                            kind=kind,
-                            level=level,
-                            organization=organization,
-                            year=year,
-                            rounds=rounds,
-                            session=session,
-                            parent=parent,
-                        )
-                        contest.subsession_id = contest_number
-                        contest.save()
-                else:
-                    raise RuntimeError("Can't determine session kind")
+    #         # Determine Performances
+    #     for row in rows:
+    #         if row[0].startswith('Session'):
+    #             if 'Chorus' in row[0]:
+    #                 session = self.sessions.get(
+    #                     kind=self.sessions.model.KIND.chorus,
+    #                 )
+    #             elif 'Quartet' in row[0]:
+    #                 session = self.sessions.get(
+    #                     kind=self.sessions.model.KIND.quartet,
+    #                 )
+    #             else:
+    #                 raise RuntimeError("Can't determine session")
+    #             group_name = row[1].partition(":")[2].strip()
+    #             if session.kind == session.KIND.chorus:
+    #                 from .models import Group
+    #                 try:
+    #                     group = Chapter.objects.get(
+    #                         name=group_name,
+    #                         status=Chapter.STATUS.active,
+    #                     ).groups.first()
+    #                 except Chapter.DoesNotExist:
+    #                     log.error("No Chapter: {0}".format(group_name))
+    #                     continue
+    #                 except Chapter.MultipleObjectsReturned:
+    #                     log.error("Many Chapters: {0}".format(group_name))
+    #                     continue
+    #             else:
+    #                 from .models import Group
+    #                 try:
+    #                     group, created = Group.objects.get_or_create(
+    #                         name=group_name,
+    #                         status=Group.STATUS.active,
+    #                     )
+    #                 except Group.DoesNotExist:
+    #                     log.error("No Group: {0}".format(group_name))
+    #                     continue
+    #                 except Group.MultipleObjectsReturned:
+    #                     log.error("Many Groups: {0}".format(group_name))
+    #                     continue
+    #                 except UnicodeDecodeError:
+    #                     log.error("Unicode {0}".format(group_name))
+    #                     continue
+    #             performer, created = session.performers.get_or_create(
+    #                 group=group,
+    #                 session=session,
+    #             )
+    #             subsessions_list = row[2].partition(":")[2].split(",")
+    #             subsessions = [int(s) for s in subsessions_list]
+    #             log.debug(session)
+    #             log.debug([contest.subsession_id for contest in session.contests.all()])
+    #             log.debug(session.contests.get(subsession_id=2))
+    #             for subsession in subsessions:
+    #                 try:
+    #                     contest = session.contests.get(
+    #                         subsession_id=subsession,
+    #                     )
+    #                 except session.contests.model.DoesNotExist:
+    #                     pass
+    #                 contestant, created = contest.contestants.get_or_create(
+    #                     performer=performer,
+    #                 )
+    #             oa_raw = int(row[3].partition(":")[2].strip())
+    #             round = session.rounds.first()
+    #             performance, created = performer.performances.get_or_create(
+    #                 position=oa_raw - 1,
+    #                 round=round,
+    #             )
+    #             song_order = int(row[4].partition(":")[2].strip())
+    #             song_title = row[5].partition(":")[2].strip()
+    #             song, created = performance.songs.get_or_create(
+    #                 performance=performance,
+    #                 title=song_title,
+    #                 order=song_order,
+    #             )
 
-        # Determine Panel
-        for row in rows:
-            if row[0].startswith('Panel'):
-                parts = row[0].partition('-')
-                # Parse panel kind and create
-                panel_text = parts[2]
-                # Identify panel by kind
-                if 'Chorus' in panel_text:
-                    kind = self.sessions.model.KIND.chorus
-                elif 'Quartet' in panel_text:
-                    kind = self.sessions.model.KIND.quartet
-                else:
-                    raise RuntimeError("Can't determine judging panel kind")
-                session = self.sessions.get(
-                    convention=self,
-                    kind=kind,
-                )
-                # Create judges from same row
-                panel_list = row[1:]
-                mus_slot = 1
-                prs_slot = 1
-                sng_slot = 1
-                for panel in panel_list:
-                    # Partition into components
-                    parts = panel.partition('=')
-                    name = HumanName(parts[2])
-                    # And sub partition the first partition
-                    subparts = parts[0].partition('(')
-                    # Find the panel_id number
-                    panel_id = int(subparts[0].strip())
-                    # And the category by abbreviation
-                    if panel_id < 50:
-                        kind = session.judges.model.KIND.official
-                    else:
-                        kind = session.judges.model.KIND.practice
-                    category_raw = subparts[2][:3]
-                    # Get the person
-                    from .models import Person
-                    person = Person.objects.get(
-                        name=str(name),
-                    )
-                    # Now create judge by category, incrementing each
-                    # slot accordingly
-                    judge_dict = {
-                        'kind': kind,
-                        'person': person,
-                    }
-                    if category_raw == 'MUS':
-                        judge_dict['category'] = session.judges.model.CATEGORY.music
-                        judge_dict['slot'] = mus_slot
-                        mus_slot += 1
-                    elif category_raw == 'PRS':
-                        judge_dict['category'] = session.judges.model.CATEGORY.presentation
-                        judge_dict['slot'] = prs_slot
-                        prs_slot += 1
-                    elif category_raw == 'SNG':
-                        judge_dict['category'] = session.judges.model.CATEGORY.singing
-                        judge_dict['slot'] = sng_slot
-                        sng_slot += 1
-                    else:
-                        raise RuntimeError("Unknown category!")
-                    judge, created = session.judges.get_or_create(
-                        **judge_dict
-                    )
-                    judge.panel_id = panel_id
-                    judge.save()
+    #             scores_raw = row[-judge_count:]
 
-        # Determine Judge
-        for row in rows:
-            if row[0].startswith('Judge'):
-                pass
+    #             judges = session.judges.order_by('panel_id')
+    #             i = 0
+    #             for judge in judges:
+    #                 score, created = song.scores.get_or_create(
+    #                     points=int(scores_raw[i]),
+    #                     judge=judge,
+    #                     category=judge.category,
+    #                     kind=judge.kind,
+    #                 )
+    #                 i += 1
 
-            # Determine Performances
-        for row in rows:
-            if row[0].startswith('Session'):
-                if 'Chorus' in row[0]:
-                    session = self.sessions.get(
-                        kind=self.sessions.model.KIND.chorus,
-                    )
-                elif 'Quartet' in row[0]:
-                    session = self.sessions.get(
-                        kind=self.sessions.model.KIND.quartet,
-                    )
-                else:
-                    raise RuntimeError("Can't determine session")
-                group_name = row[1].partition(":")[2].strip()
-                if session.kind == session.KIND.chorus:
-                    from .models import Group
-                    try:
-                        group = Chapter.objects.get(
-                            name=group_name,
-                            status=Chapter.STATUS.active,
-                        ).groups.first()
-                    except Chapter.DoesNotExist:
-                        log.error("No Chapter: {0}".format(group_name))
-                        continue
-                    except Chapter.MultipleObjectsReturned:
-                        log.error("Many Chapters: {0}".format(group_name))
-                        continue
-                else:
-                    from .models import Group
-                    try:
-                        group, created = Group.objects.get_or_create(
-                            name=group_name,
-                            status=Group.STATUS.active,
-                        )
-                    except Group.DoesNotExist:
-                        log.error("No Group: {0}".format(group_name))
-                        continue
-                    except Group.MultipleObjectsReturned:
-                        log.error("Many Groups: {0}".format(group_name))
-                        continue
-                    except UnicodeDecodeError:
-                        log.error("Unicode {0}".format(group_name))
-                        continue
-                performer, created = session.performers.get_or_create(
-                    group=group,
-                    session=session,
-                )
-                subsessions_list = row[2].partition(":")[2].split(",")
-                subsessions = [int(s) for s in subsessions_list]
-                log.debug(session)
-                log.debug([contest.subsession_id for contest in session.contests.all()])
-                log.debug(session.contests.get(subsession_id=2))
-                for subsession in subsessions:
-                    try:
-                        contest = session.contests.get(
-                            subsession_id=subsession,
-                        )
-                    except session.contests.model.DoesNotExist:
-                        pass
-                    contestant, created = contest.contestants.get_or_create(
-                        performer=performer,
-                    )
-                oa_raw = int(row[3].partition(":")[2].strip())
-                round = session.rounds.first()
-                performance, created = performer.performances.get_or_create(
-                    position=oa_raw - 1,
-                    round=round,
-                )
-                song_order = int(row[4].partition(":")[2].strip())
-                song_title = row[5].partition(":")[2].strip()
-                song, created = performance.songs.get_or_create(
-                    performance=performance,
-                    title=song_title,
-                    order=song_order,
-                )
+    #             # i = 1
+    #             # for in scores_raw:
+    #             #     try:
+    #             #         judge = performance.round.session.judges.get(panel_id=i)
+    #             #     except Exception as e:
+    #             #         log.error(panel_id)
+    #             #         log.error(performance.round.session.judges.all())
+    #             #         raise e
+    #             #     score, created = song.scores.get_or_create(
+    #             #         points=int(score),
+    #             #         judge=judge,
+    #             #         category=judge.category,
+    #             #         kind=judge.kind,
+    #             #     )
+    #             #     i += 1
 
-                scores_raw = row[-judge_count:]
-
-                judges = session.judges.order_by('panel_id')
-                i = 0
-                for judge in judges:
-                    score, created = song.scores.get_or_create(
-                        points=int(scores_raw[i]),
-                        judge=judge,
-                        category=judge.category,
-                        kind=judge.kind,
-                    )
-                    i += 1
-
-                # i = 1
-                # for in scores_raw:
-                #     try:
-                #         judge = performance.round.session.judges.get(panel_id=i)
-                #     except Exception as e:
-                #         log.error(panel_id)
-                #         log.error(performance.round.session.judges.all())
-                #         raise e
-                #     score, created = song.scores.get_or_create(
-                #         points=int(score),
-                #         judge=judge,
-                #         category=judge.category,
-                #         kind=judge.kind,
-                #     )
-                #     i += 1
-
-        # Denormalize
-        for session in self.sessions.all():
-            for performer in session.performers.all():
-                for performance in performer.performances.all():
-                    for song in performance.songs.all():
-                        song.calculate()
-                        song.save()
-                    performance.calculate()
-                    performance.save()
-                performer.calculate()
-                performer.save()
-        for session in self.sessions.all():
-            for contest in session.contests.all():
-                contest.rank()
-                contest.save()
-        # models.signals.post_save.connect(session_post_save)
-        return
+    #     # Denormalize
+    #     for session in self.sessions.all():
+    #         for performer in session.performers.all():
+    #             for performance in performer.performances.all():
+    #                 for song in performance.songs.all():
+    #                     song.calculate()
+    #                     song.save()
+    #                 performance.calculate()
+    #                 performance.save()
+    #             performer.calculate()
+    #             performer.save()
+    #     for session in self.sessions.all():
+    #         for contest in session.contests.all():
+    #             contest.rank()
+    #             contest.save()
+    #     # models.signals.post_save.connect(session_post_save)
+    #     return
 
 
 class Director(TimeStampedModel):
@@ -3131,8 +3109,9 @@ class Session(TimeStampedModel):
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
-        (3, 'senior', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
+        (3, 'seniors', 'Seniors Quartet',),
+        (4, 'collegiate', 'Collegiate Quartet',),
+        (4, 'novice', 'Novice Quartet',),
     )
 
     kind = models.IntegerField(
@@ -3175,6 +3154,7 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
+    # Denormalized
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))

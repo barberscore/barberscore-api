@@ -146,7 +146,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
+class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -170,20 +170,21 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         'year',
         'organization',
         'session',
+        'award',
     )
 
     list_display = (
         'name',
         'status',
         'session',
-        'organization',
-        'level',
-        'kind',
+        'award',
         'goal',
-        'parent',
-        'year',
-        'rounds',
-        'qual_score',
+        # 'organization',
+        # 'level',
+        # 'kind',
+        # 'year',
+        # 'rounds',
+        # 'qual_score',
     )
 
     fields = (
@@ -191,14 +192,14 @@ class ContestAdmin(FSMTransitionMixin, MPTTModelAdmin):
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
         'session',
+        'award',
+        'goal',
         'organization',
         'level',
         'kind',
-        'goal',
         'year',
         'rounds',
         'qual_score',
-        'parent',
     )
 
     readonly_fields = (

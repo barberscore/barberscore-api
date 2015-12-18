@@ -3,7 +3,6 @@ from django.core.management.base import (
 )
 
 from apps.api.models import (
-    Award,
     Convention,
 )
 
@@ -12,7 +11,6 @@ from apps.api.utils import (
     extract_sessions,
     extract_rounds,
     extract_panel,
-    extract_awards,
     extract_performers,
 )
 
@@ -26,9 +24,6 @@ class Command(BaseCommand):
 
         vs = Convention.objects.filter(year=2015)
         vs.delete()
-
-        ws = Award.objects.all()
-        ws.delete()
 
         self.stdout.write("Database Flushed")
 
@@ -117,10 +112,6 @@ class Command(BaseCommand):
         for v in vs:
             extract_rounds(v)
         self.stdout.write("Rounds Extracted")
-
-        for v in vs:
-            extract_awards(v)
-        self.stdout.write("Awards Extracted")
 
         for v in vs:
             extract_panel(v)
