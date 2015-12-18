@@ -19,6 +19,7 @@ from .models import (
     Chapter,
     Group,
     Performer,
+    Contest,
 )
 
 
@@ -404,7 +405,8 @@ def extract_contests(convention):
                         stix_name=stix_name,
                     )
                 except Award.DoesNotExist:
-                    log.info("No award for: {0}".format(stix_name))
+                    # Might need qualification info.
+                    # log.info("No award for: {0}".format(stix_name))
                     continue
                 except Award.MultipleObjectsReturned:
                     log.info("Multi awards for: {0}".format(stix_name))
@@ -412,6 +414,9 @@ def extract_contests(convention):
                 contest = {
                     'session': session,
                     'award': award,
+                    'goal': 1,
                 }
                 contests.append(contest)
+    for contest in contests:
+        Contest.objects.get_or_create(**contest)
     return contests
