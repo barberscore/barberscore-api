@@ -378,9 +378,9 @@ class Award(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.organization,
-            self.get_kind_display(),
-            self.long_name,
+            u"{0}".format(self.organization),
+            u"{0}".format(self.get_kind_display()),
+            u"{0}".format(self.long_name),
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -640,6 +640,7 @@ class Contest(TimeStampedModel):
         related_name='contests',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     organization = TreeForeignKey(
@@ -3111,7 +3112,7 @@ class Session(TimeStampedModel):
         (2, 'chorus', 'Chorus',),
         (3, 'seniors', 'Seniors Quartet',),
         (4, 'collegiate', 'Collegiate Quartet',),
-        (4, 'novice', 'Novice Quartet',),
+        (5, 'novice', 'Novice Quartet',),
     )
 
     kind = models.IntegerField(
