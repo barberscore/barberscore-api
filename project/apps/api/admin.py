@@ -43,6 +43,8 @@ from .models import (
     User,
 )
 
+import arrow
+
 # from grappelli.forms import GrappelliSortableHiddenMixin
 from super_inlines.admin import SuperModelAdmin
 
@@ -266,6 +268,18 @@ class ContestantAdmin(admin.ModelAdmin):
 
 @admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
+
+    def human_range(self, obj):
+        try:
+            dates = "{0} - {1}".format(
+                arrow.get(obj.dates2.lower).format('MMMM D'),
+                arrow.get(obj.dates2.upper).format('MMMM D, YYYY'),
+            )
+        except AttributeError:
+            dates = obj.dates2
+        return dates
+    human_range.short_description = "Dates22"
+
     change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = (
         'name',
@@ -274,14 +288,11 @@ class ConventionAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'status_monitor',
-        'location',
-        'dates',
-        'year',
         'organization',
         'kind',
         'division',
-        'stix_div',
+        'human_range',
+        'location',
     )
 
     fields = (
