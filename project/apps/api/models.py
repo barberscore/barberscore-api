@@ -12,6 +12,11 @@ from django.db import (
     models,
 )
 
+from django.contrib.postgres.fields import (
+    DateRangeField,
+    DateTimeRangeField,
+)
+
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -150,6 +155,13 @@ class Common(TimeStampedModel):
             The retirement/deceased date of the resource.""",
         blank=True,
         null=True,
+    )
+
+    dates = DateRangeField(
+        help_text="""
+            The active dates of the resource.""",
+        null=True,
+        blank=True,
     )
 
     location = models.CharField(
@@ -1268,6 +1280,13 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    dates2 = DateRangeField(
+        help_text="""
+            The convention dates (will be replaced by start/end).""",
+        null=True,
+        blank=True,
+    )
+
     location = models.CharField(
         help_text="""
             The location of the convention.""",
@@ -2283,6 +2302,20 @@ class Performance(TimeStampedModel):
         blank=True,
     )
 
+    scheduled = DateTimeRangeField(
+        help_text="""
+            The scheduled performance window.""",
+        null=True,
+        blank=True,
+    )
+
+    actual = DateTimeRangeField(
+        help_text="""
+            The actual performance window.""",
+        null=True,
+        blank=True,
+    )
+
     # Denormalized
     place = models.IntegerField(
         help_text="""
@@ -3144,6 +3177,13 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    dates = DateRangeField(
+        help_text="""
+            The active dates of the session.""",
+        null=True,
+        blank=True,
+    )
+
     # Denormalized
     organization = TreeForeignKey(
         'Organization',
@@ -3308,6 +3348,13 @@ class Round(TimeStampedModel):
     )
 
     start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    dates = DateRangeField(
+        help_text="""
+            The active dates of the resource.""",
         null=True,
         blank=True,
     )
