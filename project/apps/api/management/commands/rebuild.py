@@ -16,6 +16,9 @@ from apps.api.utils import (
     extract_contestants,
     extract_performances,
     extract_songs,
+    extract_scores,
+    denormalize,
+    rank,
 )
 
 from django.core.files import File
@@ -140,5 +143,17 @@ class Command(BaseCommand):
         for v in vs:
             extract_songs(v)
         self.stdout.write("Songs Extracted")
+
+        for v in vs:
+            extract_scores(v)
+        self.stdout.write("Scores Extracted")
+
+        for v in vs:
+            denormalize(v)
+        self.stdout.write("Convention Denormalized")
+
+        for v in vs:
+            rank(v)
+        self.stdout.write("Convention Ranked")
 
         return "Rebuild Complete"

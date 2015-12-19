@@ -23,6 +23,7 @@ from .models import (
     Contestant,
     Performance,
     Song,
+    Score,
 )
 
 
@@ -572,4 +573,90 @@ def extract_songs(convention):
             })
     for song in songs:
         Song.objects.get_or_create(**song)
+    return
+
+
+def extract_scores(convention):
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    scores = []
+    for row in rows:
+        if len(row) == 0:
+            continue
+        # if row[0].startswith("Judge Count: "):
+        #     judge_count = int(row[0].partition(":")[2].strip())
+        if row[0].startswith("Session: "):
+            # first retrieve the songs
+            kind = get_session_kind(row[0])
+            session = convention.sessions.get(
+                kind=getattr(Session.KIND, kind),
+            )
+            performer_text = unidecode(row[1].partition(":")[2].strip())
+
+            if performer_text == '(Not Found)':
+                continue
+
+            if session.kind == Session.KIND.chorus:
+                performer = session.performers.get(
+                    group__chapter__name__iexact=performer_text,
+                )
+            else:
+                performer = session.performers.get(
+                    group__name__iexact=performer_text,
+                )
+            order = int(row[3].partition(":")[2].strip()) - 1
+            kind = get_round_kind(row[0])
+            round = session.rounds.get(
+                kind=getattr(Round.KIND, kind),
+            )
+            performance = Performance.objects.get(
+                round=round,
+                performer=performer,
+                position=order,
+            )
+            number = int(row[4].partition(":")[2].strip())
+            song = performance.songs.get(
+                order=number,
+            )
+
+            judges = round.judges.order_by('panel_id')
+            scores_raw = row[-judges.count():]
+            i = 0
+            for judge in judges:
+                try:
+                    points = int(scores_raw[i])
+                except:
+                    log.error("No points: {0} - {1}".format(points, performance))
+                scores.append({
+                    'song': song,
+                    'judge': judge,
+                    'category': judge.category,
+                    'kind': judge.kind,
+                    'points': points,
+                })
+                i += 1
+    for score in scores:
+        Score.objects.get_or_create(**score)
+    return
+
+
+def denormalize(convention):
+    for session in convention.sessions.all():
+        for performer in session.performers.all():
+            for performance in performer.performances.all():
+                for song in performance.songs.all():
+                    song.calculate()
+                    song.save()
+                performance.calculate()
+                performance.save()
+            performer.calculate()
+            performer.save()
+    return
+
+
+def rank(convention):
+    for session in convention.sessions.all():
+        for contest in session.contests.all():
+            contest.rank()
+            contest.save()
     return
