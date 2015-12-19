@@ -1,6 +1,7 @@
 import csv
 
 from django.db.models import Q
+
 from unidecode import unidecode
 
 import logging
@@ -134,7 +135,14 @@ def extract_rounds(convention):
             session.rounds.create(
                 kind=getattr(Round.KIND, round_kind),
                 stix_name=row[0],
+                num=0,
             )
+    for session in convention.sessions.all():
+        i = 1
+        for round in session.rounds.order_by('-kind'):
+            round.num = i
+            round.save()
+            i += 1
     return
 
 
@@ -227,6 +235,7 @@ def create_awards(convention):
 def extract_panel(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
+    judges = []
     for row in rows:
         if len(row) == 0:
             continue
@@ -244,13 +253,18 @@ def extract_panel(convention):
                 log.error("Can't find Panel: {0}".format(row[0]))
                 continue
             panelists = row[1:]
-            mus_slot = 1
-            prs_slot = 1
-            sng_slot = 1
             for panelist in panelists:
                 parts = panelist.partition("=")
                 panel_id = int(parts[0].partition(" ")[0].strip())
-                category = parts[0].partition(" ")[2][1:4]
+                category_raw = parts[0].partition(" ")[2][1:4]
+                if category_raw == 'MUS':
+                    category = Judge.CATEGORY.music
+                elif category_raw == 'PRS':
+                    category = Judge.CATEGORY.presentation
+                elif category_raw == 'SNG':
+                    category = Judge.CATEGORY.singing
+                else:
+                    raise RuntimeError("Can't determine category")
                 nm = unidecode(parts[2])
                 name = str(HumanName(nm))
                 if panel_id < 50:
@@ -281,29 +295,17 @@ def extract_panel(convention):
                     organization = person.organization
                 else:
                     organization = Organization.objects.get(name='BHS FHT')
-                judge_dict = {
+                judges.append({
                     'kind': kind,
                     'person': person,
                     'round': round,
                     'organization': organization,
-                    'session': session,
                     'panel_id': panel_id,
-                }
-                if category == 'MUS':
-                    judge_dict['category'] = Judge.CATEGORY.music
-                    judge_dict['slot'] = mus_slot
-                    mus_slot += 1
-                elif category == 'PRS':
-                    judge_dict['category'] = Judge.CATEGORY.presentation
-                    judge_dict['slot'] = prs_slot
-                    prs_slot += 1
-                elif category == 'SNG':
-                    judge_dict['category'] = Judge.CATEGORY.singing
-                    judge_dict['slot'] = sng_slot
-                    sng_slot += 1
-                else:
-                    raise RuntimeError("Unknown category! {0}".format(category))
-                Judge.objects.create(**judge_dict)
+                    'category': category,
+                    'slot': panel_id,
+                })
+    for judge in judges:
+        Judge.objects.create(**judge)
     return
 
 

@@ -340,8 +340,6 @@ class Award(TimeStampedModel):
     )
 
     rounds = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     long_name = models.CharField(
@@ -1118,7 +1116,7 @@ class Contestant(TimeStampedModel):
         # If there are no performances, skip.
         if self.performer.performances.exists():
             agg = self.performer.performances.filter(
-                round__num__lte=self.contest.rounds,
+                round__num__lte=self.contest.award.rounds,
             ).filter(
                 round__session=self.contest.session,
             ).aggregate(
@@ -1946,13 +1944,13 @@ class Judge(TimeStampedModel):
     session = models.ForeignKey(
         'Session',
         related_name='judges',
+        null=True,
+        blank=True,
     )
 
     round = models.ForeignKey(
         'Round',
         related_name='judges',
-        null=True,
-        blank=True,
     )
 
     status = models.IntegerField(
@@ -3307,8 +3305,6 @@ class Round(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     start_date = models.DateField(
