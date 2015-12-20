@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+import datetime
+
 from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
 
@@ -270,12 +272,17 @@ class ContestantAdmin(admin.ModelAdmin):
 class ConventionAdmin(admin.ModelAdmin):
 
     def human_range(self, obj):
-        try:
-            dates = "{0} - {1}".format(
-                arrow.get(obj.dates2.lower).format('MMMM D'),
-                arrow.get(obj.dates2.upper).format('MMMM D, YYYY'),
-            )
-        except AttributeError:
+        if obj.dates2:
+            if obj.dates2.upper - obj.dates2.lower == datetime.timedelta(1):
+                dates = "{0}".format(
+                    arrow.get(obj.dates2.lower).format('MMMM D, YYYY'),
+                )
+            else:
+                dates = "{0} - {1}".format(
+                    arrow.get(obj.dates2.lower).format('MMMM D'),
+                    arrow.get(obj.dates2.upper).format('MMMM D, YYYY'),
+                )
+        else:
             dates = obj.dates2
         return dates
     human_range.short_description = "Dates22"
@@ -287,12 +294,13 @@ class ConventionAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'status',
-        'organization',
-        'kind',
-        'division',
+        # 'status',
+        # 'organization',
+        # 'kind',
+        # 'division',
+        'dates2',
         'human_range',
-        'location',
+        # 'location',
     )
 
     fields = (
