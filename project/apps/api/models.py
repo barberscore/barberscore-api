@@ -70,15 +70,13 @@ from .managers import (
     PerformerQuerySet,
 )
 
-# from .signals import session_post_save
-
 from .validators import (
     validate_trimmed,
     dixon,
-    # is_imsessioned,
-    # is_scheduled,
-    # has_performers,
-    # has_contests,
+    is_imsessioned,
+    is_scheduled,
+    has_performers,
+    has_contests,
     # round_scheduled,
     # contest_started,
     scores_entered,
@@ -131,16 +129,6 @@ class Common(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
         (20, 'inactive', 'Inactive',),
-    )
-
-    sts = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    sts_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='sts',
     )
 
     start_date = models.DateField(
@@ -878,70 +866,70 @@ class Contest(TimeStampedModel):
         #     s += 1
         # return
 
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.built,
-    #         STATUS.ready,
-    #     ],
-    #     target=STATUS.ready,
-    #     conditions=[
-    #         is_scheduled,
-    #         is_imsessioned,
-    #         has_performers,
-    #     ],
-    # )
-    # def prep(self):
-    #     # Seed performers
-    #     marker = []
-    #     i = 1
-    #     for performer in self.performers.accepted().order_by('-prelim'):
-    #         try:
-    #             match = performer.prelim == marker[0].prelim
-    #         except IndexError:
-    #             performer.seed = i
-    #             performer.save()
-    #             marker.append(performer)
-    #             continue
-    #         if match:
-    #             performer.seed = i
-    #             i += len(marker)
-    #             performer.save()
-    #             marker.append(performer)
-    #             continue
-    #         else:
-    #             i += 1
-    #             performer.seed = i
-    #             performer.save()
-    #             marker = [performer]
-    #     return "{0} Ready".format(self)
+    @transition(
+        field=status,
+        source=[
+            STATUS.built,
+            STATUS.final,
+        ],
+        target=STATUS.final,
+        conditions=[
+            is_scheduled,
+            is_imsessioned,
+            has_performers,
+        ],
+    )
+    def prep(self):
+        # Seed performers
+        marker = []
+        i = 1
+        for performer in self.performers.accepted().order_by('-prelim'):
+            try:
+                match = performer.prelim == marker[0].prelim
+            except IndexError:
+                performer.seed = i
+                performer.save()
+                marker.append(performer)
+                continue
+            if match:
+                performer.seed = i
+                i += len(marker)
+                performer.save()
+                marker.append(performer)
+                continue
+            else:
+                i += 1
+                performer.seed = i
+                performer.save()
+                marker = [performer]
+        return "{0} Ready".format(self)
 
-    # @transition(
-    #     field=status,
-    #     source=STATUS.built,
-    #     target=STATUS.started,
-    #     conditions=[
-    #         # is_scheduled,
-    #         is_imsessioned,
-    #         has_performers,
-    #         has_contests,
-    #     ],
-    # )
-    # def start(self):
-    #     # Triggered in UI
-    #     # TODO seed performers?
-    #     round = self.rounds.initial()
-    #     p = 0
-    #     for performer in self.performers.accepted().order_by('?'):
-    #         performer.register()
-    #         performer.save()
-    #         round.performances.create(
-    #             round=round,
-    #             performer=performer,
-    #             position=p,
-    #         )
-    #         p += 1
-    #     return "{0} Started".format(self)
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.started,
+        conditions=[
+            # is_scheduled,
+            is_imsessioned,
+            has_performers,
+            has_contests,
+        ],
+    )
+    def start(self):
+        # Triggered in UI
+        # TODO seed performers?
+        round = self.rounds.initial()
+        p = 0
+        for performer in self.performers.accepted().order_by('?'):
+            performer.register()
+            performer.save()
+            round.performances.create(
+                round=round,
+                performer=performer,
+                position=p,
+            )
+            p += 1
+        return "{0} Started".format(self)
 
     @transition(
         field=status,
@@ -1341,464 +1329,6 @@ class Convention(TimeStampedModel):
                 self.year,
             )
         super(Convention, self).save(*args, **kwargs)
-
-    # def stix(self):
-    #     # models.signals.post_save.disconnect(session_post_save)
-
-    #     # Load data and skip first two header rows
-    #     reader = csv.reader(self.stix_file, skipinitialspace=True)
-    #     reader.next()
-    #     reader.next()
-    #     rows = [row for row in reader]
-
-    #     # Determine meta-data
-    #     chorus_count = 0
-    #     quartet_count = 0
-    #     for row in rows:
-    #         if row[0].startswith('Subsessions:'):
-    #             # Parse session into components
-    #             parts = row[0].partition(':')
-    #             # Parse session meta-data
-    #             session_text = parts[2].strip()
-    #             if session_text.startswith('Chorus'):
-    #                 chorus_count += 1
-    #             elif session_text.startswith('Quartet'):
-    #                 quartet_count += 1
-    #             else:
-    #                 raise RuntimeError("Can't determine session kind")
-    #         if row[0].startswith('Judge'):
-    #             # TODO Parse from panel meta data
-    #             judge_count = int(row[0].partition(":")[2].strip())
-    #     # Build Sessions
-    #     for row in rows:
-    #         if row[0].startswith('Subsessions:'):
-    #             # Parse session into components
-    #             parts = row[0].partition(':')
-    #             # Parse session kind and create
-    #             session_text = parts[2]
-    #             # Identify session by kind
-    #             if 'Chorus' in session_text:
-    #                 # Get or create the session for indempodence
-    #                 session, created = self.sessions.get_or_create(
-    #                     convention=self,
-    #                     kind=self.sessions.model.KIND.chorus,
-    #                     size=2,   #  WARNING   CONSTANT!! !  HACK
-    #                     num_rounds=chorus_count,
-    #                 )
-    #                 # This is a little hacky, but instantiate the rounds,
-    #                 # including increment and kind.
-    #                 i = 0
-    #                 j = chorus_count
-    #                 while i < chorus_count:
-    #                     rnd, created = session.rounds.get_or_create(
-    #                         num=i,
-    #                         kind=j,
-    #                     )
-    #                     i += 1
-    #                     j -= 1
-
-    #                 # build a list of the contests (called subsessions here)
-    #                 contest_list = row[1:]
-    #                 for c in contest_list:
-    #                     # Parse each list item for id, name
-    #                     parts = c.partition('=')
-    #                     contest_number = int(parts[0].strip())
-    #                     contest_text = parts[2]
-    #                     # skip if it's a "most improved" award
-    #                     if "Most-Improved" in contest_text:
-    #                         log.error("Skipping most improved: {0}".format(contest_text))
-    #                         continue
-    #                     # Determine the organization
-    #                     if contest_text.startswith(self.organization.long_name):
-    #                         #  If the subsession matches the convention, stop
-    #                         organization = self.organization
-    #                     else:
-    #                         # match according to the related division name, or throw exception
-    #                         divisions = self.organization.children.all()
-    #                         organization = None
-    #                         for div in divisions:
-    #                             # TODO might need regex here
-    #                             if contest_text.startswith("{0} ".format(div.long_name)):
-    #                                 organization = div
-    #                                 continue
-    #                         if not organization:
-    #                             raise RuntimeError("No match on subsession")
-
-    #                     # Determine the parent (if any)
-    #                     # # Check for qualifiers from this list
-    #                     # qualification_markers = [
-    #                     #     'Preliminary',
-    #                     # ]
-    #                     # if any(substring in contest_text for substring in qualification_markers):
-    #                     # Check for prelims
-    #                     parent = None
-    #                     year = self.year
-    #                     if "Preliminary" in contest_text:
-    #                         # Find year, based on district
-    #                         year = self.year + 1
-    #                         try:
-    #                             parent = Contest.objects.get(
-    #                                 level=Contest.LEVEL.international,
-    #                                 kind=Contest.KIND.chorus,
-    #                                 organization=self.organization.parent,
-    #                                 year=year,
-    #                             )
-    #                         except Exception as e:
-    #                             raise ("Error finding parent: {0} {1}".format(contest_text, e))
-
-    #                     if "Qualification" in contest_text:
-    #                         # Find year, based on district
-    #                         year = self.year
-    #                         try:
-    #                             parent = Contest.objects.get(
-    #                                 level=Contest.LEVEL.district,
-    #                                 kind=Contest.KIND.chorus,
-    #                                 organization=self.organization,
-    #                                 year=year,
-    #                             )
-    #                         except Exception as e:
-    #                             log.error("Error finding parent: {0}".format(contest_text))
-    #                             raise e
-    #                     # Determine Level
-    #                     # TODO Not sure this adds value...
-    #                     level = organization.level + 1
-
-    #                     # Determine Rounds
-    #                     # This is assumed to be constant for Chorus comps.
-    #                     rounds = 1
-
-    #                     # Determine the Kind
-    #                     # TODO Really need a better parser here
-    #                     KIND = session.contests.model.KIND
-    #                     if 'Plateau A Chorus' in contest_text:
-    #                         kind = KIND.a
-    #                     elif 'Plateau AA Chorus' in contest_text:
-    #                         kind = KIND.aa
-    #                     elif 'Plateau AAA Chorus' in contest_text:
-    #                         kind = KIND.aaa
-    #                     else:
-    #                         kind = KIND.chorus
-    #                         # raise RuntimeError("parse fail!")
-    #                     contest, created = session.contests.get_or_create(
-    #                         kind=kind,
-    #                         level=level,
-    #                         organization=organization,
-    #                         year=year,
-    #                         rounds=rounds,
-    #                         session=session,
-    #                         parent=parent,
-    #                     )
-    #                     contest.subsession_id = contest_number
-    #                     contest.save()
-
-    #             # Identify session by kind
-    #             if 'Quartet' in session_text:
-    #                 # Get or create the session for indempodence
-    #                 session, created = self.sessions.get_or_create(
-    #                     convention=self,
-    #                     kind=self.sessions.model.KIND.quartet,
-    #                     size=2,   #  WARNING   CONSTANT!! !  HACK
-    #                     num_rounds=quartet_count,
-    #                 )
-    #                 # This is a little hacky, but instantiate the rounds,
-    #                 # including increment and kind.
-    #                 i = 0
-    #                 j = quartet_count
-    #                 while i < quartet_count:
-    #                     rnd, created = session.rounds.get_or_create(
-    #                         num=i,
-    #                         kind=j,
-    #                     )
-    #                     i += 1
-    #                     j -= 1
-
-    #                 # build a list of the contests (called subsessions here)
-    #                 contest_list = row[1:]
-    #                 for c in contest_list:
-
-    #                     # There's something wrong with who and how is being skipped and defaulted to
-
-    #                     # skip if it's a "most improved" award
-    #                     if any([
-    #                         "Out of Division" in c,
-    #                         "Super Seniors" in c,
-    #                     ]):
-    #                         log.error("Skipping out of division: {0}".format(contest_text))
-    #                         continue
-    #                     # Parse each list item for id, name
-    #                     parts = c.partition('=')
-    #                     log.debug(contest_list)
-    #                     log.debug(parts)
-    #                     contest_number = int(parts[0].strip())
-    #                     contest_text = parts[2]
-    #                     # Determine the organization
-    #                     if contest_text.startswith(self.organization.long_name):
-    #                         #  If the subsession matches the convention, stop
-    #                         organization = self.organization
-    #                     else:
-    #                         # match according to the related division name, or throw exception
-    #                         divisions = self.organization.children.all()
-    #                         organization = None
-    #                         for div in divisions:
-    #                             # TODO might need regex here
-    #                             if contest_text.startswith("{0} ".format(div.long_name)):
-    #                                 organization = div
-    #                                 continue
-    #                         if not organization:
-    #                             raise RuntimeError("No match on subsession")
-
-    #                     # Determine the Kind
-    #                     # TODO Really need a better parser here
-    #                     KIND = session.contests.model.KIND
-    #                     if 'Novice Quartet' in contest_text:
-    #                         kind = KIND.novice
-    #                     if 'Seniors Quartet' in contest_text:
-    #                         kind = KIND.seniors
-    #                     else:
-    #                         kind = KIND.quartet
-
-    #                     # Determine the parent (if any)
-    #                     # # Check for qualifiers from this list
-    #                     # qualification_markers = [
-    #                     #     'Preliminary',
-    #                     # ]
-    #                     # if any(substring in contest_text for substring in qualification_markers):
-    #                     # Check for prelims
-    #                     parent = None
-    #                     year = self.year
-    #                     if "Qualification" in contest_text:
-    #                         # Find year, based on district
-    #                         year = self.year
-    #                         try:
-    #                             parent = Contest.objects.get(
-    #                                 level=Contest.LEVEL.district,
-    #                                 kind=kind,
-    #                                 organization=self.organization,
-    #                                 year=year,
-    #                             )
-    #                         except Exception as e:
-    #                             log.error("Error finding parent: {0}".format(contest_text))
-    #                             raise e
-
-    #                     # Determine Level
-    #                     # TODO Not sure this adds value...
-    #                     level = organization.level + 1
-
-    #                     # Determine Rounds
-    #                     if "(2 Rounds)" in contest_text:
-    #                         rounds = 2
-    #                     else:
-    #                         rounds = 1
-
-    #                         # raise RuntimeError("parse fail!")
-    #                     contest, created = session.contests.get_or_create(
-    #                         kind=kind,
-    #                         level=level,
-    #                         organization=organization,
-    #                         year=year,
-    #                         rounds=rounds,
-    #                         session=session,
-    #                         parent=parent,
-    #                     )
-    #                     contest.subsession_id = contest_number
-    #                     contest.save()
-    #             else:
-    #                 raise RuntimeError("Can't determine session kind")
-
-    #     # Determine Panel
-    #     for row in rows:
-    #         if row[0].startswith('Panel'):
-    #             parts = row[0].partition('-')
-    #             # Parse panel kind and create
-    #             panel_text = parts[2]
-    #             # Identify panel by kind
-    #             if 'Chorus' in panel_text:
-    #                 kind = self.sessions.model.KIND.chorus
-    #             elif 'Quartet' in panel_text:
-    #                 kind = self.sessions.model.KIND.quartet
-    #             else:
-    #                 raise RuntimeError("Can't determine judging panel kind")
-    #             session = self.sessions.get(
-    #                 convention=self,
-    #                 kind=kind,
-    #             )
-    #             # Create judges from same row
-    #             panel_list = row[1:]
-    #             mus_slot = 1
-    #             prs_slot = 1
-    #             sng_slot = 1
-    #             for panel in panel_list:
-    #                 # Partition into components
-    #                 parts = panel.partition('=')
-    #                 name = HumanName(parts[2])
-    #                 # And sub partition the first partition
-    #                 subparts = parts[0].partition('(')
-    #                 # Find the panel_id number
-    #                 panel_id = int(subparts[0].strip())
-    #                 # And the category by abbreviation
-    #                 if panel_id < 50:
-    #                     kind = session.judges.model.KIND.official
-    #                 else:
-    #                     kind = session.judges.model.KIND.practice
-    #                 category_raw = subparts[2][:3]
-    #                 # Get the person
-    #                 from .models import Person
-    #                 person = Person.objects.get(
-    #                     name=str(name),
-    #                 )
-    #                 # Now create judge by category, incrementing each
-    #                 # slot accordingly
-    #                 judge_dict = {
-    #                     'kind': kind,
-    #                     'person': person,
-    #                 }
-    #                 if category_raw == 'MUS':
-    #                     judge_dict['category'] = session.judges.model.CATEGORY.music
-    #                     judge_dict['slot'] = mus_slot
-    #                     mus_slot += 1
-    #                 elif category_raw == 'PRS':
-    #                     judge_dict['category'] = session.judges.model.CATEGORY.presentation
-    #                     judge_dict['slot'] = prs_slot
-    #                     prs_slot += 1
-    #                 elif category_raw == 'SNG':
-    #                     judge_dict['category'] = session.judges.model.CATEGORY.singing
-    #                     judge_dict['slot'] = sng_slot
-    #                     sng_slot += 1
-    #                 else:
-    #                     raise RuntimeError("Unknown category!")
-    #                 judge, created = session.judges.get_or_create(
-    #                     **judge_dict
-    #                 )
-    #                 judge.panel_id = panel_id
-    #                 judge.save()
-
-    #     # Determine Judge
-    #     for row in rows:
-    #         if row[0].startswith('Judge'):
-    #             pass
-
-    #         # Determine Performances
-    #     for row in rows:
-    #         if row[0].startswith('Session'):
-    #             if 'Chorus' in row[0]:
-    #                 session = self.sessions.get(
-    #                     kind=self.sessions.model.KIND.chorus,
-    #                 )
-    #             elif 'Quartet' in row[0]:
-    #                 session = self.sessions.get(
-    #                     kind=self.sessions.model.KIND.quartet,
-    #                 )
-    #             else:
-    #                 raise RuntimeError("Can't determine session")
-    #             group_name = row[1].partition(":")[2].strip()
-    #             if session.kind == session.KIND.chorus:
-    #                 from .models import Group
-    #                 try:
-    #                     group = Chapter.objects.get(
-    #                         name=group_name,
-    #                         status=Chapter.STATUS.active,
-    #                     ).groups.first()
-    #                 except Chapter.DoesNotExist:
-    #                     log.error("No Chapter: {0}".format(group_name))
-    #                     continue
-    #                 except Chapter.MultipleObjectsReturned:
-    #                     log.error("Many Chapters: {0}".format(group_name))
-    #                     continue
-    #             else:
-    #                 from .models import Group
-    #                 try:
-    #                     group, created = Group.objects.get_or_create(
-    #                         name=group_name,
-    #                         status=Group.STATUS.active,
-    #                     )
-    #                 except Group.DoesNotExist:
-    #                     log.error("No Group: {0}".format(group_name))
-    #                     continue
-    #                 except Group.MultipleObjectsReturned:
-    #                     log.error("Many Groups: {0}".format(group_name))
-    #                     continue
-    #                 except UnicodeDecodeError:
-    #                     log.error("Unicode {0}".format(group_name))
-    #                     continue
-    #             performer, created = session.performers.get_or_create(
-    #                 group=group,
-    #                 session=session,
-    #             )
-    #             subsessions_list = row[2].partition(":")[2].split(",")
-    #             subsessions = [int(s) for s in subsessions_list]
-    #             log.debug(session)
-    #             log.debug([contest.subsession_id for contest in session.contests.all()])
-    #             log.debug(session.contests.get(subsession_id=2))
-    #             for subsession in subsessions:
-    #                 try:
-    #                     contest = session.contests.get(
-    #                         subsession_id=subsession,
-    #                     )
-    #                 except session.contests.model.DoesNotExist:
-    #                     pass
-    #                 contestant, created = contest.contestants.get_or_create(
-    #                     performer=performer,
-    #                 )
-    #             oa_raw = int(row[3].partition(":")[2].strip())
-    #             round = session.rounds.first()
-    #             performance, created = performer.performances.get_or_create(
-    #                 position=oa_raw - 1,
-    #                 round=round,
-    #             )
-    #             song_order = int(row[4].partition(":")[2].strip())
-    #             song_title = row[5].partition(":")[2].strip()
-    #             song, created = performance.songs.get_or_create(
-    #                 performance=performance,
-    #                 title=song_title,
-    #                 order=song_order,
-    #             )
-
-    #             scores_raw = row[-judge_count:]
-
-    #             judges = session.judges.order_by('panel_id')
-    #             i = 0
-    #             for judge in judges:
-    #                 score, created = song.scores.get_or_create(
-    #                     points=int(scores_raw[i]),
-    #                     judge=judge,
-    #                     category=judge.category,
-    #                     kind=judge.kind,
-    #                 )
-    #                 i += 1
-
-    #             # i = 1
-    #             # for in scores_raw:
-    #             #     try:
-    #             #         judge = performance.round.session.judges.get(panel_id=i)
-    #             #     except Exception as e:
-    #             #         log.error(panel_id)
-    #             #         log.error(performance.round.session.judges.all())
-    #             #         raise e
-    #             #     score, created = song.scores.get_or_create(
-    #             #         points=int(score),
-    #             #         judge=judge,
-    #             #         category=judge.category,
-    #             #         kind=judge.kind,
-    #             #     )
-    #             #     i += 1
-
-    #     # Denormalize
-    #     for session in self.sessions.all():
-    #         for performer in session.performers.all():
-    #             for performance in performer.performances.all():
-    #                 for song in performance.songs.all():
-    #                     song.calculate()
-    #                     song.save()
-    #                 performance.calculate()
-    #                 performance.save()
-    #             performer.calculate()
-    #             performer.save()
-    #     for session in self.sessions.all():
-    #         for contest in session.contests.all():
-    #             contest.rank()
-    #             contest.save()
-    #     # models.signals.post_save.connect(session_post_save)
-    #     return
 
 
 class Director(TimeStampedModel):
@@ -2936,6 +2466,262 @@ class Person(Common):
         super(Person, self).save(*args, **kwargs)
 
 
+class Round(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (15, 'ready', 'Ready',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
+        (30, 'final', 'Final',),
+    )
+
+    KIND = Choices(
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semi-Finals'),
+        (3, 'quarters', 'Quarter-Finals'),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='rounds',
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    num = models.IntegerField(
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    dates = DateRangeField(
+        help_text="""
+            The active dates of the resource.""",
+        null=True,
+        blank=True,
+    )
+
+    slots = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    stix_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    class Meta:
+        ordering = (
+            'session',
+            'kind',
+        )
+        unique_together = (
+            ('session', 'kind',),
+        )
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} {1}".format(
+            self.session,
+            self.get_kind_display(),
+        )
+        super(Round, self).save(*args, **kwargs)
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def get_preceding(self):
+        try:
+            obj = self.__class__.objects.get(
+                contest=self.contest,
+                kind=self.kind + 1,
+            )
+            return obj
+        except self.DoesNotExist:
+            return None
+
+    def get_next(self):
+        try:
+            obj = self.__class__.objects.get(
+                contest=self.contest,
+                kind=self.kind - 1,
+            )
+            return obj
+        except self.DoesNotExist:
+            return None
+
+    def next_performance(self):
+        try:
+            return self.performances.filter(
+                status=self.performances.model.STATUS.ready,
+            ).order_by('position').first()
+        except self.performances.model.DoesNotExist:
+            return None
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.new,
+    #     target=STATUS.built,
+    # )
+    # def build(self):
+    #     return
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.built,
+    #     target=STATUS.ready,
+    #     # conditions=[
+    #     #     contest_started,
+    #     # ]
+    # )
+    # def prep(self):
+    #     p = 0
+    #     for performer in self.contest.performers.official().order_by('?'):
+    #         self.performances.create(
+    #             round=self,
+    #             performer=performer,
+    #             position=p,
+    #         )
+    #         p += 1
+    #     return
+
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.started,
+        conditions=[
+            # round_drawn,
+            # round_scheduled,
+            # contest_started,
+            # preceding_round_finished,
+        ]
+    )
+    def start(self):
+        # Triggered in UI
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.started,
+        target=STATUS.finished,
+        conditions=[
+            performances_finished,
+            scores_validated,
+        ]
+    )
+    def finish(self):
+        # TODO Validate performances over
+        cursor = []
+        i = 1
+        for performance in self.performances.order_by('-total_points'):
+            try:
+                match = performance.total_points == cursor[0].total_points
+            except IndexError:
+                performance.place = i
+                performance.save()
+                cursor.append(performance)
+                continue
+            if match:
+                performance.place = i
+                i += len(cursor)
+                performance.save()
+                cursor.append(performance)
+                continue
+            else:
+                i += 1
+                performance.place = i
+                performance.save()
+                cursor = [performance]
+        return "Round Ended"
+
+    @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    def finalize(self):
+        return
+        # # TODO Some validation
+        # try:
+        #     # TODO This is an awful lot to be in a try/except; refactor?
+        #     next_round = self.contest.rounds.get(
+        #         kind=(self.kind - 1),
+        #     )
+        #     qualifiers = self.performances.filter(
+        #         place__lte=next_round.slots,
+        #     ).order_by('?')
+        #     p = 0
+        #     for qualifier in qualifiers:
+        #         l = next_round.performances.create(
+        #             performer=qualifier.performer,
+        #             position=p,
+        #             # start=next_round.start,
+        #         )
+        #         p += 1
+        #         p1 = l.songs.create(performance=l, order=1)
+        #         p2 = l.songs.create(performance=l, order=2)
+        #         for j in self.contest.judges.scoring():
+        #             p1.scores.create(
+        #                 song=p1,
+        #                 judge=j,
+        #             )
+        #             p2.scores.create(
+        #                 song=p2,
+        #                 judge=j,
+        #             )
+        # except self.DoesNotExist:
+        #     pass
+        # return 'Round Confirmed'
+    # def draw_contest(self):
+    #     cs = self.performers.order_by('?')
+    #     round = self.rounds.get(kind=self.rounds)
+    #     p = 0
+    #     for c in cs:
+    #         round.performances.create(
+    #             performer=c,
+    #             position=p,
+    #             start=round.start,
+    #         )
+    #         p += 1
+    #     self.status = self.STATUS.ready
+    #     self.save()
+
+
 class Score(TimeStampedModel):
     """
         The Score is never released publicly.  These are the actual
@@ -3290,262 +3076,6 @@ class Session(TimeStampedModel):
         return "{0} Started".format(self)
 
 
-class Round(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (30, 'final', 'Final',),
-    )
-
-    KIND = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semi-Finals'),
-        (3, 'quarters', 'Quarter-Finals'),
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='rounds',
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    num = models.IntegerField(
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    dates = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
-        null=True,
-        blank=True,
-    )
-
-    slots = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    stix_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    class Meta:
-        ordering = (
-            'session',
-            'kind',
-        )
-        unique_together = (
-            ('session', 'kind',),
-        )
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.session,
-            self.get_kind_display(),
-        )
-        super(Round, self).save(*args, **kwargs)
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def get_preceding(self):
-        try:
-            obj = self.__class__.objects.get(
-                contest=self.contest,
-                kind=self.kind + 1,
-            )
-            return obj
-        except self.DoesNotExist:
-            return None
-
-    def get_next(self):
-        try:
-            obj = self.__class__.objects.get(
-                contest=self.contest,
-                kind=self.kind - 1,
-            )
-            return obj
-        except self.DoesNotExist:
-            return None
-
-    def next_performance(self):
-        try:
-            return self.performances.filter(
-                status=self.performances.model.STATUS.ready,
-            ).order_by('position').first()
-        except self.performances.model.DoesNotExist:
-            return None
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.built,
-    # )
-    # def build(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.built,
-    #     target=STATUS.ready,
-    #     # conditions=[
-    #     #     contest_started,
-    #     # ]
-    # )
-    # def prep(self):
-    #     p = 0
-    #     for performer in self.contest.performers.official().order_by('?'):
-    #         self.performances.create(
-    #             round=self,
-    #             performer=performer,
-    #             position=p,
-    #         )
-    #         p += 1
-    #     return
-
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.started,
-        conditions=[
-            # round_drawn,
-            # round_scheduled,
-            # contest_started,
-            # preceding_round_finished,
-        ]
-    )
-    def start(self):
-        # Triggered in UI
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.started,
-        target=STATUS.finished,
-        conditions=[
-            performances_finished,
-            scores_validated,
-        ]
-    )
-    def finish(self):
-        # TODO Validate performances over
-        cursor = []
-        i = 1
-        for performance in self.performances.order_by('-total_points'):
-            try:
-                match = performance.total_points == cursor[0].total_points
-            except IndexError:
-                performance.place = i
-                performance.save()
-                cursor.append(performance)
-                continue
-            if match:
-                performance.place = i
-                i += len(cursor)
-                performance.save()
-                cursor.append(performance)
-                continue
-            else:
-                i += 1
-                performance.place = i
-                performance.save()
-                cursor = [performance]
-        return "Round Ended"
-
-    @transition(field=status, source=STATUS.finished, target=STATUS.final)
-    def finalize(self):
-        return
-        # # TODO Some validation
-        # try:
-        #     # TODO This is an awful lot to be in a try/except; refactor?
-        #     next_round = self.contest.rounds.get(
-        #         kind=(self.kind - 1),
-        #     )
-        #     qualifiers = self.performances.filter(
-        #         place__lte=next_round.slots,
-        #     ).order_by('?')
-        #     p = 0
-        #     for qualifier in qualifiers:
-        #         l = next_round.performances.create(
-        #             performer=qualifier.performer,
-        #             position=p,
-        #             # start=next_round.start,
-        #         )
-        #         p += 1
-        #         p1 = l.songs.create(performance=l, order=1)
-        #         p2 = l.songs.create(performance=l, order=2)
-        #         for j in self.contest.judges.scoring():
-        #             p1.scores.create(
-        #                 song=p1,
-        #                 judge=j,
-        #             )
-        #             p2.scores.create(
-        #                 song=p2,
-        #                 judge=j,
-        #             )
-        # except self.DoesNotExist:
-        #     pass
-        # return 'Round Confirmed'
-    # def draw_contest(self):
-    #     cs = self.performers.order_by('?')
-    #     round = self.rounds.get(kind=self.rounds)
-    #     p = 0
-    #     for c in cs:
-    #         round.performances.create(
-    #             performer=c,
-    #             position=p,
-    #             start=round.start,
-    #         )
-    #         p += 1
-    #     self.status = self.STATUS.ready
-    #     self.save()
-
-
 class Singer(TimeStampedModel):
     """Quartet Relation"""
     id = models.UUIDField(
@@ -3812,19 +3342,20 @@ class Song(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.new,
-    #     ],
-    #     target=STATUS.entered,
-    #     conditions=[
-    #         song_entered,
-    #     ]
-    # )
-    # def enter(self):
-    #     # Triggered from form/admin
-    #     return
+
+    @transition(
+        field=status,
+        source=[
+            STATUS.new,
+        ],
+        target=STATUS.final,
+        conditions=[
+            song_entered,
+        ]
+    )
+    def enter(self):
+        # Triggered from form/admin
+        return
 
     @transition(
         field=status,
