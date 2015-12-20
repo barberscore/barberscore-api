@@ -302,6 +302,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'stix_div',
         ('location', 'timezone',),
         'dates',
+        'dates2',
         'organization',
         'kind',
         'year',
