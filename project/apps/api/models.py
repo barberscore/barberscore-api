@@ -131,21 +131,7 @@ class Common(TimeStampedModel):
         (20, 'inactive', 'Inactive',),
     )
 
-    start_date = models.DateField(
-        help_text="""
-            The founding/birth date of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    end_date = models.DateField(
-        help_text="""
-            The retirement/deceased date of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    dates = DateRangeField(
+    date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
         null=True,
@@ -359,12 +345,6 @@ class Award(TimeStampedModel):
         default="",
     )
 
-    is_championship = models.BooleanField(
-        help_text="""
-            Championships are awards with only one winner.""",
-        default=True,
-    )
-
     class Meta:
         ordering = (
             'organization',
@@ -521,6 +501,13 @@ class Certification(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
+    )
+
+    date = DateRangeField(
+        help_text="""
+            The active dates of the resource.""",
+        null=True,
+        blank=True,
     )
 
     def __unicode__(self):
@@ -1261,14 +1248,7 @@ class Convention(TimeStampedModel):
         choices=YEAR_CHOICES,
     )
 
-    dates = models.CharField(
-        help_text="""
-            The convention dates (will be replaced by start/end).""",
-        max_length=200,
-        blank=True,
-    )
-
-    dates2 = DateRangeField(
+    date = DateRangeField(
         help_text="""
             The convention dates (will be replaced by start/end).""",
         null=True,
@@ -1654,18 +1634,11 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
-    start_date = models.DateField(
+    date = DateRangeField(
         help_text="""
-            The founding/birth date of the resource.""",
-        blank=True,
+            The active dates of the resource.""",
         null=True,
-    )
-
-    end_date = models.DateField(
-        help_text="""
-            The retirement/deceased date of the resource.""",
         blank=True,
-        null=True,
     )
 
     location = models.CharField(
@@ -1825,11 +1798,6 @@ class Performance(TimeStampedModel):
 
     position = models.PositiveSmallIntegerField(
         'Position',
-    )
-
-    start_time = models.DateTimeField(
-        null=True,
-        blank=True,
     )
 
     scheduled = DateTimeRangeField(
@@ -2521,11 +2489,6 @@ class Round(TimeStampedModel):
     )
 
     num = models.IntegerField(
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
     )
 
     dates = DateRangeField(

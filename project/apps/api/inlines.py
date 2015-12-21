@@ -465,7 +465,6 @@ class RoundInline(admin.TabularInline):
         'session',
         'kind',
         'status',
-        'start_date',
         'num',
         'slots',
     )

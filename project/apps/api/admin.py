@@ -77,7 +77,6 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'organization',
-        'is_championship',
     ]
 
     def get_long_name(self, obj):
@@ -125,7 +124,6 @@ class ChapterAdmin(admin.ModelAdmin):
     fields = (
         'name',
         # ('status', 'status_monitor',),
-        ('start_date', 'end_date',),
         'organization',
         'location',
         'website',
@@ -272,18 +270,18 @@ class ContestantAdmin(admin.ModelAdmin):
 class ConventionAdmin(admin.ModelAdmin):
 
     def human_range(self, obj):
-        if obj.dates2:
-            if obj.dates2.upper - obj.dates2.lower == datetime.timedelta(1):
+        if obj.date:
+            if obj.date.upper - obj.date.lower == datetime.timedelta(1):
                 dates = "{0}".format(
-                    arrow.get(obj.dates2.lower).format('MMMM D, YYYY'),
+                    arrow.get(obj.date.lower).format('MMMM D, YYYY'),
                 )
             else:
                 dates = "{0} - {1}".format(
-                    arrow.get(obj.dates2.lower).format('MMMM D'),
-                    arrow.get(obj.dates2.upper).format('MMMM D, YYYY'),
+                    arrow.get(obj.date.lower).format('MMMM D'),
+                    arrow.get(obj.date.upper).format('MMMM D, YYYY'),
                 )
         else:
-            dates = obj.dates2
+            dates = obj.date
         return dates
     human_range.short_description = "Dates22"
 
@@ -298,7 +296,7 @@ class ConventionAdmin(admin.ModelAdmin):
         # 'organization',
         # 'kind',
         # 'division',
-        'dates2',
+        'date',
         'human_range',
         # 'location',
     )
@@ -310,7 +308,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'stix_div',
         ('location', 'timezone',),
         'dates',
-        'dates2',
+        'date',
         'organization',
         'kind',
         'year',
@@ -365,7 +363,6 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'kind',
-        ('start_date', 'end_date',),
         'chapter',
         'location',
         'website',
@@ -463,7 +460,6 @@ class OrganizationAdmin(MPTTModelAdmin):
         'kind',
         'short_name',
         'long_name',
-        ('start_date', 'end_date',),
         'location',
         'website',
         'facebook',
@@ -515,7 +511,6 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
         'name',
         'status',
         'draw',
-        'start_time',
         'total_score',
     ]
     list_filter = [
@@ -527,7 +522,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'performer',
-        ('draw', 'start_time',),
+        ('draw',),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
@@ -657,7 +652,6 @@ class PersonAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'kind',
-        ('start_date', 'end_date',),
         'organization',
         'location',
         'website',
@@ -807,14 +801,13 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'name',
         'status',
-        'start_date',
         'slots',
     ]
     fields = [
         'name',
         ('status', 'status_monitor',),
         ('session', 'kind',),
-        ('start_date', 'slots',),
+        ('slots',),
     ]
 
     readonly_fields = [
