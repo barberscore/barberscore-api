@@ -625,9 +625,6 @@ class Contest(TimeStampedModel):
     award = models.ForeignKey(
         'Award',
         related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     organization = TreeForeignKey(

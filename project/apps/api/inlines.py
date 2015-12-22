@@ -89,7 +89,7 @@ class ContestInline(admin.TabularInline):
 
     fields = (
         'link',
-        'name',
+        # 'name',
         'status',
         'award',
         'session',
@@ -232,7 +232,6 @@ class GroupInline(admin.TabularInline):
 class JudgeInline(admin.TabularInline):
     model = Judge
     fields = (
-        'session',
         'person',
         # 'organization',
         'category',
@@ -320,10 +319,10 @@ class PerformerInline(admin.TabularInline):
         'link',
         'session',
         'group',
-        'organization',
-        'seed',
-        'prelim',
-        'total_score',
+        # 'organization',
+        # 'seed',
+        # 'prelim',
+        # 'total_score',
         'men',
     )
     ordering = (

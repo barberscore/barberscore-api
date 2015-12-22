@@ -407,7 +407,7 @@ class JudgeAdmin(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'session',
+        'round',
         'person',
         'organization',
         ('category', 'slot',),
@@ -426,18 +426,18 @@ class JudgeAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'organization',
-        'session',
+        'round',
         'person',
     ]
 
     raw_id_fields = (
-        'session',
+        'round',
         'person',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'session',
+            'round',
             'person',
         ]
     }
@@ -573,12 +573,12 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'seed',
-        'prelim',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
+        # 'seed',
+        # 'prelim',
+        # 'mus_score',
+        # 'prs_score',
+        # 'sng_score',
+        # 'total_score',
         'men',
     )
 
@@ -608,8 +608,8 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('group', 'organization',),
         ('seed', 'prelim',),
         ('men',),
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
+        # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
+        # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
 
     readonly_fields = (
@@ -787,7 +787,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     inlines = [
         RoundInline,
-        JudgeInline,
         ContestInline,
         PerformerInline,
     ]
@@ -836,7 +835,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         PerformanceInline,
-        # PlacementInline,
+        JudgeInline,
     ]
 
     search_fields = [
