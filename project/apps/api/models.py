@@ -8,6 +8,8 @@ import uuid
 import os
 import datetime
 
+import arrow
+
 from django.db import (
     models,
 )
@@ -679,6 +681,8 @@ class Contest(TimeStampedModel):
         help_text="""
             The objective of the contest.""",
         choices=GOAL,
+        null=True,
+        blank=True,
     )
 
     qual_score = models.FloatField(
@@ -1234,7 +1238,7 @@ class Convention(TimeStampedModel):
 
     division = models.IntegerField(
         help_text="""
-            This is a division convention of Divisions.""",
+            Detail if division/combo convention.""",
         choices=DIVISION,
         null=True,
         blank=True,
@@ -1246,13 +1250,12 @@ class Convention(TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
+        editable=False,
     )
 
     date = DateRangeField(
         help_text="""
             The convention dates (will be replaced by start/end).""",
-        null=True,
-        blank=True,
     )
 
     location = models.CharField(
@@ -1290,24 +1293,13 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        # self.name = u"{0}; {1}; {2}".format(
-        #     self.stix_name,
-        #     self.location,
-        #     self.dates,
-        # )
-        if self.division:
-            self.name = u"{0} {1} {2} {3}".format(
-                self.organization,
-                self.get_kind_display(),
-                self.get_division_display(),
-                self.year,
-            )
-        else:
-            self.name = u"{0} {1} {2}".format(
-                self.organization,
-                self.get_kind_display(),
-                self.year,
-            )
+        self.name = " ".join(filter(None, [
+            u"{0}".format(self.organization),
+            u"{0}".format(self.get_kind_display()),
+            u"{0}".format(self.get_division_display()),
+            u"{0}".format(self.year),
+        ]))
+        self.year = arrow.get(self.date.lower).year
         super(Convention, self).save(*args, **kwargs)
 
 
@@ -2091,34 +2083,12 @@ class Performer(TimeStampedModel):
         related_name='performers',
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='performers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     picture = models.ImageField(
         help_text="""
             The on-stage session picture (as opposed to the "official" photo).""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
-    )
-
-    seed = models.IntegerField(
-        help_text="""
-            The incoming rank based on prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
-        null=True,
-        blank=True,
     )
 
     men = models.IntegerField(
@@ -2130,6 +2100,31 @@ class Performer(TimeStampedModel):
     )
 
     # Denormalized
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='performers',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        editable=False,
+    )
+
+    seed = models.IntegerField(
+        help_text="""
+            The incoming rank based on prelim score.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     place = models.IntegerField(
         help_text="""
             The final placement/rank of the performer for the entire session (ie, not a specific contest).""",
@@ -2216,6 +2211,7 @@ class Performer(TimeStampedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
+        self.organization = self.group.organization
         self.name = u"{0} {1}".format(
             self.session,
             self.group,
@@ -2936,8 +2932,6 @@ class Session(TimeStampedModel):
     # Denormalized
     organization = TreeForeignKey(
         'Organization',
-        help_text="""
-            The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
         related_name='sessions',
         editable=False,
     )

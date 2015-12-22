@@ -4,6 +4,9 @@ from django.db.models import Q
 
 from unidecode import unidecode
 
+from psycopg2.extras import DateRange
+import arrow
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -58,10 +61,15 @@ def import_convention(path, kind, division=False):
             )
         except Organization.DoesNotExist:
             raise RuntimeError("No Match for: {0}".format(district))
+        date = DateRange(
+            arrow.get(dates, "MMMM D, YYYY").date(),
+            arrow.get(dates, "MMMM D, YYYY").replace(days=+1).date(),
+            "[)",
+        )
         convention = Convention(
             stix_name=stix_name,
             location=location,
-            dates=dates,
+            date=date,
             year=year,
             organization=organization,
             kind=getattr(Convention.KIND, kind),

@@ -165,12 +165,12 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'history',
-        'goal',
-        'level',
-        'kind',
-        'year',
-        'organization',
+        # 'history',
+        # 'goal',
+        # 'level',
+        # 'kind',
+        # 'year',
+        # 'organization',
         'session',
         'award',
     )
@@ -195,13 +195,13 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('history', 'history_monitor',),
         'session',
         'award',
-        'goal',
-        'organization',
-        'level',
-        'kind',
-        'year',
-        'rounds',
-        'qual_score',
+        # 'goal',
+        # 'organization',
+        # 'level',
+        # 'kind',
+        # 'year',
+        # 'rounds',
+        # 'qual_score',
     )
 
     readonly_fields = (
@@ -292,11 +292,11 @@ class ConventionAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        # 'status',
-        # 'organization',
-        # 'kind',
-        # 'division',
-        'date',
+        'status',
+        'organization',
+        'kind',
+        'division',
+        # 'date',
         'human_range',
         # 'location',
     )
@@ -304,15 +304,14 @@ class ConventionAdmin(admin.ModelAdmin):
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'stix_name',
-        'stix_div',
+        # 'stix_name',
+        # 'stix_div',
         ('location', 'timezone',),
-        'dates',
+        # 'dates',
         'date',
         'organization',
         'kind',
-        'year',
-        'stix_file',
+        # 'stix_file',
         'division',
     )
 
@@ -334,6 +333,7 @@ class ConventionAdmin(admin.ModelAdmin):
     readonly_fields = (
         'name',
         'status_monitor',
+        'year',
     )
     save_on_top = True
 
@@ -613,6 +613,9 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     readonly_fields = (
+        'organization',
+        'seed',
+        'prelim',
         'name',
         'status_monitor',
         'mus_points',
@@ -740,11 +743,11 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         ('status', 'status_monitor',),
         ('history', 'history_monitor',),
         'convention',
-        'organization',
-        'year',
         'kind',
-        'size',
-        'num_rounds',
+        # 'organization',
+        # 'year',
+        # # 'size',
+        # 'num_rounds',
     ]
 
     list_display = [
@@ -752,8 +755,8 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status',
         'convention',
         'kind',
-        'size',
-        'num_rounds',
+        # 'size',
+        # 'num_rounds',
     ]
 
     list_filter = (
@@ -786,7 +789,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         RoundInline,
         JudgeInline,
         ContestInline,
-        PerformerStackedInline,
+        PerformerInline,
     ]
 
 

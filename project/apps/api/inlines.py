@@ -90,14 +90,16 @@ class ContestInline(admin.TabularInline):
     fields = (
         'link',
         'name',
+        'status',
+        'award',
         'session',
-        'organization',
-        'level',
-        'kind',
-        'goal',
-        'year',
-        'rounds',
-        'qual_score',
+        # 'organization',
+        # 'level',
+        # 'kind',
+        # 'goal',
+        # 'year',
+        # 'rounds',
+        # 'qual_score',
     )
     show_change_link = True
 
@@ -130,7 +132,7 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        'name',
+        # 'name',
         'contest',
         'performer',
         'total_score',
@@ -339,6 +341,9 @@ class PerformerInline(admin.TabularInline):
     readonly_fields = [
         'total_score',
         'link',
+        'organization',
+        'seed',
+        'prelim',
     ]
 
     autocomplete_lookup_fields = {
@@ -400,9 +405,9 @@ class SessionInline(admin.TabularInline):
         'name',
         'status',
         'convention',
-        'kind',
-        'size',
-        'num_rounds',
+        # 'kind',
+        # 'size',
+        # 'num_rounds',
     )
     show_change_link = True
 
@@ -462,10 +467,11 @@ class RoundInline(admin.TabularInline):
 
     fields = (
         'link',
+        'name',
         'session',
-        'kind',
+        # 'kind',
         'status',
-        'num',
+        # 'num',
         'slots',
     )
     ordering = (
@@ -486,6 +492,7 @@ class RoundInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
     readonly_fields = [
         'link',
+        'name',
     ]
 
 
@@ -506,11 +513,9 @@ class PerformerStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'link',
         'session',
         'group',
-        'organization',
-        'seed',
-        'prelim',
-        'total_score',
         'men',
+        'organization',
+        ('seed', 'prelim',),
     )
     ordering = (
         'group__kind',
@@ -525,8 +530,10 @@ class PerformerStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'group',
     )
     readonly_fields = [
-        'total_score',
         'link',
+        'organization',
+        'seed',
+        'prelim',
     ]
 
     inlines = [
