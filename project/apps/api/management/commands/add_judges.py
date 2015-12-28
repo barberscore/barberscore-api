@@ -4,29 +4,33 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    add_contestants,
+    add_judges,
 )
 
 from apps.api.models import (
-    Contest,
+    Session,
 )
 
 
 class Command(BaseCommand):
-    help = "Create contestants."
+    help = "Create judges."
 
     def add_arguments(self, parser):
         parser.add_argument(
             'slug',
-            type=str,
+        )
+
+        parser.add_argument(
+            'size',
+            type=int,
         )
 
     def handle(self, *args, **options):
         try:
-            contest = Contest.objects.get(
+            session = Session.objects.get(
                 slug=options['slug'],
             )
-        except Contest.DoesNotExist:
-            raise CommandError("Contest does not exist.")
-        result = add_contestants(contest)
+        except Session.DoesNotExist:
+            raise CommandError("Session does not exist.")
+        result = add_judges(session, options['size'])
         self.stdout.write("{0}".format(result))

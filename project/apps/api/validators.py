@@ -83,6 +83,10 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
     return "Performance Tested"
 
 
+def sessions_entered(convention):
+    return convention.sessions.exists()
+
+
 def validate_trimmed(value):
     if value.endswith(" ") or value.startswith(" "):
         raise ValidationError(
@@ -91,22 +95,22 @@ def validate_trimmed(value):
         )
 
 
-def is_imsessioned(contest):
-    for judge in contest.judges.official():
-        if not judge.person:
-            return False
-    return True
+# def is_imsessioned(contest):
+#     for judge in contest.judges.official():
+#         if not judge.person:
+#             return False
+#     return True
 
 
 def is_scheduled(contest):
-    for round in contest.rounds.all():
+    for round in contest.session.rounds.all():
         if not round.start_date:
             return False
     return True
 
 
 def has_performers(contest):
-    return contest.performers.exists()
+    return contest.session.performers.exists()
 
 
 def has_contests(contest):

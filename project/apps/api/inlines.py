@@ -96,10 +96,10 @@ class ContestInline(admin.TabularInline):
         # 'organization',
         # 'level',
         # 'kind',
-        # 'goal',
+        'goal',
         # 'year',
-        # 'rounds',
-        # 'qual_score',
+        'rounds',
+        'qual_score',
     )
     show_change_link = True
 
@@ -149,11 +149,11 @@ class ContestantInline(admin.TabularInline):
     raw_id_fields = (
         'performer',
     )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'performer',
-        ]
-    }
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'performer',
+    #     ]
+    # }
     readonly_fields = [
         'link',
         'name',
@@ -319,7 +319,7 @@ class PerformerInline(admin.TabularInline):
         'link',
         'session',
         'group',
-        # 'organization',
+        'organization',
         # 'seed',
         # 'prelim',
         # 'total_score',
@@ -340,7 +340,7 @@ class PerformerInline(admin.TabularInline):
     readonly_fields = [
         'total_score',
         'link',
-        'organization',
+        # 'organization',
         'seed',
         'prelim',
     ]
@@ -404,7 +404,7 @@ class SessionInline(admin.TabularInline):
         'name',
         'status',
         'convention',
-        # 'kind',
+        'kind',
         # 'size',
         # 'num_rounds',
     )
@@ -468,9 +468,9 @@ class RoundInline(admin.TabularInline):
         'link',
         'name',
         'session',
-        # 'kind',
+        'kind',
         'status',
-        # 'num',
+        'num',
         'slots',
     )
     ordering = (

@@ -73,9 +73,9 @@ from .managers import (
 )
 
 from .validators import (
+    sessions_entered,
     validate_trimmed,
     dixon,
-    is_imsessioned,
     is_scheduled,
     has_performers,
     has_contests,
@@ -349,8 +349,10 @@ class Award(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'organization',
+            'organization__level',
+            'organization__name',
             'kind',
+            'long_name',
         )
         unique_together = (
             ('organization', 'long_name', 'kind',),
@@ -627,48 +629,6 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        help_text="""
-            The organization that will confer the contest.  Note that this may be different than the organization running the parent session.""",
-        related_name='contests',
-        null=True,
-        blank=True,
-    )
-
-    LEVEL = Choices(
-        (1, 'international', "International"),
-        (2, 'district', "District"),
-        (3, 'division', "Division"),
-    )
-
-    level = models.IntegerField(
-        help_text="""
-            The level of the contest.  Note that this may be different than the level of the parent session.""",
-        choices=LEVEL,
-        null=True,
-        blank=True,
-    )
-
-    KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (3, 'seniors', 'Senior',),
-        (4, 'collegiate', 'Collegiate',),
-        (5, 'novice', 'Novice',),
-        (6, 'a', 'Plateau A',),
-        (7, 'aa', 'Plateau AA',),
-        (8, 'aaa', 'Plateau AAA',),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of the contest.  Note that this may be different than the kind of the parent session.""",
-        choices=KIND,
-        null=True,
-        blank=True,
-    )
-
     GOAL = Choices(
         (1, 'championship', "Championship"),
         (2, 'qualifier', "Qualifier"),
@@ -758,6 +718,10 @@ class Contest(TimeStampedModel):
         default='',
     )
 
+    @property
+    def champion(self):
+        return self.contestants.order_by('place').first()
+
     class Meta:
         unique_together = (
             ('session', 'award', 'goal',)
@@ -811,98 +775,6 @@ class Contest(TimeStampedModel):
                 cursor = [contestant]
         return "{0} Ready for Review".format(self)
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.built,
-    )
-    def build(self):
-        # Triggered by contest post_save signal if created
-        r = 1
-        while r <= self.rounds:
-            self.rounds.create(
-                session=self,
-                kind=r,
-            )
-            r += 1
-
-        # # Create an adminstrator sentinel
-        # self.judges.create(
-        #     contest=self,
-        #     category=0,
-        #     slot=1,
-        # )
-
-        # # Create sentinels for the session.
-        # s = 1
-        # while s <= self.session:
-        #     self.judges.create(
-        #         contest=self,
-        #         category=1,
-        #         slot=s,
-        #     )
-        #     self.judges.create(
-        #         contest=self,
-        #         category=2,
-        #         slot=s,
-        #     )
-        #     self.judges.create(
-        #         contest=self,
-        #         category=3,
-        #         slot=s,
-        #     )
-        #     s += 1
-        # return
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.built,
-            STATUS.final,
-        ],
-        target=STATUS.final,
-        conditions=[
-            is_scheduled,
-            is_imsessioned,
-            has_performers,
-        ],
-    )
-    def prep(self):
-        # Seed performers
-        marker = []
-        i = 1
-        for performer in self.performers.accepted().order_by('-prelim'):
-            try:
-                match = performer.prelim == marker[0].prelim
-            except IndexError:
-                performer.seed = i
-                performer.save()
-                marker.append(performer)
-                continue
-            if match:
-                performer.seed = i
-                i += len(marker)
-                performer.save()
-                marker.append(performer)
-                continue
-            else:
-                i += 1
-                performer.seed = i
-                performer.save()
-                marker = [performer]
-        return "{0} Ready".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.started,
-        conditions=[
-            # is_scheduled,
-            is_imsessioned,
-            has_performers,
-            has_contests,
-        ],
-    )
     def start(self):
         # Triggered in UI
         # TODO seed performers?
@@ -919,14 +791,6 @@ class Contest(TimeStampedModel):
             p += 1
         return "{0} Started".format(self)
 
-    @transition(
-        field=status,
-        source=STATUS.started,
-        target=STATUS.finished,
-        conditions=[
-            # rounds_finished,
-        ],
-    )
     # Check everything is done.
     def finish(self):
         # Denormalize
@@ -973,11 +837,6 @@ class Contest(TimeStampedModel):
                 contestant.save()
                 cursor = [contestant]
         return "{0} Ready for Review".format(self)
-
-    @transition(field=status, source=STATUS.finished, target=STATUS.final)
-    def finalize(self):
-        # Review logic
-        return "{0} Ready".format(self)
 
 
 class Contestant(TimeStampedModel):
@@ -1163,10 +1022,11 @@ class Convention(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
-        (30, 'final', 'Final',),
+        (30, 'finished', 'Finished',),
+        (50, 'final', 'Final',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1181,13 +1041,6 @@ class Convention(TimeStampedModel):
         help_text="""
             The organization hosting the convention.""",
     )
-
-    # orgs = TreeManyToManyField(
-    #     'Organization',
-    #     help_text="""
-    #         The organization hosting the convention.""",
-    #     related_name='orgs',
-    # )
 
     stix_name = models.CharField(
         max_length=200,
@@ -1290,14 +1143,66 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            u"{0}".format(self.organization),
-            u"{0}".format(self.get_kind_display()),
-            u"{0}".format(self.get_division_display()),
-            u"{0}".format(self.year),
-        ]))
+        if self.division:
+            self.name = " ".join(filter(None, [
+                u"{0}".format(self.organization),
+                u"{0}".format(self.get_kind_display()),
+                u"{0}".format(self.get_division_display()),
+                u"{0}".format(self.year),
+            ]))
+        else:
+            self.name = " ".join(filter(None, [
+                u"{0}".format(self.organization),
+                u"{0}".format(self.get_kind_display()),
+                u"{0}".format(self.year),
+            ]))
         self.year = arrow.get(self.date.lower).year
         super(Convention, self).save(*args, **kwargs)
+
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+        conditions=[
+            sessions_entered,
+        ]
+    )
+    def build(self):
+        # Triggered from UI
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.started,
+        conditions=[
+        ]
+    )
+    def start(self):
+        # Triggered from UI
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.started,
+        target=STATUS.finished,
+        conditions=[
+        ]
+    )
+    def finish(self):
+        # Triggered from UI
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.final,
+        conditions=[
+        ]
+    )
+    def finalize(self):
+        # Triggered from UI
+        return
 
 
 class Director(TimeStampedModel):
@@ -1423,10 +1328,6 @@ class Judge(TimeStampedModel):
         (30, 'final', 'Final',),
     )
 
-    SLOT_CHOICES = []
-    for r in range(1, 6):
-        SLOT_CHOICES.append((r, r))
-
     CATEGORY = Choices(
         (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
@@ -1490,7 +1391,8 @@ class Judge(TimeStampedModel):
     )
 
     slot = models.IntegerField(
-        choices=SLOT_CHOICES,
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
@@ -1981,7 +1883,9 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for judge in self.round.session.judges.scoring():
+            for judge in self.round.session.judges.filter(
+                kind=self.round.session.judges.model.KIND.official
+            ):
                 song.scores.create(
                     song=song,
                     judge=judge,
@@ -2096,16 +2000,15 @@ class Performer(TimeStampedModel):
         blank=True,
     )
 
-    # Denormalized
     organization = TreeForeignKey(
         'Organization',
         related_name='performers',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        editable=False,
     )
 
+    # Denormalized
     seed = models.IntegerField(
         help_text="""
             The incoming rank based on prelim score.""",
@@ -2208,7 +2111,6 @@ class Performer(TimeStampedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
-        self.organization = self.group.organization
         self.name = u"{0} {1}".format(
             self.session,
             self.group,
@@ -2258,17 +2160,35 @@ class Performer(TimeStampedModel):
                 self.prs_score = None
                 self.sng_score = None
 
-    @transition(field=status, source=STATUS.new, target=STATUS.qualified)
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.qualified
+    )
     def qualify(self):
         # Send notice?
         return "{0} Qualified".format(self)
 
-    @transition(field=status, source=[STATUS.qualified, STATUS.declined], target=STATUS.accepted)
+    @transition(
+        field=status,
+        source=[
+            STATUS.qualified,
+            STATUS.declined,
+        ],
+        target=STATUS.accepted,
+    )
     def accept(self):
         # Send notice?
         return "{0} Accepted".format(self)
 
-    @transition(field=status, source=[STATUS.qualified, STATUS.accepted], target=STATUS.declined)
+    @transition(
+        field=status,
+        source=[
+            STATUS.qualified,
+            STATUS.accepted,
+        ],
+        target=STATUS.declined,
+    )
     def decline(self):
         # Send notice?
         return "{0} Declined".format(self)
@@ -2282,17 +2202,29 @@ class Performer(TimeStampedModel):
         # Triggered by contest start
         return "{0} Official".format(self)
 
-    @transition(field=status, source=STATUS.official, target=STATUS.dropped)
+    @transition(
+        field=status,
+        source=STATUS.official,
+        target=STATUS.dropped,
+    )
     def drop(self):
         # Send notice?
         return "{0} Dropped".format(self)
 
-    @transition(field=status, source=STATUS.official, target=STATUS.finished)
+    @transition(
+        field=status,
+        source=STATUS.official,
+        target=STATUS.finished,
+    )
     def finish(self):
         # Send notice?
         return "{0} Finished".format(self)
 
-    @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.final,
+    )
     def finalize(self):
         # Send notice?
         return "{0} Finalized".format(self)
@@ -2629,7 +2561,11 @@ class Round(TimeStampedModel):
                 cursor = [performance]
         return "Round Ended"
 
-    @transition(field=status, source=STATUS.finished, target=STATUS.final)
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.final,
+    )
     def finalize(self):
         return
         # # TODO Some validation
@@ -2862,7 +2798,8 @@ class Session(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
-        (30, 'final', 'Final',),
+        (20, 'finished', 'Finished',),
+        (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -3004,6 +2941,21 @@ class Session(TimeStampedModel):
 
     @transition(
         field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+        conditions=[
+            # is_scheduled,
+            # is_imsessioned,
+            # has_performers,
+            # has_contests,
+        ],
+    )
+    def build(self):
+        # Triggered in UI
+        return
+
+    @transition(
+        field=status,
         source=STATUS.built,
         target=STATUS.started,
         conditions=[
@@ -3028,6 +2980,36 @@ class Session(TimeStampedModel):
             )
             p += 1
         return "{0} Started".format(self)
+
+    @transition(
+        field=status,
+        source=STATUS.started,
+        target=STATUS.finished,
+        conditions=[
+            # is_scheduled,
+            # is_imsessioned,
+            # has_performers,
+            # has_contests,
+        ],
+    )
+    def finish(self):
+        # Triggered in UI
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.final,
+        conditions=[
+            # is_scheduled,
+            # is_imsessioned,
+            # has_performers,
+            # has_contests,
+        ],
+    )
+    def finalize(self):
+        # Triggered in UI
+        return
 
 
 class Singer(TimeStampedModel):
@@ -3296,43 +3278,6 @@ class Song(TimeStampedModel):
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.new,
-        ],
-        target=STATUS.final,
-        conditions=[
-            song_entered,
-        ]
-    )
-    def enter(self):
-        # Triggered from form/admin
-        return
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.new,
-        ],
-        target=STATUS.confirmed,
-        conditions=[
-            song_entered,
-            # TODO could put `performance_finished` here if want to prevent UI
-        ]
-    )
-    def confirm(self):
-        # Triggered from performance.finish()
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.confirmed,
-        target=STATUS.final,
-    )
-    def finalize(self):
-        return
 
 
 class Tune(TimeStampedModel):

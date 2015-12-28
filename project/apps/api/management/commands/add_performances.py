@@ -4,7 +4,7 @@ from django.core.management.base import (
 )
 
 from apps.api.factories import (
-    add_judges,
+    add_performances,
 )
 
 from apps.api.models import (
@@ -13,7 +13,7 @@ from apps.api.models import (
 
 
 class Command(BaseCommand):
-    help = "Create sample session."
+    help = "Schedule performances for session."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -28,6 +28,6 @@ class Command(BaseCommand):
                     slug=slug,
                 )
             except Session.DoesNotExist:
-                raise CommandError("Contest does not exist.")
-            result = add_judges(session)
+                raise CommandError("Session does not exist.")
+            result = add_performances(session)
             self.stdout.write("{0}".format(result))

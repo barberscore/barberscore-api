@@ -267,7 +267,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
 
 @admin.register(Convention)
-class ConventionAdmin(admin.ModelAdmin):
+class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     def human_range(self, obj):
         if obj.date:
@@ -284,6 +284,10 @@ class ConventionAdmin(admin.ModelAdmin):
             dates = obj.date
         return dates
     human_range.short_description = "Dates22"
+
+    fsm_field = [
+        'status',
+    ]
 
     change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = (

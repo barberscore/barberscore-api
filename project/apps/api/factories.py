@@ -17,6 +17,7 @@ from .models import (
     Judge,
     Round,
     Tune,
+    Performance,
 )
 
 
@@ -35,59 +36,37 @@ def add_rounds(session):
         k -= 1
 
 
-def add_judges(session):
-    size = session.size
+def add_judges(session, size):
     admin = Certification.objects.filter(
         category=Certification.CATEGORY.admin,
     ).order_by('?').first()
+    round = session.rounds.get(num=1)
     Judge.objects.create(
         person=admin.person,
-        session=session,
-        slot=1,
+        round=round,
         category=admin.category,
         kind=Judge.KIND.official,
     )
-    # TODO This is not very DRY...
-    musics = Certification.objects.filter(
-        category=Certification.CATEGORY.music,
-    ).order_by('?')[:size]
+    categories = [
+        'music',
+        'presentation',
+        'singing',
+    ]
     i = 1
-    for music in musics:
-        Judge.objects.create(
-            person=music.person,
-            session=session,
-            slot=i,
-            category=music.category,
-            kind=Judge.KIND.official,
-        )
-        i += 1
-    presentations = Certification.objects.filter(
-        category=Certification.CATEGORY.presentation,
-    ).order_by('?')[:size]
-    i = 1
-    for presentation in presentations:
-        Judge.objects.create(
-            person=presentation.person,
-            session=session,
-            slot=i,
-            category=presentation.category,
-            kind=Judge.KIND.official,
-        )
-        i += 1
-    singings = Certification.objects.filter(
-        category=Certification.CATEGORY.singing,
-    ).order_by('?')[:size]
-    i = 1
-    for singing in singings:
-        Judge.objects.create(
-            person=singing.person,
-            session=session,
-            slot=i,
-            category=singing.category,
-            kind=Judge.KIND.official,
-        )
-        i += 1
-    return "Judges Imsessioned"
+    for category in categories:
+        certifications = Certification.objects.filter(
+            category=getattr(Certification.CATEGORY, category),
+        ).order_by('?')[:size]
+        for certification in certifications:
+            Judge.objects.create(
+                person=certification.person,
+                round=round,
+                slot=i,
+                category=getattr(Judge.CATEGORY, category),
+                kind=Judge.KIND.official,
+            )
+            i += 1
+    return "Judges Impaneled"
 
 
 def add_performers(session, number=20):
@@ -103,7 +82,6 @@ def add_performers(session, number=20):
         performer = Performer.objects.create(
             session=session,
             group=group,
-            prelim=randint(700, 900) * .1,
         )
         performer.qualify()
         performer.accept()
@@ -111,14 +89,28 @@ def add_performers(session, number=20):
     return "Performers Added"
 
 
-def add_contestants(contest, number=10):
-    performers = contest.session.performers.order_by('?')[:number]
+def add_contestants(contest):
+    performers = contest.session.performers.order_by('?')
     for performer in performers:
         Contestant.objects.create(
             contest=contest,
             performer=performer,
         )
     return "Contestants Added"
+
+
+def add_performances(session):
+    performers = session.performers.order_by('?')
+    round = session.rounds.get(num=1)
+    position = 0
+    for performer in performers:
+        Performance.objects.create(
+            performer=performer,
+            round=round,
+            position=position,
+        )
+        position += 1
+    return "Performances Added"
 
 
 def score_performance(performance):
