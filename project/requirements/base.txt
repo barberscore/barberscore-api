@@ -20,7 +20,7 @@ titlecase==0.8.0
 django-autoslug==1.9.3
 django-grappelli==2.7.2
 django-super-inlines==0.1.4
-django-mptt==0.7.4
+django-mptt==0.8.0
 django-easy-pdf==0.1.0
 xhtml2pdf==0.0.6
 reportlab==2.7
