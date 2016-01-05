@@ -9,6 +9,9 @@ from rest_framework import (
 from drf_haystack.viewsets import HaystackViewSet
 
 from .models import (
+    Arranger,
+    Award,
+    Chapter,
     Convention,
     Session,
     Contest,
@@ -29,6 +32,9 @@ from .models import (
 )
 
 from .serializers import (
+    ArrangerSerializer,
+    AwardSerializer,
+    ChapterSerializer,
     ConventionSerializer,
     SessionSerializer,
     ContestSerializer,
@@ -50,10 +56,33 @@ from .serializers import (
 )
 
 
+class ArrangerViewSet(viewsets.ModelViewSet):
+    queryset = Arranger.objects.select_related(
+        'catalog',
+        'person',
+    )
+    serializer_class = ArrangerSerializer
+    lookup_field = 'slug'
+
+
+class AwardViewSet(viewsets.ModelViewSet):
+    queryset = Award.objects.all()
+    serializer_class = AwardSerializer
+    lookup_field = 'slug'
+
+
+class ChapterViewSet(viewsets.ModelViewSet):
+    queryset = Chapter.objects.select_related(
+        'organization',
+    )
+    serializer_class = ChapterSerializer
+    lookup_field = 'slug'
+
+
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
-        'organization',
+        'award',
     ).filter(
         # history=Session.HISTORY.complete,
     ).prefetch_related(
@@ -66,7 +95,6 @@ class ContestViewSet(viewsets.ModelViewSet):
 class CatalogViewSet(viewsets.ModelViewSet):
     queryset = Catalog.objects.select_related(
         'tune',
-        'person',
     )
     serializer_class = CatalogSerializer
     lookup_field = 'slug'

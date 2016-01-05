@@ -3,6 +3,9 @@ from rest_framework import serializers
 from drf_haystack.serializers import HaystackSerializer
 
 from .models import (
+    Arranger,
+    Award,
+    Chapter,
     Convention,
     Session,
     Contest,
@@ -27,6 +30,57 @@ from .search_indexes import (
     TuneIndex,
     PersonIndex,
 )
+
+
+class ArrangerSerializer(serializers.ModelSerializer):
+    person = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Arranger
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'person',
+        )
+
+
+class AwardSerializer(serializers.ModelSerializer):
+    organization = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Award
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'organization',
+        )
+
+
+class ChapterSerializer(serializers.ModelSerializer):
+    organization = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug',
+    )
+
+    class Meta:
+        model = Chapter
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'organization',
+        )
 
 
 class CatalogSerializer(serializers.ModelSerializer):
@@ -58,11 +112,6 @@ class ContestSerializer(serializers.ModelSerializer):
         slug_field='slug',
     )
 
-    organization = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-
     contestants = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -74,17 +123,17 @@ class ContestSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             # 'url',
-            'slug',
             'name',
+            'slug',
             'status',
-            'organization',
-            'level',
-            'kind',
+            # 'level',
+            # 'kind',
             'goal',
             'year',
             'rounds',
             'qual_score',
             'session',
+            'award',
             'contestants',
         )
 
@@ -105,12 +154,10 @@ class ContestantSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             # 'url',
-            'slug',
             'name',
+            'slug',
             'status',
             'place',
-            'place',
-            'men',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -208,11 +255,12 @@ class ConventionSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             # 'url',
-            'slug',
             'name',
+            'slug',
             'status',
             'kind',
-            'dates',
+            'division',
+            'date',
             'location',
             'year',
             'organization',
@@ -259,8 +307,7 @@ class GroupSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'start_date',
-            'end_date',
+            'date',
             'location',
             'website',
             'facebook',
@@ -322,8 +369,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'start_date',
-            'end_date',
+            'date',
             'location',
             'website',
             'facebook',
@@ -366,7 +412,8 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'draw',
-            'start_time',
+            'scheduled',
+            'actual',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -412,8 +459,7 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'url',
             'slug',
             'name',
-            'start_date',
-            'end_date',
+            'date',
             'location',
             'website',
             'facebook',
@@ -584,6 +630,7 @@ class SongSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'order',
+            'title',
             'status',
             'is_parody',
             'tune',
@@ -598,7 +645,6 @@ class SongSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
-            'penalty',
             'scores',
         )
 
