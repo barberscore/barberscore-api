@@ -62,13 +62,13 @@ class ArrangerViewSet(viewsets.ModelViewSet):
         'person',
     )
     serializer_class = ArrangerSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.all()
     serializer_class = AwardSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
@@ -76,7 +76,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
         'organization',
     )
     serializer_class = ChapterSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -89,7 +89,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         'contestants',
     )
     serializer_class = ContestSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
@@ -97,7 +97,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
         'tune',
     )
     serializer_class = CatalogSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -106,7 +106,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'performer',
     )
     serializer_class = ContestantSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class SessionViewSet(viewsets.ModelViewSet):
@@ -121,7 +121,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         'judges',
     )
     serializer_class = SessionSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -135,7 +135,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'singers',
     )
     serializer_class = PerformerSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
@@ -147,7 +147,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
         'sessions',
     )
     serializer_class = ConventionSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class DirectorViewSet(viewsets.ModelViewSet):
@@ -156,7 +156,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
         'performer',
     )
     serializer_class = DirectorSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -164,7 +164,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         'performers',
     )
     serializer_class = GroupSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
@@ -176,13 +176,13 @@ class JudgeViewSet(viewsets.ModelViewSet):
         'scores',
     )
     serializer_class = JudgeSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
@@ -193,7 +193,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         'songs',
     )
     serializer_class = PerformanceSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -204,7 +204,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'sessions',
     )
     serializer_class = PersonSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -229,7 +229,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         'performances',
     )
     serializer_class = RoundSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class SingerViewSet(viewsets.ModelViewSet):
@@ -238,7 +238,7 @@ class SingerViewSet(viewsets.ModelViewSet):
         'performer',
     )
     serializer_class = SingerSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -249,7 +249,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'scores',
     )
     serializer_class = SongSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'
 
 
 class TuneViewSet(viewsets.ModelViewSet):
@@ -258,4 +258,4 @@ class TuneViewSet(viewsets.ModelViewSet):
         'songs',
     )
     serializer_class = TuneSerializer
-    lookup_field = 'slug'
+    # lookup_field = 'slug'

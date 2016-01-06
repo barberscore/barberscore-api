@@ -138,6 +138,11 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Plus supplementary settings:
+# JSON_API_FORMAT_KEYS = 'dasherize'
+# JSON_API_FORMAT_RELATION_KEYS = 'dasherize'
+# JSON_API_PLURALIZE_RELATION_TYPE = False
+
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = True
 

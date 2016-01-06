@@ -24,7 +24,7 @@ from .views import (
     OrganizationViewSet,
 )
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'arranger', ArrangerViewSet)
 router.register(r'award', AwardViewSet)
