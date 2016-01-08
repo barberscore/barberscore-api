@@ -52,10 +52,6 @@ from model_utils.fields import (
 
 from model_utils import Choices
 
-from model_utils.managers import (
-    PassThroughManager,
-)
-
 from mptt.models import (
     MPTTModel,
     TreeForeignKey,
@@ -2101,7 +2097,7 @@ class Performer(TimeStampedModel):
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
 
-    objects = PassThroughManager.for_queryset_class(PerformerQuerySet)()
+    objects = PerformerQuerySet.as_manager()
 
     def __unicode__(self):
         return u"{0}".format(self.name)
