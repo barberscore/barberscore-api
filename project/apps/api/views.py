@@ -6,7 +6,7 @@ from rest_framework import (
     permissions,
 )
 
-from drf_haystack.viewsets import HaystackViewSet
+# from drf_haystack.viewsets import HaystackViewSet
 
 from .models import (
     Arranger,
@@ -44,7 +44,6 @@ from .serializers import (
     PerformerSerializer,
     TuneSerializer,
     PersonSerializer,
-    SearchSerializer,
     SongSerializer,
     SingerSerializer,
     ScoreSerializer,
@@ -53,6 +52,7 @@ from .serializers import (
     JudgeSerializer,
     PerformanceSerializer,
     OrganizationSerializer,
+    # SearchSerializer,
 )
 
 
@@ -218,8 +218,8 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ]
 
 
-class SearchViewSet(HaystackViewSet):
-    serializer_class = SearchSerializer
+# class SearchViewSet(HaystackViewSet):
+#     serializer_class = SearchSerializer
 
 
 class RoundViewSet(viewsets.ModelViewSet):

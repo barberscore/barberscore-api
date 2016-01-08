@@ -113,7 +113,7 @@ PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
 
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 1000,
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework_json_api.pagination.PageNumberPagination',
@@ -156,13 +156,13 @@ DJOSER = {
 }
 
 # Haystack
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200',
-        'INDEX_NAME': 'haystack',
-    },
-}
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+#         'URL': 'http://127.0.0.1:9200',
+#         'INDEX_NAME': 'haystack',
+#     },
+# }
 
 # Grappelli
 GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
@@ -210,7 +210,7 @@ INSTALLED_APPS = (
     'fsm_admin',
     'django_fsm',
     # 'django_fsm_log',
-    'haystack',
+    # 'haystack',
     'easy_pdf',
     'timezone_field',
     'corsheaders',

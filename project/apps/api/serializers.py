@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from drf_haystack.serializers import HaystackSerializer
+# from drf_haystack.serializers import HaystackSerializer
 
 from .models import (
     Arranger,
@@ -25,18 +25,18 @@ from .models import (
     Organization,
 )
 
-from .search_indexes import (
-    GroupIndex,
-    TuneIndex,
-    PersonIndex,
-)
+# from .search_indexes import (
+#     GroupIndex,
+#     TuneIndex,
+#     PersonIndex,
+# )
 
 
 class ArrangerSerializer(serializers.ModelSerializer):
-    person = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # person = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Arranger
@@ -50,10 +50,10 @@ class ArrangerSerializer(serializers.ModelSerializer):
 
 
 class AwardSerializer(serializers.ModelSerializer):
-    organization = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # organization = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Award
@@ -67,10 +67,10 @@ class AwardSerializer(serializers.ModelSerializer):
 
 
 class ChapterSerializer(serializers.ModelSerializer):
-    organization = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # organization = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Chapter
@@ -84,16 +84,16 @@ class ChapterSerializer(serializers.ModelSerializer):
 
 
 class CatalogSerializer(serializers.ModelSerializer):
-    tune = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # tune = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    arrangers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # arrangers = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Catalog
@@ -107,16 +107,16 @@ class CatalogSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    session = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # session = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Contest
@@ -139,15 +139,15 @@ class ContestSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    contest = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # contest = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    performer = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # performer = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Contestant
@@ -172,39 +172,39 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class PerformerSerializer(serializers.ModelSerializer):
-    session = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # session = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    organization = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # organization = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    performances = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # performances = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    directors = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # directors = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    singers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # singers = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contestants = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contestants = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Performer
@@ -239,16 +239,16 @@ class PerformerSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    organization = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # organization = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    sessions = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # sessions = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Convention
@@ -270,14 +270,14 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class DirectorSerializer(serializers.ModelSerializer):
-    performer = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    person = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # performer = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # person = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Director
@@ -294,11 +294,11 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
-    performers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # performers = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Group
@@ -322,19 +322,19 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class JudgeSerializer(serializers.ModelSerializer):
-    scores = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-    session = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    person = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # scores = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # session = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # person = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Judge
@@ -352,15 +352,15 @@ class JudgeSerializer(serializers.ModelSerializer):
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    children = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-    parent = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # children = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # parent = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Organization
@@ -387,21 +387,21 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    performer = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # performer = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    round = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # round = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    songs = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # songs = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Performance
@@ -435,22 +435,22 @@ class PersonSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    choruses = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
-    quartets = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # choruses = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # quartets = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    sessions = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # sessions = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Person
@@ -477,15 +477,15 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class RoundSerializer(serializers.ModelSerializer):
-    session = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    performances = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # session = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # performances = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Round
@@ -503,15 +503,15 @@ class RoundSerializer(serializers.ModelSerializer):
 
 
 class ScoreSerializer(serializers.ModelSerializer):
-    song = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # song = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    judge = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # judge = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Score
@@ -529,34 +529,34 @@ class ScoreSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    convention = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # convention = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    contests = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # contests = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    rounds = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # rounds = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    judges = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # judges = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    performers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # performers = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Session
@@ -578,14 +578,14 @@ class SessionSerializer(serializers.ModelSerializer):
 
 
 class SingerSerializer(serializers.ModelSerializer):
-    performer = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
-    person = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # performer = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # person = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Singer
@@ -601,26 +601,26 @@ class SingerSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    tune = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # tune = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     # catalog = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
     # )
 
-    performance = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='slug',
-    )
+    # performance = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
-    scores = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # scores = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Song
@@ -656,11 +656,11 @@ class TuneSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    songs = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='slug',
-    )
+    # songs = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
 
     class Meta:
         model = Tune
@@ -674,21 +674,21 @@ class TuneSerializer(serializers.ModelSerializer):
         )
 
 
-class SearchSerializer(HaystackSerializer):
-    kind = serializers.CharField(
-        source='model_name',
-    )
+# class SearchSerializer(HaystackSerializer):
+#     kind = serializers.CharField(
+#         source='model_name',
+#     )
 
-    class Meta:
-        index_classes = [
-            GroupIndex,
-            TuneIndex,
-            PersonIndex,
-        ]
-        fields = [
-            "text",
-            "name",
-            "slug",
-            "description",
-            "kind",
-        ]
+#     class Meta:
+#         index_classes = [
+#             GroupIndex,
+#             TuneIndex,
+#             PersonIndex,
+#         ]
+#         fields = [
+#             "text",
+#             "name",
+#             "slug",
+#             "description",
+#             "kind",
+#         ]
