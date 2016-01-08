@@ -171,73 +171,6 @@ class ContestantSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformerSerializer(serializers.ModelSerializer):
-    # session = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # organization = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # performances = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # directors = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # singers = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    class Meta:
-        model = Performer
-        fields = (
-            'id',
-            # 'url',
-            'slug',
-            'name',
-            'status',
-            'organization',
-            'picture',
-            'seed',
-            'prelim',
-            'place',
-            'men',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'delta_score',
-            'delta_place',
-            'session',
-            'performances',
-            'directors',
-            'singers',
-            'contestants',
-        )
-
-
 class ConventionSerializer(serializers.ModelSerializer):
     # organization = serializers.SlugRelatedField(
     #     read_only=True,
@@ -425,6 +358,74 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'round',
             'performer',
             'songs',
+        )
+
+
+class PerformerSerializer(serializers.ModelSerializer):
+    # session = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # organization = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # performances = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # directors = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # singers = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # contestants = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    class Meta:
+        model = Performer
+        fields = (
+            'id',
+            # 'url',
+            'slug',
+            'name',
+            'status',
+            'organization',
+            'picture',
+            'seed',
+            'prelim',
+            'place',
+            'men',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'delta_score',
+            'delta_place',
+            'session',
+            'group',
+            'performances',
+            'directors',
+            'singers',
+            'contestants',
         )
 
 
