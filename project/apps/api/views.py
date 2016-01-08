@@ -106,6 +106,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'performer',
     )
     serializer_class = ContestantSerializer
+    resource_name = 'contestant'
     # lookup_field = 'slug'
 
 

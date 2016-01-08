@@ -29,4 +29,4 @@ fuzzywuzzy==0.8.0
 python-Levenshtein==0.12.0
 Unidecode==0.4.18
 arrow==0.7.0
-djangorestframework-jsonapi==2.0.0-alpha3
+djangorestframework-jsonapi==2.0.0b1

@@ -113,7 +113,8 @@ PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
 
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 50,
+    # DJA settings
+    # 'PAGE_SIZE': 50,
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework_json_api.pagination.PageNumberPagination',
@@ -127,7 +128,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
-    # And defaults
+    # And other DRF settings
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -139,7 +140,7 @@ REST_FRAMEWORK = {
 }
 
 # Plus supplementary settings:
-# JSON_API_FORMAT_KEYS = 'dasherize'
+JSON_API_FORMAT_KEYS = 'dasherize'
 # JSON_API_FORMAT_RELATION_KEYS = 'dasherize'
 # JSON_API_PLURALIZE_RELATION_TYPE = False
 

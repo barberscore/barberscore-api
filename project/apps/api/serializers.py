@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework_json_api import serializers
 
 # from drf_haystack.serializers import HaystackSerializer
 
@@ -187,14 +187,14 @@ class ConventionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Convention
         fields = (
-            'id',
+            # 'id',
             # 'url',
             'name',
             'slug',
             'status',
             'kind',
             'division',
-            'date',
+            # 'date',
             'location',
             'year',
             'organization',
