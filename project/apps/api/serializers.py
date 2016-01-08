@@ -63,6 +63,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'organization',
+            'contests',
         )
 
 

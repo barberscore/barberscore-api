@@ -241,6 +241,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'performer',
         'contest',
         'place',
+        'total_score',
     ]
     list_filter = (
         'status',
@@ -258,6 +259,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
         'status_monitor',
         'place',
+        'total_score',
     ]
 
     raw_id_fields = [

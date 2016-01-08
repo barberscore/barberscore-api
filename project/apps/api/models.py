@@ -952,7 +952,7 @@ class Contestant(TimeStampedModel):
         )
         ordering = (
             'contest',
-            'performer',
+            'place',
         )
 
     def calculate(self):
@@ -983,12 +983,18 @@ class Contestant(TimeStampedModel):
 
             # Calculate percentile
             try:
-                possible = self.contest.session.size * 2 * self.performer.performances.count()
+                # TODO Really shouldn't do this...
+                size = self.contest.session.rounds.first().judges.filter(kind=10).count() / 3
+                possible = size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
                 self.sng_score = round(self.sng_points / possible, 1)
                 self.total_score = round(self.total_points / (possible * 3), 1)
             except TypeError:
+                self.mus_score = None
+                self.prs_score = None
+                self.sng_score = None
+            except ZeroDivisionError:
                 self.mus_score = None
                 self.prs_score = None
                 self.sng_score = None

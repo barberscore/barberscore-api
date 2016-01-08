@@ -112,7 +112,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
-    ).filter(
+    # ).filter(
         # history=Session.HISTORY.complete,
     ).prefetch_related(
         'contests',
@@ -141,8 +141,8 @@ class PerformerViewSet(viewsets.ModelViewSet):
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
         'organization',
-    ).exclude(
-        status=Convention.STATUS.new,
+    # ).exclude(
+    #     status=Convention.STATUS.new,
     ).prefetch_related(
         'sessions',
     )
