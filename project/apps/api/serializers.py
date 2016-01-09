@@ -32,7 +32,7 @@ from .models import (
 # )
 
 
-class ArrangerSerializer(serializers.ModelSerializer):
+class ArrangerSerializer(serializers.HyperlinkedModelSerializer):
     # person = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -42,14 +42,14 @@ class ArrangerSerializer(serializers.ModelSerializer):
         model = Arranger
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'person',
         )
 
 
-class AwardSerializer(serializers.ModelSerializer):
+class AwardSerializer(serializers.HyperlinkedModelSerializer):
     # organization = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -59,7 +59,7 @@ class AwardSerializer(serializers.ModelSerializer):
         model = Award
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'organization',
@@ -67,7 +67,7 @@ class AwardSerializer(serializers.ModelSerializer):
         )
 
 
-class ChapterSerializer(serializers.ModelSerializer):
+class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     # organization = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -77,14 +77,14 @@ class ChapterSerializer(serializers.ModelSerializer):
         model = Chapter
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'organization',
         )
 
 
-class CatalogSerializer(serializers.ModelSerializer):
+class CatalogSerializer(serializers.HyperlinkedModelSerializer):
     # tune = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -100,14 +100,14 @@ class CatalogSerializer(serializers.ModelSerializer):
         model = Catalog
         fields = (
             'id',
-            # 'url',
+            'url',
             'tune',
             'song_name',
             'arrangers',
         )
 
 
-class ContestSerializer(serializers.ModelSerializer):
+class ContestSerializer(serializers.HyperlinkedModelSerializer):
     # session = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -123,7 +123,7 @@ class ContestSerializer(serializers.ModelSerializer):
         model = Contest
         fields = (
             'id',
-            # 'url',
+            'url',
             'name',
             'slug',
             'status',
@@ -139,7 +139,7 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestantSerializer(serializers.ModelSerializer):
+class ContestantSerializer(serializers.HyperlinkedModelSerializer):
     # contest = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -154,7 +154,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         model = Contestant
         fields = (
             'id',
-            # 'url',
+            'url',
             'name',
             'slug',
             'status',
@@ -172,7 +172,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         )
 
 
-class ConventionSerializer(serializers.ModelSerializer):
+class ConventionSerializer(serializers.HyperlinkedModelSerializer):
     # organization = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -188,7 +188,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         model = Convention
         fields = (
             # 'id',
-            # 'url',
+            'url',
             'name',
             'slug',
             'status',
@@ -203,7 +203,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         )
 
 
-class DirectorSerializer(serializers.ModelSerializer):
+class DirectorSerializer(serializers.HyperlinkedModelSerializer):
     # performer = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -217,7 +217,7 @@ class DirectorSerializer(serializers.ModelSerializer):
         model = Director
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'performer',
@@ -226,7 +226,7 @@ class DirectorSerializer(serializers.ModelSerializer):
         )
 
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
     # performers = serializers.SlugRelatedField(
     #     many=True,
@@ -238,7 +238,7 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'date',
@@ -255,7 +255,7 @@ class GroupSerializer(serializers.ModelSerializer):
         )
 
 
-class JudgeSerializer(serializers.ModelSerializer):
+class JudgeSerializer(serializers.HyperlinkedModelSerializer):
     # scores = serializers.SlugRelatedField(
     #     many=True,
     #     read_only=True,
@@ -274,7 +274,7 @@ class JudgeSerializer(serializers.ModelSerializer):
         model = Judge
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'person',
@@ -285,7 +285,7 @@ class JudgeSerializer(serializers.ModelSerializer):
         )
 
 
-class OrganizationSerializer(serializers.ModelSerializer):
+class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
     # children = serializers.SlugRelatedField(
     #     many=True,
     #     read_only=True,
@@ -300,7 +300,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'date',
@@ -320,7 +320,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformanceSerializer(serializers.ModelSerializer):
+class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
     # performer = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -341,7 +341,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         model = Performance
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'status',
@@ -362,7 +362,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformerSerializer(serializers.ModelSerializer):
+class PerformerSerializer(serializers.HyperlinkedModelSerializer):
     # session = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -401,7 +401,7 @@ class PerformerSerializer(serializers.ModelSerializer):
         model = Performer
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'status',
@@ -430,7 +430,7 @@ class PerformerSerializer(serializers.ModelSerializer):
         )
 
 
-class PersonSerializer(serializers.ModelSerializer):
+class PersonSerializer(serializers.HyperlinkedModelSerializer):
     # catalogs = serializers.SlugRelatedField(
     #     many=True,
     #     read_only=True,
@@ -458,7 +458,7 @@ class PersonSerializer(serializers.ModelSerializer):
         model = Person
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'date',
@@ -478,7 +478,7 @@ class PersonSerializer(serializers.ModelSerializer):
         )
 
 
-class RoundSerializer(serializers.ModelSerializer):
+class RoundSerializer(serializers.HyperlinkedModelSerializer):
     # session = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -493,7 +493,7 @@ class RoundSerializer(serializers.ModelSerializer):
         model = Round
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'status',
@@ -504,7 +504,7 @@ class RoundSerializer(serializers.ModelSerializer):
         )
 
 
-class ScoreSerializer(serializers.ModelSerializer):
+class ScoreSerializer(serializers.HyperlinkedModelSerializer):
     # song = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -519,7 +519,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         model = Score
         fields = [
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'song',
@@ -530,7 +530,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         ]
 
 
-class SessionSerializer(serializers.ModelSerializer):
+class SessionSerializer(serializers.HyperlinkedModelSerializer):
     # convention = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -564,7 +564,7 @@ class SessionSerializer(serializers.ModelSerializer):
         model = Session
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'status',
@@ -579,7 +579,7 @@ class SessionSerializer(serializers.ModelSerializer):
         )
 
 
-class SingerSerializer(serializers.ModelSerializer):
+class SingerSerializer(serializers.HyperlinkedModelSerializer):
     # performer = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -593,7 +593,7 @@ class SingerSerializer(serializers.ModelSerializer):
         model = Singer
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'performer',
@@ -602,7 +602,7 @@ class SingerSerializer(serializers.ModelSerializer):
         )
 
 
-class SongSerializer(serializers.ModelSerializer):
+class SongSerializer(serializers.HyperlinkedModelSerializer):
     # tune = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -628,7 +628,7 @@ class SongSerializer(serializers.ModelSerializer):
         model = Song
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             'order',
@@ -651,7 +651,7 @@ class SongSerializer(serializers.ModelSerializer):
         )
 
 
-class TuneSerializer(serializers.ModelSerializer):
+class TuneSerializer(serializers.HyperlinkedModelSerializer):
     # catalogs = serializers.SlugRelatedField(
     #     many=True,
     #     read_only=True,
@@ -668,7 +668,7 @@ class TuneSerializer(serializers.ModelSerializer):
         model = Tune
         fields = (
             'id',
-            # 'url',
+            'url',
             'slug',
             'name',
             # 'catalogs',

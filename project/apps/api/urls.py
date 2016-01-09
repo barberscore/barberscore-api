@@ -24,7 +24,7 @@ from .views import (
     # SearchViewSet,
 )
 
-router = routers.DefaultRouter(trailing_slash=True)
+router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'arranger', ArrangerViewSet)
 router.register(r'award', AwardViewSet)
