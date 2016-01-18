@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/dbinetti/barberscore.svg?style=svg)](https://circleci.com/gh/dbinetti/barberscore)
+[![Circle CI](https://circleci.com/gh/dbinetti/barberscore.svg?branch=master)](https://circleci.com/gh/dbinetti/barberscore)
 
 [![codecov.io](https://codecov.io/github/dbinetti/barberscore/coverage.svg?branch=master)](https://codecov.io/github/dbinetti/barberscore?branch=master)
 
