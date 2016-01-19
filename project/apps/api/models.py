@@ -312,9 +312,9 @@ class Award(TimeStampedModel):
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
-        (3, 'seniors', 'Seniors Quartet',),
-        (4, 'collegiate', 'Collegiate Quartet',),
-        (5, 'novice', 'Novice Quartet',),
+        (3, 'seniors', 'Seniors',),
+        (4, 'collegiate', 'Collegiate',),
+        (5, 'novice', 'Novice',),
     )
 
     kind = models.IntegerField(
