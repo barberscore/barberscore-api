@@ -458,20 +458,6 @@ class Certification(TimeStampedModel):
         editable=False,
     )
 
-    STATUS = Choices(
-        (0, 'new', 'New'),
-        (1, 'active', 'Active'),
-        (2, 'candidate', 'Candidate'),
-        (3, 'inactive', 'Inactive'),
-    )
-
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -489,8 +475,22 @@ class Certification(TimeStampedModel):
         related_name='certifications',
     )
 
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
     category = models.IntegerField(
         choices=CATEGORY,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New'),
+        (1, 'active', 'Active'),
+        (2, 'candidate', 'Candidate'),
+        (3, 'inactive', 'Inactive'),
     )
 
     status = FSMIntegerField(
