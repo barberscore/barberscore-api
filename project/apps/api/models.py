@@ -1390,7 +1390,7 @@ class Judge(TimeStampedModel):
 
     person = models.ForeignKey(
         'Person',
-        related_name='sessions',
+        related_name='panels',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
