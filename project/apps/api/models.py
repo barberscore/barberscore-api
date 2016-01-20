@@ -123,12 +123,6 @@ class Common(TimeStampedModel):
         max_length=255,
     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-    )
-
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -217,11 +211,6 @@ class Arranger(TimeStampedModel):
         editable=False,
     )
 
-    PART = Choices(
-        (1, 'arranger', 'Arranger'),
-        (2, 'coarranger', 'Co-Arranger'),
-    )
-
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -232,6 +221,16 @@ class Arranger(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
+    )
+
+    PART = Choices(
+        (1, 'arranger', 'Arranger'),
+        (2, 'coarranger', 'Co-Arranger'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+        default=PART.arranger,
     )
 
     catalog = models.ForeignKey(
@@ -245,11 +244,6 @@ class Arranger(TimeStampedModel):
     person = models.ForeignKey(
         'Person',
         related_name='arrangements',
-    )
-
-    part = models.IntegerField(
-        choices=PART,
-        default=PART.arranger,
     )
 
     def __unicode__(self):
@@ -304,11 +298,6 @@ class Award(TimeStampedModel):
         monitor='status',
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='awards',
-    )
-
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
@@ -343,6 +332,22 @@ class Award(TimeStampedModel):
         default="",
     )
 
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='awards',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            u"{0}".format(self.organization),
+            u"{0}".format(self.get_kind_display()),
+            u"{0}".format(self.long_name),
+        ]))
+        super(Award, self).save(*args, **kwargs)
+
     class Meta:
         ordering = (
             'organization__level',
@@ -354,37 +359,17 @@ class Award(TimeStampedModel):
             ('organization', 'long_name', 'kind',),
         )
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            u"{0}".format(self.organization),
-            u"{0}".format(self.get_kind_display()),
-            u"{0}".format(self.long_name),
-        ]))
-        super(Award, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
 
 class Catalog(TimeStampedModel):
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    song_name = models.CharField(
+        blank=True,
+        max_length=200,
     )
 
     tune = models.ForeignKey(
@@ -393,11 +378,6 @@ class Catalog(TimeStampedModel):
         blank=True,
         related_name='catalogs',
         on_delete=models.SET_NULL,
-    )
-
-    song_name = models.CharField(
-        blank=True,
-        max_length=200,
     )
 
     bhs_id = models.IntegerField(
@@ -425,10 +405,24 @@ class Catalog(TimeStampedModel):
         blank=True,
     )
 
+    DIFFICULTY = Choices(
+        (1, "Very Easy"),
+        (2, "Easy"),
+        (3, "Medium"),
+        (4, "Hard"),
+        (5, "Very Hard"),
+    )
+
     bhs_difficulty = models.IntegerField(
         null=True,
         blank=True,
         choices=DIFFICULTY
+    )
+
+    TEMPO = Choices(
+        (1, "Ballad"),
+        (2, "Uptune"),
+        (3, "Mixed"),
     )
 
     bhs_tempo = models.IntegerField(
@@ -451,7 +445,6 @@ class Catalog(TimeStampedModel):
 
 
 class Certification(TimeStampedModel):
-    """Certification"""
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -468,11 +461,6 @@ class Certification(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='certifications',
     )
 
     CATEGORY = Choices(
@@ -508,6 +496,11 @@ class Certification(TimeStampedModel):
             The active dates of the resource.""",
         null=True,
         blank=True,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='certifications',
     )
 
     def __unicode__(self):
@@ -577,7 +570,6 @@ class Chapter(Common):
 
 
 class Contest(TimeStampedModel):
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -613,16 +605,6 @@ class Contest(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='contests',
-    )
-
-    award = models.ForeignKey(
-        'Award',
-        related_name='contests',
     )
 
     GOAL = Choices(
@@ -714,19 +696,19 @@ class Contest(TimeStampedModel):
         default='',
     )
 
+    session = models.ForeignKey(
+        'Session',
+        related_name='contests',
+    )
+
+    award = models.ForeignKey(
+        'Award',
+        related_name='contests',
+    )
+
     @property
     def champion(self):
         return self.contestants.order_by('place').first()
-
-    class Meta:
-        unique_together = (
-            ('session', 'award', 'goal',)
-        )
-        ordering = (
-            'session',
-            'award',
-            'goal',
-        )
 
     @staticmethod
     def autocomplete_search_fields():
@@ -834,12 +816,18 @@ class Contest(TimeStampedModel):
                 cursor = [contestant]
         return "{0} Ready for Review".format(self)
 
+    class Meta:
+        unique_together = (
+            ('session', 'award', 'goal',)
+        )
+        ordering = (
+            'session',
+            'award',
+            'goal',
+        )
+
 
 class Contestant(TimeStampedModel):
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -857,6 +845,10 @@ class Contestant(TimeStampedModel):
         always_update=True,
         unique=True,
         max_length=255,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
     )
 
     status = FSMIntegerField(
@@ -946,15 +938,6 @@ class Contestant(TimeStampedModel):
         )
         super(Contestant, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('performer', 'contest',),
-        )
-        ordering = (
-            'contest',
-            'place',
-        )
-
     def calculate(self):
         # If there are no performances, skip.
         if self.performer.performances.exists():
@@ -999,6 +982,15 @@ class Contestant(TimeStampedModel):
                 self.prs_score = None
                 self.sng_score = None
 
+    class Meta:
+        unique_together = (
+            ('performer', 'contest',),
+        )
+        ordering = (
+            'contest',
+            'place',
+        )
+
 
 class Convention(TimeStampedModel):
     id = models.UUIDField(
@@ -1036,24 +1028,6 @@ class Convention(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        help_text="""
-            The organization hosting the convention.""",
-    )
-
-    stix_name = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-
-    stix_div = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
     )
 
     KIND = Choices(
@@ -1123,6 +1097,24 @@ class Convention(TimeStampedModel):
         default='US/Pacific',
     )
 
+    organization = TreeForeignKey(
+        'Organization',
+        help_text="""
+            The organization hosting the convention.""",
+    )
+
+    stix_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+
+    stix_div = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+
     stix_file = models.FileField(
         help_text="""
             The bbstix file.""",
@@ -1130,16 +1122,6 @@ class Convention(TimeStampedModel):
         blank=True,
         null=True,
     )
-
-    class Meta:
-        ordering = [
-            '-year',
-            'organization__name',
-        ]
-
-        unique_together = (
-            ('organization', 'kind', 'year', 'division',),
-        )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1160,6 +1142,16 @@ class Convention(TimeStampedModel):
             ]))
         self.year = arrow.get(self.date.lower).year
         super(Convention, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = [
+            '-year',
+            'organization__name',
+        ]
+
+        unique_together = (
+            ('organization', 'kind', 'year', 'division',),
+        )
 
     @transition(
         field=status,
@@ -1215,11 +1207,6 @@ class Director(TimeStampedModel):
         editable=False,
     )
 
-    PART = Choices(
-        (1, 'director', 'Director'),
-        (2, 'codirector', 'Co-Director'),
-    )
-
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -1232,6 +1219,16 @@ class Director(TimeStampedModel):
         max_length=255,
     )
 
+    PART = Choices(
+        (1, 'director', 'Director'),
+        (2, 'codirector', 'Co-Director'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+        default=PART.director,
+    )
+
     performer = models.ForeignKey(
         'Performer',
         related_name='directors',
@@ -1240,11 +1237,6 @@ class Director(TimeStampedModel):
     person = models.ForeignKey(
         'Person',
         related_name='choruses',
-    )
-
-    part = models.IntegerField(
-        choices=PART,
-        default=PART.director,
     )
 
     def __unicode__(self):
@@ -1322,27 +1314,6 @@ class Group(Common):
 
 class Judge(TimeStampedModel):
     """Contest Judge"""
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'scheduled', 'Scheduled',),
-        (20, 'confirmed', 'Confirmed',),
-        (30, 'final', 'Final',),
-    )
-
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
-    KIND = Choices(
-        (10, 'official', 'Official'),
-        (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1362,16 +1333,11 @@ class Judge(TimeStampedModel):
         max_length=255,
     )
 
-    session = models.ForeignKey(
-        'Session',
-        related_name='judges',
-        null=True,
-        blank=True,
-    )
-
-    round = models.ForeignKey(
-        'Round',
-        related_name='judges',
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'scheduled', 'Scheduled',),
+        (20, 'confirmed', 'Confirmed',),
+        (30, 'final', 'Final',),
     )
 
     status = models.IntegerField(
@@ -1384,8 +1350,21 @@ class Judge(TimeStampedModel):
         monitor='status',
     )
 
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
     category = models.IntegerField(
         choices=CATEGORY,
+    )
+
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
     )
 
     kind = models.IntegerField(
@@ -1395,6 +1374,18 @@ class Judge(TimeStampedModel):
     slot = models.IntegerField(
         null=True,
         blank=True,
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='judges',
+        null=True,
+        blank=True,
+    )
+
+    round = models.ForeignKey(
+        'Round',
+        related_name='judges',
     )
 
     person = models.ForeignKey(
@@ -1626,6 +1617,9 @@ class Organization(MPTTModel, TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
     class MPTTMeta:
         order_insertion_by = [
             'kind',
@@ -1635,25 +1629,12 @@ class Organization(MPTTModel, TimeStampedModel):
         #     'tree_id',
         # ]
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
 
 class Performance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
-        # (15, 'ready', 'Ready',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
     )
 
     name = models.CharField(
@@ -1669,6 +1650,16 @@ class Performance(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        # (10, 'built', 'Built',),
+        # (15, 'ready', 'Ready',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -1677,16 +1668,6 @@ class Performance(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
-    )
-
-    round = models.ForeignKey(
-        'Round',
-        related_name='performances',
-    )
-
-    performer = models.ForeignKey(
-        'Performer',
-        related_name='performances',
     )
 
     position = models.PositiveSmallIntegerField(
@@ -1764,6 +1745,16 @@ class Performance(TimeStampedModel):
         editable=False,
     )
 
+    round = models.ForeignKey(
+        'Round',
+        related_name='performances',
+    )
+
+    performer = models.ForeignKey(
+        'Performer',
+        related_name='performances',
+    )
+
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
@@ -1775,15 +1766,6 @@ class Performance(TimeStampedModel):
         except TypeError:
             return None
 
-    class Meta:
-        ordering = (
-            'round',
-            'position',
-        )
-        unique_together = (
-            ('round', 'performer',),
-        )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -1793,6 +1775,15 @@ class Performance(TimeStampedModel):
             self.performer.group,
         )
         super(Performance, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = (
+            'round',
+            'position',
+        )
+        unique_together = (
+            ('round', 'performer',),
+        )
 
     def calculate(self):
         if self.songs.exists():
@@ -1935,18 +1926,6 @@ class Performance(TimeStampedModel):
 
 
 class Performer(TimeStampedModel):
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
-        (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
-        (50, 'official', 'Official',),
-        (60, 'finished', 'Finished',),
-        (90, 'final', 'Final',),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1966,6 +1945,17 @@ class Performer(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'accepted', 'Accepted',),
+        (30, 'declined', 'Declined',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'official', 'Official',),
+        (60, 'finished', 'Finished',),
+        (90, 'final', 'Final',),
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -1974,16 +1964,6 @@ class Performer(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='performers',
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        related_name='performers',
     )
 
     picture = models.ImageField(
@@ -2000,14 +1980,6 @@ class Performer(TimeStampedModel):
         default=4,
         null=True,
         blank=True,
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='performers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Denormalized
@@ -2081,6 +2053,24 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         editable=False,
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='performers',
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='performers',
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='performers',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     @property
@@ -2234,16 +2224,6 @@ class Performer(TimeStampedModel):
 
 class Person(Common):
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-        (30, 'retired', 'Retired',),
-        (40, 'deceased', 'Deceased',),
-        (50, 'stix', 'Stix Issue',),
-        (60, 'dup', 'Possible Duplicate',),
-    )
-
     KIND = Choices(
         (1, 'individual', "Individual"),
         (2, 'team', "Team"),
@@ -2256,6 +2236,16 @@ class Person(Common):
         default=KIND.individual,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+        (30, 'retired', 'Retired',),
+        (40, 'deceased', 'Deceased',),
+        (50, 'stix', 'Stix Issue',),
+        (60, 'dup', 'Possible Duplicate',),
+    )
+
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -2264,13 +2254,6 @@ class Person(Common):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     member = models.IntegerField(
@@ -2308,11 +2291,36 @@ class Person(Common):
         editable=False,
     )
 
-    class Meta:
-        ordering = ['name']
+    organization = TreeForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.is_judge = self.certifications.exists()
+        name = HumanName(self.name)
+        if name.nickname:
+            self.common_name = " ".join(filter(None, [
+                u"{0}".format(name.nickname),
+                u"{0}".format(name.last),
+                u"{0}".format(name.suffix),
+            ]))
+        else:
+            self.common_name = u'{0}'.format(self.name)
+        self.formal_name = " ".join(filter(None, [
+            u'{0}'.format(name.first),
+            u'{0}'.format(name.last),
+            u'{0}'.format(name.suffix),
+        ]))
+        super(Person, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['name']
 
     @staticmethod
     def autocomplete_search_fields():
@@ -2342,45 +2350,12 @@ class Person(Common):
         else:
             return None
 
-    def save(self, *args, **kwargs):
-        self.is_judge = self.certifications.exists()
-        name = HumanName(self.name)
-        if name.nickname:
-            self.common_name = " ".join(filter(None, [
-                u"{0}".format(name.nickname),
-                u"{0}".format(name.last),
-                u"{0}".format(name.suffix),
-            ]))
-        else:
-            self.common_name = u'{0}'.format(self.name)
-        self.formal_name = " ".join(filter(None, [
-            u'{0}'.format(name.first),
-            u'{0}'.format(name.last),
-            u'{0}'.format(name.suffix),
-        ]))
-        super(Person, self).save(*args, **kwargs)
-
 
 class Round(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (30, 'final', 'Final',),
-    )
-
-    KIND = Choices(
-        (1, 'finals', 'Finals'),
-        (2, 'semis', 'Semi-Finals'),
-        (3, 'quarters', 'Quarter-Finals'),
     )
 
     name = models.CharField(
@@ -2396,6 +2371,15 @@ class Round(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'built', 'Built',),
+        (15, 'ready', 'Ready',),
+        (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
+        (30, 'final', 'Final',),
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -2406,9 +2390,10 @@ class Round(TimeStampedModel):
         monitor='status',
     )
 
-    session = models.ForeignKey(
-        'Session',
-        related_name='rounds',
+    KIND = Choices(
+        (1, 'finals', 'Finals'),
+        (2, 'semis', 'Semi-Finals'),
+        (3, 'quarters', 'Quarter-Finals'),
     )
 
     kind = models.IntegerField(
@@ -2418,7 +2403,7 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    dates = DateRangeField(
+    date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
         null=True,
@@ -2434,6 +2419,11 @@ class Round(TimeStampedModel):
         max_length=255,
         blank=True,
         default='',
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='rounds',
     )
 
     class Meta:
@@ -2800,7 +2790,7 @@ class Session(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
-        (20, 'finished', 'Finished',),
+        (30, 'finished', 'Finished',),
         (50, 'final', 'Final',),
     )
 
@@ -2812,11 +2802,6 @@ class Session(TimeStampedModel):
     status_monitor = MonitorField(
         help_text="""Status last updated""",
         monitor='status',
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='sessions',
     )
 
     KIND = Choices(
@@ -2858,18 +2843,11 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    dates = DateRangeField(
+    date = DateRangeField(
         help_text="""
             The active dates of the session.""",
         null=True,
         blank=True,
-    )
-
-    # Denormalized
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='sessions',
-        editable=False,
     )
 
     # Denormalized
@@ -2917,6 +2895,18 @@ class Session(TimeStampedModel):
         upload_to=generate_image_filename,
         blank=True,
         null=True,
+    )
+
+    # Denormalized
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='sessions',
+        editable=False,
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='sessions',
     )
 
     def __unicode__(self):
@@ -3022,13 +3012,6 @@ class Singer(TimeStampedModel):
         editable=False,
     )
 
-    PART = Choices(
-        (1, 'tenor', 'Tenor'),
-        (2, 'lead', 'Lead'),
-        (3, 'baritone', 'Baritone'),
-        (4, 'bass', 'Bass'),
-    )
-
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -3041,6 +3024,17 @@ class Singer(TimeStampedModel):
         max_length=255,
     )
 
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+    )
+
     performer = models.ForeignKey(
         'Performer',
         related_name='singers',
@@ -3049,10 +3043,6 @@ class Singer(TimeStampedModel):
     person = models.ForeignKey(
         'Person',
         related_name='quartets',
-    )
-
-    part = models.IntegerField(
-        choices=PART,
     )
 
     def __unicode__(self):
@@ -3085,21 +3075,6 @@ class Singer(TimeStampedModel):
 
 
 class Song(TimeStampedModel):
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
-        # (20, 'entered', 'Entered',),
-        # (30, 'flagged', 'Flagged',),
-        # (35, 'validated', 'Validated',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
-    )
-
-    ORDER = Choices(
-        (1, 'first', 'First'),
-        (2, 'second', 'Second'),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3119,6 +3094,16 @@ class Song(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        # (10, 'built', 'Built',),
+        # (20, 'entered', 'Entered',),
+        # (30, 'flagged', 'Flagged',),
+        # (35, 'validated', 'Validated',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -3129,9 +3114,9 @@ class Song(TimeStampedModel):
         monitor='status',
     )
 
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='songs',
+    ORDER = Choices(
+        (1, 'first', 'First'),
+        (2, 'second', 'Second'),
     )
 
     order = models.IntegerField(
@@ -3150,22 +3135,6 @@ class Song(TimeStampedModel):
 
     is_parody = models.BooleanField(
         default=False,
-    )
-
-    catalog = models.ForeignKey(
-        'Catalog',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    tune = models.ForeignKey(
-        'Tune',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Denormalized values
@@ -3215,6 +3184,27 @@ class Song(TimeStampedModel):
         null=True,
         blank=True,
         editable=False,
+    )
+
+    catalog = models.ForeignKey(
+        'Catalog',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    tune = models.ForeignKey(
+        'Tune',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    performance = models.ForeignKey(
+        'Performance',
+        related_name='songs',
     )
 
     class Meta:
