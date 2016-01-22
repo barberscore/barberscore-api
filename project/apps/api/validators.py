@@ -38,6 +38,7 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
        for [5,1,5] -> [1, None]
 
     """
+    is_flagged = False
     for song in performance.songs.all():
         scores = song.scores.all()
         assert(left or right), 'At least one of the variables, `left` or `right`, must be True.'
@@ -76,11 +77,15 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
             outliers = [None, Q_maxdiff[1]]
         for score in scores:
             if round(score.points * .01, 2) in outliers:
-                score.flag()
-            else:
-                score.validate()
-            score.save()
-    return "Performance Tested"
+                is_flagged = True
+    if is_flagged:
+        performance.flag()
+        print 'flag'
+    else:
+        performance.accept()
+        print 'accept'
+    performance.save()
+    return
 
 
 def sessions_entered(convention):

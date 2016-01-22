@@ -361,7 +361,7 @@ class ScoreInline(admin.TabularInline):
         'judge',
         'category',
         'points',
-        'status',
+        # 'status',
     )
     ordering = (
         'judge',
@@ -552,7 +552,7 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
         'performance',
         'order',
-        'status',
+        # 'status',
         'title',
         # 'tune',
         ('mus_points', 'prs_points', 'sng_points',),
@@ -580,4 +580,4 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'sng_points',
     ]
     show_change_link = True
-    classes = ('grp-collapse grp-open',)
+    # classes = ('grp-collapse grp-open',)

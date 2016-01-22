@@ -695,7 +695,7 @@ class ScoreAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        # ('status', 'status_monitor',),
         'song',
         'judge',
         'points',
@@ -703,20 +703,20 @@ class ScoreAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'name',
-        'status_monitor',
+        # 'status_monitor',
         'song',
         'judge',
     ]
 
     list_display = [
         'name',
-        'status',
+        # 'status',
         'points',
     ]
 
-    list_filter = [
-        'status',
-    ]
+    # list_filter = [
+    #     'status',
+    # ]
 
     raw_id_fields = [
         'song',
@@ -855,8 +855,9 @@ class SongAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'name',
-        'status',
-        'tune',
+        # 'status',
+        'title',
+        # 'tune',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -865,16 +866,18 @@ class SongAdmin(admin.ModelAdmin):
 
     search_fields = (
         'name',
+        'title',
     )
 
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        # ('status', 'status_monitor',),
         'order',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-        'tune',
-        'catalog',
+        'title',
+        # 'tune',
+        # 'catalog',
     ]
 
     inlines = [
@@ -882,9 +885,9 @@ class SongAdmin(admin.ModelAdmin):
         ScoreInline,
     ]
 
-    list_filter = (
-        'status',
-    )
+    # list_filter = (
+    #     'status',
+    # )
 
     readonly_fields = (
         'name',
@@ -897,17 +900,17 @@ class SongAdmin(admin.ModelAdmin):
         'prs_score',
         'sng_score',
         'total_score',
-        'status_monitor',
+        # 'status_monitor',
     )
     raw_id_fields = (
         'performance',
-        'tune',
-        'catalog',
+        # 'tune',
+        # 'catalog',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'performance',
-            'tune',
+            # 'tune',
         ]
     }
 

@@ -10,6 +10,8 @@ import datetime
 
 import arrow
 
+from django.db.models.functions import Now
+
 from django.db import (
     models,
 )
@@ -1652,12 +1654,12 @@ class Performance(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
-        # (15, 'ready', 'Ready',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
+        (10, 'started', 'Started',),
+        (20, 'finished', 'Finished',),
+        (30, 'entered', 'Entered',),
+        (40, 'flagged', 'Flagged',),
+        (50, 'accepted', 'Accepted',),
+        (90, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -1786,6 +1788,9 @@ class Performance(TimeStampedModel):
         )
 
     def calculate(self):
+        for song in self.songs.all():
+            song.calculate()
+            song.save()
         if self.songs.exists():
             agg = self.songs.all().aggregate(
                 mus=models.Sum('mus_points'),
@@ -1859,7 +1864,6 @@ class Performance(TimeStampedModel):
     @transition(
         field=status,
         source=[
-            # STATUS.built,
             STATUS.new,
         ],
         target=STATUS.started,
@@ -1869,6 +1873,13 @@ class Performance(TimeStampedModel):
     )
     def start(self):
         # Triggered from UI
+
+        # Set start time
+        self.actual = (
+            Now(),
+            None,
+        )
+
         # Creates Song and Score sentinels.
         i = 1
         while i <= 2:
@@ -1876,12 +1887,15 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for judge in self.round.session.judges.filter(
-                kind=self.round.session.judges.model.KIND.official
+            for judge in self.round.judges.filter(
+                kind=self.round.judges.model.KIND.official,
+            ).exclude(
+                category=self.round.judges.model.CATEGORY.admin,
             ):
                 song.scores.create(
                     song=song,
                     judge=judge,
+                    category=judge.category,
                     kind=judge.kind,
                 )
             i += 1
@@ -1892,31 +1906,59 @@ class Performance(TimeStampedModel):
         source=STATUS.started,
         target=STATUS.finished,
         conditions=[
-            scores_entered,
-            songs_entered,
         ]
     )
     def finish(self):
         # Triggered from UI
-        dixon(self)  # TODO Should this be somewhere else?  Song perhaps?
-        for song in self.songs.all():
-            song.confirm()
+        self.actual = (
+            self.actual[0],
+            Now(),
+        )
         return
 
     @transition(
         field=status,
         source=STATUS.finished,
-        target=STATUS.confirmed,
-        # conditions=[
-        #     round_finished,
-        # ]
+        target=STATUS.entered,
+        conditions=[
+            songs_entered,
+            scores_entered,
+        ]
     )
-    def confirm(self):
+    def enter(self):
         return
 
     @transition(
         field=status,
-        source=STATUS.confirmed,
+        source=[
+            STATUS.entered,
+            STATUS.flagged,
+        ],
+        target=STATUS.flagged,
+        # conditions=[
+        #     round_finished,   TODO No is_flagged
+        # ]
+    )
+    def flag(self):
+        return
+
+    @transition(
+        field=status,
+        source=[
+            STATUS.entered,
+            STATUS.flagged,
+        ],
+        target=STATUS.accepted,
+        # conditions=[
+        #     round_finished,   TODO No is_flagged
+        # ]
+    )
+    def accept(self):
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.accepted,
         target=STATUS.final,
         conditions=[
         ]
@@ -2377,6 +2419,7 @@ class Round(TimeStampedModel):
         (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
+        (28, 'confirmed', 'Confirmed',),
         (30, 'final', 'Final',),
     )
 
@@ -2524,11 +2567,25 @@ class Round(TimeStampedModel):
         source=STATUS.started,
         target=STATUS.finished,
         conditions=[
-            performances_finished,
-            scores_validated,
+            # performances_finished,
         ]
     )
     def finish(self):
+        for performance in self.performances.all():
+            performance.calculate()
+            performance.save()
+            dixon(performance)
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.confirmed,
+        conditions=[
+            # Add performances ACCEPTED
+        ]
+    )
+    def confirm(self):
         # TODO Validate performances over
         cursor = []
         i = 1
@@ -2555,7 +2612,7 @@ class Round(TimeStampedModel):
 
     @transition(
         field=status,
-        source=STATUS.finished,
+        source=STATUS.confirmed,
         target=STATUS.final,
     )
     def finalize(self):
@@ -2715,55 +2772,55 @@ class Score(TimeStampedModel):
         )
         super(Score, self).save(*args, **kwargs)
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.flagged,
-        conditions=[
-            score_entered,
-            # TODO Could be 'performance_finished' here if want to prevent admin UI
-        ]
-    )
-    def flag(self):
-        # Triggered from dixon test in performance.finish()
-        return
+    # @transition(
+    #     field=status,
+    #     source=STATUS.new,
+    #     target=STATUS.flagged,
+    #     conditions=[
+    #         score_entered,
+    #         # TODO Could be 'performance_finished' here if want to prevent admin UI
+    #     ]
+    # )
+    # def flag(self):
+    #     # Triggered from dixon test in performance.finish()
+    #     return
 
-    @transition(
-        field=status,
-        source=[
-            STATUS.new,
-            STATUS.flagged,
-        ],
-        target=STATUS.validated,
-        conditions=[
-            score_entered,
-            # TODO Could be 'performance_finished' here if want to prevent admin UI
-        ]
-    )
-    def validate(self):
-        # Triggered from dixon test in performance.finish() or UI
-        return
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.new,
+    #         STATUS.flagged,
+    #     ],
+    #     target=STATUS.validated,
+    #     conditions=[
+    #         score_entered,
+    #         # TODO Could be 'performance_finished' here if want to prevent admin UI
+    #     ]
+    # )
+    # def validate(self):
+    #     # Triggered from dixon test in performance.finish() or UI
+    #     return
 
-    @transition(
-        field=status,
-        source=[
-            STATUS.validated,
-        ],
-        target=STATUS.confirmed,
-        conditions=[
-            # song_entered,
-        ]
-    )
-    def confirm(self):
-        return
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.validated,
+    #     ],
+    #     target=STATUS.confirmed,
+    #     conditions=[
+    #         # song_entered,
+    #     ]
+    # )
+    # def confirm(self):
+    #     return
 
-    @transition(
-        field=status,
-        source=STATUS.confirmed,
-        target=STATUS.final,
-    )
-    def finalize(self):
-        return
+    # @transition(
+    #     field=status,
+    #     source=STATUS.confirmed,
+    #     target=STATUS.final,
+    # )
+    # def finalize(self):
+    #     return
 
 
 class Session(TimeStampedModel):
