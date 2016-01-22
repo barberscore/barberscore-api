@@ -279,24 +279,23 @@ class PerformanceInline(admin.TabularInline):
         'status',
         'position',
         'draw',
-        # 'start',
+        'scheduled',
+        'actual',
     )
     sortable_field_name = "position"
 
     model = Performance
     extra = 0
-    # raw_id_fields = (
-    #     'performer',
-    # )
+    raw_id_fields = (
+        'performer',
+    )
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'performer',
     #     ]
     # }
     readonly_fields = (
-        'performer',
         'draw',
-        # 'start',
         'link',
     )
     classes = ('grp-collapse grp-closed',)
