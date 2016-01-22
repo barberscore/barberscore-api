@@ -135,8 +135,9 @@ class ContestantInline(admin.TabularInline):
         # 'name',
         'contest',
         'performer',
-        'total_score',
         'place',
+        'total_points',
+        'total_score',
     )
     ordering = (
         'place',
@@ -157,8 +158,10 @@ class ContestantInline(admin.TabularInline):
     readonly_fields = [
         'link',
         'name',
-        'total_score',
         'place',
+        'total_score',
+        'total_points',
+        'performer',
     ]
     can_delete = True
     # classes = ('grp-collapse grp-open',)
@@ -299,6 +302,45 @@ class PerformanceInline(admin.TabularInline):
         'draw',
         'link',
     )
+    classes = ('grp-collapse grp-closed',)
+
+
+class RankingInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_performance_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'performer',
+        'status',
+        'place',
+        'total_points',
+        'total_score',
+    )
+    extra = 0
+
+    model = Performance
+    readonly_fields = (
+        'performer',
+        'status',
+        'place',
+        'total_points',
+        'total_score',
+        'link',
+    )
+    ordering = (
+        'place',
+    )
+
     classes = ('grp-collapse grp-closed',)
 
 

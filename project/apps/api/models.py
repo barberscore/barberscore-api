@@ -596,6 +596,7 @@ class Contest(TimeStampedModel):
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
+        (28, 'ranked', 'Ranked',),
         (30, 'final', 'Final',),
     )
 
@@ -727,33 +728,33 @@ class Contest(TimeStampedModel):
         )
         super(Contest, self).save(*args, **kwargs)
 
-    def rank(self):
-        contestants = self.contestants.all()
-        for contestant in contestants:
-            contestant.calculate()
-            contestant.save()
-        cursor = []
-        i = 1
-        for contestant in self.contestants.order_by('-total_points'):
-            try:
-                match = contestant.total_points == cursor[0].total_points
-            except IndexError:
-                contestant.place = i
-                contestant.save()
-                cursor.append(contestant)
-                continue
-            if match:
-                contestant.place = i
-                i += len(cursor)
-                contestant.save()
-                cursor.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.place = i
-                contestant.save()
-                cursor = [contestant]
-        return "{0} Ready for Review".format(self)
+    # def rank(self):
+    #     contestants = self.contestants.all()
+    #     for contestant in contestants:
+    #         contestant.calculate()
+    #         contestant.save()
+    #     cursor = []
+    #     i = 1
+    #     for contestant in self.contestants.order_by('-total_points'):
+    #         try:
+    #             match = contestant.total_points == cursor[0].total_points
+    #         except IndexError:
+    #             contestant.place = i
+    #             contestant.save()
+    #             cursor.append(contestant)
+    #             continue
+    #         if match:
+    #             contestant.place = i
+    #             i += len(cursor)
+    #             contestant.save()
+    #             cursor.append(contestant)
+    #             continue
+    #         else:
+    #             i += 1
+    #             contestant.place = i
+    #             contestant.save()
+    #             cursor = [contestant]
+    #     return "{0} Ready for Review".format(self)
 
     def start(self):
         # Triggered in UI
@@ -772,28 +773,22 @@ class Contest(TimeStampedModel):
         return "{0} Started".format(self)
 
     # Check everything is done.
-    def finish(self):
+    @transition(
+        field=status,
+        source=STATUS.finished,
+        target=STATUS.ranked,
+        conditions=[
+            # is_scheduled,
+            # is_imsessioned,
+            # has_performers,
+            # has_contests,
+        ],
+    )
+    def rank(self):
         # Denormalize
-        ns = Song.objects.filter(
-            performance__round__session=self.session,
-        )
-        for n in ns:
-            n.save()
-        ps = Performance.objects.filter(
-            round__session=self.session,
-        )
-        for p in ps:
-            p.save()
-        ts = Performer.objects.filter(
-            session=self.session,
-        )
-        for t in ts:
-            t.save()
-        rs = Contestant.objects.filter(
-            contest=self,
-        )
-        for r in rs:
-            r.save()
+        for contestant in self.contestants.all():
+            contestant.calculate()
+            contestant.save()
         # Rank results
         cursor = []
         i = 1
@@ -2419,7 +2414,7 @@ class Round(TimeStampedModel):
         (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
-        (28, 'confirmed', 'Confirmed',),
+        (28, 'ranked', 'Ranked',),
         (30, 'final', 'Final',),
     )
 
@@ -2520,33 +2515,6 @@ class Round(TimeStampedModel):
         except self.performances.model.DoesNotExist:
             return None
 
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.built,
-    # )
-    # def build(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.built,
-    #     target=STATUS.ready,
-    #     # conditions=[
-    #     #     contest_started,
-    #     # ]
-    # )
-    # def prep(self):
-    #     p = 0
-    #     for performer in self.session.performers.order_by('?'):
-    #         self.performances.create(
-    #             round=self,
-    #             performer=performer,
-    #             position=p,
-    #         )
-    #         p += 1
-    #     return
-
     @transition(
         field=status,
         source=STATUS.new,
@@ -2580,12 +2548,12 @@ class Round(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.finished,
-        target=STATUS.confirmed,
+        target=STATUS.ranked,
         conditions=[
             # Add performances ACCEPTED
         ]
     )
-    def confirm(self):
+    def rank(self):
         # TODO Validate performances over
         cursor = []
         i = 1
@@ -2612,7 +2580,7 @@ class Round(TimeStampedModel):
 
     @transition(
         field=status,
-        source=STATUS.confirmed,
+        source=STATUS.ranked,
         target=STATUS.final,
     )
     def finalize(self):
@@ -2847,6 +2815,7 @@ class Session(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
+        (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
         (50, 'final', 'Final',),
     )
@@ -3048,6 +3017,21 @@ class Session(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.finished,
+        target=STATUS.ranked,
+        conditions=[
+            # is_scheduled,
+            # is_imsessioned,
+            # has_performers,
+            # has_contests,
+        ],
+    )
+    def rank(self):
+        # Triggered in UI
+        return
+
+    @transition(
+        field=status,
+        source=STATUS.ranked,
         target=STATUS.final,
         conditions=[
             # is_scheduled,

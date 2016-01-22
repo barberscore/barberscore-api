@@ -90,7 +90,7 @@ def add_performers(session, number=20):
 
 
 def add_contestants(contest):
-    performers = contest.session.performers.order_by('?')
+    performers = contest.session.performers.all()
     for performer in performers:
         Contestant.objects.create(
             contest=contest,

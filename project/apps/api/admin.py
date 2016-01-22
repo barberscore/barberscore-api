@@ -19,6 +19,7 @@ from .inlines import (
     PerformanceInline,
     ScoreInline,
     RoundInline,
+    RankingInline,
     SingerInline,
     SongStackedInline,
 )
@@ -841,6 +842,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         PerformanceInline,
+        RankingInline,
         JudgeInline,
     ]
 
