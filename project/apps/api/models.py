@@ -2495,7 +2495,7 @@ class Round(TimeStampedModel):
     # )
     # def prep(self):
     #     p = 0
-    #     for performer in self.contest.performers.official().order_by('?'):
+    #     for performer in self.session.performers.order_by('?'):
     #         self.performances.create(
     #             round=self,
     #             performer=performer,
