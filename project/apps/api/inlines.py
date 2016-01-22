@@ -286,15 +286,16 @@ class PerformanceInline(admin.TabularInline):
 
     model = Performance
     extra = 0
-    raw_id_fields = (
-        'performer',
-    )
+    # raw_id_fields = (
+    #     'performer',
+    # )
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'performer',
     #     ]
     # }
     readonly_fields = (
+        'performer',
         'draw',
         'link',
     )
