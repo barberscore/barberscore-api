@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+  <main class="container">
+    <ul class='list-unstyled'>
+      {% for contest in contests %}
+    <li><a href='{% url "website:contest-oss" contest.slug %}' >{{contest}}</a></li>
+      {% endfor %}
+    </ul>
+  </main>
+{% endblock content %}

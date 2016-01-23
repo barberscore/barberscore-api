@@ -31,11 +31,12 @@ from django.forms import (
 
 from apps.api.models import (
     Contest,
+    Session,
     Round,
     Performance,
-    Score,
+    # Score,
     Song,
-    Performer,
+    # Performer,
 )
 
 from .forms import (
@@ -127,15 +128,118 @@ def logout(request):
 
 @login_required
 def dashboard(request):
-    contests = Contest.objects.exclude(
-        status=Contest.STATUS.final,
+    contests = Contest.objects.filter(
+        session__convention__year=2016,
+        session__kind=Session.KIND.seniors,
     )
     return render(
         request,
-        'api/dashboard.html',
-        {'contests': contests},
+        'api/dashboard.html', {
+            'contests': contests,
+        },
     )
 
+
+@login_required
+def round_oss(request, slug):
+    round = get_object_or_404(
+        Round,
+        slug=slug,
+        # status=Round.STATUS.final,
+    )
+    performances = round.performances.select_related(
+        'performer__group',
+    ).prefetch_related(
+        'songs',
+        'songs__tune',
+    ).filter(
+        status=Performance.STATUS.final,
+    ).order_by(
+        'place',
+    )
+    return render(
+        request,
+        'api/round_oss.html',
+        {'round': round, 'performances': performances},
+    )
+
+
+@login_required
+def contest_oss(request, slug):
+    contest = get_object_or_404(
+        Contest,
+        slug=slug,
+        # status=Contest.STATUS.final,
+    )
+    performers = contest.session.performers.select_related(
+        'group',
+    ).prefetch_related(
+        Prefetch(
+            'performances',
+            queryset=Performance.objects.order_by('round__kind'),
+        ),
+        Prefetch(
+            'performances__round',
+        ),
+        Prefetch(
+            'performances__songs',
+            queryset=Song.objects.order_by('order'),
+        ),
+        Prefetch('performances__songs__tune'),
+    ).order_by(
+        'place',
+        # 'performances__round__kind',
+    )
+    # judges = contest.judges.official
+    # contestants = contest.contestants.all()
+    return render(
+        request,
+        'api/contest_oss.html', {
+            'contest': contest,
+            'performers': performers,
+            # 'judges': judges,
+            # 'contestants': contestants,
+        },
+    )
+
+
+class HelloPDFView(PDFTemplateView):
+    template_name = "pdf/oss.html"
+    model = Contest
+
+    def get_context_data(self, **kwargs):
+            context = super(HelloPDFView, self).get_context_data(**kwargs)
+            contest = get_object_or_404(
+                Contest,
+                slug=self.kwargs['slug'],
+                # status=Contest.STATUS.final,
+            )
+            performers = contest.performers.select_related(
+                'group',
+            ).prefetch_related(
+                Prefetch(
+                    'performances',
+                    queryset=Performance.objects.order_by('round__kind'),
+                ),
+                Prefetch(
+                    'performances__round',
+                ),
+                Prefetch(
+                    'performances__songs',
+                    queryset=Song.objects.order_by('order'),
+                ),
+                Prefetch('performances__songs__tune'),
+            ).order_by(
+                'place',
+                # 'performances__round__kind',
+            )
+            judges = contest.judges.official
+            contestants = contest.contestants.all()
+            context["contest"] = contest
+            context["performers"] = performers
+            context["judges"] = judges
+            context["contestants"] = contestants
+            return context
 
 @login_required
 def contest(request, slug):
@@ -482,103 +586,3 @@ def contest_end(request, slug):
     )
 
 
-@login_required
-def round_oss(request, slug):
-    round = get_object_or_404(
-        Round,
-        slug=slug,
-        # status=Round.STATUS.final,
-    )
-    performances = round.performances.select_related(
-        'performer__group',
-    ).prefetch_related(
-        'songs',
-        'songs__tune',
-    ).filter(
-        status=Performance.STATUS.final,
-    ).order_by(
-        'place',
-    )
-    return render(
-        request,
-        'api/round_oss.html',
-        {'round': round, 'performances': performances},
-    )
-
-
-@login_required
-def contest_oss(request, slug):
-    contest = get_object_or_404(
-        Contest,
-        slug=slug,
-        # status=Contest.STATUS.final,
-    )
-    performers = contest.performers.select_related(
-        'group',
-    ).prefetch_related(
-        Prefetch(
-            'performances',
-            queryset=Performance.objects.order_by('round__kind'),
-        ),
-        Prefetch(
-            'performances__round',
-        ),
-        Prefetch(
-            'performances__songs',
-            queryset=Song.objects.order_by('order'),
-        ),
-        Prefetch('performances__songs__tune'),
-    ).order_by(
-        'place',
-        # 'performances__round__kind',
-    )
-    # judges = contest.judges.official
-    # contestants = contest.contestants.all()
-    return render(
-        request,
-        'api/contest_oss.html', {
-            'contest': contest,
-            'performers': performers,
-            # 'judges': judges,
-            # 'contestants': contestants,
-        },
-    )
-
-
-class HelloPDFView(PDFTemplateView):
-    template_name = "pdf/oss.html"
-    model = Contest
-
-    def get_context_data(self, **kwargs):
-            context = super(HelloPDFView, self).get_context_data(**kwargs)
-            contest = get_object_or_404(
-                Contest,
-                slug=self.kwargs['slug'],
-                # status=Contest.STATUS.final,
-            )
-            performers = contest.performers.select_related(
-                'group',
-            ).prefetch_related(
-                Prefetch(
-                    'performances',
-                    queryset=Performance.objects.order_by('round__kind'),
-                ),
-                Prefetch(
-                    'performances__round',
-                ),
-                Prefetch(
-                    'performances__songs',
-                    queryset=Song.objects.order_by('order'),
-                ),
-                Prefetch('performances__songs__tune'),
-            ).order_by(
-                'place',
-                # 'performances__round__kind',
-            )
-            judges = contest.judges.official
-            contestants = contest.contestants.all()
-            context["contest"] = contest
-            context["performers"] = performers
-            context["judges"] = judges
-            context["contestants"] = contestants
-            return context
