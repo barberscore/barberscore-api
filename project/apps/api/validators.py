@@ -80,10 +80,8 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
                 is_flagged = True
     if is_flagged:
         performance.flag()
-        print 'flag'
     else:
         performance.accept()
-        print 'accept'
     performance.save()
     return
 

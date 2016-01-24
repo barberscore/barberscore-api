@@ -34,8 +34,8 @@ class Command(BaseCommand):
             ).order_by('position')
             for performance in performances:
                 performance.start()
-                performance.save()
-                score_performance(performance)
                 performance.finish()
+                score_performance(performance)
+                performance.enter()
                 performance.save()
             self.stdout.write("Filled Round")

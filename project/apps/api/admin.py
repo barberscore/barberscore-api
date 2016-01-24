@@ -688,6 +688,57 @@ class PersonAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Round)
+class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    save_on_top = True
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    list_display = [
+        'name',
+        'status',
+        'slots',
+    ]
+    fields = [
+        'name',
+        ('status', 'status_monitor',),
+        ('session', 'kind',),
+        ('slots',),
+    ]
+
+    readonly_fields = [
+        'name',
+        'status_monitor',
+        'session',
+        'kind',
+    ]
+
+    list_filter = (
+        'status',
+    )
+
+    raw_id_fields = (
+        'session',
+    )
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'session',
+        ]
+    }
+
+    inlines = [
+        PerformanceInline,
+        JudgeInline,
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -794,58 +845,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         RoundInline,
         ContestInline,
         PerformerInline,
-    ]
-
-
-@admin.register(Round)
-class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    save_on_top = True
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    list_display = [
-        'name',
-        'status',
-        'slots',
-    ]
-    fields = [
-        'name',
-        ('status', 'status_monitor',),
-        ('session', 'kind',),
-        ('slots',),
-    ]
-
-    readonly_fields = [
-        'name',
-        'status_monitor',
-        'session',
-        'kind',
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    raw_id_fields = (
-        'session',
-    )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'session',
-        ]
-    }
-
-    inlines = [
-        PerformanceInline,
-        RankingInline,
-        JudgeInline,
-    ]
-
-    search_fields = [
-        'name',
     ]
 
 

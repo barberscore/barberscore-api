@@ -10,8 +10,6 @@ import datetime
 
 import arrow
 
-from django.db.models.functions import Now
-
 from django.db import (
     models,
 )
@@ -20,6 +18,8 @@ from django.contrib.postgres.fields import (
     DateRangeField,
     DateTimeRangeField,
 )
+
+from psycopg2.extras import Range
 
 from autoslug import AutoSlugField
 
@@ -1867,15 +1867,15 @@ class Performance(TimeStampedModel):
         ],
         target=STATUS.started,
         conditions=[
-            preceding_finished,
+            # preceding_finished,
         ]
     )
     def start(self):
         # Triggered from UI
 
         # Set start time
-        self.actual = (
-            Now(),
+        self.actual = Range(
+            arrow.now().datetime,
             None,
         )
 
@@ -1910,8 +1910,8 @@ class Performance(TimeStampedModel):
     def finish(self):
         # Triggered from UI
         self.actual = (
-            self.actual[0],
-            Now(),
+            self.actual.lower,
+            arrow.now().datetime,
         )
         return
 
