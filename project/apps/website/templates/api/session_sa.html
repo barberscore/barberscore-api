@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block content %}
-  <main class="container">
+  <main>
   <h3>
     Session Scoring Analysis: {{session.name}}
   </h3>
@@ -13,72 +13,130 @@
   {% endfor %}
   </ul>
   </section>
-    <section>
-      <table class='table'>
-      <thead>
-      <tr>
-      <th></th>
-      <th>Music</th>
-      <th>Presentation</th>
-      <th>Singing</th>
-      <th>Total</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-      <td>Points</td>
-      <td>{{performer.mus_points}}</td>
-      <td>{{performer.prs_points}}</td>
-      <td>{{performer.sng_points}}</td>
-      <td>{{performer.total_points}}</td>
-      </tr>
-      <tr>
-      <td>Score</td>
-      <td>{{performer.mus_score}}</td>
-      <td>{{performer.prs_score}}</td>
-      <td>{{performer.sng_score}}</td>
-      <td>{{performer.total_score}}</td>
-      </tr>
-      </tbody>
-      </table>
-    </section>
-    <section>
+  <section>
     <table class='table'>
     <thead>
     <tr>
+    <th>P/S</th>
+    <th>P/S</th>
     <th>Song</th>
+    <th>Music</th>
+    <th>Points</th>
+    <th>Score</th>
+    <th>Prs</th>
+    <th>Points</th>
+    <th>Score</th>
+    <th>Sing</th>
+    <th>Points</th>
+    <th>Score</th>
     {% for judge in judges %}
       <th>{{judge.designation}}</th>
     {% endfor %}
-    <th>Total Points</th>
-    <th>Total Score</th>
     </tr>
     </thead>
     <tbody>
-    {% for performance in performer.performances.all %}
+    {% for performance in performances %}
+    <tr>
+      <td>{{performance.performer.group.name}} ({{performance.place}})</td>
+    <td>{{performance.total_points}}<br>{{performance.total_score}}</td>
+
+    <td>
     {% for song in performance.songs.all %}
-      <tr>
-        <td>{{song.title}}</td>
-        {% for score in song.scores.all %}
-          <td>{{score.points}}</td>
-        {% endfor %}
-        <td>{{song.total_points}}</td>
-        <td>{{song.total_score}}</td>
-      </tr>
+      {{song.title}}<br>
     {% endfor %}
+    </td>
+    <td>
+      {{performance.mus_points}}<br>
+      {{performance.mus_score}}
+    </td>
+    <td>
+    {% for song in performance.songs.all %}
+      {{song.mus_points}}<br>
+    {% endfor %}
+    </td>
+    <td>
+    {% for song in performance.songs.all %}
+      {{song.mus_score}}<br>
+    {% endfor %}
+    </td>
+    <td>
+      {{performance.prs_points}}<br>
+      {{performance.prs_score}}
+    </td>
+    <td>
+    {% for song in performance.songs.all %}
+      {{song.prs_points}}<br>
+    {% endfor %}
+    </td>
+    <td>
+    {% for song in performance.songs.all %}
+      {{song.prs_score}}<br>
+    {% endfor %}
+    </td>
+    <td>
+      {{performance.sng_points}}<br>
+      {{performance.sng_score}}
+    </td>
+    <td>
+    {% for song in performance.songs.all %}
+      {{song.sng_points}}<br>
+    {% endfor %}
+    </td>
+    <td>
+    {% for song in performance.songs.all %}
+      {{song.sng_score}}<br>
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.0.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.1.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.2.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.3.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.4.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.5.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.6.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.7.points}}
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.8.points}}
+    {% endfor %}
+    </td>
+
+    </tr>
     {% endfor %}
     </tbody>
-    {% comment %}
-    <tfoot>
-    {% for performance in performer.performances.all %}
-      <tr>
-        <th></th>
-        <th>{{performance.mus_points}}</th>
-      </tr>
-    {% endfor %}
-    </tfoot>
-    {% endcomment %}
     </table>
-    </section>
+  </section>
   </main>
 {% endblock content %}

@@ -273,10 +273,14 @@ def session_sa(request, slug):
     judges = session.rounds.first().judges.exclude(
         category=Judge.CATEGORY.admin,
     )
+    performances = session.rounds.first().performances.order_by('-total_points')
     return render(
         request,
-        'api/session_sa.html',
-        {'session': session, 'judges': judges},
+        'api/session_sa.html', {
+            'session': session,
+            'judges': judges,
+            'performances': performances,
+        },
     )
 
 
