@@ -28,89 +28,89 @@
             </tr>
           </thead>
           <tbody>
-            {% for performer in performers %}
+            {% for contestant in contestants %}
                 <tr>
                   <td>
-                    {{performer.place}}
+                    {{contestant.place}}
                   </td>
                   <td>
-                    {{performer.total_points}}<br>
-                    {{performer.total_score}}
+                    {{contestant.total_points}}<br>
+                    {{contestant.total_score}}
                   </td>
                   <td>
-                    {{performer.group.name}}
+                    {{contestant.performer.group.name}}
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
-                        {{song.tune.name}}<br>
+                        {{song.title}}<br>
                       {% endfor %}
                     {% endfor %}
                     <em>Totals</em>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.mus_points}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.mus_points}}</em><br>
+                      <em>{{contestant.performer.mus_points}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.prs_points}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.prs_points}}</em><br>
+                      <em>{{contestant.performer.prs_points}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.sng_points}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.sng_points}}</em><br>
+                      <em>{{contestant.performer.sng_points}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.total_points}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.total_points}}</em><br>
+                      <em>{{contestant.performer.total_points}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.mus_score}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.mus_score}}</em><br>
+                      <em>{{contestant.performer.mus_score}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.prs_score}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.prs_score}}</em><br>
+                      <em>{{contestant.performer.prs_score}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.sng_score}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.sng_score}}</em><br>
+                      <em>{{contestant.performer.sng_score}}</em><br>
                   </td>
                   <td>
-                    {% for performance in performer.performances.all %}
+                    {% for performance in contestant.performer.performances.all %}
                       {% for song in performance.songs.all %}
                         {{song.total_score}}<br>
                       {% endfor %}
                     {% endfor %}
-                      <em>{{performer.total_score}}</em><br>
+                      <em>{{contestant.performer.total_score}}</em><br>
                   </td>
                 </tr>
             {% endfor %}
@@ -119,12 +119,8 @@
       </div>
     </section>
     <section>
-      <h4>Contests</h4>
-      <ul class='list-unstyled'>
-      {% for contestant in contest.contestants.all %}
-        <li>{{contestant.contest.name}}: {{contestant.performer.group.name}}</li>
-      {% endfor %}
-      </ul>
+      <h4>Award</h4>
+        <p>{{contest.award.name}} Champion: {{champion.name}}</p>
     </section>
     <section>
       <h4>Judges</h4>
@@ -135,7 +131,7 @@
       {% for get_category_display in judges_list %}
       <tr>
         {% for judge in get_category_display.list %}
-          <td>{{judge.person.name}}, {{judge.designation}}</td>
+          <td>{{judge.person.common_name}}, {{judge.designation}}</td>
         {% endfor %}
         </tr>
       {% endfor %}

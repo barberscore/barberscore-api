@@ -964,7 +964,11 @@ class Contestant(TimeStampedModel):
             # Calculate percentile
             try:
                 # TODO Really shouldn't do this...
-                size = self.contest.session.rounds.first().judges.filter(kind=10).count() / 3
+                size = self.contest.session.rounds.first().judges.filter(
+                    kind=10,
+                ).exclude(
+                    category=0,
+                ).count() / 3
                 possible = size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
@@ -2025,7 +2029,7 @@ class Performer(TimeStampedModel):
             The incoming rank based on prelim score.""",
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     prelim = models.FloatField(
@@ -2033,7 +2037,7 @@ class Performer(TimeStampedModel):
             The incoming prelim score.""",
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     place = models.IntegerField(
@@ -3026,7 +3030,12 @@ class Session(TimeStampedModel):
         ],
     )
     def rank(self):
-        # Triggered in UI
+        for performer in self.performances.all():
+            performer.calculate()
+            performer.save()
+        for contest in self.contests.all():
+            contest.rank()
+            contest.save()
         return
 
     @transition(

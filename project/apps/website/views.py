@@ -171,34 +171,39 @@ def contest_oss(request, slug):
         slug=slug,
         # status=Contest.STATUS.final,
     )
-    performers = contest.session.performers.select_related(
-        'group',
-    ).prefetch_related(
-        Prefetch(
-            'performances',
-            queryset=Performance.objects.order_by('round__kind'),
-        ),
-        Prefetch(
-            'performances__round',
-        ),
-        Prefetch(
-            'performances__songs',
-            queryset=Song.objects.order_by('order'),
-        ),
-        Prefetch('performances__songs__tune'),
-    ).order_by(
-        'place',
-        # 'performances__round__kind',
+    # performers = contest.session.performers.select_related(
+    #     'group',
+    # ).prefetch_related(
+    #     Prefetch(
+    #         'performances',
+    #         queryset=Performance.objects.order_by('round__kind'),
+    #     ),
+    #     Prefetch(
+    #         'performances__round',
+    #     ),
+    #     Prefetch(
+    #         'performances__songs',
+    #         queryset=Song.objects.order_by('order'),
+    #     ),
+    #     Prefetch('performances__songs__tune'),
+    # ).order_by(
+    #     'place',
+    #     # 'performances__round__kind',
+    # )
+    # TODO More hackery to be refactored
+    judges = contest.session.rounds.first().judges.filter(
+        kind=10,
     )
-    # judges = contest.judges.official
-    # contestants = contest.contestants.all()
+    contestants = contest.contestants.order_by('place')
+    champion = contestants.first().performer.group
     return render(
         request,
         'api/contest_oss.html', {
             'contest': contest,
-            'performers': performers,
-            # 'judges': judges,
-            # 'contestants': contestants,
+            # 'performers': performers,
+            'judges': judges,
+            'contestants': contestants,
+            'champion': champion,
         },
     )
 
