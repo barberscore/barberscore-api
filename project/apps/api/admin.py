@@ -580,8 +580,8 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        # 'seed',
-        # 'prelim',
+        'seed',
+        'prelim',
         # 'mus_score',
         # 'prs_score',
         # 'sng_score',
@@ -621,8 +621,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'organization',
-        'seed',
-        'prelim',
         'name',
         'status_monitor',
         'mus_points',
