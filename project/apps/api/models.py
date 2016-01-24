@@ -1873,11 +1873,11 @@ class Performance(TimeStampedModel):
     def start(self):
         # Triggered from UI
 
-        # Set start time
-        self.actual = Range(
-            arrow.now().datetime,
-            None,
-        )
+        # # Set start time
+        # self.actual = Range(
+        #     arrow.now().datetime,
+        #     None,
+        # )
 
         # Creates Song and Score sentinels.
         i = 1
@@ -1909,10 +1909,10 @@ class Performance(TimeStampedModel):
     )
     def finish(self):
         # Triggered from UI
-        self.actual = (
-            self.actual.lower,
-            arrow.now().datetime,
-        )
+        # self.actual = (
+        #     self.actual.lower,
+        #     arrow.now().datetime,
+        # )
         return
 
     @transition(
