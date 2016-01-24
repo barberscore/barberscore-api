@@ -35,8 +35,9 @@ from apps.api.models import (
     Round,
     Performance,
     # Score,
+    Judge,
     Song,
-    # Performer,
+    Performer,
 )
 
 from .forms import (
@@ -245,6 +246,39 @@ class HelloPDFView(PDFTemplateView):
             context["judges"] = judges
             context["contestants"] = contestants
             return context
+
+
+@login_required
+def performer_csa(request, slug):
+    performer = get_object_or_404(
+        Performer,
+        slug=slug,
+    )
+    judges = performer.session.rounds.first().judges.exclude(
+        category=Judge.CATEGORY.admin,
+    )
+    return render(
+        request,
+        'api/performer_csa.html',
+        {'performer': performer, 'judges': judges},
+    )
+
+
+@login_required
+def session_sa(request, slug):
+    session = get_object_or_404(
+        Session,
+        slug=slug,
+    )
+    judges = session.rounds.first().judges.exclude(
+        category=Judge.CATEGORY.admin,
+    )
+    return render(
+        request,
+        'api/session_sa.html',
+        {'session': session, 'judges': judges},
+    )
+
 
 @login_required
 def contest(request, slug):

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+  <main class="container">
+  <h3>
+    Contestant Scoring Analysis
+  </h3>
+  <p>
+  {{performer.session.name}}
+  </p>
+  <p>
+  {{performer.session.convention.name}}
+  </p>
+    <section>
+      <p>
+        {{performer}}
+      </p>
+      <p>
+        {{performer}}
+      </p>
+      <table class='table'>
+      <thead>
+      <tr>
+      <th></th>
+      <th>Music</th>
+      <th>Presentation</th>
+      <th>Singing</th>
+      <th>Total</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>Points</td>
+      <td>{{performer.mus_points}}</td>
+      <td>{{performer.prs_points}}</td>
+      <td>{{performer.sng_points}}</td>
+      <td>{{performer.total_points}}</td>
+      </tr>
+      <tr>
+      <td>Score</td>
+      <td>{{performer.mus_score}}</td>
+      <td>{{performer.prs_score}}</td>
+      <td>{{performer.sng_score}}</td>
+      <td>{{performer.total_score}}</td>
+      </tr>
+      </tbody>
+      </table>
+    </section>
+    <section>
+    <table class='table'>
+    <thead>
+    <tr>
+    <th>Song</th>
+    {% for judge in judges %}
+      <th>{{judge.designation}}</th>
+    {% endfor %}
+    <th>Total Points</th>
+    <th>Total Score</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for performance in performer.performances.all %}
+    {% for song in performance.songs.all %}
+      <tr>
+        <td>{{song.title}}</td>
+        {% for score in song.scores.all %}
+          <td>{{score.points}}</td>
+        {% endfor %}
+        <td>{{song.total_points}}</td>
+        <td>{{song.total_score}}</td>
+      </tr>
+    {% endfor %}
+    {% endfor %}
+    </tbody>
+    {% comment %}
+    <tfoot>
+    {% for performance in performer.performances.all %}
+      <tr>
+        <th></th>
+        <th>{{performance.mus_points}}</th>
+      </tr>
+    {% endfor %}
+    </tfoot>
+    {% endcomment %}
+    </table>
+    </section>
+    <section>
+    <ul class='list-inline'>
+    {% for judge in judges %}
+      <li>{{judge.designation}}: {{judge.person.common_name}}</li>
+    {% endfor %}
+    </ul>
+    </section>
+  </main>
+{% endblock content %}
