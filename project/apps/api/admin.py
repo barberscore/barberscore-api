@@ -659,7 +659,6 @@ class PersonAdmin(admin.ModelAdmin):
     fields = (
         'name',
         ('status', 'status_monitor',),
-        'kind',
         'organization',
         'location',
         'website',
@@ -670,6 +669,7 @@ class PersonAdmin(admin.ModelAdmin):
         'member',
         'picture',
         'description',
+        'bhs_city',
         'notes',
     )
 

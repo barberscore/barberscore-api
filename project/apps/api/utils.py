@@ -37,58 +37,113 @@ def import_members(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
-        ps = Person.objects.all()
-        for p in ps:
-            for row in rows:
-                if p.member == int(row[0]):
-                    # p.bhs_name = row[1]
-                    # p.bhs_city = row[2]
-                    # p.state = row[3]
-                    # p.phone = row[4]
-                    # p.email = row[5]
-                    # p.save()
-                    print 'member'
-                    row.append('member')
-                else:
-                    row.append('not')
-        # i = 0
-        # for row in rows:
-        #     i += 1
-        #     if row[6] == 'not':
-        #         try:
-        #             p = Person.objects.get(
-        #                 name__iexact=row[1],
-        #             )
-        #             p.member = int(row[0])
-        #             p.bhs_name = row[1]
-        #             p.bhs_city = row[2]
-        #             p.state = row[3]
-        #             p.phone = row[4]
-        #             p.email = row[5]
-        #             p.save()
-        #             print 'name {0}'.format(i)
-        #             row.append('name')
-        #         except Person.DoesNotExist:
-        #             row[6] = 'dne'
-        #             print 'dne {0}'.format(i)
-        #         except Person.MultipleObjectsReturned:
-        #             row[6] = 'dup'
-        #             print 'dup {0}'.format(i)
-        choices = []
-        ps = Person.objects.exclude(member=None)
         for row in rows:
-            if row[6] == 'not':
-                choices.append(unidecode(row[1]))
-        t = 0
-        for p in ps:
-            t += 1
-            print 't: {0}'.format(t)
-            r = process.extractOne(
-                p.name,
-                choices
-            )
-            if r[1] > 89:
-                print p.name, r[0]
+            try:
+                p = Person.objects.get(
+                    member=row[0],
+                )
+                p.member = int(row[0])
+                p.bhs_name = row[1]
+                p.bhs_city = row[2]
+                p.bhs_state = row[3]
+                p.bhs_phone = row[4]
+                p.bhs_email = row[5]
+                p.save()
+            except Person.DoesNotExist:
+                try:
+                    p = Person.objects.get(
+                        name__iexact=row[1],
+                    )
+                    p.member = int(row[0])
+                    p.bhs_name = row[1]
+                    p.bhs_city = row[2]
+                    p.bhs_state = row[3]
+                    p.bhs_phone = row[4]
+                    p.bhs_email = row[5]
+                    p.save()
+                except Person.MultipleObjectsReturned:
+                    print 'DUPLICATE: {0}'.format(row[0])
+                except Person.DoesNotExist:
+                    try:
+                        p = Person.objects.get(
+                            common_name__iexact=row[1],
+                        )
+                        p.member = int(row[0])
+                        p.bhs_name = row[1]
+                        p.bhs_city = row[2]
+                        p.bhs_state = row[3]
+                        p.bhs_phone = row[4]
+                        p.bhs_email = row[5]
+                        p.save()
+                    except Person.MultipleObjectsReturned:
+                        print 'DUPLICATE: {0}'.format(row[0])
+                    except Person.DoesNotExist:
+                        try:
+                            p = Person.objects.get(
+                                full_name__iexact=row[1],
+                            )
+                            p.member = int(row[0])
+                            p.bhs_name = row[1]
+                            p.bhs_city = row[2]
+                            p.bhs_state = row[3]
+                            p.bhs_phone = row[4]
+                            p.bhs_email = row[5]
+                            p.save()
+                        except Person.MultipleObjectsReturned:
+                            print 'DUPLICATE: {0}'.format(row[0])
+                        except Person.DoesNotExist:
+                            try:
+                                p = Person.objects.get(
+                                    formal_name__iexact=row[1],
+                                )
+                                p.member = int(row[0])
+                                p.bhs_name = row[1]
+                                p.bhs_city = row[2]
+                                p.bhs_state = row[3]
+                                p.bhs_phone = row[4]
+                                p.bhs_email = row[5]
+                                p.save()
+                            except Person.DoesNotExist:
+                                Person.objects.create(
+                                    name=unidecode(row[1]),
+                                    member=row[0],
+                                    bhs_name=row[1],
+                                    bhs_city=row[2],
+                                    bhs_state=row[3],
+                                    bhs_phone=row[4],
+                                    bhs_email=row[5],
+                                )
+
+
+def import_quartets(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for row in rows:
+            if row[1].endswith(', The'):
+                row[1] = "The " + row[1].partition(',')[0]
+        for row in rows:
+            try:
+                g = Group.objects.get(
+                    name__iexact=row[1],
+                )
+                g.group_id = int(row[0])
+                g.bhs_name = row[1]
+                g.bhs_district = row[2]
+                g.bhs_location = row[3]
+                g.bhs_contact = row[4]
+                g.bhs_expiration = row[5]
+                g.save()
+            except Group.DoesNotExist:
+                Group.objects.create(
+                    name=row[1],
+                    group_id=int(row[0]),
+                    bhs_name=row[1],
+                    bhs_district=row[2],
+                    bhs_location=row[3],
+                    bhs_contact=row[4],
+                    bhs_expiration=row[5],
+                )
 
 
 def import_convention(path, kind, division=False):

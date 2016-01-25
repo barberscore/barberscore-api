@@ -1300,6 +1300,36 @@ class Group(Common):
         on_delete=models.SET_NULL,
     )
 
+    group_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_district = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_location = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_contact = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_expiration = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
