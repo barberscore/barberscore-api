@@ -10,6 +10,8 @@ import arrow
 import logging
 log = logging.getLogger(__name__)
 
+from fuzzywuzzy import process
+
 from nameparser import HumanName
 
 from .models import (
@@ -29,6 +31,64 @@ from .models import (
     Song,
     Score,
 )
+
+
+def import_members(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        ps = Person.objects.all()
+        for p in ps:
+            for row in rows:
+                if p.member == int(row[0]):
+                    # p.bhs_name = row[1]
+                    # p.bhs_city = row[2]
+                    # p.state = row[3]
+                    # p.phone = row[4]
+                    # p.email = row[5]
+                    # p.save()
+                    print 'member'
+                    row.append('member')
+                else:
+                    row.append('not')
+        # i = 0
+        # for row in rows:
+        #     i += 1
+        #     if row[6] == 'not':
+        #         try:
+        #             p = Person.objects.get(
+        #                 name__iexact=row[1],
+        #             )
+        #             p.member = int(row[0])
+        #             p.bhs_name = row[1]
+        #             p.bhs_city = row[2]
+        #             p.state = row[3]
+        #             p.phone = row[4]
+        #             p.email = row[5]
+        #             p.save()
+        #             print 'name {0}'.format(i)
+        #             row.append('name')
+        #         except Person.DoesNotExist:
+        #             row[6] = 'dne'
+        #             print 'dne {0}'.format(i)
+        #         except Person.MultipleObjectsReturned:
+        #             row[6] = 'dup'
+        #             print 'dup {0}'.format(i)
+        choices = []
+        ps = Person.objects.exclude(member=None)
+        for row in rows:
+            if row[6] == 'not':
+                choices.append(unidecode(row[1]))
+        t = 0
+        for p in ps:
+            t += 1
+            print 't: {0}'.format(t)
+            r = process.extractOne(
+                p.name,
+                choices
+            )
+            if r[1] > 89:
+                print p.name, r[0]
 
 
 def import_convention(path, kind, division=False):

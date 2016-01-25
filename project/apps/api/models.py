@@ -2265,18 +2265,6 @@ class Performer(TimeStampedModel):
 
 class Person(Common):
 
-    KIND = Choices(
-        (1, 'individual', "Individual"),
-        (2, 'team', "Team"),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            Most persons are individuals; however, they can be grouped into teams for the purpose of multi-arranger songs.""",
-        choices=KIND,
-        default=KIND.individual,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -2337,6 +2325,35 @@ class Person(Common):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+    )
+
+    bhs_member_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_city = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_state = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_phone = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_email = models.EmailField(
+        blank=True,
     )
 
     def __unicode__(self):
