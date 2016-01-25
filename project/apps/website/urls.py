@@ -32,8 +32,10 @@ urlpatterns = [
 
     # Scoresheets
     # url(r'^round/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.round_oss, name='round-oss'),
-    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),
+    url(r'^convention/(?P<slug>[a-zA-Z0-9-]+)/$', views.convention_detail, name='convention-detail'),
+    url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.session_oss, name='session-oss'),
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/sa/$', views.session_sa, name='session-sa'),
+    url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),
     url(r'^performer/(?P<slug>[a-zA-Z0-9-]+)/csa/$', views.performer_csa, name='performer-csa'),
     url(r"^contest/(?P<slug>[a-zA-Z0-9-]+)/pdf/$", views.HelloPDFView.as_view())
 

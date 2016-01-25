@@ -34,7 +34,7 @@ from apps.api.models import (
     Session,
     Round,
     Performance,
-    # Score,
+    Convention,
     Judge,
     Song,
     Performer,
@@ -129,14 +129,37 @@ def logout(request):
 
 @login_required
 def dashboard(request):
-    contests = Contest.objects.filter(
-        session__convention__year=2016,
-        session__kind=Session.KIND.seniors,
+    conventions = Convention.objects.filter(
+        year__gte=2015,
     )
     return render(
         request,
         'api/dashboard.html', {
+            'conventions': conventions,
+        },
+    )
+
+
+@login_required
+def convention_detail(request, slug):
+    convention = get_object_or_404(
+        Convention,
+        slug=slug,
+    )
+    sessions = convention.sessions.all()
+    contests = Contest.objects.filter(
+        session__convention=convention,
+    )
+    performers = Performer.objects.filter(
+        session__convention=convention,
+    )
+    return render(
+        request,
+        'api/convention.html', {
+            'convention': convention,
+            'sessions': sessions,
             'contests': contests,
+            'performers': performers,
         },
     )
 
@@ -261,6 +284,39 @@ def performer_csa(request, slug):
         request,
         'api/performer_csa.html',
         {'performer': performer, 'judges': judges},
+    )
+
+
+@login_required
+def session_oss(request, slug):
+    session = get_object_or_404(
+        Session,
+        slug=slug,
+    )
+    # judges = session.rounds.first().judges.exclude(
+    #     category=Judge.CATEGORY.admin,
+    # )
+    # performances = Performance.objects.filter(
+    #     round__session=session,
+    # ).order_by('-total_points')
+    # songs = Song.objects.filter(
+    #     performance__round__session=session,
+    # ).order_by('-performance__total_points', 'order',)
+    performers = Performer.objects.filter(
+        session=session,
+    ).prefetch_related(
+        'performances',
+        'performances__songs',
+    ).order_by('-total_points')
+    return render(
+        request,
+        'api/session_oss.html', {
+            'session': session,
+            # 'judges': judges,
+            # 'performances': performances,
+            # 'songs': songs,
+            'performers': performers,
+        },
     )
 
 
