@@ -776,6 +776,9 @@ def denormalize(convention):
                 performance.save()
             performer.calculate()
             performer.save()
+        for contest in session.contests.all():
+            contest.rank()
+            contest.save()
     return
 
 
