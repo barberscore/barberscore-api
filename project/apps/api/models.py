@@ -347,6 +347,7 @@ class Award(TimeStampedModel):
             u"{0}".format(self.organization),
             u"{0}".format(self.get_kind_display()),
             u"{0}".format(self.long_name),
+            u"Championship"
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -619,8 +620,6 @@ class Contest(TimeStampedModel):
         help_text="""
             The objective of the contest.""",
         choices=GOAL,
-        null=True,
-        blank=True,
     )
 
     qual_score = models.FloatField(
@@ -721,10 +720,10 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.session,
+        self.name = u"{0} Contest {1} {2}".format(
             self.award,
-            self.get_goal_display()
+            self.session.convention.get_kind_display(),
+            self.session.convention.year,
         )
         super(Contest, self).save(*args, **kwargs)
 

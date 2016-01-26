@@ -89,7 +89,7 @@ class ContestInline(admin.TabularInline):
 
     fields = (
         'link',
-        # 'name',
+        'name',
         'status',
         'award',
         'session',
