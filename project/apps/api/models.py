@@ -720,17 +720,11 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
+        self.name = u"{0} Contest {1}".format(
+            self.award,
+            self.session.convention.year,
         )
         super(Contest, self).save(*args, **kwargs)
-
-        # self.name = u"{0} Contest {1} {2}".format(
-        #     self.award,
-        #     self.session.convention.get_kind_display(),
-        #     self.session.convention.year,
-        # )
-        # super(Contest, self).save(*args, **kwargs)
 
     # def rank(self):
     #     contestants = self.contestants.all()
