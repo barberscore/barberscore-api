@@ -279,7 +279,7 @@ def performer_csa(request, slug):
 @login_required
 def session_oss(request, slug):
     session = get_object_or_404(
-        Session,
+        Session.objects.select_related('convention'),
         slug=slug,
     )
     judges = session.judges.filter(

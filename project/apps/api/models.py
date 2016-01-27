@@ -1122,6 +1122,22 @@ class Convention(TimeStampedModel):
         null=True,
     )
 
+    @property
+    def human_date(self):
+        if self.date:
+            if self.date.upper - self.date.lower == datetime.timedelta(1):
+                dates = "{0}".format(
+                    arrow.get(self.date.lower).format('MMMM D, YYYY'),
+                )
+            else:
+                dates = "{0} - {1}".format(
+                    arrow.get(self.date.lower).format('MMMM D'),
+                    arrow.get(self.date.upper).format('MMMM D, YYYY'),
+                )
+        else:
+            dates = self.date
+        return dates
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
