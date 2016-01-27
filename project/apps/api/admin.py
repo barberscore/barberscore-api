@@ -780,8 +780,8 @@ class ScoreAdmin(admin.ModelAdmin):
     }
 
     ordering = [
-        'judge',
         'song',
+        'judge',
     ]
 
 

@@ -344,7 +344,7 @@ class Award(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            u"{0}".format(self.organization),
+            u"{0}".format(self.organization.name),
             u"{0}".format(self.get_kind_display()),
             u"{0}".format(self.long_name),
             u"Championship"
@@ -720,10 +720,13 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} Contest {1}".format(
-            self.award,
-            self.session.convention.year,
-        )
+        self.name = " ".join(filter(None, [
+            self.award.organization.name,
+            self.award.get_kind_display(),
+            self.award.long_name,
+            "Contest",
+            str(self.session.convention.year),
+        ]))
         super(Contest, self).save(*args, **kwargs)
 
     # def rank(self):
@@ -927,10 +930,14 @@ class Contestant(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.contest,
-            self.performer.group,
-        )
+        self.name = " ".join(filter(None, [
+            self.contest.award.organization.name,
+            self.contest.award.get_kind_display(),
+            self.contest.award.long_name,
+            "Contest",
+            str(self.contest.session.convention.year),
+            self.performer.group.name,
+        ]))
         super(Contestant, self).save(*args, **kwargs)
 
     def calculate(self):
@@ -1142,20 +1149,14 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.division:
-            self.name = " ".join(filter(None, [
-                u"{0}".format(self.organization),
-                u"{0}".format(self.get_kind_display()),
-                u"{0}".format(self.get_division_display()),
-                u"{0}".format(self.year),
-            ]))
-        else:
-            self.name = " ".join(filter(None, [
-                u"{0}".format(self.organization),
-                u"{0}".format(self.get_kind_display()),
-                u"{0}".format(self.year),
-            ]))
         self.year = arrow.get(self.date.lower).year
+        self.name = " ".join(filter(None, [
+            self.organization.name,
+            self.get_division_display(),
+            self.get_kind_display(),
+            u"Convention",
+            str(self.year),
+        ]))
         super(Convention, self).save(*args, **kwargs)
 
     class Meta:
@@ -1824,6 +1825,16 @@ class Performance(TimeStampedModel):
             self.round,
             self.performer.group,
         )
+        self.name = " ".join(filter(None, [
+            self.round.session.convention.organization.name,
+            self.round.session.convention.get_division_display(),
+            self.round.session.convention.get_kind_display(),
+            self.round.session.get_kind_display(),
+            self.round.get_kind_display(),
+            str(self.round.session.convention.year),
+            "Performance",
+            str(self.draw),
+        ]))
         super(Performance, self).save(*args, **kwargs)
 
     class Meta:
@@ -1832,7 +1843,7 @@ class Performance(TimeStampedModel):
             'position',
         )
         unique_together = (
-            ('round', 'performer',),
+            ('round', 'position',),
         )
 
     def calculate(self):
@@ -2193,10 +2204,19 @@ class Performer(TimeStampedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.session,
-            self.group,
-        )
+        # self.name = u"{0} {1}".format(
+        #     self.session,
+        #     self.group.name,
+        # )
+        self.name = " ".join(filter(None, [
+            self.session.convention.organization.name,
+            self.session.convention.get_division_display(),
+            self.session.convention.get_kind_display(),
+            str(self.session.convention.year),
+            self.session.get_kind_display(),
+            "Performer",
+            self.group.name,
+        ]))
         super(Performer, self).save(*args, **kwargs)
 
     class Meta:
@@ -2544,10 +2564,14 @@ class Round(TimeStampedModel):
         )
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.session,
+        self.name = " ".join(filter(None, [
+            self.session.convention.organization.name,
+            self.session.convention.get_division_display(),
+            self.session.convention.get_kind_display(),
+            self.session.get_kind_display(),
             self.get_kind_display(),
-        )
+            str(self.session.convention.year),
+        ]))
         super(Round, self).save(*args, **kwargs)
 
     @staticmethod
@@ -2794,20 +2818,17 @@ class Score(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'judge',
             'song',
+            'judge',
         )
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2} {3}".format(
-            self.song,
-            self.get_kind_display(),
-            self.get_category_display(),
-            self.judge.slot,
-        )
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
         super(Score, self).save(*args, **kwargs)
 
     # @transition(
@@ -3011,10 +3032,14 @@ class Session(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.year = self.convention.year
         self.organization = self.convention.organization
-        self.name = u"{0} {1}".format(
-            self.convention,
+        self.name = " ".join(filter(None, [
+            self.convention.organization.name,
+            self.convention.get_division_display(),
+            self.convention.get_kind_display(),
             self.get_kind_display(),
-        )
+            "Session",
+            str(self.convention.year),
+        ]))
         super(Session, self).save(*args, **kwargs)
 
     class Meta:
@@ -3341,6 +3366,18 @@ class Song(TimeStampedModel):
             'Song',
             self.order,
         )
+        self.name = " ".join(filter(None, [
+            self.performance.round.session.convention.organization.name,
+            self.performance.round.session.convention.get_division_display(),
+            self.performance.round.session.convention.get_kind_display(),
+            self.performance.round.session.get_kind_display(),
+            self.performance.round.get_kind_display(),
+            str(self.performance.round.session.convention.year),
+            "Performance",
+            str(self.performance.draw),
+            'Song',
+            str(self.order),
+        ]))
         super(Song, self).save(*args, **kwargs)
 
     def calculate(self):

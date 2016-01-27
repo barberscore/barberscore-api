@@ -14,6 +14,7 @@ from apps.api.models import (
     Contestant,
     Round,
     Session,
+    Score,
 )
 
 
@@ -21,6 +22,9 @@ class Command(BaseCommand):
     help = "Command to denormailze data."
 
     def handle(self, *args, **options):
+        zs = Score.objects.all()
+        for s in zs:
+            s.save()
         ss = Song.objects.all()
         for s in ss:
             s.save()
