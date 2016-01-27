@@ -27,215 +27,124 @@
             </tr>
           </thead>
           <tbody>
-
-          {% for performer in performers %}
-            <tr>
-              <td>
-                {{performer.total_points}}<br>
-                {{performer.total_score}}<br>
-              </td>
-              <td>
-                {{performer.group.name}} {% if performer.group.organization %}{{performer.group.organization}}{%endif %}<br>
-                {{performer.group.chapter.name}}
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.title}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.round.get_kind_display}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>Totals</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.mus_points}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.mus_points}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.mus_points}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.prs_points}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.prs_points}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.prs_points}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.sng_points}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.sng_points}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.sng_points}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.total_points}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.total_points}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.total_points}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.mus_score}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.mus_score}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.mus_score}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.prs_score}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.prs_score}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.prs_score}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.sng_score}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.sng_score}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.sng_score}}</strong>
-              </td>
-              <td>
-                {% for performance in performer.performances.all %}
-                  {% for song in performance.songs.all %}
-                    {{song.total_score}}<br>
-                  {% endfor %}
-                  {% if performer.performances.count > 1%}<em>{{performance.total_score}}</em><br>{% endif %}
-                {% endfor %}
-              <strong>{{performer.total_score}}</strong>
-              </td>
-            </tr>
-          {% endfor %}
-              {% comment %}
-              <td>
-                {{performance.grouper.total_points}}<br>
-                {{performance.grouper.total_score}}
-              </td>
-              <td>
-                {{performance.grouper.performer.group.name}}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.title}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.mus_points}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.prs_points}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.sng_points}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.total_points}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.mus_score}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.prs_score}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.sng_score}}<br>
-              {% endfor %}
-              </td>
-              <td>
-              {% for song in performance.list %}
-                {{song.total_score}}<br>
-              {% endfor %}
-              </td>
-            </tr>
-          {% endfor %}
-            {% for performance in performances %}
-                <tr>
-                  <td>
-                    {{performance.place}}
-                  </td>
-                  <td>
-                    {{performance.total_points}}<br>
-                    {{performance.total_score}}
-                  </td>
-                  <td>
-                    {{performance.performer.group.name}}
-                  </td>
-                  <td>
+            {% for performer in performers %}
+              <tr>
+                <td>
+                  {{performer.total_points}}<br>
+                  {{performer.total_score}}<br>
+                </td>
+                <td>
+                  {{performer.group.name}} {% if performer.group.organization %}{{performer.group.organization}}{%endif %}<br>
+                  {{performer.group.chapter.name}}
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
-                      {{song.tune.name}}<br>
+                      {{song.title}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.round.get_kind_display}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>Totals</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.mus_points}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.mus_points}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.mus_points}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.prs_points}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.prs_points}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.prs_points}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.sng_points}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.sng_points}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.sng_points}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.total_points}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.total_points}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.total_points}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.mus_score}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.mus_score}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.mus_score}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.prs_score}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.prs_score}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.prs_score}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.sng_score}}<br>
                     {% endfor %}
-                  </td>
-                  <td>
+                    {% if performer.performances.count > 1%}<em>{{performance.sng_score}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.sng_score}}</strong>
+                </td>
+                <td>
+                  {% for performance in performer.performances.all %}
                     {% for song in performance.songs.all %}
                       {{song.total_score}}<br>
                     {% endfor %}
-                  </td>
-                </tr>
+                    {% if performer.performances.count > 1%}<em>{{performance.total_score}}</em><br>{% endif %}
+                  {% endfor %}
+                <strong>{{performer.total_score}}</strong>
+                </td>
+              </tr>
             {% endfor %}
-            {% endcomment %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h4>Awards</h4>
+        <ul class='list-unstyled'>
+          {% for contest in session.contests.all %}
+            <li>{{contest.award.name}} Champion: {{contest.contestants.all.0.performer.group.name}}</li>
+          {% endfor %}
+        </ul>
+    </section>
+    <section>
+      <h4>Judges</h4>
+      <div class='table-responsive'>
+        <table class='table'>
+          {% regroup judges by get_category_display as judges_list %}
+          <tbody>
+            {% for get_category_display in judges_list %}
+            <tr>
+              {% for judge in get_category_display.list %}
+                <td>{{judge.person.common_name}}, {{judge.designation}}</td>
+              {% endfor %}
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

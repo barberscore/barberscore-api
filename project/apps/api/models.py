@@ -1408,8 +1408,6 @@ class Judge(TimeStampedModel):
     session = models.ForeignKey(
         'Session',
         related_name='judges',
-        null=True,
-        blank=True,
     )
 
     round = models.ForeignKey(
@@ -1442,17 +1440,24 @@ class Judge(TimeStampedModel):
 
     @property
     def designation(self):
-        return u"{0[0]}{1:1d}".format(
-            self.get_category_display(),
-            self.slot,
-        )
+        if self.kind == self.KIND.official:
+            designation = u"{0[0]}{1:1d}".format(
+                self.get_category_display(),
+                self.slot,
+            )
+        else:
+            designation = u"{0[0]}{1:1d}".format(
+                self.get_category_display().lower(),
+                self.slot,
+            )
+        return designation
 
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2} {3}".format(
-            self.round,
+            self.session,
             self.get_kind_display(),
             self.get_category_display(),
             self.slot,
@@ -1461,12 +1466,12 @@ class Judge(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('round', 'kind', 'category', 'slot'),
+            ('session', 'category', 'kind', 'slot'),
         )
         ordering = (
-            'round',
-            'kind',
+            'session',
             'category',
+            'kind',
             'slot',
         )
 

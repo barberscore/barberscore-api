@@ -37,7 +37,9 @@ from apps.api.models import (
     Convention,
     Judge,
     Song,
+    Score,
     Performer,
+    Contestant,
 )
 
 from .forms import (
@@ -193,38 +195,25 @@ def contest_oss(request, slug):
     contest = get_object_or_404(
         Contest,
         slug=slug,
-        # status=Contest.STATUS.final,
     )
-    # performers = contest.session.performers.select_related(
-    #     'group',
-    # ).prefetch_related(
-    #     Prefetch(
-    #         'performances',
-    #         queryset=Performance.objects.order_by('round__kind'),
-    #     ),
-    #     Prefetch(
-    #         'performances__round',
-    #     ),
-    #     Prefetch(
-    #         'performances__songs',
-    #         queryset=Song.objects.order_by('order'),
-    #     ),
-    #     Prefetch('performances__songs__tune'),
-    # ).order_by(
-    #     'place',
-    #     # 'performances__round__kind',
-    # )
     # TODO More hackery to be refactored
-    judges = contest.session.rounds.first().judges.filter(
+    judges = contest.session.judges.filter(
         kind=10,
     )
-    contestants = contest.contestants.order_by('place')
+    contestants = Contestant.objects.filter(
+        contest=contest,
+    ).select_related(
+    ).prefetch_related(
+        'performer',
+        'performer__performances',
+        'performer__group',
+        'performer__performances__songs',
+    ).order_by('place')
     champion = contestants.first().performer.group
     return render(
         request,
         'api/contest_oss.html', {
             'contest': contest,
-            # 'performers': performers,
             'judges': judges,
             'contestants': contestants,
             'champion': champion,
@@ -293,9 +282,11 @@ def session_oss(request, slug):
         Session,
         slug=slug,
     )
-    # judges = session.rounds.first().judges.exclude(
-    #     category=Judge.CATEGORY.admin,
-    # )
+    judges = session.judges.filter(
+        kind=Judge.KIND.official,
+    ).exclude(
+        category=Judge.CATEGORY.admin,
+    )
     # performances = Performance.objects.filter(
     #     round__session=session,
     # ).order_by('-total_points')
@@ -308,14 +299,18 @@ def session_oss(request, slug):
         'performances',
         'performances__songs',
     ).order_by('-total_points')
+    contests = Contest.objects.filter(
+        session=session,
+    ).prefetch_related('contestants')
     return render(
         request,
         'api/session_oss.html', {
             'session': session,
-            # 'judges': judges,
+            'judges': judges,
             # 'performances': performances,
             # 'songs': songs,
             'performers': performers,
+            'contests': contests,
         },
     )
 

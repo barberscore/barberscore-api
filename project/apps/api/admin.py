@@ -414,7 +414,7 @@ class JudgeAdmin(admin.ModelAdmin):
     fields = [
         'name',
         ('status', 'status_monitor',),
-        'round',
+        'session',
         'person',
         'organization',
         ('category', 'slot',),
@@ -433,18 +433,18 @@ class JudgeAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'organization',
-        'round',
+        'session',
         'person',
     ]
 
     raw_id_fields = (
-        'round',
+        'session',
         'person',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'round',
+            'session',
             'person',
         ]
     }
@@ -731,7 +731,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         PerformanceInline,
-        JudgeInline,
     ]
 
     search_fields = [
@@ -845,6 +844,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         RoundInline,
         ContestInline,
         PerformerInline,
+        JudgeInline,
     ]
 
 
