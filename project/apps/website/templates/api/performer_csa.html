@@ -4,7 +4,7 @@
 {% block content %}
   <main class="container">
   <h3>
-    Contestant Scoring Analysis
+    Performer Scoring Analysis
   </h3>
   <p>
   {{performer.session.name}}
@@ -19,6 +19,7 @@
       <p>
         {{performer}}
       </p>
+      <h3>Summary</h3>
       <table class='table'>
       <thead>
       <tr>
@@ -48,6 +49,15 @@
       </table>
     </section>
     <section>
+    <h3>Contests</h3>
+    <ul class='list-unstyled'>
+    {% for contestant in performer.contestants.all %}
+      <li>{{contestant.contest}}: {{contestant.place}}</li>
+    {% endfor %}
+    </ul>
+    </section>
+    <section>
+    <h3>Songs</h3>
     <table class='table'>
     <thead>
     <tr>
@@ -86,6 +96,7 @@
     </table>
     </section>
     <section>
+    <h3>Judges</h3>
     <ul class='list-inline'>
     {% for judge in judges %}
       <li>{{judge.designation}}: {{judge.person.common_name}}</li>
