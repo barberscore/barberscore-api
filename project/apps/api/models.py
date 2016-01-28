@@ -1817,6 +1817,10 @@ class Performance(TimeStampedModel):
         except TypeError:
             return None
 
+    @property
+    def start_dt(self):
+        return self.scheduled.lower
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 

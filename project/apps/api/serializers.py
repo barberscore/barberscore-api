@@ -338,6 +338,8 @@ class PerformanceSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
+    # start_dt = serializers.Field()
+
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
 
@@ -350,6 +352,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'draw',
+            'start_dt',
             'scheduled',
             'actual',
             'mus_points',
