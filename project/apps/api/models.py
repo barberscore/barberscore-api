@@ -847,6 +847,7 @@ class Contestant(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (90, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
