@@ -1,6 +1,7 @@
 from rest_framework_json_api import serializers
 
 # from drf_haystack.serializers import HaystackSerializer
+from drf_extra_fields.fields import DateTimeRangeField
 
 from .models import (
     Arranger,
@@ -336,6 +337,9 @@ class PerformanceSerializer(serializers.ModelSerializer):
     #     read_only=True,
     #     slug_field='slug',
     # )
+
+    scheduled = DateTimeRangeField()
+    actual = DateTimeRangeField()
 
     class Meta:
         model = Performance
