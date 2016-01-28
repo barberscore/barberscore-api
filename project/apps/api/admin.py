@@ -529,7 +529,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'performer',
-        ('draw',),
+        ('draw', 'scheduled'),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
