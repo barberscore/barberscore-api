@@ -383,13 +383,23 @@ def round_announcement(request, slug):
 @login_required
 def session_sa(request, slug):
     session = get_object_or_404(
-        Session,
+        Session.objects.select_related(
+            'convention',
+        ),
         slug=slug,
     )
-    judges = session.rounds.first().judges.exclude(
+    judges = session.judges.exclude(
         category=Judge.CATEGORY.admin,
+    ).select_related('person')
+    performances = Performance.objects.filter(
+        performer__session=session,
+    ).select_related(
+        'performer',
+        'performer__group',
+    ).prefetch_related(
+        'songs',
+        'songs__scores',
     )
-    performances = session.rounds.first().performances.order_by('-total_points')
     return render(
         request,
         'api/session_sa.html', {

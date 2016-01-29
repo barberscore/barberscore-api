@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block content %}
-  <main>
+  <main class='container'>
   <h3>
     Session Scoring Analysis: {{session.name}}
   </h3>
@@ -18,16 +18,16 @@
     <thead>
     <tr>
     <th>P/S</th>
-    <th>P/S</th>
+    <th>Performer</th>
     <th>Song</th>
-    <th>Music</th>
-    <th>Points</th>
+    <th>Tot/A</th>
+    <th>MUS</th>
     <th>Score</th>
-    <th>Prs</th>
-    <th>Points</th>
+    <th>Tot/A</th>
+    <th>PRS</th>
     <th>Score</th>
-    <th>Sing</th>
-    <th>Points</th>
+    <th>Tot/A</th>
+    <th>SNG</th>
     <th>Score</th>
     {% for judge in judges %}
       <th>{{judge.designation}}</th>
@@ -37,12 +37,11 @@
     <tbody>
     {% for performance in performances %}
     <tr>
-      <td>{{performance.performer.group.name}} ({{performance.place}})</td>
-    <td>{{performance.total_points}}<br>{{performance.total_score}}</td>
-
+      <td>{{performance.total_points}}<br>{{performance.total_score}}</td>
+      <td>{{performance.performer.group.name}}<br>OA: {{performance.draw}}</td>
     <td>
     {% for song in performance.songs.all %}
-      {{song.title}}<br>
+      {{song.title|truncatechars:16}}<br>
     {% endfor %}
     </td>
     <td>
@@ -79,57 +78,57 @@
     </td>
     <td>
     {% for song in performance.songs.all %}
-      {{song.sng_points}}<br>
-    {% endfor %}
-    </td>
-    <td>
-    {% for song in performance.songs.all %}
       {{song.sng_score}}<br>
     {% endfor %}
     </td>
     <td>
-    {%for song in performance.songs.all %}
-      {{song.scores.all.0.points}}
+    {% for song in performance.songs.all %}
+      {{song.sng_points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.1.points}}
+      {{song.scores.all.0.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.2.points}}
+      {{song.scores.all.1.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.3.points}}
+      {{song.scores.all.2.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.4.points}}
+      {{song.scores.all.3.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.5.points}}
+      {{song.scores.all.4.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.6.points}}
+      {{song.scores.all.5.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.7.points}}
+      {{song.scores.all.6.points}}<br>
     {% endfor %}
     </td>
     <td>
     {%for song in performance.songs.all %}
-      {{song.scores.all.8.points}}
+      {{song.scores.all.7.points}}<br>
+    {% endfor %}
+    </td>
+    <td>
+    {%for song in performance.songs.all %}
+      {{song.scores.all.8.points}}<br>
     {% endfor %}
     </td>
 
