@@ -14,7 +14,6 @@
           <thead>
             <tr>
               <th>Place</th>
-              <th>Total</th>
               <th>Group</th>
               <th>Song</th>
               <th>MUS</th>
@@ -32,10 +31,6 @@
               <tr>
                 <td>
                   {{contestant.place}}
-                </td>
-                <td>
-                  {{contestant.total_points}}<br>
-                  {{contestant.total_score}}<br>
                 </td>
                 <td>
                   {{contestant.performer.group.name}} {% if contestant.performer.group.organization %}{{contestant.performer.group.organization}}{%endif %}<br>
