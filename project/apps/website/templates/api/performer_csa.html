@@ -11,9 +11,7 @@
   {{convention.location}}, {{convention.human_date}}
   </p>
     <section>
-      <p>
-        <strong>{{performer.group.name}}</strong><br>
-      </p>
+        <h2>{{performer.group.name}}</h2>
       <h3>Summary</h3>
       <table class='table'>
       <thead>
@@ -48,6 +46,14 @@
     <ul class='list-unstyled'>
     {% for contestant in performer.contestants.all %}
       <li>{{contestant.contest}} Placement: {{contestant.place}}</li>
+    {% endfor %}
+    </ul>
+    </section>
+    <section>
+    <h3>Performances</h3>
+    <ul class='list-unstyled'>
+    {% for performance in performer.performances.all %}
+    <li>{{performance.round.get_kind_display}}: OA {{performance.draw}} Scheduled {{start_dt}}</li>
     {% endfor %}
     </ul>
     </section>

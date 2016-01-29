@@ -33,6 +33,7 @@ urlpatterns = [
     # Scoresheets
     # url(r'^round/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.round_oss, name='round-oss'),
     url(r'^convention/(?P<slug>[a-zA-Z0-9-]+)/$', views.convention_detail, name='convention-detail'),
+    url(r'^round/(?P<slug>[a-zA-Z0-9-]+)/announcement/$', views.round_announcement, name='round-announcement'),
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.session_oss, name='session-oss'),
     url(r'^session/(?P<slug>[a-zA-Z0-9-]+)/sa/$', views.session_sa, name='session-sa'),
     url(r'^contest/(?P<slug>[a-zA-Z0-9-]+)/oss/$', views.contest_oss, name='contest-oss'),

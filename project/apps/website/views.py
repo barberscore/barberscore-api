@@ -155,6 +155,10 @@ def convention_detail(request, slug):
     performers = Performer.objects.filter(
         session__convention=convention,
     )
+    rounds = Round.objects.filter(
+        session__convention=convention,
+        kind=Round.KIND.finals,
+    )
     return render(
         request,
         'api/convention.html', {
@@ -162,6 +166,7 @@ def convention_detail(request, slug):
             'sessions': sessions,
             'contests': contests,
             'performers': performers,
+            'rounds': rounds,
         },
     )
 
@@ -311,6 +316,26 @@ def session_oss(request, slug):
             # 'performances': performances,
             # 'songs': songs,
             'performers': performers,
+            'contests': contests,
+        },
+    )
+
+
+@login_required
+def round_announcement(request, slug):
+    round = get_object_or_404(
+        Round.objects.all(),
+        slug=slug,
+    )
+    convention = round.session.convention
+    contests = round.session.contests.filter(
+        status__gte=Contest.STATUS.ranked,
+    )
+    return render(
+        request,
+        'api/round_announcement.html', {
+            'round': round,
+            'convention': convention,
             'contests': contests,
         },
     )
