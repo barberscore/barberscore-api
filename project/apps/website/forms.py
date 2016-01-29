@@ -56,30 +56,23 @@ class ContestForm(forms.ModelForm):
     class Meta:
         model = Contest
         fields = [
-            'rounds',
+            'year',
         ]
-        widgets = {
-            'rounds': forms.Select(
-                attrs={
-                    'class': 'form-control',
-                },
-            ),
-        }
 
-    def save(self, commit=True):
-        contest = super(ContestForm, self).save(commit=False)
-        contest.build()
-        if commit:
-            contest.save()
-        return contest
+    # def save(self, commit=True):
+    #     contest = super(ContestForm, self).save(commit=False)
+    #     contest.build()
+    #     if commit:
+    #         contest.save()
+    #     return contest
 
-    def draw(self, contest):
-        contest.draw_contest()
-        return contest
+    # def draw(self, contest):
+    #     contest.draw_contest()
+    #     return contest
 
-    def start(self, contest):
-        contest.start_contest()
-        return contest
+    # def start(self, contest):
+    #     contest.start_contest()
+    #     return contest
 
 
 class JudgeForm(forms.ModelForm):

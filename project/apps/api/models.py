@@ -643,13 +643,13 @@ class Contest(TimeStampedModel):
     for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
 
-    rounds = models.IntegerField(
-        help_text="""
-            The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
-        choices=ROUNDS_CHOICES,
-        null=True,
-        blank=True,
-    )
+    # rounds = models.IntegerField(
+    #     help_text="""
+    #         The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
+    #     choices=ROUNDS_CHOICES,
+    #     null=True,
+    #     blank=True,
+    # )
 
     HISTORY = Choices(
         (0, 'new', 'New',),
@@ -942,6 +942,8 @@ class Contestant(TimeStampedModel):
         super(Contestant, self).save(*args, **kwargs)
 
     def calculate(self):
+        self.performer.calculate()
+        self.performer.save()
         # If there are no performances, skip.
         if self.performer.performances.exists():
             agg = self.performer.performances.filter(
@@ -969,11 +971,10 @@ class Contestant(TimeStampedModel):
 
             # Calculate percentile
             try:
-                # TODO Really shouldn't do this...
-                size = self.contest.session.rounds.first().judges.filter(
-                    kind=10,
+                size = self.contest.session.judges.filter(
+                    kind=self.contest.session.judges.model.KIND.official,
                 ).exclude(
-                    category=0,
+                    category=self.contest.session.judges.model.CATEGORY.admin,
                 ).count() / 3
                 possible = size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)

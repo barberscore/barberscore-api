@@ -155,7 +155,7 @@ def round_scheduled(round):
 
 
 def rounds_finished(contest):
-    rounds = contest.rounds.all()
+    rounds = contest.award.rounds.all()
     for round in rounds:
         if round.status != round.STATUS.finished:
             return False

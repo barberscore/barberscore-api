@@ -269,10 +269,11 @@ def performer_csa(request, slug):
     judges = performer.session.rounds.first().judges.exclude(
         category=Judge.CATEGORY.admin,
     )
+    convention = performer.session.convention
     return render(
         request,
         'api/performer_csa.html',
-        {'performer': performer, 'judges': judges},
+        {'performer': performer, 'judges': judges, 'convention': convention},
     )
 
 
@@ -341,7 +342,7 @@ def contest(request, slug):
         Contest,
         slug=slug,
     )
-    rounds = contest.rounds.all()
+    rounds = contest.award.rounds.all()
     return render(
         request,
         'manage/contest.html',
