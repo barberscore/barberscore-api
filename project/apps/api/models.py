@@ -2234,6 +2234,9 @@ class Performer(TimeStampedModel):
         )
 
     def calculate(self):
+        for performance in self.performances.all():
+            performance.calculate()
+            performance.save()
         # If there are no performances, skip.
         if self.performances.exists():
             agg = self.performances.all().aggregate(
