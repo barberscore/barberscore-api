@@ -20,7 +20,7 @@ Q95 = {n:q for n,q in zip(range(3,len(q95)+1), q95)}
 Q99 = {n:q for n,q in zip(range(3,len(q99)+1), q99)}
 
 
-def dixon(performance, left=True, right=True, q_dict=Q90):
+def dixon(performance, left=True, right=True, q_dict=Q95):
     """
     Keyword arguments:
         data = A ordered or unordered list of data points (int or float).
@@ -40,7 +40,7 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
     """
     is_flagged = False
     for song in performance.songs.all():
-        scores = song.scores.all()
+        scores = song.scores.order_by('points')
         assert(left or right), 'At least one of the variables, `left` or `right`, must be True.'
         assert(len(scores) >= 3), 'At least 3 data points are required'
         assert(len(scores) <= max(q_dict.keys())), 'Sample size too large'
@@ -55,7 +55,6 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
             except ZeroDivisionError:
                 pass
             Q_mindiff = (Q_min - q_dict[len(data)], sdata[0])
-
         if right:
             Q_max = abs((sdata[-2] - sdata[-1]))
             try:
@@ -66,18 +65,37 @@ def dixon(performance, left=True, right=True, q_dict=Q90):
 
         if not Q_mindiff[0] > 0 and not Q_maxdiff[0] > 0:
             outliers = [None, None]
-
         elif Q_mindiff[0] == Q_maxdiff[0]:
             outliers = [Q_mindiff[1], Q_maxdiff[1]]
-
         elif Q_mindiff[0] > Q_maxdiff[0]:
             outliers = [Q_mindiff[1], None]
-
         else:
             outliers = [None, Q_maxdiff[1]]
-        for score in scores:
-            if round(score.points * .01, 2) in outliers:
-                is_flagged = True
+
+        # Check for +/- 5  This is fairly inelegant.
+        scores = song.scores.order_by('points')
+        low = scores[0]
+        next_low = scores[1]
+        if low.points + 5 < next_low.points:
+            low.dixon_test = False
+        else:
+            low.dixon_test = True
+        low.save()
+
+        scores = song.scores.order_by('-points')
+        high = scores[0]
+        next_high = scores[1]
+        if high.points - 5 > next_high.points:
+            high.dixon_test = False
+        else:
+            high.dixon_test = True
+        high.save()
+
+        nulls = song.scores.filter(dixon_test=None)
+        for n in nulls:
+            n.dixon_test = True
+            n.save()
+        return
     if is_flagged:
         performance.flag()
     else:

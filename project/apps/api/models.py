@@ -2804,6 +2804,9 @@ class Score(TimeStampedModel):
         choices=KIND,
     )
 
+    dixon_test = models.NullBooleanField(
+    )
+
     points = models.IntegerField(
         help_text="""
             The number of points contested (0-100)""",
