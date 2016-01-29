@@ -78,6 +78,7 @@ def dixon(performance, left=True, right=True, q_dict=Q95):
         next_low = scores[1]
         if low.points + 5 < next_low.points:
             low.dixon_test = False
+            is_flagged = True
         else:
             low.dixon_test = True
         low.save()
@@ -87,6 +88,7 @@ def dixon(performance, left=True, right=True, q_dict=Q95):
         next_high = scores[1]
         if high.points - 5 > next_high.points:
             high.dixon_test = False
+            is_flagged = True
         else:
             high.dixon_test = True
         high.save()
@@ -95,7 +97,7 @@ def dixon(performance, left=True, right=True, q_dict=Q95):
         for n in nulls:
             n.dixon_test = True
             n.save()
-        return
+
     if is_flagged:
         performance.flag()
     else:

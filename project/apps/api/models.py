@@ -1990,13 +1990,13 @@ class Performance(TimeStampedModel):
         ]
     )
     def enter(self):
+        # Calls post-transition signal for dixon test
         return
 
     @transition(
         field=status,
         source=[
             STATUS.entered,
-            STATUS.flagged,
         ],
         target=STATUS.flagged,
         # conditions=[
@@ -2641,7 +2641,6 @@ class Round(TimeStampedModel):
         for performance in self.performances.all():
             performance.calculate()
             performance.save()
-            dixon(performance)
         return
 
     @transition(

@@ -2,6 +2,10 @@ from django.db.models.signals import (
     post_save,
 )
 
+from django_fsm.signals import (
+    post_transition,
+)
+
 from django.dispatch import receiver
 
 from rest_framework.authtoken.models import Token
@@ -9,13 +13,18 @@ from rest_framework.authtoken.models import Token
 from django.conf import settings
 
 from .models import (
-    Session,
+    Performance,
     Certification,
 )
 
-from .factories import (
-    add_rounds,
-    add_judges,
+# from .factories import (
+#     add_rounds,
+#     add_judges,
+# )
+
+
+from .validators import (
+    dixon,
 )
 
 
@@ -32,8 +41,8 @@ def user_post_save(sender, instance=None, created=False, **kwargs):
 #             add_rounds(instance)
 #             add_judges(instance)
 #             instance.save()
-            # instance.build()
-            # instance.save()
+# instance.build()
+# instance.save()
 
 
 @receiver(post_save, sender=Certification)
@@ -42,3 +51,9 @@ def certification_post_save(sender, instance=None, created=False, raw=False, **k
     if not raw:
         if created:
             instance.person.save()
+
+
+@receiver(post_transition)
+def dixon_post_transition(sender, instance, target, source, **kwargs):
+    if sender == Performance and target == Performance.STATUS.entered:
+        dixon(instance)
