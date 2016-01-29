@@ -7,17 +7,12 @@
     Performer Scoring Analysis
   </h3>
   <p>
-  {{performer.session.name}}
-  </p>
-  <p>
-  {{performer.session.convention.name}}
+  {{convention.name}}<br>
+  {{convention.location}}, {{convention.human_date}}
   </p>
     <section>
       <p>
-        {{performer}}
-      </p>
-      <p>
-        {{performer}}
+        <strong>{{performer.group.name}}</strong><br>
       </p>
       <h3>Summary</h3>
       <table class='table'>
@@ -52,7 +47,7 @@
     <h3>Contests</h3>
     <ul class='list-unstyled'>
     {% for contestant in performer.contestants.all %}
-      <li>{{contestant.contest}}: {{contestant.place}}</li>
+      <li>{{contestant.contest}} Placement: {{contestant.place}}</li>
     {% endfor %}
     </ul>
     </section>
