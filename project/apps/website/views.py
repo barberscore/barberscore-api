@@ -6,7 +6,7 @@ from django.shortcuts import (
     redirect,
     get_object_or_404,
 )
-
+from easy_pdf.rendering import render_to_pdf_response
 from easy_pdf.views import PDFTemplateView
 
 from django.contrib.auth.decorators import login_required
@@ -222,6 +222,45 @@ def contest_oss(request, slug):
             'judges': judges,
             'contestants': contestants,
             'champion': champion,
+        },
+    )
+
+
+@login_required
+def session_pdf(request, slug):
+    session = get_object_or_404(
+        Session.objects.select_related('convention'),
+        slug=slug,
+    )
+    judges = session.judges.filter(
+        kind=Judge.KIND.official,
+    ).exclude(
+        category=Judge.CATEGORY.admin,
+    )
+    # performances = Performance.objects.filter(
+    #     round__session=session,
+    # ).order_by('-total_points')
+    # songs = Song.objects.filter(
+    #     performance__round__session=session,
+    # ).order_by('-performance__total_points', 'order',)
+    performers = Performer.objects.filter(
+        session=session,
+    ).prefetch_related(
+        'performances',
+        'performances__songs',
+    ).order_by('-total_points')
+    contests = Contest.objects.filter(
+        session=session,
+    ).prefetch_related('contestants')
+    return render_to_pdf_response(
+        request,
+        'api/session_pdf.html', {
+            'session': session,
+            'judges': judges,
+            # 'performances': performances,
+            # 'songs': songs,
+            'performers': performers,
+            'contests': contests,
         },
     )
 
