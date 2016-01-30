@@ -971,11 +971,7 @@ class Contestant(TimeStampedModel):
 
             # Calculate percentile
             try:
-                size = self.contest.session.judges.filter(
-                    kind=self.contest.session.judges.model.KIND.official,
-                ).exclude(
-                    category=self.contest.session.judges.model.CATEGORY.admin,
-                ).count() / 3
+                size = self.contest.session.size
                 possible = size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
@@ -1022,7 +1018,7 @@ class Convention(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'built', 'Built',),
+        (10, 'scheduled', 'Scheduled',),
         (20, 'started', 'Started',),
         (30, 'finished', 'Finished',),
         (50, 'final', 'Final',),
@@ -1174,20 +1170,21 @@ class Convention(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.new,
-        target=STATUS.built,
+        target=STATUS.scheduled,
         conditions=[
-            sessions_entered,
+            # TODO Date and location
         ]
     )
-    def build(self):
+    def schedule(self):
         # Triggered from UI
         return
 
     @transition(
         field=status,
-        source=STATUS.built,
+        source=STATUS.scheduled,
         target=STATUS.started,
         conditions=[
+            # TODO Within window?
         ]
     )
     def start(self):
@@ -1199,6 +1196,8 @@ class Convention(TimeStampedModel):
         source=STATUS.started,
         target=STATUS.finished,
         conditions=[
+            # Outside of window?
+            # Ensure session finished?
         ]
     )
     def finish(self):
@@ -1210,6 +1209,7 @@ class Convention(TimeStampedModel):
         source=STATUS.finished,
         target=STATUS.final,
         conditions=[
+            # Everything else finalized
         ]
     )
     def finalize(self):
@@ -2954,22 +2954,20 @@ class Session(TimeStampedModel):
         help_text="""
             Size of the judging panel (per category).""",
         choices=SIZE_CHOICES,
-        null=True,
-        blank=True,
     )
 
     ROUNDS_CHOICES = []
     for r in reversed(range(1, 4)):
         ROUNDS_CHOICES.append((r, r))
 
-    num_rounds = models.IntegerField(
-        help_text="""
-            Number of rounds (rounds) for the session.""",
-        choices=ROUNDS_CHOICES,
-        default=1,
-        null=True,
-        blank=True,
-    )
+    # num_rounds = models.IntegerField(
+    #     help_text="""
+    #         Number of rounds (rounds) for the session.""",
+    #     choices=ROUNDS_CHOICES,
+    #     default=1,
+    #     null=True,
+    #     blank=True,
+    # )
 
     date = DateRangeField(
         help_text="""
