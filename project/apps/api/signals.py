@@ -59,6 +59,8 @@ def certification_post_save(sender, instance=None, created=False, raw=False, **k
 def dixon_post_transition(sender, instance, target, source, **kwargs):
     if sender == Performance and target == Performance.STATUS.entered:
         dixon(instance)
+        instance.calculate()
+        instance.save()
 
 
 @receiver(pre_transition)
