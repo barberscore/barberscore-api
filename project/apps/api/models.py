@@ -2976,16 +2976,6 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    # Denormalized
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-        editable=False,
-    )
-
     # Legacy
     HISTORY = Choices(
         (0, 'new', 'New',),
@@ -3023,16 +3013,20 @@ class Session(TimeStampedModel):
         null=True,
     )
 
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='sessions',
+    )
+
     # Denormalized
+    year = models.IntegerField(
+        editable=False,
+    )
+
     organization = TreeForeignKey(
         'Organization',
         related_name='sessions',
         editable=False,
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='sessions',
     )
 
     def __unicode__(self):
