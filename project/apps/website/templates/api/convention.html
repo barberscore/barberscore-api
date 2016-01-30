@@ -34,6 +34,12 @@
           <li><a href='{% url "website:session-sa" session.slug %}'>{{session}}</a></li>
         {% endfor %}
       </ul>
+      <h4>Variances</h4>
+      <ul class='list'>
+        {% for performer in variances %}
+          <li><a href='{% url "website:performer-csa" performer.slug %}'>{{performer}}</a></li>
+        {% endfor %}
+      </ul>
     </section>
   </main>
 {% endblock content %}

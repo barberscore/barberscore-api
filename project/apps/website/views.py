@@ -155,6 +155,10 @@ def convention_detail(request, slug):
     performers = Performer.objects.filter(
         session__convention=convention,
     )
+    variances = Performer.objects.filter(
+        session__convention=convention,
+        performances__status=Performance.STATUS.flagged,
+    )
     rounds = Round.objects.filter(
         session__convention=convention,
         kind=Round.KIND.finals,
@@ -167,6 +171,7 @@ def convention_detail(request, slug):
             'contests': contests,
             'performers': performers,
             'rounds': rounds,
+            'variances': variances,
         },
     )
 
