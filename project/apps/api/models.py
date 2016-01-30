@@ -774,17 +774,13 @@ class Contest(TimeStampedModel):
         return "{0} Started".format(self)
 
     # Check everything is done.
-    @transition(
-        field=status,
-        source=STATUS.finished,
-        target=STATUS.ranked,
-        conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
-        ],
-    )
+    # @transition(
+    #     field=status,
+    #     source=STATUS.finished,
+    #     target=STATUS.ranked,
+    #     conditions=[
+    #     ],
+    # )
     def rank(self):
         # Denormalize
         for contestant in self.contestants.all():
@@ -1986,8 +1982,8 @@ class Performance(TimeStampedModel):
         source=STATUS.finished,
         target=STATUS.entered,
         conditions=[
-            songs_entered,
-            scores_entered,
+            # songs_entered,
+            # scores_entered,
         ]
     )
     def enter(self):
@@ -2810,6 +2806,13 @@ class Score(TimeStampedModel):
     dixon_test = models.NullBooleanField(
     )
 
+    asterisk_test = models.NullBooleanField(
+    )
+
+    is_composite = models.BooleanField(
+        default=False,
+    )
+
     points = models.IntegerField(
         help_text="""
             The number of points contested (0-100)""",
@@ -3108,7 +3111,7 @@ class Session(TimeStampedModel):
         ],
     )
     def rank(self):
-        for performer in self.performances.all():
+        for performer in self.performers.all():
             performer.calculate()
             performer.save()
         for contest in self.contests.all():

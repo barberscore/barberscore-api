@@ -403,6 +403,8 @@ class ScoreInline(admin.TabularInline):
         'category',
         'points',
         'dixon_test',
+        'asterisk_test',
+        'is_composite',
     )
     ordering = (
         'judge',
@@ -416,6 +418,7 @@ class ScoreInline(admin.TabularInline):
         'category',
         'judge',
         'dixon_test',
+        'asterisk_test',
     ]
 
     # autocomplete_lookup_fields = {

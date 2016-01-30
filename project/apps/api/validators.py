@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 
+from django.db.models import (Avg)
+
 q80 = [0.886,0.679,0.557,0.482,0.434,0.399,0.370,0.349,0.332,0.318,0.305,0.294,0.285,0.277,0.269,0.263,0.258,0.252,0.247,0.242,0.238,0.234,0.230,0.227,0.224,0.220,0.218,0.215]
 
 q90 = [
@@ -98,11 +100,78 @@ def dixon(performance, left=True, right=True, q_dict=Q95):
             n.dixon_test = True
             n.save()
 
+        musics = song.scores.filter(
+            category=song.scores.model.CATEGORY.music,
+        )
+
+        presentations = song.scores.filter(
+            category=song.scores.model.CATEGORY.presentation,
+        )
+
+        singings = song.scores.filter(
+            category=song.scores.model.CATEGORY.singing,
+        )
+
+        mus_avg = musics.aggregate(Avg('points'))
+        prs_avg = presentations.aggregate(Avg('points'))
+        sng_avg = singings.aggregate(Avg('points'))
+
+        for music in musics:
+            if abs(music.points - mus_avg['points__avg']) > 5:
+                music.asterisk_test = False
+            else:
+                music.asterisk_test = True
+            music.save()
+        for presentation in presentations:
+            if abs(presentation.points - prs_avg['points__avg']) > 5:
+                presentation.asterisk_test = False
+            else:
+                presentation.asterisk_test = True
+            presentation.save()
+        for singing in singings:
+            if abs(singing.points - sng_avg['points__avg']) > 5:
+                singing.asterisk_test = False
+            else:
+                singing.asterisk_test = True
+            singing.save()
+
     if is_flagged:
         performance.flag()
     else:
         performance.accept()
     performance.save()
+    return
+
+
+def fill_missing(performance):
+    for song in performance.songs.all():
+        scores = song.scores.all()
+
+        musics = scores.filter(
+            category=song.scores.model.CATEGORY.music,
+        )
+
+        presentations = scores.filter(
+            category=song.scores.model.CATEGORY.presentation,
+        )
+
+        singings = scores.filter(
+            category=song.scores.model.CATEGORY.singing,
+        )
+
+        mus_avg = musics.aggregate(Avg('points'))['points__avg']
+        prs_avg = presentations.aggregate(Avg('points'))['points__avg']
+        sng_avg = singings.aggregate(Avg('points'))['points__avg']
+
+        for score in scores:
+            if score.is_composite:
+                if score.category == score.CATEGORY.music:
+                    score.points = round(mus_avg)
+                if score.category == score.CATEGORY.presentation:
+                    score.points = round(prs_avg)
+                if score.category == score.CATEGORY.singing:
+                    score.points = round(sng_avg)
+                score.save()
     return
 
 

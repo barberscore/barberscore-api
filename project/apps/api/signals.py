@@ -4,6 +4,7 @@ from django.db.models.signals import (
 
 from django_fsm.signals import (
     post_transition,
+    pre_transition,
 )
 
 from django.dispatch import receiver
@@ -25,6 +26,7 @@ from .models import (
 
 from .validators import (
     dixon,
+    fill_missing,
 )
 
 
@@ -57,3 +59,9 @@ def certification_post_save(sender, instance=None, created=False, raw=False, **k
 def dixon_post_transition(sender, instance, target, source, **kwargs):
     if sender == Performance and target == Performance.STATUS.entered:
         dixon(instance)
+
+
+@receiver(pre_transition)
+def fill_pre_transition(sender, instance, target, source, **kwargs):
+    if sender == Performance and target == Performance.STATUS.entered:
+        fill_missing(instance)
