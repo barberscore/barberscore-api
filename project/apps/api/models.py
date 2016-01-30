@@ -3060,10 +3060,6 @@ class Session(TimeStampedModel):
         source=STATUS.new,
         target=STATUS.built,
         conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
         ],
     )
     def build(self):
@@ -3075,10 +3071,6 @@ class Session(TimeStampedModel):
         source=STATUS.built,
         target=STATUS.started,
         conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
         ],
     )
     def start(self):
@@ -3102,10 +3094,6 @@ class Session(TimeStampedModel):
         source=STATUS.started,
         target=STATUS.finished,
         conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
         ],
     )
     def finish(self):
@@ -3117,10 +3105,6 @@ class Session(TimeStampedModel):
         source=STATUS.finished,
         target=STATUS.ranked,
         conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
         ],
     )
     def rank(self):
@@ -3137,10 +3121,6 @@ class Session(TimeStampedModel):
         source=STATUS.ranked,
         target=STATUS.final,
         conditions=[
-            # is_scheduled,
-            # is_imsessioned,
-            # has_performers,
-            # has_contests,
         ],
     )
     def finalize(self):
