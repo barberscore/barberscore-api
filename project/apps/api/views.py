@@ -63,6 +63,7 @@ class ArrangerViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ArrangerSerializer
     # lookup_field = 'slug'
+    resource_name = "arranger"
 
 
 class AwardViewSet(viewsets.ModelViewSet):
@@ -73,6 +74,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     )
     serializer_class = AwardSerializer
     # lookup_field = 'slug'
+    resource_name = "award"
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
@@ -81,6 +83,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ChapterSerializer
     # lookup_field = 'slug'
+    resource_name = "chapter"
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -94,6 +97,7 @@ class ContestViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ContestSerializer
     # lookup_field = 'slug'
+    resource_name = "contest"
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
@@ -104,6 +108,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
     )
     serializer_class = CatalogSerializer
     # lookup_field = 'slug'
+    resource_name = "catalog"
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -114,13 +119,12 @@ class ContestantViewSet(viewsets.ModelViewSet):
     serializer_class = ContestantSerializer
     resource_name = 'contestant'
     # lookup_field = 'slug'
+    resource_name = "contestant"
 
 
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
-    # ).filter(
-        # history=Session.HISTORY.complete,
     ).prefetch_related(
         'contests',
         'performers',
@@ -129,6 +133,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SessionSerializer
     # lookup_field = 'slug'
+    resource_name = "session"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -143,18 +148,18 @@ class PerformerViewSet(viewsets.ModelViewSet):
     )
     serializer_class = PerformerSerializer
     # lookup_field = 'slug'
+    resource_name = "performer"
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
         'organization',
-    # ).exclude(
-    #     status=Convention.STATUS.new,
     ).prefetch_related(
         'sessions',
     )
     serializer_class = ConventionSerializer
     # lookup_field = 'slug'
+    resource_name = "convention"
 
 
 class DirectorViewSet(viewsets.ModelViewSet):
@@ -164,6 +169,7 @@ class DirectorViewSet(viewsets.ModelViewSet):
     )
     serializer_class = DirectorSerializer
     # lookup_field = 'slug'
+    resource_name = "director"
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -172,6 +178,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     )
     serializer_class = GroupSerializer
     # lookup_field = 'slug'
+    resource_name = "group"
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
@@ -184,12 +191,14 @@ class JudgeViewSet(viewsets.ModelViewSet):
     )
     serializer_class = JudgeSerializer
     # lookup_field = 'slug'
+    resource_name = "judge"
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.exclude(level=2)
     serializer_class = OrganizationSerializer
     # lookup_field = 'slug'
+    resource_name = "organization"
 
 
 class PerformanceViewSet(viewsets.ModelViewSet):
@@ -201,6 +210,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     )
     serializer_class = PerformanceSerializer
     # lookup_field = 'slug'
+    resource_name = "performance"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -208,10 +218,10 @@ class PersonViewSet(viewsets.ModelViewSet):
         # 'catalogs',
         'choruses',
         'quartets',
-        'sessions',
     )
     serializer_class = PersonSerializer
     # lookup_field = 'slug'
+    resource_name = "person"
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -223,6 +233,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.DjangoModelPermissions,
     ]
+    resource_name = "score"
 
 
 # class SearchViewSet(HaystackViewSet):
@@ -237,6 +248,7 @@ class RoundViewSet(viewsets.ModelViewSet):
     )
     serializer_class = RoundSerializer
     # lookup_field = 'slug'
+    resource_name = "round"
 
 
 class SingerViewSet(viewsets.ModelViewSet):
@@ -246,6 +258,7 @@ class SingerViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SingerSerializer
     # lookup_field = 'slug'
+    resource_name = "singer"
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -257,6 +270,7 @@ class SongViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SongSerializer
     # lookup_field = 'slug'
+    resource_name = "song"
 
 
 class TuneViewSet(viewsets.ModelViewSet):
@@ -266,3 +280,4 @@ class TuneViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TuneSerializer
     # lookup_field = 'slug'
+    resource_name = "tune"

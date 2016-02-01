@@ -253,6 +253,9 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'performers',
         )
+        read_only_fields = [
+            'picture',
+        ]
 
 
 class JudgeSerializer(serializers.ModelSerializer):
@@ -318,6 +321,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'children',
             # 'performers',
         )
+        read_only_fields = [
+            'picture',
+        ]
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -434,6 +440,9 @@ class PerformerSerializer(serializers.ModelSerializer):
             'singers',
             'contestants',
         )
+        read_only_fields = [
+            'picture',
+        ]
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -476,12 +485,15 @@ class PersonSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            'kind',
+            # 'kind',
             # 'catalogs',
             'choruses',
             'quartets',
-            'sessions',
+            # 'sessions',
         )
+        read_only_fields = [
+            'picture',
+        ]
 
 
 class RoundSerializer(serializers.ModelSerializer):

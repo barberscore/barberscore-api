@@ -263,6 +263,9 @@ class Arranger(TimeStampedModel):
             ('catalog', 'person',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "arranger"
+
 
 class Award(TimeStampedModel):
     id = models.UUIDField(
@@ -362,6 +365,9 @@ class Award(TimeStampedModel):
             ('organization', 'long_name', 'kind',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "award"
+
 
 class Catalog(TimeStampedModel):
     id = models.UUIDField(
@@ -446,6 +452,9 @@ class Catalog(TimeStampedModel):
         default=False,
     )
 
+    class JSONAPIMeta:
+        resource_name = "catalog"
+
 
 class Certification(TimeStampedModel):
     id = models.UUIDField(
@@ -521,6 +530,9 @@ class Certification(TimeStampedModel):
             ('category', 'person',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "certification"
+
 
 class Chapter(Common):
 
@@ -570,6 +582,9 @@ class Chapter(Common):
         ordering = (
             'name',
         )
+
+    class JSONAPIMeta:
+        resource_name = "chapter"
 
 
 class Contest(TimeStampedModel):
@@ -820,6 +835,9 @@ class Contest(TimeStampedModel):
             'goal',
         )
 
+    class JSONAPIMeta:
+        resource_name = "contest"
+
 
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
@@ -990,6 +1008,9 @@ class Contestant(TimeStampedModel):
             'contest',
             'place',
         )
+
+    class JSONAPIMeta:
+        resource_name = "contestant"
 
 
 class Convention(TimeStampedModel):
@@ -1163,6 +1184,9 @@ class Convention(TimeStampedModel):
             ('organization', 'kind', 'year', 'division',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "convention"
+
     @transition(
         field=status,
         source=STATUS.new,
@@ -1273,6 +1297,9 @@ class Director(TimeStampedModel):
             ('performer', 'person',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "director"
+
 
 class Group(Common):
 
@@ -1354,6 +1381,9 @@ class Group(Common):
         ordering = (
             'name',
         )
+
+    class JSONAPIMeta:
+        resource_name = "group"
 
 
 class Judge(TimeStampedModel):
@@ -1489,6 +1519,9 @@ class Judge(TimeStampedModel):
             'kind',
             'slot',
         )
+
+    class JSONAPIMeta:
+        resource_name = "judge"
 
 
 class Organization(MPTTModel, TimeStampedModel):
@@ -1678,6 +1711,9 @@ class Organization(MPTTModel, TimeStampedModel):
         #     'tree_id',
         # ]
 
+    class JSONAPIMeta:
+        resource_name = "organization"
+
 
 class Performance(TimeStampedModel):
     id = models.UUIDField(
@@ -1847,6 +1883,9 @@ class Performance(TimeStampedModel):
         unique_together = (
             ('round', 'position',),
         )
+
+    class JSONAPIMeta:
+        resource_name = "performance"
 
     def calculate(self):
         for song in self.songs.all():
@@ -2230,6 +2269,9 @@ class Performer(TimeStampedModel):
             ('group', 'session',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "performer"
+
     def calculate(self):
         for performance in self.performances.all():
             performance.calculate()
@@ -2454,6 +2496,9 @@ class Person(Common):
     class Meta:
         ordering = ['name']
 
+    class JSONAPIMeta:
+        resource_name = "performer"
+
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
@@ -2567,6 +2612,9 @@ class Round(TimeStampedModel):
         unique_together = (
             ('session', 'kind',),
         )
+
+    class JSONAPIMeta:
+        resource_name = "round"
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
@@ -2836,6 +2884,9 @@ class Score(TimeStampedModel):
             'judge',
         )
 
+    class JSONAPIMeta:
+        resource_name = "score"
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3058,6 +3109,9 @@ class Session(TimeStampedModel):
             'kind',
         )
 
+    class JSONAPIMeta:
+        resource_name = "session"
+
     @transition(
         field=status,
         source=STATUS.new,
@@ -3191,6 +3245,9 @@ class Singer(TimeStampedModel):
         ordering = (
             '-name',
         )
+
+    class JSONAPIMeta:
+        resource_name = "singer"
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1} {2}".format(
@@ -3343,6 +3400,9 @@ class Song(TimeStampedModel):
             ('performance', 'order',),
         )
 
+    class JSONAPIMeta:
+        resource_name = "song"
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3437,6 +3497,9 @@ class Tune(TimeStampedModel):
     class Meta:
         ordering = ['name']
 
+    class JSONAPIMeta:
+        resource_name = "tune"
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3475,3 +3538,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.email
+
+    class JSONAPIMeta:
+        resource_name = "user"
