@@ -130,12 +130,14 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
     # And other DRF settings
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
@@ -150,12 +152,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Easy Select2
 SELECT2_USE_BUNDLED_JQUERY = False
-
-# Djoser
-DJOSER = {
-    'LOGIN_AFTER_REGISTRATION': True,
-    'APPEND_USER_DATA': True,
-}
 
 # Haystack
 # HAYSTACK_CONNECTIONS = {

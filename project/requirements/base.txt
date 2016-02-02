@@ -31,3 +31,4 @@ Unidecode==0.4.19
 arrow==0.7.0
 djangorestframework-jsonapi==2.0.0-beta.1
 django-extra-fields==0.5
+https://github.com/dbinetti/django-rest-framework-jwt/archive/master.zip
