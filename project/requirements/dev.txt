@@ -1,4 +1,4 @@
 -r base.txt
 
-ipython==4.0.3
+ipython==4.1.0
 django-debug-toolbar==1.4
