@@ -148,9 +148,9 @@ class Command(BaseCommand):
             extract_scores(v)
         self.stdout.write("Scores Extracted")
 
-        for v in vs:
-            denormalize(v)
-        self.stdout.write("Convention Denormalized")
+        # for v in vs:
+        #     denormalize(v)
+        # self.stdout.write("Convention Denormalized")
 
         for v in vs:
             rank(v)

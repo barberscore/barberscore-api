@@ -2,6 +2,8 @@ import csv
 
 from django.db.models import Q
 
+from django.db import IntegrityError
+
 from unidecode import unidecode
 
 from psycopg2.extras import DateRange
@@ -127,6 +129,7 @@ def import_quartets(path):
                 g = Group.objects.get(
                     name__iexact=row[1],
                 )
+                g.kind = Group.KIND.quartet
                 g.group_id = int(row[0])
                 g.bhs_name = row[1]
                 g.bhs_district = row[2]
@@ -143,6 +146,46 @@ def import_quartets(path):
                     bhs_location=row[3],
                     bhs_contact=row[4],
                     bhs_expiration=row[5],
+                )
+
+
+def import_choruses(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                g = Group.objects.get(
+                    name__iexact=row[3],
+                )
+                g.kind = Group.KIND.chorus
+                g.group_id = int(row[0])
+                g.bhs_chapter_code = row[1]
+                g.bhs_chapter_name = row[2]
+                g.bhs_name = row[3]
+                g.bhs_website = row[4]
+                g.bhs_location = ", ".join(filter(None, [
+                    row[7],
+                    row[8],
+                ]))
+                g.bhs_phone = row[10]
+                g.bhs_contact = row[11]
+                g.save()
+            except Group.DoesNotExist:
+                Group.objects.create(
+                    name=row[3],
+                    kind=Group.KIND.chorus,
+                    group_id=int(row[0]),
+                    bhs_chapter_code=row[1],
+                    bhs_chapter_name=row[2],
+                    bhs_name=row[3],
+                    bhs_website=row[4],
+                    bhs_location=", ".join(filter(None, [
+                        row[7],
+                        row[8],
+                    ])),
+                    bhs_phone=row[10],
+                    bhs_contact=row[11],
                 )
 
 
@@ -235,10 +278,17 @@ def extract_sessions(convention):
     for row in rows:
         if len(row) == 0:
             continue
+        if row[0].startswith('Judge Count:'):
+            count = int(row[0].partition(":")[2])
+            size = int(count / 3)
+    for row in rows:
+        if len(row) == 0:
+            continue
         if row[0].startswith('Subsessions:'):
             kind = get_session_kind(row[0])
             convention.sessions.get_or_create(
                 kind=getattr(Session.KIND, kind),
+                size=size,
             )
     return
 
@@ -421,14 +471,17 @@ def extract_panel(convention):
                 judges.append({
                     'kind': kind,
                     'person': person,
-                    'round': round,
+                    'session': round.session,
                     'organization': organization,
                     'panel_id': panel_id,
                     'category': category,
                     'slot': panel_id,
                 })
     for judge in judges:
-        Judge.objects.create(**judge)
+        try:
+            Judge.objects.get_or_create(**judge)
+        except IntegrityError:
+            continue
     return
 
 
@@ -534,22 +587,83 @@ def extract_contests(convention):
                         organization=organization,
                         stix_name=stix_name,
                     )
+                    goal = Contest.GOAL.championship
                 except Award.DoesNotExist:
-                    # Might need qualification info.
-                    # log.info("No award for: {0}".format(stix_name))
-                    continue
+                    goal = Contest.GOAL.qualifier
+                    if "International Preliminary" in stix_name:
+                        if "Chorus" in stix_name:
+                            award = Award.objects.get(
+                                organization__name='BHS',
+                                kind=Award.KIND.chorus,
+                                long_name='',
+                            )
+                        elif "Quartet" in stix_name:
+                            award = Award.objects.get(
+                                organization__name='BHS',
+                                kind=Award.KIND.quartet,
+                                long_name='',
+                            )
+                        elif "Seniors" in stix_name:
+                            award = Award.objects.get(
+                                organization__name='BHS',
+                                kind=Award.KIND.seniors,
+                                long_name='',
+                            )
+                        elif "Collegiate" in stix_name:
+                            award = Award.objects.get(
+                                organization__name='BHS',
+                                kind=Award.KIND.collegiate,
+                                long_name='',
+                            )
+                        else:
+                            log.info("No award for: {0}".format(stix_name))
+                            continue
+                    elif "District Qualification" in stix_name:
+                        if "Chorus" in stix_name:
+                            award = Award.objects.get(
+                                organization=session.convention.organization,
+                                kind=Award.KIND.chorus,
+                                long_name='',
+                            )
+                        elif "Quartet" in stix_name:
+                            award = Award.objects.get(
+                                organization=session.convention.organization,
+                                kind=Award.KIND.quartet,
+                                long_name='',
+                            )
+                        elif "Seniors" in stix_name:
+                            award = Award.objects.get(
+                                organization=session.convention.organization,
+                                kind=Award.KIND.seniors,
+                                long_name='',
+                            )
+                        elif "Collegiate" in stix_name:
+                            award = Award.objects.get(
+                                organization=session.convention.organization,
+                                kind=Award.KIND.collegiate,
+                                long_name='',
+                            )
+                        else:
+                            log.info("No award for: {0}".format(stix_name))
+                            continue
+                    else:
+                        log.info("No award for: {0}".format(stix_name))
+                        continue
                 except Award.MultipleObjectsReturned:
                     log.info("Multi awards for: {0}".format(stix_name))
                     continue
                 contest = {
                     'session': session,
                     'award': award,
-                    'goal': 1,
+                    'goal': goal,
                     'subsession_id': stix_num,
                 }
                 contests.append(contest)
     for contest in contests:
-        Contest.objects.get_or_create(**contest)
+        try:
+            Contest.objects.get_or_create(**contest)
+        except IntegrityError:
+            pass
     return contests
 
 
@@ -585,7 +699,9 @@ def extract_contestants(convention):
             for contest in contest_list:
                 stix_num = int(contest)
                 try:
-                    contest = session.contests.get(
+                    contest = session.contests.exclude(
+                        goal=Contest.GOAL.qualifier,
+                    ).get(
                         subsession_id=stix_num,
                     )
                 except Contest.DoesNotExist:
@@ -744,7 +860,7 @@ def extract_scores(convention):
                 order=number,
             )
 
-            judges = round.judges.order_by('panel_id')
+            judges = session.judges.order_by('panel_id')
             scores_raw = row[-judges.count():]
             i = 0
             for judge in judges:

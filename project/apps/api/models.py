@@ -735,12 +735,19 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.goal == 1:
+            sess = None
+        else:
+            sess = self.session.name
+
         self.name = " ".join(filter(None, [
             self.award.organization.name,
             self.award.get_kind_display(),
             self.award.long_name,
-            "Contest",
+            self.get_goal_display(),
+            sess,
             str(self.session.convention.year),
+            # self.id.hex,
         ]))
         super(Contest, self).save(*args, **kwargs)
 
@@ -1350,6 +1357,21 @@ class Group(Common):
         blank=True,
     )
 
+    bhs_chapter_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_chapter_code = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_website = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
     bhs_district = models.CharField(
         max_length=255,
         blank=True,
@@ -1361,6 +1383,11 @@ class Group(Common):
     )
 
     bhs_contact = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_phone = models.CharField(
         max_length=255,
         blank=True,
     )
@@ -1452,11 +1479,6 @@ class Judge(TimeStampedModel):
 
     session = models.ForeignKey(
         'Session',
-        related_name='judges',
-    )
-
-    round = models.ForeignKey(
-        'Round',
         related_name='judges',
     )
 
