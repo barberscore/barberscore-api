@@ -373,6 +373,9 @@ def create_awards(convention):
                 # Instantiate long_name
                 long_name = stix_name
 
+                # Instantiate year
+                year = convention.year
+
                 # Exceptions for International
                 if "Dealer's Choice" in long_name:
                     long_name = "Dealer's Choice"
@@ -398,6 +401,7 @@ def create_awards(convention):
                     'long_name': long_name,
                     'rounds': rounds,
                     'stix_name': stix_name,
+                    'year': year,
                 })
 
     for award in awards:
@@ -586,6 +590,7 @@ def extract_contests(convention):
                     award = Award.objects.get(
                         organization=organization,
                         stix_name=stix_name,
+                        year=convention.year,
                     )
                     goal = Contest.GOAL.championship
                 except Award.DoesNotExist:
@@ -596,24 +601,28 @@ def extract_contests(convention):
                                 organization__name='BHS',
                                 kind=Award.KIND.chorus,
                                 long_name='',
+                                year=convention.year,
                             )
                         elif "Quartet" in stix_name:
                             award = Award.objects.get(
                                 organization__name='BHS',
                                 kind=Award.KIND.quartet,
                                 long_name='',
+                                year=convention.year,
                             )
                         elif "Seniors" in stix_name:
                             award = Award.objects.get(
                                 organization__name='BHS',
                                 kind=Award.KIND.seniors,
                                 long_name='',
+                                year=convention.year,
                             )
                         elif "Collegiate" in stix_name:
                             award = Award.objects.get(
                                 organization__name='BHS',
                                 kind=Award.KIND.collegiate,
                                 long_name='',
+                                year=convention.year,
                             )
                         else:
                             log.info("No award for: {0}".format(stix_name))
@@ -624,24 +633,28 @@ def extract_contests(convention):
                                 organization=session.convention.organization,
                                 kind=Award.KIND.chorus,
                                 long_name='',
+                                year=convention.year,
                             )
                         elif "Quartet" in stix_name:
                             award = Award.objects.get(
                                 organization=session.convention.organization,
                                 kind=Award.KIND.quartet,
                                 long_name='',
+                                year=convention.year,
                             )
                         elif "Seniors" in stix_name:
                             award = Award.objects.get(
                                 organization=session.convention.organization,
                                 kind=Award.KIND.seniors,
                                 long_name='',
+                                year=convention.year,
                             )
                         elif "Collegiate" in stix_name:
                             award = Award.objects.get(
                                 organization=session.convention.organization,
                                 kind=Award.KIND.collegiate,
                                 long_name='',
+                                year=convention.year,
                             )
                         else:
                             log.info("No award for: {0}".format(stix_name))
@@ -699,12 +712,11 @@ def extract_contestants(convention):
             for contest in contest_list:
                 stix_num = int(contest)
                 try:
-                    contest = session.contests.exclude(
-                        goal=Contest.GOAL.qualifier,
-                    ).get(
+                    contest = session.contests.get(
                         subsession_id=stix_num,
                     )
                 except Contest.DoesNotExist:
+                    log.error("Can't find contest: {0}".format(contest))
                     continue
                 contestants.append({
                     'contest': contest,
@@ -713,9 +725,12 @@ def extract_contestants(convention):
     for contestant in contestants:
         try:
             Contestant.objects.get_or_create(**contestant)
+        except IntegrityError:
+            log.error("Already exists: {0}".format(contestant))
+            continue
         except ValueError:
             log.error("Can't create: {0}".format(contestant))
-            # TODO This could also be used to capture qualifiers
+            continue
     return
 
 
@@ -878,6 +893,45 @@ def extract_scores(convention):
                 i += 1
     for score in scores:
         Score.objects.get_or_create(**score)
+    return
+
+
+def fill_parents(convention):
+    for session in convention.sessions.all():
+        for contest in session.contests.exclude(
+            goal=Contest.GOAL.championship,
+        ):
+            award = contest.award
+            if contest.award.kind == Award.KIND.chorus:
+                try:
+                    parent = Contest.objects.get(
+                        award=award,
+                        goal=Contest.GOAL.championship,
+                        session__convention__year=convention.year + 1,
+                    )
+                except Contest.DoesNotExist:
+                    log.error("No Parent for {0}".format(contest))
+            else:
+                try:
+                    parent = Contest.objects.get(
+                        award=award,
+                        goal=Contest.GOAL.championship,
+                        session__convention__year=convention.year,
+                    )
+                except Contest.DoesNotExist:
+                    log.error("No Parent for {0}".format(contest))
+            contest.parent = parent
+            contest.save()
+    return
+
+
+def update_panel_size(convention):
+    for session in convention.sessions.all():
+        session.size = session.judges.filter(
+            kind=Judge.KIND.official,
+            category=Judge.CATEGORY.music,
+        ).count()
+        session.save()
     return
 
 

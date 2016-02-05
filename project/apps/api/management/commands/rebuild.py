@@ -18,6 +18,7 @@ from apps.api.utils import (
     extract_songs,
     extract_scores,
     denormalize,
+    fill_parents,
     rank,
 )
 
@@ -147,6 +148,10 @@ class Command(BaseCommand):
         for v in vs:
             extract_scores(v)
         self.stdout.write("Scores Extracted")
+
+        for v in vs:
+            fill_parents(v)
+        self.stdout.write("Parents Added")
 
         # for v in vs:
         #     denormalize(v)

@@ -169,7 +169,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'history',
         # 'goal',
         # 'level',
-        # 'kind',
+        'goal',
+        'parent',
         # 'year',
         # 'organization',
         'session',
@@ -199,7 +200,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'goal',
         # 'organization',
         # 'level',
-        # 'kind',
+        'goal',
+        'parent',
         # 'year',
         # 'rounds',
         # 'qual_score',
@@ -248,6 +250,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'status',
         'contest__session__convention',
         'contest__session__convention__year',
+        'contest__goal',
     )
 
     autocomplete_lookup_fields = {

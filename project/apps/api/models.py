@@ -326,6 +326,15 @@ class Award(TimeStampedModel):
         default='',
     )
 
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        editable=False,
+    )
+
     stix_num = models.IntegerField(
         null=True,
         blank=True,
@@ -347,10 +356,11 @@ class Award(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            u"{0}".format(self.organization.name),
-            u"{0}".format(self.get_kind_display()),
-            u"{0}".format(self.long_name),
-            u"Championship"
+            self.organization.name,
+            self.get_kind_display(),
+            self.long_name,
+            u"Championship",
+            str(self.year),
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -360,9 +370,10 @@ class Award(TimeStampedModel):
             'organization__name',
             'kind',
             'long_name',
+            'year',
         )
         unique_together = (
-            ('organization', 'long_name', 'kind',),
+            ('organization', 'long_name', 'kind', 'year',),
         )
 
     class JSONAPIMeta:
@@ -723,6 +734,15 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
     @property
     def champion(self):
         return self.contestants.order_by('place').first()
@@ -738,7 +758,7 @@ class Contest(TimeStampedModel):
         if self.goal == 1:
             sess = None
         else:
-            sess = self.session.name
+            sess = self.session.organization.name
 
         self.name = " ".join(filter(None, [
             self.award.organization.name,
@@ -956,7 +976,7 @@ class Contestant(TimeStampedModel):
             self.contest.award.organization.name,
             self.contest.award.get_kind_display(),
             self.contest.award.long_name,
-            "Contest",
+            self.contest.get_goal_display(),
             str(self.contest.session.convention.year),
             self.performer.group.name,
         ]))
