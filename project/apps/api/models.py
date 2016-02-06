@@ -577,6 +577,76 @@ class Chapter(Common):
         on_delete=models.SET_NULL,
     )
 
+    bhs_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_chapter_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_group_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_chapter_code = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_group_id = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    bhs_website = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_district = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_venue = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_address = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_city = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_state = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_zip = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_contact = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_phone = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)

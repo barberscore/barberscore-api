@@ -189,6 +189,49 @@ def import_choruses(path):
                 )
 
 
+def import_chapters(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                c = Chapter.objects.get(
+                    code=row[1],
+                )
+                c.bhs_group_id = int(row[0])
+                c.bhs_chapter_code = row[1]
+                c.bhs_chapter_name = row[2]
+                c.bhs_group_name = row[3]
+                c.bhs_website = row[4]
+                c.bhs_venue = row[5]
+                c.bhs_address = row[6]
+                c.bhs_city = row[7]
+                c.bhs_state = row[8]
+                c.bhs_zip = row[9]
+                c.bhs_phone = row[10]
+                c.bhs_contact = row[11]
+                c.save()
+                print "Updated {0}".format(c)
+            except Chapter.DoesNotExist:
+                Chapter.objects.create(
+                    name=row[2],
+                    code=row[1],
+                    bhs_group_id = int(row[0]),
+                    bhs_chapter_code = row[1],
+                    bhs_chapter_name = row[2],
+                    bhs_group_name = row[3],
+                    bhs_website = row[4],
+                    bhs_venue = row[5],
+                    bhs_address = row[6],
+                    bhs_city = row[7],
+                    bhs_state = row[8],
+                    bhs_zip = row[9],
+                    bhs_phone = row[10],
+                    bhs_contact = row[11],
+                )
+                print "Created {0}".format(row[2])
+
+
 def import_convention(path, kind, division=False):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
