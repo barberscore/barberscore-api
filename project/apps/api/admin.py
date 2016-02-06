@@ -168,7 +168,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         # 'history',
         # 'goal',
-        # 'level',
+        'award__organization__level',
+        'award__kind',
         'goal',
         'parent',
         # 'year',
@@ -183,6 +184,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'award',
         'goal',
+        'parent',
         # 'organization',
         # 'level',
         # 'kind',
@@ -205,6 +207,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'year',
         # 'rounds',
         # 'qual_score',
+        'subsession_text',
     )
 
     readonly_fields = (
@@ -650,6 +653,7 @@ class PersonAdmin(admin.ModelAdmin):
         'name',
         'status',
         'status_monitor',
+        'member',
         'location',
         'website',
         'facebook',
@@ -657,6 +661,12 @@ class PersonAdmin(admin.ModelAdmin):
         'email',
         'phone',
         'picture',
+        'bhs_member_id',
+        'bhs_name',
+        'bhs_city',
+        'bhs_state',
+        'bhs_phone',
+        'bhs_email',
     )
 
     fields = (

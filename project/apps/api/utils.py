@@ -575,12 +575,11 @@ def extract_contests(convention):
                 stix_num = parts[0].strip()
                 stix_name = parts[2].strip()
                 # Identify the organization
-                parent = convention.organization
-                if parent.long_name in stix_name:
-                    organization = parent
+                if convention.organization.long_name in stix_name:
+                    organization = convention.organization
                 else:
                     try:
-                        organization = parent.children.get(
+                        organization = convention.organization.children.get(
                             long_name=stix_name.partition(" Division")[0],
                         )
                     except Organization.DoesNotExist:
@@ -670,6 +669,7 @@ def extract_contests(convention):
                     'award': award,
                     'goal': goal,
                     'subsession_id': stix_num,
+                    'subsession_text': stix_name,
                 }
                 contests.append(contest)
     for contest in contests:
@@ -902,7 +902,7 @@ def fill_parents(convention):
             goal=Contest.GOAL.championship,
         ):
             award = contest.award
-            if contest.award.kind == Award.KIND.chorus:
+            if convention.kind == Convention.KIND.fall:
                 try:
                     parent = Contest.objects.get(
                         award=award,
@@ -911,7 +911,7 @@ def fill_parents(convention):
                     )
                 except Contest.DoesNotExist:
                     log.error("No Parent for {0}".format(contest))
-            else:
+            elif convention.kind == Convention.KIND.spring:
                 try:
                     parent = Contest.objects.get(
                         award=award,
@@ -920,6 +920,8 @@ def fill_parents(convention):
                     )
                 except Contest.DoesNotExist:
                     log.error("No Parent for {0}".format(contest))
+            else:
+                log.error("Indeterminent convention kind.  {0}".format(convention))
             contest.parent = parent
             contest.save()
     return

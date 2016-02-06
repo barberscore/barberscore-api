@@ -143,18 +143,21 @@ class Common(TimeStampedModel):
         help_text="""
             The website URL of the resource.""",
         blank=True,
+        null=True,
     )
 
     facebook = models.URLField(
         help_text="""
             The facebook URL of the resource.""",
         blank=True,
+        null=True,
     )
 
     twitter = models.CharField(
         help_text="""
             The twitter handle (in form @twitter_handle) of the resource.""",
         blank=True,
+        null=True,
         max_length=16,
         validators=[
             RegexValidator(
@@ -171,6 +174,7 @@ class Common(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
+        null=True,
     )
 
     phone = PhoneNumberField(
@@ -2436,6 +2440,7 @@ class Person(Common):
     member = models.IntegerField(
         null=True,
         blank=True,
+        unique=True,
     )
 
     # Denormalization for searching
