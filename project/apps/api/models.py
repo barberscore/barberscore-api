@@ -137,27 +137,28 @@ class Common(TimeStampedModel):
             The geographical location of the resource.""",
         max_length=200,
         blank=True,
+        default='',
     )
 
     website = models.URLField(
         help_text="""
             The website URL of the resource.""",
         blank=True,
-        null=True,
+        default='',
     )
 
     facebook = models.URLField(
         help_text="""
             The facebook URL of the resource.""",
         blank=True,
-        null=True,
+        default='',
     )
 
     twitter = models.CharField(
         help_text="""
             The twitter handle (in form @twitter_handle) of the resource.""",
         blank=True,
-        null=True,
+        default='',
         max_length=16,
         validators=[
             RegexValidator(
@@ -174,14 +175,14 @@ class Common(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
-        null=True,
+        default='',
     )
 
     phone = PhoneNumberField(
         help_text="""
             The phone number of the resource.  Include country code.""",
         blank=True,
-        null=True,
+        default='',
     )
 
     picture = models.ImageField(
