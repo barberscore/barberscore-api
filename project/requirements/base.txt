@@ -27,7 +27,7 @@ factory-boy==2.6.0
 docutils==0.12
 fuzzywuzzy==0.8.1
 python-Levenshtein==0.12.0
-Unidecode==0.4.19
+Unidecode==0.4.18
 arrow==0.7.0
 djangorestframework-jsonapi==2.0.0-beta.1
 django-extra-fields==0.5
