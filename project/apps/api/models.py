@@ -326,15 +326,6 @@ class Award(TimeStampedModel):
         default='',
     )
 
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-        editable=False,
-    )
-
     stix_num = models.IntegerField(
         null=True,
         blank=True,
@@ -370,10 +361,9 @@ class Award(TimeStampedModel):
             'organization__name',
             'kind',
             'long_name',
-            'year',
         )
         unique_together = (
-            ('organization', 'long_name', 'kind', 'year',),
+            ('organization', 'long_name', 'kind',),
         )
 
     class JSONAPIMeta:
