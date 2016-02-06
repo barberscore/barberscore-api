@@ -1362,6 +1362,14 @@ class Group(Common):
         on_delete=models.SET_NULL,
     )
 
+    district = models.ForeignKey(
+        'Organization',
+        related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     group_id = models.IntegerField(
         null=True,
         blank=True,
