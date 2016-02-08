@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^api-token-verify/', 'rest_framework_jwt.views.verify_jwt_token'),
     url(r'^api/', include('apps.api.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^website/', include('apps.website.urls', namespace='website')),
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
