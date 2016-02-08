@@ -8,6 +8,11 @@ from rest_framework import (
 
 # from drf_haystack.viewsets import HaystackViewSet
 
+from .filters import (
+    ConventionFilter,
+)
+
+
 from .models import (
     Arranger,
     Award,
@@ -160,6 +165,12 @@ class ConventionViewSet(viewsets.ModelViewSet):
     serializer_class = ConventionSerializer
     # lookup_field = 'slug'
     resource_name = "convention"
+    # filter_class = [
+    #     ConventionFilter,
+    # ]
+    filter_fields = (
+        'status',
+    )
 
 
 class DirectorViewSet(viewsets.ModelViewSet):

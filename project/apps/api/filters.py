@@ -1,5 +1,8 @@
 from rest_framework import filters
 
+from .models import (
+    Convention,
+)
 
 class CoalesceFilterBackend(filters.BaseFilterBackend):
     """
@@ -11,3 +14,11 @@ class CoalesceFilterBackend(filters.BaseFilterBackend):
         if id_list:
             queryset = queryset.filter(slug__in=id_list)
         return queryset
+
+
+class ConventionFilter(filters.FilterSet):
+    class Meta:
+        model = Convention
+        fields = [
+            'status',
+        ]
