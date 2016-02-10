@@ -632,7 +632,6 @@ def extract_contests(convention):
                     award = Award.objects.get(
                         organization=organization,
                         stix_name=stix_name,
-                        year=convention.year,
                     )
                     goal = Contest.GOAL.championship
                 except Award.DoesNotExist:
@@ -643,28 +642,24 @@ def extract_contests(convention):
                                 organization__name='BHS',
                                 kind=Award.KIND.chorus,
                                 long_name='',
-                                year=convention.year,
                             )
                         elif "Quartet" in stix_name:
                             award = Award.objects.get(
                                 organization__name='BHS',
                                 kind=Award.KIND.quartet,
                                 long_name='',
-                                year=convention.year,
                             )
                         elif "Seniors" in stix_name:
                             award = Award.objects.get(
                                 organization__name='BHS',
                                 kind=Award.KIND.seniors,
                                 long_name='',
-                                year=convention.year,
                             )
                         elif "Collegiate" in stix_name:
                             award = Award.objects.get(
                                 organization__name='BHS',
                                 kind=Award.KIND.collegiate,
                                 long_name='',
-                                year=convention.year,
                             )
                         else:
                             log.info("No award for: {0}".format(stix_name))
@@ -675,28 +670,24 @@ def extract_contests(convention):
                                 organization=session.convention.organization,
                                 kind=Award.KIND.chorus,
                                 long_name='',
-                                year=convention.year,
                             )
                         elif "Quartet" in stix_name:
                             award = Award.objects.get(
                                 organization=session.convention.organization,
                                 kind=Award.KIND.quartet,
                                 long_name='',
-                                year=convention.year,
                             )
                         elif "Seniors" in stix_name:
                             award = Award.objects.get(
                                 organization=session.convention.organization,
                                 kind=Award.KIND.seniors,
                                 long_name='',
-                                year=convention.year,
                             )
                         elif "Collegiate" in stix_name:
                             award = Award.objects.get(
                                 organization=session.convention.organization,
                                 kind=Award.KIND.collegiate,
                                 long_name='',
-                                year=convention.year,
                             )
                         else:
                             log.info("No award for: {0}".format(stix_name))
