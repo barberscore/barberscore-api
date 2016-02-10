@@ -29,6 +29,6 @@ fuzzywuzzy==0.8.1
 python-Levenshtein==0.12.0
 Unidecode==0.4.18
 arrow==0.7.0
-djangorestframework-jsonapi==2.0.0-beta.1
 django-extra-fields==0.5
 https://github.com/dbinetti/django-rest-framework-jwt/archive/master.zip
+git+git://github.com/django-json-api/django-rest-framework-json-api.git@c37d3f4220fbcf8d442b9c25cdddc6b3bcdc4994

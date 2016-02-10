@@ -1,7 +1,17 @@
 from rest_framework_json_api import serializers
 
+import six
+import pytz
+
+from django.core.exceptions import (
+    ValidationError,
+)
+
 # from drf_haystack.serializers import HaystackSerializer
-from drf_extra_fields.fields import DateTimeRangeField
+from drf_extra_fields.fields import (
+    DateTimeRangeField,
+    DateRangeField,
+)
 
 from .models import (
     Arranger,
@@ -32,6 +42,16 @@ from .models import (
 #     PersonIndex,
 # )
 
+
+class TimezoneField(serializers.Field):
+    def to_representation(self, obj):
+        return six.text_type(obj)
+
+    def to_internal_value(self, data):
+        try:
+            return pytz.timezone(str(data))
+        except pytz.exceptions.UnknownTimeZoneError:
+            raise ValidationError('Unknown timezone')
 
 class ArrangerSerializer(serializers.ModelSerializer):
     # person = serializers.SlugRelatedField(
@@ -183,6 +203,8 @@ class ConventionSerializer(serializers.ModelSerializer):
     #     read_only=True,
     #     slug_field='slug',
     # )
+    date = DateRangeField()
+    timezone = TimezoneField()
 
     class Meta:
         model = Convention
@@ -194,14 +216,13 @@ class ConventionSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'division',
-            # 'date',
+            'date',
             'location',
             'year',
             'organization',
-            # 'timezone',
+            'timezone',
             'sessions',
         )
-
 
 class DirectorSerializer(serializers.ModelSerializer):
     # performer = serializers.SlugRelatedField(
