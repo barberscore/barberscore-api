@@ -44,14 +44,14 @@ DEFAULT_FROM_EMAIL = 'noreply@barberscore.com'
 from urlparse import urlparse
 es = urlparse(get_env_variable("SEARCHBOX_URL"))
 
-# HAYSTACK_CONNECTIONS = {
-#     'default': {
-#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-#         'URL': es.scheme + '://' + es.hostname + ':80',
-#         'INDEX_NAME': 'haystack',
-#         'KWARGS': {"http_auth": es.username + ':' + es.password},
-#     },
-# }
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': es.scheme + '://' + es.hostname + ':80',
+        'INDEX_NAME': 'haystack',
+        'KWARGS': {"http_auth": es.username + ':' + es.password},
+    },
+}
 
 ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),
