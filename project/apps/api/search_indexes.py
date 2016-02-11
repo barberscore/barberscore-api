@@ -1,37 +1,17 @@
-# from haystack import indexes
+from haystack import indexes
 
-# from .models import (
-#     Group,
-#     Tune,
-#     Person,
-# )
+from .models import (
+    Group,
+)
 
 
-# class GroupIndex(indexes.ModelSearchIndex, indexes.Indexable):
-#     class Meta:
-#         model = Group
-#         fields = [
-#             'name',
-#             'slug',
-#             'description',
-#         ]
+class GroupIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    name = indexes.CharField(model_attr='name')
 
+    def get_model(self):
+        return Group
 
-# class PersonIndex(indexes.ModelSearchIndex, indexes.Indexable):
-#     class Meta:
-#         model = Person
-#         fields = [
-#             'name',
-#             'slug',
-#             'description',
-#         ]
-
-
-# class TuneIndex(indexes.ModelSearchIndex, indexes.Indexable):
-#     class Meta:
-#         model = Tune
-#         fields = [
-#             'name',
-#             'slug',
-#             'description',
-#         ]
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()

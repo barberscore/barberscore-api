@@ -7,7 +7,10 @@ from django.core.exceptions import (
     ValidationError,
 )
 
-# from drf_haystack.serializers import HaystackSerializer
+from drf_haystack.serializers import (
+    HaystackSerializerMixin,
+)
+
 from drf_extra_fields.fields import (
     DateTimeRangeField,
     DateRangeField,
@@ -36,11 +39,9 @@ from .models import (
     Organization,
 )
 
-# from .search_indexes import (
-#     GroupIndex,
-#     TuneIndex,
-#     PersonIndex,
-# )
+from .search_indexes import (
+    GroupIndex,
+)
 
 
 class TimezoneField(serializers.Field):
@@ -52,6 +53,7 @@ class TimezoneField(serializers.Field):
             return pytz.timezone(str(data))
         except pytz.exceptions.UnknownTimeZoneError:
             raise ValidationError('Unknown timezone')
+
 
 class ArrangerSerializer(serializers.ModelSerializer):
     # person = serializers.SlugRelatedField(
@@ -224,6 +226,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'sessions',
         )
 
+
 class DirectorSerializer(serializers.ModelSerializer):
     # performer = serializers.SlugRelatedField(
     #     read_only=True,
@@ -276,6 +279,14 @@ class GroupSerializer(serializers.ModelSerializer):
         )
         read_only_fields = [
             'picture',
+        ]
+
+
+class GroupSearchSerializer(HaystackSerializerMixin, GroupSerializer):
+    class Meta(GroupSerializer.Meta):
+        search_fields = [
+            "text",
+            "name",
         ]
 
 
@@ -713,23 +724,3 @@ class TuneSerializer(serializers.ModelSerializer):
             # 'catalogs',
             'songs',
         )
-
-
-# class SearchSerializer(HaystackSerializer):
-#     kind = serializers.CharField(
-#         source='model_name',
-#     )
-
-#     class Meta:
-#         index_classes = [
-#             GroupIndex,
-#             TuneIndex,
-#             PersonIndex,
-#         ]
-#         fields = [
-#             "text",
-#             "name",
-#             "slug",
-#             "description",
-#             "kind",
-#         ]

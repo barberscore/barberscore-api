@@ -1,4 +1,4 @@
-django==1.9.2
+django==1.8.9
 django-cors-headers==1.1.0
 dj-database-url==0.3.0
 django-timezone-field==1.3
@@ -32,3 +32,6 @@ arrow==0.7.0
 django-extra-fields==0.5
 https://github.com/dbinetti/django-rest-framework-jwt/archive/master.zip
 git+git://github.com/django-json-api/django-rest-framework-json-api.git@c37d3f4220fbcf8d442b9c25cdddc6b3bcdc4994
+django-haystack==2.4.1
+drf-haystack==1.5.6
+elasticsearch==1.9.0

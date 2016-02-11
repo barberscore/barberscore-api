@@ -6,7 +6,7 @@ from rest_framework import (
     permissions,
 )
 
-# from drf_haystack.viewsets import HaystackViewSet
+from drf_haystack.viewsets import HaystackViewSet
 
 from .filters import (
     ConventionFilter,
@@ -57,7 +57,7 @@ from .serializers import (
     JudgeSerializer,
     PerformanceSerializer,
     OrganizationSerializer,
-    # SearchSerializer,
+    GroupSearchSerializer,
 )
 
 
@@ -192,6 +192,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     resource_name = "group"
 
 
+class GroupSearchViewSet(HaystackViewSet):
+    index_models = [Group]
+    serializer_class = GroupSearchSerializer
+
+
 class JudgeViewSet(viewsets.ModelViewSet):
     queryset = Judge.objects.select_related(
         'session',
@@ -245,10 +250,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
         permissions.DjangoModelPermissions,
     ]
     resource_name = "score"
-
-
-# class SearchViewSet(HaystackViewSet):
-#     serializer_class = SearchSerializer
 
 
 class RoundViewSet(viewsets.ModelViewSet):

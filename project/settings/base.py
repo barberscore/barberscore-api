@@ -159,13 +159,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 SELECT2_USE_BUNDLED_JQUERY = False
 
 # Haystack
-# HAYSTACK_CONNECTIONS = {
-#     'default': {
-#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-#         'URL': 'http://127.0.0.1:9200',
-#         'INDEX_NAME': 'haystack',
-#     },
-# }
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200',
+        'INDEX_NAME': 'haystack',
+    },
+}
 
 # Grappelli
 GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
@@ -213,7 +213,7 @@ INSTALLED_APPS = (
     'fsm_admin',
     'django_fsm',
     # 'django_fsm_log',
-    # 'haystack',
+    'haystack',
     'easy_pdf',
     'timezone_field',
     'corsheaders',
