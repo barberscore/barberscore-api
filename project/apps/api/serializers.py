@@ -41,6 +41,7 @@ from .models import (
 
 from .search_indexes import (
     GroupIndex,
+    PersonIndex,
 )
 
 
@@ -222,6 +223,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'location',
             'year',
             'organization',
+            'drcj',
             'timezone',
             'sessions',
         )
@@ -521,10 +523,18 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'catalogs',
             'choruses',
             'quartets',
-            # 'sessions',
+            'conventions',
         )
         read_only_fields = [
             'picture',
+        ]
+
+
+class PersonSearchSerializer(HaystackSerializerMixin, GroupSerializer):
+    class Meta(PersonSerializer.Meta):
+        search_fields = [
+            "text",
+            "name",
         ]
 
 

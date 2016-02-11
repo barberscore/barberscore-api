@@ -8,3 +8,5 @@ deployment:
 machine:
   python:
     version: 2.7.11
+  services:
+    - elasticsearch

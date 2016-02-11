@@ -22,6 +22,7 @@ from .views import (
     PerformanceViewSet,
     OrganizationViewSet,
     GroupSearchViewSet,
+    PersonSearchViewSet,
 )
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -40,6 +41,7 @@ router.register(r'judge', JudgeViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'performer', PerformerViewSet)
+router.register(r'person/search', PersonSearchViewSet, base_name='person-search')
 router.register(r'person', PersonViewSet)
 router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)

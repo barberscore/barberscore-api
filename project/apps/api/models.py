@@ -1216,6 +1216,15 @@ class Convention(TimeStampedModel):
             The organization hosting the convention.""",
     )
 
+    drcj = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='conventions',
+        help_text="""
+            The person managing the convention.""",
+    )
+
     stix_name = models.CharField(
         max_length=200,
         null=True,
@@ -2613,7 +2622,7 @@ class Person(Common):
         ordering = ['name']
 
     class JSONAPIMeta:
-        resource_name = "performer"
+        resource_name = "person"
 
     @staticmethod
     def autocomplete_search_fields():

@@ -10,6 +10,7 @@ from drf_haystack.viewsets import HaystackViewSet
 
 from .filters import (
     ConventionFilter,
+    PersonFilter,
 )
 
 
@@ -58,6 +59,7 @@ from .serializers import (
     PerformanceSerializer,
     OrganizationSerializer,
     GroupSearchSerializer,
+    PersonSearchSerializer,
 )
 
 
@@ -238,6 +240,15 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     # lookup_field = 'slug'
     resource_name = "person"
+    filter_fields = (
+        'name',
+    )
+    filter_class = PersonFilter
+
+
+class PersonSearchViewSet(HaystackViewSet):
+    index_models = [Person]
+    serializer_class = PersonSearchSerializer
 
 
 class ScoreViewSet(viewsets.ModelViewSet):

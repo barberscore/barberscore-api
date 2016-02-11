@@ -323,6 +323,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'dates',
         'date',
         'organization',
+        'drcj',
         'kind',
         # 'stix_file',
         'division',
@@ -348,6 +349,11 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status_monitor',
         'year',
     )
+
+    raw_id_fields = [
+        'drcj',
+    ]
+
     save_on_top = True
 
 
