@@ -18,6 +18,11 @@ MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = MEDIA_STORAGE
 STATICFILES_STORAGE = STATIC_STORAGE
 
+# CORS Settings
+CORS_ORIGIN_WHITELIST = (
+    'localhost:4200',
+)
+
 INSTALLED_APPS += (
     'debug_toolbar',
 )

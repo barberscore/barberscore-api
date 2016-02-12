@@ -53,6 +53,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Middleware
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,7 +122,7 @@ JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
 
 #  CORS Headers
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 
 # Haystack
 HAYSTACK_CONNECTIONS = {

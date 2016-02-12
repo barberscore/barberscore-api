@@ -1,12 +1,13 @@
 from .base import *
 
-import sys
+from urlparse import urlparse
+es = urlparse(get_env_variable("SEARCHBOX_URL"))
+
 
 # AWS S3  Settings
 # This was hellaciously confusing to set up.
 # `Static` means public-read, static resources like CSS, Images, etc.
 # `Media` means private, user or admin-uploaded resources that have ACL
-
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -36,14 +37,18 @@ DEFAULT_FILE_STORAGE = MEDIA_STORAGE
 STATICFILES_STORAGE = STATIC_STORAGE
 
 
+# CORS Settings
+CORS_ORIGIN_WHITELIST = (
+    'barberscore-ember.herokuapp.com',
+    'barberscore.com',
+)
+
+# Email
 EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
 MANDRILL_API_KEY = get_env_variable("MANDRILL_APIKEY")
 DEFAULT_FROM_EMAIL = 'noreply@barberscore.com'
 
 # Haystack
-from urlparse import urlparse
-es = urlparse(get_env_variable("SEARCHBOX_URL"))
-
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
