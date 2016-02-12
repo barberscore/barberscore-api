@@ -1258,7 +1258,7 @@ class Convention(TimeStampedModel):
                     arrow.get(self.date.upper).format('MMMM D, YYYY'),
                 )
         else:
-            dates = self.date
+            dates = None
         return dates
 
     def __unicode__(self):

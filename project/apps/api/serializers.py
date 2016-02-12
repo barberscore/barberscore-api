@@ -226,6 +226,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'drcj',
             'timezone',
             'sessions',
+            'human_date',
         )
 
 
