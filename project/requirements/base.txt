@@ -35,3 +35,4 @@ git+git://github.com/django-json-api/django-rest-framework-json-api.git@c37d3f42
 django-haystack==2.4.1
 drf-haystack==1.5.6
 elasticsearch==1.9.0
+djangorestframework-filters==0.7.0
