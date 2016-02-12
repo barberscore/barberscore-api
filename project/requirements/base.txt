@@ -17,14 +17,13 @@ django-super-inlines==0.1.4
 django-timezone-field==1.3
 django==1.8.9
 djangorestframework-filters==0.7.0
+djangorestframework-jsonapi==2.0.0-beta.2
 djangorestframework==3.3.2
 docutils==0.12
 drf-haystack==1.5.6
 elasticsearch==1.9.0
 factory-boy==2.6.1
 fuzzywuzzy==0.8.1
-git+git://github.com/django-json-api/django-rest-framework-json-api.git@c37d3f4220fbcf8d442b9c25cdddc6b3bcdc4994
-https://github.com/dbinetti/django-rest-framework-jwt/archive/master.zip
 nameparser==0.3.11
 phonenumbers==7.2.5
 Pillow==3.1.1
@@ -36,3 +35,5 @@ s3cmd==1.6.1
 titlecase==0.8.1
 Unidecode==0.4.18
 xhtml2pdf==0.0.6
+
+https://github.com/dbinetti/django-rest-framework-jwt/archive/master.zip
