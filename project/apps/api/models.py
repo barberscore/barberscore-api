@@ -2889,6 +2889,13 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    administrator = models.ForeignKey(
+        'Person',
+        related_name='sessions',
+        null=True,
+        blank=True,
+    )
+
     # Legacy
     HISTORY = Choices(
         (0, 'new', 'New',),

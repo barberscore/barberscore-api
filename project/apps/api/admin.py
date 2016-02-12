@@ -730,6 +730,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         ('history', 'history_monitor',),
         'convention',
         'kind',
+        'administrator',
         # 'organization',
         # 'year',
         # # 'size',
@@ -741,6 +742,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status',
         'convention',
         'kind',
+        'administrator',
         # 'size',
         # 'num_rounds',
     ]
@@ -749,8 +751,9 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status',
         'history',
         'kind',
-        'year',
+        'convention__year',
         'organization',
+        'administrator',
     )
 
     raw_id_fields = (
@@ -768,7 +771,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status_monitor',
         'history_monitor',
         'organization',
-        'year',
     ]
 
     inlines = [

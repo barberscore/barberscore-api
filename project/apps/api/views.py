@@ -115,6 +115,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
+        'administrator',
     ).prefetch_related(
         'performers',
         'rounds',
@@ -149,9 +150,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
     serializer_class = ConventionSerializer
     # lookup_field = 'slug'
     resource_name = "convention"
-    # filter_class = [
-    #     ConventionFilter,
-    # ]
     filter_class = ConventionFilter
 
 
