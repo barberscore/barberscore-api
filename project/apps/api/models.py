@@ -976,6 +976,13 @@ class Contestant(TimeStampedModel):
         related_name='contestants',
     )
 
+    award = models.ForeignKey(
+        'Award',
+        related_name='contestants',
+        null=True,
+        blank=True,
+    )
+
     # Denormalization
     place = models.IntegerField(
         help_text="""
