@@ -1,9 +1,10 @@
-from rest_framework import filters
-import django_filters
+import rest_framework_filters as filters
 
 from .models import (
     Convention,
     Person,
+    Contest,
+    Award,
 )
 
 # class CoalesceFilterBackend(filters.BaseFilterBackend):
@@ -26,12 +27,25 @@ class ConventionFilter(filters.FilterSet):
         ]
 
 
-class PersonFilter(django_filters.FilterSet):
+class PersonFilter(filters.FilterSet):
     class Meta:
         model = Person
         fields = {
-            'name': [
-                'exact',
-                'icontains',
-            ],
+            'name': filters.ALL_LOOKUPS,
+        }
+
+
+class ContestFilter(filters.FilterSet):
+    class Meta:
+        model = Contest
+        fields = {
+            'name': filters.ALL_LOOKUPS,
+        }
+
+
+class AwardFilter(filters.FilterSet):
+    class Meta:
+        model = Contest
+        fields = {
+            'name': filters.ALL_LOOKUPS,
         }

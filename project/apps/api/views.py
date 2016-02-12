@@ -11,6 +11,7 @@ from drf_haystack.viewsets import HaystackViewSet
 from .filters import (
     ConventionFilter,
     PersonFilter,
+    ContestFilter,
 )
 
 
@@ -105,6 +106,12 @@ class ContestViewSet(viewsets.ModelViewSet):
     serializer_class = ContestSerializer
     # lookup_field = 'slug'
     resource_name = "contest"
+    filter_fields = (
+        'name',
+    )
+    filter_class = ContestFilter
+
+
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
