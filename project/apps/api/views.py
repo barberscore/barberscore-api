@@ -152,6 +152,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
     # filter_class = [
     #     ConventionFilter,
     # ]
+    filter_class = ConventionFilter
 
 
 class DirectorViewSet(viewsets.ModelViewSet):
