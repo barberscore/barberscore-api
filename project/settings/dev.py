@@ -1,7 +1,7 @@
 from .base import *
 
 ALLOWED_HOSTS = [
-    'localhost',
+    'localhost:4200 ',
 ]
 
 # Static Server Config
