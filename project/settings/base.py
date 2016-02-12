@@ -2,7 +2,6 @@ import os
 import dj_database_url
 
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib.messages import constants as message_constants
 
 
 def get_env_variable(var_name):
@@ -25,18 +24,14 @@ TEMPLATE_DEBUG = DEBUG
 # Globals
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 PROJECT_NAME = 'barberscore'
-USE_TZ = True
 TIME_ZONE = get_env_variable("TZ")
+USE_TZ = True
 LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 USE_L10N = True
-USE_TZ = True
 SECRET_KEY = get_env_variable("SECRET_KEY")
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
-LOGIN_URL = 'website:login'
-LOGOUT_URL = 'website:logout'
-LOGIN_REDIRECT_URL = 'website:home'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = ()
 STATIC_URL = '/static/'
@@ -58,7 +53,6 @@ AUTHENTICATION_BACKENDS = (
 
 # Middleware
 MIDDLEWARE_CLASSES = (
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,35 +75,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
 )
 
-# Bootstrap overwrite
-MESSAGE_TAGS = {
-    message_constants.ERROR: 'danger',
-}
-
 # Phonenumber support
 PHONENUMBER_DEFAULT_REGION = 'US'
 PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
-
-# Rest Framework (default)
-# REST_FRAMEWORK = {
-#     'DEFAULT_FILTER_BACKENDS': [
-#         'apps.api.filters.CoalesceFilterBackend',
-#     ],
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#         'rest_framework.authentication.BasicAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
-#     ],
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-#     ],
-#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE': 100,
-#     'DEFAULT_RENDERER_CLASSES': [
-#         'rest_framework.renderers.JSONRenderer',
-#         'rest_framework.renderers.BrowsableAPIRenderer',
-#     ]
-# }
 
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
@@ -154,9 +122,6 @@ APPEND_TRAILING_SLASH = False
 
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = True
-
-# Easy Select2
-SELECT2_USE_BUNDLED_JQUERY = False
 
 # Haystack
 HAYSTACK_CONNECTIONS = {
