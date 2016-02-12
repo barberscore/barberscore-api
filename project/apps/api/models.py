@@ -1288,7 +1288,6 @@ class Judge(TimeStampedModel):
     )
 
     CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
         (3, 'singing', 'Singing'),
