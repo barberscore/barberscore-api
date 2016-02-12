@@ -3,7 +3,6 @@ import rest_framework_filters as filters
 from .models import (
     Convention,
     Person,
-    Contest,
     Award,
 )
 
@@ -22,9 +21,9 @@ from .models import (
 class ConventionFilter(filters.FilterSet):
     class Meta:
         model = Convention
-        fields = [
-            'status',
-        ]
+        fields = {
+            'status': filters.ALL_LOOKUPS,
+        }
 
 
 class PersonFilter(filters.FilterSet):
@@ -35,17 +34,9 @@ class PersonFilter(filters.FilterSet):
         }
 
 
-class ContestFilter(filters.FilterSet):
-    class Meta:
-        model = Contest
-        fields = {
-            'name': filters.ALL_LOOKUPS,
-        }
-
-
 class AwardFilter(filters.FilterSet):
     class Meta:
-        model = Contest
+        model = Award
         fields = {
             'name': filters.ALL_LOOKUPS,
         }

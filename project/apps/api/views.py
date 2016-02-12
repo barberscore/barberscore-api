@@ -11,7 +11,6 @@ from drf_haystack.viewsets import HaystackViewSet
 from .filters import (
     ConventionFilter,
     PersonFilter,
-    ContestFilter,
 )
 
 
@@ -21,7 +20,6 @@ from .models import (
     Chapter,
     Convention,
     Session,
-    Contest,
     Contestant,
     Round,
     Group,
@@ -44,7 +42,6 @@ from .serializers import (
     ChapterSerializer,
     ConventionSerializer,
     SessionSerializer,
-    ContestSerializer,
     ContestantSerializer,
     RoundSerializer,
     GroupSerializer,
@@ -78,7 +75,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
         'organization',
     ).prefetch_related(
-        'contests',
+        'contestants',
     )
     serializer_class = AwardSerializer
     # lookup_field = 'slug'
@@ -94,26 +91,6 @@ class ChapterViewSet(viewsets.ModelViewSet):
     resource_name = "chapter"
 
 
-class ContestViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.select_related(
-        'session',
-        'award',
-    ).filter(
-        # history=Session.HISTORY.complete,
-    ).prefetch_related(
-        'contestants',
-    )
-    serializer_class = ContestSerializer
-    # lookup_field = 'slug'
-    resource_name = "contest"
-    filter_fields = (
-        'name',
-    )
-    filter_class = ContestFilter
-
-
-
-
 class CatalogViewSet(viewsets.ModelViewSet):
     queryset = Catalog.objects.select_related(
         'tune',
@@ -127,7 +104,6 @@ class CatalogViewSet(viewsets.ModelViewSet):
 
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
-        'contest',
         'performer',
     )
     serializer_class = ContestantSerializer
@@ -140,7 +116,6 @@ class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
     ).prefetch_related(
-        'contests',
         'performers',
         'rounds',
         'judges',
@@ -177,9 +152,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
     # filter_class = [
     #     ConventionFilter,
     # ]
-    filter_fields = (
-        'status',
-    )
 
 
 class DirectorViewSet(viewsets.ModelViewSet):

@@ -7,7 +7,7 @@ from fsm_admin.mixins import FSMTransitionMixin
 
 from .inlines import (
     ArrangerInline,
-    ContestInline,
+    AwardInline,
     CertificationInline,
     ContestantInline,
     SessionInline,
@@ -22,12 +22,12 @@ from .inlines import (
     RankingInline,
     SingerInline,
     SongStackedInline,
+    OrganizationInline,
 )
 
 from .models import (
     Arranger,
     Award,
-    Contest,
     Catalog,
     Chapter,
     Contestant,
@@ -148,93 +148,6 @@ class ChapterAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Contest)
-class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    inlines = [
-        ContestantInline,
-    ]
-
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    save_on_top = True
-    search_fields = (
-        'name',
-    )
-
-    list_filter = (
-        'status',
-        # 'history',
-        # 'goal',
-        'award__organization__level',
-        'award__kind',
-        'goal',
-        'parent',
-        # 'year',
-        # 'organization',
-        'session',
-        'award',
-    )
-
-    list_display = (
-        'name',
-        'status',
-        'session',
-        'award',
-        'goal',
-        'parent',
-        # 'organization',
-        # 'level',
-        # 'kind',
-        # 'year',
-        # 'rounds',
-        # 'qual_score',
-    )
-
-    fields = (
-        'name',
-        ('status', 'status_monitor',),
-        ('history', 'history_monitor',),
-        'session',
-        'award',
-        # 'goal',
-        # 'organization',
-        # 'level',
-        'goal',
-        'parent',
-        # 'year',
-        # 'rounds',
-        # 'qual_score',
-        'subsession_text',
-    )
-
-    readonly_fields = (
-        'name',
-        'status_monitor',
-        'history_monitor',
-    )
-
-    # ordering = (
-    #     '-year',
-    #     '-tree_id',
-    #     'level',
-    #     'kind',
-    #     'goal',
-    # )
-
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == "convention":
-    #         try:
-    #             parent_obj_id = request.resolver_match.args[0]
-    #             obj = Contest.objects.get(pk=parent_obj_id)
-    #             kwargs["queryset"] = Convention.objects.filter(year=obj.year)
-    #         except IndexError:
-    #             pass
-    #     return super(ContestAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -245,21 +158,16 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'performer',
-        'contest',
         'place',
         'total_score',
     ]
     list_filter = (
         'status',
-        'contest__session__convention',
-        'contest__session__convention__year',
-        'contest__goal',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'performer',
-            'contest',
         ]
     }
     readonly_fields = [
@@ -271,7 +179,6 @@ class ContestantAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'performer',
-        'contest',
     ]
 
 
@@ -339,9 +246,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     inlines = [
-        # ContestInline,
         SessionInline,
-        # PerformerInline,
+        # OrganizationInline,
     ]
 
     readonly_fields = (
@@ -508,6 +414,11 @@ class OrganizationAdmin(MPTTModelAdmin):
         'status',
         'kind',
     ]
+
+    inlines = [
+        AwardInline,
+    ]
+
 
     # ordering = [
     #     'tree_id',
@@ -862,7 +773,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     inlines = [
         RoundInline,
-        ContestInline,
         PerformerInline,
         JudgeInline,
     ]

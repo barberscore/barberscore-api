@@ -219,7 +219,5 @@ INSTALLED_APPS = (
     'corsheaders',
     'mptt',
     'rest_framework',
-    'rest_framework.authtoken',
     'apps.api',
-    'apps.website',
 )

@@ -8,7 +8,7 @@ from super_inlines.admin import SuperInlineModelAdmin
 
 from .models import (
     Arranger,
-    Contest,
+    Award,
     Certification,
     Contestant,
     Session,
@@ -17,6 +17,7 @@ from .models import (
     Group,
     Judge,
     Performance,
+    Organization,
     Score,
     Round,
     Singer,
@@ -49,6 +50,14 @@ class ArrangerInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
+class AwardInline(admin.TabularInline):
+    model = Award
+    # fields = (
+    #     'name',
+    # )
+    extra = 0
+
+
 class CertificationInline(admin.TabularInline):
     fields = (
         'name',
@@ -74,48 +83,6 @@ class CertificationInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class ContestInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_contest_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
-
-    fields = (
-        'link',
-        'name',
-        'status',
-        'award',
-        'session',
-        # 'organization',
-        # 'level',
-        # 'kind',
-        'goal',
-        # 'year',
-        'qual_score',
-    )
-    show_change_link = True
-
-    model = Contest
-    extra = 0
-    raw_id_fields = (
-        'session',
-    )
-    readonly_fields = [
-        'link',
-        'name',
-    ]
-
-    can_delete = True
-    classes = ('grp-collapse grp-closed',)
-
-
 class ContestantInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
@@ -131,8 +98,7 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        # 'name',
-        'contest',
+        'award',
         'performer',
         'place',
         'total_points',
@@ -343,6 +309,14 @@ class RankingInline(admin.TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
+class OrganizationInline(admin.TabularInline):
+    model = Organization
+    # fields = (
+    #     'name',
+    # )
+    extra = 0
+
+
 class PerformerInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
@@ -525,14 +499,6 @@ class RoundInline(admin.TabularInline):
 
     model = Round
     extra = 0
-    # raw_id_fields = (
-    #     'contest',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'contest',
-    #     ]
-    # }
     classes = ('grp-collapse grp-closed',)
     readonly_fields = [
         'link',

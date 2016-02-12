@@ -27,7 +27,6 @@ from .models import (
     Chapter,
     Group,
     Performer,
-    Contest,
     Contestant,
     Performance,
     Song,

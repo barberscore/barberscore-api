@@ -663,274 +663,6 @@ class Chapter(Common):
         resource_name = "chapter"
 
 
-class Contest(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-        editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        (28, 'ranked', 'Ranked',),
-        (30, 'final', 'Final',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
-    GOAL = Choices(
-        (1, 'championship', "Championship"),
-        (2, 'qualifier', "Qualifier"),
-    )
-
-    goal = models.IntegerField(
-        help_text="""
-            The objective of the contest.""",
-        choices=GOAL,
-    )
-
-    qual_score = models.FloatField(
-        help_text="""
-            The objective of the contest.  Note that if the goal is `qualifier` then this must be set.""",
-        null=True,
-        blank=True,
-    )
-
-    YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        YEAR_CHOICES.append((r, r))
-
-    year = models.IntegerField(
-        choices=YEAR_CHOICES,
-        null=True,
-        blank=True,
-    )
-
-    ROUNDS_CHOICES = []
-    for r in reversed(range(1, 4)):
-        ROUNDS_CHOICES.append((r, r))
-
-    # rounds = models.IntegerField(
-    #     help_text="""
-    #         The number of rounds that will be used in determining the contest.  Note that this may be fewer than the total number of rounds (rounds) in the parent session.""",
-    #     choices=ROUNDS_CHOICES,
-    #     null=True,
-    #     blank=True,
-    # )
-
-    HISTORY = Choices(
-        (0, 'new', 'New',),
-        (10, 'none', 'None',),
-        (20, 'pdf', 'PDF',),
-        (30, 'places', 'Places',),
-        (40, 'incomplete', 'Incomplete',),
-        (50, 'complete', 'Complete',),
-    )
-
-    history = models.IntegerField(
-        help_text="""Used to manage state for historical imports.""",
-        choices=HISTORY,
-        default=HISTORY.new,
-    )
-
-    history_monitor = MonitorField(
-        help_text="""History last updated""",
-        monitor='history',
-    )
-
-    scoresheet_pdf = models.FileField(
-        help_text="""
-            PDF of the OSS.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    scoresheet_csv = models.FileField(
-        help_text="""
-            The parsed scoresheet (used for legacy imports).""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    subsession_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    subsession_text = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='contests',
-    )
-
-    award = models.ForeignKey(
-        'Award',
-        related_name='contests',
-    )
-
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
-    @property
-    def champion(self):
-        return self.contestants.order_by('place').first()
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        if self.goal == 1:
-            sess = None
-        else:
-            sess = self.session.organization.name
-
-        self.name = " ".join(filter(None, [
-            self.award.organization.name,
-            self.award.get_kind_display(),
-            self.award.long_name,
-            self.get_goal_display(),
-            sess,
-            str(self.session.convention.year),
-            # self.id.hex,
-        ]))
-        super(Contest, self).save(*args, **kwargs)
-
-    # def rank(self):
-    #     contestants = self.contestants.all()
-    #     for contestant in contestants:
-    #         contestant.calculate()
-    #         contestant.save()
-    #     cursor = []
-    #     i = 1
-    #     for contestant in self.contestants.order_by('-total_points'):
-    #         try:
-    #             match = contestant.total_points == cursor[0].total_points
-    #         except IndexError:
-    #             contestant.place = i
-    #             contestant.save()
-    #             cursor.append(contestant)
-    #             continue
-    #         if match:
-    #             contestant.place = i
-    #             i += len(cursor)
-    #             contestant.save()
-    #             cursor.append(contestant)
-    #             continue
-    #         else:
-    #             i += 1
-    #             contestant.place = i
-    #             contestant.save()
-    #             cursor = [contestant]
-    #     return "{0} Ready for Review".format(self)
-
-    def start(self):
-        # Triggered in UI
-        # TODO seed performers?
-        round = self.rounds.initial()
-        p = 0
-        for performer in self.performers.accepted().order_by('?'):
-            performer.register()
-            performer.save()
-            round.performances.create(
-                round=round,
-                performer=performer,
-                position=p,
-            )
-            p += 1
-        return "{0} Started".format(self)
-
-    # Check everything is done.
-    # @transition(
-    #     field=status,
-    #     source=STATUS.finished,
-    #     target=STATUS.ranked,
-    #     conditions=[
-    #     ],
-    # )
-    def rank(self):
-        # Denormalize
-        for contestant in self.contestants.all():
-            contestant.calculate()
-            contestant.save()
-        # Rank results
-        cursor = []
-        i = 1
-        for contestant in self.contestants.order_by('-total_points'):
-            try:
-                match = contestant.total_points == cursor[0].total_points
-            except IndexError:
-                contestant.place = i
-                contestant.save()
-                cursor.append(contestant)
-                continue
-            if match:
-                contestant.place = i
-                i += len(cursor)
-                contestant.save()
-                cursor.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.place = i
-                contestant.save()
-                cursor = [contestant]
-        return "{0} Ready for Review".format(self)
-
-    class Meta:
-        unique_together = (
-            ('session', 'award', 'goal',)
-        )
-        ordering = (
-            'session',
-            'award',
-            'goal',
-        )
-
-    class JSONAPIMeta:
-        resource_name = "contest"
-
-
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -968,11 +700,6 @@ class Contestant(TimeStampedModel):
 
     performer = models.ForeignKey(
         'Performer',
-        related_name='contestants',
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
         related_name='contestants',
     )
 
@@ -1045,11 +772,10 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.contest.award.organization.name,
-            self.contest.award.get_kind_display(),
-            self.contest.award.long_name,
-            self.contest.get_goal_display(),
-            str(self.contest.session.convention.year),
+            self.award.organization.name,
+            self.award.get_kind_display(),
+            self.award.long_name,
+            str(self.performer.session.convention.year),
             self.performer.group.name,
         ]))
         super(Contestant, self).save(*args, **kwargs)
@@ -1060,7 +786,7 @@ class Contestant(TimeStampedModel):
         # If there are no performances, skip.
         if self.performer.performances.exists():
             agg = self.performer.performances.filter(
-                round__num__lte=self.contest.award.rounds,
+                round__num__lte=self.award.rounds,
             ).filter(
                 round__session=self.contest.session,
             ).aggregate(
@@ -1084,7 +810,7 @@ class Contestant(TimeStampedModel):
 
             # Calculate percentile
             try:
-                size = self.contest.session.size
+                size = self.performer.session.size
                 possible = size * 2 * self.performer.performances.count()
                 self.mus_score = round(self.mus_points / possible, 1)
                 self.prs_score = round(self.prs_points / possible, 1)
@@ -1101,10 +827,10 @@ class Contestant(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('performer', 'contest',),
+            ('performer', 'award',),
         )
         ordering = (
-            'contest',
+            'award',
             'place',
         )
 
@@ -1221,6 +947,7 @@ class Convention(TimeStampedModel):
         'Organization',
         help_text="""
             The organization hosting the convention.""",
+        related_name='conventions',
     )
 
     drcj = models.ForeignKey(

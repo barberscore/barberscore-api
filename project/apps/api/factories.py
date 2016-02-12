@@ -93,7 +93,6 @@ def add_contestants(contest):
     performers = contest.session.performers.all()
     for performer in performers:
         Contestant.objects.create(
-            contest=contest,
             performer=performer,
         )
     return "Contestants Added"

@@ -9,10 +9,6 @@ from django_fsm.signals import (
 
 from django.dispatch import receiver
 
-from rest_framework.authtoken.models import Token
-
-from django.conf import settings
-
 from .models import (
     Performance,
     Certification,
@@ -28,23 +24,6 @@ from .validators import (
     dixon,
     fill_missing,
 )
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def user_post_save(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
-
-
-# @receiver(post_save, sender=Session)
-# def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-#     if not raw:
-#         if created:
-#             add_rounds(instance)
-#             add_judges(instance)
-#             instance.save()
-# instance.build()
-# instance.save()
 
 
 @receiver(post_save, sender=Certification)
