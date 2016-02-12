@@ -4,6 +4,7 @@ from .models import (
     Convention,
     Person,
     Award,
+    Group,
 )
 
 # class CoalesceFilterBackend(filters.BaseFilterBackend):
@@ -37,6 +38,13 @@ class PersonFilter(filters.FilterSet):
 class AwardFilter(filters.FilterSet):
     class Meta:
         model = Award
+        fields = {
+            'name': filters.ALL_LOOKUPS,
+        }
+
+class GroupFilter(filters.FilterSet):
+    class Meta:
+        model = Group
         fields = {
             'name': filters.ALL_LOOKUPS,
         }

@@ -11,53 +11,54 @@ from drf_haystack.viewsets import HaystackViewSet
 from .filters import (
     ConventionFilter,
     PersonFilter,
+    GroupFilter,
 )
 
 
 from .models import (
     Arranger,
     Award,
-    Chapter,
-    Convention,
-    Session,
-    Contestant,
-    Round,
-    Group,
-    Performer,
-    Tune,
-    Person,
-    Song,
-    Singer,
-    Score,
-    Director,
     Catalog,
+    Chapter,
+    Contestant,
+    Convention,
+    Director,
+    Group,
     Judge,
-    Performance,
     Organization,
+    Performance,
+    Performer,
+    Person,
+    Round,
+    Score,
+    Session,
+    Singer,
+    Song,
+    Tune,
 )
 
 from .serializers import (
     ArrangerSerializer,
     AwardSerializer,
-    ChapterSerializer,
-    ConventionSerializer,
-    SessionSerializer,
-    ContestantSerializer,
-    RoundSerializer,
-    GroupSerializer,
-    PerformerSerializer,
-    TuneSerializer,
-    PersonSerializer,
-    SongSerializer,
-    SingerSerializer,
-    ScoreSerializer,
-    DirectorSerializer,
     CatalogSerializer,
-    JudgeSerializer,
-    PerformanceSerializer,
-    OrganizationSerializer,
+    ChapterSerializer,
+    ContestantSerializer,
+    ConventionSerializer,
+    DirectorSerializer,
     GroupSearchSerializer,
+    GroupSerializer,
+    JudgeSerializer,
+    OrganizationSerializer,
+    PerformanceSerializer,
+    PerformerSerializer,
     PersonSearchSerializer,
+    PersonSerializer,
+    RoundSerializer,
+    ScoreSerializer,
+    SessionSerializer,
+    SingerSerializer,
+    SongSerializer,
+    TuneSerializer,
 )
 
 
@@ -170,11 +171,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     # lookup_field = 'slug'
     resource_name = "group"
+    filter_fields = (
+        'name',
+    )
+    filter_class = GroupFilter
 
 
-class GroupSearchViewSet(HaystackViewSet):
-    index_models = [Group]
-    serializer_class = GroupSearchSerializer
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
@@ -222,11 +224,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'name',
     )
     filter_class = PersonFilter
-
-
-class PersonSearchViewSet(HaystackViewSet):
-    index_models = [Person]
-    serializer_class = PersonSearchSerializer
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
