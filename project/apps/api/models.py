@@ -17,6 +17,7 @@ from django.db import (
 from django.contrib.postgres.fields import (
     DateRangeField,
     DateTimeRangeField,
+    IntegerRangeField,
 )
 
 from psycopg2.extras import Range
@@ -325,6 +326,16 @@ class Award(TimeStampedModel):
     rounds = models.IntegerField(
     )
 
+    qual = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    size = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
     long_name = models.CharField(
         max_length=200,
         blank=True,
@@ -356,7 +367,6 @@ class Award(TimeStampedModel):
             self.get_kind_display(),
             self.long_name,
             u"Championship",
-            str(self.year),
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -685,6 +695,11 @@ class Contestant(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'qualified', 'Qualified',),
+        (20, 'dnq', 'Did Not Qualify',),
+        (30, 'disqualified', 'Disqualified',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'ranked', 'Ranked',),
         (90, 'final', 'Final',),
     )
 
@@ -1167,6 +1182,14 @@ class Group(Common):
         default=KIND.quartet,
     )
 
+    is_youth = models.BooleanField(
+        default=False,
+    )
+
+    is_senior = models.BooleanField(
+        default=False,
+    )
+
     chapter = models.ForeignKey(
         'Chapter',
         related_name='groups',
@@ -1175,7 +1198,7 @@ class Group(Common):
         on_delete=models.SET_NULL,
     )
 
-    district = models.ForeignKey(
+    organization = models.ForeignKey(
         'Organization',
         related_name='groups',
         null=True,

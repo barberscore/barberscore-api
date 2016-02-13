@@ -288,7 +288,7 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'kind',
-        'district',
+        'organization',
         'chapter',
         'location',
         'website',
