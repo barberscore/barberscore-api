@@ -1175,7 +1175,7 @@ class Group(Common):
         on_delete=models.SET_NULL,
     )
 
-    district = models.ForeignKey(
+    organization = models.ForeignKey(
         'Organization',
         related_name='groups',
         null=True,
