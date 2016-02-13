@@ -993,3 +993,12 @@ def rank(convention):
             contest.rank()
             contest.save()
     return
+
+
+def chapter_district(chapter):
+    if not chapter.code:
+        log.error("No Chapter Code for {0}".format(chapter))
+        return
+    else:
+        letter = chapter.code[:1]
+        chapter.organization = Organization.objects.get(code=letter)

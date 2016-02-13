@@ -110,16 +110,17 @@ class ChapterAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'organization',
+        'code',
         # 'status',
         # 'status_monitor',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'code',
-        'picture',
+        # 'location',
+        # 'website',
+        # 'facebook',
+        # 'twitter',
+        # 'email',
+        # 'phone',
+        # 'picture',
     )
 
     fields = (

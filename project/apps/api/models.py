@@ -1547,6 +1547,13 @@ class Organization(MPTTModel, TimeStampedModel):
         max_length=200,
     )
 
+    code = models.CharField(
+        help_text="""
+            The single-letter code, corresponding to chapter codes.""",
+        blank=True,
+        max_length=1,
+    )
+
     parent = TreeForeignKey(
         'self',
         null=True,
