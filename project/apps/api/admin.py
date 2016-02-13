@@ -385,6 +385,7 @@ class OrganizationAdmin(MPTTModelAdmin):
         ('status', 'status_monitor',),
         'parent',
         'kind',
+        'code',
         'short_name',
         'long_name',
         'location',
