@@ -123,6 +123,11 @@ class ChapterAdmin(admin.ModelAdmin):
         # 'picture',
     )
 
+    list_filter = (
+        'organization',
+        'status',
+    )
+
     fields = (
         'name',
         # ('status', 'status_monitor',),
