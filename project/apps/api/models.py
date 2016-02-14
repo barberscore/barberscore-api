@@ -1290,6 +1290,7 @@ class Group(TimeStampedModel):
     )
 
     group_id = models.IntegerField(
+        unique=True,
         null=True,
         blank=True,
     )
@@ -2420,6 +2421,7 @@ class Person(Common):
     bhs_member_id = models.IntegerField(
         null=True,
         blank=True,
+        unique=True,
     )
 
     bhs_name = models.CharField(
