@@ -106,6 +106,7 @@ class CatalogAdmin(admin.ModelAdmin):
 class ChapterAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
+        'code',
     )
 
     list_display = (
