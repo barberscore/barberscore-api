@@ -310,6 +310,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_filter = (
         'kind',
+        'status',
     )
 
     inlines = [
