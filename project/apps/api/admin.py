@@ -113,7 +113,7 @@ class ChapterAdmin(admin.ModelAdmin):
         'name',
         'organization',
         'code',
-        # 'status',
+        'status',
         # 'status_monitor',
         # 'location',
         # 'website',
@@ -131,7 +131,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
-        # ('status', 'status_monitor',),
+        ('status', 'status_monitor',),
         'organization',
         'location',
         'website',
@@ -150,7 +150,7 @@ class ChapterAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = (
-        # 'status_monitor',
+        'status_monitor',
     )
     save_on_top = True
 
