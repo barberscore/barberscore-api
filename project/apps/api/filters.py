@@ -7,17 +7,6 @@ from .models import (
     Group,
 )
 
-# class CoalesceFilterBackend(filters.BaseFilterBackend):
-#     """
-#     Support Ember Data coalesceFindRequests.
-
-#     """
-#     def filter_queryset(self, request, queryset, view):
-#         id_list = request.query_params.getlist('ids[]')
-#         if id_list:
-#             queryset = queryset.filter(slug__in=id_list)
-#         return queryset
-
 
 class ConventionFilter(filters.FilterSet):
     class Meta:
@@ -41,6 +30,7 @@ class AwardFilter(filters.FilterSet):
         fields = {
             'name': filters.ALL_LOOKUPS,
         }
+
 
 class GroupFilter(filters.FilterSet):
     class Meta:
