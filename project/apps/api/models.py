@@ -564,9 +564,7 @@ class Chapter(Common):
             The chapter code.""",
         max_length=200,
         blank=True,
-        validators=[
-            validate_trimmed,
-        ],
+        null=True,
     )
 
     organization = TreeForeignKey(
