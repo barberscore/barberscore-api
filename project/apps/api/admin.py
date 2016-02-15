@@ -281,7 +281,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'chapter',
-        'group_id'
+        'group_id',
         'status',
         'status_monitor',
         'location',
@@ -298,7 +298,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'kind',
         'organization',
-        'group_id'
+        'group_id',
         'chapter',
         'location',
         'website',
