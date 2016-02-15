@@ -275,11 +275,13 @@ class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
         'chapter__name',
+        'group_id',
     )
 
     list_display = (
         'name',
         'chapter',
+        'group_id'
         'status',
         'status_monitor',
         'location',
@@ -296,6 +298,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'kind',
         'organization',
+        'group_id'
         'chapter',
         'location',
         'website',
