@@ -562,6 +562,7 @@ class Chapter(Common):
     code = models.CharField(
         help_text="""
             The chapter code.""",
+        unique=True,
         max_length=200,
         blank=True,
         null=True,
@@ -596,6 +597,7 @@ class Chapter(Common):
     )
 
     bhs_group_id = models.IntegerField(
+        unique=True,
         blank=True,
         null=True,
     )
@@ -1731,6 +1733,11 @@ class Performance(TimeStampedModel):
         'Position',
     )
 
+    slot = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     scheduled = DateTimeRangeField(
         help_text="""
             The scheduled performance window.""",
@@ -1843,17 +1850,17 @@ class Performance(TimeStampedModel):
             self.round.get_kind_display(),
             str(self.round.session.convention.year),
             "Performance",
-            str(self.draw),
+            "{0:02d}".format(self.slot),
         ]))
         super(Performance, self).save(*args, **kwargs)
 
     class Meta:
         ordering = (
             'round',
-            'position',
+            'slot',
         )
         unique_together = (
-            ('round', 'position',),
+            ('round', 'slot',),
         )
 
     class JSONAPIMeta:

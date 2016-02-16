@@ -153,6 +153,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'performer',
+            'award',
         )
 
 
@@ -278,6 +279,7 @@ class JudgeSerializer(serializers.ModelSerializer):
             'name',
             'person',
             'category',
+            'designation',
             'kind',
             'slot',
             'status',
@@ -354,6 +356,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
+            'slot',
             'draw',
             'start_dt',
             'scheduled',
