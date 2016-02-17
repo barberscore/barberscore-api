@@ -12,6 +12,7 @@ from .filters import (
     ConventionFilter,
     PersonFilter,
     GroupFilter,
+    TuneFilter,
 )
 
 
@@ -279,3 +280,7 @@ class TuneViewSet(viewsets.ModelViewSet):
     serializer_class = TuneSerializer
     # lookup_field = 'slug'
     resource_name = "tune"
+    filter_fields = (
+        'name',
+    )
+    filter_class = TuneFilter
