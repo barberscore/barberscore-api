@@ -12,7 +12,6 @@ from apps.api.utils import (
     extract_rounds,
     extract_panel,
     extract_performers,
-    extract_contests,
     extract_contestants,
     extract_performances,
     extract_songs,
@@ -128,10 +127,6 @@ class Command(BaseCommand):
         for v in vs:
             extract_performers(v)
         self.stdout.write("Performers Extracted")
-
-        for v in vs:
-            extract_contests(v)
-        self.stdout.write("Contests Extracted")
 
         for v in vs:
             extract_contestants(v)

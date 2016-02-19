@@ -19,8 +19,6 @@ from django.contrib.postgres.fields import (
     DateTimeRangeField,
 )
 
-from psycopg2.extras import Range
-
 from autoslug import AutoSlugField
 
 from django.core.validators import (
@@ -70,27 +68,6 @@ from .managers import (
     PerformerQuerySet,
 )
 
-from .validators import (
-    sessions_entered,
-    validate_trimmed,
-    dixon,
-    is_scheduled,
-    has_performers,
-    has_contests,
-    # round_scheduled,
-    # contest_started,
-    scores_entered,
-    songs_entered,
-    # rounds_finished,
-    # round_finished,
-    performances_finished,
-    scores_validated,
-    song_entered,
-    score_entered,
-    preceding_finished,
-    # preceding_round_finished,
-)
-
 
 def generate_image_filename(instance, filename):
     f, ext = os.path.splitext(filename)
@@ -110,9 +87,6 @@ class Common(TimeStampedModel):
         max_length=200,
         blank=False,
         unique=True,
-        validators=[
-            validate_trimmed,
-        ],
         error_messages={
             'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
         }
@@ -211,7 +185,8 @@ class Common(TimeStampedModel):
 
 
 class Arranger(TimeStampedModel):
-    """Chorus relation"""
+    """Chorus relation."""
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1073,7 +1048,8 @@ class Convention(TimeStampedModel):
 
 
 class Director(TimeStampedModel):
-    """Chorus relation"""
+    """Chorus relation."""
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1148,9 +1124,6 @@ class Group(TimeStampedModel):
             The name of the resource.""",
         max_length=200,
         blank=False,
-        validators=[
-            validate_trimmed,
-        ],
         error_messages={
             'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
         }
@@ -1360,7 +1333,8 @@ class Group(TimeStampedModel):
 
 
 class Judge(TimeStampedModel):
-    """Contest Judge"""
+    """Contest Judge."""
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1502,9 +1476,6 @@ class Organization(MPTTModel, TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=200,
-        validators=[
-            validate_trimmed,
-        ],
     )
 
     slug = AutoSlugField(
@@ -2196,7 +2167,7 @@ class Performer(TimeStampedModel):
 
     @property
     def delta_score(self):
-        """ The difference between qualifying score and final score.""",
+        """The difference between qualifying score and final score.""",
         try:
             return self.total_score - self.prelim
         except TypeError:
@@ -2204,7 +2175,7 @@ class Performer(TimeStampedModel):
 
     @property
     def delta_place(self):
-        """ The difference between qualifying rank and final rank.""",
+        """The difference between qualifying rank and final rank.""",
         try:
             return self.seed - self.place
         except TypeError:
@@ -2759,10 +2730,11 @@ class Round(TimeStampedModel):
 
 
 class Score(TimeStampedModel):
+    """The Score is never released publicly.
+
+    These are the actual Judge's scores from the contest.
     """
-        The Score is never released publicly.  These are the actual
-        Judge's scores from the contest.
-    """
+
     STATUS = Choices(
         (0, 'new', 'New',),
         (20, 'entered', 'Entered',),
@@ -3174,7 +3146,8 @@ class Session(TimeStampedModel):
 
 
 class Singer(TimeStampedModel):
-    """Quartet Relation"""
+    """Quartet Relation."""
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,

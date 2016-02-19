@@ -89,15 +89,6 @@ def add_performers(session, number=20):
     return "Performers Added"
 
 
-def add_contestants(contest):
-    performers = contest.session.performers.all()
-    for performer in performers:
-        Contestant.objects.create(
-            performer=performer,
-        )
-    return "Contestants Added"
-
-
 def add_performances(session):
     performers = session.performers.order_by('?')
     round = session.rounds.get(num=1)

@@ -4,7 +4,6 @@ from django.core.management.base import (
 
 from apps.api.models import (
     Convention,
-    Contest,
     Performer,
     Performance,
     Song,
@@ -40,9 +39,6 @@ class Command(BaseCommand):
         ss = Round.objects.all()
         for s in ss:
             s.save()
-        cs = Contest.objects.all()
-        for c in cs:
-            c.save()
         ps = Session.objects.all()
         for p in ps:
             p.save()
