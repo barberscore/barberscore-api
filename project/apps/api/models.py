@@ -688,7 +688,7 @@ class Contestant(TimeStampedModel):
     # Denormalization
     place = models.IntegerField(
         help_text="""
-            The final ranking relative to this contest.""",
+            The final ranking relative to this award.""",
         null=True,
         blank=True,
         editable=False,
@@ -763,7 +763,7 @@ class Contestant(TimeStampedModel):
             agg = self.performer.performances.filter(
                 round__num__lte=self.award.rounds,
             ).filter(
-                round__session=self.contest.session,
+                round__session=self.performer.session,
             ).aggregate(
                 mus=models.Sum('mus_points'),
                 prs=models.Sum('prs_points'),
@@ -1333,7 +1333,7 @@ class Group(TimeStampedModel):
 
 
 class Judge(TimeStampedModel):
-    """Contest Judge."""
+    """Panel Judge."""
 
     id = models.UUIDField(
         primary_key=True,
@@ -1508,8 +1508,6 @@ class Organization(MPTTModel, TimeStampedModel):
     )
 
     level = models.IntegerField(
-        help_text="""
-            The level of the contest.  Note that this may be different than the level of the parent session.""",
         choices=LEVEL,
         null=True,
         blank=True,
@@ -2092,8 +2090,6 @@ class Performer(TimeStampedModel):
     )
 
     place = models.IntegerField(
-        help_text="""
-            The final placement/rank of the performer for the entire session (ie, not a specific contest).""",
         null=True,
         blank=True,
         editable=False,
@@ -2298,7 +2294,6 @@ class Performer(TimeStampedModel):
         target=STATUS.official,
     )
     def register(self):
-        # Triggered by contest start
         return "{0} Official".format(self)
 
     @transition(
@@ -2586,26 +2581,6 @@ class Round(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def get_preceding(self):
-        try:
-            obj = self.__class__.objects.get(
-                contest=self.contest,
-                kind=self.kind + 1,
-            )
-            return obj
-        except self.DoesNotExist:
-            return None
-
-    def get_next(self):
-        try:
-            obj = self.__class__.objects.get(
-                contest=self.contest,
-                kind=self.kind - 1,
-            )
-            return obj
-        except self.DoesNotExist:
-            return None
-
     def next_performance(self):
         try:
             return self.performances.filter(
@@ -2619,10 +2594,6 @@ class Round(TimeStampedModel):
         source=STATUS.new,
         target=STATUS.started,
         conditions=[
-            # round_drawn,
-            # round_scheduled,
-            # contest_started,
-            # preceding_round_finished,
         ]
     )
     def start(self):
@@ -2683,56 +2654,12 @@ class Round(TimeStampedModel):
     )
     def finalize(self):
         return
-        # # TODO Some validation
-        # try:
-        #     # TODO This is an awful lot to be in a try/except; refactor?
-        #     next_round = self.contest.rounds.get(
-        #         kind=(self.kind - 1),
-        #     )
-        #     qualifiers = self.performances.filter(
-        #         place__lte=next_round.slots,
-        #     ).order_by('?')
-        #     p = 0
-        #     for qualifier in qualifiers:
-        #         l = next_round.performances.create(
-        #             performer=qualifier.performer,
-        #             position=p,
-        #             # start=next_round.start,
-        #         )
-        #         p += 1
-        #         p1 = l.songs.create(performance=l, order=1)
-        #         p2 = l.songs.create(performance=l, order=2)
-        #         for j in self.contest.judges.scoring():
-        #             p1.scores.create(
-        #                 song=p1,
-        #                 judge=j,
-        #             )
-        #             p2.scores.create(
-        #                 song=p2,
-        #                 judge=j,
-        #             )
-        # except self.DoesNotExist:
-        #     pass
-        # return 'Round Confirmed'
-    # def draw_contest(self):
-    #     cs = self.performers.order_by('?')
-    #     round = self.rounds.get(kind=self.rounds)
-    #     p = 0
-    #     for c in cs:
-    #         round.performances.create(
-    #             performer=c,
-    #             position=p,
-    #             start=round.start,
-    #         )
-    #         p += 1
-    #     self.status = self.STATUS.ready
-    #     self.save()
 
 
 class Score(TimeStampedModel):
     """The Score is never released publicly.
 
-    These are the actual Judge's scores from the contest.
+    These are the actual Judge's scores.
     """
 
     STATUS = Choices(
@@ -2816,7 +2743,7 @@ class Score(TimeStampedModel):
 
     points = models.IntegerField(
         help_text="""
-            The number of points contested (0-100)""",
+            The number of points (0-100)""",
         null=True,
         blank=True,
         validators=[
@@ -3128,9 +3055,6 @@ class Session(TimeStampedModel):
         for performer in self.performers.all():
             performer.calculate()
             performer.save()
-        for contest in self.contests.all():
-            contest.rank()
-            contest.save()
         return
 
     @transition(
