@@ -342,7 +342,6 @@ class Award(TimeStampedModel):
             self.get_kind_display(),
             self.long_name,
             u"Championship",
-            str(self.year),
         ]))
         super(Award, self).save(*args, **kwargs)
 
