@@ -307,11 +307,6 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    size_name = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     is_improved = models.BooleanField(
         default=False,
     )
