@@ -343,10 +343,11 @@ class Award(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.organization.name,
-            self.get_kind_display(),
-            self.long_name,
-            u"Championship",
+            self.id.hex,
+            # self.organization.name,
+            # self.get_kind_display(),
+            # self.long_name,
+            # u"Championship",
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -357,9 +358,9 @@ class Award(TimeStampedModel):
             'kind',
             'long_name',
         )
-        unique_together = (
-            ('organization', 'long_name', 'kind',),
-        )
+        # unique_together = (
+        #     ('organization', 'long_name', 'kind',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "award"
