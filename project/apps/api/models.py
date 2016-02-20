@@ -307,37 +307,12 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    SIZE = Choices(
-        (0, 'all', 'All',),
-        (100, 'p1', 'Plateau 1',),
-        (110, 'p2', 'Plateau 2',),
-        (120, 'p3', 'Plateau 3',),
-        (130, 'p4', 'Plateau 4',),
-        (140, 'pa', 'Plateau A',),
-        (150, 'paa', 'Plateau AA',),
-        (160, 'paaa', 'Plateau AAA',),
-        (170, 'paaaa', 'Plateau AAAA',),
-        (180, 'pb', 'Plateau B',),
-        (190, 'pi', 'Plateau I',),
-        (200, 'pii', 'Plateau II',),
-        (210, 'piii', 'Plateau III',),
-        (220, 'piv', 'Plateau IV',),
-        (230, 'small', 'Small',),
-        (240, 'vl', 'Very Large',),
-        (250, 'super', 'Super',),
-    )
-
     size_name = models.IntegerField(
-        choices=SIZE,
         null=True,
         blank=True,
     )
 
     is_improved = models.BooleanField(
-        default=False,
-    )
-
-    is_novice = models.BooleanField(
         default=False,
     )
 
