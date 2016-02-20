@@ -1,7 +1,6 @@
 from __future__ import division
 
 import logging
-log = logging.getLogger(__name__)
 
 import uuid
 
@@ -17,6 +16,7 @@ from django.db import (
 from django.contrib.postgres.fields import (
     DateRangeField,
     DateTimeRangeField,
+    IntegerRangeField,
 )
 
 from autoslug import AutoSlugField
@@ -67,6 +67,8 @@ from .managers import (
     UserManager,
     PerformerQuerySet,
 )
+
+log = logging.getLogger(__name__)
 
 
 def generate_image_filename(instance, filename):
@@ -298,6 +300,15 @@ class Award(TimeStampedModel):
     )
 
     rounds = models.IntegerField(
+    )
+
+    size = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
+    is_improved = models.BooleanField(
+        default=False,
     )
 
     long_name = models.CharField(
@@ -1244,6 +1255,18 @@ class Group(TimeStampedModel):
             The kind of group; choices are Quartet or Chorus.""",
         choices=KIND,
         default=KIND.quartet,
+    )
+
+    is_senior = models.BooleanField(
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
+        default=False,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
     )
 
     chapter = models.ForeignKey(
