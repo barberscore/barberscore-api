@@ -679,6 +679,171 @@ class Chapter(Common):
         resource_name = "chapter"
 
 
+class Contest(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    status_monitor = MonitorField(
+        help_text="""Status last updated""",
+        monitor='status',
+    )
+
+    KIND = Choices(
+        (1, 'championship', "Championship"),
+        (2, 'qualifier', "Qualifier"),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The objective of the contest.""",
+        choices=KIND,
+    )
+
+    subsession_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    subsession_text = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='contests',
+    )
+
+    award = models.ForeignKey(
+        'Award',
+        related_name='contests',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            # self.award.organization.name,
+            # self.award.get_kind_display(),
+            # self.award.long_name,
+            # self.get_goal_display(),
+            # sess,
+            # str(self.session.convention.year),
+            self.id.hex,
+        ]))
+        super(Contest, self).save(*args, **kwargs)
+
+    # def rank(self):
+    #     contestants = self.contestants.all()
+    #     for contestant in contestants:
+    #         contestant.calculate()
+    #         contestant.save()
+    #     cursor = []
+    #     i = 1
+    #     for contestant in self.contestants.order_by('-total_points'):
+    #         try:
+    #             match = contestant.total_points == cursor[0].total_points
+    #         except IndexError:
+    #             contestant.place = i
+    #             contestant.save()
+    #             cursor.append(contestant)
+    #             continue
+    #         if match:
+    #             contestant.place = i
+    #             i += len(cursor)
+    #             contestant.save()
+    #             cursor.append(contestant)
+    #             continue
+    #         else:
+    #             i += 1
+    #             contestant.place = i
+    #             contestant.save()
+    #             cursor = [contestant]
+    #     return "{0} Ready for Review".format(self)
+
+    def start(self):
+        return "{0} Started".format(self)
+
+    # Check everything is done.
+    # @transition(
+    #     field=status,
+    #     source=STATUS.finished,
+    #     target=STATUS.ranked,
+    #     conditions=[
+    #     ],
+    # )
+    def rank(self):
+        # Denormalize
+        for contestant in self.contestants.all():
+            contestant.calculate()
+            contestant.save()
+        # Rank results
+        cursor = []
+        i = 1
+        for contestant in self.contestants.order_by('-total_points'):
+            try:
+                match = contestant.total_points == cursor[0].total_points
+            except IndexError:
+                contestant.place = i
+                contestant.save()
+                cursor.append(contestant)
+                continue
+            if match:
+                contestant.place = i
+                i += len(cursor)
+                contestant.save()
+                cursor.append(contestant)
+                continue
+            else:
+                i += 1
+                contestant.place = i
+                contestant.save()
+                cursor = [contestant]
+        return "{0} Ready for Review".format(self)
+
+    class Meta:
+        unique_together = (
+            ('session', 'award', 'kind',)
+        )
+        ordering = (
+            'session',
+            'award',
+            'kind',
+        )
+
+    class JSONAPIMeta:
+        resource_name = "contest"
+
+
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
