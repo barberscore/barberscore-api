@@ -747,6 +747,23 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
+    @property
+    def champion(self):
+        return self.contestants.order_by('place').first()
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
