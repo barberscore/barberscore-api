@@ -30,6 +30,7 @@ from .models import (
     Award,
     Catalog,
     Chapter,
+    Contest,
     Contestant,
     Session,
     Performer,
@@ -161,6 +162,11 @@ class ChapterAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
+@admin.register(Contest)
+class ContestAdmin(admin.ModelAdmin):
+    save_on_top = True
+
+
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -171,6 +177,8 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'performer',
+        'contest',
+        'award',
         'place',
         'total_score',
     ]
