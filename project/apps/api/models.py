@@ -1558,6 +1558,7 @@ class Organization(MPTTModel, TimeStampedModel):
         (0, 'international', "International"),
         (1, 'district', "District/Affiliates"),
         (2, 'division', "Division"),
+        (3, 'chapter', "Chapter"),
     )
 
     level = models.IntegerField(
@@ -1578,6 +1579,9 @@ class Organization(MPTTModel, TimeStampedModel):
         ]),
         ('Division', [
             (40, 'division', "Division"),
+        ]),
+        ('Chapter', [
+            (60, 'chapter', "Chapter"),
         ]),
     )
 
