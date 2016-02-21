@@ -299,6 +299,17 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    SEASON = Choices(
+        (1, 'fall', 'Fall',),
+        (2, 'spring', 'Spring',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+        null=True,
+        blank=True,
+    )
+
     rounds = models.IntegerField(
     )
 
