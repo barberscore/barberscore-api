@@ -1685,9 +1685,81 @@ class Organization(MPTTModel, TimeStampedModel):
 
     code = models.CharField(
         help_text="""
-            The single-letter code, corresponding to chapter codes.""",
+            The chapter code.""",
+        max_length=200,
         blank=True,
-        max_length=1,
+        null=True,
+    )
+
+    bhs_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_chapter_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_group_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_chapter_code = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_group_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
+    bhs_website = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_district = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_venue = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_address = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_city = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_state = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_zip = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_contact = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    bhs_phone = models.CharField(
+        max_length=255,
+        blank=True,
     )
 
     parent = TreeForeignKey(
