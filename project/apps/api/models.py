@@ -395,8 +395,8 @@ class Award(TimeStampedModel):
             self.organization.name,
             most_improved,
             self.get_size_display(),
-            self.get_kind_display(),
             self.idiom,
+            self.get_kind_display(),
             goal,
         ]))
         super(Award, self).save(*args, **kwargs)
