@@ -273,6 +273,7 @@ class Award(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
         (20, 'inactive', 'Inactive',),
+        (30, 'idiomatic', 'Idiomatic',),
     )
 
     status = FSMIntegerField(
@@ -334,8 +335,6 @@ class Award(TimeStampedModel):
         (210, 'piii', 'Plateau III',),
         (220, 'piv', 'Plateau IV',),
         (230, 'small', 'Small',),
-        (240, 'vl', 'Very Large',),
-        (250, 'super', 'Super',),
     )
 
     size = models.IntegerField(
@@ -348,10 +347,10 @@ class Award(TimeStampedModel):
         default=False,
     )
 
-    long_name = models.CharField(
+    idiom = models.CharField(
         max_length=200,
+        null=True,
         blank=True,
-        default='',
     )
 
     stix_num = models.IntegerField(
@@ -387,12 +386,22 @@ class Award(TimeStampedModel):
             most_improved = 'Most-Improved'
         else:
             most_improved = None
+        if self.parent:
+            goal = 'Qualifier'
+        else:
+            goal = 'Championship'
+        if self.status == self.STATUS.idiomatic:
+            idiomatic = 'Idiomatic'
+        else:
+            idiomatic = None
         self.name = " ".join(filter(None, [
-            self.id.hex,
-            # self.organization.name,
-            # most_improved,
-            # self.get_size_display(),
-            # self.get_kind_display(),
+            # self.id.hex,
+            self.organization.name,
+            most_improved,
+            self.get_size_display(),
+            self.get_kind_display(),
+            goal,
+            idiomatic,
         ]))
         super(Award, self).save(*args, **kwargs)
 
