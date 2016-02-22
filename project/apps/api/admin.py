@@ -71,8 +71,6 @@ class AwardAdmin(admin.ModelAdmin):
         'get_long_name',
         'get_level',
         'kind',
-        'size',
-        'is_novice',
         'is_improved',
         'rounds',
         'season',

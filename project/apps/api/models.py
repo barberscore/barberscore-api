@@ -313,7 +313,7 @@ class Award(TimeStampedModel):
     rounds = models.IntegerField(
     )
 
-    size = IntegerRangeField(
+    size_range = IntegerRangeField(
         null=True,
         blank=True,
     )
@@ -342,10 +342,6 @@ class Award(TimeStampedModel):
         choices=SIZE,
         null=True,
         blank=True,
-    )
-
-    is_novice = models.BooleanField(
-        default=False,
     )
 
     is_improved = models.BooleanField(
