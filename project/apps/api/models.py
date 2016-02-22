@@ -338,7 +338,7 @@ class Award(TimeStampedModel):
         (250, 'super', 'Super',),
     )
 
-    size_name = models.IntegerField(
+    size = models.IntegerField(
         choices=SIZE,
         null=True,
         blank=True,
@@ -374,12 +374,16 @@ class Award(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.is_improved:
+            most_improved = 'Most-Improved'
+        else:
+            most_improved = None
         self.name = " ".join(filter(None, [
             self.id.hex,
             # self.organization.name,
+            # most_improved,
+            # self.get_size_display(),
             # self.get_kind_display(),
-            # self.long_name,
-            # u"Championship",
         ]))
         super(Award, self).save(*args, **kwargs)
 
