@@ -1123,5 +1123,4 @@ def list_prelims(path):
                         })
 
     for award in awards:
-        # Award.objects.get_or_create(**award)
-        print award
+        Award.objects.get_or_create(**award)

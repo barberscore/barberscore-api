@@ -391,13 +391,13 @@ class Award(TimeStampedModel):
         else:
             goal = 'Championship'
         self.name = " ".join(filter(None, [
-            # self.id.hex,
-            self.organization.name,
-            most_improved,
-            self.get_size_display(),
-            self.idiom,
-            self.get_kind_display(),
-            goal,
+            self.id.hex,
+            # self.organization.name,
+            # most_improved,
+            # self.get_size_display(),
+            # self.idiom,
+            # self.get_kind_display(),
+            # goal,
         ]))
         super(Award, self).save(*args, **kwargs)
 
