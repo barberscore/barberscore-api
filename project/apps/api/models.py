@@ -378,6 +378,14 @@ class Award(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    @property
+    def goal(self):
+        if self.parent:
+            goal = 'Qualifier'
+        else:
+            goal = 'Championship'
+        return goal
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -386,10 +394,6 @@ class Award(TimeStampedModel):
             most_improved = 'Most-Improved'
         else:
             most_improved = None
-        if self.parent:
-            goal = 'Qualifier'
-        else:
-            goal = 'Championship'
         self.name = " ".join(filter(None, [
             self.id.hex,
             # self.organization.name,
