@@ -370,6 +370,15 @@ class Award(TimeStampedModel):
         related_name='awards',
     )
 
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
