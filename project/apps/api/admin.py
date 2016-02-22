@@ -71,6 +71,11 @@ class AwardAdmin(admin.ModelAdmin):
         'get_long_name',
         'get_level',
         'kind',
+        'size',
+        'is_novice',
+        'is_improved',
+        'rounds',
+        'season',
         'long_name',
         'stix_name',
     ]
@@ -79,6 +84,10 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'organization',
+    ]
+
+    readonly_fields = [
+        'status_monitor',
     ]
 
     def get_long_name(self, obj):
