@@ -73,6 +73,7 @@ class AwardAdmin(admin.ModelAdmin):
         'kind',
         'size',
         'is_improved',
+        'idiom',
         'rounds',
         'season',
         'stix_name',

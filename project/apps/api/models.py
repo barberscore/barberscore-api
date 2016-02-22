@@ -390,18 +390,14 @@ class Award(TimeStampedModel):
             goal = 'Qualifier'
         else:
             goal = 'Championship'
-        if self.status == self.STATUS.idiomatic:
-            idiomatic = 'Idiomatic'
-        else:
-            idiomatic = None
         self.name = " ".join(filter(None, [
             # self.id.hex,
             self.organization.name,
             most_improved,
             self.get_size_display(),
             self.get_kind_display(),
+            self.idiom,
             goal,
-            idiomatic,
         ]))
         super(Award, self).save(*args, **kwargs)
 
