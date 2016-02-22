@@ -19,6 +19,7 @@ from nameparser import HumanName
 from .models import (
     Organization,
     Convention,
+    Contest,
     Session,
     Round,
     Award,
@@ -215,18 +216,18 @@ def import_chapters(path):
                 Chapter.objects.create(
                     name=row[2],
                     code=row[1],
-                    bhs_group_id = int(row[0]),
-                    bhs_chapter_code = row[1],
-                    bhs_chapter_name = row[2],
-                    bhs_group_name = row[3],
-                    bhs_website = row[4],
-                    bhs_venue = row[5],
-                    bhs_address = row[6],
-                    bhs_city = row[7],
-                    bhs_state = row[8],
-                    bhs_zip = row[9],
-                    bhs_phone = row[10],
-                    bhs_contact = row[11],
+                    bhs_group_id=int(row[0]),
+                    bhs_chapter_code=row[1],
+                    bhs_chapter_name=row[2],
+                    bhs_group_name=row[3],
+                    bhs_website=row[4],
+                    bhs_venue=row[5],
+                    bhs_address=row[6],
+                    bhs_city=row[7],
+                    bhs_state=row[8],
+                    bhs_zip=row[9],
+                    bhs_phone=row[10],
+                    bhs_contact=row[11],
                 )
                 print "Created {0}".format(row[2])
 
@@ -362,7 +363,7 @@ def extract_rounds(convention):
 
 
 def create_awards(convention):
-    """One time"""
+    """One time."""
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
     excludes = [
@@ -1002,3 +1003,125 @@ def chapter_district(chapter):
     else:
         letter = chapter.code[:1]
         chapter.organization = Organization.objects.get(code=letter)
+
+
+def list_prelims(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        includes = [
+            # "Evaluation",
+            "Preliminary",
+            "Qualification",
+            # "Out Of District",
+            # "Out Of Division",
+            # "Out of Division",
+        ]
+        awards = []
+        for row in rows:
+            if len(row) == 0:
+                continue
+            if row[0].startswith('Subsessions:'):
+                contest_list = row[1:]
+                for contest in contest_list:
+                    # Parse each list item for id, name
+                    parts = contest.partition('=')
+                    stix_num = parts[0]
+                    stix_name = parts[2]
+
+                    # Skip qualifications
+                    if any([string in stix_name for string in includes]):
+                        kind = get_session_kind(contest)
+                        if not kind:
+                            continue
+                        kind = getattr(Session.KIND, kind)
+
+                        # Identify the organization
+                        if "Preliminary" in stix_name:
+                            org = stix_name.partition("District")[0].strip()
+                            try:
+                                organization = Organization.objects.get(
+                                    long_name=org,
+                                    kind=Organization.KIND.district,
+                                )
+                            except Organization.DoesNotExist:
+                                log.error("Org error: {0}, {1}".format(org, stix_name))
+                                continue
+                            parent = Award.objects.get(
+                                kind=kind,
+                                organization=organization.parent,
+                                is_improved=False,
+                                size=None,
+                                idiom=None,
+                                parent=None,
+                            )
+                        elif "Qualification" in stix_name:
+                            if "Division" in stix_name:
+                                org = stix_name.rpartition("Division")[0].strip()
+                                try:
+                                    organization = Organization.objects.get(
+                                        long_name=org,
+                                        kind=Organization.KIND.division,
+                                    )
+                                except Organization.DoesNotExist:
+                                    log.error("Does Not Exist: {0}, {1}".format(org, stix_name))
+                                    continue
+                                except Organization.MultipleObjectsReturned:
+                                    log.error("Multiple: {0}, {1}".format(org, stix_name))
+                                    continue
+                                parent = Award.objects.get(
+                                    kind=kind,
+                                    organization=organization.parent,
+                                    is_improved=False,
+                                    size=None,
+                                    idiom=None,
+                                    parent=None,
+                                )
+                            else:
+                                org = stix_name.partition("District")[0].strip()
+                                try:
+                                    organization = Organization.objects.get(
+                                        long_name=org,
+                                        kind=Organization.KIND.district,
+                                    )
+                                except Organization.DoesNotExist:
+                                    log.error("Org error: {0}, {1}".format(org, stix_name))
+                                    continue
+                                parent = Award.objects.get(
+                                    kind=kind,
+                                    organization=organization,
+                                    is_improved=False,
+                                    size=None,
+                                    idiom=None,
+                                    parent=None,
+                                )
+
+                        # Identify number of rounds
+                        if "(2 Rounds)" in stix_name:
+                            rounds = 2
+                        elif "(3 Rounds)" in stix_name:
+                            rounds = 3
+                        else:
+                            rounds = 1
+
+                        if 'fall' in path:
+                            season = 1
+                        elif 'spring' in path:
+                            season = 2
+                        else:
+                            season = None
+
+                        # Build the dictionary
+                        awards.append({
+                            'organization': organization,
+                            'kind': kind,
+                            'season': season,
+                            'rounds': rounds,
+                            'stix_num': stix_num,
+                            'stix_name': stix_name,
+                            'parent': parent,
+                        })
+
+    for award in awards:
+        # Award.objects.get_or_create(**award)
+        print award
