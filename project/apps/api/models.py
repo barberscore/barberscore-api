@@ -753,17 +753,6 @@ class Contest(TimeStampedModel):
         monitor='status',
     )
 
-    KIND = Choices(
-        (1, 'championship', "Championship"),
-        (2, 'qualifier', "Qualifier"),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The objective of the contest.""",
-        choices=KIND,
-    )
-
     subsession_id = models.IntegerField(
         null=True,
         blank=True,
@@ -889,12 +878,11 @@ class Contest(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('session', 'award', 'kind',)
+            ('session', 'award',)
         )
         ordering = (
             'session',
             'award',
-            'kind',
         )
 
     class JSONAPIMeta:

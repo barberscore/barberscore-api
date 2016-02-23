@@ -182,7 +182,6 @@ class ContestAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'session__convention__year',
-        'kind',
     ]
 
     save_on_top = True
