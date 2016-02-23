@@ -232,6 +232,96 @@ def import_chapters(path):
                 print "Created {0}".format(row[2])
 
 
+def import_awards(convention):
+    """One time."""
+    reader = csv.reader(convention.stix_file, skipinitialspace=True)
+    rows = [row for row in reader]
+    excludes = [
+        "Evaluation",
+        "Preliminary",
+        "Qualification",
+        "Out Of District",
+        "Out Of Division",
+        "Out of Division",
+    ]
+    awards = []
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith('Subsessions:'):
+            contest_list = row[1:]
+            for contest in contest_list:
+
+                # Parse each list item for id, name
+                parts = contest.partition('=')
+                # stix_num = parts[0]
+                stix_name = parts[2]
+
+                # Skip qualifications
+                if any([string in stix_name for string in excludes]):
+                    continue
+
+                # Identify the organization
+                parent = convention.organization
+                if parent.long_name in stix_name:
+                    organization = parent
+                else:
+                    organization = parent.children.get(
+                        long_name=stix_name.partition(" Division")[0],
+                    )
+
+                # Identify number of rounds
+                if "(2 Rounds)" in stix_name:
+                    rounds = 2
+                elif "(3 Rounds)" in stix_name:
+                    rounds = 3
+                else:
+                    rounds = 1
+
+                kind = get_session_kind(contest)
+                if not kind:
+                    continue
+                kind = getattr(Session.KIND, kind)
+
+                # Instantiate long_name
+                long_name = stix_name
+
+                # Instantiate year
+                year = convention.year
+
+                # Exceptions for International
+                if "Dealer's Choice" in long_name:
+                    long_name = "Dealer's Choice"
+                elif "Srs Qt - Oldest Qt Cumulative Yrs" in stix_name:
+                    long_name = "Oldest Quartet"
+                else:
+                    # Remove paranthetical data.  Assumed to tail.
+                    long_name = long_name.partition("(")[0].strip()
+                    # Remove redundant Organization
+                    long_name = long_name.partition("{0} {1}".format(
+                        organization.long_name,
+                        organization.get_kind_display(),
+                    ))[2].strip()
+                    # Remove the redundant kind from the string
+                    long_name = long_name.partition("{0}".format(
+                        Award.KIND[kind]
+                    ))[0].strip()
+
+                # Build the dictionary
+                awards.append({
+                    'organization': organization,
+                    'kind': kind,
+                    'long_name': long_name,
+                    'rounds': rounds,
+                    'stix_name': stix_name,
+                    'year': year,
+                })
+
+    for award in awards:
+        Award.objects.get_or_create(**award)
+    return
+
+
 def import_convention(path, kind, division=False):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
@@ -361,96 +451,6 @@ def extract_rounds(convention):
             round.num = i
             round.save()
             i += 1
-    return
-
-
-def create_awards(convention):
-    """One time."""
-    reader = csv.reader(convention.stix_file, skipinitialspace=True)
-    rows = [row for row in reader]
-    excludes = [
-        "Evaluation",
-        "Preliminary",
-        "Qualification",
-        "Out Of District",
-        "Out Of Division",
-        "Out of Division",
-    ]
-    awards = []
-    for row in rows:
-        if len(row) == 0:
-            continue
-        if row[0].startswith('Subsessions:'):
-            contest_list = row[1:]
-            for contest in contest_list:
-
-                # Parse each list item for id, name
-                parts = contest.partition('=')
-                # stix_num = parts[0]
-                stix_name = parts[2]
-
-                # Skip qualifications
-                if any([string in stix_name for string in excludes]):
-                    continue
-
-                # Identify the organization
-                parent = convention.organization
-                if parent.long_name in stix_name:
-                    organization = parent
-                else:
-                    organization = parent.children.get(
-                        long_name=stix_name.partition(" Division")[0],
-                    )
-
-                # Identify number of rounds
-                if "(2 Rounds)" in stix_name:
-                    rounds = 2
-                elif "(3 Rounds)" in stix_name:
-                    rounds = 3
-                else:
-                    rounds = 1
-
-                kind = get_session_kind(contest)
-                if not kind:
-                    continue
-                kind = getattr(Session.KIND, kind)
-
-                # Instantiate long_name
-                long_name = stix_name
-
-                # Instantiate year
-                year = convention.year
-
-                # Exceptions for International
-                if "Dealer's Choice" in long_name:
-                    long_name = "Dealer's Choice"
-                elif "Srs Qt - Oldest Qt Cumulative Yrs" in stix_name:
-                    long_name = "Oldest Quartet"
-                else:
-                    # Remove paranthetical data.  Assumed to tail.
-                    long_name = long_name.partition("(")[0].strip()
-                    # Remove redundant Organization
-                    long_name = long_name.partition("{0} {1}".format(
-                        organization.long_name,
-                        organization.get_kind_display(),
-                    ))[2].strip()
-                    # Remove the redundant kind from the string
-                    long_name = long_name.partition("{0}".format(
-                        Award.KIND[kind]
-                    ))[0].strip()
-
-                # Build the dictionary
-                awards.append({
-                    'organization': organization,
-                    'kind': kind,
-                    'long_name': long_name,
-                    'rounds': rounds,
-                    'stix_name': stix_name,
-                    'year': year,
-                })
-
-    for award in awards:
-        Award.objects.get_or_create(**award)
     return
 
 

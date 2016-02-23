@@ -807,13 +807,15 @@ class Contest(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
+            self.award.name,
+            str(self.session.convention.year),
             # self.award.organization.name,
             # self.award.get_kind_display(),
             # self.award.long_name,
             # self.get_goal_display(),
             # sess,
             # str(self.session.convention.year),
-            self.id.hex,
+            # self.id.hex,
         ]))
         super(Contest, self).save(*args, **kwargs)
 
@@ -1015,9 +1017,7 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.award.organization.name,
-            self.award.get_kind_display(),
-            self.award.long_name,
+            self.award.name,
             str(self.performer.session.convention.year),
             self.performer.group.name,
         ]))

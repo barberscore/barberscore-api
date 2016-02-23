@@ -178,6 +178,13 @@ class ChapterAdmin(admin.ModelAdmin):
 
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    list_filter = [
+        'status',
+        'session__convention__year',
+        'kind',
+    ]
+
     save_on_top = True
 
 
