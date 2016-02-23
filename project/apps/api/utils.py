@@ -322,6 +322,147 @@ def import_awards(convention):
     return
 
 
+def import_prelims(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        includes = [
+            # "Evaluation",
+            "Preliminary",
+            "Qualification",
+            # "Out Of District",
+            # "Out Of Division",
+            # "Out of Division",
+        ]
+        awards = []
+        for row in rows:
+            if len(row) == 0:
+                continue
+            if row[0].startswith('Subsessions:'):
+                contest_list = row[1:]
+                for contest in contest_list:
+                    # Parse each list item for id, name
+                    parts = contest.partition('=')
+                    stix_num = parts[0]
+                    stix_name = parts[2]
+
+                    # Skip qualifications
+                    if any([string in stix_name for string in includes]):
+                        kind = get_session_kind(contest)
+                        if not kind:
+                            continue
+                        kind = getattr(Session.KIND, kind)
+
+                        # Identify the organization
+                        if "Preliminary" in stix_name:
+                            org = stix_name.partition("District")[0].strip()
+                            try:
+                                organization = Organization.objects.get(
+                                    long_name=org,
+                                    kind=Organization.KIND.district,
+                                )
+                            except Organization.DoesNotExist:
+                                print "Prelim Error: {0}, {1}".format(org, stix_name)
+                                continue
+                            try:
+                                parent = Award.objects.get(
+                                    kind=kind,
+                                    organization=organization.parent,
+                                    is_improved=False,
+                                    size=None,
+                                    idiom=None,
+                                    parent=None,
+                                )
+                            except Award.DoesNotExist:
+                                print kind, organization
+                        elif "Qualification" in stix_name:
+                            if "Division" in stix_name:
+                                org = stix_name.rpartition("Division")[0].strip()
+                                try:
+                                    organization = Organization.objects.get(
+                                        long_name=org,
+                                        kind=Organization.KIND.division,
+                                    )
+                                except Organization.DoesNotExist:
+                                    print "Division Does Not Exist: {0}, {1}, {2}".format(org, stix_name, path)
+                                    continue
+                                except Organization.MultipleObjectsReturned:
+                                    if path.endswith("20.txt"):
+                                        organization = Organization.objects.get(
+                                            long_name=org,
+                                            kind=Organization.KIND.division,
+                                            parent__name='BHS LOL',
+                                        )
+                                    else:
+                                        organization = Organization.objects.get(
+                                            long_name=org,
+                                            kind=Organization.KIND.division,
+                                            parent__name='BHS FWD',
+                                        )
+                                parent = Award.objects.get(
+                                    kind=kind,
+                                    organization=organization.parent,
+                                    is_improved=False,
+                                    size=None,
+                                    idiom=None,
+                                    parent=None,
+                                )
+                            else:
+                                org = stix_name.partition("District")[0].strip()
+                                try:
+                                    organization = Organization.objects.get(
+                                        long_name=org,
+                                        kind=Organization.KIND.district,
+                                    )
+                                except Organization.DoesNotExist:
+                                    print "District error: {0}, {1}, {2}".format(org, stix_name, path)
+                                    continue
+                                parent = Award.objects.get(
+                                    kind=kind,
+                                    organization=organization,
+                                    is_improved=False,
+                                    size=None,
+                                    idiom=None,
+                                    parent=None,
+                                )
+
+                        # Identify number of rounds
+                        if "(2 Rounds)" in stix_name:
+                            rounds = 2
+                        elif "(3 Rounds)" in stix_name:
+                            rounds = 3
+                        else:
+                            rounds = 1
+
+                        if 'fall' in path:
+                            season = 1
+                        elif 'spring' in path:
+                            season = 2
+                        else:
+                            season = None
+
+                        # Build the dictionary
+                        awards.append({
+                            'organization': organization,
+                            'kind': kind,
+                            'is_improved': False,
+                            'size': None,
+                            'idiom': None,
+                            'season': season,
+                            'rounds': rounds,
+                            # 'stix_num': stix_num,
+                            'stix_name': stix_name,
+                            'parent': parent,
+                        })
+
+    for award in awards:
+        try:
+            Award.objects.get_or_create(**award)
+        except IntegrityError:
+            log.error("Already exists: {0}".format(award))
+            continue
+
+
 def import_convention(path, kind, division=False):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
@@ -530,6 +671,7 @@ def extract_panel(convention):
         try:
             Judge.objects.get_or_create(**judge)
         except IntegrityError:
+            log.error("Already exists: {0}".format(judge))
             continue
     return
 
@@ -541,7 +683,7 @@ def extract_performers(convention):
     for row in rows:
         if len(row) == 0:
             continue
-        if row[0].startswith("Session: "):
+        if row[0].startswith("Session: ") and row[4].endswith("1"):
             kind = get_session_kind(row[0])
             session = convention.sessions.get(
                 kind=getattr(Session.KIND, kind),
@@ -555,43 +697,30 @@ def extract_performers(convention):
                         name__iexact=contestant_text,
                     )
                 except Chapter.DoesNotExist:
-                    log.info("Potential Duplicate: {0}".format(contestant_text))
-                    chapter = Chapter.objects.create(
-                        name=contestant_text,
-                        status=Chapter.STATUS.dup,
-                    )
+                    log.error("Can't find chorus by chapter name: {0}, {1}".format(contestant_text, convention))
+                    continue
                 try:
-                    group = chapter.groups.exclude(
-                        status=Group.STATUS.inactive,
-                    ).get(
+                    group = chapter.groups.get(
+                        status=Group.STATUS.active,
                         chapter=chapter,
                     )
-                except Group.MultipleObjectsReturned:
-                    group = chapter.groups.exclude(
-                        status=Group.STATUS.inactive,
-                    ).filter(
-                        chapter=chapter,
-                    ).first()
-                    group.status = Group.STATUS.dup
-                    group.save()
-                    log.info("Check chapter groups for: {0}".format(group.chapter))
                 except Group.DoesNotExist:
-                    group = Group.objects.create(
-                        name=contestant_text,
-                        status=Group.STATUS.dup,
-                        chapter=chapter,
-                    )
+                    log.error("Can't find chorus by chapter: {0}, {1}".format(contestant_text, chapter))
+                    continue
+                except Group.MultipleObjectsReturned:
+                    log.error("Multi choruses found for chapter: {0}, {1}".format(contestant_text, chapter))
+                    continue
             else:
                 try:
                     group = Group.objects.get(
                         name__iexact=contestant_text,
                     )
                 except Group.DoesNotExist:
-                    log.info("Potential Duplicate: {0}".format(contestant_text))
                     group = Group.objects.create(
                         name=contestant_text,
-                        status=Group.STATUS.dup,
+                        status=Group.STATUS.inactive,
                     )
+                    log.info("Created Inactive Group: {0}".format(contestant_text))
             performers.append({
                 'session': session,
                 'group': group,
@@ -635,75 +764,74 @@ def extract_contests(convention):
                         organization=organization,
                         stix_name=stix_name,
                     )
-                    goal = Contest.GOAL.championship
                 except Award.DoesNotExist:
-                    goal = Contest.GOAL.qualifier
-                    if "International Preliminary" in stix_name:
-                        if "Chorus" in stix_name:
-                            award = Award.objects.get(
-                                organization__name='BHS',
-                                kind=Award.KIND.chorus,
-                                long_name='',
-                            )
-                        elif "Quartet" in stix_name:
-                            award = Award.objects.get(
-                                organization__name='BHS',
-                                kind=Award.KIND.quartet,
-                                long_name='',
-                            )
-                        elif "Seniors" in stix_name:
-                            award = Award.objects.get(
-                                organization__name='BHS',
-                                kind=Award.KIND.seniors,
-                                long_name='',
-                            )
-                        elif "Collegiate" in stix_name:
-                            award = Award.objects.get(
-                                organization__name='BHS',
-                                kind=Award.KIND.collegiate,
-                                long_name='',
-                            )
-                        else:
-                            log.info("No award for: {0}".format(stix_name))
-                            continue
-                    elif "District Qualification" in stix_name:
-                        if "Chorus" in stix_name:
-                            award = Award.objects.get(
-                                organization=session.convention.organization,
-                                kind=Award.KIND.chorus,
-                                long_name='',
-                            )
-                        elif "Quartet" in stix_name:
-                            award = Award.objects.get(
-                                organization=session.convention.organization,
-                                kind=Award.KIND.quartet,
-                                long_name='',
-                            )
-                        elif "Seniors" in stix_name:
-                            award = Award.objects.get(
-                                organization=session.convention.organization,
-                                kind=Award.KIND.seniors,
-                                long_name='',
-                            )
-                        elif "Collegiate" in stix_name:
-                            award = Award.objects.get(
-                                organization=session.convention.organization,
-                                kind=Award.KIND.collegiate,
-                                long_name='',
-                            )
-                        else:
-                            log.info("No award for: {0}".format(stix_name))
-                            continue
-                    else:
-                        log.info("No award for: {0}".format(stix_name))
-                        continue
+                    log.info("No award for: {0}".format(stix_name))
+                    continue
+                    # if "International Preliminary" in stix_name:
+                    #     if "Chorus" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization__name='BHS',
+                    #             kind=Award.KIND.chorus,
+                    #             long_name='',
+                    #         )
+                    #     elif "Quartet" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization__name='BHS',
+                    #             kind=Award.KIND.quartet,
+                    #             long_name='',
+                    #         )
+                    #     elif "Seniors" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization__name='BHS',
+                    #             kind=Award.KIND.seniors,
+                    #             long_name='',
+                    #         )
+                    #     elif "Collegiate" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization__name='BHS',
+                    #             kind=Award.KIND.collegiate,
+                    #             long_name='',
+                    #         )
+                    #     else:
+                    #         log.info("No award for: {0}".format(stix_name))
+                    #         continue
+                    # elif "District Qualification" in stix_name:
+                    #     if "Chorus" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization=session.convention.organization,
+                    #             kind=Award.KIND.chorus,
+                    #             long_name='',
+                    #         )
+                    #     elif "Quartet" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization=session.convention.organization,
+                    #             kind=Award.KIND.quartet,
+                    #             long_name='',
+                    #         )
+                    #     elif "Seniors" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization=session.convention.organization,
+                    #             kind=Award.KIND.seniors,
+                    #             long_name='',
+                    #         )
+                    #     elif "Collegiate" in stix_name:
+                    #         award = Award.objects.get(
+                    #             organization=session.convention.organization,
+                    #             kind=Award.KIND.collegiate,
+                    #             long_name='',
+                    #         )
+                    #     else:
+                    #         log.info("No award for: {0}".format(stix_name))
+                    #         continue
+                    # else:
+                    #     log.info("No award for: {0}".format(stix_name))
+                    #     continue
                 except Award.MultipleObjectsReturned:
                     log.info("Multi awards for: {0}".format(stix_name))
                     continue
                 contest = {
                     'session': session,
                     'award': award,
-                    'goal': goal,
                     'subsession_id': stix_num,
                     'subsession_text': stix_name,
                 }
@@ -711,8 +839,9 @@ def extract_contests(convention):
     for contest in contests:
         try:
             Contest.objects.get_or_create(**contest)
-        except IntegrityError:
-            pass
+        except IntegrityError as e:
+            log.error("Contest name already exists: {0}".format(e))
+            continue
     return contests
 
 
@@ -932,35 +1061,35 @@ def extract_scores(convention):
     return
 
 
-def fill_parents(convention):
-    for session in convention.sessions.all():
-        for contest in session.contests.exclude(
-            goal=Contest.GOAL.championship,
-        ):
-            award = contest.award
-            if convention.kind == Convention.KIND.fall:
-                try:
-                    parent = Contest.objects.get(
-                        award=award,
-                        goal=Contest.GOAL.championship,
-                        session__convention__year=convention.year + 1,
-                    )
-                except Contest.DoesNotExist:
-                    log.error("No Parent for {0}".format(contest))
-            elif convention.kind == Convention.KIND.spring:
-                try:
-                    parent = Contest.objects.get(
-                        award=award,
-                        goal=Contest.GOAL.championship,
-                        session__convention__year=convention.year,
-                    )
-                except Contest.DoesNotExist:
-                    log.error("No Parent for {0}".format(contest))
-            else:
-                log.error("Indeterminent convention kind.  {0}".format(convention))
-            contest.parent = parent
-            contest.save()
-    return
+# def fill_parents(convention):
+#     for session in convention.sessions.all():
+#         for contest in session.contests.exclude(
+#             goal=Contest.GOAL.championship,
+#         ):
+#             award = contest.award
+#             if convention.kind == Convention.KIND.fall:
+#                 try:
+#                     parent = Contest.objects.get(
+#                         award=award,
+#                         goal=Contest.GOAL.championship,
+#                         session__convention__year=convention.year + 1,
+#                     )
+#                 except Contest.DoesNotExist:
+#                     log.error("No Parent for {0}".format(contest))
+#             elif convention.kind == Convention.KIND.spring:
+#                 try:
+#                     parent = Contest.objects.get(
+#                         award=award,
+#                         goal=Contest.GOAL.championship,
+#                         session__convention__year=convention.year,
+#                     )
+#                 except Contest.DoesNotExist:
+#                     log.error("No Parent for {0}".format(contest))
+#             else:
+#                 log.error("Indeterminent convention kind.  {0}".format(convention))
+#             contest.parent = parent
+#             contest.save()
+#     return
 
 
 def update_panel_size(convention):
@@ -1007,141 +1136,3 @@ def chapter_district(chapter):
         chapter.organization = Organization.objects.get(code=letter)
 
 
-def list_prelims(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        rows = [row for row in reader]
-        includes = [
-            # "Evaluation",
-            "Preliminary",
-            "Qualification",
-            # "Out Of District",
-            # "Out Of Division",
-            # "Out of Division",
-        ]
-        awards = []
-        for row in rows:
-            if len(row) == 0:
-                continue
-            if row[0].startswith('Subsessions:'):
-                contest_list = row[1:]
-                for contest in contest_list:
-                    # Parse each list item for id, name
-                    parts = contest.partition('=')
-                    stix_num = parts[0]
-                    stix_name = parts[2]
-
-                    # Skip qualifications
-                    if any([string in stix_name for string in includes]):
-                        kind = get_session_kind(contest)
-                        if not kind:
-                            continue
-                        kind = getattr(Session.KIND, kind)
-
-                        # Identify the organization
-                        if "Preliminary" in stix_name:
-                            org = stix_name.partition("District")[0].strip()
-                            try:
-                                organization = Organization.objects.get(
-                                    long_name=org,
-                                    kind=Organization.KIND.district,
-                                )
-                            except Organization.DoesNotExist:
-                                print "Prelim Error: {0}, {1}".format(org, stix_name)
-                                continue
-                            try:
-                                parent = Award.objects.get(
-                                    kind=kind,
-                                    organization=organization.parent,
-                                    is_improved=False,
-                                    size=None,
-                                    idiom=None,
-                                    parent=None,
-                                )
-                            except Award.DoesNotExist:
-                                print kind, organization
-                        elif "Qualification" in stix_name:
-                            if "Division" in stix_name:
-                                org = stix_name.rpartition("Division")[0].strip()
-                                try:
-                                    organization = Organization.objects.get(
-                                        long_name=org,
-                                        kind=Organization.KIND.division,
-                                    )
-                                except Organization.DoesNotExist:
-                                    print "Division Does Not Exist: {0}, {1}, {2}".format(org, stix_name, path)
-                                    continue
-                                except Organization.MultipleObjectsReturned:
-                                    if path.endswith("20.txt"):
-                                        organization = Organization.objects.get(
-                                            long_name=org,
-                                            kind=Organization.KIND.division,
-                                            parent__name='BHS LOL',
-                                        )
-                                    else:
-                                        organization = Organization.objects.get(
-                                            long_name=org,
-                                            kind=Organization.KIND.division,
-                                            parent__name='BHS FWD',
-                                        )
-                                parent = Award.objects.get(
-                                    kind=kind,
-                                    organization=organization.parent,
-                                    is_improved=False,
-                                    size=None,
-                                    idiom=None,
-                                    parent=None,
-                                )
-                            else:
-                                org = stix_name.partition("District")[0].strip()
-                                try:
-                                    organization = Organization.objects.get(
-                                        long_name=org,
-                                        kind=Organization.KIND.district,
-                                    )
-                                except Organization.DoesNotExist:
-                                    print "District error: {0}, {1}, {2}".format(org, stix_name, path)
-                                    continue
-                                parent = Award.objects.get(
-                                    kind=kind,
-                                    organization=organization,
-                                    is_improved=False,
-                                    size=None,
-                                    idiom=None,
-                                    parent=None,
-                                )
-
-                        # Identify number of rounds
-                        if "(2 Rounds)" in stix_name:
-                            rounds = 2
-                        elif "(3 Rounds)" in stix_name:
-                            rounds = 3
-                        else:
-                            rounds = 1
-
-                        if 'fall' in path:
-                            season = 1
-                        elif 'spring' in path:
-                            season = 2
-                        else:
-                            season = None
-
-                        # Build the dictionary
-                        awards.append({
-                            'organization': organization,
-                            'kind': kind,
-                            'is_improved': False,
-                            'size': None,
-                            'idiom': None,
-                            'season': season,
-                            'rounds': rounds,
-                            # 'stix_num': stix_num,
-                            'stix_name': stix_name,
-                            'parent': parent,
-                        })
-
-    for award in awards:
-        try:
-            Award.objects.get_or_create(**award)
-        except IntegrityError:
-            print award

@@ -12,12 +12,11 @@ from apps.api.utils import (
     extract_rounds,
     extract_panel,
     extract_performers,
+    extract_contests,
     extract_contestants,
     extract_performances,
     extract_songs,
     extract_scores,
-    denormalize,
-    fill_parents,
     rank,
 )
 
@@ -129,6 +128,10 @@ class Command(BaseCommand):
         self.stdout.write("Performers Extracted")
 
         for v in vs:
+            extract_contests(v)
+        self.stdout.write("Contests Extracted")
+
+        for v in vs:
             extract_contestants(v)
         self.stdout.write("Contestants Extracted")
 
@@ -144,9 +147,9 @@ class Command(BaseCommand):
             extract_scores(v)
         self.stdout.write("Scores Extracted")
 
-        for v in vs:
-            fill_parents(v)
-        self.stdout.write("Parents Added")
+        # for v in vs:
+        #     fill_parents(v)
+        # self.stdout.write("Parents Added")
 
         # for v in vs:
         #     denormalize(v)
