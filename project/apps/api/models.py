@@ -407,13 +407,13 @@ class Award(TimeStampedModel):
         ]))
         super(Award, self).save(*args, **kwargs)
 
-    # class Meta:
-    #     ordering = (
-    #         'organization__level',
-    #         'organization__name',
-    #         'kind',
-    #         'long_name',
-    #     )
+    class Meta:
+        ordering = (
+            'organization__level',
+            'organization__name',
+            'kind',
+            'size',
+        )
     #     unique_together = (
     #         ('organization', 'long_name', 'kind',),
     #     )

@@ -52,10 +52,34 @@ class ArrangerInline(admin.TabularInline):
 
 class AwardInline(admin.TabularInline):
     model = Award
-    # fields = (
-    #     'name',
-    # )
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_award_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'name',
+        'organization',
+        'kind',
+        'season',
+        'rounds',
+        'size',
+        'is_improved',
+        'idiom',
+    )
     extra = 0
+    readonly_fields = [
+        'name',
+        'link',
+    ]
 
 
 class CertificationInline(admin.TabularInline):

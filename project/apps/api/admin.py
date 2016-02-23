@@ -91,6 +91,10 @@ class AwardAdmin(admin.ModelAdmin):
         'goal',
     ]
 
+    inlines = [
+        AwardInline,
+    ]
+
     # def get_long_name(self, obj):
     #     return obj.organization.long_name
     # get_long_name.short_description = 'Org Name'
@@ -453,6 +457,7 @@ class OrganizationAdmin(MPTTModelAdmin):
 
     inlines = [
         AwardInline,
+        OrganizationInline,
     ]
 
 
