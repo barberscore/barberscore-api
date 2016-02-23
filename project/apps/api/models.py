@@ -302,8 +302,11 @@ class Award(TimeStampedModel):
     )
 
     SEASON = Choices(
-        (1, 'fall', 'Fall',),
-        (2, 'spring', 'Spring',),
+        (1, 'international', 'International',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+        (9, 'video', 'Video',),
     )
 
     season = models.IntegerField(
@@ -395,6 +398,10 @@ class Award(TimeStampedModel):
             most_improved = 'Most-Improved'
         else:
             most_improved = None
+        if self.parent:
+            parent = self.parent.name
+        else:
+            parent = None
         self.name = " ".join(filter(None, [
             # self.id.hex,
             self.organization.name,
@@ -403,7 +410,7 @@ class Award(TimeStampedModel):
             self.idiom,
             self.get_kind_display(),
             self.goal,
-            "{0}".format(self.parent),
+            parent,
         ]))
         super(Award, self).save(*args, **kwargs)
 
