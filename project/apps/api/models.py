@@ -292,6 +292,7 @@ class Award(TimeStampedModel):
         (3, 'seniors', 'Seniors',),
         (4, 'collegiate', 'Collegiate',),
         (5, 'novice', 'Novice',),
+        (6, 'youth', 'Youth',),
     )
 
     kind = models.IntegerField(
@@ -395,13 +396,14 @@ class Award(TimeStampedModel):
         else:
             most_improved = None
         self.name = " ".join(filter(None, [
-            self.id.hex,
-            # self.organization.name,
-            # most_improved,
-            # self.get_size_display(),
-            # self.idiom,
-            # self.get_kind_display(),
-            # goal,
+            # self.id.hex,
+            self.organization.name,
+            most_improved,
+            self.get_size_display(),
+            self.idiom,
+            self.get_kind_display(),
+            self.goal,
+            "{0}".format(self.parent),
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -3324,6 +3326,7 @@ class Session(TimeStampedModel):
         (3, 'seniors', 'Seniors',),
         (4, 'collegiate', 'Collegiate',),
         (5, 'novice', 'Novice',),
+        (6, 'youth', 'Youth',),
     )
 
     kind = models.IntegerField(

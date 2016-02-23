@@ -247,7 +247,7 @@ def import_convention(path, kind, division=False):
                 dates = ", ".join([row_two[4], row_two[5]])
                 year = int(row_two[5])
             except IndexError:
-                log.error("Could not build: {0}".format(row_two))
+                print "Could not build: {0}".format(row_two)
         else:
             try:
                 district = row_two[0].partition("District")[0].strip()
@@ -288,6 +288,8 @@ def get_session_kind(name):
         kind = 'seniors'
     elif 'Collegiate' in name:
         kind = 'collegiate'
+    elif 'Youth' in name:
+        kind = 'youth'
     elif 'Chorus' in name:
         kind = 'chorus'
     elif 'Quartet' in name:
@@ -1045,16 +1047,19 @@ def list_prelims(path):
                                     kind=Organization.KIND.district,
                                 )
                             except Organization.DoesNotExist:
-                                log.error("Org error: {0}, {1}".format(org, stix_name))
+                                print "Prelim Error: {0}, {1}".format(org, stix_name)
                                 continue
-                            parent = Award.objects.get(
-                                kind=kind,
-                                organization=organization.parent,
-                                is_improved=False,
-                                size=None,
-                                idiom=None,
-                                parent=None,
-                            )
+                            try:
+                                parent = Award.objects.get(
+                                    kind=kind,
+                                    organization=organization.parent,
+                                    is_improved=False,
+                                    size=None,
+                                    idiom=None,
+                                    parent=None,
+                                )
+                            except Award.DoesNotExist:
+                                print kind, organization
                         elif "Qualification" in stix_name:
                             if "Division" in stix_name:
                                 org = stix_name.rpartition("Division")[0].strip()
@@ -1064,11 +1069,21 @@ def list_prelims(path):
                                         kind=Organization.KIND.division,
                                     )
                                 except Organization.DoesNotExist:
-                                    log.error("Does Not Exist: {0}, {1}".format(org, stix_name))
+                                    print "Division Does Not Exist: {0}, {1}, {2}".format(org, stix_name, path)
                                     continue
                                 except Organization.MultipleObjectsReturned:
-                                    log.error("Multiple: {0}, {1}".format(org, stix_name))
-                                    continue
+                                    if path.endswith("20.txt"):
+                                        organization = Organization.objects.get(
+                                            long_name=org,
+                                            kind=Organization.KIND.division,
+                                            parent__name='BHS LOL',
+                                        )
+                                    else:
+                                        organization = Organization.objects.get(
+                                            long_name=org,
+                                            kind=Organization.KIND.division,
+                                            parent__name='BHS FWD',
+                                        )
                                 parent = Award.objects.get(
                                     kind=kind,
                                     organization=organization.parent,
@@ -1085,7 +1100,7 @@ def list_prelims(path):
                                         kind=Organization.KIND.district,
                                     )
                                 except Organization.DoesNotExist:
-                                    log.error("Org error: {0}, {1}".format(org, stix_name))
+                                    print "District error: {0}, {1}, {2}".format(org, stix_name, path)
                                     continue
                                 parent = Award.objects.get(
                                     kind=kind,
@@ -1115,12 +1130,18 @@ def list_prelims(path):
                         awards.append({
                             'organization': organization,
                             'kind': kind,
+                            'is_improved': False,
+                            'size': None,
+                            'idiom': None,
                             'season': season,
                             'rounds': rounds,
-                            'stix_num': stix_num,
+                            # 'stix_num': stix_num,
                             'stix_name': stix_name,
                             'parent': parent,
                         })
 
     for award in awards:
-        Award.objects.get_or_create(**award)
+        try:
+            Award.objects.get_or_create(**award)
+        except IntegrityError:
+            print award
