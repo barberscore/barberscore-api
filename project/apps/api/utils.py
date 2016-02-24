@@ -1062,7 +1062,7 @@ def extract_scores(convention):
                 try:
                     points = int(scores_raw[i])
                 except:
-                    log.error("No points: {0} - {1}".format(points, performance))
+                    log.error("Can not parse points from panel: {0} - {1}".format(points, performance))
                 scores.append({
                     'song': song,
                     'judge': judge,
@@ -1149,5 +1149,3 @@ def chapter_district(chapter):
     else:
         letter = chapter.code[:1]
         chapter.organization = Organization.objects.get(code=letter)
-
-
