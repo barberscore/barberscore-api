@@ -566,6 +566,7 @@ def extract_sessions(convention):
             convention.sessions.get_or_create(
                 kind=getattr(Session.KIND, kind),
                 size=size,
+                status=Session.STATUS.final,
             )
     return
 
@@ -586,6 +587,7 @@ def extract_rounds(convention):
                 kind=getattr(Round.KIND, round_kind),
                 stix_name=row[0],
                 num=0,
+                status=Round.STATUS.final,
             )
     for session in convention.sessions.all():
         i = 1
@@ -667,6 +669,7 @@ def extract_panel(convention):
                     'panel_id': panel_id,
                     'category': category,
                     'slot': panel_id,
+                    'status': Judge.STATUS.final,
                 })
     for judge in judges:
         try:
@@ -785,6 +788,7 @@ def extract_contests(convention):
                     'award': award,
                     'subsession_id': stix_num,
                     'subsession_text': stix_name,
+                    'status': Contest.STATUS.final,
                 }
                 contests.append(contest)
     for contest in contests:
@@ -872,6 +876,7 @@ def extract_contestants(convention):
                 contestants.append({
                     'contest': contest,
                     'performer': performer,
+                    'status': Contestants.STATUS.final,
                 })
     for contestant in contestants:
         try:
@@ -933,6 +938,7 @@ def extract_performances(convention):
                 'slot': order,
                 'position': (order - 1),
                 'performer': performer,
+                'status': Performance.STATUS.final,
             })
     for performance in performances:
         Performance.objects.get_or_create(**performance)

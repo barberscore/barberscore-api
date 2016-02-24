@@ -14,6 +14,7 @@ class ConventionFilter(filters.FilterSet):
         model = Convention
         fields = {
             'status': filters.ALL_LOOKUPS,
+            'year': filters.ALL_LOOKUPS,
         }
 
 

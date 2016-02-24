@@ -21,6 +21,7 @@ from .models import (
     Award,
     Catalog,
     Chapter,
+    Contest,
     Contestant,
     Convention,
     Director,
@@ -43,6 +44,7 @@ from .serializers import (
     AwardSerializer,
     CatalogSerializer,
     ChapterSerializer,
+    ContestSerializer,
     ContestantSerializer,
     ConventionSerializer,
     DirectorSerializer,
@@ -102,6 +104,20 @@ class CatalogViewSet(viewsets.ModelViewSet):
     serializer_class = CatalogSerializer
     # lookup_field = 'slug'
     resource_name = "catalog"
+
+
+class ContestViewSet(viewsets.ModelViewSet):
+    queryset = Contest.objects.select_related(
+        'session',
+        'award',
+        'parent',
+    ).prefetch_related(
+        'contestants',
+    )
+    serializer_class = ContestSerializer
+    resource_name = 'contest'
+    # lookup_field = 'slug'
+    resource_name = "contest"
 
 
 class ContestantViewSet(viewsets.ModelViewSet):

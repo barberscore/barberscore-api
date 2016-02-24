@@ -3,23 +3,24 @@ from rest_framework import routers
 from .views import (
     ArrangerViewSet,
     AwardViewSet,
-    ChapterViewSet,
-    ConventionViewSet,
-    SessionViewSet,
-    ContestantViewSet,
-    RoundViewSet,
-    GroupViewSet,
-    PerformerViewSet,
-    TuneViewSet,
-    PersonViewSet,
-    SongViewSet,
-    SingerViewSet,
-    DirectorViewSet,
     CatalogViewSet,
-    ScoreViewSet,
+    ChapterViewSet,
+    ContestantViewSet,
+    ContestViewSet,
+    ConventionViewSet,
+    DirectorViewSet,
+    GroupViewSet,
     JudgeViewSet,
-    PerformanceViewSet,
     OrganizationViewSet,
+    PerformanceViewSet,
+    PerformerViewSet,
+    PersonViewSet,
+    RoundViewSet,
+    ScoreViewSet,
+    SessionViewSet,
+    SingerViewSet,
+    SongViewSet,
+    TuneViewSet,
 )
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -28,6 +29,7 @@ router.register(r'arranger', ArrangerViewSet)
 router.register(r'award', AwardViewSet)
 router.register(r'catalog', CatalogViewSet)
 router.register(r'chapter', ChapterViewSet)
+router.register(r'contest', ContestViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'director', DirectorViewSet)

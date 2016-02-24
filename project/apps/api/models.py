@@ -1093,6 +1093,7 @@ class Convention(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
+        (15, 'upcoming', 'Upcoming',),
         (20, 'started', 'Started',),
         (30, 'finished', 'Finished',),
         (50, 'final', 'Final',),

@@ -19,23 +19,24 @@ from drf_extra_fields.fields import (
 from .models import (
     Arranger,
     Award,
-    Chapter,
-    Convention,
-    Session,
-    Contestant,
-    Performer,
-    Round,
-    Group,
-    Person,
-    Tune,
-    Song,
-    Singer,
-    Director,
     Catalog,
-    Score,
+    Chapter,
+    Contest,
+    Contestant,
+    Convention,
+    Director,
+    Group,
     Judge,
-    Performance,
     Organization,
+    Performance,
+    Performer,
+    Person,
+    Round,
+    Score,
+    Session,
+    Singer,
+    Song,
+    Tune,
 )
 
 from .search_indexes import (
@@ -126,6 +127,34 @@ class CatalogSerializer(serializers.ModelSerializer):
             'tune',
             'song_name',
             'arrangers',
+        )
+
+
+class ContestSerializer(serializers.ModelSerializer):
+    # session = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    # performances = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    class Meta:
+        model = Contest
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'status',
+            'champion',
+            'contestants',
+            'award',
+            'session',
+            'parent',
+            'children',
         )
 
 
