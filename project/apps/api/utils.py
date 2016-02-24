@@ -32,6 +32,7 @@ from .models import (
     Performance,
     Song,
     Score,
+    Tune,
 )
 
 
@@ -744,10 +745,19 @@ def extract_contests(convention):
                 kind=getattr(Session.KIND, session_kind),
             )
             contest_list = row[1:]
+            excludes = [
+                "Evaluation",
+                "Out Of District",
+                "Out Of Division",
+                "Out of Division",
+            ]
             for item in contest_list:
                 parts = item.partition("=")
                 stix_num = parts[0].strip()
                 stix_name = parts[2].strip()
+                # Skip evals
+                if any([string in stix_name for string in excludes]):
+                    continue
                 # Identify the organization
                 if convention.organization.long_name in stix_name:
                     organization = convention.organization
@@ -767,65 +777,6 @@ def extract_contests(convention):
                 except Award.DoesNotExist:
                     log.info("No award for: {0}".format(stix_name))
                     continue
-                    # if "International Preliminary" in stix_name:
-                    #     if "Chorus" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization__name='BHS',
-                    #             kind=Award.KIND.chorus,
-                    #             long_name='',
-                    #         )
-                    #     elif "Quartet" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization__name='BHS',
-                    #             kind=Award.KIND.quartet,
-                    #             long_name='',
-                    #         )
-                    #     elif "Seniors" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization__name='BHS',
-                    #             kind=Award.KIND.seniors,
-                    #             long_name='',
-                    #         )
-                    #     elif "Collegiate" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization__name='BHS',
-                    #             kind=Award.KIND.collegiate,
-                    #             long_name='',
-                    #         )
-                    #     else:
-                    #         log.info("No award for: {0}".format(stix_name))
-                    #         continue
-                    # elif "District Qualification" in stix_name:
-                    #     if "Chorus" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization=session.convention.organization,
-                    #             kind=Award.KIND.chorus,
-                    #             long_name='',
-                    #         )
-                    #     elif "Quartet" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization=session.convention.organization,
-                    #             kind=Award.KIND.quartet,
-                    #             long_name='',
-                    #         )
-                    #     elif "Seniors" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization=session.convention.organization,
-                    #             kind=Award.KIND.seniors,
-                    #             long_name='',
-                    #         )
-                    #     elif "Collegiate" in stix_name:
-                    #         award = Award.objects.get(
-                    #             organization=session.convention.organization,
-                    #             kind=Award.KIND.collegiate,
-                    #             long_name='',
-                    #         )
-                    #     else:
-                    #         log.info("No award for: {0}".format(stix_name))
-                    #         continue
-                    # else:
-                    #     log.info("No award for: {0}".format(stix_name))
-                    #     continue
                 except Award.MultipleObjectsReturned:
                     log.info("Multi awards for: {0}".format(stix_name))
                     continue
@@ -839,8 +790,8 @@ def extract_contests(convention):
     for contest in contests:
         try:
             Contest.objects.get_or_create(**contest)
-        except IntegrityError as e:
-            log.error("Contest name already exists: {0}".format(e))
+        except IntegrityError:
+            log.error("Contest name already exists: {0}".format(contest))
             continue
     return contests
 
@@ -849,12 +800,37 @@ def extract_contestants(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
     contestants = []
+    no_contest = {}
+    for row in rows:
+        if len(row) == 0:
+            continue
+        if row[0].startswith("Subsessions:"):
+            kind = get_session_kind(row[0])
+            rnd = get_round_kind(row[0])
+            key = kind + rnd
+            kind_list = []
+            contest_list = row[1:]
+            excludes = [
+                "Evaluation",
+                "Out Of District",
+                "Out Of Division",
+                "Out of Division",
+            ]
+            for item in contest_list:
+                parts = item.partition("=")
+                stix_num = parts[0].strip()
+                stix_name = parts[2].strip()
+                if any([string in stix_name for string in excludes]):
+                    kind_list.append(stix_num)
+            no_contest[key] = kind_list
     for row in rows:
         if len(row) == 0:
             continue
         if row[0].startswith("Session: "):
             # first retrieve the performer
             kind = get_session_kind(row[0])
+            rnd = get_round_kind(row[0])
+            key = kind + rnd
             session = convention.sessions.get(
                 kind=getattr(Session.KIND, kind),
             )
@@ -864,9 +840,13 @@ def extract_contestants(convention):
                 continue
 
             if session.kind == Session.KIND.chorus:
-                performer = session.performers.get(
-                    group__chapter__name__iexact=performer_text,
-                )
+                try:
+                    performer = session.performers.get(
+                        group__chapter__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("No Performer: {0}".format(performer_text))
+                    break
             else:
                 performer = session.performers.get(
                     group__name__iexact=performer_text,
@@ -876,12 +856,18 @@ def extract_contestants(convention):
             contest_list = row[2].partition(":")[2].strip().split(",")
             for contest in contest_list:
                 stix_num = int(contest)
+                if str(stix_num) in no_contest[key]:
+                    log.info("Out of District: {0}".format(performer))
+                    continue
                 try:
                     contest = session.contests.get(
                         subsession_id=stix_num,
                     )
                 except Contest.DoesNotExist:
-                    log.error("Can't find contest: {0}".format(contest))
+                    log.error("Can't find contest: {0}, {1}, {2}, {3}".format(contest, convention, kind, performer))
+                    continue
+                except Contest.MultipleObjectsReturned:
+                    log.error("Multiple contests: {0}, {1}, {2}, {3}, {4}".format(contest, convention, kind, performer, stix_num))
                     continue
                 contestants.append({
                     'contest': contest,
@@ -918,15 +904,23 @@ def extract_performances(convention):
                 continue
 
             if session.kind == Session.KIND.chorus:
-                performer = session.performers.get(
-                    group__chapter__name__iexact=performer_text,
-                )
+                try:
+                    performer = session.performers.get(
+                        group__chapter__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can not find chorus: {0}".format(performer_text))
+                    continue
             else:
-                performer = session.performers.get(
-                    group__name__iexact=performer_text,
-                )
+                try:
+                    performer = session.performers.get(
+                        group__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can not find quartet: {0}".format(performer_text))
+                    continue
             # now get the order appearance
-            order = int(row[3].partition(":")[2].strip()) - 1
+            order = int(row[3].partition(":")[2].strip())
 
             # And the Round.
             kind = get_round_kind(row[0])
@@ -936,7 +930,8 @@ def extract_performances(convention):
             # And put together.
             performances.append({
                 'round': round,
-                'position': order,
+                'slot': order,
+                'position': (order - 1),
                 'performer': performer,
             })
     for performance in performances:
@@ -963,14 +958,22 @@ def extract_songs(convention):
                 continue
 
             if session.kind == Session.KIND.chorus:
-                performer = session.performers.get(
-                    group__chapter__name__iexact=performer_text,
-                )
+                try:
+                    performer = session.performers.get(
+                        group__chapter__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can not find chorus: {0}".format(performer_text))
+                    continue
             else:
-                performer = session.performers.get(
-                    group__name__iexact=performer_text,
-                )
-            order = int(row[3].partition(":")[2].strip()) - 1
+                try:
+                    performer = session.performers.get(
+                        group__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can not find quartet: {0}".format(performer_text))
+                    continue
+            order = int(row[3].partition(":")[2].strip())
             kind = get_round_kind(row[0])
             round = session.rounds.get(
                 kind=getattr(Round.KIND, kind),
@@ -978,7 +981,7 @@ def extract_songs(convention):
             performance = Performance.objects.get(
                 round=round,
                 performer=performer,
-                position=order,
+                slot=order,
             )
 
             # Next, get the song number
@@ -987,10 +990,14 @@ def extract_songs(convention):
             # Next, get the song title
             title = unidecode(row[5].partition(":")[2].strip())
 
+            tune, created = Tune.objects.get_or_create(
+                name=title,
+            )
+
             songs.append({
                 'performance': performance,
                 'order': number,
-                'title': title,
+                'tune': tune,
             })
     for song in songs:
         Song.objects.get_or_create(**song)
@@ -1018,14 +1025,22 @@ def extract_scores(convention):
                 continue
 
             if session.kind == Session.KIND.chorus:
-                performer = session.performers.get(
-                    group__chapter__name__iexact=performer_text,
-                )
+                try:
+                    performer = session.performers.get(
+                        group__chapter__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can not find chorus: {0}".format(performer_text))
+                    continue
             else:
-                performer = session.performers.get(
-                    group__name__iexact=performer_text,
-                )
-            order = int(row[3].partition(":")[2].strip()) - 1
+                try:
+                    performer = session.performers.get(
+                        group__name__iexact=performer_text,
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can not find quartet: {0}".format(performer_text))
+                    continue
+            order = int(row[3].partition(":")[2].strip())
             kind = get_round_kind(row[0])
             round = session.rounds.get(
                 kind=getattr(Round.KIND, kind),
@@ -1033,7 +1048,7 @@ def extract_scores(convention):
             performance = Performance.objects.get(
                 round=round,
                 performer=performer,
-                position=order,
+                slot=order,
             )
             number = int(row[4].partition(":")[2].strip())
             song = performance.songs.get(

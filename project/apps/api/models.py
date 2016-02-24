@@ -797,7 +797,8 @@ class Contest(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.award.name,
-            str(self.session.convention.year),
+            # str(self.session.convention.year),
+            self.session.name,
             # self.award.organization.name,
             # self.award.get_kind_display(),
             # self.award.long_name,
@@ -939,8 +940,6 @@ class Contestant(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
-        null=True,
-        blank=True,
     )
 
     # Denormalization
@@ -1005,9 +1004,11 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.award.name,
-            str(self.performer.session.convention.year),
-            self.performer.group.name,
+            # self.award.name,
+            # str(self.performer.session.convention.year),
+            # self.performer.group.name,
+            self.contest.name,
+            self.performer.name,
         ]))
         super(Contestant, self).save(*args, **kwargs)
 
@@ -1058,10 +1059,10 @@ class Contestant(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('performer', 'award',),
+            ('performer', 'contest',),
         )
         ordering = (
-            'award',
+            'contest',
             'place',
         )
 
