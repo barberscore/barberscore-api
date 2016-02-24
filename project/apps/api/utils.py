@@ -846,7 +846,7 @@ def extract_contestants(convention):
                     )
                 except Performer.DoesNotExist:
                     log.error("No Performer: {0}".format(performer_text))
-                    break
+                    continue
             else:
                 performer = session.performers.get(
                     group__name__iexact=performer_text,

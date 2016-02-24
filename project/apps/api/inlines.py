@@ -268,12 +268,10 @@ class PerformanceInline(admin.TabularInline):
         'link',
         'performer',
         'status',
-        'position',
-        'draw',
+        'slot',
         'scheduled',
         'actual',
     )
-    sortable_field_name = "position"
 
     model = Performance
     extra = 0
