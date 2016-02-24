@@ -10,6 +10,7 @@ from .models import (
     Arranger,
     Award,
     Certification,
+    Contest,
     Contestant,
     Session,
     Performer,
@@ -105,6 +106,50 @@ class CertificationInline(admin.TabularInline):
     ]
     can_delete = True
     classes = ('grp-collapse grp-closed',)
+
+
+class ContestInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_contest_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'status',
+        'award',
+        'session',
+    )
+
+    show_change_link = True
+
+    model = Contest
+    extra = 0
+    # raw_id_fields = (
+    #     'performer',
+    # )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'performer',
+    #     ]
+    # }
+    readonly_fields = [
+        'link',
+        'name',
+        # 'place',
+        # 'total_score',
+        # 'total_points',
+        # 'performer',
+    ]
+    can_delete = True
+    # classes = ('grp-collapse grp-open',)
 
 
 class ContestantInline(admin.TabularInline):

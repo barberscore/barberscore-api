@@ -729,6 +729,7 @@ def extract_performers(convention):
                 'session': session,
                 'group': group,
                 'status': Performer.STATUS.final,
+                'organization': group.organization,
             })
     for performer in performers:
         Performer.objects.get_or_create(**performer)
@@ -1080,37 +1081,6 @@ def extract_scores(convention):
     for score in scores:
         Score.objects.get_or_create(**score)
     return
-
-
-# def fill_parents(convention):
-#     for session in convention.sessions.all():
-#         for contest in session.contests.exclude(
-#             goal=Contest.GOAL.championship,
-#         ):
-#             award = contest.award
-#             if convention.kind == Convention.KIND.fall:
-#                 try:
-#                     parent = Contest.objects.get(
-#                         award=award,
-#                         goal=Contest.GOAL.championship,
-#                         session__convention__year=convention.year + 1,
-#                     )
-#                 except Contest.DoesNotExist:
-#                     log.error("No Parent for {0}".format(contest))
-#             elif convention.kind == Convention.KIND.spring:
-#                 try:
-#                     parent = Contest.objects.get(
-#                         award=award,
-#                         goal=Contest.GOAL.championship,
-#                         session__convention__year=convention.year,
-#                     )
-#                 except Contest.DoesNotExist:
-#                     log.error("No Parent for {0}".format(contest))
-#             else:
-#                 log.error("Indeterminent convention kind.  {0}".format(convention))
-#             contest.parent = parent
-#             contest.save()
-#     return
 
 
 def update_panel_size(convention):

@@ -9,6 +9,7 @@ from .inlines import (
     ArrangerInline,
     AwardInline,
     CertificationInline,
+    ContestInline,
     ContestantInline,
     SessionInline,
     PerformerInline,
@@ -189,6 +190,7 @@ class ContestAdmin(admin.ModelAdmin):
     inlines = [
         ContestantInline,
     ]
+
 
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
@@ -827,6 +829,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         RoundInline,
         PerformerInline,
         JudgeInline,
+        ContestInline,
     ]
 
 
@@ -837,8 +840,8 @@ class SongAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         # 'status',
-        'title',
-        # 'tune',
+        # 'title',
+        'tune',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -847,7 +850,7 @@ class SongAdmin(admin.ModelAdmin):
 
     search_fields = (
         'name',
-        'title',
+        'tune__name',
     )
 
     fields = [
@@ -856,8 +859,8 @@ class SongAdmin(admin.ModelAdmin):
         'order',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-        'title',
-        # 'tune',
+        # 'title',
+        'tune',
         # 'catalog',
     ]
 

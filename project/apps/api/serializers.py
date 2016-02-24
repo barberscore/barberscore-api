@@ -149,12 +149,12 @@ class ContestSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
-            'champion',
+            # 'champion',
             'contestants',
             'award',
             'session',
-            'parent',
-            'children',
+            # 'parent',
+            # 'children',
         )
 
 
@@ -625,6 +625,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'administrator',
             'rounds',
             'performers',
+            'contests',
             'judges',
         )
 
