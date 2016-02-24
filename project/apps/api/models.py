@@ -1018,7 +1018,7 @@ class Contestant(TimeStampedModel):
         # If there are no performances, skip.
         if self.performer.performances.exists():
             agg = self.performer.performances.filter(
-                round__num__lte=self.award.rounds,
+                round__num__lte=self.contest.award.rounds,
             ).filter(
                 round__session=self.performer.session,
             ).aggregate(

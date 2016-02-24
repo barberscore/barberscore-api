@@ -186,6 +186,9 @@ class ContestAdmin(admin.ModelAdmin):
 
     save_on_top = True
 
+    inlines = [
+        ContestantInline,
+    ]
 
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):

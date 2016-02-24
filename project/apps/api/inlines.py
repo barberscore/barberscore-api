@@ -122,7 +122,6 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
-        'award',
         'performer',
         'place',
         'total_points',
