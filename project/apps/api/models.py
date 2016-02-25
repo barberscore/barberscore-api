@@ -2418,6 +2418,18 @@ class Performer(TimeStampedModel):
         blank=True,
     )
 
+    is_senior = models.BooleanField(
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
+        default=False,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
+    )
+
     # Denormalized
     seed = models.IntegerField(
         help_text="""
@@ -3330,6 +3342,18 @@ class Session(TimeStampedModel):
         help_text="""
             The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
         choices=KIND,
+    )
+
+    is_senior = models.BooleanField(
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
+        default=False,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
     )
 
     SIZE_CHOICES = []

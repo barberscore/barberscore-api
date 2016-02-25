@@ -337,6 +337,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('status', 'status_monitor',),
         'kind',
         'organization',
+        ('is_senior', 'is_youth', 'is_novice',),
         'group_id',
         'chapter',
         'location',
@@ -591,6 +592,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('group', 'organization',),
         ('seed', 'prelim',),
         ('men',),
+        ('is_senior', 'is_youth', 'is_novice',),
         # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
@@ -783,6 +785,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'convention',
         'kind',
         'administrator',
+        ('is_senior', 'is_youth', 'is_novice',),
         # 'organization',
         # 'year',
         # # 'size',
@@ -805,11 +808,11 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'kind',
         'convention__year',
         'organization',
-        'administrator',
     )
 
     raw_id_fields = (
         'convention',
+        'administrator',
     )
 
     autocomplete_lookup_fields = {
@@ -831,6 +834,11 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         JudgeInline,
         ContestInline,
     ]
+
+    list_select_related = [
+        'convention',
+    ]
+
 
 
 @admin.register(Song)
