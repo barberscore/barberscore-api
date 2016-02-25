@@ -126,6 +126,7 @@ class ContestInline(admin.TabularInline):
         'status',
         'award',
         'session',
+        'is_qualifier',
     )
 
     show_change_link = True
@@ -143,6 +144,7 @@ class ContestInline(admin.TabularInline):
     readonly_fields = [
         'link',
         'name',
+        'is_qualifier',
         # 'place',
         # 'total_score',
         # 'total_points',

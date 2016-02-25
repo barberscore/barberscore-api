@@ -783,6 +783,12 @@ class Contest(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    # Denormalization
+    is_qualifier = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+
     @property
     def champion(self):
         return self.contestants.order_by('place').first()
@@ -795,6 +801,16 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.session.convention.division:
+            if self.award.organization.kind == self.award.organization.KIND.division:
+                self.is_qualifier = False
+            else:
+                self.is_qualifier = True
+        else:
+            if self.award.organization == self.session.convention.organization:
+                self.is_qualifier = False
+            else:
+                self.is_qualifier = True
         self.name = " ".join(filter(None, [
             self.award.name,
             # str(self.session.convention.year),
@@ -882,8 +898,9 @@ class Contest(TimeStampedModel):
             ('session', 'award',)
         )
         ordering = (
-            'session',
+            '-session__convention__year',
             'award',
+            'session',
         )
 
     class JSONAPIMeta:
@@ -928,13 +945,6 @@ class Contestant(TimeStampedModel):
     performer = models.ForeignKey(
         'Performer',
         related_name='contestants',
-    )
-
-    award = models.ForeignKey(
-        'Award',
-        related_name='contestants',
-        null=True,
-        blank=True,
     )
 
     contest = models.ForeignKey(
@@ -1512,19 +1522,19 @@ class Group(TimeStampedModel):
         default=False,
     )
 
-    is_collegiate = models.BooleanField(
-        default=False,
-    )
-
     is_senior = models.BooleanField(
         default=False,
     )
 
-    is_youth = models.BooleanField(
+    is_collegiate = models.BooleanField(
         default=False,
     )
 
     is_novice = models.BooleanField(
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
         default=False,
     )
 
@@ -2428,30 +2438,6 @@ class Performer(TimeStampedModel):
         default=4,
         null=True,
         blank=True,
-    )
-
-    is_quartet = models.BooleanField(
-        default=False,
-    )
-
-    is_chorus = models.BooleanField(
-        default=False,
-    )
-
-    is_collegiate = models.BooleanField(
-        default=False,
-    )
-
-    is_senior = models.BooleanField(
-        default=False,
-    )
-
-    is_youth = models.BooleanField(
-        default=False,
-    )
-
-    is_novice = models.BooleanField(
-        default=False,
     )
 
     # Denormalized
@@ -3366,30 +3352,6 @@ class Session(TimeStampedModel):
         help_text="""
             The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
         choices=KIND,
-    )
-
-    is_quartet = models.BooleanField(
-        default=False,
-    )
-
-    is_chorus = models.BooleanField(
-        default=False,
-    )
-
-    is_collegiate = models.BooleanField(
-        default=False,
-    )
-
-    is_senior = models.BooleanField(
-        default=False,
-    )
-
-    is_youth = models.BooleanField(
-        default=False,
-    )
-
-    is_novice = models.BooleanField(
-        default=False,
     )
 
     SIZE_CHOICES = []

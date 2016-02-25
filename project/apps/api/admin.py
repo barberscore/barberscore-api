@@ -191,6 +191,10 @@ class ContestAdmin(admin.ModelAdmin):
         ContestantInline,
     ]
 
+    readonly_fields = [
+        'is_qualifier',
+    ]
+
 
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
@@ -336,7 +340,8 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         ('status', 'status_monitor',),
         'kind',
-        'organization', (
+        'organization',
+        (
             'is_quartet',
             'is_chorus',
             'is_collegiate',
@@ -598,14 +603,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('group', 'organization',),
         ('seed', 'prelim',),
         ('men',),
-        'organization', (
-            'is_quartet',
-            'is_chorus',
-            'is_collegiate',
-            'is_senior',
-            'is_youth',
-            'is_novice',
-        ),
         # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
@@ -798,14 +795,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'convention',
         'kind',
         'administrator',
-        'organization', (
-            'is_quartet',
-            'is_chorus',
-            'is_collegiate',
-            'is_senior',
-            'is_youth',
-            'is_novice',
-        ),
         # 'organization',
         # 'year',
         # # 'size',
@@ -858,7 +847,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
     list_select_related = [
         'convention',
     ]
-
 
 
 @admin.register(Song)
