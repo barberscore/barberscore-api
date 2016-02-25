@@ -1504,6 +1504,18 @@ class Group(TimeStampedModel):
         default=KIND.quartet,
     )
 
+    is_quartet = models.BooleanField(
+        default=False,
+    )
+
+    is_chorus = models.BooleanField(
+        default=False,
+    )
+
+    is_collegiate = models.BooleanField(
+        default=False,
+    )
+
     is_senior = models.BooleanField(
         default=False,
     )
@@ -2416,6 +2428,18 @@ class Performer(TimeStampedModel):
         default=4,
         null=True,
         blank=True,
+    )
+
+    is_quartet = models.BooleanField(
+        default=False,
+    )
+
+    is_chorus = models.BooleanField(
+        default=False,
+    )
+
+    is_collegiate = models.BooleanField(
+        default=False,
     )
 
     is_senior = models.BooleanField(
@@ -3342,6 +3366,18 @@ class Session(TimeStampedModel):
         help_text="""
             The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
         choices=KIND,
+    )
+
+    is_quartet = models.BooleanField(
+        default=False,
+    )
+
+    is_chorus = models.BooleanField(
+        default=False,
+    )
+
+    is_collegiate = models.BooleanField(
+        default=False,
     )
 
     is_senior = models.BooleanField(
