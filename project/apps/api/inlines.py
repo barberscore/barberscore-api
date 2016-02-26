@@ -558,7 +558,6 @@ class RoundInline(admin.TabularInline):
         'kind',
         'status',
         'num',
-        'slots',
     )
     ordering = (
         'session',

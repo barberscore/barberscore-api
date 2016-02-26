@@ -76,116 +76,6 @@ def generate_image_filename(instance, filename):
     return '{0}{1}'.format(instance.id, ext)
 
 
-class Common(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the resource.""",
-        max_length=200,
-        blank=False,
-        unique=True,
-        error_messages={
-            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
-        }
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    date = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
-        null=True,
-        blank=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
-        blank=True,
-        default='',
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    phone = PhoneNumberField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        blank=True,
-        default='',
-    )
-
-    picture = models.ImageField(
-        upload_to=generate_image_filename,
-        help_text="""
-            The picture/logo of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            A description/bio of the resource.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
-    )
-
-    class Meta:
-        abstract = True
-
-
 class Arranger(TimeStampedModel):
     """Chorus relation."""
 
@@ -570,7 +460,30 @@ class Certification(TimeStampedModel):
         resource_name = "certification"
 
 
-class Chapter(Common):
+class Chapter(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.""",
+        max_length=200,
+        blank=False,
+        unique=True,
+        error_messages={
+            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
+        }
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
 
     STATUS = Choices(
         (0, 'new', 'New',),
@@ -582,6 +495,87 @@ class Chapter(Common):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    date = DateRangeField(
+        help_text="""
+            The active dates of the resource.""",
+        null=True,
+        blank=True,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=200,
+        blank=True,
+        default='',
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    twitter = models.CharField(
+        help_text="""
+            The twitter handle (in form @twitter_handle) of the resource.""",
+        blank=True,
+        default='',
+        max_length=16,
+        validators=[
+            RegexValidator(
+                regex=r'@([A-Za-z0-9_]+)',
+                message="""
+                    Must be a single Twitter handle
+                    in the form `@twitter_handle`.
+                """,
+            ),
+        ],
+    )
+
+    email = models.EmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    phone = PhoneNumberField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        blank=True,
+        default='',
+    )
+
+    picture = models.ImageField(
+        upload_to=generate_image_filename,
+        help_text="""
+            The picture/logo of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A description/bio of the resource.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
     )
 
     code = models.CharField(
@@ -2938,11 +2932,6 @@ class Round(TimeStampedModel):
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
-        null=True,
-        blank=True,
-    )
-
-    slots = models.IntegerField(
         null=True,
         blank=True,
     )

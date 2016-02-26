@@ -554,7 +554,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
-            'slots',
             'session',
             'performances',
         )

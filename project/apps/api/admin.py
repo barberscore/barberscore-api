@@ -651,13 +651,11 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'name',
         'status',
-        'slots',
     ]
     fields = [
         'name',
         'status',
         ('session', 'kind',),
-        ('slots',),
     ]
 
     readonly_fields = [
