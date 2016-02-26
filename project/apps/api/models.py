@@ -281,11 +281,6 @@ class Award(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     KIND = Choices(
         (1, 'quartet', 'Quartet',),
         (2, 'chorus', 'Chorus',),
@@ -315,16 +310,7 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    rounds = models.IntegerField(
-    )
-
-    size_range = IntegerRangeField(
-        null=True,
-        blank=True,
-    )
-
     SIZE = Choices(
-        (0, 'all', 'All',),
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
         (120, 'p3', 'Plateau 3',),
@@ -345,6 +331,14 @@ class Award(TimeStampedModel):
         choices=SIZE,
         null=True,
         blank=True,
+    )
+
+    size_range = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
+    num_rounds = models.IntegerField(
     )
 
     is_primary = models.BooleanField(
@@ -377,23 +371,6 @@ class Award(TimeStampedModel):
         related_name='awards',
     )
 
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
-    @property
-    def goal(self):
-        if self.parent:
-            goal = 'Qualifier'
-        else:
-            goal = 'Championship'
-        return goal
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -402,10 +379,6 @@ class Award(TimeStampedModel):
             most_improved = 'Most-Improved'
         else:
             most_improved = None
-        if self.parent:
-            parent = self.parent.name
-        else:
-            parent = None
         self.name = " ".join(filter(None, [
             # self.id.hex,
             self.organization.name,
@@ -414,7 +387,6 @@ class Award(TimeStampedModel):
             self.idiom,
             self.get_kind_display(),
             self.goal,
-            parent,
         ]))
         super(Award, self).save(*args, **kwargs)
 

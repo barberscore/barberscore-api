@@ -69,14 +69,11 @@ class AwardAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'organization',
-        # 'get_long_name',
-        # 'get_level',
         'kind',
         'size',
         'is_improved',
         'idiom',
-        'goal',
-        'rounds',
+        'num_rounds',
         'season',
         'stix_name',
     ]
@@ -86,25 +83,6 @@ class AwardAdmin(admin.ModelAdmin):
         'kind',
         'organization',
     ]
-
-    readonly_fields = [
-        'status_monitor',
-        'goal',
-    ]
-
-    inlines = [
-        AwardInline,
-    ]
-
-    # def get_long_name(self, obj):
-    #     return obj.organization.long_name
-    # get_long_name.short_description = 'Org Name'
-    # get_long_name.admin_order_field = 'organization__long_name'
-
-    # def get_level(self, obj):
-    #     return obj.organization.get_kind_display()
-    # get_level.short_description = 'Org Level'
-    # get_level.admin_order_field = 'organization__level'
 
 
 @admin.register(Catalog)
