@@ -347,6 +347,10 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    is_primary = models.BooleanField(
+        default=False,
+    )
+
     is_improved = models.BooleanField(
         default=False,
     )
