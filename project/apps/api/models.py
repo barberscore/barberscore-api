@@ -783,6 +783,17 @@ class Contest(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    CYCLE_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        CYCLE_CHOICES.append((r, "{0} - {1}".format(r - 1, r)))
+
+    cycle = models.IntegerField(
+        choices=CYCLE_CHOICES,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
     # Denormalization
     is_qualifier = models.BooleanField(
         default=False,
@@ -1171,6 +1182,8 @@ class Convention(TimeStampedModel):
     date = DateRangeField(
         help_text="""
             The convention dates (will be replaced by start/end).""",
+        null=True,
+        blank=True,
     )
 
     location = models.CharField(
@@ -1242,7 +1255,7 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.year = arrow.get(self.date.lower).year
+        # self.year = arrow.get(self.date.lower).year
         self.name = " ".join(filter(None, [
             self.organization.name,
             self.get_division_display(),
@@ -3354,19 +3367,19 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
-    SIZE_CHOICES = []
-    for r in reversed(range(1, 6)):
-        SIZE_CHOICES.append((r, r))
+    # SIZE_CHOICES = []
+    # for r in reversed(range(1, 6)):
+    #     SIZE_CHOICES.append((r, r))
 
-    size = models.IntegerField(
-        help_text="""
-            Size of the judging panel (per category).""",
-        choices=SIZE_CHOICES,
-    )
+    # size = models.IntegerField(
+    #     help_text="""
+    #         Size of the judging panel (per category).""",
+    #     choices=SIZE_CHOICES,
+    # )
 
-    ROUNDS_CHOICES = []
-    for r in reversed(range(1, 4)):
-        ROUNDS_CHOICES.append((r, r))
+    # ROUNDS_CHOICES = []
+    # for r in reversed(range(1, 4)):
+    #     ROUNDS_CHOICES.append((r, r))
 
     # num_rounds = models.IntegerField(
     #     help_text="""
