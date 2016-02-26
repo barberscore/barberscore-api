@@ -539,11 +539,6 @@ class Certification(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -587,11 +582,6 @@ class Chapter(Common):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     code = models.CharField(
@@ -727,11 +717,6 @@ class Contest(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     subsession_id = models.IntegerField(
@@ -929,11 +914,6 @@ class Contestant(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     performer = models.ForeignKey(
         'Performer',
         related_name='contestants',
@@ -1104,11 +1084,6 @@ class Convention(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     KIND = Choices(
@@ -1491,11 +1466,6 @@ class Group(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     KIND = Choices(
         (1, 'quartet', 'Quartet'),
         (2, 'chorus', 'Chorus'),
@@ -1652,11 +1622,6 @@ class Judge(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     CATEGORY = Choices(
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
@@ -1780,11 +1745,6 @@ class Organization(MPTTModel, TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     LEVEL = Choices(
@@ -2053,11 +2013,6 @@ class Performance(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     position = models.PositiveSmallIntegerField(
@@ -2411,11 +2366,6 @@ class Performer(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     picture = models.ImageField(
@@ -2808,11 +2758,6 @@ class Person(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     member = models.IntegerField(
         null=True,
         blank=True,
@@ -2975,11 +2920,6 @@ class Round(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     KIND = Choices(
@@ -3175,11 +3115,6 @@ class Score(TimeStampedModel):
         default=STATUS.new,
     )
 
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
-    )
-
     song = models.ForeignKey(
         'Song',
         related_name='scores',
@@ -3326,11 +3261,6 @@ class Session(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     KIND = Choices(
@@ -3644,11 +3574,6 @@ class Song(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    status_monitor = MonitorField(
-        help_text="""Status last updated""",
-        monitor='status',
     )
 
     ORDER = Choices(

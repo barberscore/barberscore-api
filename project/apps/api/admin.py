@@ -111,7 +111,6 @@ class ChapterAdmin(admin.ModelAdmin):
         'bhs_name',
         'bhs_group_name',
         'bhs_group_id',
-        # 'status_monitor',
         # 'location',
         # 'website',
         # 'facebook',
@@ -128,7 +127,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'organization',
         'bhs_name',
         'bhs_group_name',
@@ -149,9 +148,6 @@ class ChapterAdmin(admin.ModelAdmin):
         GroupInline,
     ]
 
-    readonly_fields = (
-        'status_monitor',
-    )
     save_on_top = True
 
 
@@ -182,7 +178,7 @@ class ContestantAdmin(admin.ModelAdmin):
     ]
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'performer',
         'contest',
         'award',
@@ -200,7 +196,6 @@ class ContestantAdmin(admin.ModelAdmin):
     }
     readonly_fields = [
         'name',
-        'status_monitor',
         'place',
         'total_score',
     ]
@@ -251,7 +246,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     fields = (
         'name',
-        ('status', 'status_monitor',),
+        'status',
         # 'stix_name',
         # 'stix_div',
         ('location', 'timezone',),
@@ -280,7 +275,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'name',
-        'status_monitor',
         'year',
     )
 
@@ -304,7 +298,6 @@ class GroupAdmin(admin.ModelAdmin):
         'chapter',
         'group_id',
         'status',
-        'status_monitor',
         'location',
         'website',
         'facebook',
@@ -316,7 +309,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'kind',
         'organization',
         (
@@ -349,10 +342,6 @@ class GroupAdmin(admin.ModelAdmin):
         PerformerInline,
     ]
 
-    readonly_fields = (
-        'status_monitor',
-    )
-
     raw_id_fields = [
         'chapter',
     ]
@@ -372,7 +361,7 @@ class JudgeAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'session',
         'person',
         'organization',
@@ -421,7 +410,7 @@ class JudgeAdmin(admin.ModelAdmin):
 class OrganizationAdmin(MPTTModelAdmin):
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'parent',
         'kind',
         'code',
@@ -442,10 +431,6 @@ class OrganizationAdmin(MPTTModelAdmin):
         'status',
         'level',
         'kind',
-    ]
-
-    readonly_fields = [
-        'status_monitor',
     ]
 
     list_display = [
@@ -493,7 +478,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'performer',
         ('draw', 'scheduled'),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
@@ -502,7 +487,6 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     readonly_fields = [
         'name',
-        'status_monitor',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -576,7 +560,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     }
     fields = (
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'session',
         ('group', 'organization',),
         ('seed', 'prelim',),
@@ -588,7 +572,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = (
         'organization',
         'name',
-        'status_monitor',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -612,7 +595,6 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'status_monitor',
         'member',
         'location',
         'website',
@@ -631,7 +613,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
-        ('status', 'status_monitor',),
+        'status',
         'organization',
         'location',
         'website',
@@ -650,9 +632,6 @@ class PersonAdmin(admin.ModelAdmin):
         'status',
     ]
 
-    readonly_fields = (
-        'status_monitor',
-    )
     inlines = [
         DirectorInline,
         SingerInline,
@@ -676,14 +655,13 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        'status',
         ('session', 'kind',),
         ('slots',),
     ]
 
     readonly_fields = [
         'name',
-        'status_monitor',
         'session',
         'kind',
     ]
@@ -717,7 +695,7 @@ class ScoreAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
-        # ('status', 'status_monitor',),
+        # 'status',
         'song',
         'judge',
         'points',
@@ -725,7 +703,6 @@ class ScoreAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'name',
-        # 'status_monitor',
         'song',
         'judge',
     ]
@@ -768,7 +745,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
     save_on_top = True
     fields = [
         'name',
-        ('status', 'status_monitor',),
+        'status',
         ('history', 'history_monitor',),
         'convention',
         'kind',
@@ -810,7 +787,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     readonly_fields = [
         'name',
-        'status_monitor',
         'history_monitor',
         'organization',
     ]
@@ -849,7 +825,7 @@ class SongAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
-        # ('status', 'status_monitor',),
+        # 'status',
         'order',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
@@ -878,7 +854,6 @@ class SongAdmin(admin.ModelAdmin):
         'prs_score',
         'sng_score',
         'total_score',
-        # 'status_monitor',
     )
     raw_id_fields = (
         'performance',
