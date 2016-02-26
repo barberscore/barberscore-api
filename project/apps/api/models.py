@@ -386,7 +386,6 @@ class Award(TimeStampedModel):
             self.get_size_display(),
             self.idiom,
             self.get_kind_display(),
-            self.goal,
         ]))
         super(Award, self).save(*args, **kwargs)
 
@@ -397,9 +396,15 @@ class Award(TimeStampedModel):
             'kind',
             'size',
         )
-    #     unique_together = (
-    #         ('organization', 'long_name', 'kind',),
-    #     )
+        unique_together = (
+            (
+                'organization',
+                'is_improved',
+                'size',
+                'idiom',
+                'kind',
+            ),
+        )
 
     class JSONAPIMeta:
         resource_name = "award"
