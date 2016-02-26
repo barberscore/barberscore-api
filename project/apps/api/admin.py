@@ -156,7 +156,9 @@ class ContestAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     list_filter = [
         'status',
-        'session__convention__year',
+        'cycle',
+        'award__kind',
+        'award__season',
     ]
 
     save_on_top = True
@@ -252,6 +254,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('location', 'timezone',),
         # 'dates',
         'date',
+        'year',
         'organization',
         'drcj',
         'kind',

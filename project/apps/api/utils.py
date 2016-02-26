@@ -10,9 +10,6 @@ from psycopg2.extras import DateRange
 import arrow
 
 import logging
-log = logging.getLogger(__name__)
-
-from fuzzywuzzy import process
 
 from nameparser import HumanName
 
@@ -34,6 +31,8 @@ from .models import (
     Score,
     Tune,
 )
+
+log = logging.getLogger(__name__)
 
 
 def import_members(path):
@@ -1127,50 +1126,46 @@ def chapter_district(chapter):
         chapter.organization = Organization.objects.get(code=letter)
 
 
-# # delete existing
-# from apps.api.models import (
-#     Convention,
-#     Judge,
-# )
-
-# vs = Convention.objects.filter(
-#     year=2015,
-# )
-
-# for v in vs:
-#     sessions = v.sessions.all()
-#     new_v, f = Convention.objects.get_or_create(
-#         kind=v.kind,
-#         division=v.division,
-#         year=v.year + 1,
-#         organization=v.organization
-#     )
-#     print new_v, f
-#     for session in sessions:
-#         new_s, f = new_v.sessions.get_or_create(
-#             kind=session.kind,
-#         )
-#         print new_s, f
-#         rounds = session.rounds.all()
-#         for round in rounds:
-#             new_r, f = new_s.rounds.get_or_create(
-#                 kind=round.kind,
-#                 num=round.num,
-#                 slots=round.slots,
-#             )
-#             print new_r, f
-#         judges = session.judges.filter(kind=Judge.KIND.official)
-#         for judge in judges:
-#             new_j, f = new_s.judges.get_or_create(
-#                 category=judge.category,
-#                 kind=judge.kind,
-#                 slot=judge.slot,
-#             )
-#             print new_j, f
-#         contests = session.contests.all()
-#         for contest in contests:
-#             new_c, f = new_s.contests.get_or_create(
-#                 award=contest.award,
-#                 session=contest.session,
-#             )
-#             print new_c, f
+def generate_cycle(year):
+    conventions = Convention.objects.filter(
+        year=year - 1,
+    )
+    log.info(conventions)
+    for convention in conventions:
+        new_v, f = Convention.objects.get_or_create(
+            kind=convention.kind,
+            division=convention.division,
+            year=year,
+            organization=convention.organization
+        )
+        log.info("{0}, {1}".format(new_v, f))
+        sessions = convention.sessions.all()
+        for session in sessions:
+            new_s, f = new_v.sessions.get_or_create(
+                kind=session.kind,
+            )
+            log.info("{0}, {1}".format(new_s, f))
+            rounds = session.rounds.all()
+            for round in rounds:
+                new_r, f = new_s.rounds.get_or_create(
+                    kind=round.kind,
+                    num=round.num,
+                )
+                log.info("{0}, {1}".format(new_r, f))
+            judges = session.judges.filter(kind=Judge.KIND.official)
+            for judge in judges:
+                new_j, f = new_s.judges.get_or_create(
+                    category=judge.category,
+                    kind=judge.kind,
+                    slot=judge.slot,
+                )
+                log.info("{0}, {1}".format(new_j, f))
+            contests = session.contests.filter(cycle=year - 1)
+            for contest in contests:
+                new_c, f = new_s.contests.get_or_create(
+                    award=contest.award,
+                    session=contest.session,
+                    cycle=year,
+                )
+                log.info("{0}, {1}".format(new_c, f))
+    return "Built {0}".format(year)

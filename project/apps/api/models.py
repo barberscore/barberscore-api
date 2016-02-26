@@ -749,7 +749,6 @@ class Contest(TimeStampedModel):
 
     cycle = models.IntegerField(
         choices=CYCLE_CHOICES,
-        editable=False,
         null=True,
         blank=True,
     )
@@ -772,16 +771,19 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.session.convention.division:
-            if self.award.organization.kind == self.award.organization.KIND.division:
-                self.is_qualifier = False
+        if not self.award.idiom:
+            if self.session.convention.division:
+                if self.award.organization.kind == self.award.organization.KIND.division:
+                    self.is_qualifier = False
+                else:
+                    self.is_qualifier = True
             else:
-                self.is_qualifier = True
+                if self.award.organization == self.session.convention.organization:
+                    self.is_qualifier = False
+                else:
+                    self.is_qualifier = True
         else:
-            if self.award.organization == self.session.convention.organization:
-                self.is_qualifier = False
-            else:
-                self.is_qualifier = True
+            self.is_qualifier = False
         self.name = " ".join(filter(None, [
             self.award.name,
             # str(self.session.convention.year),
@@ -1101,15 +1103,16 @@ class Convention(TimeStampedModel):
         (230, 'evgd4', "Division IV"),
         (240, 'evgd5', "Division V"),
         (250, 'fwdaz', "Arizona Division"),
-        (260, 'fwdnenw', "NE/NW Division"),
-        (270, 'fwdsesw', "SE/SW Division"),
-        (280, 'lolp1', "Division One/Packerland Division"),
+        (260, 'fwdnenw', "NE/NW Divisions"),
+        (270, 'fwdsesw', "SE/SW Divisions"),
+        (280, 'lolp1', "Division One/Packerland Divisions"),
         (290, 'lolnp', "Northern Plains Division"),
-        (300, 'lol10sw', "10,000 Lakes and Southwest Division"),
+        (300, 'lol10sw', "10,000 Lakes and Southwest Divisions"),
         (310, 'madatl', "Atlantic Division"),
-        (320, 'madnw', "Northern and Western Division"),
+        (320, 'madnw', "Northern and Western Divisions"),
         (330, 'madsth', "Southern Division"),
         (340, 'nedsun', "Sunrise Division"),
+        (350, 'swdnenwsesw', "NE/NW/SE/SW Divisions"),
     )
 
     division = models.IntegerField(

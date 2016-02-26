@@ -48,7 +48,7 @@ class ArrangerInline(admin.TabularInline):
     }
     can_delete = True
     show_change_link = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class AwardInline(admin.TabularInline):
@@ -105,7 +105,7 @@ class CertificationInline(admin.TabularInline):
         'name',
     ]
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class ContestInline(admin.TabularInline):
@@ -225,7 +225,7 @@ class DirectorInline(admin.TabularInline):
     #     ]
     # }
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class GroupInline(admin.TabularInline):
@@ -264,7 +264,7 @@ class GroupInline(admin.TabularInline):
         ]
     }
     can_delete = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class JudgeInline(admin.TabularInline):
@@ -294,7 +294,7 @@ class JudgeInline(admin.TabularInline):
     }
     can_delete = True
     show_change_link = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 # class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
@@ -335,7 +335,7 @@ class PerformanceInline(admin.TabularInline):
         'draw',
         'link',
     )
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class RankingInline(admin.TabularInline):
@@ -374,7 +374,7 @@ class RankingInline(admin.TabularInline):
         'place',
     )
 
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class OrganizationInline(admin.TabularInline):
@@ -535,7 +535,7 @@ class SingerInline(admin.TabularInline):
     # }
     can_delete = True
     show_change_link = True
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
 
 
 class RoundInline(admin.TabularInline):
@@ -566,7 +566,7 @@ class RoundInline(admin.TabularInline):
 
     model = Round
     extra = 0
-    classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
     readonly_fields = [
         'link',
         'name',
