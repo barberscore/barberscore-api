@@ -1168,14 +1168,23 @@ def generate_cycle(year):
                     cycle=year,
                 )
                 log.info("{0}, {1}".format(new_c, f))
+    contests = Contest.objects.filter(cycle=year)
+    qualifiers = []
+    for contest in contests:
+        if not contest.award.idiom:
+            if contest.session.convention.division:
+                if contest.award.organization.kind != Organization.KIND.division:
+                    qualifiers.append(contest)
+            else:
+                if contest.award.organization != contest.session.convention.organization:
+                    qualifiers.append(contest)
+    for qualifier in qualifiers:
+        qualifier.parent = Contest.objects.exclude(
+            pk__in=[q.pk.hex for q in qualifiers],
+        ).get(
+            award=qualifier.award,
+            award__is_primary=True,
+            cycle=qualifier.cycle,
+        )
+        qualifier.save()
     return "Built {0}".format(year)
-
-cs = Contest.objects.filter(is_qualifier=True)
-for c in cs:
-    c.parent = Contest.objects.get(
-        award = c.award,
-        award__is_primary = True,
-        is_qualifier = False,
-        cycle = c.cycle,
-    )
-    c.save()
