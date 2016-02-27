@@ -164,6 +164,7 @@ class ContestAdmin(admin.ModelAdmin):
     save_on_top = True
 
     inlines = [
+        ContestInline,
         ContestantInline,
     ]
 

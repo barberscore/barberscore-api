@@ -1169,3 +1169,13 @@ def generate_cycle(year):
                 )
                 log.info("{0}, {1}".format(new_c, f))
     return "Built {0}".format(year)
+
+cs = Contest.objects.filter(is_qualifier=True)
+for c in cs:
+    c.parent = Contest.objects.get(
+        award = c.award,
+        award__is_primary = True,
+        is_qualifier = False,
+        cycle = c.cycle,
+    )
+    c.save()
