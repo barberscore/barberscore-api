@@ -158,6 +158,7 @@ class ContestAdmin(admin.ModelAdmin):
         'status',
         'cycle',
         'award__is_primary',
+        'award__organization__level',
         'award__kind',
         'award__season',
         'is_qualifier',
