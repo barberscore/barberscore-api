@@ -81,7 +81,9 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'organization__level',
         'organization',
+        'is_primary',
     ]
 
 
