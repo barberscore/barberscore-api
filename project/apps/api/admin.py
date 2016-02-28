@@ -182,7 +182,6 @@ class ContestantAdmin(admin.ModelAdmin):
         'status',
         'performer',
         'contest',
-        'award',
         'place',
         'total_score',
     ]
