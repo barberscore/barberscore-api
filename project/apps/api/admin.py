@@ -157,6 +157,7 @@ class ContestAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'cycle',
+        'award__is_primary',
         'award__kind',
         'award__season',
         'is_qualifier',
