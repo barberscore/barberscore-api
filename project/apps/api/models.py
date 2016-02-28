@@ -239,6 +239,10 @@ class Award(TimeStampedModel):
         default=False,
     )
 
+    is_novice = models.BooleanField(
+        default=False,
+    )
+
     idiom = models.CharField(
         max_length=200,
         null=True,
@@ -261,18 +265,31 @@ class Award(TimeStampedModel):
         related_name='awards',
     )
 
+    # Denormalization
+    level = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        self.level = self.organization.level
         if self.is_improved:
             most_improved = 'Most-Improved'
         else:
             most_improved = None
+        if self.is_novice:
+            novice = 'Most-Improved'
+        else:
+            novice = None
         self.name = " ".join(filter(None, [
             # self.id.hex,
             self.organization.name,
             most_improved,
+            novice,
             self.get_size_display(),
             self.idiom,
             self.get_kind_display(),
@@ -1653,7 +1670,7 @@ class Judge(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        limit_choices_to={'is_judge': True},
+        # limit_choices_to={'is_judge': True},
         # limit_choices_to=models.Q(certifications__isnull=False),
     )
 
