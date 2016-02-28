@@ -745,7 +745,7 @@ class Contest(TimeStampedModel):
 
     CYCLE_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        CYCLE_CHOICES.append((r, "{0} - {1}".format(r - 1, r)))
+        CYCLE_CHOICES.append((r, r))
 
     cycle = models.IntegerField(
         choices=CYCLE_CHOICES,
@@ -753,10 +753,8 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    # Denormalization
     is_qualifier = models.BooleanField(
         default=False,
-        editable=False,
     )
 
     @property
@@ -771,19 +769,19 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if not self.award.idiom:
-            if self.session.convention.division:
-                if self.award.organization.kind == self.award.organization.KIND.division:
-                    self.is_qualifier = False
-                else:
-                    self.is_qualifier = True
-            else:
-                if self.award.organization == self.session.convention.organization:
-                    self.is_qualifier = False
-                else:
-                    self.is_qualifier = True
-        else:
-            self.is_qualifier = False
+        # if not self.award.idiom:
+        #     if self.session.convention.division:
+        #         if self.award.organization.kind == self.award.organization.KIND.division:
+        #             self.is_qualifier = False
+        #         else:
+        #             self.is_qualifier = True
+        #     else:
+        #         if self.award.organization == self.session.convention.organization:
+        #             self.is_qualifier = False
+        #         else:
+        #             self.is_qualifier = True
+        # else:
+        #     self.is_qualifier = False
         self.name = " ".join(filter(None, [
             self.award.name,
             # str(self.session.convention.year),

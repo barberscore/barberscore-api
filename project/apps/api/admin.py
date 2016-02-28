@@ -159,6 +159,7 @@ class ContestAdmin(admin.ModelAdmin):
         'cycle',
         'award__kind',
         'award__season',
+        'is_qualifier',
     ]
 
     save_on_top = True
@@ -166,10 +167,6 @@ class ContestAdmin(admin.ModelAdmin):
     inlines = [
         ContestInline,
         ContestantInline,
-    ]
-
-    readonly_fields = [
-        'is_qualifier',
     ]
 
 
