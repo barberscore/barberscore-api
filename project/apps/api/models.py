@@ -266,7 +266,15 @@ class Award(TimeStampedModel):
     )
 
     # Denormalization
+    LEVEL = Choices(
+        (0, 'international', "International"),
+        (1, 'district', "District/Affiliates"),
+        (2, 'division', "Division"),
+        (3, 'chapter', "Chapter"),
+    )
+
     level = models.IntegerField(
+        choices=LEVEL,
         null=True,
         blank=True,
         editable=False,
@@ -1111,6 +1119,21 @@ class Convention(TimeStampedModel):
         choices=KIND,
     )
 
+    # Denormalization
+    LEVEL = Choices(
+        (0, 'international', "International"),
+        (1, 'district', "District"),
+        (2, 'division', "Division"),
+        (3, 'chapter', "Chapter"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+        null=True,
+        blank=True,
+        editable=True,
+    )
+
     DIVISION = Choices(
         (200, 'evgd1', "Division I"),
         (210, 'evgd2', "Division II"),
@@ -1224,6 +1247,10 @@ class Convention(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         # self.year = arrow.get(self.date.lower).year
+        if self.division:
+            self.level = self.LEVEL.division
+        else:
+            self.level = self.organization.level
         self.name = " ".join(filter(None, [
             self.organization.name,
             self.get_division_display(),

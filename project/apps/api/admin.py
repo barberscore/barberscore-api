@@ -241,6 +241,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'organization',
         'kind',
+        'level',
         'division',
         # 'date',
         'human_range',
@@ -259,6 +260,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'organization',
         'drcj',
         'kind',
+        'level',
         # 'stix_file',
         'division',
     )
@@ -267,7 +269,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'year',
-        'organization__level',
+        'level',
         'division',
         'organization',
     )
@@ -280,6 +282,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = (
         'name',
         'year',
+        'level',
     )
 
     raw_id_fields = [
