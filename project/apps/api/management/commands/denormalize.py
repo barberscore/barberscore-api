@@ -12,6 +12,7 @@ from apps.api.models import (
     # Director,
     # Judge,
     Contestant,
+    Contest,
     Round,
     Session,
     Score,
