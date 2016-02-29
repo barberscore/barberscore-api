@@ -2189,7 +2189,8 @@ class Performance(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.round.session.convention.organization.name,
             self.round.session.convention.get_division_display(),
-            self.round.session.convention.get_kind_display(),
+            self.round.session.convention.get_season_display(),
+            self.round.session.get_age_display(),
             self.round.session.get_kind_display(),
             self.round.get_kind_display(),
             str(self.round.session.convention.year),
@@ -2568,7 +2569,7 @@ class Performer(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
             self.session.convention.get_division_display(),
-            self.session.convention.get_kind_display(),
+            self.session.convention.get_season_display(),
             str(self.session.convention.year),
             self.session.get_age_display(),
             self.session.get_kind_display(),
@@ -3028,7 +3029,7 @@ class Round(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
             self.session.convention.get_division_display(),
-            self.session.convention.get_kind_display(),
+            self.session.convention.get_season_display(),
             self.session.get_age_display(),
             self.session.get_kind_display(),
             self.get_kind_display(),
@@ -3757,7 +3758,8 @@ class Song(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.performance.round.session.convention.organization.name,
             self.performance.round.session.convention.get_division_display(),
-            self.performance.round.session.convention.get_kind_display(),
+            self.performance.round.session.convention.get_season_display(),
+            self.performance.round.session.get_age_display(),
             self.performance.round.session.get_kind_display(),
             self.performance.round.get_kind_display(),
             str(self.performance.round.session.convention.year),
