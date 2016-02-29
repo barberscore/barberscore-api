@@ -463,7 +463,7 @@ def import_prelims(path):
             continue
 
 
-def import_convention(path, kind, division=False):
+def import_convention(path, season, division=False):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
@@ -504,7 +504,7 @@ def import_convention(path, kind, division=False):
             date=date,
             year=year,
             organization=organization,
-            kind=getattr(Convention.KIND, kind),
+            season=getattr(Convention.SEASON, season),
         )
         if division:
             convention.stix_div = division
@@ -1133,7 +1133,7 @@ def generate_cycle(year):
     log.info(conventions)
     for convention in conventions:
         new_v, f = Convention.objects.get_or_create(
-            kind=convention.kind,
+            season=convention.season,
             division=convention.division,
             year=year,
             organization=convention.organization

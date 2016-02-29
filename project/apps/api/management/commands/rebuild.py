@@ -36,7 +36,7 @@ class Command(BaseCommand):
         i = 11
         while i <= 27:
             path = "stix/fall000{0}.txt".format(i)
-            convention = import_convention(path, kind='fall')
+            convention = import_convention(path, season='fall')
             convention.save()
             filename = convention.id.hex + '.txt'
             convention.stix_file.save(
@@ -50,7 +50,7 @@ class Command(BaseCommand):
         i = 11
         while i <= 21:
             path = "stix/spring000{0}.txt".format(i)
-            convention = import_convention(path, kind='spring')
+            convention = import_convention(path, season='spring')
             convention.save()
             filename = convention.id.hex + '.txt'
             convention.stix_file.save(
@@ -64,7 +64,7 @@ class Command(BaseCommand):
         i = 11
         while i <= 25:
             path = "stix/combo000{0}.txt".format(i)
-            convention = import_convention(path, kind='spring', division=True)
+            convention = import_convention(path, season='spring', division=True)
             convention.save()
             filename = convention.id.hex + '.txt'
             convention.stix_file.save(
@@ -81,7 +81,7 @@ class Command(BaseCommand):
 
         for f in international:
             path = "stix/{0}".format(f)
-            convention = import_convention(path, kind='international')
+            convention = import_convention(path, season='international')
             convention.save()
             filename = convention.id.hex + '.txt'
             convention.stix_file.save(
@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
         for f in midwinter:
             path = "stix/{0}".format(f)
-            convention = import_convention(path, kind='midwinter')
+            convention = import_convention(path, season='midwinter')
             convention.save()
             filename = convention.id.hex + '.txt'
             convention.stix_file.save(
