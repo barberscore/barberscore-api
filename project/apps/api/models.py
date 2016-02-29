@@ -1131,6 +1131,20 @@ class Convention(TimeStampedModel):
         choices=KIND,
     )
 
+    SEASON = Choices(
+        (1, 'international', 'International',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+        (9, 'video', 'Video',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+        null=True,
+        blank=True,
+    )
+
     # Denormalization
     LEVEL = Choices(
         (0, 'international', "International"),
