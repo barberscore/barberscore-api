@@ -190,10 +190,20 @@ class ContestAdmin(admin.ModelAdmin):
         'is_qualifier',
     ]
 
+    fields = [
+        'name',
+        'status',
+        'award',
+        'session',
+        'cycle',
+        'is_qualifier',
+        'stix_num',
+        'stix_name',
+    ]
+
     save_on_top = True
 
     inlines = [
-        ContestInline,
         ContestantInline,
     ]
 

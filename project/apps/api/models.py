@@ -783,8 +783,6 @@ class Contest(TimeStampedModel):
 
     cycle = models.IntegerField(
         choices=CYCLE_CHOICES,
-        null=True,
-        blank=True,
     )
 
     is_qualifier = models.BooleanField(
