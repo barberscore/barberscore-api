@@ -1112,20 +1112,6 @@ class Convention(TimeStampedModel):
         default=STATUS.new,
     )
 
-    KIND = Choices(
-        (1, 'international', 'International',),
-        (2, 'midwinter', 'Midwinter',),
-        (3, 'fall', 'Fall',),
-        (4, 'spring', 'Spring',),
-        (9, 'video', 'Video',),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of convention.""",
-        choices=KIND,
-    )
-
     SEASON = Choices(
         (1, 'international', 'International',),
         (2, 'midwinter', 'Midwinter',),
@@ -1275,7 +1261,7 @@ class Convention(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.organization.name,
             self.get_division_display(),
-            self.get_kind_display(),
+            self.get_season_display(),
             u"Convention",
             str(self.year),
         ]))
@@ -1288,7 +1274,7 @@ class Convention(TimeStampedModel):
         ]
 
         unique_together = (
-            ('organization', 'kind', 'year', 'division',),
+            ('organization', 'season', 'year', 'division',),
         )
 
     class JSONAPIMeta:
@@ -2584,6 +2570,7 @@ class Performer(TimeStampedModel):
             self.session.convention.get_division_display(),
             self.session.convention.get_kind_display(),
             str(self.session.convention.year),
+            self.session.get_age_display(),
             self.session.get_kind_display(),
             "Performer",
             self.group.name,
@@ -3042,6 +3029,7 @@ class Round(TimeStampedModel):
             self.session.convention.organization.name,
             self.session.convention.get_division_display(),
             self.session.convention.get_kind_display(),
+            self.session.get_age_display(),
             self.session.get_kind_display(),
             self.get_kind_display(),
             str(self.session.convention.year),
