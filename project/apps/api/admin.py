@@ -207,6 +207,9 @@ class ContestAdmin(admin.ModelAdmin):
         ContestantInline,
     ]
 
+    readonly_fields = [
+        'name',
+    ]
 
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):

@@ -1160,7 +1160,7 @@ def generate_cycle(year):
         new_v, f = Convention.objects.get_or_create(
             season=convention.season,
             division=convention.division,
-            year=year,
+            year=convention.year + 1,
             organization=convention.organization
         )
         log.info("{0}, {1}".format(new_v, f))
@@ -1186,12 +1186,12 @@ def generate_cycle(year):
                     slot=judge.slot,
                 )
                 log.info("{0}, {1}".format(new_j, f))
-            contests = session.contests.filter(cycle=year - 1)
+            contests = session.contests.all()
             for contest in contests:
                 new_c, f = new_s.contests.get_or_create(
                     award=contest.award,
                     session=contest.session,
-                    cycle=year,
+                    cycle=contest.cycle + 1,
                     is_qualifier=contest.is_qualifier
                 )
                 log.info("{0}, {1}".format(new_c, f))
