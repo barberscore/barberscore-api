@@ -186,6 +186,18 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
+    )
+
     SEASON = Choices(
         (1, 'international', 'International',),
         (2, 'midwinter', 'Midwinter',),
@@ -1131,7 +1143,7 @@ class Convention(TimeStampedModel):
         choices=LEVEL,
         null=True,
         blank=True,
-        editable=True,
+        editable=False,
     )
 
     DIVISION = Choices(
@@ -1515,6 +1527,18 @@ class Group(TimeStampedModel):
             The kind of group; choices are Quartet or Chorus.""",
         choices=KIND,
         default=KIND.quartet,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
     )
 
     is_quartet = models.BooleanField(
@@ -3310,6 +3334,18 @@ class Session(TimeStampedModel):
         help_text="""
             The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
         choices=KIND,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
     )
 
     # SIZE_CHOICES = []
