@@ -800,8 +800,8 @@ def extract_contests(convention):
                 contest = {
                     'session': session,
                     'award': award,
-                    'subsession_id': stix_num,
-                    'subsession_text': stix_name,
+                    'stix_num': stix_num,
+                    'stix_name': stix_name,
                     'status': Contest.STATUS.active,
                     'is_qualifier': is_qualifier,
                     'cycle': cycle,
@@ -884,7 +884,7 @@ def extract_contestants(convention):
                     continue
                 try:
                     contest = session.contests.get(
-                        subsession_id=stix_num,
+                        stix_num=stix_num,
                     )
                 except Contest.DoesNotExist:
                     log.error("Can't find contest: {0}, {1}, {2}, {3}".format(contest, convention, kind, performer))
@@ -1168,6 +1168,7 @@ def generate_cycle(year):
         for session in sessions:
             new_s, f = new_v.sessions.get_or_create(
                 kind=session.kind,
+                age=session.age,
             )
             log.info("{0}, {1}".format(new_s, f))
             rounds = session.rounds.all()
@@ -1191,25 +1192,7 @@ def generate_cycle(year):
                     award=contest.award,
                     session=contest.session,
                     cycle=year,
+                    is_qualifier=contest.is_qualifier
                 )
                 log.info("{0}, {1}".format(new_c, f))
-    contests = Contest.objects.filter(cycle=year)
-    qualifiers = []
-    for contest in contests:
-        if not contest.award.idiom:
-            if contest.session.convention.division:
-                if contest.award.organization.kind != Organization.KIND.division:
-                    qualifiers.append(contest)
-            else:
-                if contest.award.organization != contest.session.convention.organization:
-                    qualifiers.append(contest)
-    for qualifier in qualifiers:
-        qualifier.parent = Contest.objects.exclude(
-            pk__in=[q.pk.hex for q in qualifiers],
-        ).get(
-            award=qualifier.award,
-            award__is_primary=True,
-            cycle=qualifier.cycle,
-        )
-        qualifier.save()
     return "Built {0}".format(year)

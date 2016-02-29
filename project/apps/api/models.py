@@ -747,12 +747,12 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    subsession_id = models.IntegerField(
+    stix_num = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    subsession_text = models.CharField(
+    stix_name = models.CharField(
         max_length=255,
         blank=True,
         default='',
