@@ -86,6 +86,27 @@ class AwardAdmin(admin.ModelAdmin):
         'is_primary',
     ]
 
+    fields = [
+        'name',
+        'status',
+        'organization',
+        'level',
+        'kind',
+        'age',
+        'size',
+        ('is_primary', 'is_improved', 'is_novice'),
+        'idiom',
+        'num_rounds',
+        # 'panel_size',
+        'stix_num',
+        'stix_name',
+    ]
+
+    readonly_fields = [
+        'name',
+        'level',
+    ]
+
 
 @admin.register(Catalog)
 class CatalogAdmin(admin.ModelAdmin):
@@ -211,22 +232,6 @@ class ContestantAdmin(admin.ModelAdmin):
 @admin.register(Convention)
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
-    def human_range(self, obj):
-        if obj.date:
-            if obj.date.upper - obj.date.lower == datetime.timedelta(1):
-                dates = "{0}".format(
-                    arrow.get(obj.date.lower).format('MMMM D, YYYY'),
-                )
-            else:
-                dates = "{0} - {1}".format(
-                    arrow.get(obj.date.lower).format('MMMM D'),
-                    arrow.get(obj.date.upper).format('MMMM D, YYYY'),
-                )
-        else:
-            dates = obj.date
-        return dates
-    human_range.short_description = "Dates22"
-
     fsm_field = [
         'status',
     ]
@@ -240,38 +245,35 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status',
         'organization',
-        'kind',
         'level',
         'division',
+        'season',
         # 'date',
-        'human_range',
+        'human_date',
         # 'location',
     )
 
     fields = (
         'name',
         'status',
-        # 'stix_name',
-        # 'stix_div',
         ('location', 'timezone',),
         # 'dates',
         'date',
         'year',
         'organization',
-        'drcj',
-        'kind',
         'level',
-        # 'stix_file',
         'division',
+        'season',
+        'drcj',
     )
 
     list_filter = (
         'status',
-        'kind',
+        'organization',
         'year',
         'level',
         'division',
-        'organization',
+        'season',
     )
 
     inlines = [
@@ -283,6 +285,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'year',
         'level',
+        'human_date',
     )
 
     raw_id_fields = [
