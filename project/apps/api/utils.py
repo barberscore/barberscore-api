@@ -513,26 +513,23 @@ def import_convention(path, season, division=False):
 
 
 def get_session_kind(name):
-    if 'Novice' in name:
-        kind = 'novice'
-    elif 'Seniors' in name:
-        kind = 'seniors'
-    elif 'Collegiate' in name:
-        kind = 'collegiate'
-    elif 'Youth' in name:
-        kind = 'youth'
-    elif 'Chorus' in name:
-        kind = 'chorus'
-    elif 'Quartet' in name:
-        kind = 'quartet'
-    elif "Dealer's Choice" in name:
-        kind = 'quartet'
-    elif "Srs Qt - Oldest Qt Cumulative Yrs" in name:
-        kind = 'seniors'
+    if 'Chorus' in name:
+        kind = Session.KIND.chorus
     else:
-        log.error("Could not determine Session.KIND: {0}".format(name))
-        return None
+        kind = Session.KIND.quartet
     return kind
+
+
+def get_session_age(name):
+    if 'Seniors' in name:
+        age = Session.AGE.seniors
+    elif 'Collegiate' in name:
+        age = Session.AGE.collegiate
+    elif 'Youth' in name:
+        age = Session.AGE.youth
+    else:
+        age = None
+    return age
 
 
 def get_round_kind(name):
@@ -554,17 +551,12 @@ def extract_sessions(convention):
     for row in rows:
         if len(row) == 0:
             continue
-        if row[0].startswith('Judge Count:'):
-            count = int(row[0].partition(":")[2])
-            size = int(count / 3)
-    for row in rows:
-        if len(row) == 0:
-            continue
         if row[0].startswith('Subsessions:'):
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             convention.sessions.get_or_create(
-                kind=getattr(Session.KIND, kind),
-                size=size,
+                kind=kind,
+                age=age,
                 status=Session.STATUS.final,
             )
     return
@@ -577,9 +569,11 @@ def extract_rounds(convention):
         if len(row) == 0:
             continue
         if row[0].startswith("Subsessions:"):
-            session_kind = get_session_kind(row[0])
+            kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, session_kind),
+                kind=kind,
+                age=age,
             )
             round_kind = get_round_kind(row[0])
             session.rounds.create(
@@ -605,9 +599,11 @@ def extract_panel(convention):
         if len(row) == 0:
             continue
         if row[0].startswith('Panel'):
-            session_kind = get_session_kind(row[0])
+            kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, session_kind),
+                kind=kind,
+                age=age,
             )
             round_kind = get_round_kind(row[0])
             try:
@@ -688,8 +684,10 @@ def extract_performers(convention):
             continue
         if row[0].startswith("Session: ") and row[4].endswith("1"):
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, kind),
+                kind=kind,
+                age=age,
             )
             contestant_text = unidecode(row[1].partition(":")[2].strip())
             if contestant_text == '(Not Found)':
@@ -743,9 +741,11 @@ def extract_contests(convention):
         if len(row) == 0:
             continue
         if row[0].startswith("Subsessions:"):
-            session_kind = get_session_kind(row[0])
+            kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, session_kind),
+                kind=kind,
+                age=age,
             )
             contest_list = row[1:]
             excludes = [
@@ -755,6 +755,11 @@ def extract_contests(convention):
                 "Out of Division",
             ]
             for item in contest_list:
+                is_qualifier = False
+                if convention.season == convention.SEASON.spring:
+                    cycle = convention.year
+                else:
+                    cycle = convention.year + 1
                 parts = item.partition("=")
                 stix_num = parts[0].strip()
                 stix_name = parts[2].strip()
@@ -767,28 +772,39 @@ def extract_contests(convention):
                 else:
                     try:
                         organization = convention.organization.children.get(
-                            long_name=stix_name.partition(" Division")[0],
+                            Q(long_name=stix_name.partition(" Division")[0]) | Q(short_name=stix_name.partition(" Division")[0])
                         )
                     except Organization.DoesNotExist:
                         log.info("Can't find Org: {0}".format(stix_name.partition(" Division")[0]))
                         continue
-                try:
+                if 'Preliminary' in stix_name:
                     award = Award.objects.get(
-                        organization=organization,
-                        stix_name=stix_name,
+                        kind=kind,
+                        age=age,
+                        organization=convention.organization.parent,
+                        is_primary=True,
                     )
-                except Award.DoesNotExist:
-                    log.info("No award for: {0}".format(stix_name))
-                    continue
-                except Award.MultipleObjectsReturned:
-                    log.info("Multi awards for: {0}".format(stix_name))
-                    continue
+                    is_qualifier = True
+                else:
+                    try:
+                        award = Award.objects.get(
+                            organization=organization,
+                            stix_name=stix_name,
+                        )
+                    except Award.DoesNotExist:
+                        log.info("No award for: {0}".format(stix_name))
+                        continue
+                    except Award.MultipleObjectsReturned:
+                        log.info("Multi awards for: {0}".format(stix_name))
+                        continue
                 contest = {
                     'session': session,
                     'award': award,
                     'subsession_id': stix_num,
                     'subsession_text': stix_name,
-                    'status': Contest.STATUS.final,
+                    'status': Contest.STATUS.active,
+                    'is_qualifier': is_qualifier,
+                    'cycle': cycle,
                 }
                 contests.append(contest)
     for contest in contests:
@@ -797,7 +813,7 @@ def extract_contests(convention):
         except IntegrityError:
             log.error("Contest name already exists: {0}".format(contest))
             continue
-    return contests
+    return
 
 
 def extract_contestants(convention):
@@ -810,8 +826,9 @@ def extract_contestants(convention):
             continue
         if row[0].startswith("Subsessions:"):
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             rnd = get_round_kind(row[0])
-            key = kind + rnd
+            key = "{0}{1}{2}".format(kind, age, rnd)
             kind_list = []
             contest_list = row[1:]
             excludes = [
@@ -833,10 +850,12 @@ def extract_contestants(convention):
         if row[0].startswith("Session: "):
             # first retrieve the performer
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             rnd = get_round_kind(row[0])
-            key = kind + rnd
+            key = "{0}{1}{2}".format(kind, age, rnd)
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, kind),
+                kind=kind,
+                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -876,7 +895,7 @@ def extract_contestants(convention):
                 contestants.append({
                     'contest': contest,
                     'performer': performer,
-                    'status': Contestants.STATUS.final,
+                    'status': Contestant.STATUS.final,
                 })
     for contestant in contestants:
         try:
@@ -900,8 +919,10 @@ def extract_performances(convention):
         if row[0].startswith("Session: "):
             # first retrieve the performer
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, kind),
+                kind=kind,
+                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -955,8 +976,10 @@ def extract_songs(convention):
         if row[0].startswith("Session: "):
             # first retrieve the performance
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, kind),
+                kind=kind,
+                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -1022,8 +1045,10 @@ def extract_scores(convention):
         if row[0].startswith("Session: "):
             # first retrieve the songs
             kind = get_session_kind(row[0])
+            age = get_session_age(row[0])
             session = convention.sessions.get(
-                kind=getattr(Session.KIND, kind),
+                kind=kind,
+                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 

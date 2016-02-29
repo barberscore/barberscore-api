@@ -268,6 +268,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'division',
         'season',
         'drcj',
+        'stix_file',
     )
 
     list_filter = (
