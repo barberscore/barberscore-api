@@ -80,10 +80,13 @@ class AwardAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'level',
         'kind',
-        'organization__level',
+        'age',
         'organization',
         'is_primary',
+        'is_novice',
+        'is_improved',
     ]
 
     fields = [
@@ -321,15 +324,8 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         'status',
         'kind',
+        ('age', 'is_novice',),
         'organization',
-        (
-            'is_quartet',
-            'is_chorus',
-            'is_collegiate',
-            'is_senior',
-            'is_youth',
-            'is_novice',
-        ),
         'group_id',
         'chapter',
         'location',
@@ -754,9 +750,8 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
     fields = [
         'name',
         'status',
-        ('history', 'history_monitor',),
         'convention',
-        'kind',
+        ('kind', 'age',),
         'administrator',
         # 'organization',
         # 'year',
@@ -769,6 +764,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status',
         'convention',
         'kind',
+        'age',
         'administrator',
         # 'size',
         # 'num_rounds',
@@ -776,8 +772,8 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     list_filter = (
         'status',
-        'history',
         'kind',
+        'age',
         'convention__year',
         'organization',
     )

@@ -302,7 +302,7 @@ class Award(TimeStampedModel):
         else:
             most_improved = None
         if self.is_novice:
-            novice = 'Most-Improved'
+            novice = 'Novice'
         else:
             novice = None
         self.name = " ".join(filter(None, [
