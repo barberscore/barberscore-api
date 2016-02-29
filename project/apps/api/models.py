@@ -312,6 +312,7 @@ class Award(TimeStampedModel):
             novice,
             self.get_size_display(),
             self.idiom,
+            self.get_age_display(),
             self.get_kind_display(),
         ]))
         super(Award, self).save(*args, **kwargs)
@@ -3461,7 +3462,8 @@ class Session(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.convention.organization.name,
             self.convention.get_division_display(),
-            self.convention.get_kind_display(),
+            self.convention.get_season_display(),
+            self.get_age_display(),
             self.get_kind_display(),
             "Session",
             str(self.convention.year),
@@ -3470,7 +3472,7 @@ class Session(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('convention', 'kind',),
+            ('convention', 'kind', 'age',),
         )
         ordering = (
             '-year',
