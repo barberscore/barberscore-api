@@ -145,7 +145,7 @@ class ContestInline(admin.TabularInline):
         'link',
         'name',
         'is_qualifier',
-        # 'place',
+        # 'rank',
         # 'total_score',
         # 'total_points',
         # 'performer',
@@ -170,12 +170,13 @@ class ContestantInline(admin.TabularInline):
     fields = (
         'link',
         'performer',
-        'place',
+        'rank',
         'total_points',
         'total_score',
+        'status',
     )
     ordering = (
-        'place',
+        'rank',
     )
 
     show_change_link = True
@@ -193,10 +194,11 @@ class ContestantInline(admin.TabularInline):
     readonly_fields = [
         'link',
         'name',
-        'place',
+        'rank',
         'total_score',
         'total_points',
         'performer',
+        'status',
     ]
     can_delete = True
     # classes = ('grp-collapse grp-open',)
@@ -355,7 +357,7 @@ class RankingInline(admin.TabularInline):
         'link',
         'performer',
         'status',
-        'place',
+        'rank',
         'total_points',
         'total_score',
     )
@@ -365,13 +367,13 @@ class RankingInline(admin.TabularInline):
     readonly_fields = (
         'performer',
         'status',
-        'place',
+        'rank',
         'total_points',
         'total_score',
         'link',
     )
     ordering = (
-        'place',
+        'rank',
     )
 
     classes = ('grp-collapse grp-open',)

@@ -100,6 +100,7 @@ class AwardAdmin(admin.ModelAdmin):
         ('is_primary', 'is_improved', 'is_novice'),
         'idiom',
         'num_rounds',
+        'cutoff',
         # 'panel_size',
         'stix_num',
         'stix_name',
@@ -211,6 +212,7 @@ class ContestAdmin(admin.ModelAdmin):
         'name',
     ]
 
+
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
@@ -222,7 +224,7 @@ class ContestantAdmin(admin.ModelAdmin):
         'status',
         'performer',
         'contest',
-        'place',
+        'rank',
         'total_score',
     ]
     list_filter = (
@@ -236,7 +238,7 @@ class ContestantAdmin(admin.ModelAdmin):
     }
     readonly_fields = [
         'name',
-        'place',
+        'rank',
         'total_score',
     ]
 

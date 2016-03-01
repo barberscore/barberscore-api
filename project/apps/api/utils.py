@@ -1136,9 +1136,14 @@ def denormalize(convention):
 
 def rank(convention):
     for session in convention.sessions.all():
+        session.rank()
+        session.save()
         for contest in session.contests.all():
             contest.rank()
             contest.save()
+        for round in session.rounds.all():
+            round.rank()
+            round.save()
     return
 
 

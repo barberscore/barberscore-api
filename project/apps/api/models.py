@@ -65,6 +65,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
 
+from ranking import Ranking
+
 from .managers import (
     UserManager,
     PerformerQuerySet,
@@ -255,6 +257,11 @@ class Award(TimeStampedModel):
 
     idiom = models.CharField(
         max_length=200,
+        null=True,
+        blank=True,
+    )
+
+    cutoff = models.FloatField(
         null=True,
         blank=True,
     )
@@ -793,7 +800,7 @@ class Contest(TimeStampedModel):
 
     @property
     def champion(self):
-        return self.contestants.order_by('place').first()
+        return self.contestants.order_by('rank').first()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -830,73 +837,22 @@ class Contest(TimeStampedModel):
         ]))
         super(Contest, self).save(*args, **kwargs)
 
-    # def rank(self):
-    #     contestants = self.contestants.all()
-    #     for contestant in contestants:
-    #         contestant.calculate()
-    #         contestant.save()
-    #     cursor = []
-    #     i = 1
-    #     for contestant in self.contestants.order_by('-total_points'):
-    #         try:
-    #             match = contestant.total_points == cursor[0].total_points
-    #         except IndexError:
-    #             contestant.place = i
-    #             contestant.save()
-    #             cursor.append(contestant)
-    #             continue
-    #         if match:
-    #             contestant.place = i
-    #             i += len(cursor)
-    #             contestant.save()
-    #             cursor.append(contestant)
-    #             continue
-    #         else:
-    #             i += 1
-    #             contestant.place = i
-    #             contestant.save()
-    #             cursor = [contestant]
-    #     return "{0} Ready for Review".format(self)
+    def rank(self):
+        contestants = self.contestants.order_by('-total_points')
+        points = [contestant.total_points for contestant in contestants]
+        ranking = Ranking(points, start=1)
+        for contestant in contestants:
+            contestant.rank = ranking.rank(contestant.total_points)
+            if self.is_qualifier:
+                if contestant.total_score >= self.award.cutoff:
+                    contestant.status = contestant.STATUS.qualified
+                else:
+                    contestant.status = contestant.STATUS.dnq
+            contestant.save()
+        return
 
     def start(self):
         return "{0} Started".format(self)
-
-    # Check everything is done.
-    # @transition(
-    #     field=status,
-    #     source=STATUS.finished,
-    #     target=STATUS.ranked,
-    #     conditions=[
-    #     ],
-    # )
-    def rank(self):
-        # Denormalize
-        for contestant in self.contestants.all():
-            contestant.calculate()
-            contestant.save()
-        # Rank results
-        cursor = []
-        i = 1
-        for contestant in self.contestants.order_by('-total_points'):
-            try:
-                match = contestant.total_points == cursor[0].total_points
-            except IndexError:
-                contestant.place = i
-                contestant.save()
-                cursor.append(contestant)
-                continue
-            if match:
-                contestant.place = i
-                i += len(cursor)
-                contestant.save()
-                cursor.append(contestant)
-                continue
-            else:
-                i += 1
-                contestant.place = i
-                contestant.save()
-                cursor = [contestant]
-        return "{0} Ready for Review".format(self)
 
     class Meta:
         unique_together = (
@@ -934,6 +890,8 @@ class Contestant(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (30, 'dnq', 'Did Not Qualify',),
+        (50, 'qualified', 'Qualified',),
         (90, 'final', 'Final',),
     )
 
@@ -953,7 +911,7 @@ class Contestant(TimeStampedModel):
     )
 
     # Denormalization
-    place = models.IntegerField(
+    rank = models.IntegerField(
         help_text="""
             The final ranking relative to this award.""",
         null=True,
@@ -1074,7 +1032,7 @@ class Contestant(TimeStampedModel):
         )
         ordering = (
             'contest',
-            'place',
+            'rank',
         )
 
     class JSONAPIMeta:
@@ -2100,7 +2058,7 @@ class Performance(TimeStampedModel):
     )
 
     # Denormalized
-    place = models.IntegerField(
+    rank = models.IntegerField(
         help_text="""
             The final ranking relative to this round.""",
         null=True,
@@ -2472,7 +2430,7 @@ class Performer(TimeStampedModel):
         # editable=False,
     )
 
-    place = models.IntegerField(
+    rank = models.IntegerField(
         null=True,
         blank=True,
         editable=False,
@@ -2556,7 +2514,7 @@ class Performer(TimeStampedModel):
     def delta_place(self):
         """The difference between qualifying rank and final rank.""",
         try:
-            return self.seed - self.place
+            return self.seed - self.rank
         except TypeError:
             return None
 
@@ -3097,38 +3055,22 @@ class Round(TimeStampedModel):
             performance.save()
         return
 
-    @transition(
-        field=status,
-        source=STATUS.finished,
-        target=STATUS.ranked,
-        conditions=[
-            # Add performances ACCEPTED
-        ]
-    )
+    # @transition(
+    #     field=status,
+    #     source=STATUS.finished,
+    #     target=STATUS.ranked,
+    #     conditions=[
+    #         # Add performances ACCEPTED
+    #     ]
+    # )
     def rank(self):
-        # TODO Validate performances over
-        cursor = []
-        i = 1
-        for performance in self.performances.order_by('-total_points'):
-            try:
-                match = performance.total_points == cursor[0].total_points
-            except IndexError:
-                performance.place = i
-                performance.save()
-                cursor.append(performance)
-                continue
-            if match:
-                performance.place = i
-                i += len(cursor)
-                performance.save()
-                cursor.append(performance)
-                continue
-            else:
-                i += 1
-                performance.place = i
-                performance.save()
-                cursor = [performance]
-        return "Round Ended"
+        performances = self.performances.order_by('-total_points')
+        points = [performance.total_points for performance in performances]
+        ranking = Ranking(points, start=1)
+        for performance in performances:
+            performance.rank = ranking.rank(performance.total_points)
+            performance.save()
+        return
 
     @transition(
         field=status,
@@ -3527,16 +3469,19 @@ class Session(TimeStampedModel):
         # Triggered in UI
         return
 
-    @transition(
-        field=status,
-        source=STATUS.finished,
-        target=STATUS.ranked,
-        conditions=[
-        ],
-    )
+    # @transition(
+    #     field=status,
+    #     source=STATUS.finished,
+    #     target=STATUS.ranked,
+    #     conditions=[
+    #     ],
+    # )
     def rank(self):
-        for performer in self.performers.all():
-            performer.calculate()
+        performers = self.performers.order_by('-total_points')
+        points = [performer.total_points for performer in performers]
+        ranking = Ranking(points, start=1)
+        for performer in performers:
+            performer.rank = ranking.rank(performer.total_points)
             performer.save()
         return
 
