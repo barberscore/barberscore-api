@@ -167,7 +167,6 @@ class Award(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
         (20, 'inactive', 'Inactive',),
-        (30, 'idiomatic', 'Idiomatic',),
     )
 
     status = FSMIntegerField(
@@ -182,8 +181,6 @@ class Award(TimeStampedModel):
 
     kind = models.IntegerField(
         choices=KIND,
-        null=True,
-        blank=True,
     )
 
     AGE = Choices(
@@ -208,8 +205,6 @@ class Award(TimeStampedModel):
 
     season = models.IntegerField(
         choices=SEASON,
-        null=True,
-        blank=True,
     )
 
     SIZE = Choices(
@@ -292,8 +287,6 @@ class Award(TimeStampedModel):
 
     level = models.IntegerField(
         choices=LEVEL,
-        null=True,
-        blank=True,
         editable=False,
     )
 
@@ -336,6 +329,7 @@ class Award(TimeStampedModel):
                 'size',
                 'idiom',
                 'kind',
+                'age',
             ),
         )
 
