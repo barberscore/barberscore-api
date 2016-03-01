@@ -13,6 +13,8 @@ from django.db import (
     models,
 )
 
+from django.apps import apps
+
 from django.contrib.postgres.fields import (
     DateRangeField,
     DateTimeRangeField,
@@ -1021,49 +1023,50 @@ class Contestant(TimeStampedModel):
         super(Contestant, self).save(*args, **kwargs)
 
     def calculate(self):
-        self.performer.calculate()
-        self.performer.save()
-        # If there are no performances, skip.
-        if self.performer.performances.exists():
-            agg = self.performer.performances.filter(
-                round__num__lte=self.contest.award.rounds,
-            ).filter(
-                round__session=self.performer.session,
-            ).aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
+        Score = apps.get_model('api', 'Score')
+        scores = Score.objects.filter(
+            song__performance__round__num__lte=self.contest.award.num_rounds,
+            song__performance__round__session=self.contest.session,
+        ).exclude(
+            kind=Score.KIND.practice,
+        ).order_by(
+            'category',
+        ).values(
+            'category',
+        ).annotate(
+            total=models.Sum('points'),
+            average=models.Avg('points'),
+        )
+        for score in scores:
+            if score['category'] == Score.CATEGORY.music:
+                self.mus_points = score['total']
+                self.mus_score = score['average']
+            if score['category'] == Score.CATEGORY.presentation:
+                self.prs_points = score['total']
+                self.prs_score = score['average']
+            if score['category'] == Score.CATEGORY.singing:
+                self.sng_points = score['total']
+                self.sng_score = score['average']
 
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
 
-            # Calculate percentile
-            try:
-                size = self.performer.session.size
-                possible = size * 2 * self.performer.performances.count()
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
-            except ZeroDivisionError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
+        # Calculate total score.
+        try:
+            self.total_score = sum([
+                self.mus_score,
+                self.prs_score,
+                self.sng_score,
+            ]) / 3
+        except TypeError:
+            self.total_score = None
 
     class Meta:
         unique_together = (
@@ -2212,40 +2215,49 @@ class Performance(TimeStampedModel):
         resource_name = "performance"
 
     def calculate(self):
-        for song in self.songs.all():
-            song.calculate()
-            song.save()
-        if self.songs.exists():
-            agg = self.songs.all().aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
+        Score = apps.get_model('api', 'Score')
+        scores = Score.objects.filter(
+            song__performance=self,
+        ).exclude(
+            kind=Score.KIND.practice,
+        ).order_by(
+            'category',
+        ).values(
+            'category',
+        ).annotate(
+            total=models.Sum('points'),
+            average=models.Avg('points'),
+        )
+        for score in scores:
+            if score['category'] == Score.CATEGORY.music:
+                self.mus_points = score['total']
+                self.mus_score = score['average']
+            if score['category'] == Score.CATEGORY.presentation:
+                self.prs_points = score['total']
+                self.prs_score = score['average']
+            if score['category'] == Score.CATEGORY.singing:
+                self.sng_points = score['total']
+                self.sng_score = score['average']
 
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
 
-            # Calculate percentile scores
-            try:
-                possible = self.round.session.size * 2
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
+        # Calculate total score.
+        try:
+            self.total_score = sum([
+                self.mus_score,
+                self.prs_score,
+                self.sng_score,
+            ]) / 3
+        except TypeError:
+            self.total_score = None
 
     def get_preceding(self):
         try:
@@ -2591,41 +2603,49 @@ class Performer(TimeStampedModel):
         resource_name = "performer"
 
     def calculate(self):
-        for performance in self.performances.all():
-            performance.calculate()
-            performance.save()
-        # If there are no performances, skip.
-        if self.performances.exists():
-            agg = self.performances.all().aggregate(
-                mus=models.Sum('mus_points'),
-                prs=models.Sum('prs_points'),
-                sng=models.Sum('sng_points'),
-            )
-            self.mus_points = agg['mus']
-            self.prs_points = agg['prs']
-            self.sng_points = agg['sng']
+        Score = apps.get_model('api', 'Score')
+        scores = Score.objects.filter(
+            song__performance__performer=self,
+        ).exclude(
+            kind=Score.KIND.practice,
+        ).order_by(
+            'category',
+        ).values(
+            'category',
+        ).annotate(
+            total=models.Sum('points'),
+            average=models.Avg('points'),
+        )
+        for score in scores:
+            if score['category'] == Score.CATEGORY.music:
+                self.mus_points = score['total']
+                self.mus_score = score['average']
+            if score['category'] == Score.CATEGORY.presentation:
+                self.prs_points = score['total']
+                self.prs_score = score['average']
+            if score['category'] == Score.CATEGORY.singing:
+                self.sng_points = score['total']
+                self.sng_score = score['average']
 
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
 
-            # Calculate percentile
-            try:
-                possible = self.session.size * 2 * self.performances.count()
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
+        # Calculate total score.
+        try:
+            self.total_score = sum([
+                self.mus_score,
+                self.prs_score,
+                self.sng_score,
+            ]) / 3
+        except TypeError:
+            self.total_score = None
 
     @transition(
         field=status,
@@ -3771,48 +3791,49 @@ class Song(TimeStampedModel):
         super(Song, self).save(*args, **kwargs)
 
     def calculate(self):
-        if self.scores.exists():
-            # Only use the Scores model when we have scores
-            # from a judging panel.  Otherwise, use what's
-            # already there (typically imported).
-            scores = self.scores.exclude(
-                kind=self.scores.model.KIND.practice,
-            ).order_by(
-                'category',
-            ).values(
-                'category',
-            ).annotate(
-                total=models.Sum('points')
-            )
-            for score in scores:
-                if score['category'] == self.scores.model.CATEGORY.music:
-                    self.mus_points = score['total']
-                if score['category'] == self.scores.model.CATEGORY.presentation:
-                    self.prs_points = score['total']
-                if score['category'] == self.scores.model.CATEGORY.singing:
-                    self.sng_points = score['total']
+        Score = apps.get_model('api', 'Score')
+        scores = Score.objects.filter(
+            song=self,
+        ).exclude(
+            kind=Score.KIND.practice,
+        ).order_by(
+            'category',
+        ).values(
+            'category',
+        ).annotate(
+            total=models.Sum('points'),
+            average=models.Avg('points'),
+        )
+        for score in scores:
+            if score['category'] == Score.CATEGORY.music:
+                self.mus_points = score['total']
+                self.mus_score = score['average']
+            if score['category'] == Score.CATEGORY.presentation:
+                self.prs_points = score['total']
+                self.prs_score = score['average']
+            if score['category'] == Score.CATEGORY.singing:
+                self.sng_points = score['total']
+                self.sng_score = score['average']
 
-            # Calculate total points.
-            try:
-                self.total_points = sum([
-                    self.mus_points,
-                    self.prs_points,
-                    self.sng_points,
-                ])
-            except TypeError:
-                self.total_points = None
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
 
-            # Calculate percentile scores.
-            try:
-                possible = self.performance.round.session.size
-                self.mus_score = round(self.mus_points / possible, 1)
-                self.prs_score = round(self.prs_points / possible, 1)
-                self.sng_score = round(self.sng_points / possible, 1)
-                self.total_score = round(self.total_points / (possible * 3), 1)
-            except TypeError:
-                self.mus_score = None
-                self.prs_score = None
-                self.sng_score = None
+        # Calculate total score.
+        try:
+            self.total_score = sum([
+                self.mus_score,
+                self.prs_score,
+                self.sng_score,
+            ]) / 3
+        except TypeError:
+            self.total_score = None
 
 
 class Tune(TimeStampedModel):
