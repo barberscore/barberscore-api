@@ -792,23 +792,10 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        # if not self.award.idiom:
-        #     if self.session.convention.division:
-        #         if self.award.organization.kind == self.award.organization.KIND.division:
-        #             self.is_qualifier = False
-        #         else:
-        #             self.is_qualifier = True
-        #     else:
-        #         if self.award.organization == self.session.convention.organization:
-        #             self.is_qualifier = False
-        #         else:
-        #             self.is_qualifier = True
-        # else:
-        #     self.is_qualifier = False
         self.name = " ".join(filter(None, [
             self.award.name,
-            # str(self.session.convention.year),
             self.session.name,
+            # str(self.session.convention.year),
             # self.award.organization.name,
             # self.award.get_kind_display(),
             # self.award.long_name,
