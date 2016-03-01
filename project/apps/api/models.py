@@ -1121,6 +1121,15 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    venue = models.ForeignKey(
+        'Venue',
+        null=True,
+        blank=True,
+        related_name='conventions',
+        help_text="""
+            The venue for the convention.""",
+    )
+
     organization = TreeForeignKey(
         'Organization',
         help_text="""

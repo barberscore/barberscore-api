@@ -13,6 +13,7 @@ from .filters import (
     PersonFilter,
     GroupFilter,
     TuneFilter,
+    VenueFilter,
 )
 
 
@@ -37,6 +38,7 @@ from .models import (
     Singer,
     Song,
     Tune,
+    Venue,
 )
 
 from .serializers import (
@@ -62,6 +64,7 @@ from .serializers import (
     SingerSerializer,
     SongSerializer,
     TuneSerializer,
+    VenueSerializer,
 )
 
 
@@ -300,3 +303,16 @@ class TuneViewSet(viewsets.ModelViewSet):
         'name',
     )
     filter_class = TuneFilter
+
+
+class VenueViewSet(viewsets.ModelViewSet):
+    queryset = Venue.objects.prefetch_related(
+        'conventions',
+    )
+    serializer_class = VenueSerializer
+    # lookup_field = 'slug'
+    resource_name = "venue"
+    filter_fields = (
+        'name',
+    )
+    filter_class = VenueFilter

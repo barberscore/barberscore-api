@@ -21,6 +21,7 @@ from .views import (
     SingerViewSet,
     SongViewSet,
     TuneViewSet,
+    VenueViewSet,
 )
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -45,4 +46,5 @@ router.register(r'session', SessionViewSet)
 router.register(r'singer', SingerViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'tune', TuneViewSet)
+router.register(r'venue', VenueViewSet)
 urlpatterns = router.urls

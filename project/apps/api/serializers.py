@@ -37,11 +37,7 @@ from .models import (
     Singer,
     Song,
     Tune,
-)
-
-from .search_indexes import (
-    GroupIndex,
-    PersonIndex,
+    Venue,
 )
 
 
@@ -198,7 +194,6 @@ class ConventionSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
     date = DateRangeField()
-    timezone = TimezoneField()
 
     class Meta:
         model = Convention
@@ -212,11 +207,10 @@ class ConventionSerializer(serializers.ModelSerializer):
             'level',
             'division',
             'date',
-            'location',
+            'venue',
             'year',
             'organization',
             'drcj',
-            'timezone',
             'sessions',
             'human_date',
         )
@@ -724,4 +718,30 @@ class TuneSerializer(serializers.ModelSerializer):
             'name',
             # 'catalogs',
             'songs',
+        )
+
+
+class VenueSerializer(serializers.ModelSerializer):
+    # catalogs = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # songs = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+    timezone = TimezoneField()
+
+    class Meta:
+        model = Venue
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'timezone',
+            'conventions',
         )

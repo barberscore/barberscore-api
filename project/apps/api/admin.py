@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-import datetime
-
 from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
 
@@ -13,14 +11,12 @@ from .inlines import (
     ContestantInline,
     SessionInline,
     PerformerInline,
-    PerformerStackedInline,
     DirectorInline,
     GroupInline,
     JudgeInline,
     PerformanceInline,
     ScoreInline,
     RoundInline,
-    RankingInline,
     SingerInline,
     SongStackedInline,
     OrganizationInline,
@@ -45,10 +41,9 @@ from .models import (
     Round,
     Song,
     Tune,
+    Venue,
     User,
 )
-
-import arrow
 
 # from grappelli.forms import GrappelliSortableHiddenMixin
 from super_inlines.admin import SuperModelAdmin
@@ -273,7 +268,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'name',
         'status',
-        ('location', 'timezone',),
+        'venue',
         # 'dates',
         'date',
         'year',
@@ -466,11 +461,6 @@ class OrganizationAdmin(MPTTModelAdmin):
         AwardInline,
         OrganizationInline,
     ]
-
-
-    # ordering = [
-    #     'tree_id',
-    # ]
 
 
 @admin.register(Performance)
@@ -897,6 +887,19 @@ class TuneAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',
+    )
+
+    search_fields = (
+        'name',
+    )
+
+
+@admin.register(Venue)
+class VenueAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = (
+        'name',
+        'timezone',
     )
 
     search_fields = (
