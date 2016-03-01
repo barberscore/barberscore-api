@@ -622,6 +622,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'age',
             'convention',
             'administrator',
+            'aca',
             'rounds',
             'performers',
             'contests',

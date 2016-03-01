@@ -3305,7 +3305,14 @@ class Session(TimeStampedModel):
 
     administrator = models.ForeignKey(
         'Person',
-        related_name='sessions',
+        related_name='sessions_ca',
+        null=True,
+        blank=True,
+    )
+
+    aca = models.ForeignKey(
+        'Person',
+        related_name='sessions_aca',
         null=True,
         blank=True,
     )
