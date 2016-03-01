@@ -166,6 +166,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
         'organization',
+        'venue',
     ).prefetch_related(
         'sessions',
     )
