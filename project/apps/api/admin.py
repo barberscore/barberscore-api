@@ -74,7 +74,6 @@ class AwardAdmin(admin.ModelAdmin):
         'is_improved',
         'idiom',
         'num_rounds',
-        'season',
         'stix_name',
     ]
 
@@ -187,7 +186,7 @@ class ContestAdmin(admin.ModelAdmin):
         'award__is_primary',
         'award__organization__level',
         'award__kind',
-        'award__season',
+        'award__age',
         'is_qualifier',
     ]
 

@@ -195,18 +195,6 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    SEASON = Choices(
-        (1, 'international', 'International',),
-        (2, 'midwinter', 'Midwinter',),
-        (3, 'fall', 'Fall',),
-        (4, 'spring', 'Spring',),
-        (9, 'video', 'Video',),
-    )
-
-    season = models.IntegerField(
-        choices=SEASON,
-    )
-
     SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
@@ -304,7 +292,6 @@ class Award(TimeStampedModel):
         else:
             novice = None
         self.name = " ".join(filter(None, [
-            # self.id.hex,
             self.organization.name,
             most_improved,
             novice,
@@ -317,9 +304,10 @@ class Award(TimeStampedModel):
 
     class Meta:
         ordering = (
-            'organization__level',
-            'organization__name',
+            'level',
+            'is_primary',
             'kind',
+            'age',
             'size',
         )
         unique_together = (
