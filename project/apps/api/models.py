@@ -1121,12 +1121,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    timezone = TimeZoneField(
-        help_text="""
-            The local timezone of the convention.""",
-        default='US/Pacific',
-    )
-
     organization = TreeForeignKey(
         'Organization',
         help_text="""
@@ -3785,6 +3779,45 @@ class Tune(TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "tune"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+
+class Venue(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        unique=True,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    timezone = TimeZoneField(
+        help_text="""
+            The local timezone of the venue.""",
+        default='US/Pacific',
+    )
+
+    @staticmethod
+    def autocomplete_search_fields():
+            return ("id__iexact", "name__icontains",)
+
+    class Meta:
+        ordering = ['name']
+
+    class JSONAPIMeta:
+        resource_name = "venue"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
