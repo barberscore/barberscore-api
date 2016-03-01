@@ -78,8 +78,6 @@ class ArrangerViewSet(viewsets.ModelViewSet):
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
         'organization',
-    ).prefetch_related(
-        'contestants',
     )
     serializer_class = AwardSerializer
     # lookup_field = 'slug'
@@ -123,6 +121,7 @@ class ContestViewSet(viewsets.ModelViewSet):
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'performer',
+        'contest',
     )
     serializer_class = ContestantSerializer
     resource_name = 'contestant'
@@ -138,6 +137,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         'performers',
         'rounds',
         'judges',
+        'contests',
     )
     serializer_class = SessionSerializer
     # lookup_field = 'slug'
@@ -148,11 +148,12 @@ class PerformerViewSet(viewsets.ModelViewSet):
     queryset = Performer.objects.select_related(
         'session',
         'organization',
+        'group',
     ).prefetch_related(
         'performances',
         'contestants',
-        # 'directors',
-        # 'singers',
+        'directors',
+        'singers',
     )
     serializer_class = PerformerSerializer
     # lookup_field = 'slug'
@@ -192,8 +193,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         'name',
     )
     filter_class = GroupFilter
-
-
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
@@ -280,6 +279,7 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'catalog',
         'performance',
+        'tune',
     ).prefetch_related(
         'scores',
     )
