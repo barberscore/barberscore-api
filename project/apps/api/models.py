@@ -1025,8 +1025,8 @@ class Contestant(TimeStampedModel):
     def calculate(self):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
+            song__performance__performer=self.performer,
             song__performance__round__num__lte=self.contest.award.num_rounds,
-            song__performance__round__session=self.contest.session,
         ).exclude(
             kind=Score.KIND.practice,
         ).order_by(
@@ -1040,13 +1040,13 @@ class Contestant(TimeStampedModel):
         for score in scores:
             if score['category'] == Score.CATEGORY.music:
                 self.mus_points = score['total']
-                self.mus_score = score['average']
+                self.mus_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.presentation:
                 self.prs_points = score['total']
-                self.prs_score = score['average']
+                self.prs_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.singing:
                 self.sng_points = score['total']
-                self.sng_score = score['average']
+                self.sng_score = round(score['average'], 1)
 
         # Calculate total points.
         try:
@@ -1060,11 +1060,11 @@ class Contestant(TimeStampedModel):
 
         # Calculate total score.
         try:
-            self.total_score = sum([
+            self.total_score = round(sum([
                 self.mus_score,
                 self.prs_score,
                 self.sng_score,
-            ]) / 3
+            ]) / 3, 1)
         except TypeError:
             self.total_score = None
 
@@ -2231,13 +2231,13 @@ class Performance(TimeStampedModel):
         for score in scores:
             if score['category'] == Score.CATEGORY.music:
                 self.mus_points = score['total']
-                self.mus_score = score['average']
+                self.mus_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.presentation:
                 self.prs_points = score['total']
-                self.prs_score = score['average']
+                self.prs_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.singing:
                 self.sng_points = score['total']
-                self.sng_score = score['average']
+                self.sng_score = round(score['average'], 1)
 
         # Calculate total points.
         try:
@@ -2251,11 +2251,11 @@ class Performance(TimeStampedModel):
 
         # Calculate total score.
         try:
-            self.total_score = sum([
+            self.total_score = round(sum([
                 self.mus_score,
                 self.prs_score,
                 self.sng_score,
-            ]) / 3
+            ]) / 3, 1)
         except TypeError:
             self.total_score = None
 
@@ -2619,13 +2619,13 @@ class Performer(TimeStampedModel):
         for score in scores:
             if score['category'] == Score.CATEGORY.music:
                 self.mus_points = score['total']
-                self.mus_score = score['average']
+                self.mus_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.presentation:
                 self.prs_points = score['total']
-                self.prs_score = score['average']
+                self.prs_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.singing:
                 self.sng_points = score['total']
-                self.sng_score = score['average']
+                self.sng_score = round(score['average'], 1)
 
         # Calculate total points.
         try:
@@ -2639,11 +2639,11 @@ class Performer(TimeStampedModel):
 
         # Calculate total score.
         try:
-            self.total_score = sum([
+            self.total_score = round(sum([
                 self.mus_score,
                 self.prs_score,
                 self.sng_score,
-            ]) / 3
+            ]) / 3, 1)
         except TypeError:
             self.total_score = None
 
@@ -3807,13 +3807,13 @@ class Song(TimeStampedModel):
         for score in scores:
             if score['category'] == Score.CATEGORY.music:
                 self.mus_points = score['total']
-                self.mus_score = score['average']
+                self.mus_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.presentation:
                 self.prs_points = score['total']
-                self.prs_score = score['average']
+                self.prs_score = round(score['average'], 1)
             if score['category'] == Score.CATEGORY.singing:
                 self.sng_points = score['total']
-                self.sng_score = score['average']
+                self.sng_score = round(score['average'], 1)
 
         # Calculate total points.
         try:
@@ -3827,11 +3827,11 @@ class Song(TimeStampedModel):
 
         # Calculate total score.
         try:
-            self.total_score = sum([
+            self.total_score = round(sum([
                 self.mus_score,
                 self.prs_score,
                 self.sng_score,
-            ]) / 3
+            ]) / 3, 1)
         except TypeError:
             self.total_score = None
 

@@ -1142,6 +1142,23 @@ def rank(convention):
     return
 
 
+def calculate(convention):
+    for session in convention.sessions.all():
+        for performer in session.performers.all():
+            for performance in performer.performances.all():
+                for song in performance.songs.all():
+                    song.calculate()
+                    song.save()
+                performance.calculate()
+                performance.save()
+            performer.calculate()
+            performer.save()
+            for contestant in performer.contestants.all():
+                contestant.calculate()
+                contestant.save()
+    return
+
+
 def chapter_district(chapter):
     if not chapter.code:
         log.error("No Chapter Code for {0}".format(chapter))
