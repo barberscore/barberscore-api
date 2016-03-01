@@ -214,6 +214,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'sessions',
             'human_date',
         )
+        # lookup_field = 'slug'
 
 
 class DirectorSerializer(serializers.ModelSerializer):
