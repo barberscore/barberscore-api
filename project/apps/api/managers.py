@@ -2,26 +2,6 @@ from django.contrib.auth.models import (
     BaseUserManager,
 )
 
-from django.db import (
-    models,
-)
-
-from django.db.models.query import (
-    QuerySet,
-)
-
-
-class PerformerQuerySet(QuerySet):
-    def accepted(self):
-        return self.filter(
-            status=self.model.STATUS.accepted,
-        )
-
-    def official(self):
-        return self.filter(
-            status=self.model.STATUS.official,
-        )
-
 
 class UserManager(BaseUserManager):
 

@@ -5,6 +5,7 @@ import logging
 import uuid
 
 import os
+
 import datetime
 
 import arrow
@@ -31,7 +32,6 @@ from django.core.validators import (
 
 from django_fsm import (
     transition,
-    # FSMField,
     FSMIntegerField,
 )
 
@@ -69,7 +69,6 @@ from ranking import Ranking
 
 from .managers import (
     UserManager,
-    PerformerQuerySet,
 )
 
 log = logging.getLogger(__name__)
@@ -92,6 +91,7 @@ class Arranger(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -101,27 +101,16 @@ class Arranger(TimeStampedModel):
         max_length=255,
     )
 
-    PART = Choices(
-        (1, 'arranger', 'Arranger'),
-        (2, 'coarranger', 'Co-Arranger'),
-    )
-
-    part = models.IntegerField(
-        choices=PART,
-        default=PART.arranger,
-    )
-
     catalog = models.ForeignKey(
         'Catalog',
         related_name='arrangers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='arrangements',
+        on_delete=models.CASCADE,
     )
 
     def __unicode__(self):
@@ -2473,8 +2462,6 @@ class Performer(TimeStampedModel):
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
 
-    objects = PerformerQuerySet.as_manager()
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3382,7 +3369,9 @@ class Session(TimeStampedModel):
         # TODO seed performers?
         round = self.rounds.get(num=1)
         p = 0
-        for performer in self.performers.accepted().order_by('?'):
+        for performer in self.performers.filter(
+            status=self.model.STATUS.accepted,
+        ).order_by('?'):
             performer.register()
             performer.save()
             round.performances.create(
