@@ -281,7 +281,8 @@ class Award(TimeStampedModel):
     class Meta:
         ordering = (
             'level',
-            'is_primary',
+            'organization',
+            '-is_primary',
             'kind',
             'size',
         )
@@ -1918,9 +1919,9 @@ class Organization(MPTTModel, TimeStampedModel):
             'kind',
             'short_name',
         ]
-        # ordering = [
-        #     'tree_id',
-        # ]
+        ordering = [
+            'tree_id',
+        ]
 
     class JSONAPIMeta:
         resource_name = "organization"
