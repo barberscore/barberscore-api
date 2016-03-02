@@ -300,7 +300,6 @@ class Award(TimeStampedModel):
             novice,
             self.get_size_display(),
             self.idiom,
-            self.get_age_display(),
             self.get_kind_display(),
         ]))
         super(Award, self).save(*args, **kwargs)
@@ -310,7 +309,6 @@ class Award(TimeStampedModel):
             'level',
             'is_primary',
             'kind',
-            'age',
             'size',
         )
         unique_together = (
@@ -320,7 +318,6 @@ class Award(TimeStampedModel):
                 'size',
                 'idiom',
                 'kind',
-                'age',
             ),
         )
 
@@ -1472,27 +1469,7 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    is_quartet = models.BooleanField(
-        default=False,
-    )
-
-    is_chorus = models.BooleanField(
-        default=False,
-    )
-
-    is_senior = models.BooleanField(
-        default=False,
-    )
-
-    is_collegiate = models.BooleanField(
-        default=False,
-    )
-
     is_novice = models.BooleanField(
-        default=False,
-    )
-
-    is_youth = models.BooleanField(
         default=False,
     )
 
@@ -2126,7 +2103,6 @@ class Performance(TimeStampedModel):
             self.round.session.convention.organization.name,
             self.round.session.convention.get_division_display(),
             self.round.session.convention.get_season_display(),
-            self.round.session.get_age_display(),
             self.round.session.get_kind_display(),
             self.round.get_kind_display(),
             str(self.round.session.convention.year),
@@ -2516,7 +2492,6 @@ class Performer(TimeStampedModel):
             self.session.convention.get_division_display(),
             self.session.convention.get_season_display(),
             str(self.session.convention.year),
-            self.session.get_age_display(),
             self.session.get_kind_display(),
             "Performer",
             self.group.name,
@@ -2983,7 +2958,6 @@ class Round(TimeStampedModel):
             self.session.convention.organization.name,
             self.session.convention.get_division_display(),
             self.session.convention.get_season_display(),
-            self.session.get_age_display(),
             self.session.get_kind_display(),
             self.get_kind_display(),
             str(self.session.convention.year),
@@ -3282,29 +3256,6 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    # SIZE_CHOICES = []
-    # for r in reversed(range(1, 6)):
-    #     SIZE_CHOICES.append((r, r))
-
-    # size = models.IntegerField(
-    #     help_text="""
-    #         Size of the judging panel (per category).""",
-    #     choices=SIZE_CHOICES,
-    # )
-
-    # ROUNDS_CHOICES = []
-    # for r in reversed(range(1, 4)):
-    #     ROUNDS_CHOICES.append((r, r))
-
-    # num_rounds = models.IntegerField(
-    #     help_text="""
-    #         Number of rounds (rounds) for the session.""",
-    #     choices=ROUNDS_CHOICES,
-    #     default=1,
-    #     null=True,
-    #     blank=True,
-    # )
-
     date = DateRangeField(
         help_text="""
             The active dates of the session.""",
@@ -3389,7 +3340,6 @@ class Session(TimeStampedModel):
             self.convention.organization.name,
             self.convention.get_division_display(),
             self.convention.get_season_display(),
-            self.get_age_display(),
             self.get_kind_display(),
             "Session",
             str(self.convention.year),
@@ -3398,7 +3348,7 @@ class Session(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('convention', 'kind', 'age',),
+            ('convention', 'kind',),
         )
         ordering = (
             '-year',
@@ -3709,7 +3659,6 @@ class Song(TimeStampedModel):
             self.performance.round.session.convention.organization.name,
             self.performance.round.session.convention.get_division_display(),
             self.performance.round.session.convention.get_season_display(),
-            self.performance.round.session.get_age_display(),
             self.performance.round.session.get_kind_display(),
             self.performance.round.get_kind_display(),
             str(self.performance.round.session.convention.year),

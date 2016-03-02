@@ -76,7 +76,6 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'level',
         'kind',
-        'age',
         'organization',
         'is_primary',
         'is_novice',

@@ -515,21 +515,15 @@ def import_convention(path, season, division=False):
 def get_session_kind(name):
     if 'Chorus' in name:
         kind = Session.KIND.chorus
+    elif 'Seniors' in name:
+        kind = Session.AGE.seniors
+    elif 'Collegiate' in name:
+        kind = Session.AGE.collegiate
+    elif 'Youth' in name:
+        kind = Session.AGE.youth
     else:
         kind = Session.KIND.quartet
     return kind
-
-
-def get_session_age(name):
-    if 'Seniors' in name:
-        age = Session.AGE.seniors
-    elif 'Collegiate' in name:
-        age = Session.AGE.collegiate
-    elif 'Youth' in name:
-        age = Session.AGE.youth
-    else:
-        age = None
-    return age
 
 
 def get_round_kind(name):
@@ -553,10 +547,8 @@ def extract_sessions(convention):
             continue
         if row[0].startswith('Subsessions:'):
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             convention.sessions.get_or_create(
                 kind=kind,
-                age=age,
                 status=Session.STATUS.final,
             )
     return
@@ -570,10 +562,8 @@ def extract_rounds(convention):
             continue
         if row[0].startswith("Subsessions:"):
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             round_kind = get_round_kind(row[0])
             session.rounds.create(
@@ -600,10 +590,8 @@ def extract_panel(convention):
             continue
         if row[0].startswith('Panel'):
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             round_kind = get_round_kind(row[0])
             try:
@@ -684,10 +672,8 @@ def extract_performers(convention):
             continue
         if row[0].startswith("Session: ") and row[4].endswith("1"):
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             contestant_text = unidecode(row[1].partition(":")[2].strip())
             if contestant_text == '(Not Found)':
@@ -742,10 +728,8 @@ def extract_contests(convention):
             continue
         if row[0].startswith("Subsessions:"):
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             contest_list = row[1:]
             excludes = [
@@ -780,7 +764,6 @@ def extract_contests(convention):
                 if 'Preliminary' in stix_name:
                     award = Award.objects.get(
                         kind=kind,
-                        age=age,
                         organization=convention.organization.parent,
                         is_primary=True,
                     )
@@ -826,9 +809,8 @@ def extract_contestants(convention):
             continue
         if row[0].startswith("Subsessions:"):
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             rnd = get_round_kind(row[0])
-            key = "{0}{1}{2}".format(kind, age, rnd)
+            key = "{0}{1}{2}".format(kind, rnd)
             kind_list = []
             contest_list = row[1:]
             excludes = [
@@ -850,12 +832,10 @@ def extract_contestants(convention):
         if row[0].startswith("Session: "):
             # first retrieve the performer
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             rnd = get_round_kind(row[0])
-            key = "{0}{1}{2}".format(kind, age, rnd)
+            key = "{0}{1}{2}".format(kind, rnd)
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -919,10 +899,8 @@ def extract_performances(convention):
         if row[0].startswith("Session: "):
             # first retrieve the performer
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -976,10 +954,8 @@ def extract_songs(convention):
         if row[0].startswith("Session: "):
             # first retrieve the performance
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -1045,10 +1021,8 @@ def extract_scores(convention):
         if row[0].startswith("Session: "):
             # first retrieve the songs
             kind = get_session_kind(row[0])
-            age = get_session_age(row[0])
             session = convention.sessions.get(
                 kind=kind,
-                age=age,
             )
             performer_text = unidecode(row[1].partition(":")[2].strip())
 
@@ -1190,7 +1164,6 @@ def generate_cycle(year):
         for session in sessions:
             new_s, f = new_v.sessions.get_or_create(
                 kind=session.kind,
-                age=session.age,
             )
             log.info("{0}, {1}".format(new_s, f))
             rounds = session.rounds.all()

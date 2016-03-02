@@ -614,7 +614,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
-            'age',
             'convention',
             'administrator',
             'aca',
