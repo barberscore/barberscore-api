@@ -516,11 +516,11 @@ def get_session_kind(name):
     if 'Chorus' in name:
         kind = Session.KIND.chorus
     elif 'Seniors' in name:
-        kind = Session.AGE.seniors
+        kind = Session.KIND.seniors
     elif 'Collegiate' in name:
-        kind = Session.AGE.collegiate
+        kind = Session.KIND.collegiate
     elif 'Youth' in name:
-        kind = Session.AGE.youth
+        kind = Session.KIND.youth
     else:
         kind = Session.KIND.quartet
     return kind

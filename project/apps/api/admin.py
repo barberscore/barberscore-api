@@ -88,7 +88,6 @@ class AwardAdmin(admin.ModelAdmin):
         'organization',
         'level',
         'kind',
-        'age',
         'size',
         ('is_primary', 'is_improved', 'is_novice'),
         'idiom',
@@ -180,7 +179,6 @@ class ContestAdmin(admin.ModelAdmin):
         'award__is_primary',
         'award__organization__level',
         'award__kind',
-        'award__age',
         'is_qualifier',
     ]
 
@@ -755,7 +753,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'name',
         'status',
         'convention',
-        ('kind', 'age',),
+        'kind',
         'administrator',
         # 'organization',
         # 'year',
@@ -768,7 +766,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status',
         'convention',
         'kind',
-        'age',
         'administrator',
         # 'size',
         # 'num_rounds',
@@ -777,7 +774,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
     list_filter = (
         'status',
         'kind',
-        'age',
         'convention__year',
         'organization',
     )
@@ -795,7 +791,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     readonly_fields = [
         'name',
-        'history_monitor',
         'organization',
     ]
 

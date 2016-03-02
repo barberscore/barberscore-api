@@ -48,10 +48,6 @@ from model_utils.models import (
     TimeStampedModel,
 )
 
-from model_utils.fields import (
-    MonitorField,
-)
-
 from model_utils import Choices
 
 from mptt.models import (
@@ -175,18 +171,6 @@ class Award(TimeStampedModel):
         choices=KIND,
     )
 
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
     SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
@@ -255,6 +239,7 @@ class Award(TimeStampedModel):
     organization = TreeForeignKey(
         'Organization',
         related_name='awards',
+        on_delete=models.CASCADE,
     )
 
     # Denormalization
@@ -304,6 +289,7 @@ class Award(TimeStampedModel):
             (
                 'organization',
                 'is_improved',
+                'is_novice',
                 'size',
                 'idiom',
                 'kind',
@@ -3231,18 +3217,6 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
     date = DateRangeField(
         help_text="""
             The active dates of the session.""",
@@ -3264,38 +3238,9 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    # Legacy
-    HISTORY = Choices(
-        (0, 'new', 'New',),
-        (10, 'none', 'None',),
-        (20, 'pdf', 'PDF',),
-        (30, 'places', 'Places',),
-        (40, 'incomplete', 'Incomplete',),
-        (50, 'complete', 'Complete',),
-    )
-
-    history = models.IntegerField(
-        help_text="""Used to manage state for historical imports.""",
-        choices=HISTORY,
-        default=HISTORY.new,
-    )
-
-    history_monitor = MonitorField(
-        help_text="""History last updated""",
-        monitor='history',
-    )
-
     scoresheet_pdf = models.FileField(
         help_text="""
             The historical PDF OSS.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    scoresheet_csv = models.FileField(
-        help_text="""
-            The parsed scoresheet (used for legacy imports).""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
