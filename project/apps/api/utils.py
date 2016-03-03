@@ -1191,3 +1191,21 @@ def generate_cycle(year):
                 )
                 log.info("{0}, {1}".format(new_c, f))
     return "Built {0}".format(year)
+
+
+def import_cj20(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        parts = ['Tenor', 'Lead', 'Baritone', 'Bass']
+        quartet = None
+        singer = None
+        chapter = None
+        for row in rows:
+            if row[1]:
+                quartet = row[1]
+            if any([string in row[10] for string in parts]):
+                singer = row[10]
+            if not any([string in row[10] for string in parts]):
+                chapter = row[10]
+            print quartet, singer, chapter

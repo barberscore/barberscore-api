@@ -308,6 +308,14 @@ class Catalog(TimeStampedModel):
         editable=False,
     )
 
+    # name = models.CharField(
+    #     max_length=255,
+    #     # unique=True,
+    #     # editable=False,
+    #     null=True,
+    #     blank=True,
+    # )
+
     song_name = models.CharField(
         blank=True,
         max_length=200,
@@ -383,6 +391,15 @@ class Catalog(TimeStampedModel):
     is_medley = models.BooleanField(
         default=False,
     )
+
+    # def __unicode__(self):
+    #     return u"{0}".format(self.name)
+
+    # def save(self, *args, **kwargs):
+    #     self.name = " ".join(filter(None, [
+    #         self.id.hex,
+    #     ]))
+    #     super(Catalog, self).save(*args, **kwargs)
 
     class JSONAPIMeta:
         resource_name = "catalog"
@@ -2758,6 +2775,13 @@ class Person(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    chapter = models.ForeignKey(
+        'Chapter',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
