@@ -323,10 +323,8 @@ class Catalog(TimeStampedModel):
 
     tune = models.ForeignKey(
         'Tune',
-        null=True,
-        blank=True,
         related_name='catalogs',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     bhs_id = models.IntegerField(
@@ -698,6 +696,134 @@ class Chapter(TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "chapter"
+
+
+class Chart(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    is_generic = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    title = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    composer = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    lyricist = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_published = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_songname = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_fee = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_songname = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_copyright_date = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    bhs_copyright_owner = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    DIFFICULTY = Choices(
+        (1, "Very Easy"),
+        (2, "Easy"),
+        (3, "Medium"),
+        (4, "Hard"),
+        (5, "Very Hard"),
+    )
+
+    bhs_difficulty = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=DIFFICULTY
+    )
+
+    TEMPO = Choices(
+        (1, "Ballad"),
+        (2, "Uptune"),
+        (3, "Mixed"),
+    )
+
+    bhs_tempo = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=TEMPO,
+    )
+
+    bhs_medley = models.BooleanField(
+        default=False,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(Chart, self).save(*args, **kwargs)
+
+    class JSONAPIMeta:
+        resource_name = "chart"
 
 
 class Contest(TimeStampedModel):
@@ -3465,6 +3591,54 @@ class Session(TimeStampedModel):
         return
 
 
+class Setlist(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    performer = models.ForeignKey(
+        'Performer',
+        related_name='setlist',
+    )
+
+    catalog = models.ForeignKey(
+        'Catalog',
+        related_name='setlist',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    class Meta:
+        unique_together = (
+            ('performer', 'catalog',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "setlist"
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0}".format(
+            self.id.hex,
+        )
+        super(Setlist, self).save(*args, **kwargs)
+
+
 class Singer(TimeStampedModel):
     """Quartet Relation."""
 
@@ -3477,6 +3651,7 @@ class Singer(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
