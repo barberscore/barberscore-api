@@ -91,6 +91,7 @@ class AwardAdmin(admin.ModelAdmin):
         'level',
         'kind',
         'size',
+        'size_range',
         ('is_primary', 'is_improved', 'is_novice'),
         'idiom',
         'num_rounds',
