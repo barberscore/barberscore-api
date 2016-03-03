@@ -332,6 +332,7 @@ class Award(TimeStampedModel):
             '-is_primary',
             'kind',
             'size',
+            'scope',
         )
         unique_together = (
             (
