@@ -14,21 +14,23 @@ import logging
 from nameparser import HumanName
 
 from .models import (
-    Organization,
-    Convention,
-    Contest,
-    Session,
-    Round,
     Award,
-    Judge,
-    Person,
     Chapter,
-    Group,
-    Performer,
+    Contest,
     Contestant,
+    Convention,
+    Group,
+    Judge,
+    Member,
+    Organization,
     Performance,
-    Song,
+    Performer,
+    Person,
+    Round,
     Score,
+    Session,
+    Singer,
+    Song,
     Tune,
 )
 
@@ -1193,19 +1195,79 @@ def generate_cycle(year):
     return "Built {0}".format(year)
 
 
-def import_cj20(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        rows = [row for row in reader]
-        parts = ['Tenor', 'Lead', 'Baritone', 'Bass']
-        quartet = None
-        singer = None
-        chapter = None
-        for row in rows:
-            if row[1]:
-                quartet = row[1]
-            if any([string in row[10] for string in parts]):
-                singer = row[10]
-            if not any([string in row[10] for string in parts]):
-                chapter = row[10]
-            print quartet, singer, chapter
+def import_entryform(session):
+    reader = csv.reader(session.entry_form, skipinitialspace=True)
+    next(reader)
+    rows = [row for row in reader]
+    parts = ['Tenor', 'Lead', 'Baritone', 'Bass']
+    output = []
+    quartet = None
+    part = None
+    member = None
+    person = None
+    chapter = None
+    person = None
+    for row in rows:
+        entry = {}
+        if row[1]:
+            quartet = row[1]
+        if any([string in row[10] for string in parts]):
+            part = row[10].partition("-")[0].strip()
+            person = row[10].partition("-")[2].strip()
+            member = person.partition("-")[0].strip()
+            person = person.partition("-")[2].strip()
+        if not any([string in row[10] for string in parts]):
+            chapter = row[10].partition(" ")[0].strip()
+        entry['quartet'] = quartet
+        entry['part'] = part.lower()
+        entry['member'] = int(member)
+        entry['chapter'] = chapter
+        entry['person'] = person
+        output.append(entry)
+    for row in output:
+        if row['chapter']:
+            try:
+                person = Person.objects.get(
+                    member=row['member'],
+                )
+            except Person.DoesNotExist:
+                try:
+                    person = Person.objects.create(
+                        member=row['member'],
+                        name=row['person'],
+                    )
+                except IntegrityError:
+                    person = Person.objects.create(
+                        member=row['member'],
+                        name="{0} {1}".format(row['person'], row['member'])
+                    )
+            try:
+                chapter = Chapter.objects.get(
+                    code=row['chapter']
+                )
+            except Chapter.DoesNotExist:
+                print row['chapter']
+            Member.objects.get_or_create(
+                chapter=chapter,
+                person=person,
+                status=Member.STATUS.active,
+            )
+    for row in output:
+        if row['chapter']:
+            try:
+                performer = Performer.objects.get(
+                    group__name=row['quartet'],
+                    session=session,
+                )
+            except Performer.DoesNotExist:
+                print row['quartet']
+                continue
+            person = Person.objects.get(
+                member=row['member'],
+            )
+            singer, created = Singer.objects.get_or_create(
+                performer=performer,
+                person=person,
+                part=getattr(Singer.PART, row['part']),
+            )
+    return

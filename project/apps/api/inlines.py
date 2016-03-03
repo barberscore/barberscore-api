@@ -17,6 +17,7 @@ from .models import (
     Director,
     Group,
     Judge,
+    Member,
     Performance,
     Organization,
     Score,
@@ -337,6 +338,23 @@ class PerformanceInline(admin.TabularInline):
         'draw',
         'link',
     )
+    classes = ('grp-collapse grp-open',)
+
+
+class MemberInline(admin.TabularInline):
+    model = Member
+    fields = (
+        'chapter',
+        'person',
+        'status',
+    )
+    extra = 0
+    raw_id_fields = (
+        'chapter',
+        'person',
+    )
+    can_delete = True
+    show_change_link = True
     classes = ('grp-collapse grp-open',)
 
 

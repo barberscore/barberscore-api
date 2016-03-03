@@ -14,6 +14,7 @@ from .inlines import (
     DirectorInline,
     GroupInline,
     JudgeInline,
+    MemberInline,
     PerformanceInline,
     ScoreInline,
     RoundInline,
@@ -35,6 +36,7 @@ from .models import (
     Group,
     Judge,
     Organization,
+    Member,
     Performance,
     Person,
     Score,
@@ -165,6 +167,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
     inlines = [
         GroupInline,
+        MemberInline,
     ]
 
     save_on_top = True
@@ -419,6 +422,21 @@ class JudgeAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Member)
+class MemberAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'chapter',
+        'person',
+        'status',
+    ]
+
+    raw_id_fields = [
+        'chapter',
+        'person',
+    ]
+
+
 @admin.register(Organization)
 class OrganizationAdmin(MPTTModelAdmin):
     fields = [
@@ -644,6 +662,7 @@ class PersonAdmin(admin.ModelAdmin):
         DirectorInline,
         SingerInline,
         ArrangerInline,
+        MemberInline,
         CertificationInline,
     ]
 
@@ -755,7 +774,8 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'convention',
         'kind',
         'administrator',
-        # 'organization',
+        'entry_form',
+        'song_list',
         # 'year',
         # # 'size',
         # 'num_rounds',

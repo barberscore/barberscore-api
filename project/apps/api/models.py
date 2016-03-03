@@ -1680,6 +1680,68 @@ class Judge(TimeStampedModel):
         resource_name = "judge"
 
 
+class Member(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    chapter = models.ForeignKey(
+        'Chapter',
+        related_name='members',
+        on_delete=models.CASCADE,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='members',
+        on_delete=models.CASCADE,
+    )
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.chapter.name,
+            self.person.name,
+        ]))
+        super(Member, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('chapter', 'person',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "member"
+
+
 class Organization(MPTTModel, TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2088,10 +2150,6 @@ class Performance(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
-            self.round,
-            self.performer.group,
-        )
         self.name = " ".join(filter(None, [
             self.round.session.convention.organization.name,
             self.round.session.convention.get_division_display(),
@@ -3266,6 +3324,22 @@ class Session(TimeStampedModel):
     scoresheet_pdf = models.FileField(
         help_text="""
             The historical PDF OSS.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    entry_form = models.FileField(
+        help_text="""
+            The cj20 entry form.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    song_list = models.FileField(
+        help_text="""
+            The cj20 song list.""",
         upload_to=generate_image_filename,
         blank=True,
         null=True,
