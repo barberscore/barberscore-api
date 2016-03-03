@@ -711,6 +711,14 @@ class Chart(TimeStampedModel):
         editable=False,
     )
 
+    tune = models.ForeignKey(
+        'Tune',
+        null=True,
+        blank=True,
+        related_name='charts',
+        on_delete=models.SET_NULL,
+    )
+
     is_generic = models.BooleanField(
         default=False,
     )
