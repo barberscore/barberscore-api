@@ -20,6 +20,7 @@ from django.contrib.postgres.fields import (
     DateRangeField,
     DateTimeRangeField,
     IntegerRangeField,
+    FloatRangeField,
 )
 
 from autoslug import AutoSlugField
@@ -173,6 +174,20 @@ class Award(TimeStampedModel):
         choices=KIND,
     )
 
+    SEASON = Choices(
+        (1, 'international', 'International',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+        (9, 'video', 'Video',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+        null=True,
+        blank=True,
+    )
+
     SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
@@ -197,6 +212,35 @@ class Award(TimeStampedModel):
     )
 
     size_range = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
+    SCOPE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (175, 'paaaaa', 'Plateau AAAAA',),
+        # (180, 'pb', 'Plateau B',),
+        # (190, 'pi', 'Plateau I',),
+        # (200, 'pii', 'Plateau II',),
+        # (210, 'piii', 'Plateau III',),
+        # (220, 'piv', 'Plateau IV',),
+        # (230, 'small', 'Small',),
+    )
+
+    scope = models.IntegerField(
+        choices=SCOPE,
+        null=True,
+        blank=True,
+    )
+
+    scope_range = FloatRangeField(
         null=True,
         blank=True,
     )
@@ -275,6 +319,7 @@ class Award(TimeStampedModel):
             most_improved,
             novice,
             self.get_size_display(),
+            self.get_scope_display(),
             self.idiom,
             self.get_kind_display(),
         ]))
@@ -294,6 +339,7 @@ class Award(TimeStampedModel):
                 'is_improved',
                 'is_novice',
                 'size',
+                'scope',
                 'idiom',
                 'kind',
             ),
@@ -717,10 +763,20 @@ class Chart(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.is_generic:
+            arranger = None
+        else:
+            arranger = "[{0}]".format(self.arranger)
         self.name = " ".join(filter(None, [
-            self.id.hex,
+            self.title,
+            arranger,
         ]))
         super(Chart, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('title', 'arranger', 'is_generic',),
+        )
 
     class JSONAPIMeta:
         resource_name = "chart"
