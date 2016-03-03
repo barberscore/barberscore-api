@@ -3,7 +3,6 @@ from rest_framework import routers
 from .views import (
     ArrangerViewSet,
     AwardViewSet,
-    CatalogViewSet,
     ChapterViewSet,
     ContestantViewSet,
     ContestViewSet,
@@ -20,7 +19,6 @@ from .views import (
     SessionViewSet,
     SingerViewSet,
     SongViewSet,
-    TuneViewSet,
     VenueViewSet,
 )
 
@@ -28,7 +26,6 @@ router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'arranger', ArrangerViewSet)
 router.register(r'award', AwardViewSet)
-router.register(r'catalog', CatalogViewSet)
 router.register(r'chapter', ChapterViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contestant', ContestantViewSet)
@@ -45,6 +42,5 @@ router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)
 router.register(r'singer', SingerViewSet)
 router.register(r'song', SongViewSet)
-router.register(r'tune', TuneViewSet)
 router.register(r'venue', VenueViewSet)
 urlpatterns = router.urls

@@ -19,7 +19,6 @@ from drf_extra_fields.fields import (
 from .models import (
     Arranger,
     Award,
-    Catalog,
     Chapter,
     Contest,
     Contestant,
@@ -36,7 +35,6 @@ from .models import (
     Session,
     Singer,
     Song,
-    Tune,
     Venue,
 )
 
@@ -100,29 +98,6 @@ class ChapterSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'organization',
-        )
-
-
-class CatalogSerializer(serializers.ModelSerializer):
-    # tune = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # arrangers = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    class Meta:
-        model = Catalog
-        fields = (
-            'id',
-            'url',
-            'tune',
-            'song_name',
-            'arrangers',
         )
 
 
@@ -648,7 +623,7 @@ class SingerSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    # tune = serializers.SlugRelatedField(
+    # chart = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
     # )
@@ -680,8 +655,7 @@ class SongSerializer(serializers.ModelSerializer):
             'title',
             'status',
             'is_parody',
-            'tune',
-            # 'catalog',
+            'chart',
             'arranger',
             'performance',
             'mus_points',
@@ -693,31 +667,6 @@ class SongSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'scores',
-        )
-
-
-class TuneSerializer(serializers.ModelSerializer):
-    # catalogs = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # songs = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    class Meta:
-        model = Tune
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            # 'catalogs',
-            'songs',
         )
 
 

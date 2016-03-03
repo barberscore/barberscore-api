@@ -16,7 +16,6 @@ from .models import (
     Group,
     Judge,
     Round,
-    Tune,
     Performance,
 )
 
@@ -101,20 +100,6 @@ def add_performances(session):
         )
         position += 1
     return "Performances Added"
-
-
-def score_performance(performance):
-    base = randint(70, 90)
-    songs = performance.songs.all()
-    for song in songs:
-        song.title = Tune.objects.order_by('?').first().name
-        scores = song.scores.all()
-        for score in scores:
-            low, high = base, base + 5
-            score.points = randint(low, high)
-            score.save()
-        song.save()
-    return "Performance Scored"
 
 
 def schedule_performances(round):

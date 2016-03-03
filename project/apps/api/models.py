@@ -97,9 +97,11 @@ class Arranger(TimeStampedModel):
         max_length=255,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
+    chart = models.ForeignKey(
+        'Chart',
         related_name='arrangers',
+        null=True,
+        blank=True,
         on_delete=models.CASCADE,
     )
 
@@ -114,14 +116,14 @@ class Arranger(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.catalog,
+            self.chart,
             self.person,
         )
         super(Arranger, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('catalog', 'person',),
+            ('chart', 'person',),
         )
 
     class JSONAPIMeta:
@@ -299,108 +301,6 @@ class Award(TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "award"
-
-
-class Catalog(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    # name = models.CharField(
-    #     max_length=255,
-    #     # unique=True,
-    #     # editable=False,
-    #     null=True,
-    #     blank=True,
-    # )
-
-    song_name = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    tune = models.ForeignKey(
-        'Tune',
-        related_name='catalogs',
-        on_delete=models.CASCADE,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_published = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_songname = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_arranger = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_fee = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
-    bhs_difficulty = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DIFFICULTY
-    )
-
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    bhs_tempo = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=TEMPO,
-    )
-
-    bhs_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    # def __unicode__(self):
-    #     return u"{0}".format(self.name)
-
-    # def save(self, *args, **kwargs):
-    #     self.name = " ".join(filter(None, [
-    #         self.id.hex,
-    #     ]))
-    #     super(Catalog, self).save(*args, **kwargs)
-
-    class JSONAPIMeta:
-        resource_name = "catalog"
 
 
 class Certification(TimeStampedModel):
@@ -709,14 +609,6 @@ class Chart(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    tune = models.ForeignKey(
-        'Tune',
-        null=True,
-        blank=True,
-        related_name='charts',
-        on_delete=models.SET_NULL,
     )
 
     is_generic = models.BooleanField(
@@ -3622,11 +3514,15 @@ class Setlist(TimeStampedModel):
     performer = models.ForeignKey(
         'Performer',
         related_name='setlist',
+        on_delete=models.CASCADE,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
+    chart = models.ForeignKey(
+        'Chart',
         related_name='setlist',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
 
     def __unicode__(self):
@@ -3634,7 +3530,7 @@ class Setlist(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('performer', 'catalog',),
+            ('performer', 'chart',),
         )
 
     class JSONAPIMeta:
@@ -3829,22 +3725,6 @@ class Song(TimeStampedModel):
         editable=False,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    tune = models.ForeignKey(
-        'Tune',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     chart = models.ForeignKey(
         'Chart',
         related_name='songs',
@@ -3937,39 +3817,6 @@ class Song(TimeStampedModel):
             ]) / 3, 1)
         except TypeError:
             self.total_score = None
-
-
-class Tune(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    class Meta:
-        ordering = ['name']
-
-    class JSONAPIMeta:
-        resource_name = "tune"
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
 
 
 class Venue(TimeStampedModel):

@@ -5,7 +5,6 @@ from .models import (
     Person,
     Award,
     Group,
-    Tune,
     Venue,
 )
 
@@ -38,14 +37,6 @@ class AwardFilter(filters.FilterSet):
 class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
-        fields = {
-            'name': filters.ALL_LOOKUPS,
-        }
-
-
-class TuneFilter(filters.FilterSet):
-    class Meta:
-        model = Tune
         fields = {
             'name': filters.ALL_LOOKUPS,
         }

@@ -652,7 +652,6 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
         'order',
         # 'status',
         # 'title',
-        'tune',
         ('mus_points', 'prs_points', 'sng_points',),
     )
     ordering = (
@@ -661,14 +660,6 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     )
     model = Song
     extra = 0
-    raw_id_fields = (
-        'tune',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'tune',
-        ]
-    }
     inlines = (
         ScoreInline,
     )

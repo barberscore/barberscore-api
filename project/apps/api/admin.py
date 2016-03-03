@@ -26,8 +26,8 @@ from .inlines import (
 from .models import (
     Arranger,
     Award,
-    Catalog,
     Chapter,
+    Chart,
     Contest,
     Contestant,
     Session,
@@ -42,12 +42,10 @@ from .models import (
     Score,
     Round,
     Song,
-    Tune,
     Venue,
     User,
 )
 
-# from grappelli.forms import GrappelliSortableHiddenMixin
 from super_inlines.admin import SuperModelAdmin
 
 
@@ -55,7 +53,6 @@ from super_inlines.admin import SuperModelAdmin
 class ArrangerAdmin(admin.ModelAdmin):
     list_display = [
         'name',
-        'catalog',
         'person',
     ]
 
@@ -107,15 +104,9 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Catalog)
-class CatalogAdmin(admin.ModelAdmin):
-    list_display = [
-        'song_name',
-        'tune',
-        'bhs_id',
-        'bhs_songname',
-        'bhs_arranger',
-    ]
+@admin.register(Chart)
+class ChartAdmin(admin.ModelAdmin):
+    save_on_top = True
 
 
 @admin.register(Chapter)
@@ -835,7 +826,7 @@ class SongAdmin(admin.ModelAdmin):
         'name',
         # 'status',
         # 'title',
-        'tune',
+        'chart',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -844,7 +835,6 @@ class SongAdmin(admin.ModelAdmin):
 
     search_fields = (
         'name',
-        'tune__name',
     )
 
     fields = [
@@ -854,8 +844,6 @@ class SongAdmin(admin.ModelAdmin):
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
         # 'title',
-        'tune',
-        # 'catalog',
     ]
 
     inlines = [
@@ -881,31 +869,16 @@ class SongAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         'performance',
-        # 'tune',
-        # 'catalog',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'performance',
-            # 'tune',
         ]
     }
 
     ordering = (
         'name',
         'order',
-    )
-
-
-@admin.register(Tune)
-class TuneAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = (
-        'name',
-    )
-
-    search_fields = (
-        'name',
     )
 
 

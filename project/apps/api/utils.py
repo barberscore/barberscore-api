@@ -16,6 +16,7 @@ from nameparser import HumanName
 from .models import (
     Award,
     Chapter,
+    Chart,
     Contest,
     Contestant,
     Convention,
@@ -31,7 +32,6 @@ from .models import (
     Session,
     Singer,
     Song,
-    Tune,
 )
 
 log = logging.getLogger(__name__)
@@ -997,14 +997,15 @@ def extract_songs(convention):
             # Next, get the song title
             title = unidecode(row[5].partition(":")[2].strip())
 
-            tune, created = Tune.objects.get_or_create(
-                name=title,
+            chart, created = Chart.objects.get_or_create(
+                title=title,
+                is_generic=True,
             )
 
             songs.append({
                 'performance': performance,
                 'order': number,
-                'tune': tune,
+                'chart': chart,
             })
     for song in songs:
         Song.objects.get_or_create(**song)

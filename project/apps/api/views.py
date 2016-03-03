@@ -12,7 +12,6 @@ from .filters import (
     ConventionFilter,
     PersonFilter,
     GroupFilter,
-    TuneFilter,
     VenueFilter,
 )
 
@@ -20,7 +19,6 @@ from .filters import (
 from .models import (
     Arranger,
     Award,
-    Catalog,
     Chapter,
     Contest,
     Contestant,
@@ -37,14 +35,12 @@ from .models import (
     Session,
     Singer,
     Song,
-    Tune,
     Venue,
 )
 
 from .serializers import (
     ArrangerSerializer,
     AwardSerializer,
-    CatalogSerializer,
     ChapterSerializer,
     ContestSerializer,
     ContestantSerializer,
@@ -63,7 +59,6 @@ from .serializers import (
     SessionSerializer,
     SingerSerializer,
     SongSerializer,
-    TuneSerializer,
     VenueSerializer,
 )
 
@@ -94,17 +89,6 @@ class ChapterViewSet(viewsets.ModelViewSet):
     serializer_class = ChapterSerializer
     # lookup_field = 'slug'
     resource_name = "chapter"
-
-
-class CatalogViewSet(viewsets.ModelViewSet):
-    queryset = Catalog.objects.select_related(
-        'tune',
-    ).prefetch_related(
-        'arrangers',
-    )
-    serializer_class = CatalogSerializer
-    # lookup_field = 'slug'
-    resource_name = "catalog"
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -290,20 +274,6 @@ class SongViewSet(viewsets.ModelViewSet):
     serializer_class = SongSerializer
     # lookup_field = 'slug'
     resource_name = "song"
-
-
-class TuneViewSet(viewsets.ModelViewSet):
-    queryset = Tune.objects.prefetch_related(
-        # 'catalogs',
-        'songs',
-    )
-    serializer_class = TuneSerializer
-    # lookup_field = 'slug'
-    resource_name = "tune"
-    filter_fields = (
-        'name',
-    )
-    filter_class = TuneFilter
 
 
 class VenueViewSet(viewsets.ModelViewSet):
