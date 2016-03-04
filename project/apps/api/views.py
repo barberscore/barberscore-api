@@ -1,12 +1,14 @@
 import logging
-log = logging.getLogger(__name__)
 
+from rest_framework.response import Response
+from rest_framework.decorators import detail_route
 from rest_framework import (
     viewsets,
     permissions,
+    status,
 )
 
-from drf_haystack.viewsets import HaystackViewSet
+# from drf_haystack.viewsets import HaystackViewSet
 
 from .filters import (
     ConventionFilter,
@@ -46,13 +48,11 @@ from .serializers import (
     ContestantSerializer,
     ConventionSerializer,
     DirectorSerializer,
-    GroupSearchSerializer,
     GroupSerializer,
     JudgeSerializer,
     OrganizationSerializer,
     PerformanceSerializer,
     PerformerSerializer,
-    PersonSearchSerializer,
     PersonSerializer,
     RoundSerializer,
     ScoreSerializer,
@@ -61,6 +61,8 @@ from .serializers import (
     SongSerializer,
     VenueSerializer,
 )
+
+log = logging.getLogger(__name__)
 
 
 class ArrangerViewSet(viewsets.ModelViewSet):
@@ -251,6 +253,18 @@ class RoundViewSet(viewsets.ModelViewSet):
     serializer_class = RoundSerializer
     # lookup_field = 'slug'
     resource_name = "round"
+
+    @detail_route(methods=['put'])
+    def draw(self, request, pk=None):
+        round = self.get_object()
+        response = round.draw()
+        if response:
+            return Response(response)
+        else:
+            return Response(
+                {'error': 'did not draw'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class SingerViewSet(viewsets.ModelViewSet):

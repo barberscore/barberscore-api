@@ -3119,7 +3119,7 @@ class Round(TimeStampedModel):
                 slot=slot,
             )
             i += 1
-        return
+        return {'success': 'drew {0} performances'.format(i)}
 
     @transition(
         field=status,
