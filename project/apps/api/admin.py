@@ -21,6 +21,7 @@ from .inlines import (
     SingerInline,
     SongStackedInline,
     OrganizationInline,
+    SetlistInline,
 )
 
 from .models import (
@@ -554,6 +555,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         DirectorInline,
         PerformanceInline,
         ContestantInline,
+        SetlistInline,
     ]
 
     list_display = (

@@ -1283,7 +1283,7 @@ def import_setlist(session):
         performer = session.performers.get(
             group__group_id=row[1],
         )
-        chart = Chart.objects.get(
+        chart, c = Chart.objects.get_or_create(
             title=row[5],
             is_generic=True,
         )

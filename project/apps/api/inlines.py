@@ -21,6 +21,7 @@ from .models import (
     Performance,
     Organization,
     Score,
+    Setlist,
     Round,
     Singer,
     Song,
@@ -32,7 +33,6 @@ class ArrangerInline(admin.TabularInline):
     fields = (
         # 'song',
         'person',
-        'part',
         # 'is_practice',
     )
     ordering = (
@@ -533,7 +533,20 @@ class SessionInline(admin.TabularInline):
 
 class SingerInline(admin.TabularInline):
     model = Singer
+
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_person_change',
+                    args=(
+                        obj.person.id.hex,
+                    )
+                )
+            )
+        )
     fields = (
+        'link',
         'performer',
         'person',
         'part',
@@ -547,6 +560,9 @@ class SingerInline(admin.TabularInline):
         'person',
         'performer',
     )
+    readonly_fields = [
+        'link',
+    ]
     # autocomplete_lookup_fields = {
     #     'fk': [
     #         'person',
@@ -670,3 +686,15 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     ]
     show_change_link = True
     # classes = ('grp-collapse grp-open',)
+
+
+class SetlistInline(admin.TabularInline):
+    fields = [
+        'performer',
+        'chart',
+    ]
+    model = Setlist
+    extra = 0
+    raw_id_fields = [
+        'chart',
+    ]
