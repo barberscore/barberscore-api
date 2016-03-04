@@ -240,6 +240,8 @@ class GroupSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'kind',
+            'chapter',
+            'organization',
             'performers',
         )
         read_only_fields = [
