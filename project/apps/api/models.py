@@ -3571,6 +3571,15 @@ class Setlist(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
     performer = models.ForeignKey(
         'Performer',
         related_name='setlist',

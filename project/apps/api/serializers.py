@@ -33,6 +33,7 @@ from .models import (
     Round,
     Score,
     Session,
+    Setlist,
     Singer,
     Song,
     Venue,
@@ -597,6 +598,43 @@ class SessionSerializer(serializers.ModelSerializer):
             'performers',
             'contests',
             'judges',
+        )
+
+
+class SetlistSerializer(serializers.ModelSerializer):
+    # convention = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # rounds = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # judges = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    # performers = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    class Meta:
+        model = Setlist
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'status',
+            'chart',
+            'performer',
         )
 
 

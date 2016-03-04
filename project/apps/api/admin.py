@@ -31,20 +31,21 @@ from .models import (
     Chart,
     Contest,
     Contestant,
-    Session,
-    Performer,
     Convention,
     Group,
     Judge,
-    Organization,
     Member,
+    Organization,
     Performance,
+    Performer,
     Person,
-    Score,
     Round,
+    Score,
+    Session,
+    Setlist,
     Song,
-    Venue,
     User,
+    Venue,
 )
 
 from super_inlines.admin import SuperModelAdmin
@@ -827,6 +828,16 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     list_select_related = [
         'convention',
+    ]
+
+
+@admin.register(Setlist)
+class SetlistAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'status',
+        'performer',
+        'chart',
     ]
 
 
