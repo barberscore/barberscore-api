@@ -2124,10 +2124,6 @@ class Performance(TimeStampedModel):
         default=STATUS.new,
     )
 
-    position = models.PositiveSmallIntegerField(
-        'Position',
-    )
-
     slot = models.IntegerField(
         null=True,
         blank=True,

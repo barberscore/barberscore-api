@@ -1279,15 +1279,41 @@ def import_setlist(session):
     reader = csv.reader(session.song_list, skipinitialspace=True)
     next(reader)
     rows = [row for row in reader]
-    for row in rows:
-        performer = session.performers.get(
-            group__group_id=row[1],
-        )
-        chart, c = Chart.objects.get_or_create(
-            title=row[5],
-            is_generic=True,
-        )
-        Setlist.objects.get_or_create(
-            performer=performer,
-            chart=chart,
-        )
+    if session.kind == session.KIND.quartet:
+        for row in rows:
+            performer = session.performers.get(
+                group__group_id=row[1],
+            )
+            chart, c = Chart.objects.get_or_create(
+                title=row[5],
+                is_generic=True,
+            )
+            Setlist.objects.get_or_create(
+                performer=performer,
+                chart=chart,
+            )
+    elif session.kind == session.KIND.chorus:
+        for row in rows:
+            try:
+                group = Group.objects.get(
+                    status=Group.STATUS.active,
+                    chapter__code=row[1],
+                )
+            except Group.DoesNotExist:
+                print row[1]
+            round = session.rounds.get(num=1)
+            performer, c = session.performers.get_or_create(
+                group=group,
+            )
+            performance, c = performer.performances.get_or_create(
+                round=round,
+                slot=int(row[0]),
+            )
+            chart, c = Chart.objects.get_or_create(
+                title=row[6],
+                is_generic=True,
+            )
+            Setlist.objects.get_or_create(
+                performer=performer,
+                chart=chart,
+            )
