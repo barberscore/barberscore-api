@@ -359,7 +359,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'slot',
-            'draw',
             'start_dt',
             'scheduled',
             'actual',

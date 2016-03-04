@@ -2125,8 +2125,6 @@ class Performance(TimeStampedModel):
     )
 
     slot = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     scheduled = DateTimeRangeField(
@@ -2213,13 +2211,6 @@ class Performance(TimeStampedModel):
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
-
-    @property
-    def draw(self):
-        try:
-            return "{0:02d}".format(self.position + 1)
-        except TypeError:
-            return None
 
     @property
     def start_dt(self):
@@ -2611,10 +2602,7 @@ class Performer(TimeStampedModel):
             raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
-        # self.name = u"{0} {1}".format(
-        #     self.session,
-        #     self.group.name,
-        # )
+        # on create
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
             self.session.convention.get_division_display(),
@@ -2624,6 +2612,7 @@ class Performer(TimeStampedModel):
             "Performer",
             self.group.name,
         ]))
+
         super(Performer, self).save(*args, **kwargs)
 
     class Meta:
@@ -3113,6 +3102,24 @@ class Round(TimeStampedModel):
             ).order_by('position').first()
         except self.performances.model.DoesNotExist:
             return None
+
+    # @transition(
+    #     field=status,
+    #     source=STATUS.new,
+    #     target=STATUS.started,
+    #     conditions=[
+    #     ]
+    # )
+    def draw(self):
+        i = 1
+        for performer in self.session.performers.all().order_by('?'):  # TODO: better filter?
+            slot = i
+            performer.performances.create(
+                round=self,
+                slot=slot,
+            )
+            i += 1
+        return
 
     @transition(
         field=status,
@@ -3820,7 +3827,7 @@ class Song(TimeStampedModel):
             self.performance.round.get_kind_display(),
             str(self.performance.round.session.convention.year),
             "Performance",
-            str(self.performance.draw),
+            str(self.performance.slot),
             'Song',
             str(self.order),
         ]))

@@ -10,15 +10,10 @@ from django_fsm.signals import (
 from django.dispatch import receiver
 
 from .models import (
+    Performer,
     Performance,
     Certification,
 )
-
-# from .factories import (
-#     add_rounds,
-#     add_judges,
-# )
-
 
 from .validators import (
     dixon,
@@ -28,10 +23,29 @@ from .validators import (
 
 @receiver(post_save, sender=Certification)
 def certification_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """ Denormalization to make autocomplete work as expected """
+    """Denormalization to make autocomplete work as expected."""
     if not raw:
         if created:
             instance.person.save()
+
+
+@receiver(post_save, sender=Performer)
+def performer_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create contestant sentinels on performer creation."""
+    if not raw:
+        if created:
+            instance.organization = instance.group.organization
+            contests = instance.session.contests.all()
+            for contest in contests:
+                if all([
+                    # instance.organization <= contest.award.organization,
+                    # instance.group.kind == contest.award.kind,
+                    True,
+                ]):
+                    instance.contestants.create(
+                        contest=contest,
+                    )
+            instance.save()
 
 
 @receiver(post_transition)

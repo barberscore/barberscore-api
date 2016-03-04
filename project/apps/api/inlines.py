@@ -170,11 +170,12 @@ class ContestantInline(admin.TabularInline):
 
     fields = (
         'link',
+        'name',
+        'status',
         'performer',
         'rank',
         'total_points',
         'total_score',
-        'status',
     )
     ordering = (
         'rank',
@@ -300,7 +301,6 @@ class JudgeInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-# class PerformancesInline(GrappelliSortableHiddenMixin, admin.TabularInline):
 class PerformanceInline(admin.TabularInline):
     def link(self, obj):
         return mark_safe(
@@ -335,7 +335,6 @@ class PerformanceInline(admin.TabularInline):
     # }
     readonly_fields = (
         'performer',
-        'draw',
         'link',
     )
     classes = ('grp-collapse grp-open',)

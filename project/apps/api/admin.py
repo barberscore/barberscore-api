@@ -498,7 +498,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
     list_display = [
         'name',
         'status',
-        'draw',
+        'slot',
         'total_score',
     ]
     list_filter = [
@@ -510,7 +510,7 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
         'name',
         'status',
         'performer',
-        ('draw', 'scheduled'),
+        ('slot', 'scheduled'),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]
@@ -525,7 +525,6 @@ class PerformanceAdmin(FSMTransitionMixin, SuperModelAdmin):
         'prs_score',
         'sng_score',
         'total_score',
-        'draw',
     ]
 
     raw_id_fields = (
