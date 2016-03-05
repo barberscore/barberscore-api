@@ -17,7 +17,6 @@ from drf_extra_fields.fields import (
 )
 
 from .models import (
-    Arranger,
     Award,
     Chapter,
     Contest,
@@ -48,23 +47,6 @@ class TimezoneField(serializers.Field):
             return pytz.timezone(str(data))
         except pytz.exceptions.UnknownTimeZoneError:
             raise ValidationError('Unknown timezone')
-
-
-class ArrangerSerializer(serializers.ModelSerializer):
-    # person = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    class Meta:
-        model = Arranger
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'person',
-        )
 
 
 class AwardSerializer(serializers.ModelSerializer):
@@ -658,7 +640,6 @@ class SongSerializer(serializers.ModelSerializer):
             'status',
             'is_parody',
             'chart',
-            'arranger',
             'performance',
             'mus_points',
             'prs_points',

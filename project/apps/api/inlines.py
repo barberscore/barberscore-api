@@ -7,7 +7,6 @@ from super_inlines.admin import SuperInlineModelAdmin
 
 
 from .models import (
-    Arranger,
     Award,
     Certification,
     Contest,
@@ -25,30 +24,6 @@ from .models import (
     Role,
     Song,
 )
-
-
-class ArrangerInline(admin.TabularInline):
-    model = Arranger
-    fields = (
-        # 'song',
-        'person',
-        # 'is_practice',
-    )
-    ordering = (
-        'person',
-    )
-    extra = 0
-    raw_id_fields = (
-        'person',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-        ]
-    }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-open',)
 
 
 class AwardInline(admin.TabularInline):

@@ -4,7 +4,6 @@ from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
 
 from .inlines import (
-    ArrangerInline,
     AwardInline,
     CertificationInline,
     ContestInline,
@@ -24,7 +23,6 @@ from .inlines import (
 )
 
 from .models import (
-    Arranger,
     Award,
     Chapter,
     Chart,
@@ -48,14 +46,6 @@ from .models import (
 )
 
 from super_inlines.admin import SuperModelAdmin
-
-
-@admin.register(Arranger)
-class ArrangerAdmin(admin.ModelAdmin):
-    list_display = [
-        'name',
-        'person',
-    ]
 
 
 @admin.register(Award)
@@ -663,7 +653,6 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = [
         RoleInline,
-        ArrangerInline,
         MemberInline,
         CertificationInline,
     ]
@@ -867,7 +856,6 @@ class SongAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        # ArrangersInline,
         ScoreInline,
     ]
 

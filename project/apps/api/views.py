@@ -19,7 +19,6 @@ from .filters import (
 
 
 from .models import (
-    Arranger,
     Award,
     Chapter,
     Contest,
@@ -41,7 +40,6 @@ from .models import (
 )
 
 from .serializers import (
-    ArrangerSerializer,
     AwardSerializer,
     ChapterSerializer,
     ContestSerializer,
@@ -63,16 +61,6 @@ from .serializers import (
 )
 
 log = logging.getLogger(__name__)
-
-
-class ArrangerViewSet(viewsets.ModelViewSet):
-    queryset = Arranger.objects.select_related(
-        'catalog',
-        'person',
-    )
-    serializer_class = ArrangerSerializer
-    # lookup_field = 'slug'
-    resource_name = "arranger"
 
 
 class AwardViewSet(viewsets.ModelViewSet):
