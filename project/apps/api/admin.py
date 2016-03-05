@@ -11,14 +11,13 @@ from .inlines import (
     ContestantInline,
     SessionInline,
     PerformerInline,
-    DirectorInline,
     GroupInline,
     JudgeInline,
     MemberInline,
     PerformanceInline,
     ScoreInline,
     RoundInline,
-    SingerInline,
+    RoleInline,
     SongStackedInline,
     OrganizationInline,
     SetlistInline,
@@ -551,8 +550,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
 
     inlines = [
-        SingerInline,
-        DirectorInline,
+        RoleInline,
         PerformanceInline,
         ContestantInline,
         SetlistInline,
@@ -664,8 +662,7 @@ class PersonAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        DirectorInline,
-        SingerInline,
+        RoleInline,
         ArrangerInline,
         MemberInline,
         CertificationInline,

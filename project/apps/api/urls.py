@@ -7,7 +7,6 @@ from .views import (
     ContestantViewSet,
     ContestViewSet,
     ConventionViewSet,
-    DirectorViewSet,
     GroupViewSet,
     JudgeViewSet,
     OrganizationViewSet,
@@ -18,7 +17,7 @@ from .views import (
     ScoreViewSet,
     SessionViewSet,
     SetlistViewSet,
-    SingerViewSet,
+    RoleViewSet,
     SongViewSet,
     VenueViewSet,
 )
@@ -31,7 +30,6 @@ router.register(r'chapter', ChapterViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
-router.register(r'director', DirectorViewSet)
 router.register(r'group', GroupViewSet)
 router.register(r'judge', JudgeViewSet)
 router.register(r'organization', OrganizationViewSet)
@@ -42,7 +40,7 @@ router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)
 router.register(r'setlist', SetlistViewSet)
-router.register(r'singer', SingerViewSet)
+router.register(r'role', RoleViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'venue', VenueViewSet)
 urlpatterns = router.urls

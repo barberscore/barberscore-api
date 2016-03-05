@@ -14,7 +14,6 @@ from .models import (
     Contestant,
     Session,
     Performer,
-    Director,
     Group,
     Judge,
     Member,
@@ -23,7 +22,7 @@ from .models import (
     Score,
     Setlist,
     Round,
-    Singer,
+    Role,
     Song,
 )
 
@@ -204,32 +203,6 @@ class ContestantInline(admin.TabularInline):
     ]
     can_delete = True
     # classes = ('grp-collapse grp-open',)
-
-
-class DirectorInline(admin.TabularInline):
-    fields = (
-        'performer',
-        'person',
-        'part',
-    )
-    ordering = (
-        'part',
-        'performer',
-    )
-    model = Director
-    extra = 0
-    raw_id_fields = (
-        'person',
-        'performer',
-    )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'person',
-    #         'performer',
-    #     ]
-    # }
-    can_delete = True
-    classes = ('grp-collapse grp-open',)
 
 
 class GroupInline(admin.TabularInline):
@@ -530,8 +503,8 @@ class SessionInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
 
 
-class SingerInline(admin.TabularInline):
-    model = Singer
+class RoleInline(admin.TabularInline):
+    model = Role
 
     def link(self, obj):
         return mark_safe(

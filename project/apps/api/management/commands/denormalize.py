@@ -8,8 +8,6 @@ from apps.api.models import (
     Performer,
     Performance,
     Song,
-    # Singer,
-    # Director,
     # Judge,
     Contestant,
     Contest,

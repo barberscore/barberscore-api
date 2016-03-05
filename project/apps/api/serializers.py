@@ -23,7 +23,6 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Director,
     Group,
     Judge,
     Organization,
@@ -34,7 +33,7 @@ from .models import (
     Score,
     Session,
     Setlist,
-    Singer,
+    Role,
     Song,
     Venue,
 )
@@ -191,29 +190,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'human_date',
         )
         # lookup_field = 'slug'
-
-
-class DirectorSerializer(serializers.ModelSerializer):
-    # performer = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # person = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    class Meta:
-        model = Director
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'performer',
-            'person',
-            'part',
-        )
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -394,18 +370,6 @@ class PerformerSerializer(serializers.ModelSerializer):
     #     slug_field='slug',
     # )
 
-    # directors = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # singers = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     # contestants = serializers.SlugRelatedField(
     #     many=True,
     #     read_only=True,
@@ -439,8 +403,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'session',
             'group',
             'performances',
-            'directors',
-            'singers',
+            'roles',
             'contestants',
         )
         read_only_fields = [
@@ -490,8 +453,8 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             # 'kind',
             # 'catalogs',
-            'choruses',
-            'quartets',
+            'roles',
+            'panels',
             'conventions',
         )
         read_only_fields = [
@@ -638,7 +601,7 @@ class SetlistSerializer(serializers.ModelSerializer):
         )
 
 
-class SingerSerializer(serializers.ModelSerializer):
+class RoleSerializer(serializers.ModelSerializer):
     # performer = serializers.SlugRelatedField(
     #     read_only=True,
     #     slug_field='slug',
@@ -649,7 +612,7 @@ class SingerSerializer(serializers.ModelSerializer):
     # )
 
     class Meta:
-        model = Singer
+        model = Role
         fields = (
             'id',
             'url',

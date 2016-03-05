@@ -2598,9 +2598,9 @@ class Performer(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def clean(self):
-        if self.singers.count() > 4:
-            raise ValidationError('There can not be more than four persons in a quartet.')
+    # def clean(self):
+    #     if self.singers.count() > 4:
+    #         raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
         # on create
@@ -2998,6 +2998,91 @@ class Person(TimeStampedModel):
             return name.nickname
         else:
             return None
+
+
+class Role(TimeStampedModel):
+    """Quartet Relation."""
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        unique=True,
+        max_length=255,
+    )
+
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
+        (5, 'director', 'Director'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+    )
+
+    performer = models.ForeignKey(
+        'Performer',
+        related_name='roles',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='roles',
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def clean(self):
+        if all([
+            self.performer.group.kind == Group.KIND.chorus,
+            self.part != self.PART.director,
+        ]):
+            raise ValidationError('Choruses do not have quartet singers.')
+        if all([
+            self.performer.group.kind == Group.KIND.quartet,
+            self.part == self.PART.director,
+        ]):
+            raise ValidationError('Quartets do not have directors.')
+        # if self.part:
+        #     if [s['part'] for s in self.performer.singers.values(
+        #         'part'
+        #     )].count(self.part) > 1:
+        #         raise ValidationError('There can not be more than one of the same part in a quartet.')
+
+    class Meta:
+        unique_together = (
+            ('performer', 'person',),
+        )
+        ordering = (
+            '-name',
+        )
+
+    class JSONAPIMeta:
+        resource_name = "role"
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        self.name = " ".join(filter(None, [
+            self.performer.name,
+            self.person.name,
+            self.get_part_display(),
+        ]))
+        super(Role, self).save(*args, **kwargs)
 
 
 class Round(TimeStampedModel):
@@ -3659,14 +3744,14 @@ class Singer(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def clean(self):
+    # def clean(self):
         # if self.performer.group.kind == Group.CHORUS:
         #     raise ValidationError('Choruses do not have quartet singers.')
-        if self.part:
-            if [s['part'] for s in self.performer.singers.values(
-                'part'
-            )].count(self.part) > 1:
-                raise ValidationError('There can not be more than one of the same part in a quartet.')
+        # if self.part:
+        #     if [s['part'] for s in self.performer.singers.values(
+        #         'part'
+        #     )].count(self.part) > 1:
+        #         raise ValidationError('There can not be more than one of the same part in a quartet.')
 
     class Meta:
         unique_together = (

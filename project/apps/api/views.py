@@ -25,7 +25,6 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Director,
     Group,
     Judge,
     Organization,
@@ -36,7 +35,7 @@ from .models import (
     Score,
     Session,
     Setlist,
-    Singer,
+    Role,
     Song,
     Venue,
 )
@@ -48,7 +47,6 @@ from .serializers import (
     ContestSerializer,
     ContestantSerializer,
     ConventionSerializer,
-    DirectorSerializer,
     GroupSerializer,
     JudgeSerializer,
     OrganizationSerializer,
@@ -59,7 +57,7 @@ from .serializers import (
     ScoreSerializer,
     SessionSerializer,
     SetlistSerializer,
-    SingerSerializer,
+    RoleSerializer,
     SongSerializer,
     VenueSerializer,
 )
@@ -143,8 +141,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'performances',
         'contestants',
-        'directors',
-        'singers',
+        'roles',
     )
     serializer_class = PerformerSerializer
     # lookup_field = 'slug'
@@ -162,16 +159,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
     # lookup_field = 'slug'
     resource_name = "convention"
     filter_class = ConventionFilter
-
-
-class DirectorViewSet(viewsets.ModelViewSet):
-    queryset = Director.objects.select_related(
-        'person',
-        'performer',
-    )
-    serializer_class = DirectorSerializer
-    # lookup_field = 'slug'
-    resource_name = "director"
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -281,14 +268,14 @@ class RoundViewSet(viewsets.ModelViewSet):
             )
 
 
-class SingerViewSet(viewsets.ModelViewSet):
-    queryset = Singer.objects.select_related(
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.select_related(
         'person',
         'performer',
     )
-    serializer_class = SingerSerializer
+    serializer_class = RoleSerializer
     # lookup_field = 'slug'
-    resource_name = "singer"
+    resource_name = "role"
 
 
 class SongViewSet(viewsets.ModelViewSet):
