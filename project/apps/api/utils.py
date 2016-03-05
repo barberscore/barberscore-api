@@ -45,9 +45,9 @@ def import_members(path):
         for row in rows:
             try:
                 p = Person.objects.get(
-                    member=row[0],
+                    bhs_id=row[0],
                 )
-                p.member = int(row[0])
+                p.bhs_id = int(row[0])
                 p.bhs_name = row[1]
                 p.bhs_city = row[2]
                 p.bhs_state = row[3]
@@ -59,7 +59,7 @@ def import_members(path):
                     p = Person.objects.get(
                         name__iexact=row[1],
                     )
-                    p.member = int(row[0])
+                    p.bhs_id = int(row[0])
                     p.bhs_name = row[1]
                     p.bhs_city = row[2]
                     p.bhs_state = row[3]
@@ -73,7 +73,7 @@ def import_members(path):
                         p = Person.objects.get(
                             common_name__iexact=row[1],
                         )
-                        p.member = int(row[0])
+                        p.bhs_id = int(row[0])
                         p.bhs_name = row[1]
                         p.bhs_city = row[2]
                         p.bhs_state = row[3]
@@ -87,7 +87,7 @@ def import_members(path):
                             p = Person.objects.get(
                                 full_name__iexact=row[1],
                             )
-                            p.member = int(row[0])
+                            p.bhs_id = int(row[0])
                             p.bhs_name = row[1]
                             p.bhs_city = row[2]
                             p.bhs_state = row[3]
@@ -101,7 +101,7 @@ def import_members(path):
                                 p = Person.objects.get(
                                     formal_name__iexact=row[1],
                                 )
-                                p.member = int(row[0])
+                                p.bhs_id = int(row[0])
                                 p.bhs_name = row[1]
                                 p.bhs_city = row[2]
                                 p.bhs_state = row[3]
@@ -111,7 +111,7 @@ def import_members(path):
                             except Person.DoesNotExist:
                                 Person.objects.create(
                                     name=unidecode(row[1]),
-                                    member=row[0],
+                                    bhs_id=row[0],
                                     bhs_name=row[1],
                                     bhs_city=row[2],
                                     bhs_state=row[3],
@@ -133,7 +133,7 @@ def import_quartets(path):
                     name__iexact=row[1],
                 )
                 g.kind = Group.KIND.quartet
-                g.group_id = int(row[0])
+                g.bhs_id = int(row[0])
                 g.bhs_name = row[1]
                 g.bhs_district = row[2]
                 g.bhs_location = row[3]
@@ -143,7 +143,7 @@ def import_quartets(path):
             except Group.DoesNotExist:
                 Group.objects.create(
                     name=row[1],
-                    group_id=int(row[0]),
+                    bhs_id=int(row[0]),
                     bhs_name=row[1],
                     bhs_district=row[2],
                     bhs_location=row[3],
@@ -162,7 +162,7 @@ def import_choruses(path):
                     name__iexact=row[3],
                 )
                 g.kind = Group.KIND.chorus
-                g.group_id = int(row[0])
+                g.bhs_id = int(row[0])
                 g.bhs_chapter_code = row[1]
                 g.bhs_chapter_name = row[2]
                 g.bhs_name = row[3]
@@ -178,7 +178,7 @@ def import_choruses(path):
                 Group.objects.create(
                     name=row[3],
                     kind=Group.KIND.chorus,
-                    group_id=int(row[0]),
+                    bhs_id=int(row[0]),
                     bhs_chapter_code=row[1],
                     bhs_chapter_name=row[2],
                     bhs_name=row[3],
@@ -201,7 +201,7 @@ def import_chapters(path):
                 c = Chapter.objects.get(
                     code=row[1],
                 )
-                c.bhs_group_id = int(row[0])
+                c.bhs_id = int(row[0])
                 c.bhs_chapter_code = row[1]
                 c.bhs_chapter_name = row[2]
                 c.bhs_group_name = row[3]
@@ -219,7 +219,7 @@ def import_chapters(path):
                 Chapter.objects.create(
                     name=row[2],
                     code=row[1],
-                    bhs_group_id=int(row[0]),
+                    bhs_id=int(row[0]),
                     bhs_chapter_code=row[1],
                     bhs_chapter_name=row[2],
                     bhs_group_name=row[3],
@@ -1205,7 +1205,7 @@ def import_entryform(session):
     output = []
     quartet = None
     part = None
-    member = None
+    bhs_id = None
     person = None
     chapter = None
     person = None
@@ -1216,13 +1216,13 @@ def import_entryform(session):
         if any([string in row[10] for string in parts]):
             part = row[10].partition("-")[0].strip()
             person = row[10].partition("-")[2].strip()
-            member = person.partition("-")[0].strip()
+            bhs_id = person.partition("-")[0].strip()
             person = person.partition("-")[2].strip()
         if not any([string in row[10] for string in parts]):
             chapter = row[10].partition(" ")[0].strip()
         entry['quartet'] = quartet
         entry['part'] = part.lower()
-        entry['member'] = int(member)
+        entry['bhs_id'] = int(bhs_id)
         entry['chapter'] = chapter
         entry['person'] = person
         output.append(entry)
@@ -1230,18 +1230,18 @@ def import_entryform(session):
         if row['chapter']:
             try:
                 person = Person.objects.get(
-                    member=row['member'],
+                    bhs_id=row['bhs_id'],
                 )
             except Person.DoesNotExist:
                 try:
                     person = Person.objects.create(
-                        member=row['member'],
+                        bhs_id=row['bhs_id'],
                         name=row['person'],
                     )
                 except IntegrityError:
                     person = Person.objects.create(
-                        member=row['member'],
-                        name="{0} {1}".format(row['person'], row['member'])
+                        bhs_id=row['bhs_id'],
+                        name="{0} {1}".format(row['person'], row['bhs_id'])
                     )
             try:
                 chapter = Chapter.objects.get(
@@ -1265,7 +1265,7 @@ def import_entryform(session):
                 print row['quartet']
                 continue
             person = Person.objects.get(
-                member=row['member'],
+                bhs_id=row['bhs_id'],
             )
             singer, created = Singer.objects.get_or_create(
                 performer=performer,
@@ -1282,7 +1282,7 @@ def import_setlist(session):
     if session.kind == session.KIND.quartet:
         for row in rows:
             performer = session.performers.get(
-                group__group_id=row[1],
+                group__bhs_id=row[1],
             )
             chart, c = Chart.objects.get_or_create(
                 title=row[5],

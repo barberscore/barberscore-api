@@ -558,6 +558,12 @@ class Chapter(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    bhs_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
     bhs_name = models.CharField(
         max_length=255,
         blank=True,
@@ -576,12 +582,6 @@ class Chapter(TimeStampedModel):
     bhs_chapter_code = models.CharField(
         max_length=255,
         blank=True,
-    )
-
-    bhs_group_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
     )
 
     bhs_website = models.CharField(
@@ -693,6 +693,7 @@ class Chart(TimeStampedModel):
     bhs_id = models.IntegerField(
         null=True,
         blank=True,
+        unique=True,
     )
 
     bhs_published = models.DateField(
@@ -1565,7 +1566,7 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    group_id = models.IntegerField(
+    bhs_id = models.IntegerField(
         unique=True,
         null=True,
         blank=True,
@@ -2013,7 +2014,7 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
-    bhs_group_id = models.IntegerField(
+    bhs_id = models.IntegerField(
         unique=True,
         blank=True,
         null=True,
@@ -2863,7 +2864,7 @@ class Person(TimeStampedModel):
         default=STATUS.new,
     )
 
-    member = models.IntegerField(
+    bhs_id = models.IntegerField(
         null=True,
         blank=True,
         unique=True,
