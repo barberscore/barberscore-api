@@ -603,6 +603,15 @@ class Chart(TimeStampedModel):
         editable=False,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New'),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
     is_generic = models.BooleanField(
         default=False,
     )
@@ -3548,15 +3557,13 @@ class Setlist(TimeStampedModel):
 
     performer = models.ForeignKey(
         'Performer',
-        related_name='setlist',
+        related_name='setlists',
         on_delete=models.CASCADE,
     )
 
     chart = models.ForeignKey(
         'Chart',
-        related_name='setlist',
-        null=True,
-        blank=True,
+        related_name='setlists',
         on_delete=models.CASCADE,
     )
 
