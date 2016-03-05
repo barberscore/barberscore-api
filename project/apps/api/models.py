@@ -2911,6 +2911,15 @@ class Role(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
     PART = Choices(
         (1, 'tenor', 'Tenor'),
         (2, 'lead', 'Lead'),
