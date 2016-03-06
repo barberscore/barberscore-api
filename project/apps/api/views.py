@@ -15,12 +15,14 @@ from .filters import (
     PersonFilter,
     GroupFilter,
     VenueFilter,
+    ChartFilter,
 )
 
 
 from .models import (
     Award,
     Chapter,
+    Chart,
     Contest,
     Contestant,
     Convention,
@@ -41,6 +43,7 @@ from .models import (
 
 from .serializers import (
     AwardSerializer,
+    ChartSerializer,
     ChapterSerializer,
     ContestSerializer,
     ContestantSerializer,
@@ -197,8 +200,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.prefetch_related(
         # 'catalogs',
-        'choruses',
-        'quartets',
+        'roles',
     )
     serializer_class = PersonSerializer
     # lookup_field = 'slug'
@@ -270,13 +272,26 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'catalog',
         'performance',
-        'tune',
+        'chart',
     ).prefetch_related(
         'scores',
     )
     serializer_class = SongSerializer
     # lookup_field = 'slug'
     resource_name = "song"
+
+
+class ChartViewSet(viewsets.ModelViewSet):
+    queryset = Chart.objects.prefetch_related(
+        'songs',
+    )
+    serializer_class = ChartSerializer
+    # lookup_field = 'slug'
+    resource_name = "song"
+    filter_fields = (
+        'name',
+    )
+    filter_class = ChartFilter
 
 
 class VenueViewSet(viewsets.ModelViewSet):

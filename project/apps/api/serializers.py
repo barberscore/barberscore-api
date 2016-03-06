@@ -19,6 +19,7 @@ from drf_extra_fields.fields import (
 from .models import (
     Award,
     Chapter,
+    Chart,
     Contest,
     Contestant,
     Convention,
@@ -80,6 +81,27 @@ class ChapterSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'organization',
+        )
+
+
+class ChartSerializer(serializers.ModelSerializer):
+    # organization = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     slug_field='slug',
+    # )
+
+    class Meta:
+        model = Chart
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'status',
+            'title',
+            'arranger',
+            'composer',
+            'lyricist',
         )
 
 
