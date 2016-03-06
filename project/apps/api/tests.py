@@ -1,45 +1,11 @@
-from nose.tools import (
-    ok_,
-)
-
-from rest_framework.test import (
-    APIClient,
-)
+from django.core.urlresolvers import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 
-from apps.api.factories import (
-    QuartetFactory,
-)
-
-from apps.api.models import (
-    Group,
-)
-
-
-def test_quartet():
-    pass
-    # quartet = QuartetFactory(
-    # )
-
-    # ok_(
-    #     quartet.name == "The Buffalo Bills",
-    #     "Name should be 'The Buffalo Bills', is {0}".format(quartet.name),
-    # )
-
-    # ok_(
-    #     quartet.kind == Group.QUARTET
-    # )
-
-    # client = APIClient(
-    # )
-
-    # response = client.get('/api/group/{0}/'.format(quartet.slug))
-
-    # ok_(
-    #     response.status_code == 200,
-    #     "result: {0}".format(response.status_code),
-    # )
-
-    # ok_(
-    #     response.data['name'] == 'The Buffalo Bills'
-    # )
+class ConventionTests(APITestCase):
+    def test_get_conventions(self):
+        """Ensure we can get the convention list."""
+        url = reverse('convention-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

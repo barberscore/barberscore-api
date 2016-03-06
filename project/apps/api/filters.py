@@ -1,13 +1,20 @@
 import rest_framework_filters as filters
 
 from .models import (
-    Convention,
     Chart,
-    Person,
-    Award,
+    Convention,
     Group,
+    Person,
     Venue,
 )
+
+
+class ChartFilter(filters.FilterSet):
+    class Meta:
+        model = Chart
+        fields = {
+            'name': filters.ALL_LOOKUPS,
+        }
 
 
 class ConventionFilter(filters.FilterSet):
@@ -19,22 +26,6 @@ class ConventionFilter(filters.FilterSet):
         }
 
 
-class PersonFilter(filters.FilterSet):
-    class Meta:
-        model = Person
-        fields = {
-            'name': filters.ALL_LOOKUPS,
-        }
-
-
-class AwardFilter(filters.FilterSet):
-    class Meta:
-        model = Award
-        fields = {
-            'name': filters.ALL_LOOKUPS,
-        }
-
-
 class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
@@ -43,9 +34,9 @@ class GroupFilter(filters.FilterSet):
         }
 
 
-class ChartFilter(filters.FilterSet):
+class PersonFilter(filters.FilterSet):
     class Meta:
-        model = Chart
+        model = Person
         fields = {
             'name': filters.ALL_LOOKUPS,
         }

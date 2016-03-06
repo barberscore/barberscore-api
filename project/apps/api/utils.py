@@ -346,7 +346,6 @@ def import_prelims(path):
                 for contest in contest_list:
                     # Parse each list item for id, name
                     parts = contest.partition('=')
-                    stix_num = parts[0]
                     stix_name = parts[2]
 
                     # Skip qualifications

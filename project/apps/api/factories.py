@@ -1,22 +1,13 @@
-from random import (
-    randint,
-)
-
 from django.utils import timezone
-
-from factory.django import (
-    DjangoModelFactory,
-)
 
 from .models import (
     Certification,
-    Contestant,
-    Session,
-    Performer,
     Group,
     Judge,
-    Round,
     Performance,
+    Performer,
+    Round,
+    Session,
 )
 
 
@@ -109,11 +100,3 @@ def schedule_performances(round):
         performance.prep()
         performance.save()
     return "Performances scheduled"
-
-
-class QuartetFactory(DjangoModelFactory):
-    name = "The Buffalo Bills"
-    kind = Group.KIND.quartet
-
-    class Meta:
-        model = Group

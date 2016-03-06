@@ -7,10 +7,6 @@ from django.core.exceptions import (
     ValidationError,
 )
 
-from drf_haystack.serializers import (
-    HaystackSerializerMixin,
-)
-
 from drf_extra_fields.fields import (
     DateTimeRangeField,
     DateRangeField,
@@ -18,6 +14,7 @@ from drf_extra_fields.fields import (
 
 from .models import (
     Award,
+    Certification,
     Chapter,
     Chart,
     Contest,
@@ -25,15 +22,16 @@ from .models import (
     Convention,
     Group,
     Judge,
+    Member,
     Organization,
     Performance,
     Performer,
     Person,
+    Role,
     Round,
     Score,
     Session,
     Setlist,
-    Role,
     Song,
     Venue,
 )
@@ -51,11 +49,6 @@ class TimezoneField(serializers.Field):
 
 
 class AwardSerializer(serializers.ModelSerializer):
-    # organization = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Award
         fields = (
@@ -67,12 +60,18 @@ class AwardSerializer(serializers.ModelSerializer):
         )
 
 
-class ChapterSerializer(serializers.ModelSerializer):
-    # organization = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
+class CertificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Certification
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+        )
 
+
+class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
         fields = (
@@ -85,17 +84,12 @@ class ChapterSerializer(serializers.ModelSerializer):
 
 
 class ChartSerializer(serializers.ModelSerializer):
-    # organization = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Chart
         fields = (
             'id',
             'url',
-            'slug',
+            # 'slug',
             'name',
             'status',
             'title',
@@ -106,16 +100,6 @@ class ChartSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    # session = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # performances = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Contest
         fields = (
@@ -124,21 +108,13 @@ class ContestSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
-            # 'champion',
             'contestants',
             'award',
             'session',
-            # 'parent',
-            # 'children',
         )
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    # performer = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Contestant
         fields = (
@@ -162,16 +138,6 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    # organization = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # sessions = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
     date = DateRangeField()
 
     class Meta:
@@ -193,17 +159,9 @@ class ConventionSerializer(serializers.ModelSerializer):
             'sessions',
             'human_date',
         )
-        # lookup_field = 'slug'
 
 
 class GroupSerializer(serializers.ModelSerializer):
-
-    # performers = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Group
         fields = (
@@ -230,29 +188,7 @@ class GroupSerializer(serializers.ModelSerializer):
         ]
 
 
-class GroupSearchSerializer(HaystackSerializerMixin, GroupSerializer):
-    class Meta(GroupSerializer.Meta):
-        search_fields = [
-            "text",
-            "name",
-        ]
-
-
 class JudgeSerializer(serializers.ModelSerializer):
-    # scores = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # session = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # person = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Judge
         fields = (
@@ -271,17 +207,20 @@ class JudgeSerializer(serializers.ModelSerializer):
         )
 
 
-class OrganizationSerializer(serializers.ModelSerializer):
-    # children = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # parent = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
+class MemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'person',
+            'chapter',
+        )
 
+
+class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = (
@@ -298,11 +237,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            # 'kind',
             'long_name',
             'parent',
             'children',
-            # 'performers',
         )
         read_only_fields = [
             'picture',
@@ -310,24 +247,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    # performer = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # round = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # songs = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # start_dt = serializers.Field()
-
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
 
@@ -358,28 +277,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 
 class PerformerSerializer(serializers.ModelSerializer):
-    # session = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # organization = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # performances = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # contestants = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Performer
         fields = (
@@ -416,29 +313,6 @@ class PerformerSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    # catalogs = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # choruses = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # quartets = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # sessions = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Person
         fields = (
@@ -455,8 +329,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            # 'kind',
-            # 'catalogs',
             'roles',
             'panels',
             'conventions',
@@ -466,25 +338,21 @@ class PersonSerializer(serializers.ModelSerializer):
         ]
 
 
-class PersonSearchSerializer(HaystackSerializerMixin, GroupSerializer):
-    class Meta(PersonSerializer.Meta):
-        search_fields = [
-            "text",
-            "name",
-        ]
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = (
+            'id',
+            'url',
+            'slug',
+            'name',
+            'performer',
+            'person',
+            'part',
+        )
 
 
 class RoundSerializer(serializers.ModelSerializer):
-    # session = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # performances = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Round
         fields = (
@@ -500,16 +368,6 @@ class RoundSerializer(serializers.ModelSerializer):
 
 
 class ScoreSerializer(serializers.ModelSerializer):
-    # song = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # judge = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Score
         fields = [
@@ -526,29 +384,6 @@ class ScoreSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    # convention = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # rounds = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # judges = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # performers = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Session
         fields = (
@@ -569,29 +404,6 @@ class SessionSerializer(serializers.ModelSerializer):
 
 
 class SetlistSerializer(serializers.ModelSerializer):
-    # convention = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # rounds = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # judges = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # performers = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Setlist
         fields = (
@@ -605,51 +417,7 @@ class SetlistSerializer(serializers.ModelSerializer):
         )
 
 
-class RoleSerializer(serializers.ModelSerializer):
-    # performer = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-    # person = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    class Meta:
-        model = Role
-        fields = (
-            'id',
-            'url',
-            'slug',
-            'name',
-            'performer',
-            'person',
-            'part',
-        )
-
-
 class SongSerializer(serializers.ModelSerializer):
-    # chart = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # catalog = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # performance = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # scores = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
     class Meta:
         model = Song
         fields = (
@@ -676,17 +444,6 @@ class SongSerializer(serializers.ModelSerializer):
 
 
 class VenueSerializer(serializers.ModelSerializer):
-    # catalogs = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
-
-    # songs = serializers.SlugRelatedField(
-    #     many=True,
-    #     read_only=True,
-    #     slug_field='slug',
-    # )
     timezone = TimezoneField()
 
     class Meta:

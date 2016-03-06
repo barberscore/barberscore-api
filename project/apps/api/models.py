@@ -1,10 +1,10 @@
 from __future__ import division
 
+import os
+
 import logging
 
 import uuid
-
-import os
 
 import datetime
 
@@ -67,6 +67,7 @@ from ranking import Ranking
 from .managers import (
     UserManager,
 )
+
 
 log = logging.getLogger(__name__)
 
@@ -601,6 +602,15 @@ class Chart(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
+    )
+
+    slug = AutoSlugField(
+        populate_from='name',
+        always_update=True,
+        # unique=True,
+        max_length=255,
+        null=True,
+        blank=True,
     )
 
     STATUS = Choices(
