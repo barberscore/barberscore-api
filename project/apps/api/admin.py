@@ -24,6 +24,7 @@ from .inlines import (
 
 from .models import (
     Award,
+    Certification,
     Chapter,
     Chart,
     Contest,
@@ -36,6 +37,7 @@ from .models import (
     Performance,
     Performer,
     Person,
+    Role,
     Round,
     Score,
     Session,
@@ -104,6 +106,11 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'level',
     ]
+
+
+@admin.register(Certification)
+class CertificationAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Chart)
@@ -656,6 +663,11 @@ class PersonAdmin(admin.ModelAdmin):
         MemberInline,
         CertificationInline,
     ]
+
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Round)
