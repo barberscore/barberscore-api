@@ -56,11 +56,28 @@ class AwardSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
+            'kind',
+            'season',
+            'size',
+            'scope',
+            'num_rounds',
+            'is_primary',
+            'is_improved',
+            'is_novice',
+            'idiom',
+            'cutoff',
+            'level',
             'organization',
         )
+        read_only_fields = [
+            'level',
+        ]
 
 
 class CertificationSerializer(serializers.ModelSerializer):
+    date = DateRangeField()
+
     class Meta:
         model = Certification
         fields = (
@@ -68,6 +85,10 @@ class CertificationSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'category',
+            'status',
+            'date',
+            'person',
         )
 
 
