@@ -89,7 +89,6 @@ class ChartSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            # 'slug',
             'name',
             'status',
             'title',

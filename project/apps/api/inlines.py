@@ -46,7 +46,7 @@ class AwardInline(admin.TabularInline):
         'organization',
         'kind',
         'season',
-        'rounds',
+        'num_rounds',
         'size',
         'is_improved',
         'idiom',

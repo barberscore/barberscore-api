@@ -604,15 +604,6 @@ class Chart(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        # unique=True,
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New'),
     )
