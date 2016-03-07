@@ -3417,7 +3417,7 @@ class Session(TimeStampedModel):
         return
 
 
-class Setlist(TimeStampedModel):
+class Submission(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3448,13 +3448,13 @@ class Setlist(TimeStampedModel):
 
     performer = models.ForeignKey(
         'Performer',
-        related_name='setlists',
+        related_name='submissions',
         on_delete=models.CASCADE,
     )
 
     chart = models.ForeignKey(
         'Chart',
-        related_name='setlists',
+        related_name='submissions',
         on_delete=models.CASCADE,
     )
 
@@ -3467,13 +3467,13 @@ class Setlist(TimeStampedModel):
         )
 
     class JSONAPIMeta:
-        resource_name = "setlist"
+        resource_name = "submission"
 
     def save(self, *args, **kwargs):
         self.name = u"{0}".format(
             self.id.hex,
         )
-        super(Setlist, self).save(*args, **kwargs)
+        super(Submission, self).save(*args, **kwargs)
 
 
 class Song(TimeStampedModel):

@@ -19,7 +19,7 @@ from .models import (
     Performance,
     Organization,
     Score,
-    Setlist,
+    Submission,
     Round,
     Role,
     Song,
@@ -635,12 +635,12 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     # classes = ('grp-collapse grp-open',)
 
 
-class SetlistInline(admin.TabularInline):
+class SubmissionInline(admin.TabularInline):
     fields = [
         'performer',
         'chart',
     ]
-    model = Setlist
+    model = Submission
     extra = 0
     raw_id_fields = [
         'chart',

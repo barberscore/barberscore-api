@@ -19,7 +19,7 @@ from .inlines import (
     RoleInline,
     SongStackedInline,
     OrganizationInline,
-    SetlistInline,
+    SubmissionInline,
 )
 
 from .models import (
@@ -41,7 +41,7 @@ from .models import (
     Round,
     Score,
     Session,
-    Setlist,
+    Submission,
     Song,
     User,
     Venue,
@@ -550,7 +550,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         RoleInline,
         PerformanceInline,
         ContestantInline,
-        SetlistInline,
+        SubmissionInline,
     ]
 
     list_display = (
@@ -828,8 +828,8 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
     ]
 
 
-@admin.register(Setlist)
-class SetlistAdmin(admin.ModelAdmin):
+@admin.register(Submission)
+class SubmissionAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'status',

@@ -30,7 +30,7 @@ from .models import (
     Round,
     Score,
     Session,
-    Setlist,
+    Submission,
     Singer,
     Song,
 )
@@ -1274,7 +1274,7 @@ def import_entryform(session):
     return
 
 
-def import_setlist(session):
+def import_submission(session):
     reader = csv.reader(session.song_list, skipinitialspace=True)
     next(reader)
     rows = [row for row in reader]
@@ -1287,7 +1287,7 @@ def import_setlist(session):
                 title=row[5],
                 is_generic=True,
             )
-            Setlist.objects.get_or_create(
+            Submission.objects.get_or_create(
                 performer=performer,
                 chart=chart,
             )
@@ -1312,7 +1312,7 @@ def import_setlist(session):
                 title=row[6],
                 is_generic=True,
             )
-            Setlist.objects.get_or_create(
+            Submission.objects.get_or_create(
                 performer=performer,
                 chart=chart,
             )

@@ -36,7 +36,7 @@ from .models import (
     Round,
     Score,
     Session,
-    Setlist,
+    Submission,
     Song,
     Venue,
 )
@@ -60,7 +60,7 @@ from .serializers import (
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
-    SetlistSerializer,
+    SubmissionSerializer,
     SongSerializer,
     VenueSerializer,
 )
@@ -270,16 +270,16 @@ class SessionViewSet(viewsets.ModelViewSet):
     resource_name = "session"
 
 
-class SetlistViewSet(viewsets.ModelViewSet):
-    queryset = Setlist.objects.select_related(
+class SubmissionViewSet(viewsets.ModelViewSet):
+    queryset = Submission.objects.select_related(
         'performer',
         'chart',
     )
-    serializer_class = SetlistSerializer
+    serializer_class = SubmissionSerializer
     permission_classes = [
         permissions.DjangoModelPermissions,
     ]
-    resource_name = "setlist"
+    resource_name = "submission"
 
 
 class SongViewSet(viewsets.ModelViewSet):

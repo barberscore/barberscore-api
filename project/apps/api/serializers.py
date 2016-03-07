@@ -31,7 +31,7 @@ from .models import (
     Round,
     Score,
     Session,
-    Setlist,
+    Submission,
     Song,
     Venue,
 )
@@ -69,6 +69,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'cutoff',
             'level',
             'organization',
+            'contests',
         )
         read_only_fields = [
             'level',
@@ -105,7 +106,6 @@ class ChapterSerializer(serializers.ModelSerializer):
             'organization',
             'groups',
             'members',
-            'bhs_id',
         )
 
 
@@ -124,7 +124,8 @@ class ChartSerializer(serializers.ModelSerializer):
             'is_generic',
             'is_parody',
             'is_medley',
-            'bhs_id',
+            'songs',
+            'submissions',
         )
 
 
@@ -199,18 +200,18 @@ class ConventionSerializer(serializers.ModelSerializer):
             'season',
             'level',
             'division',
+            'year',
             'date',
             'venue',
-            'year',
             'organization',
             'drcj',
             'sessions',
-            'human_date',
+            # 'human_date',
         )
 
-        readonly_fields = [
-            'human_date',
-        ]
+        # readonly_fields = [
+        #     'human_date',
+        # ]
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -239,7 +240,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'chapter',
             'organization',
             'performers',
-            'bhs_id',
         )
         read_only_fields = [
             'picture',
@@ -306,7 +306,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'long_name',
             'parent',
             'children',
-            'bhs_id',
         )
         read_only_fields = [
             'picture',
@@ -425,7 +424,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'roles',
             'panels',
             'conventions',
-            'bhs_id',
             'common_name',
             'full_name',
             'formal_name',
@@ -434,7 +432,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'nick_name',
             'organization',
             'chapter',
-            'bhs_id',
         )
         read_only_fields = [
             'picture',
@@ -455,6 +452,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
             'performer',
             'person',
             'part',
@@ -489,6 +487,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'song',
             'judge',
             'points',
+            'category',
             'kind',
         ]
 
@@ -506,16 +505,15 @@ class SessionSerializer(serializers.ModelSerializer):
             'convention',
             'administrator',
             'aca',
-            'rounds',
             'performers',
             'contests',
             'judges',
         )
 
 
-class SetlistSerializer(serializers.ModelSerializer):
+class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Setlist
+        model = Submission
         fields = (
             'id',
             'url',
