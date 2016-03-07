@@ -508,6 +508,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'performers',
             'contests',
             'judges',
+            'rounds',
         )
 
 
