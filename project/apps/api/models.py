@@ -382,9 +382,6 @@ class Chapter(TimeStampedModel):
         max_length=200,
         blank=False,
         unique=True,
-        error_messages={
-            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
-        }
     )
 
     slug = AutoSlugField(
@@ -404,87 +401,6 @@ class Chapter(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    date = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
-        null=True,
-        blank=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
-        blank=True,
-        default='',
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    phone = PhoneNumberField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        blank=True,
-        default='',
-    )
-
-    picture = models.ImageField(
-        upload_to=generate_image_filename,
-        help_text="""
-            The picture/logo of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            A description/bio of the resource.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
     )
 
     code = models.CharField(
@@ -770,6 +686,18 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
+    CYCLE_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        CYCLE_CHOICES.append((r, r))
+
+    cycle = models.IntegerField(
+        choices=CYCLE_CHOICES,
+    )
+
+    is_qualifier = models.BooleanField(
+        default=False,
+    )
+
     stix_num = models.IntegerField(
         null=True,
         blank=True,
@@ -789,27 +717,6 @@ class Contest(TimeStampedModel):
     award = models.ForeignKey(
         'Award',
         related_name='contests',
-    )
-
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
-    CYCLE_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        CYCLE_CHOICES.append((r, r))
-
-    cycle = models.IntegerField(
-        choices=CYCLE_CHOICES,
-    )
-
-    is_qualifier = models.BooleanField(
-        default=False,
     )
 
     @property
@@ -1596,8 +1503,6 @@ class Judge(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        # limit_choices_to={'is_judge': True},
-        # limit_choices_to=models.Q(certifications__isnull=False),
     )
 
     organization = TreeForeignKey(
@@ -1608,7 +1513,7 @@ class Judge(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    panel_id = models.IntegerField(
+    bhs_panel_id = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1884,6 +1789,12 @@ class Organization(MPTTModel, TimeStampedModel):
         null=True,
     )
 
+    bhs_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
     bhs_name = models.CharField(
         max_length=255,
         blank=True,
@@ -1902,12 +1813,6 @@ class Organization(MPTTModel, TimeStampedModel):
     bhs_chapter_code = models.CharField(
         max_length=255,
         blank=True,
-    )
-
-    bhs_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
     )
 
     bhs_website = models.CharField(
@@ -2382,7 +2287,7 @@ class Performer(TimeStampedModel):
             The incoming rank based on prelim score.""",
         null=True,
         blank=True,
-        # editable=False,
+        editable=False,
     )
 
     prelim = models.FloatField(
@@ -2390,7 +2295,7 @@ class Performer(TimeStampedModel):
             The incoming prelim score.""",
         null=True,
         blank=True,
-        # editable=False,
+        editable=False,
     )
 
     rank = models.IntegerField(
@@ -2658,6 +2563,21 @@ class Person(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+        (30, 'retired', 'Retired',),
+        (40, 'deceased', 'Deceased',),
+        (50, 'stix', 'Stix Issue',),
+        (60, 'dup', 'Possible Duplicate',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -2739,21 +2659,6 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-        (30, 'retired', 'Retired',),
-        (40, 'deceased', 'Deceased',),
-        (50, 'stix', 'Stix Issue',),
-        (60, 'dup', 'Possible Duplicate',),
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
     bhs_id = models.IntegerField(
         null=True,
         blank=True,
@@ -2784,12 +2689,6 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    # Denormalization to make autocomplete work
-    is_judge = models.BooleanField(
-        default=False,
-        editable=False,
-    )
-
     organization = TreeForeignKey(
         'Organization',
         null=True,
@@ -2802,12 +2701,6 @@ class Person(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    bhs_member_id = models.IntegerField(
-        null=True,
-        blank=True,
-        unique=True,
     )
 
     bhs_name = models.CharField(
@@ -2838,7 +2731,6 @@ class Person(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.is_judge = self.certifications.exists()
         name = HumanName(self.name)
         if name.nickname:
             self.common_name = " ".join(filter(None, [
@@ -3163,28 +3055,6 @@ class Score(TimeStampedModel):
     These are the actual Judge's scores.
     """
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (20, 'entered', 'Entered',),
-        (30, 'flagged', 'Flagged',),
-        (35, 'validated', 'Validated',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
-    )
-
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
-    KIND = Choices(
-        (10, 'official', 'Official'),
-        (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
-    )
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3204,6 +3074,15 @@ class Score(TimeStampedModel):
         max_length=255,
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (20, 'entered', 'Entered',),
+        (30, 'flagged', 'Flagged',),
+        (35, 'validated', 'Validated',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
@@ -3219,8 +3098,20 @@ class Score(TimeStampedModel):
         related_name='scores',
     )
 
+    CATEGORY = Choices(
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
     category = models.IntegerField(
         choices=CATEGORY,
+    )
+
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
     )
 
     kind = models.IntegerField(
@@ -3231,10 +3122,6 @@ class Score(TimeStampedModel):
     )
 
     asterisk_test = models.NullBooleanField(
-    )
-
-    is_composite = models.BooleanField(
-        default=False,
     )
 
     points = models.IntegerField(
@@ -3423,12 +3310,6 @@ class Session(TimeStampedModel):
 
     # Denormalized
     year = models.IntegerField(
-        editable=False,
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='sessions',
         editable=False,
     )
 
@@ -3637,16 +3518,6 @@ class Song(TimeStampedModel):
 
     order = models.IntegerField(
         choices=ORDER,
-    )
-
-    title = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    arranger = models.CharField(
-        max_length=255,
-        blank=True,
     )
 
     is_parody = models.BooleanField(

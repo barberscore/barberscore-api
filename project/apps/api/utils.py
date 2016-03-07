@@ -606,7 +606,7 @@ def extract_panel(convention):
             panelists = row[1:]
             for panelist in panelists:
                 parts = panelist.partition("=")
-                panel_id = int(parts[0].partition(" ")[0].strip())
+                bhs_panel_id = int(parts[0].partition(" ")[0].strip())
                 category_raw = parts[0].partition(" ")[2][1:4]
                 if category_raw == 'MUS':
                     category = Judge.CATEGORY.music
@@ -618,7 +618,7 @@ def extract_panel(convention):
                     raise RuntimeError("Can't determine category")
                 nm = unidecode(parts[2])
                 name = str(HumanName(nm))
-                if panel_id < 50:
+                if bhs_panel_id < 50:
                     kind = Judge.KIND.official
                 else:
                     kind = Judge.KIND.practice
@@ -651,9 +651,9 @@ def extract_panel(convention):
                     'person': person,
                     'session': round.session,
                     'organization': organization,
-                    'panel_id': panel_id,
+                    'bhs_panel_id': bhs_panel_id,
                     'category': category,
-                    'slot': panel_id,
+                    'slot': bhs_panel_id,
                     'status': Judge.STATUS.final,
                 })
     for judge in judges:
@@ -1063,7 +1063,7 @@ def extract_scores(convention):
                 order=number,
             )
 
-            judges = session.judges.order_by('panel_id')
+            judges = session.judges.order_by('bhs_panel_id')
             scores_raw = row[-judges.count():]
             i = 0
             for judge in judges:

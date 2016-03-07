@@ -100,7 +100,12 @@ class ChapterSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
+            'code',
             'organization',
+            'groups',
+            'members',
+            'bhs_id',
         )
 
 
@@ -116,6 +121,10 @@ class ChartSerializer(serializers.ModelSerializer):
             'arranger',
             'composer',
             'lyricist',
+            'is_generic',
+            'is_parody',
+            'is_medley',
+            'bhs_id',
         )
 
 
@@ -128,10 +137,17 @@ class ContestSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
+            'cycle',
+            'is_qualifier',
+            # 'champion',
             'contestants',
             'award',
             'session',
         )
+
+        # readonly_fields = [
+        #     'champion',
+        # ]
 
 
 class ContestantSerializer(serializers.ModelSerializer):
@@ -155,6 +171,18 @@ class ContestantSerializer(serializers.ModelSerializer):
             'performer',
             'contest',
         )
+
+        readonly_fields = [
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+        ]
 
 
 class ConventionSerializer(serializers.ModelSerializer):
@@ -180,8 +208,14 @@ class ConventionSerializer(serializers.ModelSerializer):
             'human_date',
         )
 
+        readonly_fields = [
+            'human_date',
+        ]
+
 
 class GroupSerializer(serializers.ModelSerializer):
+    date = DateRangeField()
+
     class Meta:
         model = Group
         fields = (
@@ -189,6 +223,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
             'date',
             'location',
             'website',
@@ -199,9 +234,12 @@ class GroupSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'kind',
+            'age',
+            'is_novice',
             'chapter',
             'organization',
             'performers',
+            'bhs_id',
         )
         read_only_fields = [
             'picture',
@@ -216,12 +254,12 @@ class JudgeSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            'person',
+            'status',
             'category',
             'designation',
             'kind',
             'slot',
-            'status',
+            'person',
             'session',
             'scores',
         )
@@ -235,12 +273,15 @@ class MemberSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
             'person',
             'chapter',
         )
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
+    date = DateRangeField()
+
     class Meta:
         model = Organization
         fields = (
@@ -248,6 +289,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
+            'level',
+            'kind',
             'date',
             'location',
             'website',
@@ -257,9 +301,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
+            'short_name',
+            'code',
             'long_name',
             'parent',
             'children',
+            'bhs_id',
         )
         read_only_fields = [
             'picture',
@@ -279,7 +326,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'slot',
-            'start_dt',
             'scheduled',
             'actual',
             'mus_points',
@@ -295,6 +341,17 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'songs',
         )
 
+        readonly_fields = [
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+        ]
+
 
 class PerformerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -306,11 +363,11 @@ class PerformerSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'organization',
+            'men',
             'picture',
             'seed',
             'prelim',
             'rank',
-            'men',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -329,10 +386,25 @@ class PerformerSerializer(serializers.ModelSerializer):
         )
         read_only_fields = [
             'picture',
+            'seed',
+            'prelim',
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'delta_score',
+            'delta_place',
         ]
 
 
 class PersonSerializer(serializers.ModelSerializer):
+    date = DateRangeField()
+
     class Meta:
         model = Person
         fields = (
@@ -340,6 +412,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
             'date',
             'location',
             'website',
@@ -352,9 +425,25 @@ class PersonSerializer(serializers.ModelSerializer):
             'roles',
             'panels',
             'conventions',
+            'bhs_id',
+            'common_name',
+            'full_name',
+            'formal_name',
+            'first_name',
+            'last_name',
+            'nick_name',
+            'organization',
+            'chapter',
+            'bhs_id',
         )
         read_only_fields = [
             'picture',
+            'common_name',
+            'full_name',
+            'formal_name',
+            'first_name',
+            'last_name',
+            'nick_name',
         ]
 
 
@@ -382,6 +471,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
+            'num',
             'session',
             'performances',
         )
@@ -395,10 +485,10 @@ class ScoreSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'status',
             'song',
             'judge',
             'points',
-            'status',
             'kind',
         ]
 
@@ -445,10 +535,8 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
-            'order',
-            'title',
             'status',
-            'is_parody',
+            'order',
             'chart',
             'performance',
             'mus_points',
@@ -461,6 +549,17 @@ class SongSerializer(serializers.ModelSerializer):
             'total_score',
             'scores',
         )
+
+        readonly_fields = [
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+        ]
 
 
 class VenueSerializer(serializers.ModelSerializer):

@@ -77,7 +77,9 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 
 class CertificationViewSet(viewsets.ModelViewSet):
-    queryset = Certification.objects.all()
+    queryset = Certification.objects.select_related(
+        'person',
+    )
     serializer_class = CertificationSerializer
     resource_name = "certification"
 
@@ -85,6 +87,9 @@ class CertificationViewSet(viewsets.ModelViewSet):
 class ChapterViewSet(viewsets.ModelViewSet):
     queryset = Chapter.objects.select_related(
         'organization',
+    ).prefetch_related(
+        'groups',
+        'members',
     )
     serializer_class = ChapterSerializer
     resource_name = "chapter"
@@ -194,7 +199,10 @@ class PerformerViewSet(viewsets.ModelViewSet):
 
 
 class PersonViewSet(viewsets.ModelViewSet):
-    queryset = Person.objects.prefetch_related(
+    queryset = Person.objects.select_related(
+        'organization',
+        'chapter',
+    ).prefetch_related(
         'roles',
         'panels',
         'conventions',

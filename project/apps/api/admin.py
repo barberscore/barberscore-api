@@ -629,7 +629,7 @@ class PersonAdmin(admin.ModelAdmin):
         'email',
         'phone',
         'picture',
-        'bhs_member_id',
+        # 'bhs_id',
         'bhs_name',
         'bhs_city',
         'bhs_state',
@@ -798,7 +798,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'status',
         'kind',
         'convention__year',
-        'organization',
+        'convention',
     )
 
     raw_id_fields = (
@@ -814,7 +814,6 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
 
     readonly_fields = [
         'name',
-        'organization',
     ]
 
     inlines = [
