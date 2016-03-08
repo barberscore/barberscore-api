@@ -750,12 +750,16 @@ class Contest(TimeStampedModel):
         points = [contestant.total_points for contestant in contestants]
         ranking = Ranking(points, start=1)
         for contestant in contestants:
-            contestant.rank = ranking.rank(contestant.total_points)
             if self.is_qualifier:
-                if contestant.total_score >= self.award.cutoff:
-                    contestant.status = contestant.STATUS.qualified
+                if self.award.cutoff:
+                    if contestant.total_score >= self.award.cutoff:
+                        contestant.rank = 1
+                    else:
+                        contestant.rank = 0
                 else:
-                    contestant.status = contestant.STATUS.dnq
+                    contestant.rank = None
+            else:
+                contestant.rank = ranking.rank(contestant.total_points)
             contestant.save()
         return
 
@@ -940,7 +944,7 @@ class Contestant(TimeStampedModel):
         )
         ordering = (
             'contest',
-            'rank',
+            '-total_points',
         )
 
     class JSONAPIMeta:
@@ -2414,6 +2418,7 @@ class Performer(TimeStampedModel):
     class Meta:
         ordering = (
             'session',
+            '-total_points',
             'group',
         )
         unique_together = (
