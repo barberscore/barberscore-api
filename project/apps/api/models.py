@@ -2850,9 +2850,16 @@ class Role(TimeStampedModel):
         blank=True,
     )
 
+    performer = models.ForeignKey(
+        'Performer',
+        related_name='roles',
+    )
+
     group = models.ForeignKey(
         'Group',
         related_name='roles',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
@@ -2865,12 +2872,12 @@ class Role(TimeStampedModel):
 
     def clean(self):
         if all([
-            self.group.kind == Group.KIND.chorus,
+            self.performer.group.kind == Group.KIND.chorus,
             self.part != self.PART.director,
         ]):
             raise ValidationError('Choruses do not have quartet singers.')
         if all([
-            self.group.kind == Group.KIND.quartet,
+            self.performer.group.kind == Group.KIND.quartet,
             self.part == self.PART.director,
         ]):
             raise ValidationError('Quartets do not have directors.')

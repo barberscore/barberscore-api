@@ -494,22 +494,28 @@ class RoleInline(admin.TabularInline):
         )
     fields = (
         'link',
-        'group',
+        'performer',
         'person',
         'part',
     )
     ordering = (
         'part',
-        'group',
+        'performer',
     )
     extra = 0
     raw_id_fields = (
         'person',
-        'group',
+        'performer',
     )
     readonly_fields = [
         'link',
     ]
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'person',
+    #         # 'performer',
+    #     ]
+    # }
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-open',)
