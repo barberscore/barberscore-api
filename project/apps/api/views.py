@@ -141,7 +141,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         'organization',
     ).prefetch_related(
         'performers',
-        'roles',
     )
     serializer_class = GroupSerializer
     filter_class = GroupFilter
@@ -193,6 +192,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'performances',
         'contestants',
+        'roles',
     )
     serializer_class = PerformerSerializer
     resource_name = "performer"
@@ -215,7 +215,7 @@ class PersonViewSet(viewsets.ModelViewSet):
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.select_related(
         'person',
-        'group',
+        'performer',
     )
     serializer_class = RoleSerializer
     resource_name = "role"

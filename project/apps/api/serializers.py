@@ -240,7 +240,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'chapter',
             'organization',
             'performers',
-            'roles',
         )
         read_only_fields = [
             'picture',
@@ -381,6 +380,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'session',
             'group',
             'performances',
+            'roles',
             'contestants',
         )
         read_only_fields = [
@@ -453,7 +453,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'slug',
             'name',
             'status',
-            'group',
+            'performer',
             'person',
             'part',
         )
