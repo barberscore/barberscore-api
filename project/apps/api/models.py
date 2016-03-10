@@ -2889,7 +2889,7 @@ class Role(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('group', 'person',),
+            ('performer', 'person',),
         )
         ordering = (
             '-name',
@@ -2901,7 +2901,7 @@ class Role(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.full_clean()
         self.name = " ".join(filter(None, [
-            self.group.name,
+            self.performer.name,
             self.person.name,
             self.get_part_display(),
         ]))
