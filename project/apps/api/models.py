@@ -719,9 +719,13 @@ class Contest(TimeStampedModel):
         related_name='contests',
     )
 
-    @property
-    def champion(self):
-        return self.contestants.order_by('rank').first()
+    champion = models.OneToOneField(
+        'Contestant',
+        related_name='contests',
+        null=True,
+        blank=True,
+        editable=False,
+    )
 
     @staticmethod
     def autocomplete_search_fields():
@@ -731,6 +735,13 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.is_qualifier:
+            self.champion = None
+        else:
+            try:
+                self.champion = self.contestants.order_by('rank').first()
+            except AttributeError:
+                self.champion = None
         self.name = " ".join(filter(None, [
             self.award.name,
             self.session.name,

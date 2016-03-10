@@ -130,6 +130,10 @@ class ChartSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
+    # champion = serializers.StringRelatedField(
+    #     read_only=True,
+    # )
+
     class Meta:
         model = Contest
         fields = (
@@ -140,15 +144,11 @@ class ContestSerializer(serializers.ModelSerializer):
             'status',
             'cycle',
             'is_qualifier',
-            # 'champion',
+            'champion',
             'contestants',
             'award',
             'session',
         )
-
-        # readonly_fields = [
-        #     'champion',
-        # ]
 
 
 class ContestantSerializer(serializers.ModelSerializer):
