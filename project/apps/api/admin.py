@@ -357,6 +357,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     inlines = [
         PerformerInline,
+        RoleInline,
     ]
 
     raw_id_fields = [
@@ -547,7 +548,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
 
     inlines = [
-        RoleInline,
         PerformanceInline,
         ContestantInline,
         SubmissionInline,
