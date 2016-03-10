@@ -2822,6 +2822,8 @@ class Role(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
     )
 
     status = FSMIntegerField(
@@ -2841,9 +2843,23 @@ class Role(TimeStampedModel):
         choices=PART,
     )
 
+    date = DateRangeField(
+        help_text="""
+            Active Dates""",
+        null=True,
+        blank=True,
+    )
+
     performer = models.ForeignKey(
         'Performer',
         related_name='roles',
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='roles',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
