@@ -97,6 +97,7 @@ class AwardAdmin(admin.ModelAdmin):
         'idiom',
         'num_rounds',
         'cutoff',
+        'minimum',
         # 'panel_size',
         'stix_num',
         'stix_name',

@@ -217,6 +217,11 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    minimum = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     stix_num = models.IntegerField(
         null=True,
         blank=True,
@@ -735,13 +740,10 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.is_qualifier:
+        try:
+            self.champion = self.contestants.order_by('rank').first()
+        except AttributeError:
             self.champion = None
-        else:
-            try:
-                self.champion = self.contestants.order_by('rank').first()
-            except AttributeError:
-                self.champion = None
         self.name = " ".join(filter(None, [
             self.award.name,
             self.session.name,
@@ -762,20 +764,64 @@ class Contest(TimeStampedModel):
         ranking = Ranking(points, start=1)
         for contestant in contestants:
             if self.is_qualifier:
-                if self.award.cutoff:
-                    if contestant.total_score >= self.award.cutoff:
-                        contestant.rank = 1
+                if self.award.level == self.award.LEVEL.international:
+                    if self.award.kind == self.award.KIND.quartet:
+                        if contestant.total_score < self.award.minimum:
+                            contestant.rank = 0
+                            contestant.save()
+                            continue
+                        if contestant.total_score >= self.award.cutoff:
+                            contestant.rank = 1
+                            contestant.save()
+                            continue
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.rank = 1
+                        else:
+                            contestant.rank = 0
+                    elif self.award.kind == self.award.KIND.chorus:
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.rank = 1
+                        else:
+                            contestant.rank = 0
+                    elif self.award.kind == self.award.KIND.seniors:
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.rank = 1
+                        else:
+                            contestant.rank = 0
+                    elif self.award.kind == self.award.KIND.youth:
+                        if contestant.total_score < self.award.minimum:
+                            contestant.rank = 0
+                            contestant.save()
+                            continue
+                        if contestant.total_score >= self.award.cutoff:
+                            contestant.rank = 1
+                            contestant.save()
+                            continue
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.rank = 1
+                        else:
+                            contestant.rank = 0
+                    elif self.award.kind == self.award.KIND.collegiate:
+                        if contestant.total_score < self.award.minimum:
+                            contestant.rank = 0
+                            contestant.save()
+                            continue
+                        if contestant.total_score >= self.award.cutoff:
+                            contestant.rank = 1
+                            contestant.save()
+                            continue
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.rank = 1
+                        else:
+                            contestant.rank = 0
                     else:
-                        contestant.rank = 0
+                        raise RuntimeError("No Award Kind")
                 else:
-                    contestant.rank = None
+                    contestant.rank = None  # TODO District quals.
             else:
                 contestant.rank = ranking.rank(contestant.total_points)
             contestant.save()
         return
-
-    def start(self):
-        return "{0} Started".format(self)
 
     class Meta:
         unique_together = (
