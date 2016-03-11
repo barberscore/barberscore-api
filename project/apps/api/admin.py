@@ -556,8 +556,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'seed',
-        'prelim',
         # 'mus_score',
         # 'prs_score',
         # 'sng_score',
@@ -589,7 +587,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'session',
         ('group', 'organization',),
-        ('seed', 'prelim',),
         ('men',),
         # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
