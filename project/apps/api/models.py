@@ -2858,8 +2858,6 @@ class Role(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='roles',
-        null=True,
-        blank=True,
     )
 
     person = models.ForeignKey(
@@ -2888,9 +2886,9 @@ class Role(TimeStampedModel):
         #         raise ValidationError('There can not be more than one of the same part in a quartet.')
 
     class Meta:
-        unique_together = (
-            ('performer', 'person',),
-        )
+        # unique_together = (
+        #     ('group', 'person', 'part',),
+        # )
         ordering = (
             '-name',
         )
@@ -2901,9 +2899,10 @@ class Role(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.full_clean()
         self.name = " ".join(filter(None, [
-            self.performer.name,
-            self.person.name,
-            self.get_part_display(),
+            self.id.hex,
+            # self.group.name,
+            # self.person.name,
+            # self.get_part_display(),
         ]))
         super(Role, self).save(*args, **kwargs)
 

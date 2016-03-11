@@ -494,6 +494,7 @@ class RoleInline(admin.TabularInline):
         )
     fields = (
         'link',
+        'group',
         'performer',
         'person',
         'part',
@@ -501,10 +502,12 @@ class RoleInline(admin.TabularInline):
     ordering = (
         'part',
         'performer',
+        'person',
     )
     extra = 0
     raw_id_fields = (
         'person',
+        'group',
         'performer',
     )
     readonly_fields = [
