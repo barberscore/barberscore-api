@@ -31,7 +31,6 @@ from .models import (
     Score,
     Session,
     Submission,
-    Singer,
     Song,
 )
 
@@ -1196,123 +1195,149 @@ def generate_cycle(year):
     return "Built {0}".format(year)
 
 
-def import_entryform(session):
-    reader = csv.reader(session.entry_form, skipinitialspace=True)
-    next(reader)
-    rows = [row for row in reader]
-    parts = ['Tenor', 'Lead', 'Baritone', 'Bass']
-    output = []
-    quartet = None
-    part = None
-    bhs_id = None
-    person = None
-    chapter = None
-    person = None
-    for row in rows:
-        entry = {}
-        if row[1]:
-            quartet = row[1]
-        if any([string in row[10] for string in parts]):
-            part = row[10].partition("-")[0].strip()
-            person = row[10].partition("-")[2].strip()
-            bhs_id = person.partition("-")[0].strip()
-            person = person.partition("-")[2].strip()
-        if not any([string in row[10] for string in parts]):
-            chapter = row[10].partition(" ")[0].strip()
-        entry['quartet'] = quartet
-        entry['part'] = part.lower()
-        entry['bhs_id'] = int(bhs_id)
-        entry['chapter'] = chapter
-        entry['person'] = person
-        output.append(entry)
-    for row in output:
-        if row['chapter']:
-            try:
-                person = Person.objects.get(
-                    bhs_id=row['bhs_id'],
-                )
-            except Person.DoesNotExist:
-                try:
-                    person = Person.objects.create(
-                        bhs_id=row['bhs_id'],
-                        name=row['person'],
-                    )
-                except IntegrityError:
-                    person = Person.objects.create(
-                        bhs_id=row['bhs_id'],
-                        name="{0} {1}".format(row['person'], row['bhs_id'])
-                    )
-            try:
-                chapter = Chapter.objects.get(
-                    code=row['chapter']
-                )
-            except Chapter.DoesNotExist:
-                print row['chapter']
-            Member.objects.get_or_create(
-                chapter=chapter,
-                person=person,
-                status=Member.STATUS.active,
-            )
-    for row in output:
-        if row['chapter']:
-            try:
-                performer = Performer.objects.get(
-                    group__name=row['quartet'],
-                    session=session,
-                )
-            except Performer.DoesNotExist:
-                print row['quartet']
-                continue
-            person = Person.objects.get(
-                bhs_id=row['bhs_id'],
-            )
-            singer, created = Singer.objects.get_or_create(
-                performer=performer,
-                person=person,
-                part=getattr(Singer.PART, row['part']),
-            )
-    return
+# def import_entryform(session):
+#     reader = csv.reader(session.entry_form, skipinitialspace=True)
+#     next(reader)
+#     rows = [row for row in reader]
+#     parts = ['Tenor', 'Lead', 'Baritone', 'Bass']
+#     output = []
+#     quartet = None
+#     part = None
+#     bhs_id = None
+#     person = None
+#     chapter = None
+#     person = None
+#     for row in rows:
+#         entry = {}
+#         if row[1]:
+#             quartet = row[1]
+#         if any([string in row[10] for string in parts]):
+#             part = row[10].partition("-")[0].strip()
+#             person = row[10].partition("-")[2].strip()
+#             bhs_id = person.partition("-")[0].strip()
+#             person = person.partition("-")[2].strip()
+#         if not any([string in row[10] for string in parts]):
+#             chapter = row[10].partition(" ")[0].strip()
+#         entry['quartet'] = quartet
+#         entry['part'] = part.lower()
+#         entry['bhs_id'] = int(bhs_id)
+#         entry['chapter'] = chapter
+#         entry['person'] = person
+#         output.append(entry)
+#     for row in output:
+#         if row['chapter']:
+#             try:
+#                 person = Person.objects.get(
+#                     bhs_id=row['bhs_id'],
+#                 )
+#             except Person.DoesNotExist:
+#                 try:
+#                     person = Person.objects.create(
+#                         bhs_id=row['bhs_id'],
+#                         name=row['person'],
+#                     )
+#                 except IntegrityError:
+#                     person = Person.objects.create(
+#                         bhs_id=row['bhs_id'],
+#                         name="{0} {1}".format(row['person'], row['bhs_id'])
+#                     )
+#             try:
+#                 chapter = Chapter.objects.get(
+#                     code=row['chapter']
+#                 )
+#             except Chapter.DoesNotExist:
+#                 print row['chapter']
+#             Member.objects.get_or_create(
+#                 chapter=chapter,
+#                 person=person,
+#                 status=Member.STATUS.active,
+#             )
+#     for row in output:
+#         if row['chapter']:
+#             try:
+#                 performer = Performer.objects.get(
+#                     group__name=row['quartet'],
+#                     session=session,
+#                 )
+#             except Performer.DoesNotExist:
+#                 print row['quartet']
+#                 continue
+#             person = Person.objects.get(
+#                 bhs_id=row['bhs_id'],
+#             )
+#             singer, created = Singer.objects.get_or_create(
+#                 performer=performer,
+#                 person=person,
+#                 part=getattr(Singer.PART, row['part']),
+#             )
+#     return
 
 
 def import_submission(session):
     reader = csv.reader(session.song_list, skipinitialspace=True)
     next(reader)
     rows = [row for row in reader]
-    if session.kind == session.KIND.quartet:
-        for row in rows:
-            performer = session.performers.get(
-                group__bhs_id=row[1],
-            )
-            chart, c = Chart.objects.get_or_create(
-                title=row[5],
-                is_generic=True,
-            )
-            Submission.objects.get_or_create(
-                performer=performer,
-                chart=chart,
-            )
-    elif session.kind == session.KIND.chorus:
-        for row in rows:
+    for row in rows:
+        if session.kind == session.KIND.chorus:
             try:
                 group = Group.objects.get(
                     status=Group.STATUS.active,
                     chapter__code=row[1],
                 )
             except Group.DoesNotExist:
-                print row[1]
-            round = session.rounds.get(num=1)
-            performer, c = session.performers.get_or_create(
-                group=group,
-            )
+                raise RuntimeError("No active group: {0}, {1}".format(row[1], row[2]))
+            try:
+                men = int(row[10])
+            except ValueError:
+                log.info("Can not parse men: {0}, {1}".format(row[10], group))
+                men = None
+        else:
+            try:
+                group = Group.objects.get(
+                    bhs_id=row[1],
+                )
+            except Group.DoesNotExist:
+                group = Group.objects.create(
+                    bhs_id=int(row[1]),
+                    name=row[2].strip(),
+                    kind=Group.KIND.quartet,
+                )
+                log.info("Created {0}, {1}".format(row[1], row[2],))
+            men = 4
+        if row[11] == 'MEDLEY':
+            is_medley = True
+        else:
+            is_medley = False
+        if row[0] == '0':
+            oa = None
+        else:
+            oa = int(row[0])
+        if row[7][:1].isdigit():
+            bhs_id = int(row[7].partition(' -')[0])
+        else:
+            bhs_id = None
+        round = session.rounds.get(num=1)
+        performer, c = session.performers.get_or_create(
+            group=group,
+        )
+        performer.men = men
+        performer.save()
+        chart, c = Chart.objects.get_or_create(
+            title=row[6],
+            arranger=unidecode(row[8]),
+            is_medley=is_medley,
+            bhs_copyright_date=row[12],
+            bhs_copyright_owner=row[13],
+            bhs_id=bhs_id,
+            composer=unidecode(row[14]),
+            lyricist=unidecode(row[15]),
+        )
+        Submission.objects.get_or_create(
+            performer=performer,
+            chart=chart,
+        )
+        if oa:
             performance, c = performer.performances.get_or_create(
                 round=round,
-                slot=int(row[0]),
-            )
-            chart, c = Chart.objects.get_or_create(
-                title=row[6],
-                is_generic=True,
-            )
-            Submission.objects.get_or_create(
-                performer=performer,
-                chart=chart,
+                slot=oa,
             )

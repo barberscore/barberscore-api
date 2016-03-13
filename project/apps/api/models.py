@@ -645,15 +645,20 @@ class Chart(TimeStampedModel):
             arranger = None
         else:
             arranger = "[{0}]".format(self.arranger)
+        if self.bhs_id:
+            bhs_id = "- {0}".format(self.bhs_id)
+        else:
+            bhs_id = None
         self.name = " ".join(filter(None, [
             self.title,
             arranger,
+            bhs_id,
         ]))
         super(Chart, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (
-            ('title', 'arranger', 'is_generic',),
+            ('title', 'arranger', 'bhs_id',),
         )
 
     class JSONAPIMeta:
@@ -2068,10 +2073,6 @@ class Performance(TimeStampedModel):
     @staticmethod
     def autocomplete_search_fields():
             return ("id__iexact", "name__icontains",)
-
-    @property
-    def start_dt(self):
-        return self.scheduled.lower
 
     def __unicode__(self):
         return u"{0}".format(self.name)
