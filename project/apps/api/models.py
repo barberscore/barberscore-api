@@ -650,16 +650,17 @@ class Chart(TimeStampedModel):
         else:
             bhs_id = None
         self.name = " ".join(filter(None, [
-            self.title,
-            arranger,
-            bhs_id,
+            self.id.hex,
+            # self.title,
+            # arranger,
+            # bhs_id,
         ]))
         super(Chart, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('title', 'arranger', 'bhs_id',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('title', 'arranger', 'bhs_id',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "chart"
