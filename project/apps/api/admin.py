@@ -896,6 +896,9 @@ class VenueAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',
+        'location',
+        'city',
+        'state',
         'timezone',
     )
 

@@ -3680,11 +3680,6 @@ class Song(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} {1} {2}".format(
-            self.performance,
-            'Song',
-            self.order,
-        )
         self.name = " ".join(filter(None, [
             self.performance.round.session.convention.organization.name,
             self.performance.round.session.convention.get_division_display(),
@@ -3764,6 +3759,21 @@ class Venue(TimeStampedModel):
         max_length=255,
     )
 
+    location = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    city = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    state = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the venue.""",
@@ -3779,6 +3789,15 @@ class Venue(TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "venue"
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+            # self.location,
+            # self.city,
+            # self.state,
+        ]))
+        super(Venue, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u"{0}".format(self.name)

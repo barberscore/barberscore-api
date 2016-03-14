@@ -571,6 +571,9 @@ class VenueSerializer(serializers.ModelSerializer):
             'url',
             'slug',
             'name',
+            'location',
+            'city',
+            'state',
             'timezone',
             'conventions',
         )
