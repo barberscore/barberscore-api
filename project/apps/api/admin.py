@@ -155,16 +155,7 @@ class ChapterAdmin(admin.ModelAdmin):
         'bhs_name',
         'bhs_group_name',
         'bhs_id',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
         'code',
-        'notes',
     )
 
     inlines = [
@@ -788,6 +779,7 @@ class SessionAdmin(FSMTransitionMixin, SuperModelAdmin):
         'convention',
         'kind',
         'administrator',
+        'song_list',
         # 'size',
         # 'num_rounds',
     ]
