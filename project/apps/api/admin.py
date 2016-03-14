@@ -6,21 +6,20 @@ from fsm_admin.mixins import FSMTransitionMixin
 from .inlines import (
     AwardInline,
     CertificationInline,
-    ContestantInline,
     ContestInline,
+    ContestantInline,
+    SessionInline,
+    PerformerInline,
     GroupInline,
     JudgeInline,
     MemberInline,
-    OrganizationInline,
     PerformanceInline,
-    PerformerInline,
-    RoleInline,
-    RoundInline,
     ScoreInline,
-    SessionInline,
+    RoundInline,
+    RoleInline,
     SongStackedInline,
+    OrganizationInline,
     SubmissionInline,
-    VenueInline,
 )
 
 from .models import (
@@ -285,7 +284,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         SessionInline,
-        VenueInline,
         # OrganizationInline,
     ]
 

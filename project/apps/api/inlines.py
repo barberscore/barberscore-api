@@ -23,7 +23,6 @@ from .models import (
     Round,
     Role,
     Song,
-    Venue,
 )
 
 
@@ -649,16 +648,3 @@ class SubmissionInline(admin.TabularInline):
     raw_id_fields = [
         'chart',
     ]
-
-
-class VenueInline(admin.TabularInline):
-    fields = [
-        'location',
-        'city',
-        'state',
-    ]
-    model = Venue
-    extra = 0
-    # raw_id_fields = [
-    #     'chart',
-    # ]
