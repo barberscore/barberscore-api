@@ -902,6 +902,14 @@ class VenueAdmin(admin.ModelAdmin):
         'timezone',
     )
 
+    list_display = [
+        'name',
+        'location',
+        'city',
+        'state',
+        'timezone',
+    ]
+
     search_fields = (
         'name',
     )
