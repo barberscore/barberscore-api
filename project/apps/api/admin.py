@@ -289,7 +289,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'name',
-        'year',
+        # 'year',
         'level',
         'human_date',
     )

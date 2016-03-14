@@ -1114,7 +1114,7 @@ class Convention(TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
-        editable=False,
+        # editable=False,
     )
 
     date = DateRangeField(
