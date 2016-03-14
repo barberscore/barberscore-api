@@ -23,6 +23,7 @@ class ConventionFilter(filters.FilterSet):
         fields = {
             'status': filters.ALL_LOOKUPS,
             'year': filters.ALL_LOOKUPS,
+            'season': filters.ALL_LOOKUPS,
         }
 
 
