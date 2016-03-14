@@ -413,7 +413,7 @@ class ScoreInline(admin.TabularInline):
         'points',
         'dixon_test',
         'asterisk_test',
-        'is_composite',
+        # 'is_composite',
     )
     ordering = (
         'judge',
