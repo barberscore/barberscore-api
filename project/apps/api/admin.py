@@ -914,6 +914,10 @@ class VenueAdmin(admin.ModelAdmin):
         'name',
     )
 
+    readonly_fields = [
+        'name',
+    ]
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

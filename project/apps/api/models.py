@@ -3750,6 +3750,7 @@ class Venue(TimeStampedModel):
     name = models.CharField(
         max_length=200,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -3761,17 +3762,14 @@ class Venue(TimeStampedModel):
 
     location = models.CharField(
         max_length=255,
-        blank=True,
     )
 
     city = models.CharField(
         max_length=255,
-        blank=True,
     )
 
     state = models.CharField(
         max_length=255,
-        blank=True,
     )
 
     timezone = TimeZoneField(
@@ -3792,10 +3790,9 @@ class Venue(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.id.hex,
-            # self.location,
-            # self.city,
-            # self.state,
+            self.location,
+            self.city,
+            self.state,
         ]))
         super(Venue, self).save(*args, **kwargs)
 
