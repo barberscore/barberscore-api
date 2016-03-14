@@ -1089,8 +1089,10 @@ class Convention(TimeStampedModel):
         (280, 'lolp1', "Division One/Packerland Divisions"),
         (290, 'lolnp', "Northern Plains Division"),
         (300, 'lol10sw', "10,000 Lakes and Southwest Divisions"),
-        (310, 'madatl', "Atlantic Division"),
-        (320, 'madnw', "Northern and Western Divisions"),
+        # (310, 'madatl', "Atlantic Division"),  <- LEGACY
+        # (320, 'madnw', "Northern and Western Divisions"), <- LEGACY
+        (322, 'madnth', "Northern Division"),
+        (324, 'madcen', "Central Division"),
         (330, 'madsth', "Southern Division"),
         (340, 'nedsun', "Sunrise Division"),
         (342, 'nedwst', "Western Regional"),
