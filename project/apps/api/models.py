@@ -1093,6 +1093,8 @@ class Convention(TimeStampedModel):
         (320, 'madnw', "Northern and Western Divisions"),
         (330, 'madsth', "Southern Division"),
         (340, 'nedsun', "Sunrise Division"),
+        (342, 'nedwst', "Western Regional"),
+        (344, 'nedest', "Eastern Regional"),
         (350, 'swdnenwsesw', "NE/NW/SE/SW Divisions"),
     )
 
