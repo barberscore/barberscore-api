@@ -1285,7 +1285,7 @@ def import_submission(session):
                     chapter__code=row[1],
                 )
             except Group.DoesNotExist:
-                raise RuntimeError("No active group: {0}, {1}".format(row[1], row[2]))
+                raise RuntimeError("No chorus for: {0}, {1}, {2}".format(row[1], row[2], session))
             try:
                 men = int(row[10])
             except ValueError:

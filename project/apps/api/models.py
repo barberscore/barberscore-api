@@ -1208,7 +1208,7 @@ class Convention(TimeStampedModel):
 
     class Meta:
         ordering = [
-            '-year',
+            'date',
             'organization__name',
         ]
 
