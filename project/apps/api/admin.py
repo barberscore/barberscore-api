@@ -253,7 +253,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'division',
         'season',
-        # 'date',
+        'date',
         'human_date',
         # 'location',
     )
