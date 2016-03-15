@@ -117,6 +117,9 @@ class CertificationAdmin(admin.ModelAdmin):
 @admin.register(Chart)
 class ChartAdmin(admin.ModelAdmin):
     save_on_top = True
+    search_fields = [
+        'title',
+    ]
 
 
 @admin.register(Chapter)
