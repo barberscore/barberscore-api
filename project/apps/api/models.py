@@ -865,6 +865,8 @@ class Contestant(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'eligible', 'Eligible',),
+        (20, 'ineligible', 'Ineligible',),
         (30, 'dnq', 'Did Not Qualify',),
         (50, 'qualified', 'Qualified',),
         (90, 'final', 'Final',),

@@ -1320,8 +1320,15 @@ def import_submission(session):
         performer, c = session.performers.get_or_create(
             group=group,
         )
+        performer.organization = group.organization
         performer.men = men
         performer.save()
+        contests = session.contests.all()
+        for contest in contests:
+            Contestant.objects.get_or_create(
+                performer=performer,
+                contest=contest,
+            )
         chart, c = Chart.objects.get_or_create(
             title=row[6],
             arranger=unidecode(row[8]),
