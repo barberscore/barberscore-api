@@ -650,10 +650,9 @@ class Chart(TimeStampedModel):
         else:
             bhs_id = None
         self.name = " ".join(filter(None, [
-            self.id.hex,
-            # self.title,
-            # arranger,
-            # bhs_id,
+            self.title,
+            arranger,
+            bhs_id,
         ]))
         super(Chart, self).save(*args, **kwargs)
 
