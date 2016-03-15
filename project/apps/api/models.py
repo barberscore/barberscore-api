@@ -277,14 +277,6 @@ class Award(TimeStampedModel):
         super(Award, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = (
-            'level',
-            'organization',
-            '-is_primary',
-            'kind',
-            'size',
-            'scope',
-        )
         unique_together = (
             (
                 'organization',
@@ -311,6 +303,7 @@ class Certification(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
+        editable=False,
     )
 
     slug = AutoSlugField(
@@ -361,6 +354,7 @@ class Certification(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
             self.person,
+            " - ",
             self.get_category_display(),
         )
         super(Certification, self).save(*args, **kwargs)
@@ -496,17 +490,8 @@ class Chapter(TimeStampedModel):
         blank=True,
     )
 
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
     def __unicode__(self):
         return u"{0}".format(self.name)
-
-    class Meta:
-        ordering = (
-            'name',
-        )
 
     class JSONAPIMeta:
         resource_name = "chapter"
@@ -737,10 +722,6 @@ class Contest(TimeStampedModel):
         editable=False,
     )
 
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -831,11 +812,6 @@ class Contest(TimeStampedModel):
     class Meta:
         unique_together = (
             ('session', 'award',)
-        )
-        ordering = (
-            '-session__convention__year',
-            'award',
-            'session',
         )
 
     class JSONAPIMeta:
@@ -948,10 +924,10 @@ class Contestant(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            # self.award.name,
-            # str(self.performer.session.convention.year),
+            self.contest.award.name,
+            str(self.performer.session.convention.year),
             # self.performer.group.name,
-            self.contest.name,
+            # self.contest.award.name,
             self.performer.name,
         ]))
         super(Contestant, self).save(*args, **kwargs)
@@ -1005,10 +981,6 @@ class Contestant(TimeStampedModel):
     class Meta:
         unique_together = (
             ('performer', 'contest',),
-        )
-        ordering = (
-            'contest',
-            '-total_points',
         )
 
     class JSONAPIMeta:
@@ -1207,11 +1179,6 @@ class Convention(TimeStampedModel):
         super(Convention, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = [
-            'date',
-            'organization__name',
-        ]
-
         unique_together = (
             ('organization', 'season', 'year', 'division',),
         )
@@ -1481,17 +1448,10 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     class Meta:
-        ordering = (
-            'name',
-        )
         unique_together = (
             ('name', 'kind',),
         )
@@ -1614,12 +1574,6 @@ class Judge(TimeStampedModel):
     class Meta:
         unique_together = (
             ('session', 'category', 'kind', 'slot'),
-        )
-        ordering = (
-            'session',
-            'category',
-            'kind',
-            'slot',
         )
 
     class JSONAPIMeta:
@@ -1944,9 +1898,6 @@ class Organization(MPTTModel, TimeStampedModel):
             'kind',
             'short_name',
         ]
-        ordering = [
-            'tree_id',
-        ]
 
     class JSONAPIMeta:
         resource_name = "organization"
@@ -2071,10 +2022,6 @@ class Performance(TimeStampedModel):
         related_name='performances',
     )
 
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2092,10 +2039,6 @@ class Performance(TimeStampedModel):
         super(Performance, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = (
-            'round',
-            'slot',
-        )
         unique_together = (
             ('round', 'slot',),
         )
@@ -2449,10 +2392,6 @@ class Performer(TimeStampedModel):
         except TypeError:
             return None
 
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2475,11 +2414,6 @@ class Performer(TimeStampedModel):
         super(Performer, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = (
-            'session',
-            '-total_points',
-            'group',
-        )
         unique_together = (
             ('group', 'session',),
         )
@@ -2811,15 +2745,8 @@ class Person(TimeStampedModel):
         ]))
         super(Person, self).save(*args, **kwargs)
 
-    class Meta:
-        ordering = ['name']
-
     class JSONAPIMeta:
         resource_name = "person"
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
 
     @property
     def first_name(self):
@@ -2933,14 +2860,6 @@ class Role(TimeStampedModel):
         #     )].count(self.part) > 1:
         #         raise ValidationError('There can not be more than one of the same part in a quartet.')
 
-    class Meta:
-        # unique_together = (
-        #     ('group', 'person', 'part',),
-        # )
-        ordering = (
-            '-name',
-        )
-
     class JSONAPIMeta:
         resource_name = "role"
 
@@ -3022,10 +2941,6 @@ class Round(TimeStampedModel):
     )
 
     class Meta:
-        ordering = (
-            'session',
-            'kind',
-        )
         unique_together = (
             ('session', 'kind',),
         )
@@ -3043,10 +2958,6 @@ class Round(TimeStampedModel):
             str(self.session.convention.year),
         ]))
         super(Round, self).save(*args, **kwargs)
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3219,12 +3130,6 @@ class Score(TimeStampedModel):
             ),
         ]
     )
-
-    class Meta:
-        ordering = (
-            'song',
-            'judge',
-        )
 
     class JSONAPIMeta:
         resource_name = "score"
@@ -3411,11 +3316,6 @@ class Session(TimeStampedModel):
     class Meta:
         unique_together = (
             ('convention', 'kind',),
-        )
-        ordering = (
-            '-year',
-            'convention',
-            'kind',
         )
 
     class JSONAPIMeta:
@@ -3666,10 +3566,6 @@ class Song(TimeStampedModel):
     )
 
     class Meta:
-        ordering = [
-            'performance',
-            'order',
-        ]
         unique_together = (
             ('performance', 'order',),
         )
@@ -3778,13 +3674,6 @@ class Venue(TimeStampedModel):
             The local timezone of the venue.""",
         default='US/Pacific',
     )
-
-    @staticmethod
-    def autocomplete_search_fields():
-            return ("id__iexact", "name__icontains",)
-
-    class Meta:
-        ordering = ['name']
 
     class JSONAPIMeta:
         resource_name = "venue"

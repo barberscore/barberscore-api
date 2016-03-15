@@ -75,6 +75,15 @@ class AwardSerializer(serializers.ModelSerializer):
             'level',
         ]
 
+        ordering = (
+            'level',
+            'organization',
+            '-is_primary',
+            'kind',
+            'size',
+            'scope',
+        )
+
 
 class CertificationSerializer(serializers.ModelSerializer):
     date = DateRangeField()
@@ -106,6 +115,10 @@ class ChapterSerializer(serializers.ModelSerializer):
             'organization',
             'groups',
             'members',
+        )
+
+        ordering = (
+            'name',
         )
 
 
@@ -149,6 +162,11 @@ class ContestSerializer(serializers.ModelSerializer):
             'award',
             'session',
         )
+        ordering = (
+            '-session__convention__year',
+            'award',
+            'session',
+        )
 
 
 class ContestantSerializer(serializers.ModelSerializer):
@@ -185,6 +203,11 @@ class ContestantSerializer(serializers.ModelSerializer):
             'total_score',
         ]
 
+        ordering = (
+            'contest',
+            '-total_points',
+        )
+
 
 class ConventionSerializer(serializers.ModelSerializer):
     date = DateRangeField()
@@ -212,6 +235,11 @@ class ConventionSerializer(serializers.ModelSerializer):
         # readonly_fields = [
         #     'human_date',
         # ]
+
+        ordering = [
+            'date',
+            'organization__name',
+        ]
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -246,6 +274,10 @@ class GroupSerializer(serializers.ModelSerializer):
             'picture',
         ]
 
+        ordering = (
+            'name',
+        )
+
 
 class JudgeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -263,6 +295,13 @@ class JudgeSerializer(serializers.ModelSerializer):
             'person',
             'session',
             'scores',
+        )
+
+        ordering = (
+            'session',
+            'category',
+            'kind',
+            'slot',
         )
 
 
@@ -312,6 +351,10 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'picture',
         ]
 
+        ordering = [
+            'tree_id',
+        ]
+
 
 class PerformanceSerializer(serializers.ModelSerializer):
     scheduled = DateTimeRangeField()
@@ -351,6 +394,11 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
         ]
+
+        ordering = (
+            'round',
+            'slot',
+        )
 
 
 class PerformerSerializer(serializers.ModelSerializer):
@@ -399,6 +447,11 @@ class PerformerSerializer(serializers.ModelSerializer):
             'delta_score',
             'delta_place',
         ]
+        ordering = (
+            'session',
+            '-total_points',
+            'group',
+        )
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -444,6 +497,10 @@ class PersonSerializer(serializers.ModelSerializer):
             'nick_name',
         ]
 
+        ordering = [
+            'name',
+        ]
+
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -457,6 +514,10 @@ class RoleSerializer(serializers.ModelSerializer):
             'group',
             'person',
             'part',
+        )
+
+        ordering = (
+            '-name',
         )
 
 
@@ -473,6 +534,11 @@ class RoundSerializer(serializers.ModelSerializer):
             'num',
             'session',
             'performances',
+        )
+
+        ordering = (
+            'session',
+            'kind',
         )
 
 
@@ -492,6 +558,11 @@ class ScoreSerializer(serializers.ModelSerializer):
             'kind',
         ]
 
+        ordering = (
+            'song',
+            'judge',
+        )
+
 
 class SessionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -510,6 +581,11 @@ class SessionSerializer(serializers.ModelSerializer):
             'contests',
             'judges',
             'rounds',
+        )
+
+        ordering = (
+            'song',
+            'judge',
         )
 
 
@@ -561,6 +637,11 @@ class SongSerializer(serializers.ModelSerializer):
             'total_score',
         ]
 
+        ordering = [
+            'performance',
+            'order',
+        ]
+
 
 class VenueSerializer(serializers.ModelSerializer):
     timezone = TimezoneField()
@@ -578,3 +659,7 @@ class VenueSerializer(serializers.ModelSerializer):
             'timezone',
             'conventions',
         )
+
+        ordering = [
+            'name',
+        ]

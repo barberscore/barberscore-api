@@ -146,7 +146,6 @@ class ContestantInline(admin.TabularInline):
         'link',
         'name',
         'status',
-        'performer',
         'rank',
         'total_points',
         'total_score',
@@ -159,14 +158,6 @@ class ContestantInline(admin.TabularInline):
 
     model = Contestant
     extra = 0
-    raw_id_fields = (
-        'performer',
-    )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'performer',
-    #     ]
-    # }
     readonly_fields = [
         'link',
         'name',
@@ -181,40 +172,41 @@ class ContestantInline(admin.TabularInline):
 
 
 class GroupInline(admin.TabularInline):
-    def link(self, obj):
-        return mark_safe(
-            "<a href={0}>link</a>".format(
-                reverse(
-                    'admin:api_group_change',
-                    args=(
-                        obj.id.hex,
-                    )
-                )
-            )
-        )
+    # def link(self, obj):
+    #     return mark_safe(
+    #         "<a href={0}>link</a>".format(
+    #             reverse(
+    #                 'admin:api_group_change',
+    #                 args=(
+    #                     obj.id.hex,
+    #                 )
+    #             )
+    #         )
+    #     )
 
     fields = (
-        'link',
+        # 'link',
         'name',
         'status',
+
     )
     ordering = (
         'name',
     )
     model = Group
     extra = 0
-    readonly_fields = (
-        'name',
-        'link',
-    )
-    raw_id_fields = (
-        'chapter',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'chapter',
-        ]
-    }
+    # readonly_fields = (
+    #     'name',
+    #     # 'link',
+    # )
+    # raw_id_fields = (
+    #     'chapter',
+    # )
+    # autocomplete_lookup_fields = {
+    #     'fk': [
+    #         'chapter',
+    #     ]
+    # }
     can_delete = True
     classes = ('grp-collapse grp-open',)
 
@@ -286,6 +278,9 @@ class PerformanceInline(admin.TabularInline):
         'link',
     )
     classes = ('grp-collapse grp-open',)
+    ordering = (
+        'slot',
+    )
 
 
 class MemberInline(admin.TabularInline):
@@ -616,7 +611,7 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
         'performance',
         'order',
-        # 'status',
+        'chart',
         # 'title',
         ('mus_points', 'prs_points', 'sng_points',),
     )
@@ -636,6 +631,14 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     ]
     show_change_link = True
     # classes = ('grp-collapse grp-open',)
+    raw_id_fields = (
+        'chart',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'chart',
+        ]
+    }
 
 
 class SubmissionInline(admin.TabularInline):

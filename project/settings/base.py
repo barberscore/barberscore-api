@@ -136,7 +136,32 @@ HAYSTACK_CONNECTIONS = {
 # Grappelli
 GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
 GRAPPELLI_AUTOCOMPLETE_LIMIT = 20
-# GRAPPELLI_INDEX_DASHBOARD = 'dashboard.CustomIndexDashboard'
+GRAPPELLI_AUTOCOMPLETE_SEARCH_FIELDS = {
+    "api": {
+        "award": ("id__iexact", "name__icontains",),
+        "certification": ("id__iexact", "name__icontains",),
+        "chapter": ("id__iexact", "name__icontains",),
+        "chart": ("id__iexact", "name__icontains",),
+        "contest": ("id__iexact", "name__icontains",),
+        "contestant": ("id__iexact", "name__icontains",),
+        "convention": ("id__iexact", "name__icontains",),
+        "group": ("id__iexact", "name__icontains",),
+        "judge": ("id__iexact", "name__icontains",),
+        "member": ("id__iexact", "name__icontains",),
+        "organization": ("id__iexact", "name__icontains",),
+        "performance": ("id__iexact", "name__icontains",),
+        "performer": ("id__iexact", "name__icontains",),
+        "person": ("id__iexact", "name__icontains",),
+        "role": ("id__iexact", "name__icontains",),
+        "round": ("id__iexact", "name__icontains",),
+        "score": ("id__iexact", "name__icontains",),
+        "session": ("id__iexact", "name__icontains",),
+        "submission": ("id__iexact", "name__icontains",),
+        "song": ("id__iexact", "name__icontains",),
+        "venue": ("id__iexact", "name__icontains",),
+    }
+}
+
 
 LOGGING = {
     'version': 1,
@@ -171,6 +196,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'super_inlines.grappelli_integration',
     'grappelli',
+    'grappelli_autocomplete_fk_edit_link',
     'super_inlines',
     'django.contrib.admin',
     'django.contrib.admindocs',
