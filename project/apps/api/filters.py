@@ -47,10 +47,17 @@ class GroupFilter(filters.FilterSet):
 
 
 class PersonFilter(filters.FilterSet):
+    certifications__category = ListFilter(name='certifications__category')
+
     class Meta:
         model = Person
+        fields = [
+            'status',
+        ]
         fields = {
             'name': filters.ALL_LOOKUPS,
+            # 'status': filters.ALL_LOOKUPS,
+            # 'certifications__category': filters.ALL_LOOKUPS,
         }
 
 

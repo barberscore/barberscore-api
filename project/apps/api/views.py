@@ -206,6 +206,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'roles',
         'panels',
         'conventions',
+        'certifications',
     )
     serializer_class = PersonSerializer
     filter_class = PersonFilter

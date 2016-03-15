@@ -424,6 +424,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'roles',
             'panels',
             'conventions',
+            'certifications',
             'common_name',
             'full_name',
             'formal_name',
