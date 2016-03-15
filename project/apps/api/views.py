@@ -71,6 +71,13 @@ log = logging.getLogger(__name__)
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
         'organization',
+    ).order_by(
+        'level',
+        'organization',
+        '-is_primary',
+        'kind',
+        'size',
+        'scope',
     )
     serializer_class = AwardSerializer
     resource_name = "award"
@@ -90,6 +97,8 @@ class ChapterViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'groups',
         'members',
+    ).order_by(
+        'name',
     )
     serializer_class = ChapterSerializer
     resource_name = "chapter"
@@ -108,6 +117,10 @@ class ContestViewSet(viewsets.ModelViewSet):
         'award',
     ).prefetch_related(
         'contestants',
+    ).order_by(
+        '-session__convention__year',
+        'award',
+        'session',
     )
     serializer_class = ContestSerializer
     resource_name = "contest"
@@ -117,6 +130,9 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'performer',
         'contest',
+    ).order_by(
+        'contest',
+        '-total_points',
     )
     serializer_class = ContestantSerializer
     resource_name = "contestant"
@@ -129,6 +145,9 @@ class ConventionViewSet(viewsets.ModelViewSet):
         'drcj',
     ).prefetch_related(
         'sessions',
+    ).order_by(
+        'date',
+        'organization__name',
     )
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
@@ -142,6 +161,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'performers',
         'roles',
+    ).order_by(
+        'name',
     )
     serializer_class = GroupSerializer
     filter_class = GroupFilter
@@ -154,6 +175,11 @@ class JudgeViewSet(viewsets.ModelViewSet):
         'person',
     ).prefetch_related(
         'scores',
+    ).order_by(
+        'session',
+        'category',
+        'kind',
+        'slot',
     )
     serializer_class = JudgeSerializer
     resource_name = "judge"
@@ -169,7 +195,11 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
-    queryset = Organization.objects.exclude(level=2)
+    queryset = Organization.objects.exclude(
+        level=2,
+    ).order_by(
+        'tree_id',
+    )
     serializer_class = OrganizationSerializer
     resource_name = "organization"
 
@@ -180,6 +210,9 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         'performer',
     ).prefetch_related(
         'songs',
+    ).order_by(
+        'round',
+        'slot',
     )
     serializer_class = PerformanceSerializer
     resource_name = "performance"
@@ -193,6 +226,10 @@ class PerformerViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'performances',
         'contestants',
+    ).order_by(
+        'session',
+        '-total_points',
+        'group',
     )
     serializer_class = PerformerSerializer
     resource_name = "performer"
@@ -207,6 +244,8 @@ class PersonViewSet(viewsets.ModelViewSet):
         'panels',
         'conventions',
         'certifications',
+    ).order_by(
+        'name',
     )
     serializer_class = PersonSerializer
     filter_class = PersonFilter
@@ -217,6 +256,8 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.select_related(
         'person',
         'group',
+    ).order_by(
+        '-name',
     )
     serializer_class = RoleSerializer
     resource_name = "role"
@@ -227,6 +268,9 @@ class RoundViewSet(viewsets.ModelViewSet):
         'session',
     ).prefetch_related(
         'performances',
+    ).order_by(
+        'session',
+        'kind',
     )
     serializer_class = RoundSerializer
     resource_name = "round"
@@ -248,6 +292,9 @@ class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
         'judge',
+    ).order_by(
+        'song',
+        'judge',
     )
     serializer_class = ScoreSerializer
     permission_classes = [
@@ -266,6 +313,9 @@ class SessionViewSet(viewsets.ModelViewSet):
         'rounds',
         'judges',
         'contests',
+    ).order_by(
+        'song',
+        'judge',
     )
     serializer_class = SessionSerializer
     resource_name = "session"
@@ -289,6 +339,9 @@ class SongViewSet(viewsets.ModelViewSet):
         'chart',
     ).prefetch_related(
         'scores',
+    ).order_by(
+        'performance',
+        'order',
     )
     serializer_class = SongSerializer
     resource_name = "song"
@@ -297,6 +350,8 @@ class SongViewSet(viewsets.ModelViewSet):
 class VenueViewSet(viewsets.ModelViewSet):
     queryset = Venue.objects.prefetch_related(
         'conventions',
+    ).order_by(
+        'name',
     )
     serializer_class = VenueSerializer
     filter_class = VenueFilter
