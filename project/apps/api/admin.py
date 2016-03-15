@@ -116,7 +116,35 @@ class CertificationAdmin(admin.ModelAdmin):
 
 @admin.register(Chart)
 class ChartAdmin(admin.ModelAdmin):
-    save_on_top = True
+    change_list_template = "admin/change_list_filter_sidebar.html"
+
+    fields = [
+        'name',
+        'status',
+        'title',
+        'arranger',
+        'composer',
+        'lyricist',
+        'bhs_id',
+        ('is_medley', 'is_generic',),
+    ]
+
+    list_display = [
+        'name',
+        'status',
+        'title',
+        'arranger',
+        'bhs_id',
+    ]
+
+    list_filter = [
+        'status',
+    ]
+
+    readonly_fields = [
+        'name',
+    ]
+
     search_fields = [
         'title',
     ]
