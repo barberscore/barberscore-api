@@ -58,6 +58,7 @@ class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     fields = [
         'name',
         'status',
+        'is_manual',
         'organization',
         'level',
         'kind',
@@ -79,6 +80,7 @@ class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     list_display = [
         'name',
         'status',
+        'is_manual',
         'kind',
         'season',
         'size',
@@ -94,6 +96,7 @@ class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'is_manual',
         'level',
         'kind',
         'season',

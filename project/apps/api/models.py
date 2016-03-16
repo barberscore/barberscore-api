@@ -206,6 +206,10 @@ class Award(TimeStampedModel):
         default=False,
     )
 
+    is_manual = models.BooleanField(
+        default=False,
+    )
+
     idiom = models.CharField(
         max_length=200,
         null=True,
