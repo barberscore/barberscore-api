@@ -1320,7 +1320,11 @@ def import_submission(session):
         performer, c = session.performers.get_or_create(
             group=group,
         )
-        performer.organization = group.organization
+        if group.kind == Group.KIND.chorus:
+            try:
+                performer.organization = group.chapter.organization
+            except AttributeError:
+                pass
         performer.men = men
         performer.save()
         contests = session.contests.all()
