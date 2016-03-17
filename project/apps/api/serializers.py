@@ -377,6 +377,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'group',
             'performances',
             'contestants',
+            'submissions',
         )
         read_only_fields = [
             'picture',

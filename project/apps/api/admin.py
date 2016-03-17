@@ -594,6 +594,10 @@ class PerformanceAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, Super
     ]
     list_filter = [
         'status',
+        'round__session__convention__year',
+        'round__session__convention__organization',
+        'round__session__convention__season',
+        'round__session__kind',
         'round',
     ]
 

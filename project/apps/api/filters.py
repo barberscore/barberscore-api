@@ -8,6 +8,7 @@ from .models import (
     Convention,
     Group,
     Person,
+    Submission,
     Venue,
 )
 
@@ -58,6 +59,15 @@ class PersonFilter(filters.FilterSet):
             'name': filters.ALL_LOOKUPS,
             # 'status': filters.ALL_LOOKUPS,
             # 'certifications__category': filters.ALL_LOOKUPS,
+        }
+
+
+class SubmissionFilter(filters.FilterSet):
+    class Meta:
+        model = Submission
+        fields = {
+            'chart__name': filters.ALL_LOOKUPS,
+            'performer__id': filters.ALL_LOOKUPS,
         }
 
 

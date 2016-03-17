@@ -13,6 +13,7 @@ from .filters import (
     ConventionFilter,
     GroupFilter,
     PersonFilter,
+    SubmissionFilter,
     VenueFilter,
 )
 
@@ -330,6 +331,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.DjangoModelPermissions,
     ]
+    filter_class = SubmissionFilter
     resource_name = "submission"
 
 
