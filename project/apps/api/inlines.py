@@ -127,6 +127,17 @@ class ContestInline(admin.TabularInline):
     ]
     can_delete = True
     classes = ('grp-collapse grp-closed',)
+    ordering = (
+        'award__level',
+        'award__organization__name',
+        'award__kind',
+        '-award__is_primary',
+        'award__is_improved',
+        'award__size',
+        'award__scope',
+        'award__is_novice',
+        'award__idiom',
+    )
 
 
 class ContestantInline(admin.TabularInline):
@@ -238,7 +249,7 @@ class JudgeInline(admin.TabularInline):
     }
     can_delete = True
     show_change_link = True
-    classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class PerformanceInline(admin.TabularInline):

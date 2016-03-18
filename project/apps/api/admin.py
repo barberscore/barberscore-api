@@ -117,6 +117,18 @@ class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
     ]
 
+    ordering = (
+        'level',
+        'organization__name',
+        'kind',
+        '-is_primary',
+        'is_improved',
+        'size',
+        'scope',
+        'is_novice',
+        'idiom',
+    )
+
 
 @admin.register(Certification)
 class CertificationAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
@@ -233,6 +245,11 @@ class ChapterAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
     save_on_top = True
 
+    ordering = (
+        'code',
+        'name',
+    )
+
 
 @admin.register(Contest)
 class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
@@ -265,6 +282,7 @@ class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'name',
+        'cycle',
     ]
 
     raw_id_fields = [
@@ -391,6 +409,12 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
             'venue',
         ]
     }
+
+    ordering = (
+        '-year',
+        'level',
+        'organization__name',
+    )
 
     save_on_top = True
 
@@ -703,6 +727,10 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
 
     save_on_top = True
 
+    ordering = (
+        'name',
+    )
+
 
 @admin.register(Person)
 class PersonAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
@@ -936,7 +964,9 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'status',
         'kind',
         'convention__year',
-        'convention',
+        'convention__level',
+        'convention__organization',
+        'convention__season',
     )
 
     raw_id_fields = (
@@ -965,6 +995,14 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
     list_select_related = [
         'convention',
     ]
+
+    ordering = (
+        '-convention__year',
+        'convention__level',
+        'convention__organization__name',
+        '-convention__season',
+        'kind',
+    )
 
 
 @admin.register(Submission)

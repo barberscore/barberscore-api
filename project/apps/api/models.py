@@ -398,6 +398,7 @@ class Chapter(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
         (20, 'inactive', 'Inactive',),
+        (30, 'affiliate', 'Affiliate',),
         (50, 'dup', 'Duplicate',),
     )
 
@@ -691,6 +692,7 @@ class Contest(TimeStampedModel):
 
     cycle = models.IntegerField(
         choices=CYCLE_CHOICES,
+        editable=False,
     )
 
     is_qualifier = models.BooleanField(
@@ -730,10 +732,10 @@ class Contest(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        try:
-            self.champion = self.contestants.order_by('rank').first()
-        except AttributeError:
-            self.champion = None
+        if self.session.convention.season == self.session.convention.SEASON.spring:
+            self.cycle = self.session.convention.year
+        else:
+            self.cycle = self.session.convention.year + 1
         self.name = " ".join(filter(None, [
             self.award.name,
             self.session.name,
@@ -749,6 +751,8 @@ class Contest(TimeStampedModel):
         super(Contest, self).save(*args, **kwargs)
 
     def rank(self):
+        if self.award.is_manual:
+            return
         contestants = self.contestants.order_by('-total_points')
         points = [contestant.total_points for contestant in contestants]
         ranking = Ranking(points, start=1)
@@ -811,6 +815,10 @@ class Contest(TimeStampedModel):
             else:
                 contestant.rank = ranking.rank(contestant.total_points)
             contestant.save()
+            try:
+                self.champion = self.contestants.order_by('rank').first()
+            except AttributeError:
+                self.champion = None
         return
 
     class Meta:
@@ -1017,6 +1025,7 @@ class Convention(TimeStampedModel):
         (15, 'upcoming', 'Upcoming',),
         (20, 'started', 'Started',),
         (30, 'finished', 'Finished',),
+        (40, 'recent', 'Recent',),
         (50, 'final', 'Final',),
     )
 
@@ -3296,16 +3305,10 @@ class Session(TimeStampedModel):
         related_name='sessions',
     )
 
-    # Denormalized
-    year = models.IntegerField(
-        editable=False,
-    )
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.year = self.convention.year
         self.organization = self.convention.organization
         self.name = " ".join(filter(None, [
             self.convention.organization.name,
