@@ -108,14 +108,14 @@ class ContestInline(admin.TabularInline):
 
     model = Contest
     extra = 0
-    # raw_id_fields = (
-    #     'performer',
-    # )
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'performer',
-    #     ]
-    # }
+    raw_id_fields = (
+        'award',
+    )
+    autocomplete_lookup_fields = {
+        'fk': [
+            'award',
+        ]
+    }
     readonly_fields = [
         'link',
         'name',
@@ -126,7 +126,7 @@ class ContestInline(admin.TabularInline):
         # 'performer',
     ]
     can_delete = True
-    # classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class ContestantInline(admin.TabularInline):
