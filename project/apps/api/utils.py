@@ -1333,16 +1333,24 @@ def import_submission(session):
                 performer=performer,
                 contest=contest,
             )
-        chart, c = Chart.objects.get_or_create(
-            title=row[6],
-            arranger=unidecode(row[8]),
-            is_medley=is_medley,
-            bhs_copyright_date=row[12],
-            bhs_copyright_owner=row[13],
-            bhs_id=bhs_id,
-            composer=unidecode(row[14]),
-            lyricist=unidecode(row[15]),
-        )
+        try:
+            chart, c = Chart.objects.get_or_create(
+                title=row[6],
+                arranger=unidecode(row[8]),
+                is_medley=is_medley,
+                bhs_copyright_date=row[12],
+                bhs_copyright_owner=row[13],
+                bhs_id=bhs_id,
+                composer=unidecode(row[14]),
+                lyricist=unidecode(row[15]),
+            )
+        except IntegrityError:
+            print "Duplicate chart: {0} {1} {2} {3}".format(
+                row[6],
+                unidecode(row[8]),
+                bhs_id,
+                performer,
+            )
         Submission.objects.get_or_create(
             performer=performer,
             chart=chart,
