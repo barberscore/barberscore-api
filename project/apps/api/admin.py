@@ -942,6 +942,7 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'convention',
         'kind',
         'administrator',
+        'aca',
         'entry_form',
         'song_list',
         # 'year',
@@ -972,12 +973,14 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
     raw_id_fields = (
         'convention',
         'administrator',
+        'aca',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'convention',
             'administrator',
+            'aca',
         ]
     }
 
