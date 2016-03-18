@@ -1305,11 +1305,18 @@ def import_submission(session):
                     )
                     print "Created {0}, {1}".format(row[1], row[2],)
                 except IntegrityError:
-                    print "Update {0} with {1}".format(
+                    group = Group.objects.create(
+                        bhs_id=int(row[1]),
+                        name="{0} {1}".format(
+                            row[2].strip(),
+                            row[1]
+                        ),
+                        kind=Group.KIND.quartet,
+                    )
+                    print "Check {0} with {1}".format(
                         row[2].strip(),
                         int(row[1]),
                     )
-                    continue
             men = 4
         if row[11] == 'MEDLEY':
             is_medley = True
