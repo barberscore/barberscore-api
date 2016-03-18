@@ -1297,12 +1297,19 @@ def import_submission(session):
                     bhs_id=row[1],
                 )
             except Group.DoesNotExist:
-                group = Group.objects.create(
-                    bhs_id=int(row[1]),
-                    name=row[2].strip(),
-                    kind=Group.KIND.quartet,
-                )
-                log.info("Created {0}, {1}".format(row[1], row[2],))
+                try:
+                    group = Group.objects.create(
+                        bhs_id=int(row[1]),
+                        name=row[2].strip(),
+                        kind=Group.KIND.quartet,
+                    )
+                    print "Created {0}, {1}".format(row[1], row[2],)
+                except IntegrityError:
+                    print "Update {0} with {1}".format(
+                        row[2].strip(),
+                        int(row[1]),
+                    )
+                    continue
             men = 4
         if row[11] == 'MEDLEY':
             is_medley = True
