@@ -196,9 +196,7 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
-    queryset = Organization.objects.exclude(
-        level=2,
-    ).order_by(
+    queryset = Organization.objects.order_by(
         'tree_id',
     )
     serializer_class = OrganizationSerializer
