@@ -2108,7 +2108,7 @@ class Performance(TimeStampedModel):
         try:
             obj = self.__class__.objects.get(
                 round=self.round,
-                position=self.position - 1,
+                slot=self.slot - 1,
             )
             return obj
         except self.DoesNotExist:
@@ -2118,7 +2118,7 @@ class Performance(TimeStampedModel):
         try:
             obj = self.__class__.objects.get(
                 round=self.round,
-                position=self.position + 1,
+                slot=self.slot + 1,
             )
             return obj
         except self.DoesNotExist:
@@ -2142,17 +2142,17 @@ class Performance(TimeStampedModel):
     # def prep(self):
     #     return
 
-    @transition(
-        field=status,
-        source=[
-            STATUS.new,
-        ],
-        target=STATUS.started,
-        conditions=[
-            # preceding_finished,
-        ]
-    )
-    def start(self):
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.new,
+    #     ],
+    #     target=STATUS.started,
+    #     conditions=[
+    #         # preceding_finished,
+    #     ]
+    # )
+    def build(self):
         # Triggered from UI
 
         # # Set start time
@@ -2164,16 +2164,14 @@ class Performance(TimeStampedModel):
         # Creates Song and Score sentinels.
         i = 1
         while i <= 2:
-            song = self.songs.create(
+            song, c = self.songs.get_or_create(
                 performance=self,
                 order=i,
             )
-            for judge in self.round.judges.filter(
-                kind=self.round.judges.model.KIND.official,
-            ).exclude(
-                category=self.round.judges.model.CATEGORY.admin,
+            for judge in self.round.session.judges.filter(
+                kind=self.round.session.judges.model.KIND.official,
             ):
-                song.scores.create(
+                song.scores.get_or_create(
                     song=song,
                     judge=judge,
                     category=judge.category,
