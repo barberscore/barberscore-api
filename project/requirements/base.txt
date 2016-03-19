@@ -26,11 +26,11 @@ elasticsearch==1.9.0
 factory-boy==2.6.1
 fake-factory==0.5.7
 fuzzywuzzy==0.10.0
-nameparser==0.3.13
+nameparser==0.3.14
 phonenumbers==7.2.7
 Pillow==3.1.1
 psycopg2==2.6.1
-python-dateutil==2.5.0
+python-dateutil==2.5.1
 python-Levenshtein==0.12.0
 pytz==2016.1
 ranking==0.3.1
