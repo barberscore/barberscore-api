@@ -2104,23 +2104,25 @@ class Performance(TimeStampedModel):
         except TypeError:
             self.total_score = None
 
+    @property
     def get_preceding(self):
         try:
             obj = self.__class__.objects.get(
                 round=self.round,
                 slot=self.slot - 1,
             )
-            return obj
+            return obj.id
         except self.DoesNotExist:
             return None
 
+    @property
     def get_next(self):
         try:
             obj = self.__class__.objects.get(
                 round=self.round,
                 slot=self.slot + 1,
             )
-            return obj
+            return obj.id
         except self.DoesNotExist:
             return None
 
