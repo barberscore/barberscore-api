@@ -494,7 +494,7 @@ class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'session',
         'person',
         'organization',
-        ('category', 'slot',),
+        ('category', 'kind',),
     ]
 
     list_display = [
@@ -673,6 +673,7 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
         PerformanceInline,
         ContestantInline,
         SubmissionInline,
+        RoleInline,
     ]
 
     list_display = (
@@ -685,12 +686,16 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
         'men',
     )
 
+    list_filter = [
+        'status',
+        'session__convention__year',
+        'session__convention__organization',
+        'session__convention__season',
+        'session__kind',
+    ]
+
     search_fields = (
         'name',
-    )
-
-    list_filter = (
-        'status',
     )
 
     raw_id_fields = (

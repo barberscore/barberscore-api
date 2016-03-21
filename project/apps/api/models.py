@@ -1589,6 +1589,21 @@ class Judge(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        # Very hacky slot designator
+        if not self.slot:
+            try:
+                self.slot = self.__class__.objects.filter(
+                    session=self.session,
+                    category=self.category,
+                    kind=self.kind,
+                ).aggregate(
+                    max=models.Max('slot')
+                )['max'] + 1
+            except TypeError:
+                if self.kind == self.KIND.practice:
+                    self.slot = 6
+                else:
+                    self.slot = 1
         self.name = u"{0} {1} {2} {3}".format(
             self.session,
             self.get_kind_display(),
@@ -1924,6 +1939,9 @@ class Organization(MPTTModel, TimeStampedModel):
             'kind',
             'short_name',
         ]
+        ordering = (
+            'tree_id',
+        )
 
     class JSONAPIMeta:
         resource_name = "organization"
@@ -2858,6 +2876,8 @@ class Role(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='roles',
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(

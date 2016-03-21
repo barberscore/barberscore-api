@@ -228,7 +228,6 @@ class JudgeInline(admin.TabularInline):
         'person',
         # 'organization',
         'category',
-        'slot',
         'kind',
         'session',
     )
@@ -236,7 +235,6 @@ class JudgeInline(admin.TabularInline):
         'session',
         'kind',
         'category',
-        'slot',
     )
     extra = 0
     raw_id_fields = (
@@ -500,7 +498,7 @@ class RoleInline(admin.TabularInline):
         )
     fields = (
         'link',
-        'group',
+        # 'group',
         'performer',
         'person',
         'part',
@@ -513,18 +511,18 @@ class RoleInline(admin.TabularInline):
     extra = 0
     raw_id_fields = (
         'person',
-        'group',
+        # 'group',
         'performer',
     )
     readonly_fields = [
         'link',
     ]
-    # autocomplete_lookup_fields = {
-    #     'fk': [
-    #         'person',
-    #         # 'performer',
-    #     ]
-    # }
+    autocomplete_lookup_fields = {
+        'fk': [
+            'person',
+            # 'performer',
+        ]
+    }
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-open',)
