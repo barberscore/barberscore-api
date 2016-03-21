@@ -695,8 +695,10 @@ class Contest(TimeStampedModel):
         editable=False,
     )
 
+    # Denorm
     is_qualifier = models.BooleanField(
         default=False,
+        editable=False,
     )
 
     stix_num = models.IntegerField(
@@ -736,6 +738,17 @@ class Contest(TimeStampedModel):
             self.cycle = self.session.convention.year
         else:
             self.cycle = self.session.convention.year + 1
+        if any([
+            all([
+                self.session.convention.level == self.session.convention.LEVEL.district,
+                self.award.level == self.award.LEVEL.international,
+            ]),
+            all([
+                self.session.convention.division,
+                self.award.level != self.award.LEVEL.division,
+            ]),
+        ]):
+            self.is_qualifier = True
         self.name = " ".join(filter(None, [
             self.award.name,
             self.session.name,

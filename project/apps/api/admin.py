@@ -283,6 +283,7 @@ class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     readonly_fields = [
         'name',
         'cycle',
+        'is_qualifier',
     ]
 
     raw_id_fields = [
