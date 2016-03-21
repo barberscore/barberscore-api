@@ -2155,15 +2155,6 @@ class Performance(TimeStampedModel):
     #     ]
     # )
     def build(self):
-        # Triggered from UI
-
-        # # Set start time
-        # self.actual = Range(
-        #     arrow.now().datetime,
-        #     None,
-        # )
-
-        # Creates Song and Score sentinels.
         i = 1
         while i <= 2:
             song, c = self.songs.get_or_create(
@@ -2478,6 +2469,14 @@ class Performer(TimeStampedModel):
             ]) / 3, 1)
         except TypeError:
             self.total_score = None
+
+    def build(self):
+        contests = self.session.contests.all()
+        for contest in contests:
+            self.contestants.get_or_create(
+                contest=contest,
+            )
+        return
 
     @transition(
         field=status,

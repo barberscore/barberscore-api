@@ -1,11 +1,12 @@
 import os
 import dj_database_url
+import datetime
 
 from django.core.exceptions import ImproperlyConfigured
 
 
 def get_env_variable(var_name):
-    """Get the environment variable or return exception"""
+    """Get the environment variable or return exception."""
     try:
         var = os.environ[var_name]
         # Replace unix strings with Python Booleans
@@ -121,6 +122,9 @@ JSON_API_FORMAT_KEYS = 'dasherize'
 # JSON_API_PLURALIZE_RELATION_TYPE = False
 APPEND_TRAILING_SLASH = False
 
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+}
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = False
 

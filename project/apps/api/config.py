@@ -7,4 +7,4 @@ class ApiConfig(AppConfig):
     name = 'apps.api'
 
     def ready(self):
-        pass
+        from .signals import *
