@@ -12,6 +12,7 @@ from .filters import (
     ChartFilter,
     ConventionFilter,
     GroupFilter,
+    PerformerFilter,
     PersonFilter,
     SubmissionFilter,
     VenueFilter,
@@ -216,6 +217,54 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     serializer_class = PerformanceSerializer
     resource_name = "performance"
 
+    @detail_route(methods=['put'])
+    def move_top(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.move_top()
+        if response:
+            return Response(response)
+        else:
+            return Response(
+                {'error': 'did not move'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @detail_route(methods=['put'])
+    def move_bottom(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.move_bottom()
+        if response:
+            return Response(response)
+        else:
+            return Response(
+                {'error': 'did not move'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @detail_route(methods=['put'])
+    def scratch(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.scratch()
+        if response:
+            return Response(response)
+        else:
+            return Response(
+                {'error': 'did not scratch'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @detail_route(methods=['put'])
+    def dixon(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.dixon()
+        if response:
+            return Response(response)
+        else:
+            return Response(
+                {'error': 'did not test'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class PerformerViewSet(viewsets.ModelViewSet):
     queryset = Performer.objects.select_related(
@@ -231,7 +280,20 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'group',
     )
     serializer_class = PerformerSerializer
+    filter_class = PerformerFilter
     resource_name = "performer"
+
+    @detail_route(methods=['put'])
+    def add_performance(self, request, pk=None):
+        performer = self.get_object()
+        response = performer.add_performance()
+        if response:
+            return Response(response)
+        else:
+            return Response(
+                {'error': 'did not move'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class PersonViewSet(viewsets.ModelViewSet):

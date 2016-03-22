@@ -8,6 +8,7 @@ from .models import (
     Convention,
     Group,
     Person,
+    Performer,
     Submission,
     Venue,
 )
@@ -42,6 +43,14 @@ class ConventionFilter(filters.FilterSet):
 class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
+        fields = {
+            'name': filters.ALL_LOOKUPS,
+        }
+
+
+class PerformerFilter(filters.FilterSet):
+    class Meta:
+        model = Performer
         fields = {
             'name': filters.ALL_LOOKUPS,
         }

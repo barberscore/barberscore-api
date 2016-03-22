@@ -43,6 +43,7 @@ def dixon(performance, left=True, right=True, q_dict=Q95):
     is_flagged = False
     for song in performance.songs.all():
         scores = song.scores.order_by('points')
+        print scores
         assert(left or right), 'At least one of the variables, `left` or `right`, must be True.'
         assert(len(scores) >= 3), 'At least 3 data points are required'
         assert(len(scores) <= max(q_dict.keys())), 'Sample size too large'

@@ -492,6 +492,8 @@ class ScoreSerializer(serializers.ModelSerializer):
             'points',
             'category',
             'kind',
+            'dixon_test',
+            'asterisk_test',
         ]
 
 

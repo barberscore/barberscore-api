@@ -68,6 +68,7 @@ from .managers import (
     UserManager,
 )
 
+from .validators import dixon
 
 log = logging.getLogger(__name__)
 
@@ -2164,6 +2165,25 @@ class Performance(TimeStampedModel):
         self.save()
         return {'success': 'moved'}
 
+    def scratch(self):
+        i = self.slot
+        self.slot = -1
+        self.save()
+        performances = self.round.performances.filter(
+            slot__gt=i,
+        ).order_by('slot')
+        for performance in performances:
+            performance.slot -= 1
+            performance.save()
+        self.performer.status = self.performer.STATUS.dropped
+        self.performer.save()
+        self.delete()
+        return {'success': 'scratched'}
+
+    def dixon(self):
+        dixon(self)
+        return {'success': 'dixoned'}
+
     @property
     def get_preceding(self):
         try:
@@ -2261,31 +2281,35 @@ class Performance(TimeStampedModel):
         # Calls post-transition signal for dixon test
         return
 
-    @transition(
-        field=status,
-        source=[
-            STATUS.entered,
-        ],
-        target=STATUS.flagged,
-        # conditions=[
-        #     round_finished,   TODO No is_flagged
-        # ]
-    )
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.entered,
+    #     ],
+    #     target=STATUS.flagged,
+    #     # conditions=[
+    #     #     round_finished,   TODO No is_flagged
+    #     # ]
+    # )
     def flag(self):
+        self.status = self.STATUS.flagged
+        self.save()
         return
 
-    @transition(
-        field=status,
-        source=[
-            STATUS.entered,
-            STATUS.flagged,
-        ],
-        target=STATUS.accepted,
-        # conditions=[
-        #     round_finished,   TODO No is_flagged
-        # ]
-    )
+    # @transition(
+    #     field=status,
+    #     source=[
+    #         STATUS.entered,
+    #         STATUS.flagged,
+    #     ],
+    #     target=STATUS.accepted,
+    #     # conditions=[
+    #     #     round_finished,   TODO No is_flagged
+    #     # ]
+    # )
     def accept(self):
+        self.status = self.STATUS.accepted
+        self.save()
         return
 
     @transition(
