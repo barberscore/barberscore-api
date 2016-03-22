@@ -2135,6 +2135,35 @@ class Performance(TimeStampedModel):
         except TypeError:
             self.total_score = None
 
+    def move_top(self):
+        i = self.slot
+        self.slot = -1
+        self.save()
+        performances = self.round.performances.filter(
+            slot__lt=i,
+        ).order_by('-slot')
+        for performance in performances:
+            performance.slot += 1
+            performance.save()
+        self.slot = 1
+        self.save()
+        return {'success': 'moved'}
+
+    def move_bottom(self):
+        i = self.slot
+        self.slot = -1
+        self.save()
+        performances = self.round.performances.filter(
+            slot__gt=i,
+        ).order_by('slot')
+        total = performances.aggregate(m=models.Max('slot'))['m']
+        for performance in performances:
+            performance.slot -= 1
+            performance.save()
+        self.slot = total
+        self.save()
+        return {'success': 'moved'}
+
     @property
     def get_preceding(self):
         try:
