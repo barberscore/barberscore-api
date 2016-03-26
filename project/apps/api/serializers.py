@@ -322,6 +322,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'slot',
+            'rank',
             'scheduled',
             'actual',
             'get_preceding',
@@ -376,8 +377,6 @@ class PerformerSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
-            'delta_score',
-            'delta_place',
             'session',
             'group',
             'performances',
@@ -398,8 +397,6 @@ class PerformerSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
-            'delta_score',
-            'delta_place',
         ]
 
 

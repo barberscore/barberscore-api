@@ -348,6 +348,15 @@ class RoundViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @detail_route(methods=['put'])
+    def rank(self, request, pk=None):
+        round = self.get_object()
+        response = round.rank()
+        if response:
+            return Response(response)
+        else:
+            return Response(response)
+
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(

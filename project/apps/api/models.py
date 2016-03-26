@@ -1213,55 +1213,6 @@ class Convention(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "convention"
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.scheduled,
-        conditions=[
-            # TODO Date and location
-        ]
-    )
-    def schedule(self):
-        # Triggered from UI
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.scheduled,
-        target=STATUS.started,
-        conditions=[
-            # TODO Within window?
-        ]
-    )
-    def start(self):
-        # Triggered from UI
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.started,
-        target=STATUS.finished,
-        conditions=[
-            # Outside of window?
-            # Ensure session finished?
-        ]
-    )
-    def finish(self):
-        # Triggered from UI
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.finished,
-        target=STATUS.final,
-        conditions=[
-            # Everything else finalized
-        ]
-    )
-    def finalize(self):
-        # Triggered from UI
-        return
-
 
 class Group(TimeStampedModel):
     id = models.UUIDField(
@@ -1574,16 +1525,10 @@ class Judge(TimeStampedModel):
 
     @property
     def designation(self):
-        if self.kind == self.KIND.official:
-            designation = u"{0[0]}{1:1d}".format(
-                self.get_category_display(),
-                self.slot,
-            )
-        else:
-            designation = u"{0[0]}{1:1d}".format(
-                self.get_category_display().lower(),
-                self.slot,
-            )
+        designation = u"{0[0]}{1:1d}".format(
+            self.get_category_display(),
+            self.slot,
+        )
         return designation
 
     def __unicode__(self):
@@ -2206,34 +2151,6 @@ class Performance(TimeStampedModel):
         except self.DoesNotExist:
             return None
 
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.built,
-    #     conditions=[
-    #     ]
-    # )
-    # def build(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.built,
-    #     target=STATUS.ready,
-    # )
-    # def prep(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.new,
-    #     ],
-    #     target=STATUS.started,
-    #     conditions=[
-    #         # preceding_finished,
-    #     ]
-    # )
     def build(self):
         i = 1
         while i <= 2:
@@ -2253,72 +2170,16 @@ class Performance(TimeStampedModel):
             i += 1
         return
 
-    @transition(
-        field=status,
-        source=STATUS.started,
-        target=STATUS.finished,
-        conditions=[
-        ]
-    )
-    def finish(self):
-        # Triggered from UI
-        # self.actual = (
-        #     self.actual.lower,
-        #     arrow.now().datetime,
-        # )
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.finished,
-        target=STATUS.entered,
-        conditions=[
-            # songs_entered,
-            # scores_entered,
-        ]
-    )
-    def enter(self):
-        # Calls post-transition signal for dixon test
-        return
-
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.entered,
-    #     ],
-    #     target=STATUS.flagged,
-    #     # conditions=[
-    #     #     round_finished,   TODO No is_flagged
-    #     # ]
-    # )
     def flag(self):
         self.status = self.STATUS.flagged
         self.save()
         return
 
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.entered,
-    #         STATUS.flagged,
-    #     ],
-    #     target=STATUS.accepted,
-    #     # conditions=[
-    #     #     round_finished,   TODO No is_flagged
-    #     # ]
-    # )
     def accept(self):
         self.status = self.STATUS.accepted
         self.save()
         return
 
-    @transition(
-        field=status,
-        source=STATUS.accepted,
-        target=STATUS.final,
-        conditions=[
-        ]
-    )
     def finalize(self):
         return
 
@@ -2464,22 +2325,6 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    @property
-    def delta_score(self):
-        """The difference between qualifying score and final score.""",
-        try:
-            return self.total_score - self.prelim
-        except TypeError:
-            return None
-
-    @property
-    def delta_place(self):
-        """The difference between qualifying rank and final rank.""",
-        try:
-            return self.seed - self.rank
-        except TypeError:
-            return None
-
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2561,74 +2406,6 @@ class Performer(TimeStampedModel):
                 contest=contest,
             )
         return
-
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.qualified
-    )
-    def qualify(self):
-        # Send notice?
-        return "{0} Qualified".format(self)
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.qualified,
-            STATUS.declined,
-        ],
-        target=STATUS.accepted,
-    )
-    def accept(self):
-        # Send notice?
-        return "{0} Accepted".format(self)
-
-    @transition(
-        field=status,
-        source=[
-            STATUS.qualified,
-            STATUS.accepted,
-        ],
-        target=STATUS.declined,
-    )
-    def decline(self):
-        # Send notice?
-        return "{0} Declined".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.accepted,
-        target=STATUS.official,
-    )
-    def register(self):
-        return "{0} Official".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.official,
-        target=STATUS.dropped,
-    )
-    def drop(self):
-        # Send notice?
-        return "{0} Dropped".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.official,
-        target=STATUS.finished,
-    )
-    def finish(self):
-        # Send notice?
-        return "{0} Finished".format(self)
-
-    @transition(
-        field=status,
-        source=STATUS.finished,
-        target=STATUS.final,
-    )
-    def finalize(self):
-        # Send notice?
-        return "{0} Finalized".format(self)
 
 
 class Person(TimeStampedModel):
@@ -3060,21 +2837,6 @@ class Round(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def next_performance(self):
-        try:
-            return self.performances.filter(
-                status=self.performances.model.STATUS.ready,
-            ).order_by('position').first()
-        except self.performances.model.DoesNotExist:
-            return None
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.started,
-    #     conditions=[
-    #     ]
-    # )
     def draw(self):
         i = 1
         for performer in self.session.performers.all().order_by('?'):  # TODO: better filter?
@@ -3086,39 +2848,12 @@ class Round(TimeStampedModel):
             i += 1
         return {'success': 'drew {0} performances'.format(i)}
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.started,
-        conditions=[
-        ]
-    )
-    def start(self):
-        # Triggered in UI
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.started,
-        target=STATUS.finished,
-        conditions=[
-            # performances_finished,
-        ]
-    )
     def finish(self):
         for performance in self.performances.all():
             performance.calculate()
             performance.save()
         return
 
-    # @transition(
-    #     field=status,
-    #     source=STATUS.finished,
-    #     target=STATUS.ranked,
-    #     conditions=[
-    #         # Add performances ACCEPTED
-    #     ]
-    # )
     def rank(self):
         performances = self.performances.order_by('-total_points')
         points = [performance.total_points for performance in performances]
@@ -3126,14 +2861,6 @@ class Round(TimeStampedModel):
         for performance in performances:
             performance.rank = ranking.rank(performance.total_points)
             performance.save()
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.ranked,
-        target=STATUS.final,
-    )
-    def finalize(self):
         return
 
 
@@ -3240,56 +2967,6 @@ class Score(TimeStampedModel):
             self.id.hex,
         ]))
         super(Score, self).save(*args, **kwargs)
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.new,
-    #     target=STATUS.flagged,
-    #     conditions=[
-    #         score_entered,
-    #         # TODO Could be 'performance_finished' here if want to prevent admin UI
-    #     ]
-    # )
-    # def flag(self):
-    #     # Triggered from dixon test in performance.finish()
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.new,
-    #         STATUS.flagged,
-    #     ],
-    #     target=STATUS.validated,
-    #     conditions=[
-    #         score_entered,
-    #         # TODO Could be 'performance_finished' here if want to prevent admin UI
-    #     ]
-    # )
-    # def validate(self):
-    #     # Triggered from dixon test in performance.finish() or UI
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=[
-    #         STATUS.validated,
-    #     ],
-    #     target=STATUS.confirmed,
-    #     conditions=[
-    #         # song_entered,
-    #     ]
-    # )
-    # def confirm(self):
-    #     return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.confirmed,
-    #     target=STATUS.final,
-    # )
-    # def finalize(self):
-    #     return
 
 
 class Session(TimeStampedModel):
@@ -3413,24 +3090,6 @@ class Session(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "session"
 
-    @transition(
-        field=status,
-        source=STATUS.new,
-        target=STATUS.built,
-        conditions=[
-        ],
-    )
-    def build(self):
-        # Triggered in UI
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.built,
-        target=STATUS.started,
-        conditions=[
-        ],
-    )
     def start(self):
         # Triggered in UI
         # TODO seed performers?
@@ -3449,24 +3108,6 @@ class Session(TimeStampedModel):
             p += 1
         return "{0} Started".format(self)
 
-    @transition(
-        field=status,
-        source=STATUS.started,
-        target=STATUS.finished,
-        conditions=[
-        ],
-    )
-    def finish(self):
-        # Triggered in UI
-        return
-
-    # @transition(
-    #     field=status,
-    #     source=STATUS.finished,
-    #     target=STATUS.ranked,
-    #     conditions=[
-    #     ],
-    # )
     def rank(self):
         performers = self.performers.order_by('-total_points')
         points = [performer.total_points for performer in performers]
@@ -3474,17 +3115,6 @@ class Session(TimeStampedModel):
         for performer in performers:
             performer.rank = ranking.rank(performer.total_points)
             performer.save()
-        return
-
-    @transition(
-        field=status,
-        source=STATUS.ranked,
-        target=STATUS.final,
-        conditions=[
-        ],
-    )
-    def finalize(self):
-        # Triggered in UI
         return
 
 
