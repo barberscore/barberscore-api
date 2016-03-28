@@ -173,9 +173,9 @@ class ConventionViewSet(viewsets.ModelViewSet):
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
     resource_name = "convention"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -350,9 +350,9 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     filter_class = PersonFilter
     resource_name = "person"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class RoleViewSet(viewsets.ModelViewSet):
