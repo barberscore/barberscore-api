@@ -384,7 +384,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
     ]
 
-
     @detail_route(methods=['put'])
     def draw(self, request, pk=None):
         round = self.get_object()
@@ -435,9 +434,6 @@ class SessionViewSet(viewsets.ModelViewSet):
         'rounds',
         'judges',
         'contests',
-    ).order_by(
-        'song',
-        'judge',
     )
     serializer_class = SessionSerializer
     resource_name = "session"
