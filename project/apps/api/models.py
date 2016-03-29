@@ -2211,6 +2211,7 @@ class Performer(TimeStampedModel):
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
         (50, 'official', 'Official',),
+        (55, 'disqualified', 'Disqualified',),
         (60, 'finished', 'Finished',),
         (90, 'final', 'Final',),
     )
@@ -2406,6 +2407,42 @@ class Performer(TimeStampedModel):
                 contest=contest,
             )
         return
+
+    def scratch(self):
+        performances = self.performances.exclude(
+            status=self.performances.model.STATUS.final,
+        )
+        for performance in performances:
+            i = performance.slot
+            performance.slot = -1
+            performance.save()
+            others = performance.round.performances.filter(
+                slot__gt=i,
+            ).order_by('slot')
+            for other in others:
+                other.slot -= 1
+                other.save()
+        self.status = self.STATUS.dropped
+        self.save()
+        return {'success': 'scratched'}
+
+    def disqualify(self):
+        performances = self.performances.exclude(
+            status=self.performances.model.STATUS.final,
+        )
+        for performance in performances:
+            i = performance.slot
+            performance.slot = -1
+            performance.save()
+            others = performance.round.performances.filter(
+                slot__gt=i,
+            ).order_by('slot')
+            for other in others:
+                other.slot -= 1
+                other.save()
+        self.status = self.STATUS.disqualified
+        self.save()
+        return {'success': 'scratched'}
 
 
 class Person(TimeStampedModel):

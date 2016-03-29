@@ -9,7 +9,7 @@ from rest_framework import (
 )
 
 from .filters import (
-    CoalesceFilterBackend,
+    # CoalesceFilterBackend,
     ChartFilter,
     ConventionFilter,
     GroupFilter,
@@ -84,9 +84,9 @@ class AwardViewSet(viewsets.ModelViewSet):
     )
     serializer_class = AwardSerializer
     resource_name = "award"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class CertificationViewSet(viewsets.ModelViewSet):
@@ -95,9 +95,9 @@ class CertificationViewSet(viewsets.ModelViewSet):
     )
     serializer_class = CertificationSerializer
     resource_name = "certification"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
@@ -111,9 +111,9 @@ class ChapterViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ChapterSerializer
     resource_name = "chapter"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class ChartViewSet(viewsets.ModelViewSet):
@@ -121,9 +121,9 @@ class ChartViewSet(viewsets.ModelViewSet):
     serializer_class = ChartSerializer
     filter_class = ChartFilter
     resource_name = "chart"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -139,9 +139,9 @@ class ContestViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ContestSerializer
     resource_name = "contest"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -154,9 +154,9 @@ class ContestantViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ContestantSerializer
     resource_name = "contestant"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
@@ -191,9 +191,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     resource_name = "group"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
@@ -210,9 +210,9 @@ class JudgeViewSet(viewsets.ModelViewSet):
     )
     serializer_class = JudgeSerializer
     resource_name = "judge"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -222,9 +222,9 @@ class MemberViewSet(viewsets.ModelViewSet):
     )
     serializer_class = MemberSerializer
     resource_name = "member"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -247,9 +247,9 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     )
     serializer_class = PerformanceSerializer
     resource_name = "performance"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
     @detail_route(methods=['put'])
@@ -317,22 +317,21 @@ class PerformerViewSet(viewsets.ModelViewSet):
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
     resource_name = "performer"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
-
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
     @detail_route(methods=['put'])
     def add_performance(self, request, pk=None):
         performer = self.get_object()
         response = performer.add_performance()
-        if response:
-            return Response(response)
-        else:
-            return Response(
-                {'error': 'did not move'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def scratch(self, request, pk=None):
+        performer = self.get_object()
+        response = performer.scratch()
+        return Response(response)
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -364,9 +363,9 @@ class RoleViewSet(viewsets.ModelViewSet):
     )
     serializer_class = RoleSerializer
     resource_name = "role"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class RoundViewSet(viewsets.ModelViewSet):
@@ -380,9 +379,9 @@ class RoundViewSet(viewsets.ModelViewSet):
     )
     serializer_class = RoundSerializer
     resource_name = "round"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
     @detail_route(methods=['put'])
     def draw(self, request, pk=None):
@@ -419,9 +418,9 @@ class ScoreViewSet(viewsets.ModelViewSet):
         permissions.DjangoModelPermissions,
     ]
     resource_name = "score"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class SessionViewSet(viewsets.ModelViewSet):
@@ -437,9 +436,9 @@ class SessionViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SessionSerializer
     resource_name = "session"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -467,9 +466,9 @@ class SongViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SongSerializer
     resource_name = "song"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -481,6 +480,6 @@ class VenueViewSet(viewsets.ModelViewSet):
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     resource_name = "venue"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
+    # filter_backends = [
+    #     CoalesceFilterBackend,
+    # ]
