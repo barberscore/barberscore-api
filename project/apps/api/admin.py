@@ -630,7 +630,7 @@ class PerformanceAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, Super
         'name',
         'status',
         'performer',
-        ('slot', 'scheduled'),
+        ('slot', 'scheduled', 'actual'),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]

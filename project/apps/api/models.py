@@ -9,6 +9,7 @@ import uuid
 import datetime
 
 import arrow
+from django.utils import timezone
 
 from django.db import (
     models,
@@ -67,8 +68,6 @@ from ranking import Ranking
 from .managers import (
     UserManager,
 )
-
-from .validators import dixon
 
 log = logging.getLogger(__name__)
 
@@ -767,6 +766,10 @@ class Contest(TimeStampedModel):
     def rank(self):
         if self.award.is_manual:
             return
+        contestants = self.contestants.all()
+        for contestant in self.contestants.all():
+            contestant.calculate()
+            contestant.save()
         contestants = self.contestants.order_by('-total_points')
         points = [contestant.total_points for contestant in contestants]
         ranking = Ranking(points, start=1)
@@ -2095,6 +2098,39 @@ class Performance(TimeStampedModel):
         self.save()
         return {'success': 'moved'}
 
+    def move_up(self):
+        old_slot = self.slot
+        if old_slot == 1:
+            return {'success': 'already at top'}
+        self.slot = -1
+        self.save()
+        new_slot = old_slot - 1
+        replaced = self.round.performances.get(
+            slot=new_slot,
+        )
+        replaced.slot = old_slot
+        replaced.save()
+        self.slot = new_slot
+        self.save()
+        return {'success': 'moved'}
+
+    def move_down(self):
+        old_slot = self.slot
+        max_slot = self.round.performances.aggregate(m=models.Max('slot'))['m']
+        if old_slot == max_slot:
+            return {'success': 'already at bottom'}
+        self.slot = -1
+        self.save()
+        new_slot = old_slot + 1
+        replaced = self.round.performances.get(
+            slot=new_slot,
+        )
+        replaced.slot = old_slot
+        replaced.save()
+        self.slot = new_slot
+        self.save()
+        return {'success': 'moved'}
+
     def move_bottom(self):
         i = self.slot
         self.slot = -1
@@ -2125,9 +2161,15 @@ class Performance(TimeStampedModel):
         self.delete()
         return {'success': 'scratched'}
 
-    def dixon(self):
-        dixon(self)
-        return {'success': 'dixoned'}
+    def start(self):
+        self.actual = (timezone.now(), None)
+        self.save()
+        return
+
+    def finish(self):
+        self.actual = (self.actual.lower, timezone.now())
+        self.save()
+        return
 
     @property
     def get_preceding(self):
@@ -2422,6 +2464,7 @@ class Performer(TimeStampedModel):
             for other in others:
                 other.slot -= 1
                 other.save()
+            performance.delete()
         self.status = self.STATUS.dropped
         self.save()
         return {'success': 'scratched'}
@@ -3144,6 +3187,13 @@ class Session(TimeStampedModel):
             )
             p += 1
         return "{0} Started".format(self)
+
+    def finish(self):
+        # Triggered in UI
+        # TODO seed performers?
+        for contest in self.contests.all():
+            contest.rank()
+        return
 
     def rank(self):
         performers = self.performers.order_by('-total_points')

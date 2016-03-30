@@ -5,7 +5,6 @@ from rest_framework.decorators import detail_route
 from rest_framework import (
     viewsets,
     permissions,
-    status,
 )
 
 from .filters import (
@@ -251,54 +250,47 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-
     @detail_route(methods=['put'])
     def move_top(self, request, pk=None):
         performance = self.get_object()
         response = performance.move_top()
-        if response:
-            return Response(response)
-        else:
-            return Response(
-                {'error': 'did not move'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def move_up(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.move_up()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def move_down(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.move_down()
+        return Response(response)
 
     @detail_route(methods=['put'])
     def move_bottom(self, request, pk=None):
         performance = self.get_object()
         response = performance.move_bottom()
-        if response:
-            return Response(response)
-        else:
-            return Response(
-                {'error': 'did not move'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(response)
 
     @detail_route(methods=['put'])
     def scratch(self, request, pk=None):
         performance = self.get_object()
         response = performance.scratch()
-        if response:
-            return Response(response)
-        else:
-            return Response(
-                {'error': 'did not scratch'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(response)
 
     @detail_route(methods=['put'])
-    def dixon(self, request, pk=None):
+    def start(self, request, pk=None):
         performance = self.get_object()
-        response = performance.dixon()
-        if response:
-            return Response(response)
-        else:
-            return Response(
-                {'error': 'did not test'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        response = performance.start()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def finish(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.finish()
+        return Response(response)
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -387,22 +379,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     def draw(self, request, pk=None):
         round = self.get_object()
         response = round.draw()
-        if response:
-            return Response(response)
-        else:
-            return Response(
-                {'error': 'did not draw'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(response)
 
     @detail_route(methods=['put'])
     def rank(self, request, pk=None):
         round = self.get_object()
         response = round.rank()
-        if response:
-            return Response(response)
-        else:
-            return Response(response)
+        return Response(response)
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
