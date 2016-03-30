@@ -143,6 +143,12 @@ class ContestViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
+    @detail_route(methods=['put'])
+    def build(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.build()
+        return Response(response)
+
 
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
@@ -251,6 +257,12 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     # filter_backends = [
     #     CoalesceFilterBackend,
     # ]
+
+    @detail_route(methods=['put'])
+    def build(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.build()
+        return Response(response)
 
     @detail_route(methods=['put'])
     def move_top(self, request, pk=None):

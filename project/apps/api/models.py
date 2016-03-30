@@ -762,6 +762,14 @@ class Contest(TimeStampedModel):
         ]))
         super(Contest, self).save(*args, **kwargs)
 
+    def build(self):
+        performers = self.session.performers.all()
+        for performer in performers:
+            self.contestants.get_or_create(
+                performer=performer,
+            )
+        return
+
     def rank(self):
         if self.award.is_manual:
             return
@@ -2224,9 +2232,7 @@ class Performance(TimeStampedModel):
                 performance=self,
                 order=i,
             )
-            for judge in self.round.session.judges.filter(
-                kind=self.round.session.judges.model.KIND.official,
-            ):
+            for judge in self.round.session.judges.all():
                 song.scores.get_or_create(
                     song=song,
                     judge=judge,
