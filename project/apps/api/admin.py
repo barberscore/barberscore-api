@@ -268,6 +268,7 @@ class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
+        'champion',
         'cycle',
         'is_qualifier',
         'stix_num',

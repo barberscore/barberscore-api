@@ -727,7 +727,6 @@ class Contest(TimeStampedModel):
         related_name='contests',
         null=True,
         blank=True,
-        editable=False,
     )
 
     def __unicode__(self):
@@ -832,10 +831,11 @@ class Contest(TimeStampedModel):
             else:
                 contestant.rank = ranking.rank(contestant.total_points)
             contestant.save()
-            try:
-                self.champion = self.contestants.order_by('rank').first()
-            except AttributeError:
-                self.champion = None
+        try:
+            self.champion = self.contestants.order_by('rank').first()
+        except AttributeError:
+            self.champion = None
+        self.save()
         return
 
     class Meta:
@@ -2088,14 +2088,20 @@ class Performance(TimeStampedModel):
         i = self.slot
         self.slot = -1
         self.save()
+        for song in self.songs.all():
+            song.save()
         performances = self.round.performances.filter(
             slot__lt=i,
         ).order_by('-slot')
         for performance in performances:
             performance.slot += 1
             performance.save()
+            for song in performance.songs.all():
+                song.save()
         self.slot = 1
         self.save()
+        for song in self.songs.all():
+            song.save()
         return {'success': 'moved'}
 
     def move_up(self):
@@ -2104,14 +2110,20 @@ class Performance(TimeStampedModel):
             return {'success': 'already at top'}
         self.slot = -1
         self.save()
+        for song in self.songs.all():
+            song.save()
         new_slot = old_slot - 1
         replaced = self.round.performances.get(
             slot=new_slot,
         )
         replaced.slot = old_slot
         replaced.save()
+        for song in replaced.songs.all():
+            song.save()
         self.slot = new_slot
         self.save()
+        for song in self.songs.all():
+            song.save()
         return {'success': 'moved'}
 
     def move_down(self):
@@ -2121,20 +2133,28 @@ class Performance(TimeStampedModel):
             return {'success': 'already at bottom'}
         self.slot = -1
         self.save()
+        for song in self.songs.all():
+            song.save()
         new_slot = old_slot + 1
         replaced = self.round.performances.get(
             slot=new_slot,
         )
         replaced.slot = old_slot
         replaced.save()
+        for song in replaced.songs.all():
+            song.save()
         self.slot = new_slot
         self.save()
+        for song in self.songs.all():
+            song.save()
         return {'success': 'moved'}
 
     def move_bottom(self):
         i = self.slot
         self.slot = -1
         self.save()
+        for song in self.songs.all():
+            song.save()
         performances = self.round.performances.filter(
             slot__gt=i,
         ).order_by('slot')
@@ -2142,8 +2162,12 @@ class Performance(TimeStampedModel):
         for performance in performances:
             performance.slot -= 1
             performance.save()
+            for song in performance.songs.all():
+                song.save()
         self.slot = total
         self.save()
+        for song in self.songs.all():
+            song.save()
         return {'success': 'moved'}
 
     def scratch(self):
@@ -2936,6 +2960,9 @@ class Round(TimeStampedModel):
 
     def rank(self):
         performances = self.performances.order_by('-total_points')
+        for performance in self.performances.all():
+            performance.calculate()
+            performance.save()
         points = [performance.total_points for performance in performances]
         ranking = Ranking(points, start=1)
         for performance in performances:
@@ -3189,8 +3216,17 @@ class Session(TimeStampedModel):
         return "{0} Started".format(self)
 
     def finish(self):
-        # Triggered in UI
-        # TODO seed performers?
+        for performer in self.performers.all():
+            for performance in performer.performances.all():
+                for song in performance.songs.all():
+                    song.calculate()
+                    song.save()
+                performance.calculate()
+                performance.save()
+            performer.calculate()
+            performer.save()
+        for round in self.rounds.all():
+            round.rank()
         for contest in self.contests.all():
             contest.rank()
         return

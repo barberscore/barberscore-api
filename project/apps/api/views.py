@@ -10,6 +10,7 @@ from rest_framework import (
 from .filters import (
     # CoalesceFilterBackend,
     ChartFilter,
+    ContestantFilter,
     ConventionFilter,
     GroupFilter,
     PerformerFilter,
@@ -152,6 +153,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         '-total_points',
     )
     serializer_class = ContestantSerializer
+    filter_class = ContestantFilter
     resource_name = "contestant"
     # filter_backends = [
     #     CoalesceFilterBackend,
@@ -422,6 +424,12 @@ class SessionViewSet(viewsets.ModelViewSet):
     # filter_backends = [
     #     CoalesceFilterBackend,
     # ]
+
+    @detail_route(methods=['put'])
+    def finish(self, request, pk=None):
+        session = self.get_object()
+        response = session.finish()
+        return Response(response)
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):

@@ -7,6 +7,7 @@ from django_filters.fields import Lookup
 
 from .models import (
     Chart,
+    Contestant,
     Convention,
     Group,
     Person,
@@ -61,6 +62,14 @@ class ConventionFilter(filters.FilterSet):
 class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
+        fields = {
+            'name': filters.ALL_LOOKUPS,
+        }
+
+
+class ContestantFilter(filters.FilterSet):
+    class Meta:
+        model = Contestant
         fields = {
             'name': filters.ALL_LOOKUPS,
         }
