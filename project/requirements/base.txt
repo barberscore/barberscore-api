@@ -1,6 +1,5 @@
 arrow==0.7.0
 dj-database-url==0.4.0
-django-autoslug==1.9.3
 django-cors-headers==1.1.0
 django-easy-pdf==0.1.0
 django-extra-fields==0.5

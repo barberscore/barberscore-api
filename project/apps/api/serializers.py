@@ -54,7 +54,6 @@ class AwardSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'kind',
@@ -84,7 +83,6 @@ class CertificationSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'category',
             'status',
@@ -99,7 +97,6 @@ class ChapterSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'code',
@@ -139,7 +136,6 @@ class ContestSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'cycle',
@@ -158,7 +154,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'name',
-            'slug',
             'status',
             'rank',
             'mus_points',
@@ -195,7 +190,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'name',
-            'slug',
             'status',
             'season',
             'level',
@@ -217,7 +211,6 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'date',
@@ -247,7 +240,6 @@ class JudgeSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'category',
@@ -266,7 +258,6 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'person',
@@ -282,7 +273,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'level',
@@ -318,7 +308,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'slot',
@@ -360,7 +349,6 @@ class PerformerSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'organization',
@@ -408,7 +396,6 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'date',
@@ -450,7 +437,6 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'performer',
@@ -465,7 +451,6 @@ class RoundSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'kind',
@@ -481,7 +466,6 @@ class ScoreSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'song',
@@ -500,7 +484,6 @@ class SessionSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'kind',
@@ -520,7 +503,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'chart',
@@ -534,7 +516,6 @@ class SongSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'status',
             'order',
@@ -571,7 +552,6 @@ class VenueSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'slug',
             'name',
             'location',
             'city',

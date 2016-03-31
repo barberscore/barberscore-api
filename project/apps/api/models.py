@@ -24,8 +24,6 @@ from django.contrib.postgres.fields import (
     FloatRangeField,
 )
 
-from autoslug import AutoSlugField
-
 from django.core.validators import (
     RegexValidator,
     MaxValueValidator,
@@ -88,13 +86,6 @@ class Award(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -310,13 +301,6 @@ class Certification(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     CATEGORY = Choices(
         (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
@@ -385,13 +369,6 @@ class Chapter(TimeStampedModel):
         max_length=200,
         blank=False,
         unique=True,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -668,13 +645,6 @@ class Contest(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -868,13 +838,6 @@ class Contestant(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'eligible', 'Eligible',),
@@ -1035,13 +998,6 @@ class Convention(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -1240,13 +1196,6 @@ class Group(TimeStampedModel):
         error_messages={
             'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
         }
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique_with='kind',
-        max_length=255,
     )
 
     date = DateRangeField(
@@ -1464,13 +1413,6 @@ class Judge(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
@@ -1591,13 +1533,6 @@ class Member(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -1651,13 +1586,6 @@ class Organization(MPTTModel, TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=200,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        # unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -1915,13 +1843,6 @@ class Performance(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -2269,13 +2190,6 @@ class Performer(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'qualified', 'Qualified',),
@@ -2537,13 +2451,6 @@ class Person(TimeStampedModel):
         }
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -2771,13 +2678,6 @@ class Role(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -2870,13 +2770,6 @@ class Round(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -2995,13 +2888,6 @@ class Score(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (20, 'entered', 'Entered',),
@@ -3093,13 +2979,6 @@ class Session(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -3260,13 +3139,6 @@ class Submission(TimeStampedModel):
         editable=False,
     )
 
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
     )
@@ -3317,13 +3189,6 @@ class Song(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     STATUS = Choices(
@@ -3499,13 +3364,6 @@ class Venue(TimeStampedModel):
         max_length=200,
         unique=True,
         editable=False,
-    )
-
-    slug = AutoSlugField(
-        populate_from='name',
-        always_update=True,
-        unique=True,
-        max_length=255,
     )
 
     location = models.CharField(
