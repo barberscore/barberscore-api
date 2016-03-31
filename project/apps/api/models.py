@@ -729,6 +729,7 @@ class Contest(TimeStampedModel):
             self.award.name,
             suffix,
             str(self.session.convention.year),
+            self.id.hex,
         ]))
         super(Contest, self).save(*args, **kwargs)
 
@@ -1165,7 +1166,7 @@ class Convention(TimeStampedModel):
             self.level = self.organization.level
         self.name = " ".join(filter(None, [
             self.organization.name,
-            self.get_division_display(),
+            str(self.get_division_display()),
             self.get_season_display(),
             u"Convention",
             str(self.year),
@@ -1861,6 +1862,8 @@ class Performance(TimeStampedModel):
     )
 
     slot = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     scheduled = DateTimeRangeField(
@@ -1956,14 +1959,14 @@ class Performance(TimeStampedModel):
             self.round.get_kind_display(),
             str(self.round.session.convention.year),
             "Performance",
-            "{0:02d}".format(self.slot),
+            self.id.hex,
         ]))
         super(Performance, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('round', 'slot',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('round', 'slot',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "performance"
@@ -2323,7 +2326,7 @@ class Performer(TimeStampedModel):
         # on create
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
-            self.session.convention.get_division_display(),
+            str(self.session.convention.get_division_display()),
             self.session.convention.get_season_display(),
             str(self.session.convention.year),
             self.session.get_kind_display(),
@@ -2829,7 +2832,7 @@ class Round(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
-            self.session.convention.get_division_display(),
+            str(self.session.convention.get_division_display()),
             self.session.convention.get_season_display(),
             self.session.get_kind_display(),
             self.get_kind_display(),
@@ -3066,7 +3069,7 @@ class Session(TimeStampedModel):
         self.organization = self.convention.organization
         self.name = " ".join(filter(None, [
             self.convention.organization.name,
-            self.convention.get_division_display(),
+            str(self.convention.get_division_display()),
             self.convention.get_season_display(),
             self.get_kind_display(),
             "Session",
