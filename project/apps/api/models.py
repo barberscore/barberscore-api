@@ -748,17 +748,17 @@ class Contest(TimeStampedModel):
             ]),
         ]):
             self.is_qualifier = True
+        if self.is_qualifier:
+            prefix = self.session.name
+            suffix = "Qualifier"
+        else:
+            prefix = None
+            suffix = "Championship"
         self.name = " ".join(filter(None, [
+            prefix,
             self.award.name,
-            self.session.name,
-            # str(self.session.convention.year),
-            # self.award.organization.name,
-            # self.award.get_kind_display(),
-            # self.award.long_name,
-            # self.get_goal_display(),
-            # sess,
-            # str(self.session.convention.year),
-            # self.id.hex,
+            suffix,
+            str(self.session.convention.year),
         ]))
         super(Contest, self).save(*args, **kwargs)
 
