@@ -950,6 +950,7 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'kind',
         'administrator',
         'aca',
+        'cutoff',
         'entry_form',
         'song_list',
         # 'year',

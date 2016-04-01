@@ -3033,6 +3033,11 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    cutoff = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     scoresheet_pdf = models.FileField(
         help_text="""
             The historical PDF OSS.""",
