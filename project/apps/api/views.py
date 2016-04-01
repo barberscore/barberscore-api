@@ -401,6 +401,12 @@ class RoundViewSet(viewsets.ModelViewSet):
         response = round.rank()
         return Response(response)
 
+    @detail_route(methods=['put'])
+    def promote(self, request, pk=None):
+        round = self.get_object()
+        response = round.promote()
+        return Response(response)
+
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
