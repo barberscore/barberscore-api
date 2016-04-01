@@ -752,63 +752,7 @@ class Contest(TimeStampedModel):
         points = [contestant.total_points for contestant in contestants]
         ranking = Ranking(points, start=1)
         for contestant in contestants:
-            if self.is_qualifier:
-                if self.award.level == self.award.LEVEL.international:
-                    if self.award.kind == self.award.KIND.quartet:
-                        if contestant.total_score < self.award.minimum:
-                            contestant.rank = 0
-                            contestant.save()
-                            continue
-                        if contestant.total_score >= self.award.cutoff:
-                            contestant.rank = 1
-                            contestant.save()
-                            continue
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.rank = 1
-                        else:
-                            contestant.rank = 0
-                    elif self.award.kind == self.award.KIND.chorus:
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.rank = 1
-                        else:
-                            contestant.rank = 0
-                    elif self.award.kind == self.award.KIND.seniors:
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.rank = 1
-                        else:
-                            contestant.rank = 0
-                    elif self.award.kind == self.award.KIND.youth:
-                        if contestant.total_score < self.award.minimum:
-                            contestant.rank = 0
-                            contestant.save()
-                            continue
-                        if contestant.total_score >= self.award.cutoff:
-                            contestant.rank = 1
-                            contestant.save()
-                            continue
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.rank = 1
-                        else:
-                            contestant.rank = 0
-                    elif self.award.kind == self.award.KIND.collegiate:
-                        if contestant.total_score < self.award.minimum:
-                            contestant.rank = 0
-                            contestant.save()
-                            continue
-                        if contestant.total_score >= self.award.cutoff:
-                            contestant.rank = 1
-                            contestant.save()
-                            continue
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.rank = 1
-                        else:
-                            contestant.rank = 0
-                    else:
-                        raise RuntimeError("No Award Kind")
-                else:
-                    contestant.rank = None  # TODO District quals.
-            else:
-                contestant.rank = ranking.rank(contestant.total_points)
+            contestant.rank = ranking.rank(contestant.total_points)
             contestant.save()
         try:
             self.champion = self.contestants.order_by('rank').first()
@@ -2137,6 +2081,8 @@ class Performance(TimeStampedModel):
             return obj.id
         except self.DoesNotExist:
             return None
+        except TypeError:
+            return None
 
     @property
     def get_next(self):
@@ -2147,6 +2093,8 @@ class Performance(TimeStampedModel):
             )
             return obj.id
         except self.DoesNotExist:
+            return None
+        except TypeError:
             return None
 
     def build(self):
@@ -2845,12 +2793,9 @@ class Round(TimeStampedModel):
 
     def draw(self):
         i = 1
-        for performer in self.session.performers.all().order_by('?'):  # TODO: better filter?
-            slot = i
-            performer.performances.create(
-                round=self,
-                slot=slot,
-            )
+        for performance in self.performances.order_by('?'):  # TODO: better filter?
+            performance.slot = i
+            performance.save()
             i += 1
         return {'success': 'drew {0} performances'.format(i)}
 
@@ -2871,6 +2816,23 @@ class Round(TimeStampedModel):
             performance.rank = ranking.rank(performance.total_points)
             performance.save()
         return
+
+    def promote(self):
+        for contest in self.session.contests.all():
+            contest.rank()
+        performers = self.session.performers.filter(
+            contestants__contest__award__num_rounds=2,
+            contestants__rank__lte=self.session.cutoff,
+        )
+        for performer in performers:
+            obj = self.__class__.objects.get(
+                session=self.session,
+                num=self.num + 1,
+            )
+            self.performances.model.objects.create(
+                round=obj,
+                performer=performer,
+            )
 
 
 class Score(TimeStampedModel):
@@ -3312,6 +3274,7 @@ class Song(TimeStampedModel):
             str(self.performance.slot),
             'Song',
             str(self.order),
+            self.id.hex,
         ]))
         super(Song, self).save(*args, **kwargs)
 
