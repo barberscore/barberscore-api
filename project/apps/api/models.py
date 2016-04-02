@@ -31,7 +31,7 @@ from django.core.validators import (
 )
 
 from django_fsm import (
-    transition,
+    # transition,
     FSMIntegerField,
 )
 
@@ -3052,23 +3052,8 @@ class Session(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "session"
 
-    def start(self):
-        # Triggered in UI
-        # TODO seed performers?
-        round = self.rounds.get(num=1)
-        p = 0
-        for performer in self.performers.filter(
-            status=self.model.STATUS.accepted,
-        ).order_by('?'):
-            performer.register()
-            performer.save()
-            round.performances.create(
-                round=round,
-                performer=performer,
-                position=p,
-            )
-            p += 1
-        return "{0} Started".format(self)
+    def build(self):
+        return
 
     def finish(self):
         for performer in self.performers.all():
@@ -3084,15 +3069,6 @@ class Session(TimeStampedModel):
             round.rank()
         for contest in self.contests.all():
             contest.rank()
-        return
-
-    def rank(self):
-        performers = self.performers.order_by('-total_points')
-        points = [performer.total_points for performer in performers]
-        ranking = Ranking(points, start=1)
-        for performer in performers:
-            performer.rank = ranking.rank(performer.total_points)
-            performer.save()
         return
 
 
