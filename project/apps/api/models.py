@@ -1108,9 +1108,13 @@ class Convention(TimeStampedModel):
             self.level = self.LEVEL.division
         else:
             self.level = self.organization.level
+        if self.division:
+            division = str(self.get_division_display())
+        else:
+            division = None
         self.name = " ".join(filter(None, [
             self.organization.name,
-            str(self.get_division_display()),
+            division,
             self.get_season_display(),
             u"Convention",
             str(self.year),
