@@ -2755,7 +2755,7 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    date = DateRangeField(
+    date = DateTimeRangeField(
         help_text="""
             The active dates of the resource.""",
         null=True,
