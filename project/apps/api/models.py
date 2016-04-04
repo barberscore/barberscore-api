@@ -1968,6 +1968,7 @@ class Performance(TimeStampedModel):
         performances = self.round.performances.filter(
             slot__lt=self.slot,
         ).order_by('-slot')
+        top = performances.last().scheduled
         slot_cursor = self.slot
         scheduled_cursor = self.scheduled
         for performance in performances:
@@ -1979,7 +1980,7 @@ class Performance(TimeStampedModel):
             slot_cursor = prior_slot
             scheduled_cursor = prior_scheduled
         self.slot = 1
-        self.scheduled = performances.last().scheduled
+        self.scheduled = top
         self.save()
         return {'success': 'moved'}
 
