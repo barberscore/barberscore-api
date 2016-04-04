@@ -1965,23 +1965,22 @@ class Performance(TimeStampedModel):
             self.total_score = None
 
     def move_top(self):
-        i = self.slot
-        self.slot = -1
-        self.save()
-        for song in self.songs.all():
-            song.save()
         performances = self.round.performances.filter(
-            slot__lt=i,
+            slot__lt=self.slot,
         ).order_by('-slot')
+        slot_cursor = self.slot
+        scheduled_cursor = self.scheduled
         for performance in performances:
-            performance.slot += 1
+            prior_slot = performance.slot
+            prior_scheduled = performance.scheduled
+            performance.slot = slot_cursor
+            performance.scheduled = scheduled_cursor
             performance.save()
-            for song in performance.songs.all():
-                song.save()
+            slot_cursor = prior_slot
+            scheduled_cursor = prior_scheduled
         self.slot = 1
+        self.scheduled = performances.last().scheduled
         self.save()
-        for song in self.songs.all():
-            song.save()
         return {'success': 'moved'}
 
     def move_up(self):
@@ -1990,20 +1989,14 @@ class Performance(TimeStampedModel):
             return {'success': 'already at top'}
         self.slot = -1
         self.save()
-        for song in self.songs.all():
-            song.save()
         new_slot = old_slot - 1
         replaced = self.round.performances.get(
             slot=new_slot,
         )
         replaced.slot = old_slot
         replaced.save()
-        for song in replaced.songs.all():
-            song.save()
         self.slot = new_slot
         self.save()
-        for song in self.songs.all():
-            song.save()
         return {'success': 'moved'}
 
     def move_down(self):
@@ -2013,28 +2006,20 @@ class Performance(TimeStampedModel):
             return {'success': 'already at bottom'}
         self.slot = -1
         self.save()
-        for song in self.songs.all():
-            song.save()
         new_slot = old_slot + 1
         replaced = self.round.performances.get(
             slot=new_slot,
         )
         replaced.slot = old_slot
         replaced.save()
-        for song in replaced.songs.all():
-            song.save()
         self.slot = new_slot
         self.save()
-        for song in self.songs.all():
-            song.save()
         return {'success': 'moved'}
 
     def move_bottom(self):
         i = self.slot
         self.slot = -1
         self.save()
-        for song in self.songs.all():
-            song.save()
         performances = self.round.performances.filter(
             slot__gt=i,
         ).order_by('slot')
@@ -2042,12 +2027,8 @@ class Performance(TimeStampedModel):
         for performance in performances:
             performance.slot -= 1
             performance.save()
-            for song in performance.songs.all():
-                song.save()
         self.slot = total
         self.save()
-        for song in self.songs.all():
-            song.save()
         return {'success': 'moved'}
 
     def scratch(self):
