@@ -734,11 +734,7 @@ class Contest(TimeStampedModel):
         super(Contest, self).save(*args, **kwargs)
 
     def build(self):
-        performers = self.session.performers.all()
-        for performer in performers:
-            self.contestants.get_or_create(
-                performer=performer,
-            )
+        # TODO Future Award/Contestant mapping
         return
 
     def rank(self):
@@ -1088,16 +1084,15 @@ class Convention(TimeStampedModel):
         null=True,
     )
 
-    @property
-    def human_date(self):
-        if self.date:
-            date = "{0} - {1}".format(
-                arrow.get(self.date.lower).format('MMMM D'),
-                arrow.get(self.date.upper).replace(days=-1).format('MMMM D, YYYY'),
-            )
-        else:
-            date = None
-        return date
+    def start(self):
+        self.status = self.STATUS.started
+        self.save()
+        return
+
+    def finish(self):
+        self.status = self.STATUS.finished
+        self.save()
+        return
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2324,11 +2319,7 @@ class Performer(TimeStampedModel):
             self.total_score = None
 
     def build(self):
-        contests = self.session.contests.all()
-        for contest in contests:
-            self.contestants.get_or_create(
-                contest=contest,
-            )
+        # TODO Future work for automated award mapping
         return
 
     def scratch(self):
@@ -2961,10 +2952,14 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'built', 'Built',),
+        (4, 'open', 'Open',),
+        (8, 'closed', 'Closed',),
+        (10, 'ready', 'Ready',),
         (20, 'started', 'Started',),
-        (25, 'ranked', 'Ranked',),
+        # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
+        (40, 'drafted', 'Drafted',),
+        (45, 'published', 'Published',),
         (50, 'final', 'Final',),
     )
 
@@ -3065,10 +3060,32 @@ class Session(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "session"
 
-    def build(self):
+    def open(self):
+        self.status = self.STATUS.open
+        self.save()
+        return
+
+    def close(self):
+        self.status = self.STATUS.closed
+        self.save()
+        return
+
+    def ready(self):
+        self.status = self.STATUS.ready
+        self.save()
+        return
+
+    def start(self):
+        self.status = self.STATUS.started
+        self.save()
         return
 
     def finish(self):
+        self.status = self.STATUS.finished
+        self.save()
+        return
+
+    def draft(self):
         for performer in self.performers.all():
             for performance in performer.performances.all():
                 for song in performance.songs.all():
@@ -3083,6 +3100,10 @@ class Session(TimeStampedModel):
         for contest in self.contests.all():
             contest.rank()
         return
+
+    def publish(self):
+        self.status = self.STATUS.published
+        self.save()
 
 
 class Submission(TimeStampedModel):

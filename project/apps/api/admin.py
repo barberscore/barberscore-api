@@ -360,7 +360,6 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'division',
         'season',
         'date',
-        'human_date',
         # 'location',
     )
 
@@ -397,7 +396,6 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'name',
         # 'year',
         'level',
-        'human_date',
     )
 
     raw_id_fields = [

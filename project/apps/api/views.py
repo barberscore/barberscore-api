@@ -184,6 +184,18 @@ class ConventionViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
+    @detail_route(methods=['put'])
+    def start(self, request, pk=None):
+        convention = self.get_object()
+        response = convention.start()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def finish(self, request, pk=None):
+        convention = self.get_object()
+        response = convention.finish()
+        return Response(response)
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
@@ -450,9 +462,45 @@ class SessionViewSet(viewsets.ModelViewSet):
     # ]
 
     @detail_route(methods=['put'])
+    def open(self, request, pk=None):
+        session = self.get_object()
+        response = session.open()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def close(self, request, pk=None):
+        session = self.get_object()
+        response = session.close()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def ready(self, request, pk=None):
+        session = self.get_object()
+        response = session.ready()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def start(self, request, pk=None):
+        session = self.get_object()
+        response = session.start()
+        return Response(response)
+
+    @detail_route(methods=['put'])
     def finish(self, request, pk=None):
         session = self.get_object()
         response = session.finish()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def draft(self, request, pk=None):
+        session = self.get_object()
+        response = session.draft()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def publish(self, request, pk=None):
+        session = self.get_object()
+        response = session.publish()
         return Response(response)
 
 
