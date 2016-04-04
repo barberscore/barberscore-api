@@ -858,6 +858,7 @@ class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.Model
         'name',
         'status',
         ('session', 'kind',),
+        'date',
     ]
 
     readonly_fields = [
@@ -866,9 +867,13 @@ class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.Model
         'kind',
     ]
 
-    list_filter = (
+    list_filter = [
         'status',
-    )
+        'session__convention__year',
+        'session__convention__organization',
+        'session__convention__season',
+        'session__kind',
+    ]
 
     raw_id_fields = (
         'session',

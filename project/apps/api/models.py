@@ -2778,17 +2778,38 @@ class Round(TimeStampedModel):
 
     def draw(self):
         i = 1
-        for performance in self.performances.order_by('?'):  # TODO: better filter?
+        for performance in self.performances.order_by('?'):
             performance.slot = i
             performance.save()
             i += 1
         return {'success': 'drew {0} performances'.format(i)}
 
-    def finish(self):
-        for performance in self.performances.all():
-            performance.calculate()
+    def resort(self):
+        i = 1
+        if self.session.kind == self.session.KIND.chorus:
+            duration = 10
+            slack = 10
+        else:
+            duration = 10
+            slack = 2
+        cursor = None
+        for performance in self.performances.order_by('slot'):
+            if self.date:
+                if not cursor:
+                    cursor = (
+                        self.date.lower,
+                        self.date.lower + datetime.timedelta(minutes=duration),
+                    )
+                else:
+                    cursor = (
+                        cursor[1] + datetime.timedelta(minutes=slack),
+                        cursor[1] + datetime.timedelta(minutes=(duration + slack))
+                    )
+                performance.scheduled = cursor
+            performance.slot = i
             performance.save()
-        return
+            i += 1
+        return {'success': 'resorted {0} performances'.format(i)}
 
     def rank(self):
         performances = self.performances.order_by('-total_points')
@@ -2818,6 +2839,12 @@ class Round(TimeStampedModel):
                 round=obj,
                 performer=performer,
             )
+
+    def finish(self):
+        for performance in self.performances.all():
+            performance.calculate()
+            performance.save()
+        return
 
 
 class Score(TimeStampedModel):
