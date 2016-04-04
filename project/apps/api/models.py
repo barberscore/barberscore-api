@@ -3042,9 +3042,13 @@ class Session(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.organization = self.convention.organization
+        if self.convention.division:
+            division = str(self.convention.get_division_display())
+        else:
+            division = None
         self.name = " ".join(filter(None, [
             self.convention.organization.name,
-            str(self.convention.get_division_display()),
+            division,
             self.convention.get_season_display(),
             self.get_kind_display(),
             "Session",
