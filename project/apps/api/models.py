@@ -2042,13 +2042,36 @@ class Performance(TimeStampedModel):
         self.delete()
         return {'success': 'scratched'}
 
+    def build(self):
+        i = 1
+        while i <= 2:
+            song, c = self.songs.get_or_create(
+                performance=self,
+                order=i,
+            )
+            for judge in self.round.session.judges.all():
+                song.scores.get_or_create(
+                    song=song,
+                    judge=judge,
+                    category=judge.category,
+                    kind=judge.kind,
+                )
+            i += 1
+        return
+
     def start(self):
+        self.build()
         self.actual = (timezone.now(), None)
         self.save()
         return
 
     def finish(self):
         self.actual = (self.actual.lower, timezone.now())
+        self.save()
+        return
+
+    def complete(self):
+        self.calculate()
         self.save()
         return
 
@@ -2077,36 +2100,6 @@ class Performance(TimeStampedModel):
             return None
         except TypeError:
             return None
-
-    def build(self):
-        i = 1
-        while i <= 2:
-            song, c = self.songs.get_or_create(
-                performance=self,
-                order=i,
-            )
-            for judge in self.round.session.judges.all():
-                song.scores.get_or_create(
-                    song=song,
-                    judge=judge,
-                    category=judge.category,
-                    kind=judge.kind,
-                )
-            i += 1
-        return
-
-    def flag(self):
-        self.status = self.STATUS.flagged
-        self.save()
-        return
-
-    def accept(self):
-        self.status = self.STATUS.accepted
-        self.save()
-        return
-
-    def finalize(self):
-        return
 
 
 class Performer(TimeStampedModel):
@@ -2832,10 +2825,14 @@ class Round(TimeStampedModel):
                 performer=performer,
             )
 
+    def start(self):
+        self.status = self.STATUS.start
+        self.save()
+        return
+
     def finish(self):
-        for performance in self.performances.all():
-            performance.calculate()
-            performance.save()
+        self.status = self.STATUS.finished
+        self.save()
         return
 
 
@@ -3118,12 +3115,6 @@ class Session(TimeStampedModel):
 
     def draft(self):
         for performer in self.performers.all():
-            for performance in performer.performances.all():
-                for song in performance.songs.all():
-                    song.calculate()
-                    song.save()
-                performance.calculate()
-                performance.save()
             performer.calculate()
             performer.save()
         for round in self.rounds.all():

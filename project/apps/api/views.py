@@ -271,12 +271,6 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     # ]
 
     @detail_route(methods=['put'])
-    def build(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.build()
-        return Response(response)
-
-    @detail_route(methods=['put'])
     def move_top(self, request, pk=None):
         performance = self.get_object()
         response = performance.move_top()
@@ -316,6 +310,12 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     def finish(self, request, pk=None):
         performance = self.get_object()
         response = performance.finish()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def complete(self, request, pk=None):
+        performance = self.get_object()
+        response = performance.complete()
         return Response(response)
 
 
@@ -423,6 +423,18 @@ class RoundViewSet(viewsets.ModelViewSet):
     def resort(self, request, pk=None):
         round = self.get_object()
         response = round.resort()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def start(self, request, pk=None):
+        round = self.get_object()
+        response = round.start()
+        return Response(response)
+
+    @detail_route(methods=['put'])
+    def finish(self, request, pk=None):
+        round = self.get_object()
+        response = round.finish()
         return Response(response)
 
 
