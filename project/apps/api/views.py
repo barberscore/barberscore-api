@@ -401,41 +401,35 @@ class RoundViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-    @detail_route(methods=['put'])
-    def draw(self, request, pk=None):
-        round = self.get_object()
-        response = round.draw()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def draw(self, request, pk=None):
+    #     round = self.get_object()
+    #     response = round.draw()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def rank(self, request, pk=None):
-        round = self.get_object()
-        response = round.rank()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def promote(self, request, pk=None):
+    #     round = self.get_object()
+    #     response = round.promote()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def promote(self, request, pk=None):
-        round = self.get_object()
-        response = round.promote()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def resort(self, request, pk=None):
+    #     round = self.get_object()
+    #     response = round.resort()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def resort(self, request, pk=None):
-        round = self.get_object()
-        response = round.resort()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def start(self, request, pk=None):
+    #     round = self.get_object()
+    #     response = round.start()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def start(self, request, pk=None):
-        round = self.get_object()
-        response = round.start()
-        return Response(response)
-
-    @detail_route(methods=['put'])
-    def finish(self, request, pk=None):
-        round = self.get_object()
-        response = round.finish()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def finish(self, request, pk=None):
+    #     round = self.get_object()
+    #     response = round.finish()
+    #     return Response(response)
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -486,9 +480,9 @@ class SessionViewSet(viewsets.ModelViewSet):
         return Response(response)
 
     @detail_route(methods=['put'])
-    def ready(self, request, pk=None):
+    def prepare(self, request, pk=None):
         session = self.get_object()
-        response = session.ready()
+        response = session.prepare()
         return Response(response)
 
     @detail_route(methods=['put'])

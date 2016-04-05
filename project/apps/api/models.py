@@ -1793,9 +1793,7 @@ class Performance(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
-        (30, 'entered', 'Entered',),
-        (40, 'flagged', 'Flagged',),
-        (50, 'accepted', 'Accepted',),
+        (50, 'confirmed', 'Confirmed',),
         (90, 'final', 'Final',),
     )
 
@@ -2062,16 +2060,19 @@ class Performance(TimeStampedModel):
     def start(self):
         self.build()
         self.actual = (timezone.now(), None)
+        self.status = self.STATUS.started
         self.save()
         return
 
     def finish(self):
         self.actual = (self.actual.lower, timezone.now())
+        self.status = self.STATUS.finished
         self.save()
         return
 
     def complete(self):
         self.calculate()
+        self.status = self.STATUS.completed
         self.save()
         return
 
@@ -2796,18 +2797,6 @@ class Round(TimeStampedModel):
             i += 1
         return {'success': 'resorted {0} performances'.format(i)}
 
-    def rank(self):
-        performances = self.performances.order_by('-total_points')
-        for performance in self.performances.all():
-            performance.calculate()
-            performance.save()
-        points = [performance.total_points for performance in performances]
-        ranking = Ranking(points, start=1)
-        for performance in performances:
-            performance.rank = ranking.rank(performance.total_points)
-            performance.save()
-        return
-
     def promote(self):
         for contest in self.session.contests.all():
             contest.rank()
@@ -2825,15 +2814,16 @@ class Round(TimeStampedModel):
                 performer=performer,
             )
 
-    def start(self):
-        self.status = self.STATUS.start
-        self.save()
-        return
+    # def start(self):
+    #     self.status = self.STATUS.start
+    #     self.save()
+    #     return
 
-    def finish(self):
-        self.status = self.STATUS.finished
-        self.save()
-        return
+    # def finish(self):
+    #     self.rank()
+    #     self.status = self.STATUS.finished
+    #     self.save()
+    #     return
 
 
 class Score(TimeStampedModel):
@@ -3098,7 +3088,7 @@ class Session(TimeStampedModel):
         self.save()
         return
 
-    def ready(self):
+    def prepare(self):
         self.status = self.STATUS.ready
         self.save()
         return
@@ -3114,18 +3104,15 @@ class Session(TimeStampedModel):
         return
 
     def draft(self):
-        for performer in self.performers.all():
-            performer.calculate()
-            performer.save()
-        for round in self.rounds.all():
-            round.rank()
         for contest in self.contests.all():
             contest.rank()
+        self.status = self.STATUS.drafted
         return
 
     def publish(self):
         self.status = self.STATUS.published
         self.save()
+        return
 
 
 class Submission(TimeStampedModel):
