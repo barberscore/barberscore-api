@@ -647,8 +647,12 @@ class Contest(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
+        (20, 'started', 'Started',),
+        # (25, 'ranked', 'Ranked',),
+        (30, 'finished', 'Finished',),
+        (40, 'drafted', 'Drafted',),
+        (45, 'published', 'Published',),
+        (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -740,6 +744,8 @@ class Contest(TimeStampedModel):
     def rank(self):
         if self.award.is_manual:
             return
+        if self.award.num_rounds > self.session.completed_rounds:
+            return
         contestants = self.contestants.all()
         for contestant in self.contestants.all():
             contestant.calculate()
@@ -748,12 +754,48 @@ class Contest(TimeStampedModel):
         points = [contestant.total_points for contestant in contestants]
         ranking = Ranking(points, start=1)
         for contestant in contestants:
-            contestant.rank = ranking.rank(contestant.total_points)
+            if self.is_qualifier:
+                if self.award.level == self.award.LEVEL.international:
+                    if self.award.kind == self.award.KIND.quartet:
+                        if contestant.total_score >= self.award.cutoff:
+                            contestant.status = contestant.STATUS.qualified
+                        elif contestant.total_score < self.award.minimum:
+                            contestant.status = contestant.STATUS.ineligible
+                        else:
+                            contestant.status = contestant.STATUS.eligible
+                    elif self.award.kind == self.award.KIND.chorus:
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.status = contestant.STATUS.qualified
+                        elif contestant.total_score < self.award.minimum:
+                            contestant.status = contestant.STATUS.ineligible
+                        else:
+                            contestant.status = contestant.STATUS.eligible
+                    elif self.award.kind == self.award.KIND.seniors:
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.status = contestant.STATUS.qualified
+                        else:
+                            contestant.status = contestant.STATUS.eligible
+                    elif self.award.kind == self.award.KIND.youth or self.award.kind == self.award.KIND.collegiate:
+                        if ranking.rank(contestant.total_points) == 1:
+                            contestant.status = contestant.STATUS.qualified
+                        elif contestant.total_score < self.award.minimum:
+                            contestant.status = contestant.STATUS.ineligible
+                        elif contestant.total_score >= self.award.cutoff:
+                            contestant.status = contestant.STATUS.qualified
+                        else:
+                            contestant.rank = contestant.STATUS.eligible
+                    else:
+                        raise RuntimeError("No Award Kind")
+                else:
+                    log.error("District Qual not run")
+                    continue  # TODO DIstrict Quals
+            else:
+                contestant.rank = ranking.rank(contestant.total_points)
+                contestant.status = contestant.STATUS.ranked
+                if contestant.rank == 1:
+                    self.champion = contestant
             contestant.save()
-        try:
-            self.champion = self.contestants.order_by('rank').first()
-        except AttributeError:
-            self.champion = None
+        self.status = self.STATUS.drafted
         self.save()
         return
 
@@ -785,6 +827,7 @@ class Contestant(TimeStampedModel):
         (20, 'ineligible', 'Ineligible',),
         (30, 'dnq', 'Did Not Qualify',),
         (50, 'qualified', 'Qualified',),
+        (60, 'ranked', 'Ranked',),
         (90, 'final', 'Final',),
     )
 
@@ -1991,7 +2034,7 @@ class Performance(TimeStampedModel):
         replaced.save()
         self.slot = new_slot
         self.save()
-        return {'success': 'moved'}
+        return {'success': 'moved',}
 
     def move_down(self):
         old_slot = self.slot
@@ -3050,6 +3093,10 @@ class Session(TimeStampedModel):
         'Convention',
         related_name='sessions',
     )
+
+    @property
+    def completed_rounds(self):
+        return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
 
     def __unicode__(self):
         return u"{0}".format(self.name)
