@@ -1,7 +1,12 @@
 import logging
 
-from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+# from rest_framework.response import Response
+# from rest_framework.decorators import detail_route
+
+from drf_fsm_transitions.viewset_mixins import (
+    get_viewset_transition_action_mixin,
+)
+
 from rest_framework import (
     viewsets,
     permissions,
@@ -143,11 +148,11 @@ class ContestViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-    @detail_route(methods=['put'])
-    def build(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.build()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def build(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.build()
+    #     return Response(response)
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -166,7 +171,10 @@ class ContestantViewSet(viewsets.ModelViewSet):
     # ]
 
 
-class ConventionViewSet(viewsets.ModelViewSet):
+class ConventionViewSet(
+    get_viewset_transition_action_mixin(Convention),
+    viewsets.ModelViewSet
+):
     queryset = Convention.objects.select_related(
         'organization',
         'venue',
@@ -184,17 +192,17 @@ class ConventionViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-    @detail_route(methods=['put'])
-    def start(self, request, pk=None):
-        convention = self.get_object()
-        response = convention.start()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def start(self, request, pk=None):
+    #     convention = self.get_object()
+    #     response = convention.start()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def finish(self, request, pk=None):
-        convention = self.get_object()
-        response = convention.finish()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def finish(self, request, pk=None):
+    #     convention = self.get_object()
+    #     response = convention.finish()
+    #     return Response(response)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -270,53 +278,53 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-    @detail_route(methods=['put'])
-    def move_top(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.move_top()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def move_top(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.move_top()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def move_up(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.move_up()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def move_up(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.move_up()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def move_down(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.move_down()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def move_down(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.move_down()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def move_bottom(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.move_bottom()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def move_bottom(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.move_bottom()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def scratch(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.scratch()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def scratch(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.scratch()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def start(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.start()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def start(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.start()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def finish(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.finish()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def finish(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.finish()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def complete(self, request, pk=None):
-        performance = self.get_object()
-        response = performance.complete()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def complete(self, request, pk=None):
+    #     performance = self.get_object()
+    #     response = performance.complete()
+    #     return Response(response)
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -339,17 +347,17 @@ class PerformerViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-    @detail_route(methods=['put'])
-    def add_performance(self, request, pk=None):
-        performer = self.get_object()
-        response = performer.add_performance()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def add_performance(self, request, pk=None):
+    #     performer = self.get_object()
+    #     response = performer.add_performance()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def scratch(self, request, pk=None):
-        performer = self.get_object()
-        response = performer.scratch()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def scratch(self, request, pk=None):
+    #     performer = self.get_object()
+    #     response = performer.scratch()
+    #     return Response(response)
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -467,47 +475,47 @@ class SessionViewSet(viewsets.ModelViewSet):
     #     CoalesceFilterBackend,
     # ]
 
-    @detail_route(methods=['put'])
-    def open(self, request, pk=None):
-        session = self.get_object()
-        response = session.open()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def open(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.open()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def close(self, request, pk=None):
-        session = self.get_object()
-        response = session.close()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def close(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.close()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def prepare(self, request, pk=None):
-        session = self.get_object()
-        response = session.prepare()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def prepare(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.prepare()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def start(self, request, pk=None):
-        session = self.get_object()
-        response = session.start()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def start(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.start()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def finish(self, request, pk=None):
-        session = self.get_object()
-        response = session.finish()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def finish(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.finish()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def draft(self, request, pk=None):
-        session = self.get_object()
-        response = session.draft()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def draft(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.draft()
+    #     return Response(response)
 
-    @detail_route(methods=['put'])
-    def publish(self, request, pk=None):
-        session = self.get_object()
-        response = session.publish()
-        return Response(response)
+    # @detail_route(methods=['put'])
+    # def publish(self, request, pk=None):
+    #     session = self.get_object()
+    #     response = session.publish()
+    #     return Response(response)
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):

@@ -31,7 +31,7 @@ from django.core.validators import (
 )
 
 from django_fsm import (
-    # transition,
+    transition,
     FSMIntegerField,
 )
 
@@ -1127,9 +1127,10 @@ class Convention(TimeStampedModel):
         null=True,
     )
 
-    def start(self):
-        self.status = self.STATUS.started
-        self.save()
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        print 'foo'
+        # Send Email
         return
 
     def finish(self):
@@ -2034,7 +2035,7 @@ class Performance(TimeStampedModel):
         replaced.save()
         self.slot = new_slot
         self.save()
-        return {'success': 'moved',}
+        return {'success': 'moved'}
 
     def move_down(self):
         old_slot = self.slot
