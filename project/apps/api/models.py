@@ -8,6 +8,8 @@ import uuid
 
 import datetime
 
+from psycopg2.extras import DateTimeTZRange
+
 from django.utils import timezone
 
 from django.db import (
@@ -1835,6 +1837,7 @@ class Performance(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
+        (30, 'completed', 'Completed',),
         (50, 'confirmed', 'Confirmed',),
         (90, 'final', 'Final',),
     )
@@ -2101,19 +2104,23 @@ class Performance(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        # self.build()
-        # self.actual = (timezone.now(), None)
+        self.actual = DateTimeTZRange(
+            lower=timezone.now(),
+            upper=timezone.now() + datetime.timedelta(minutes=10),
+        )
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        self.actual = (self.actual.lower, timezone.now())
+        self.actual = DateTimeTZRange(
+            lower=self.actual.lower,
+            upper=timezone.now(),
+        )
         return
 
-    def complete(self):
+    @transition(field=status, source='*', target=STATUS.completed)
+    def complete(self, *args, **kwargs):
         self.calculate()
-        self.status = self.STATUS.completed
-        self.save()
         return
 
     @property
@@ -2854,16 +2861,13 @@ class Round(TimeStampedModel):
                 performer=performer,
             )
 
-    # def start(self):
-    #     self.status = self.STATUS.start
-    #     self.save()
-    #     return
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
 
-    # def finish(self):
-    #     self.rank()
-    #     self.status = self.STATUS.finished
-    #     self.save()
-    #     return
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
 
 
 class Score(TimeStampedModel):
@@ -3123,33 +3127,33 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     @transition(field=status, source='*', target=STATUS.open)
-    def open(self):
+    def open(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.closed)
-    def close(self):
+    def close(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.ready)
-    def prepare(self):
+    def prepare(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.started)
-    def start(self):
+    def start(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self):
+    def finish(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.drafted)
-    def draft(self):
+    def draft(self, *args, **kwargs):
         for contest in self.contests.all():
             contest.rank()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
-    def publish(self):
+    def publish(self, *args, **kwargs):
         return
 
 

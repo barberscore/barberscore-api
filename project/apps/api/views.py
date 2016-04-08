@@ -263,7 +263,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
 
 class PerformanceViewSet(
-    get_viewset_transition_action_mixin(Convention),
+    get_viewset_transition_action_mixin(Performance),
     viewsets.ModelViewSet,
 ):
     queryset = Performance.objects.select_related(
@@ -280,54 +280,6 @@ class PerformanceViewSet(
     # filter_backends = [
     #     CoalesceFilterBackend,
     # ]
-
-    # @detail_route(methods=['put'])
-    # def move_top(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.move_top()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def move_up(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.move_up()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def move_down(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.move_down()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def move_bottom(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.move_bottom()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def scratch(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.scratch()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def start(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.start()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def finish(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.finish()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def complete(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.complete()
-    #     return Response(response)
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -397,7 +349,10 @@ class RoleViewSet(viewsets.ModelViewSet):
     # ]
 
 
-class RoundViewSet(viewsets.ModelViewSet):
+class RoundViewSet(
+    get_viewset_transition_action_mixin(Round),
+    viewsets.ModelViewSet
+):
     queryset = Round.objects.select_related(
         'session',
     ).prefetch_related(
@@ -461,7 +416,10 @@ class ScoreViewSet(viewsets.ModelViewSet):
     # ]
 
 
-class SessionViewSet(viewsets.ModelViewSet):
+class SessionViewSet(
+    get_viewset_transition_action_mixin(Session),
+    viewsets.ModelViewSet
+):
     queryset = Session.objects.select_related(
         'convention',
         'administrator',
@@ -477,48 +435,6 @@ class SessionViewSet(viewsets.ModelViewSet):
     # filter_backends = [
     #     CoalesceFilterBackend,
     # ]
-
-    # @detail_route(methods=['put'])
-    # def open(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.open()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def close(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.close()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def prepare(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.prepare()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def start(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.start()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def finish(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.finish()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def draft(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.draft()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def publish(self, request, pk=None):
-    #     session = self.get_object()
-    #     response = session.publish()
-    #     return Response(response)
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):

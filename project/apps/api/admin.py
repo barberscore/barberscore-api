@@ -958,6 +958,7 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'status',
         'convention',
         'kind',
+        'date',
         'administrator',
         'aca',
         'cutoff',
