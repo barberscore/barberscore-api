@@ -182,7 +182,7 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    date = DateRangeField()
+    date = DateTimeRangeField()
 
     class Meta:
         model = Convention
@@ -446,6 +446,8 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class RoundSerializer(serializers.ModelSerializer):
+    date = DateTimeRangeField()
+
     class Meta:
         model = Round
         fields = (
@@ -454,6 +456,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
+            'date',
             'num',
             'session',
             'performances',
@@ -479,6 +482,8 @@ class ScoreSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
+    date = DateTimeRangeField()
+
     class Meta:
         model = Session
         fields = (
@@ -488,6 +493,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'convention',
+            'date',
             'administrator',
             'aca',
             'performers',

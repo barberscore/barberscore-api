@@ -3036,7 +3036,7 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
-    date = DateRangeField(
+    date = DateTimeRangeField(
         help_text="""
             The active dates of the session.""",
         null=True,
