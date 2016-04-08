@@ -262,7 +262,10 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     resource_name = "organization"
 
 
-class PerformanceViewSet(viewsets.ModelViewSet):
+class PerformanceViewSet(
+    get_viewset_transition_action_mixin(Convention),
+    viewsets.ModelViewSet,
+):
     queryset = Performance.objects.select_related(
         'round',
         'performer',

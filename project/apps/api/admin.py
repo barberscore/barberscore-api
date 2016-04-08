@@ -50,6 +50,13 @@ from .models import (
 
 from super_inlines.admin import SuperModelAdmin
 
+# from django_fsm_log.models import StateLog
+
+
+# @admin.register(StateLog)
+# class StateLogAdmin(admin.ModelAdmin):
+#     pass
+
 
 @admin.register(Award)
 class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):

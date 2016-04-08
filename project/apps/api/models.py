@@ -8,7 +8,6 @@ import uuid
 
 import datetime
 
-import arrow
 from django.utils import timezone
 
 from django.db import (
@@ -34,6 +33,8 @@ from django_fsm import (
     transition,
     FSMIntegerField,
 )
+
+# from django_fsm_log.decorators import fsm_log_by
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -1129,13 +1130,10 @@ class Convention(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        print 'foo'
-        # Send Email
         return
 
-    def finish(self):
-        self.status = self.STATUS.finished
-        self.save()
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
         return
 
     def __unicode__(self):
@@ -2101,17 +2099,15 @@ class Performance(TimeStampedModel):
             i += 1
         return
 
-    def start(self):
-        self.build()
-        self.actual = (timezone.now(), None)
-        self.status = self.STATUS.started
-        self.save()
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        # self.build()
+        # self.actual = (timezone.now(), None)
         return
 
-    def finish(self):
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
         self.actual = (self.actual.lower, timezone.now())
-        self.status = self.STATUS.finished
-        self.save()
         return
 
     def complete(self):
@@ -3126,40 +3122,34 @@ class Session(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "session"
 
+    @transition(field=status, source='*', target=STATUS.open)
     def open(self):
-        self.status = self.STATUS.open
-        self.save()
         return
 
+    @transition(field=status, source='*', target=STATUS.closed)
     def close(self):
-        self.status = self.STATUS.closed
-        self.save()
         return
 
+    @transition(field=status, source='*', target=STATUS.ready)
     def prepare(self):
-        self.status = self.STATUS.ready
-        self.save()
         return
 
+    @transition(field=status, source='*', target=STATUS.started)
     def start(self):
-        self.status = self.STATUS.started
-        self.save()
         return
 
+    @transition(field=status, source='*', target=STATUS.finished)
     def finish(self):
-        self.status = self.STATUS.finished
-        self.save()
         return
 
+    @transition(field=status, source='*', target=STATUS.drafted)
     def draft(self):
         for contest in self.contests.all():
             contest.rank()
-        self.status = self.STATUS.drafted
         return
 
+    @transition(field=status, source='*', target=STATUS.published)
     def publish(self):
-        self.status = self.STATUS.published
-        self.save()
         return
 
 
