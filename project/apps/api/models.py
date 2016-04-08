@@ -1069,7 +1069,7 @@ class Convention(TimeStampedModel):
         # editable=False,
     )
 
-    datet = DateTimeRangeField(
+    date = DateTimeRangeField(
         help_text="""
             The scheduled time frame for the convention.""",
         null=True,

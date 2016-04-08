@@ -366,7 +366,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'level',
         'division',
         'season',
-        # 'date',
+        'date',
         # 'location',
     )
 
@@ -375,7 +375,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'status',
         'venue',
         # 'dates',
-        # 'date',
+        'date',
         'year',
         'organization',
         'level',
