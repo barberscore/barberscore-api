@@ -1076,6 +1076,13 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    datet = DateTimeRangeField(
+        help_text="""
+            The scheduled time frame for the convention.""",
+        null=True,
+        blank=True,
+    )
+
     location = models.CharField(
         help_text="""
             The location of the convention.""",
