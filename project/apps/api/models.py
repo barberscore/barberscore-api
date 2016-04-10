@@ -2722,6 +2722,8 @@ class Role(TimeStampedModel):
     performer = models.ForeignKey(
         'Performer',
         related_name='roles',
+        null=True,
+        blank=True,
     )
 
     group = models.ForeignKey(
