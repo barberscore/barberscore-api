@@ -2727,8 +2727,6 @@ class Role(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='roles',
-        null=True,
-        blank=True,
     )
 
     person = models.ForeignKey(
@@ -2762,9 +2760,9 @@ class Role(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.full_clean()
         self.name = " ".join(filter(None, [
+            self.person.name,
+            self.group.name,
             self.id.hex,
-            # self.group.name,
-            # self.person.name,
             # self.get_part_display(),
         ]))
         super(Role, self).save(*args, **kwargs)

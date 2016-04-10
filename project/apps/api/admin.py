@@ -679,7 +679,6 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
         PerformanceInline,
         ContestantInline,
         SubmissionInline,
-        RoleInline,
     ]
 
     list_display = (
@@ -707,12 +706,24 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
     raw_id_fields = (
         'session',
         'group',
+        'tenor',
+        'lead',
+        'baritone',
+        'bass',
+        'director',
+        'codirector',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'session',
             'group',
+            'tenor',
+            'lead',
+            'baritone',
+            'bass',
+            'director',
+            'codirector',
         ]
     }
     fields = (
@@ -720,7 +731,8 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
         'status',
         'session',
         ('group', 'organization',),
-        ('men',),
+        ('tenor', 'lead', 'baritone', 'bass',),
+        ('men', 'director', 'codirector',),
         # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
@@ -806,7 +818,6 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
         'status',
         'date',
-        'performer',
         'group',
         'person',
     ]
@@ -815,7 +826,6 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
         'status',
         'date',
-        'performer',
         'group',
         'person',
     ]
@@ -833,14 +843,12 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     ]
 
     raw_id_fields = (
-        'performer',
         'group',
         'person',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
-            'performer',
             'group',
             'person',
         ]
