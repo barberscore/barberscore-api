@@ -1386,6 +1386,61 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
 
+class Host(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='hosts',
+        null=True,
+        blank=True,
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
+        related_name='hosts',
+        null=True,
+        blank=True,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.convention.name,
+            self.organization.name,
+        ]))
+        super(Contestant, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('organization', 'convention',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "host"
+
+
 class Judge(TimeStampedModel):
     """Panel Judge."""
 
