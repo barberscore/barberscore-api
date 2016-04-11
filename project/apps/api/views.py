@@ -256,7 +256,9 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.order_by(
-        'tree_id',
+        'kind',
+        'level',
+        'name',
     )
     serializer_class = OrganizationSerializer
     resource_name = "organization"
