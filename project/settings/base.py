@@ -153,6 +153,7 @@ GRAPPELLI_AUTOCOMPLETE_SEARCH_FIELDS = {
         "judge": ("id__iexact", "name__icontains",),
         "member": ("id__iexact", "name__icontains",),
         "organization": ("id__iexact", "name__icontains",),
+        "participant": ("id__iexact", "name__icontains",),
         "performance": ("id__iexact", "name__icontains",),
         "performer": ("id__iexact", "name__icontains",),
         "person": ("id__iexact", "name__icontains",),

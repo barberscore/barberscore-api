@@ -78,6 +78,78 @@ def generate_image_filename(instance, filename):
     return '{0}{1}'.format(instance.id, ext)
 
 
+class Assistant(TimeStampedModel):
+    """Panel Judge."""
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (25, 'guest', 'Guest'),
+        (30, 'composite', 'Composite'),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='assistants',
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='assistants',
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='assistants',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.session.name,
+            self.person.name,
+        ]))
+        super(Assistant, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('session', 'person',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "assistant"
+
+
 class Award(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1386,61 +1458,6 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
 
-class Host(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='hosts',
-        null=True,
-        blank=True,
-    )
-
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='hosts',
-        null=True,
-        blank=True,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.convention.name,
-            self.organization.name,
-        ]))
-        super(Contestant, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('organization', 'convention',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "host"
-
-
 class Judge(TimeStampedModel):
     """Panel Judge."""
 
@@ -1873,6 +1890,61 @@ class Organization(MPTTModel, TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "organization"
+
+
+class Participant(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='participants',
+        null=True,
+        blank=True,
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
+        related_name='participants',
+        null=True,
+        blank=True,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.convention.name,
+            self.organization.name,
+        ]))
+        super(Participant, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            ('organization', 'convention',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "participant"
 
 
 class Performance(TimeStampedModel):
@@ -3107,9 +3179,9 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (4, 'open', 'Open',),
+        (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
-        (10, 'ready', 'Ready',),
+        (10, 'validated', 'Validated',),
         (20, 'started', 'Started',),
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
@@ -3223,7 +3295,7 @@ class Session(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "session"
 
-    @transition(field=status, source='*', target=STATUS.open)
+    @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         return
 
@@ -3231,8 +3303,8 @@ class Session(TimeStampedModel):
     def close(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.ready)
-    def prepare(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.validated)
+    def validate(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.started)
@@ -3243,11 +3315,11 @@ class Session(TimeStampedModel):
     def finish(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.drafted)
-    def draft(self, *args, **kwargs):
-        for contest in self.contests.all():
-            contest.rank()
-        return
+    # @transition(field=status, source='*', target=STATUS.drafted)
+    # def draft(self, *args, **kwargs):
+    #     for contest in self.contests.all():
+    #         contest.rank()
+    #     return
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
