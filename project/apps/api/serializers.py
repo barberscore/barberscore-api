@@ -532,6 +532,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'convention',
             'date',
             'administrator',
+            'cursor',
             'aca',
             'performers',
             'contests',

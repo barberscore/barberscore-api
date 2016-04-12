@@ -3264,6 +3264,12 @@ class Session(TimeStampedModel):
         related_name='sessions',
     )
 
+    cursor = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     @property
     def completed_rounds(self):
         return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
