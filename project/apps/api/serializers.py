@@ -590,7 +590,7 @@ class SongSerializer(serializers.ModelSerializer):
 
 
 class VenueSerializer(serializers.ModelSerializer):
-    timezone = TimezoneField()
+    timezone = TimezoneField(allow_null=True)
 
     class Meta:
         model = Venue
@@ -601,6 +601,7 @@ class VenueSerializer(serializers.ModelSerializer):
             'location',
             'city',
             'state',
+            'airport',
             'timezone',
             'conventions',
         )

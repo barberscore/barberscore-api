@@ -3585,6 +3585,12 @@ class Venue(TimeStampedModel):
         max_length=255,
     )
 
+    airport = models.CharField(
+        max_length=3,
+        null=True,
+        blank=True,
+    )
+
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the venue.""",
@@ -3597,7 +3603,8 @@ class Venue(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.location,
-            self.city,
+            " - ",
+            "{0},".format(self.city),
             self.state,
         ]))
         super(Venue, self).save(*args, **kwargs)

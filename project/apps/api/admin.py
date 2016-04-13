@@ -1200,6 +1200,7 @@ class VenueAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'location',
         'city',
         'state',
+        'airport',
         'timezone',
     )
 
