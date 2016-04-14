@@ -230,6 +230,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'name',
+            'chap_name',
             'status',
             'date',
             'location',

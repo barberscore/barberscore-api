@@ -1395,6 +1395,13 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    chap_name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     bhs_id = models.IntegerField(
         unique=True,
         null=True,
@@ -1448,6 +1455,20 @@ class Group(TimeStampedModel):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        if self.kind == self.KIND.chorus:
+            try:
+                self.chap_name = u"{0} {1} - {2}".format(
+                    self.chapter.code,
+                    self.chapter.name,
+                    self.name,
+                )
+            except AttributeError:
+                self.chap_name = self.name
+        else:
+            self.chap_name = self.name
+        super(Group, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (

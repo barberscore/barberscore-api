@@ -63,7 +63,7 @@ class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
         fields = {
-            'name': filters.ALL_LOOKUPS,
+            'chap_name': filters.ALL_LOOKUPS,
         }
 
 
