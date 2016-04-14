@@ -58,6 +58,7 @@ class AssistantSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
+            'category',
             'kind',
             'person',
             'session',

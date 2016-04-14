@@ -102,6 +102,17 @@ class Assistant(TimeStampedModel):
         default=STATUS.new,
     )
 
+    CATEGORY = Choices(
+        (10, 'aca', 'ACA'),
+        (20, 'other', 'Other'),
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+        null=True,
+        blank=True,
+    )
+
     KIND = Choices(
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),
