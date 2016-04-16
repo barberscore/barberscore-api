@@ -1481,11 +1481,6 @@ class Group(TimeStampedModel):
             self.chap_name = self.name
         super(Group, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('name', 'kind',),
-        )
-
     class JSONAPIMeta:
         resource_name = "group"
 
@@ -2615,10 +2610,6 @@ class Person(TimeStampedModel):
             The name of the resource.""",
         max_length=200,
         blank=False,
-        unique=True,
-        error_messages={
-            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
-        }
     )
 
     STATUS = Choices(
@@ -2714,6 +2705,11 @@ class Person(TimeStampedModel):
     notes = models.TextField(
         help_text="""
             Notes (for internal use only).""",
+        blank=True,
+    )
+
+    birth_date = models.DateField(
+        null=True,
         blank=True,
     )
 
@@ -2895,20 +2891,31 @@ class Role(TimeStampedModel):
         related_name='roles',
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_file = models.FileField(
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def clean(self):
-        if all([
-            self.performer.group.kind == Group.KIND.chorus,
-            self.part != self.PART.director,
-        ]):
-            raise ValidationError('Choruses do not have quartet singers.')
-        if all([
-            self.performer.group.kind == Group.KIND.quartet,
-            self.part == self.PART.director,
-        ]):
-            raise ValidationError('Quartets do not have directors.')
+    # def clean(self):
+    #     if all([
+    #         self.performer.group.kind == Group.KIND.chorus,
+    #         self.part != self.PART.director,
+    #     ]):
+    #         raise ValidationError('Choruses do not have quartet singers.')
+    #     if all([
+    #         self.performer.group.kind == Group.KIND.quartet,
+    #         self.part == self.PART.director,
+    #     ]):
+    #         raise ValidationError('Quartets do not have directors.')
         # if self.part:
         #     if [s['part'] for s in self.performer.singers.values(
         #         'part'
@@ -2919,7 +2926,6 @@ class Role(TimeStampedModel):
         resource_name = "role"
 
     def save(self, *args, **kwargs):
-        self.full_clean()
         self.name = " ".join(filter(None, [
             self.person.name,
             self.group.name,

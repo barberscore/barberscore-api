@@ -869,6 +869,7 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'date',
         'group',
         'person',
+        'bhs_file',
     ]
 
     list_display = [

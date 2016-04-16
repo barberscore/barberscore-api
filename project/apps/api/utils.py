@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from unidecode import unidecode
 
 from psycopg2.extras import DateRange
+
 import arrow
 
 import logging
@@ -22,11 +23,11 @@ from .models import (
     Convention,
     Group,
     Judge,
-    Member,
     Organization,
     Performance,
     Performer,
     Person,
+    Role,
     Round,
     Score,
     Session,
@@ -117,6 +118,148 @@ def import_members(path):
                                     bhs_phone=row[4],
                                     bhs_email=row[5],
                                 )
+
+
+def import_db_persons(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            created = False
+            try:
+                p = Person.objects.get(
+                    bhs_id=int(row[0])
+                )
+            except Person.DoesNotExist:
+                first_name = row[4].strip()
+                nick_name = row[5].strip()
+                if nick_name:
+                    if nick_name != first_name:
+                        nick_name = "({0})".format(nick_name)
+                middle_name = row[6].strip()
+                last_name = row[7].strip()
+                suffix_name = row[8].strip()
+                prefix_name = row[2].strip()
+                email = row[9].strip()
+                name = " ".join(filter(None, [
+                    prefix_name,
+                    first_name,
+                    middle_name,
+                    last_name,
+                    suffix_name,
+                    nick_name,
+                ]))
+                try:
+                    birth_date = arrow.get(row[31]).date()
+                except arrow.parser.ParserError:
+                    birth_date = None
+                p, created = Person.objects.get_or_create(
+                    bhs_id=int(row[0]),
+                    name=name,
+                    email=email,
+                    birth_date=birth_date,
+                )
+            print p, created
+
+
+def import_db_groups(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if row[1].endswith(', The'):
+                row[1] = "The " + row[1].partition(', The')[0]
+            try:
+                created = False
+                g = Group.objects.get(
+                    bhs_id=int(row[0]),
+                )
+            except Group.DoesNotExist:
+                bhs_id = int(row[0])
+                name = row[2].strip()
+                if int(row[4]) == 3:
+                    g, created = Group.objects.get_or_create(
+                        bhs_id=bhs_id,
+                        name=name,
+                    )
+                else:
+                    continue
+            print g, created
+
+
+def import_db_roles(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                group = Group.objects.get(
+                    bhs_id=int(row[1])
+                )
+            except Group.DoesNotExist:
+                print "ERROR: Missing Group {0}: {1}".format(row[1], row[2])
+                continue
+            try:
+                person = Person.objects.get(
+                    bhs_id=(row[3])
+                )
+            except Person.DoesNotExist:
+                print "ERROR: Missing Person {0}: {1} for {2} {3}".format(
+                    row[3],
+                    row[4],
+                    row[1],
+                    row[2],
+                )
+                continue
+            if int(row[12]) == 1:
+                part = Role.PART.tenor
+            elif int(row[12]) == 2:
+                part = Role.PART.lead
+            elif int(row[12]) == 3:
+                part = Role.PART.baritone
+            elif int(row[12]) == 4:
+                part = Role.PART.bass
+            else:
+                print "ERROR: No Part: {0}".format(row[12])
+                continue
+            try:
+                lower = arrow.get(row[7]).date()
+            except arrow.parser.ParserError:
+                lower = None
+            try:
+                upper = arrow.get(row[8]).date()
+            except arrow.parser.ParserError:
+                upper = None
+            if lower and upper:
+                if lower < upper:
+                    date = DateRange(
+                        lower=lower,
+                        upper=upper,
+                        bounds="[)",
+                    )
+                else:
+                    date = DateRange(
+                        lower=lower,
+                        upper=None,
+                        bounds="[)",
+                    )
+            else:
+                date = None
+            try:
+                role, created = Role.objects.get_or_create(
+                    bhs_id=int(row[0]),
+                    group=group,
+                    person=person,
+                    date=date,
+                    part=part,
+                )
+            except Role.MultipleObjectsReturned:
+                print "ERROR: Multi Roles: {1}".format(group)
+                continue
+            print role, created
 
 
 def import_quartets(path):
