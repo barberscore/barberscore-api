@@ -262,6 +262,43 @@ def import_db_roles(path):
             print role, created
 
 
+def import_db_charts(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if not row[0]:
+                continue
+            try:
+                c = Chart.objects.get(
+                    bhs_marketplace=int(row[0]),
+                )
+            except Chart.DoesNotExist:
+                bhs_marketplace = int(row[0])
+                try:
+                    bhs_published = arrow.get(row[1]).date()
+                except arrow.parser.ParserError:
+                    bhs_published = None
+                title = row[2]
+                arranger = row[3]
+                try:
+                    bhs_fee = float(row[4])
+                except ValueError:
+                    bhs_fee = None
+                is_parody = bool(row[8])
+                is_medley = bool(row[9])
+                c, created = Chart.objects.get_or_create(
+                    bhs_marketplace=bhs_marketplace,
+                    title=title,
+                    bhs_published=bhs_published,
+                    arranger=arranger,
+                    bhs_fee=bhs_fee,
+                    is_parody=is_parody,
+                    is_medley=is_medley,
+                )
+
+
 def import_quartets(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)

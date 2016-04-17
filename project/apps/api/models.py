@@ -600,7 +600,6 @@ class Chart(TimeStampedModel):
     )
 
     title = models.CharField(
-        blank=True,
         max_length=200,
     )
 
@@ -620,6 +619,12 @@ class Chart(TimeStampedModel):
     )
 
     bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+        unique=True,
+    )
+
+    bhs_marketplace = models.IntegerField(
         null=True,
         blank=True,
         unique=True,
@@ -694,25 +699,20 @@ class Chart(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.is_generic:
-            arranger = None
+        if self.bhs_marketplace:
+            bhs_marketplace = "[{0}]".format(self.bhs_marketplace)
         else:
-            arranger = "[{0}]".format(self.arranger)
-        if self.bhs_id:
-            bhs_id = "- {0}".format(self.bhs_id)
-        else:
-            bhs_id = None
+            bhs_marketplace = None
         self.name = " ".join(filter(None, [
             self.title,
-            arranger,
-            bhs_id,
+            bhs_marketplace,
         ]))
         super(Chart, self).save(*args, **kwargs)
 
-    # class Meta:
-    #     unique_together = (
-    #         ('title', 'arranger', 'bhs_id',),
-    #     )
+    class Meta:
+        unique_together = (
+            ('title', 'bhs_marketplace',),
+        )
 
     class JSONAPIMeta:
         resource_name = "chart"

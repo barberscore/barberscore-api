@@ -8,6 +8,7 @@ from apps.api.models import (
     Performer,
     Performance,
     Song,
+    Group,
     # Judge,
     Contestant,
     Contest,
@@ -33,6 +34,9 @@ class Command(BaseCommand):
         ss = Round.objects.all()
         for s in ss:
             s.save()
+        gs = Group.objects.all()
+        for g in gs:
+            g.save()
         cs = Performer.objects.all()
         for c in cs:
             c.save()
