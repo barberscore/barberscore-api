@@ -294,6 +294,72 @@ def import_quartets(path):
                 )
 
 
+def import_db_directors(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if int(row[5]) != 38:
+                continue
+            else:
+                part = Role.PART.director
+            try:
+                group = Group.objects.get(
+                    bhs_id=int(row[1])
+                )
+            except Group.DoesNotExist:
+                print "ERROR: Missing Group {0}: {1}".format(row[1], row[2])
+                continue
+            try:
+                person = Person.objects.get(
+                    bhs_id=(row[3])
+                )
+            except Person.DoesNotExist:
+                print "ERROR: Missing Person {0}: {1} for {2} {3}".format(
+                    row[3],
+                    row[4],
+                    row[1],
+                    row[2],
+                )
+                continue
+            try:
+                lower = arrow.get(row[7]).date()
+            except arrow.parser.ParserError:
+                lower = None
+            try:
+                upper = arrow.get(row[8]).date()
+            except arrow.parser.ParserError:
+                upper = None
+            if lower and upper:
+                if lower < upper:
+                    date = DateRange(
+                        lower=lower,
+                        upper=upper,
+                        bounds="[)",
+                    )
+                else:
+                    date = DateRange(
+                        lower=lower,
+                        upper=None,
+                        bounds="[)",
+                    )
+            else:
+                date = None
+            try:
+                role, created = Role.objects.get_or_create(
+                    bhs_id=int(row[0]),
+                    group=group,
+                    person=person,
+                    date=date,
+                    part=part,
+                )
+            except Role.MultipleObjectsReturned:
+                print "ERROR: Multi Roles: {1}".format(group)
+                continue
+            print role, created
+
+
 def import_choruses(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
