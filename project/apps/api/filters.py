@@ -24,7 +24,7 @@ class CoalesceFilterBackend(BaseFilterBackend):
         if raw:
             ids = raw.split(',')
             # Disable pagination, so all records can load.
-            # view.pagination_class = None
+            view.pagination_class = None
             queryset = queryset.filter(id__in=ids)
         return queryset
 
