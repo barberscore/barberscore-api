@@ -1,6 +1,5 @@
-from rest_framework.filters import BaseFilterBackend
-
 import rest_framework_filters as filters
+from rest_framework.filters import BaseFilterBackend
 
 from django_filters import Filter
 from django_filters.fields import Lookup
@@ -21,15 +20,12 @@ class CoalesceFilterBackend(BaseFilterBackend):
     """Support Ember Data coalesceFindRequests."""
 
     def filter_queryset(self, request, queryset, view):
-        try:
-            raw = request.query_params.values()[0]
-        except IndexError:
-            return queryset
-        id_list = raw.split(',')
-        if id_list:
+        raw = request.query_params.get('filter[id]')
+        if raw:
+            ids = raw.split(',')
             # Disable pagination, so all records can load.
-            view.pagination_class = None
-            queryset = queryset.filter(id__in=id_list)
+            # view.pagination_class = None
+            queryset = queryset.filter(id__in=ids)
         return queryset
 
 

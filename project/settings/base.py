@@ -113,6 +113,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework_filters.backends.DjangoFilterBackend',
+        'apps.api.filters.CoalesceFilterBackend',
     ],
 }
 

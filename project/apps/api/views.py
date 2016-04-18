@@ -13,7 +13,7 @@ from rest_framework import (
 )
 
 from .filters import (
-    # CoalesceFilterBackend,
+    CoalesceFilterBackend,
     ChartFilter,
     ContestantFilter,
     ConventionFilter,
@@ -100,6 +100,8 @@ class AssistantViewSet(viewsets.ModelViewSet):
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
         'organization',
+    ).prefetch_related(
+        'contests',
     ).order_by(
         'level',
         'organization',
@@ -259,9 +261,9 @@ class JudgeViewSet(viewsets.ModelViewSet):
     )
     serializer_class = JudgeSerializer
     resource_name = "judge"
-    # filter_backends = [
-    #     CoalesceFilterBackend,
-    # ]
+    filter_backends = [
+        CoalesceFilterBackend,
+    ]
 
 
 class MemberViewSet(viewsets.ModelViewSet):
