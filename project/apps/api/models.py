@@ -23,6 +23,7 @@ from django.contrib.postgres.fields import (
     DateTimeRangeField,
     IntegerRangeField,
     FloatRangeField,
+    ArrayField,
 )
 
 from django.core.validators import (
@@ -1099,6 +1100,12 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    risers = ArrayField(
+        base_field=models.IntegerField(null=True, blank=True),
+        null=True,
+        blank=True,
+    )
+
     # Denormalization
     LEVEL = Choices(
         (0, 'international', "International"),
@@ -1182,6 +1189,8 @@ class Convention(TimeStampedModel):
         help_text="""
             The organization hosting the convention.""",
         related_name='conventions',
+        null=True,
+        blank=True,
     )
 
     drcj = models.ForeignKey(
@@ -1226,17 +1235,17 @@ class Convention(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         # self.year = arrow.get(self.date.lower).year
-        if self.division:
-            self.level = self.LEVEL.division
-        else:
-            self.level = self.organization.level
-        if self.division:
-            division = str(self.get_division_display())
-        else:
-            division = None
+        # if self.division:
+        #     self.level = self.LEVEL.division
+        # else:
+        #     self.level = self.organization.level
+        # if self.division:
+        #     division = str(self.get_division_display())
+        # else:
+        #     division = None
         self.name = " ".join(filter(None, [
-            self.organization.name,
-            division,
+            self.id.hex,
+            # division,
             self.get_season_display(),
             u"Convention",
             str(self.year),

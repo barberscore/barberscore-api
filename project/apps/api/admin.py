@@ -424,6 +424,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'status',
         'venue',
         # 'dates',
+        'risers',
         'date',
         'year',
         'organization',
