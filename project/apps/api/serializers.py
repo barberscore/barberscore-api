@@ -209,6 +209,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
+            'kind',
             'season',
             'risers',
             'level',
