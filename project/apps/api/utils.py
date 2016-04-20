@@ -67,7 +67,7 @@ def import_members(path):
                     p.bhs_email = row[5]
                     p.save()
                 except Person.MultipleObjectsReturned:
-                    print 'DUPLICATE: {0}'.format(row[0])
+                    log.error('DUPLICATE: {0}'.format(row[0]))
                 except Person.DoesNotExist:
                     try:
                         p = Person.objects.get(
@@ -81,7 +81,7 @@ def import_members(path):
                         p.bhs_email = row[5]
                         p.save()
                     except Person.MultipleObjectsReturned:
-                        print 'DUPLICATE: {0}'.format(row[0])
+                        log.error('DUPLICATE: {0}'.format(row[0]))
                     except Person.DoesNotExist:
                         try:
                             p = Person.objects.get(
@@ -95,7 +95,7 @@ def import_members(path):
                             p.bhs_email = row[5]
                             p.save()
                         except Person.MultipleObjectsReturned:
-                            print 'DUPLICATE: {0}'.format(row[0])
+                            log.error('DUPLICATE: {0}'.format(row[0]))
                         except Person.DoesNotExist:
                             try:
                                 p = Person.objects.get(
@@ -156,7 +156,7 @@ def import_db_persons(path):
                     birth_date = None
                 p, created = Person.objects.get_or_create(
                     bhs_id=int(row[0]),
-                    name=name,
+                    name=unidecode(name),
                     email=email,
                     birth_date=birth_date,
                 )
@@ -169,23 +169,23 @@ def import_db_groups(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            if row[1].endswith(', The'):
-                row[1] = "The " + row[1].partition(', The')[0]
-            try:
-                created = False
-                g = Group.objects.get(
-                    bhs_id=int(row[0]),
-                )
-            except Group.DoesNotExist:
-                bhs_id = int(row[0])
+            if int(row[4]) == 3:
                 name = row[2].strip()
-                if int(row[4]) == 3:
+                if name.endswith(', The'):
+                    name = "The " + name.partition(', The')[0]
+                try:
+                    created = False
+                    g = Group.objects.get(
+                        bhs_id=int(row[0]),
+                    )
+                except Group.DoesNotExist:
+                    bhs_id = int(row[0])
                     g, created = Group.objects.get_or_create(
                         bhs_id=bhs_id,
-                        name=name,
+                        name=unidecode(name),
                     )
-                else:
-                    continue
+            else:
+                continue
             print g, created
 
 
@@ -200,19 +200,19 @@ def import_db_roles(path):
                     bhs_id=int(row[1])
                 )
             except Group.DoesNotExist:
-                print "ERROR: Missing Group {0}: {1}".format(row[1], row[2])
+                log.error("ERROR: Missing Group {0}: {1}".format(row[1], row[2]))
                 continue
             try:
                 person = Person.objects.get(
                     bhs_id=(row[3])
                 )
             except Person.DoesNotExist:
-                print "ERROR: Missing Person {0}: {1} for {2} {3}".format(
+                log.error("ERROR: Missing Person {0}: {1} for {2} {3}".format(
                     row[3],
                     row[4],
                     row[1],
                     row[2],
-                )
+                ))
                 continue
             if int(row[12]) == 1:
                 part = Role.PART.tenor
@@ -223,7 +223,7 @@ def import_db_roles(path):
             elif int(row[12]) == 4:
                 part = Role.PART.bass
             else:
-                print "ERROR: No Part: {0}".format(row[12])
+                log.error("ERROR: No Part: {0}".format(row[12]))
                 continue
             try:
                 lower = arrow.get(row[7]).date()
@@ -257,7 +257,7 @@ def import_db_roles(path):
                     part=part,
                 )
             except Role.MultipleObjectsReturned:
-                print "ERROR: Multi Roles: {1}".format(group)
+                log.error("ERROR: Multi Roles: {1}".format(group))
                 continue
             print role, created
 
