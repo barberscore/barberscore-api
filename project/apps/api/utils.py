@@ -154,12 +154,15 @@ def import_db_persons(path):
                     birth_date = arrow.get(row[31]).date()
                 except arrow.parser.ParserError:
                     birth_date = None
-                p, created = Person.objects.get_or_create(
-                    bhs_id=int(row[0]),
-                    name=unidecode(name),
-                    email=email,
-                    birth_date=birth_date,
-                )
+                try:
+                    p, created = Person.objects.get_or_create(
+                        bhs_id=int(row[0]),
+                        name=unidecode(name),
+                        email=email,
+                        birth_date=birth_date,
+                    )
+                except UnicodeDecodeError:
+                    continue
             print p, created
 
 
@@ -180,10 +183,13 @@ def import_db_groups(path):
                     )
                 except Group.DoesNotExist:
                     bhs_id = int(row[0])
-                    g, created = Group.objects.get_or_create(
-                        bhs_id=bhs_id,
-                        name=unidecode(name),
-                    )
+                    try:
+                        g, created = Group.objects.get_or_create(
+                            bhs_id=bhs_id,
+                            name=unidecode(name),
+                        )
+                    except UnicodeDecodeError:
+                        continue
             else:
                 continue
             print g, created
