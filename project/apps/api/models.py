@@ -10,6 +10,8 @@ import datetime
 
 from psycopg2.extras import DateTimeTZRange
 
+import arrow
+
 from django.utils import timezone
 
 from django.db import (
@@ -1171,6 +1173,8 @@ class Convention(TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
+        null=True,
+        blank=True,
         # editable=False,
     )
 
