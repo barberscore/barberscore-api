@@ -1260,8 +1260,11 @@ class Convention(TimeStampedModel):
         #     division = str(self.get_division_display())
         # else:
         #     division = None
+        organizations = " ".join(filter(None, [
+            p.organization.short_name for p in self.participants.all()
+        ]))
         self.name = " ".join(filter(None, [
-            self.id.hex,
+            organizations,
             # division,
             self.get_season_display(),
             u"Convention",
