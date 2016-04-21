@@ -457,7 +457,6 @@ class Chapter(TimeStampedModel):
             The name of the resource.""",
         max_length=200,
         blank=False,
-        unique=True,
     )
 
     STATUS = Choices(

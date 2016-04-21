@@ -195,6 +195,42 @@ def import_db_groups(path):
             print g, created
 
 
+def import_db_chapters(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if int(row[4]) == 4:
+                code = row[1].strip()
+                name = row[2].partition(" ")[2].strip()
+                try:
+                    created = False
+                    c = Chapter.objects.get(
+                        bhs_id=int(row[0]),
+                    )
+                except Chapter.DoesNotExist:
+                    bhs_id = int(row[0])
+                    try:
+                        c, created = Chapter.objects.get_or_create(
+                            bhs_id=bhs_id,
+                            code=code,
+                            name=unidecode(name),
+                        )
+                    except UnicodeDecodeError:
+                        continue
+                    except IntegrityError as e:
+                        exist = Chapter.objects.get(
+                            code=code,
+                        )
+                        exist.bhs_id = bhs_id
+                        exist.save()
+                        created = 'UPDATED'
+            else:
+                continue
+            print c, created
+
+
 def import_db_roles(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
