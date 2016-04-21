@@ -1399,7 +1399,6 @@ class Group(TimeStampedModel):
         help_text="""
             The kind of group; choices are Quartet or Chorus.""",
         choices=KIND,
-        default=KIND.quartet,
     )
 
     AGE = Choices(
