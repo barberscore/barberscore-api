@@ -166,7 +166,7 @@ def import_db_persons(path):
             print p, created
 
 
-def import_db_groups(path):
+def import_db_quartets(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
@@ -219,7 +219,7 @@ def import_db_chapters(path):
                         )
                     except UnicodeDecodeError:
                         continue
-                    except IntegrityError as e:
+                    except IntegrityError:
                         exist = Chapter.objects.get(
                             code=code,
                         )
@@ -242,14 +242,17 @@ def import_db_roles(path):
                     bhs_id=int(row[1])
                 )
             except Group.DoesNotExist:
-                log.error("ERROR: Missing Group {0}: {1}".format(row[1], row[2]))
+                log.error("Missing Group {0}: {1}".format(row[1], row[2]))
+                continue
+            if group.KIND == Group.KIND.chorus:
+                log.error("Chorus, not Quartet {0}: {1}".format(row[1], row[2]))
                 continue
             try:
                 person = Person.objects.get(
                     bhs_id=(row[3])
                 )
             except Person.DoesNotExist:
-                log.error("ERROR: Missing Person {0}: {1} for {2} {3}".format(
+                log.error("Missing Person {0}: {1} for {2} {3}".format(
                     row[3],
                     row[4],
                     row[1],
@@ -265,7 +268,7 @@ def import_db_roles(path):
             elif int(row[12]) == 4:
                 part = Role.PART.bass
             else:
-                log.error("ERROR: No Part: {0}".format(row[12]))
+                log.error("No Part: {0}".format(row[12]))
                 continue
             try:
                 lower = arrow.get(row[7]).date()
@@ -299,9 +302,99 @@ def import_db_roles(path):
                     part=part,
                 )
             except Role.MultipleObjectsReturned:
-                log.error("ERROR: Multi Roles: {1}".format(group))
+                log.error("Multi Roles: {1}".format(group))
                 continue
             print role, created
+
+
+def import_db_directors(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if int(row[5]) != 38:
+                continue
+            else:
+                part = Role.PART.director
+            groups = Group.objects.filter(
+                chapter__bhs_id=int(row[1]),
+                status=Group.STATUS.active,
+            )
+            if groups.count() > 1:
+                log.error("Too many groups {0}: {1}".format(row[1], row[2]))
+                continue
+            elif groups.count() == 0:
+                group = Group.objects.filter(
+                    chapter__bhs_id=int(row[1])
+                ).first()
+                if not group:
+                    try:
+                        chapter = Chapter.objects.get(bhs_id=int(row[1]))
+                    except Chapter.DoesNotExist:
+                        log.error("No chapter {0}: {1}".format(row[1], row[2]))
+                        continue
+                    group, c = Group.objects.get_or_create(
+                        chapter=chapter,
+                        status=Group.STATUS.inactive,
+                        name=row[2].strip(),
+                        kind=Group.KIND.chorus,
+                    )
+            else:
+                group = groups.first()
+            if group.kind != Group.KIND.chorus:
+                log.error("Not a chorus {0}: {1}".format(row[1], row[2]))
+                continue
+            try:
+                person = Person.objects.get(
+                    bhs_id=(row[3])
+                )
+            except Person.DoesNotExist:
+                log.error("Missing Person {0}: {1} for {2} {3}".format(
+                    row[3],
+                    row[4],
+                    row[1],
+                    row[2],
+                ))
+                continue
+            try:
+                lower = arrow.get(row[7]).date()
+            except arrow.parser.ParserError:
+                lower = None
+            try:
+                upper = arrow.get(row[8]).date()
+            except arrow.parser.ParserError:
+                upper = None
+            if lower and upper:
+                if lower < upper:
+                    date = DateRange(
+                        lower=lower,
+                        upper=upper,
+                        bounds="[)",
+                    )
+                else:
+                    date = DateRange(
+                        lower=lower,
+                        upper=None,
+                        bounds="[)",
+                    )
+            else:
+                date = None
+            role = {
+                'bhs_id': int(row[0]),
+                'group': group,
+                'person': person,
+                'date': date,
+                'part': part,
+            }
+            try:
+                role, created = Role.objects.get_or_create(
+                    **role
+                )
+            except Role.MultipleObjectsReturned:
+                log.error("ERROR: Multi Roles: {1}".format(role))
+                continue
+        return
 
 
 def import_db_charts(path):
@@ -371,72 +464,6 @@ def import_quartets(path):
                     bhs_contact=row[4],
                     bhs_expiration=row[5],
                 )
-
-
-def import_db_directors(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            if int(row[5]) != 38:
-                continue
-            else:
-                part = Role.PART.director
-            try:
-                group = Group.objects.get(
-                    bhs_id=int(row[1])
-                )
-            except Group.DoesNotExist:
-                print "ERROR: Missing Group {0}: {1}".format(row[1], row[2])
-                continue
-            try:
-                person = Person.objects.get(
-                    bhs_id=(row[3])
-                )
-            except Person.DoesNotExist:
-                print "ERROR: Missing Person {0}: {1} for {2} {3}".format(
-                    row[3],
-                    row[4],
-                    row[1],
-                    row[2],
-                )
-                continue
-            try:
-                lower = arrow.get(row[7]).date()
-            except arrow.parser.ParserError:
-                lower = None
-            try:
-                upper = arrow.get(row[8]).date()
-            except arrow.parser.ParserError:
-                upper = None
-            if lower and upper:
-                if lower < upper:
-                    date = DateRange(
-                        lower=lower,
-                        upper=upper,
-                        bounds="[)",
-                    )
-                else:
-                    date = DateRange(
-                        lower=lower,
-                        upper=None,
-                        bounds="[)",
-                    )
-            else:
-                date = None
-            try:
-                role, created = Role.objects.get_or_create(
-                    bhs_id=int(row[0]),
-                    group=group,
-                    person=person,
-                    date=date,
-                    part=part,
-                )
-            except Role.MultipleObjectsReturned:
-                print "ERROR: Multi Roles: {1}".format(group)
-                continue
-            print role, created
 
 
 def import_choruses(path):
