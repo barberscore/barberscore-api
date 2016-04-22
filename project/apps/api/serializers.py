@@ -481,7 +481,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'performer',
+            'group',
             'person',
             'part',
         )

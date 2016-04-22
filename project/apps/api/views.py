@@ -301,7 +301,6 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'director',
         'codirector',
     ).prefetch_related(
-        'roles',
         'submissions',
         'performances',
         'contestants',
@@ -349,7 +348,6 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.select_related(
         'person',
         'group',
-        'performer',
     ).order_by(
         '-name',
     )
