@@ -2425,6 +2425,14 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    representing = TreeForeignKey(
+        'Organization',
+        related_name='performers',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     tenor_p = models.ForeignKey(
         'Person',
         null=True,
@@ -2552,14 +2560,6 @@ class Performer(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='performers',
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='performers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     def __unicode__(self):

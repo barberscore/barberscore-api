@@ -292,7 +292,7 @@ class PerformanceViewSet(
 class PerformerViewSet(viewsets.ModelViewSet):
     queryset = Performer.objects.select_related(
         'session',
-        'organization',
+        'representing',
         'group',
         'tenor',
         'lead',

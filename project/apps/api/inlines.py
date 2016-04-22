@@ -416,8 +416,7 @@ class PerformerInline(admin.TabularInline):
     fields = (
         'link',
         'session',
-        'group',
-        'organization',
+        'representing',
         # 'seed',
         # 'prelim',
         # 'total_score',

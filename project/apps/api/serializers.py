@@ -387,7 +387,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'organization',
+            'representing',
             'tenor',
             'lead',
             'baritone',
