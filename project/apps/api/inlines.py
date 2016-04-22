@@ -542,19 +542,18 @@ class RoleInline(admin.TabularInline):
         )
     fields = (
         'link',
-        'group',
+        # 'group',
         'person',
         'part',
+        'date',
     )
     ordering = (
-        'group',
-        'person',
-        'part',
+        'date',
     )
     extra = 0
     raw_id_fields = (
         'person',
-        'group',
+        # 'group',
     )
     readonly_fields = [
         'link',
@@ -562,7 +561,7 @@ class RoleInline(admin.TabularInline):
     autocomplete_lookup_fields = {
         'fk': [
             'person',
-            'group'
+            # 'group'
         ]
     }
     can_delete = True

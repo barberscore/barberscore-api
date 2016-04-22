@@ -282,18 +282,6 @@ def import_db_roles(path):
                 except arrow.parser.ParserError:
                     log.error("No upper date: {0}".format(row[8]))
                     upper = None
-            # if (lower and upper) and (lower < upper):
-            #     date = DateRange(
-            #         lower=lower,
-            #         upper=upper,
-            #         bounds="[)",
-            #     )
-            # else:
-            #     log.error("Date out of sequence: {0} {1}".format(
-            #         row[7],
-            #         row[8],
-            #     ))
-            #     date = None
             date = DateRange(
                 lower=lower,
                 upper=upper,
@@ -316,6 +304,7 @@ def import_db_roles(path):
             except Role.MultipleObjectsReturned:
                 log.error("Multi Roles: {1}".format(group))
                 continue
+            print role
 
 
 def import_db_directors(path):
