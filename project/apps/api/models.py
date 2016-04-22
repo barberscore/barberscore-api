@@ -2382,6 +2382,7 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         related_name='performers_tenor',
+        on_delete=models.SET_NULL,
     )
 
     lead = models.ForeignKey(
@@ -2389,6 +2390,7 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         related_name='performers_lead',
+        on_delete=models.SET_NULL,
     )
 
     baritone = models.ForeignKey(
@@ -2396,6 +2398,7 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         related_name='performers_baritone',
+        on_delete=models.SET_NULL,
     )
 
     bass = models.ForeignKey(
@@ -2403,6 +2406,7 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         related_name='performers_bass',
+        on_delete=models.SET_NULL,
     )
 
     director = models.ForeignKey(
@@ -2410,6 +2414,7 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         related_name='performers_director',
+        on_delete=models.SET_NULL,
     )
 
     codirector = models.ForeignKey(
@@ -2417,6 +2422,7 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         related_name='performers_codirector',
+        on_delete=models.SET_NULL,
     )
 
     # Denormalized
@@ -2867,7 +2873,6 @@ class Role(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
-        unique=True,
         editable=False,
     )
 
@@ -2897,13 +2902,6 @@ class Role(TimeStampedModel):
     date = DateRangeField(
         help_text="""
             Active Dates""",
-        null=True,
-        blank=True,
-    )
-
-    performer = models.ForeignKey(
-        'Performer',
-        related_name='roles',
         null=True,
         blank=True,
     )
@@ -2954,10 +2952,9 @@ class Role(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.person.name,
             self.group.name,
-            self.id.hex,
-            # self.get_part_display(),
+            self.person.name,
+            self.get_part_display(),
         ]))
         super(Role, self).save(*args, **kwargs)
 

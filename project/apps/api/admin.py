@@ -869,6 +869,7 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'date',
         'group',
         'person',
+        'part',
         'bhs_file',
     ]
 
@@ -878,10 +879,12 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'date',
         'group',
         'person',
+        'part',
     ]
 
     list_filter = [
         'status',
+        'group__kind',
     ]
 
     readonly_fields = [

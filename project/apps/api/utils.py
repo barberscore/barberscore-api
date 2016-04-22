@@ -237,6 +237,8 @@ def import_db_roles(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
+            if int(row[12]) not in [1, 2, 3, 4]:
+                continue
             try:
                 group = Group.objects.get(
                     bhs_id=int(row[1])
@@ -249,16 +251,13 @@ def import_db_roles(path):
                 continue
             try:
                 person = Person.objects.get(
-                    bhs_id=(row[3])
+                    bhs_id=int(row[3])
                 )
             except Person.DoesNotExist:
-                log.error("Missing Person {0}: {1} for {2} {3}".format(
-                    row[3],
-                    row[4],
-                    row[1],
-                    row[2],
-                ))
-                continue
+                person = Person.objects.create(
+                    name=unidecode(row[4]),
+                    bhs_id=int(row[3]),
+                )
             if int(row[12]) == 1:
                 part = Role.PART.tenor
             elif int(row[12]) == 2:
@@ -273,38 +272,50 @@ def import_db_roles(path):
             try:
                 lower = arrow.get(row[7]).date()
             except arrow.parser.ParserError:
+                log.error("No lower date: {0}".format(row[7]))
                 lower = None
-            try:
-                upper = arrow.get(row[8]).date()
-            except arrow.parser.ParserError:
+            if not row[8]:
                 upper = None
-            if lower and upper:
-                if lower < upper:
-                    date = DateRange(
-                        lower=lower,
-                        upper=upper,
-                        bounds="[)",
-                    )
-                else:
-                    date = DateRange(
-                        lower=lower,
-                        upper=None,
-                        bounds="[)",
-                    )
             else:
-                date = None
+                try:
+                    upper = arrow.get(row[8]).date()
+                except arrow.parser.ParserError:
+                    log.error("No upper date: {0}".format(row[8]))
+                    upper = None
+            # if (lower and upper) and (lower < upper):
+            #     date = DateRange(
+            #         lower=lower,
+            #         upper=upper,
+            #         bounds="[)",
+            #     )
+            # else:
+            #     log.error("Date out of sequence: {0} {1}".format(
+            #         row[7],
+            #         row[8],
+            #     ))
+            #     date = None
+            date = DateRange(
+                lower=lower,
+                upper=upper,
+                bounds="[)",
+            )
+            if upper and lower:
+                if lower > upper:
+                    date = None
+            role = {
+                'bhs_id': int(row[0]),
+                'group': group,
+                'person': person,
+                'date': date,
+                'part': part,
+            }
             try:
                 role, created = Role.objects.get_or_create(
-                    bhs_id=int(row[0]),
-                    group=group,
-                    person=person,
-                    date=date,
-                    part=part,
+                    **role
                 )
             except Role.MultipleObjectsReturned:
                 log.error("Multi Roles: {1}".format(group))
                 continue
-            print role, created
 
 
 def import_db_directors(path):
@@ -320,6 +331,7 @@ def import_db_directors(path):
             groups = Group.objects.filter(
                 chapter__bhs_id=int(row[1]),
                 status=Group.STATUS.active,
+                kind=Group.KIND.chorus,
             )
             if groups.count() > 1:
                 log.error("Too many groups {0}: {1}".format(row[1], row[2]))
@@ -360,25 +372,27 @@ def import_db_directors(path):
             try:
                 lower = arrow.get(row[7]).date()
             except arrow.parser.ParserError:
+                log.error("No lower date: {0}".format(row[7]))
                 lower = None
-            try:
-                upper = arrow.get(row[8]).date()
-            except arrow.parser.ParserError:
+            if not row[8]:
                 upper = None
-            if lower and upper:
-                if lower < upper:
-                    date = DateRange(
-                        lower=lower,
-                        upper=upper,
-                        bounds="[)",
-                    )
-                else:
-                    date = DateRange(
-                        lower=lower,
-                        upper=None,
-                        bounds="[)",
-                    )
             else:
+                try:
+                    upper = arrow.get(row[8]).date()
+                except arrow.parser.ParserError:
+                    log.error("No upper date: {0}".format(row[8]))
+                    upper = None
+            if lower < upper:
+                date = DateRange(
+                    lower=lower,
+                    upper=upper,
+                    bounds="[)",
+                )
+            else:
+                log.error("Date out of sequence: {0} {1}".format(
+                    row[7],
+                    row[8],
+                ))
                 date = None
             role = {
                 'bhs_id': int(row[0]),
@@ -394,6 +408,7 @@ def import_db_directors(path):
             except Role.MultipleObjectsReturned:
                 log.error("ERROR: Multi Roles: {1}".format(role))
                 continue
+            print role
         return
 
 
