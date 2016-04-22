@@ -474,6 +474,8 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
+    date = DateRangeField()
+
     class Meta:
         model = Role
         fields = (
@@ -484,6 +486,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'group',
             'person',
             'part',
+            'date',
         )
 
 
