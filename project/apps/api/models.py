@@ -2425,6 +2425,54 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    tenor_p = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='performers_tenor',
+        on_delete=models.SET_NULL,
+    )
+
+    lead_p = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='performers_lead',
+        on_delete=models.SET_NULL,
+    )
+
+    baritone_p = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='performers_baritone',
+        on_delete=models.SET_NULL,
+    )
+
+    bass_p = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='performers_bass',
+        on_delete=models.SET_NULL,
+    )
+
+    director_p = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='performers_director',
+        on_delete=models.SET_NULL,
+    )
+
+    codirector_p = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='performers_codirector',
+        on_delete=models.SET_NULL,
+    )
+
     # Denormalized
     seed = models.IntegerField(
         help_text="""
