@@ -2433,54 +2433,6 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    tenor_p = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='performers_tenor',
-        on_delete=models.SET_NULL,
-    )
-
-    lead_p = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='performers_lead',
-        on_delete=models.SET_NULL,
-    )
-
-    baritone_p = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='performers_baritone',
-        on_delete=models.SET_NULL,
-    )
-
-    bass_p = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='performers_bass',
-        on_delete=models.SET_NULL,
-    )
-
-    director_p = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='performers_director',
-        on_delete=models.SET_NULL,
-    )
-
-    codirector_p = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='performers_codirector',
-        on_delete=models.SET_NULL,
-    )
-
     # Denormalized
     seed = models.IntegerField(
         help_text="""
@@ -2570,7 +2522,7 @@ class Performer(TimeStampedModel):
     #         raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
-        # on create
+        # NOTE Calls post-save signal on create.  Only way to do it with UUID
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
             str(self.session.convention.get_division_display()),
