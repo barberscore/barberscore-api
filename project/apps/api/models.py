@@ -3061,6 +3061,13 @@ class Round(TimeStampedModel):
         default='',
     )
 
+    mt = models.ForeignKey(
+        'Group',
+        related_name='mic_tester',
+        null=True,
+        blank=True,
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='rounds',

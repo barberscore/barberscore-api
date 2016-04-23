@@ -924,6 +924,7 @@ class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.Model
         'name',
         'status',
         ('session', 'kind',),
+        'mt',
         'date',
     ]
 
@@ -943,11 +944,13 @@ class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.Model
 
     raw_id_fields = (
         'session',
+        'mt',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'session',
+            'mt',
         ]
     }
 

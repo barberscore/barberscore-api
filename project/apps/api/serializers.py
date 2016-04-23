@@ -503,6 +503,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'kind',
             'date',
             'num',
+            'mt',
             'session',
             'performances',
         )
