@@ -1577,7 +1577,7 @@ class Judge(TimeStampedModel):
 
     certification = models.ForeignKey(
         'Certification',
-        related_name='panels',
+        related_name='judges',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
