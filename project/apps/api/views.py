@@ -114,6 +114,8 @@ class AwardViewSet(viewsets.ModelViewSet):
 class CertificationViewSet(viewsets.ModelViewSet):
     queryset = Certification.objects.select_related(
         'person',
+    ).prefetch_related(
+        'judges',
     )
     serializer_class = CertificationSerializer
     resource_name = "certification"
@@ -227,7 +229,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 class JudgeViewSet(viewsets.ModelViewSet):
     queryset = Judge.objects.select_related(
         'session',
-        'person',
+        'certification',
     ).prefetch_related(
         'scores',
     ).order_by(
@@ -331,7 +333,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'chapter',
     ).prefetch_related(
         'roles',
-        'panels',
         'conventions',
         'certifications',
         'assistants',

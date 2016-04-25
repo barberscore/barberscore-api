@@ -1575,6 +1575,14 @@ class Judge(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    certification = models.ForeignKey(
+        'Certification',
+        related_name='panels',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     organization = TreeForeignKey(
         'Organization',
         related_name='judges',
@@ -3283,13 +3291,6 @@ class Session(TimeStampedModel):
     administrator = models.ForeignKey(
         'Person',
         related_name='sessions_ca',
-        null=True,
-        blank=True,
-    )
-
-    aca = models.ForeignKey(
-        'Person',
-        related_name='sessions_aca',
         null=True,
         blank=True,
     )

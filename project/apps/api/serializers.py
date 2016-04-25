@@ -269,7 +269,7 @@ class JudgeSerializer(serializers.ModelSerializer):
             'designation',
             'kind',
             'slot',
-            'person',
+            'certification',
             'session',
             'scores',
         )
@@ -543,7 +543,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'date',
             'administrator',
             'cursor',
-            'aca',
             'performers',
             'contests',
             'judges',
