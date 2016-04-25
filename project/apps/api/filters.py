@@ -61,6 +61,7 @@ class GroupFilter(filters.FilterSet):
         model = Group
         fields = {
             'chap_name': filters.ALL_LOOKUPS,
+            'kind': filters.ALL_LOOKUPS,
         }
 
 
