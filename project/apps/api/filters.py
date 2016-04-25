@@ -6,6 +6,7 @@ from django_filters.fields import Lookup
 
 from .models import (
     Chart,
+    Certification,
     Contestant,
     Convention,
     Group,
@@ -60,6 +61,14 @@ class GroupFilter(filters.FilterSet):
         model = Group
         fields = {
             'chap_name': filters.ALL_LOOKUPS,
+        }
+
+
+class CertificationFilter(filters.FilterSet):
+    class Meta:
+        model = Certification
+        fields = {
+            'name': filters.ALL_LOOKUPS,
         }
 
 

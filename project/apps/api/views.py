@@ -14,6 +14,7 @@ from rest_framework import (
 
 from .filters import (
     CoalesceFilterBackend,
+    CertificationFilter,
     ChartFilter,
     ContestantFilter,
     ConventionFilter,
@@ -118,6 +119,7 @@ class CertificationViewSet(viewsets.ModelViewSet):
         'judges',
     )
     serializer_class = CertificationSerializer
+    filter_class = CertificationFilter
     resource_name = "certification"
 
 
