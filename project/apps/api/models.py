@@ -10,8 +10,6 @@ import datetime
 
 from psycopg2.extras import DateTimeTZRange
 
-import arrow
-
 from django.utils import timezone
 
 from django.db import (
@@ -46,9 +44,9 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
-from django.core.exceptions import (
-    ValidationError,
-)
+# from django.core.exceptions import (
+#     ValidationError,
+# )
 
 from model_utils.models import (
     TimeStampedModel,
@@ -3548,6 +3546,14 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    submission = models.ForeignKey(
+        'Submission',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     performance = models.ForeignKey(
         'Performance',
         related_name='songs',
@@ -3566,16 +3572,6 @@ class Song(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            self.performance.round.session.convention.organization.name,
-            str(self.performance.round.session.convention.get_division_display()),
-            self.performance.round.session.convention.get_season_display(),
-            self.performance.round.session.get_kind_display(),
-            self.performance.round.get_kind_display(),
-            str(self.performance.round.session.convention.year),
-            "Performance",
-            str(self.performance.slot),
-            'Song',
-            str(self.order),
             self.id.hex,
         ]))
         super(Song, self).save(*args, **kwargs)

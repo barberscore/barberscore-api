@@ -134,7 +134,6 @@ class ChapterViewSet(viewsets.ModelViewSet):
 
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.prefetch_related(
-        'songs',
         'submissions',
     )
     serializer_class = ChartSerializer
@@ -439,6 +438,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.select_related(
         'performer',
         'chart',
+    ).prefetch_related(
+        'songs',
     )
     serializer_class = SubmissionSerializer
     permission_classes = [
@@ -451,7 +452,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'performance',
-        'chart',
+        'submission',
     ).prefetch_related(
         'scores',
     ).order_by(
