@@ -314,7 +314,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'long_name',
             'parent',
             'children',
-            'tree_id',
+            'awards',
+            'lft',
         )
         read_only_fields = [
             'picture',

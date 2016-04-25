@@ -1260,7 +1260,7 @@ class Convention(TimeStampedModel):
         # else:
         #     division = None
         organizations = " ".join(filter(None, [
-            p.organization.short_name for p in self.participants.all()
+            p.organization.short_name for p in self.participants.order_by('organization__lft')
         ]))
         self.name = " ".join(filter(None, [
             organizations,
@@ -1938,9 +1938,6 @@ class Organization(MPTTModel, TimeStampedModel):
             'kind',
             'short_name',
         ]
-        ordering = (
-            'tree_id',
-        )
 
     class JSONAPIMeta:
         resource_name = "organization"
