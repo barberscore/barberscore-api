@@ -99,7 +99,7 @@ class PersonFilter(filters.FilterSet):
         ]
         fields = {
             'name': filters.ALL_LOOKUPS,
-            # 'status': filters.ALL_LOOKUPS,
+            'id_name': filters.ALL_LOOKUPS,
             # 'certifications__category': filters.ALL_LOOKUPS,
         }
 

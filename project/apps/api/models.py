@@ -2375,7 +2375,13 @@ class Performer(TimeStampedModel):
     men = models.IntegerField(
         help_text="""
             The number of men on stage.""",
-        default=4,
+        null=True,
+        blank=True,
+    )
+
+    risers = models.IntegerField(
+        help_text="""
+            The number of risers select.""",
         null=True,
         blank=True,
     )
@@ -2764,6 +2770,13 @@ class Person(TimeStampedModel):
     )
 
     # Denormalization for searching
+    id_name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     full_name = models.CharField(
         max_length=255,
         blank=True,
@@ -2830,6 +2843,10 @@ class Person(TimeStampedModel):
             ]))
         else:
             self.common_name = u'{0}'.format(self.name)
+        self.id_name = " ".join(filter(None, [
+            str(self.bhs_id),
+            self.name,
+        ]))
         self.formal_name = " ".join(filter(None, [
             u'{0}'.format(name.first),
             u'{0}'.format(name.last),
