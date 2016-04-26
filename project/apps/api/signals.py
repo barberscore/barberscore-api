@@ -31,6 +31,7 @@ def performer_post_save(sender, instance=None, created=False, raw=False, **kwarg
                     pass
                 instance.save()
             else:
+                instance.representing = instance.group.organization
                 try:
                     instance.tenor = instance.group.roles.get(
                         part=Role.PART.tenor,
