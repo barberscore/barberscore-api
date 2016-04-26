@@ -395,6 +395,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'bass',
             'men',
             'risers',
+            'is_evaluation',
             'director',
             'codirector',
             'picture',

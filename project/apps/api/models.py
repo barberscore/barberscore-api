@@ -2386,6 +2386,12 @@ class Performer(TimeStampedModel):
         blank=True,
     )
 
+    is_evaluation = models.BooleanField(
+        help_text="""
+            Performer requests evaluation.""",
+        default=True,
+    )
+
     tenor = models.ForeignKey(
         'Role',
         null=True,

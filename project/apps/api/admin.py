@@ -779,7 +779,7 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
         'name',
         'status',
         'session',
-        ('group', 'representing',),
+        ('group', 'representing', 'is_evaluation',),
         ('tenor', 'lead', 'baritone', 'bass',),
         ('men', 'director', 'codirector',),
         # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
