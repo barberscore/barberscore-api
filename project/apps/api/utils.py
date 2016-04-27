@@ -438,6 +438,28 @@ def import_db_charts(path):
                 )
 
 
+def import_home_districts(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                group = Group.objects.get(
+                    bhs_id=int(row[0]),
+                )
+            except Group.DoesNotExist:
+                log.error('NO GROUP: {0}'.format(row[0]))
+                continue
+            org = Organization.objects.get(
+                short_name=row[2].partition(" ")[0],
+                level=Organization.LEVEL.district,
+            )
+            group.location = row[1].strip()
+            group.organization = org
+            group.save()
+
+
 def import_quartets(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
