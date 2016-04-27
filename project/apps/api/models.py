@@ -1195,6 +1195,7 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The venue for the convention.""",
+        on_delete=models.SET_NULL,
     )
 
     organization = TreeForeignKey(
