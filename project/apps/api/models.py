@@ -1853,6 +1853,13 @@ class Organization(MPTTModel, TimeStampedModel):
         null=True,
     )
 
+    representative = models.ForeignKey(
+        'Person',
+        related_name='organizations',
+        blank=True,
+        null=True,
+    )
+
     bhs_id = models.IntegerField(
         unique=True,
         blank=True,

@@ -623,6 +623,7 @@ class OrganizationAdmin(MPTTModelAdmin):
         'short_name',
         'long_name',
         'location',
+        'representative',
         'website',
         'facebook',
         'twitter',
@@ -651,6 +652,16 @@ class OrganizationAdmin(MPTTModelAdmin):
         AwardInline,
         OrganizationInline,
     ]
+
+    raw_id_fields = [
+        'representative',
+    ]
+
+    autocomplete_lookup_fields = {
+        'fk': [
+            'representative',
+        ]
+    }
 
 
 @admin.register(Performance)
