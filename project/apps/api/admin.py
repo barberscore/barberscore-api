@@ -10,6 +10,7 @@ from .inlines import (
     CertificationInline,
     ContestInline,
     ContestantInline,
+    ConventionInline,
     SessionInline,
     PerformerInline,
     GroupInline,
@@ -1235,6 +1236,9 @@ class VenueAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
     ]
 
+    inlines = [
+        ConventionInline,
+    ]
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

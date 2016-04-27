@@ -12,6 +12,7 @@ from .models import (
     Certification,
     Contest,
     Contestant,
+    Convention,
     Session,
     Performer,
     Group,
@@ -49,6 +50,7 @@ class AssistantInline(admin.TabularInline):
 
 class AwardInline(admin.TabularInline):
     model = Award
+
     def link(self, obj):
         return mark_safe(
             "<a href={0}>link</a>".format(
@@ -201,6 +203,37 @@ class ContestantInline(admin.TabularInline):
     ]
     can_delete = True
     # classes = ('grp-collapse grp-open',)
+
+
+class ConventionInline(admin.TabularInline):
+    def link(self, obj):
+        return mark_safe(
+            "<a href={0}>link</a>".format(
+                reverse(
+                    'admin:api_convention_change',
+                    args=(
+                        obj.id.hex,
+                    )
+                )
+            )
+        )
+
+    fields = (
+        'link',
+        'name',
+    )
+    ordering = (
+        'name',
+    )
+
+    show_change_link = True
+
+    model = Convention
+    extra = 0
+    readonly_fields = [
+        'link',
+        'name',
+    ]
 
 
 class GroupInline(admin.TabularInline):
