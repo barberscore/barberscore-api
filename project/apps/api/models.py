@@ -1247,21 +1247,19 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        # self.year = arrow.get(self.date.lower).year
-        # if self.division:
-        #     self.level = self.LEVEL.division
-        # else:
-        #     self.level = self.organization.level
-        # if self.division:
-        #     division = str(self.get_division_display())
-        # else:
-        #     division = None
-        organizations = " ".join(filter(None, [
+        top = self.participants.aggregate(
+            min=models.Min('organization__level')
+        )['min']
+        if top == 2:
+            pre = self.participants.first().organization.parent.short_name
+        else:
+            pre = None
+        complete = [pre] + [
             p.organization.short_name for p in self.participants.order_by('organization__lft')
-        ]))
+        ]
+        organizations = " ".join(filter(None, complete))
         self.name = " ".join(filter(None, [
             organizations,
-            # division,
             self.get_season_display(),
             u"Convention",
             str(self.year),
