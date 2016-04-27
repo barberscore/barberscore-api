@@ -316,6 +316,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'children',
             'awards',
             'lft',
+            'participants',
         )
         read_only_fields = [
             'picture',
