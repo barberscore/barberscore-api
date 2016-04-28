@@ -324,7 +324,7 @@ class Award(TimeStampedModel):
     # Denormalization
     LEVEL = Choices(
         (0, 'international', "International"),
-        (1, 'district', "District/Affiliates"),
+        (1, 'district', "District"),
         (2, 'division', "Division"),
         (3, 'chapter', "Chapter"),
     )
@@ -349,6 +349,7 @@ class Award(TimeStampedModel):
             novice = None
         self.name = " ".join(filter(None, [
             self.organization.name,
+            self.get_level_display(),
             most_improved,
             novice,
             self.get_size_display(),
