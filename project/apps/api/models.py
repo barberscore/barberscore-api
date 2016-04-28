@@ -1536,6 +1536,7 @@ class Judge(TimeStampedModel):
     )
 
     CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
         (1, 'music', 'Music'),
         (2, 'presentation', 'Presentation'),
         (3, 'singing', 'Singing'),
@@ -1547,6 +1548,8 @@ class Judge(TimeStampedModel):
 
     KIND = Choices(
         (10, 'official', 'Official'),
+        (12, 'ca', 'CA'),
+        (14, 'aca', 'ACA'),
         (20, 'practice', 'Practice'),
         (30, 'composite', 'Composite'),
     )
@@ -3319,6 +3322,20 @@ class Session(TimeStampedModel):
     administrator = models.ForeignKey(
         'Person',
         related_name='sessions_ca',
+        null=True,
+        blank=True,
+    )
+
+    ca = models.ForeignKey(
+        'Certification',
+        related_name='sessions_ca',
+        null=True,
+        blank=True,
+    )
+
+    aca = models.ForeignKey(
+        'Certification',
+        related_name='sessions_aca',
         null=True,
         blank=True,
     )

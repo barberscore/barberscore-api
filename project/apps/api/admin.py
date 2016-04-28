@@ -1036,6 +1036,8 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'kind',
         'date',
         'administrator',
+        'ca',
+        'aca',
         'cursor',
         'cutoff',
         'entry_form',
@@ -1050,7 +1052,8 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'status',
         'convention',
         'kind',
-        'administrator',
+        'ca',
+        'aca',
         'song_list',
         # 'size',
         # 'num_rounds',
@@ -1068,12 +1071,16 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
     raw_id_fields = (
         'convention',
         'administrator',
+        'ca',
+        'aca',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'convention',
             'administrator',
+            'ca',
+            'aca',
         ]
     }
 
@@ -1239,6 +1246,7 @@ class VenueAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     inlines = [
         ConventionInline,
     ]
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
