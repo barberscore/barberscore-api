@@ -70,6 +70,7 @@ class CertificationFilter(filters.FilterSet):
         model = Certification
         fields = {
             'name': filters.ALL_LOOKUPS,
+            'category': filters.ALL_LOOKUPS,
         }
 
 
