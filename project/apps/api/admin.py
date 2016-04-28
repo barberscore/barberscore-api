@@ -651,7 +651,7 @@ class OrganizationAdmin(MPTTModelAdmin):
 
     inlines = [
         AwardInline,
-        OrganizationInline,
+        # OrganizationInline,
     ]
 
     raw_id_fields = [
