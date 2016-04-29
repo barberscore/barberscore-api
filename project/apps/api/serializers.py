@@ -397,6 +397,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'lead',
             'baritone',
             'bass',
+            'soa',
             'men',
             'risers',
             'is_evaluation',
