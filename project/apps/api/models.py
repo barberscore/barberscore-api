@@ -2380,6 +2380,13 @@ class Performer(TimeStampedModel):
         null=True,
     )
 
+    soa = models.IntegerField(
+        help_text="""
+            Starting Order of Appearance.""",
+        null=True,
+        blank=True,
+    )
+
     men = models.IntegerField(
         help_text="""
             The number of men on stage.""",
