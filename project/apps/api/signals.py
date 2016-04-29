@@ -5,9 +5,11 @@ from django.db.models.signals import (
 from django.dispatch import receiver
 
 from .models import (
+    Award,
     Group,
     Performer,
     Role,
+    Session,
 )
 
 
@@ -69,3 +71,22 @@ def performer_post_save(sender, instance=None, created=False, raw=False, **kwarg
                 except Role.MultipleObjectsReturned:
                     pass
                 instance.save()
+
+
+@receiver(post_save, sender=Session)
+def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create contest sentinels on performer creation."""
+    if not raw:
+        if created:
+            for participant in instance.convention.participants.all():
+                awards = Award.objects.filter(
+                    kind=instance.kind,
+                    season=instance.convention.season,
+                    organization=participant.organization,
+                )
+                for award in awards:
+                    a, c = instance.contests.get_or_create(
+                        award=award,
+                    )
+                    print "contest: {0}".format(a)
+            instance.save()
