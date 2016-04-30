@@ -2361,6 +2361,7 @@ class Performer(TimeStampedModel):
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
+        (45, 'evaluation', 'Evaluation',),
         (50, 'official', 'Official',),
         (55, 'disqualified', 'Disqualified',),
         (60, 'finished', 'Finished',),
