@@ -755,12 +755,11 @@ class Contest(TimeStampedModel):
         editable=False,
     )
 
-    # Denorm
     is_qualifier = models.BooleanField(
         default=False,
-        editable=False,
     )
 
+    # Denorm
     stix_num = models.IntegerField(
         null=True,
         blank=True,
@@ -1089,6 +1088,26 @@ class Convention(TimeStampedModel):
         (20, 'district', 'District'),
         (30, 'division', 'Division'),
         (40, 'disdiv', 'District and Division'),
+        (200, 'evgd1', "Division I"),
+        (210, 'evgd2', "Division II"),
+        (220, 'evgd3', "Division III"),
+        (230, 'evgd4', "Division IV"),
+        (240, 'evgd5', "Division V"),
+        (250, 'fwdaz', "Arizona Division"),
+        (260, 'fwdnenw', "NE/NW Divisions"),
+        (270, 'fwdsesw', "SE/SW Divisions"),
+        (280, 'lolp1', "Division One/Packerland Divisions"),
+        (290, 'lolnp', "Northern Plains Division"),
+        (300, 'lol10sw', "10,000 Lakes and Southwest Divisions"),
+        # (310, 'madatl', "Atlantic Division"),  <- LEGACY
+        # (320, 'madnw', "Northern and Western Divisions"), <- LEGACY
+        (322, 'madnth', "Northern Division"),
+        (324, 'madcen', "Central Division"),
+        (330, 'madsth', "Southern Division"),
+        (340, 'nedsun', "Sunrise Division"),
+        (342, 'nedwst', "Western Regional"),
+        (344, 'nedest', "Eastern Regional"),
+        (350, 'swdnenwsesw', "NE/NW/SE/SW Divisions"),
     )
 
     kind = models.IntegerField(
@@ -1107,29 +1126,12 @@ class Convention(TimeStampedModel):
 
     season = models.IntegerField(
         choices=SEASON,
-        null=True,
-        blank=True,
     )
 
     risers = ArrayField(
         base_field=models.IntegerField(null=True, blank=True),
         null=True,
         blank=True,
-    )
-
-    # Denormalization
-    LEVEL = Choices(
-        (0, 'international', "International"),
-        (1, 'district', "District"),
-        (2, 'division', "Division"),
-        (3, 'chapter', "Chapter"),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-        null=True,
-        blank=True,
-        editable=False,
     )
 
     DIVISION = Choices(
@@ -1181,13 +1183,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    location = models.CharField(
-        help_text="""
-            The location of the convention.""",
-        max_length=200,
-        blank=True,
-    )
-
     venue = models.ForeignKey(
         'Venue',
         null=True,
@@ -1216,6 +1211,22 @@ class Convention(TimeStampedModel):
             The person managing the convention.""",
     )
 
+    # Denormalization
+    LEVEL = Choices(
+        (0, 'international', "International"),
+        (1, 'district', "District"),
+        (2, 'division', "Division"),
+        (3, 'chapter', "Chapter"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    # Legacy
     stix_name = models.CharField(
         max_length=200,
         null=True,
