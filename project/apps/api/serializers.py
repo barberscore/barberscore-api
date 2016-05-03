@@ -220,7 +220,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'year',
             'date',
             'venue',
-            # 'organization',
+            'organization',
             'drcj',
             'sessions',
             'participants',
@@ -335,6 +335,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
             'name',
             'organization',
             'convention',
+            'is_qualifier',
         )
 
 

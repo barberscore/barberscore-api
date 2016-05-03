@@ -1255,10 +1255,8 @@ class Convention(TimeStampedModel):
     def finish(self, *args, **kwargs):
         return
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
+    @property
+    def pre(self):
         top = self.participants.aggregate(
             min=models.Min('organization__level')
         )['min']
@@ -1266,12 +1264,15 @@ class Convention(TimeStampedModel):
             pre = self.participants.first().organization.parent.short_name
         else:
             pre = None
-        complete = [pre] + [
-            p.organization.short_name for p in self.participants.order_by('organization__lft')
-        ]
-        organizations = " ".join(filter(None, complete))
+        return pre
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
-            organizations,
+            str(self.organization.short_name),
+            str(self.get_kind_display()),
             self.get_season_display(),
             u"Convention",
             str(self.year),
@@ -2004,6 +2005,10 @@ class Participant(TimeStampedModel):
         blank=True,
     )
 
+    is_qualifier = models.BooleanField(
+        default=False,
+    )
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2011,6 +2016,7 @@ class Participant(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.convention.name,
             self.organization.name,
+            str(self.is_qualifier),
         ]))
         super(Participant, self).save(*args, **kwargs)
 
