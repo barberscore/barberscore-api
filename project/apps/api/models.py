@@ -349,7 +349,6 @@ class Award(TimeStampedModel):
             novice = None
         self.name = " ".join(filter(None, [
             self.organization.name,
-            self.get_level_display(),
             most_improved,
             novice,
             self.get_size_display(),
