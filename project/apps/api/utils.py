@@ -466,11 +466,16 @@ def import_db_performers(path):
                 is_evaluation = False
             try:
                 session = convention.sessions.get(
-                    Q(kind=group.kind) | Q(kind=Session.KIND.youth)
+                    kind=group.kind,
                 )
             except Session.DoesNotExist:
-                log.error("No Session: {0}, {1} - {2}".format(convention, group, group.get_kind_display()))
-                continue
+                try:
+                    session = convention.sessions.get(
+                        kind=Session.KIND.youth,
+                    )
+                except Session.DoesNotExist:
+                    log.error("No Session: {0}, {1} - {2}".format(convention, group, group.get_kind_display()))
+                    continue
             performer, created = Performer.objects.get_or_create(
                 session=session,
                 group=group,
