@@ -444,9 +444,11 @@ def import_db_performers(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
+            bhs_id = int(row[3])
+            soa = int(row[6]) if int(row[6]) else None
             try:
                 convention = Convention.objects.get(
-                    bhs_id=int(row[3]),
+                    bhs_id=bhs_id,
                 )
             except Convention.DoesNotExist:
                 log.error("No Convention: {0}".format(row[3]))
@@ -455,14 +457,29 @@ def import_db_performers(path):
                 group = Group.objects.get(
                     bhs_id=int(row[2]),
                 )
-            except Convention.DoesNotExist:
+            except Group.DoesNotExist:
                 log.error("No Group: {0}, {1}".format(row[2], row[1]))
                 continue
             if row[7].strip() == 'Normal Evaluation and Coaching':
                 is_evaluation = True
             else:
                 is_evaluation = False
-            print convention, group, is_evaluation
+            try:
+                session = convention.sessions.get(
+                    Q(kind=group.kind) | Q(kind=Session.KIND.youth)
+                )
+            except Session.DoesNotExist:
+                log.error("No Session: {0}, {1} - {2}".format(convention, group, group.get_kind_display()))
+                continue
+            performer, created = Performer.objects.get_or_create(
+                session=session,
+                group=group,
+            )
+            performer.soa = soa
+            performer.is_evaluation = is_evaluation
+            performer.bhs_id = bhs_id
+            performer.save()
+            print performer, created
 
 
 def import_db_submissions(path):
