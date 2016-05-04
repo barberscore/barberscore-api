@@ -426,6 +426,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'status',
         'venue',
         'kind',
+        'organization',
         'bhs_id',
         'is_prelims',
         'risers',

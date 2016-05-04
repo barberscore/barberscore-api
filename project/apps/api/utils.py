@@ -438,6 +438,33 @@ def import_db_charts(path):
                 )
 
 
+def import_db_performers(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                convention = Convention.objects.get(
+                    bhs_id=int(row[3]),
+                )
+            except Convention.DoesNotExist:
+                log.error("No Convention: {0}".format(row[3]))
+                continue
+            try:
+                group = Group.objects.get(
+                    bhs_id=int(row[2]),
+                )
+            except Convention.DoesNotExist:
+                log.error("No Group: {0}, {1}".format(row[2], row[1]))
+                continue
+            if row[7].strip() == 'Normal Evaluation and Coaching':
+                is_evaluation = True
+            else:
+                is_evaluation = False
+            print convention, group, is_evaluation
+
+
 def import_db_submissions(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)

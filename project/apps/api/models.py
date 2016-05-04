@@ -2484,6 +2484,11 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # Denormalized
     seed = models.IntegerField(
         help_text="""
