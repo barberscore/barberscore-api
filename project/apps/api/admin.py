@@ -427,6 +427,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'venue',
         'kind',
         'bhs_id',
+        'is_prelims',
         'risers',
         'date',
         'year',

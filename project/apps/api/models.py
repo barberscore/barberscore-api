@@ -1082,26 +1082,26 @@ class Convention(TimeStampedModel):
         (20, 'district', 'District'),
         (30, 'division', 'Division'),
         (40, 'disdiv', 'District and Division'),
-        (200, 'evgd1', "Division I"),
-        (210, 'evgd2', "Division II"),
-        (220, 'evgd3', "Division III"),
-        (230, 'evgd4', "Division IV"),
-        (240, 'evgd5', "Division V"),
-        (250, 'fwdaz', "Arizona Division"),
-        (260, 'fwdnenw', "NE/NW Divisions"),
-        (270, 'fwdsesw', "SE/SW Divisions"),
-        (280, 'lolp1', "Division One/Packerland Divisions"),
-        (290, 'lolnp', "Northern Plains Division"),
-        (300, 'lol10sw', "10,000 Lakes and Southwest Divisions"),
+        (200, 'evgd1', "EVG Division I"),
+        (210, 'evgd2', "EVG Division II"),
+        (220, 'evgd3', "EVG Division III"),
+        (230, 'evgd4', "EVG Division IV"),
+        (240, 'evgd5', "EVG Division V"),
+        (250, 'fwdaz', "FWD Arizona Division"),
+        (260, 'fwdnenw', "FWD NE/NW Divisions"),
+        (270, 'fwdsesw', "FWD SE/SW Divisions"),
+        (280, 'lolp1', "LOL Division One/Packerland Divisions"),
+        (290, 'lolnp', "LOL Northern Plains Division"),
+        (300, 'lol10sw', "LOL 10,000 Lakes and Southwest Divisions"),
         # (310, 'madatl', "Atlantic Division"),  <- LEGACY
         # (320, 'madnw', "Northern and Western Divisions"), <- LEGACY
-        (322, 'madnth', "Northern Division"),
-        (324, 'madcen', "Central Division"),
-        (330, 'madsth', "Southern Division"),
-        (340, 'nedsun', "Sunrise Division"),
-        (342, 'nedwst', "Western Regional"),
-        (344, 'nedest', "Eastern Regional"),
-        (350, 'swdnenwsesw', "NE/NW/SE/SW Divisions"),
+        (322, 'madnth', "MAD Northern Division"),
+        (324, 'madcen', "MAD Central Division"),
+        (330, 'madsth', "MAD Southern Division"),
+        (340, 'nedsun', "NED Sunrise Division"),
+        (342, 'nedwst', "NED Western Regional"),
+        (344, 'nedest', "NED Eastern Regional"),
+        (350, 'swdnenwsesw', "SWD NE/NW/SE/SW Divisions"),
     )
 
     kind = models.IntegerField(
@@ -1129,31 +1129,31 @@ class Convention(TimeStampedModel):
     )
 
     DIVISION = Choices(
-        (200, 'evgd1', "Division I"),
-        (210, 'evgd2', "Division II"),
-        (220, 'evgd3', "Division III"),
-        (230, 'evgd4', "Division IV"),
-        (240, 'evgd5', "Division V"),
-        (250, 'fwdaz', "Arizona Division"),
-        (260, 'fwdnenw', "NE/NW Divisions"),
-        (270, 'fwdsesw', "SE/SW Divisions"),
-        (280, 'lolp1', "Division One/Packerland Divisions"),
-        (290, 'lolnp', "Northern Plains Division"),
-        (300, 'lol10sw', "10,000 Lakes and Southwest Divisions"),
+        (200, 'evgd1', "EVG Division I"),
+        (210, 'evgd2', "EVG Division II"),
+        (220, 'evgd3', "EVG Division III"),
+        (230, 'evgd4', "EVG Division IV"),
+        (240, 'evgd5', "EVG Division V"),
+        (250, 'fwdaz', "FWD Arizona Division"),
+        (260, 'fwdnenw', "FWD NE/NW Divisions"),
+        (270, 'fwdsesw', "FWD SE/SW Divisions"),
+        (280, 'lolp1', "LOL Division One/Packerland Divisions"),
+        (290, 'lolnp', "LOL Northern Plains Division"),
+        (300, 'lol10sw', "LOL 10,000 Lakes and Southwest Divisions"),
         # (310, 'madatl', "Atlantic Division"),  <- LEGACY
         # (320, 'madnw', "Northern and Western Divisions"), <- LEGACY
-        (322, 'madnth', "Northern Division"),
-        (324, 'madcen', "Central Division"),
-        (330, 'madsth', "Southern Division"),
-        (340, 'nedsun', "Sunrise Division"),
-        (342, 'nedwst', "Western Regional"),
-        (344, 'nedest', "Eastern Regional"),
-        (350, 'swdnenwsesw', "NE/NW/SE/SW Divisions"),
+        (322, 'madnth', "MAD Northern Division"),
+        (324, 'madcen', "MAD Central Division"),
+        (330, 'madsth', "MAD Southern Division"),
+        (340, 'nedsun', "NED Sunrise Division"),
+        (342, 'nedwst', "NED Western Regional"),
+        (344, 'nedest', "NED Eastern Regional"),
+        (350, 'swdnenwsesw', "SWD NE/NW/SE/SW Divisions"),
     )
 
     division = models.IntegerField(
         help_text="""
-            Detail if division/combo convention.""",
+            Detail if division/regional convention.""",
         choices=DIVISION,
         null=True,
         blank=True,
@@ -1203,6 +1203,10 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The person managing the convention.""",
+    )
+
+    is_prelims = models.BooleanField(
+        default=False,
     )
 
     bhs_id = models.IntegerField(
