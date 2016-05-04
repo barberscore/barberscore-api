@@ -411,6 +411,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
 
     list_display = (
         'name',
+        'bhs_id',
         'status',
         'kind',
         'level',
@@ -425,7 +426,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'status',
         'venue',
         'kind',
-        # 'dates',
+        'bhs_id',
         'risers',
         'date',
         'year',
