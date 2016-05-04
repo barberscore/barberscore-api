@@ -726,7 +726,6 @@ class Contest(TimeStampedModel):
 
     name = models.CharField(
         max_length=200,
-        unique=True,
         editable=False,
     )
 
@@ -807,17 +806,13 @@ class Contest(TimeStampedModel):
         ]):
             self.is_qualifier = True
         if self.is_qualifier:
-            prefix = self.session.name
             suffix = "Qualifier"
         else:
-            prefix = None
             suffix = "Championship"
         self.name = " ".join(filter(None, [
-            prefix,
             self.award.name,
             suffix,
             str(self.session.convention.year),
-            self.id.hex,
         ]))
         super(Contest, self).save(*args, **kwargs)
 
@@ -1208,6 +1203,11 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The person managing the convention.""",
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     # Denormalization

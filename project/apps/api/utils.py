@@ -438,6 +438,61 @@ def import_db_charts(path):
                 )
 
 
+def import_db_submissions(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if row[2]:
+                try:
+                    chart = Chart.objects.get(
+                        bhs_marketplace=int(row[2])
+                    )
+                    log.info("found marketplace")
+                except Chart.DoesNotExist:
+                    chart = None
+            else:
+                chart = None
+            if not chart:
+                try:
+                    chart = Chart.objects.get(
+                        title=row[1],
+                        bhs_marketplace=None,
+                    )
+                    log.info("found title")
+                except Chart.DoesNotExist:
+                    if row[2]:
+                        chart = Chart.objects.create(
+                            title=row[1],
+                            bhs_marketplace=int(row[2])
+                        )
+                        log.info("created marketplate")
+                    else:
+                        chart = Chart.objects.create(
+                            title=row[1],
+                        )
+                        log.info("created title")
+                except Chart.MultipleObjectsReturned:
+                    chart = Chart.objects.filter(
+                        title=row[1],
+                        bhs_marketplace=None,
+                    ).first()
+                    log.info("selected title")
+            try:
+                performer = Performer.objects.get(
+                    group__bhs_id=int(row[0]),
+                    session__convention__year=2016,
+                )
+            except Performer.MultipleObjectsReturned:
+                log.error("Multi Performers: {0}".format(row[0]))
+                continue
+            except Performer.DoesNotExist:
+                log.error("No Performer: {0}".format(row[0]))
+                continue
+            print performer, chart
+
+
 def import_home_districts(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
