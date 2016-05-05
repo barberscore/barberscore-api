@@ -536,12 +536,68 @@ def import_db_submissions(path):
                 print submission, created
 
 
+def import_db_representing(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            name = row[11].strip()
+            if name == 'Div I':
+                name = 'Division I Division'
+            elif name == 'Div II':
+                name = 'Division II Division'
+            elif name == 'Div III':
+                name = 'Division III Division'
+            elif name == 'Div IV':
+                name = 'Division IV Division'
+            elif name == 'Div V':
+                name = 'Division V Division'
+            elif name == 'Arizona  Division':
+                name = 'Arizona Division'
+            elif name == 'Division One':
+                name = 'Division One Division'
+            elif name == 'Granite & Pine Division':
+                name = 'Granite and Pine Division'
+            if name != 'NULL':
+                convention = Convention.objects.get(
+                    bhs_id=int(row[3]),
+                )
+                district_name = convention.organization.short_name
+                try:
+                    organization = Organization.objects.get(
+                        name="{0} {1}".format(
+                            district_name,
+                            name,
+                        )
+                    )
+                except Organization.DoesNotExist:
+                    log.error("Bad Div: {0} {1}".format(district_name, name))
+                    continue
+                try:
+                    performer = Performer.objects.get(
+                        bhs_id=int(row[0]),
+                    )
+                except Performer.DoesNotExist:
+                    log.error("Can't find performer")
+                    continue
+                performer.representing = organization
+                performer.save()
+
+
 def import_db_contests(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
         for row in rows:
+            try:
+                convention = Convention.objects.get(
+                    bhs_id=int(row[3]),
+                )
+            except Convention.DoesNotExist:
+                log.error("No Convention: {0}".format(row[3]))
+                continue
             name = row[8].strip()
             try:
                 performer = Performer.objects.get(
@@ -551,6 +607,49 @@ def import_db_contests(path):
                 log.error("Can't find performer")
                 continue
             try:
+                session = convention.sessions.get(
+                    kind=performer.group.kind,
+                )
+            except Session.DoesNotExist:
+                try:
+                    session = convention.sessions.get(
+                        kind=Session.KIND.youth,
+                    )
+                except Session.DoesNotExist:
+                    try:
+                        session = convention.sessions.get(
+                            kind=Session.KIND.seniors,
+                        )
+                    except Session.DoesNotExist:
+                        log.error("No Session: {0}, {1} - {2}".format(convention, performer.group, performer.group.get_kind_display()))
+                        continue
+            if not performer.representing:
+                log.error("No representation for {0}".format(performer))
+                continue
+            organization = performer.representing
+            if organization.level == Organization.LEVEL.district:
+                district = organization
+                division = None
+            elif organization.level == Organization.LEVEL.division:
+                district = organization.parent
+                division = organization
+            else:
+                log.error("Bad Rep: {0} {1}".format(
+                    performer,
+                    organization,
+                ))
+                continue
+            excludes = [
+                "International Srs Qt - Oldest Singer",
+            ]
+            if any([string in name for string in excludes]):
+                continue
+            if name == 'Scores for Evaluation Only':
+                performer.status = Performer.STATUS.evaluation
+                performer.save()
+                continue
+            name = name.replace("Most Improved", "Most-Improved")
+            try:
                 award = Award.objects.get(
                     organization=performer.representing,
                     stix_name__endswith=name,
@@ -558,9 +657,7 @@ def import_db_contests(path):
             except Award.DoesNotExist:
                 if 'International Preliminary Quartet' in name:
                     award = Award.objects.get(
-                        is_primary=True,
-                        level=Award.LEVEL.international,
-                        kind=Award.KIND.quartet,
+                        name='International Quartet',
                     )
                 elif 'International Preliminary Youth Qt' in name:
                     award = Award.objects.get(
@@ -575,25 +672,88 @@ def import_db_contests(path):
                         kind=Award.KIND.seniors,
                     )
                 elif 'Quartet District Qualification' in name:
-                    try:
-                        award = Award.objects.get(
-                            is_primary=True,
-                            level=Award.LEVEL.district,
-                            kind=Award.KIND.quartet,
-                            organization=performer.representing,
-                        )
-                    except Award.DoesNotExist:
-                        log.error("No Quartet District: {0}, {1}".format(
-                            performer,
-                            performer.representing,
-                        ))
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.quartet,
+                        organization=district,
+                    )
+                elif 'International Seniors Quartet' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.international,
+                        kind=Award.KIND.seniors,
+                    )
+                elif 'International Srs Qt - Oldest Qt' in name:
+                    award = Award.objects.get(
+                        name='International Oldest Seniors'
+                    )
+                elif 'Seniors Qt District Qualification (Overall)' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.seniors,
+                        organization=district,
+                    )
+                elif 'District Super Seniors Quartet' in name:
+                    award = Award.objects.get(
+                        name='Far Western District Super Seniors'
+                    )
+                elif 'Out Of District Qt Prelims (2 Rounds)' in name:
+                    award = Award.objects.get(
+                        name='International Quartet',
+                    )
+                elif 'Out of Division Quartet (Score)' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.quartet,
+                        organization=district,
+                    )
+                elif 'Out Of Division Seniors Quartet' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.seniors,
+                        organization=district,
+                    )
+                elif 'Out Of Division Quartet (Overall)' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.quartet,
+                        organization=district,
+                    )
+                elif 'Division Quartet' == name:
+                    if not division:
+                        log.error("Div with no Div: {0}".format(performer))
+                        continue
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.division,
+                        kind=Award.KIND.quartet,
+                        organization=division,
+                    )
                 else:
-                    log.error("No Award: {0}".format(name))
+                    # log.error(
+                    #     "No Award: {0}, {1} {2}".format(
+                    #         name,
+                    #         district,
+                    #         division,
+                    #     )
+                    # )
                     continue
             except Award.MultipleObjectsReturned:
                 log.error("Multiawards")
                 continue
-            # print award
+            contest, foo = session.contests.get_or_create(
+                award=award,
+            )
+            contestant, created = Contestant.objects.get_or_create(
+                contest=contest,
+                performer=performer,
+            )
+            print contestant, created
 
 
 def import_home_districts(path):
