@@ -536,6 +536,66 @@ def import_db_submissions(path):
                 print submission, created
 
 
+def import_db_contests(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            name = row[8].strip()
+            try:
+                performer = Performer.objects.get(
+                    bhs_id=int(row[0]),
+                )
+            except Performer.DoesNotExist:
+                log.error("Can't find performer")
+                continue
+            try:
+                award = Award.objects.get(
+                    organization=performer.representing,
+                    stix_name__endswith=name,
+                )
+            except Award.DoesNotExist:
+                if 'International Preliminary Quartet' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.international,
+                        kind=Award.KIND.quartet,
+                    )
+                elif 'International Preliminary Youth Qt' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.international,
+                        kind=Award.KIND.youth,
+                    )
+                elif 'International Preliminary Seniors Qt' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.international,
+                        kind=Award.KIND.seniors,
+                    )
+                elif 'Quartet District Qualification' in name:
+                    try:
+                        award = Award.objects.get(
+                            is_primary=True,
+                            level=Award.LEVEL.district,
+                            kind=Award.KIND.quartet,
+                            organization=performer.representing,
+                        )
+                    except Award.DoesNotExist:
+                        log.error("No Quartet District: {0}, {1}".format(
+                            performer,
+                            performer.representing,
+                        ))
+                else:
+                    log.error("No Award: {0}".format(name))
+                    continue
+            except Award.MultipleObjectsReturned:
+                log.error("Multiawards")
+                continue
+            # print award
+
+
 def import_home_districts(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
