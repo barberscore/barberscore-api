@@ -498,7 +498,6 @@ def import_db_submissions(path):
                     chart = Chart.objects.get(
                         bhs_marketplace=int(row[2])
                     )
-                    log.info("found marketplace")
                 except Chart.DoesNotExist:
                     chart = None
             else:
@@ -509,37 +508,32 @@ def import_db_submissions(path):
                         title=row[1],
                         bhs_marketplace=None,
                     )
-                    log.info("found title")
                 except Chart.DoesNotExist:
                     if row[2]:
                         chart = Chart.objects.create(
                             title=row[1],
                             bhs_marketplace=int(row[2])
                         )
-                        log.info("created marketplate")
                     else:
                         chart = Chart.objects.create(
                             title=row[1],
                         )
-                        log.info("created title")
                 except Chart.MultipleObjectsReturned:
                     chart = Chart.objects.filter(
                         title=row[1],
                         bhs_marketplace=None,
                     ).first()
-                    log.info("selected title")
-            try:
-                performer = Performer.objects.get(
-                    group__bhs_id=int(row[0]),
-                    session__convention__year=2016,
+            performers = Performer.objects.filter(
+                group__bhs_id=int(row[0]),
+                session__kind=Session.KIND.quartet,
+                session__convention__year=2016,
+            )
+            for performer in performers:
+                submission, created = Submission.objects.get_or_create(
+                    performer=performer,
+                    chart=chart,
                 )
-            except Performer.MultipleObjectsReturned:
-                log.error("Multi Performers: {0}".format(row[0]))
-                continue
-            except Performer.DoesNotExist:
-                log.error("No Performer: {0}".format(row[0]))
-                continue
-            print performer, chart
+                print submission, created
 
 
 def import_home_districts(path):
