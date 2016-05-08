@@ -249,23 +249,3 @@ def scores_entered(performance):
             if not score_entered(score):
                 return False
     return True
-
-
-def preceding_finished(performance):
-    preceding = performance.get_preceding()
-    if preceding:
-        if preceding.status == performance.STATUS.finished:
-            return True
-        else:
-            return False
-    return True
-
-
-def preceding_round_finished(round):
-    preceding = round.get_preceding()
-    if preceding:
-        if preceding.status == round.STATUS.finished:
-            return True
-        else:
-            return False
-    return True

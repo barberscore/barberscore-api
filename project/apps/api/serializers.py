@@ -343,8 +343,6 @@ class ParticipantSerializer(serializers.ModelSerializer):
 class PerformanceSerializer(serializers.ModelSerializer):
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
-    # get_preceding = serializers.PrimaryKeyRelatedField(read_only=True)
-    # get_next = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Performance
@@ -357,8 +355,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'rank',
             'scheduled',
             'actual',
-            'get_preceding',
-            'get_next',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -373,8 +369,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
         readonly_fields = [
-            'get_preceding',
-            'get_next',
             'mus_points',
             'prs_points',
             'sng_points',
