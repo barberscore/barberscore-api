@@ -316,6 +316,7 @@ class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'cycle',
         'award__is_primary',
         'award__organization__level',
+        'award__organization',
         'award__kind',
         'is_qualifier',
     ]
@@ -628,6 +629,7 @@ class OrganizationAdmin(MPTTModelAdmin):
         'long_name',
         'location',
         'representative',
+        'spots',
         'website',
         'facebook',
         'twitter',

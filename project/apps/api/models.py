@@ -823,8 +823,8 @@ class Contest(TimeStampedModel):
     def rank(self):
         if self.award.is_manual:
             return
-        if self.award.num_rounds > self.session.completed_rounds:
-            return
+        # if self.award.num_rounds > self.session.completed_rounds:
+        #     return
         contestants = self.contestants.all()
         for contestant in self.contestants.all():
             contestant.calculate()
@@ -1879,6 +1879,11 @@ class Organization(MPTTModel, TimeStampedModel):
         null=True,
     )
 
+    spots = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     bhs_id = models.IntegerField(
         unique=True,
         blank=True,
@@ -2076,6 +2081,10 @@ class Performance(TimeStampedModel):
             The actual performance window.""",
         null=True,
         blank=True,
+    )
+
+    is_advancing = models.BooleanField(
+        default=False,
     )
 
     # Denormalized
@@ -3124,21 +3133,72 @@ class Round(TimeStampedModel):
         return {'success': 'resorted {0} performances'.format(i)}
 
     def promote(self):
+        if self.session.kind != self.session.KIND.quartet:
+            # Only relevant for quartet contests
+            return
+        if self.session.convention.kind == self.session.convention.KIND.international:
+            # TODO: process for three-round contest.
+            return
+        # Get the number of spots available
+        spots = self.session.convention.organization.spots
+        # Instantiate the list of advancing performers
+        advancing = []
+        # First, denormalize the performances by contest
+        for performance in self.performances.all():
+            performance.calculate()
+            performance.save()
         for contest in self.session.contests.all():
             contest.rank()
-        performers = self.session.performers.filter(
-            contestants__contest__award__num_rounds=2,
-            contestants__rank__lte=self.session.cutoff,
+        # Only handle multi-round contests.
+        for contest in self.session.contests.filter(award__num_rounds__gt=1):
+            # Qualifiers have an absolute score cutoff
+            if contest.is_qualifier:
+                # International cutoff is 73.0 or creater.
+                if contest.award.level == contest.award.LEVEL.international:
+                    contestants = contest.contestants.filter(total_score__gte=73)
+                    for contestant in contestants:
+                        advancing.append(contestant.performer)
+                # District qual variers by district
+                else:
+                    # TODO Distict qual
+                    pass
+            # Championships are relative.
+            else:
+                # Order championship by rank
+                contestants = contest.contestants.order_by('rank')
+                # Get the top scorer, and accept scores within four points of top.
+                top = contestants.last().total_score - 4.0
+                contestants = contest.contestants.filter(
+                    total_score__gte=top,
+                )
+                for contestant in contestants:
+                    advancing.append(contestant.performer)
+        # Remove duplicates
+        advancing = list(set(advancing))
+        # Append up to spots available.
+        obj_list = [p.id for p in advancing]
+        diff = spots - len(advancing)
+        if diff > 0:
+            additional = self.session.performers.filter(
+                contestants__contest__award__num_rounds__gt=1,
+            ).exclude(
+                id__in=obj_list,
+            )
+            perfs = self.performances.filter(
+                performer__in=additional,
+            ).order_by('-total_score')[:diff]
+            for p in perfs:
+                advancing.append(p.performer)
+        # # Sort the list by score
+        # # advancing.sort(key=lambda x: x.total_score, reverse=True)
+        # # return advancing
+        performances = self.performances.filter(
+            performer__in=advancing,
         )
-        for performer in performers:
-            obj = self.__class__.objects.get(
-                session=self.session,
-                num=self.num + 1,
-            )
-            self.performances.model.objects.create(
-                round=obj,
-                performer=performer,
-            )
+        for performance in performances:
+            performance.is_advancing = True
+            performance.save()
+        return
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
