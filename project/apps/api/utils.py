@@ -535,7 +535,6 @@ def import_db_submissions(path):
                     ).first()
             performers = Performer.objects.filter(
                 group__bhs_id=int(row[0]),
-                session__kind=Session.KIND.quartet,
                 session__convention__year=2016,
             )
             for performer in performers:
