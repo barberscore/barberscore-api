@@ -3133,6 +3133,14 @@ class Round(TimeStampedModel):
         return {'success': 'resorted {0} performances'.format(i)}
 
     def promote(self):
+        return
+
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
         if self.session.kind != self.session.KIND.quartet:
             # Only relevant for quartet contests
             return
@@ -3198,14 +3206,6 @@ class Round(TimeStampedModel):
         for performance in performances:
             performance.is_advancing = True
             performance.save()
-        return
-
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
         return
 
 
