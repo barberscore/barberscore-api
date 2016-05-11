@@ -63,7 +63,3 @@ ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),
     'api.barberscore.com',
 ]
-
-INSTALLED_APPS += (
-    'djrill',
-)
