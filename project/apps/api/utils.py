@@ -444,22 +444,33 @@ def import_db_performers(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            bhs_id = int(row[3])
+            convention_bhs_id = int(row[3])
+            group_bhs_id = int(row[2])
             soa = int(row[6]) if int(row[6]) else None
             try:
                 convention = Convention.objects.get(
-                    bhs_id=bhs_id,
+                    bhs_id=convention_bhs_id,
                 )
             except Convention.DoesNotExist:
                 log.error("No Convention: {0}".format(row[3]))
                 continue
             try:
                 group = Group.objects.get(
-                    bhs_id=int(row[2]),
+                    bhs_id=group_bhs_id,
                 )
             except Group.DoesNotExist:
-                log.error("No Group: {0}, {1}".format(row[2], row[1]))
-                continue
+                try:
+                    chapter = Chapter.objects.get(code=row[1][:4])
+                    groups = chapter.groups.filter(status=Group.STATUS.active)
+                    if groups.count() == 1:
+                        group = groups.first()
+                        group.bhs_id = group_bhs_id
+                        group.save()
+                    else:
+                        log.error("No Group: {0}, {1}".format(row[2], row[1]))
+                        continue
+                except Chapter.DoesNotExist:
+                    log.error("No Group: {0}, {1}".format(row[2], row[1]))
             if row[7].strip() == 'Normal Evaluation and Coaching':
                 is_evaluation = True
             else:
@@ -482,9 +493,8 @@ def import_db_performers(path):
             )
             performer.soa = soa
             performer.is_evaluation = is_evaluation
-            performer.bhs_id = bhs_id
+            performer.bhs_id = int(row[0])
             performer.save()
-            print performer, created
 
 
 def import_db_submissions(path):
