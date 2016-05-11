@@ -600,9 +600,11 @@ def import_db_contests(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
+            convention_bhs_id = int(row[3])
+            performer_bhs_id = int(row[0])
             try:
                 convention = Convention.objects.get(
-                    bhs_id=int(row[3]),
+                    bhs_id=convention_bhs_id,
                 )
             except Convention.DoesNotExist:
                 log.error("No Convention: {0}".format(row[3]))
@@ -610,7 +612,7 @@ def import_db_contests(path):
             name = row[8].strip()
             try:
                 performer = Performer.objects.get(
-                    bhs_id=int(row[0]),
+                    bhs_id=performer_bhs_id,
                 )
             except Performer.DoesNotExist:
                 log.error("Can't find performer")
@@ -630,7 +632,11 @@ def import_db_contests(path):
                             kind=Session.KIND.seniors,
                         )
                     except Session.DoesNotExist:
-                        log.error("No Session: {0}, {1} - {2}".format(convention, performer.group, performer.group.get_kind_display()))
+                        log.error("No Session: {0}, {1} - {2}".format(
+                            convention,
+                            performer.group,
+                            performer.group.get_kind_display(),
+                        ))
                         continue
             if not performer.representing:
                 log.error("No representation for {0}".format(performer))
@@ -733,6 +739,163 @@ def import_db_contests(path):
                         kind=Award.KIND.quartet,
                         organization=district,
                     )
+                elif 'International Chorus' == name:
+                    award = Award.objects.get(
+                        name='International Chorus',
+                    )
+                elif 'International Preliminary Chorus' == name:
+                    award = Award.objects.get(
+                        name='International Chorus',
+                    )
+                elif 'Chorus District Qualification' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.chorus,
+                        organization=district,
+                    )
+                elif 'Most-Improved Chorus' in name:
+                    award = Award.objects.get(
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.chorus,
+                        organization=district,
+                        is_improved=True,
+                    )
+                elif 'Out Of Division Chorus' in name:
+                    award = Award.objects.get(
+                        is_primary=True,
+                        level=Award.LEVEL.district,
+                        kind=Award.KIND.chorus,
+                        organization=district,
+                    )
+                elif 'Plateau A (or 1) Chorus' == name:
+                    if row[4] == 'Division Only':
+                        organization = division
+                        level = Award.LEVEL.division
+                    else:
+                        organization = district
+                        level = Award.LEVEL.district
+                    if "Improved" in name:
+                        is_improved = True
+                    else:
+                        is_improved = False
+                    award = Award.objects.get(
+                        Q(
+                            stix_name__contains='Plateau A ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau 1 ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau I ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ),
+                    )
+                elif 'Plateau AA (or 2) Chorus' == name:
+                    if row[4] == 'Division Only':
+                        organization = division
+                        level = Award.LEVEL.division
+                    else:
+                        organization = district
+                        level = Award.LEVEL.district
+                    if "Improved" in name:
+                        is_improved = True
+                    else:
+                        is_improved = False
+                    award = Award.objects.get(
+                        Q(
+                            stix_name__contains='Plateau AA ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau 2 ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau II ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ),
+                    )
+                elif 'Plateau AAA (or 3) Chorus' == name:
+                    if row[4] == 'Division Only':
+                        organization = division
+                        level = Award.LEVEL.division
+                    else:
+                        organization = district
+                        level = Award.LEVEL.district
+                    if "Improved" in name:
+                        is_improved = True
+                    else:
+                        is_improved = False
+                    award = Award.objects.get(
+                        Q(
+                            stix_name__contains='Plateau AAA ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau 3 ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau III ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ),
+                    )
+                elif 'Plateau AAAA (or 4) Chorus' == name:
+                    if row[4] == 'Division Only':
+                        organization = division
+                        level = Award.LEVEL.division
+                    else:
+                        organization = district
+                        level = Award.LEVEL.district
+                    if "Improved" in name:
+                        is_improved = True
+                    else:
+                        is_improved = False
+                    award = Award.objects.get(
+                        Q(
+                            stix_name__contains='Plateau AAAA ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau 4 ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ) | Q(
+                            stix_name__contains='Plateau IV ',
+                            level=level,
+                            kind=Award.KIND.chorus,
+                            organization=organization,
+                            is_improved=is_improved,
+                        ),
+                    )
                 elif 'Division Quartet' == name:
                     if not division:
                         log.error("Div with no Div: {0}".format(performer))
@@ -744,13 +907,13 @@ def import_db_contests(path):
                         organization=division,
                     )
                 else:
-                    # log.error(
-                    #     "No Award: {0}, {1} {2}".format(
-                    #         name,
-                    #         district,
-                    #         division,
-                    #     )
-                    # )
+                    log.error(
+                        "No Award: {0}, {1} {2}".format(
+                            name,
+                            district,
+                            division,
+                        )
+                    )
                     continue
             except Award.MultipleObjectsReturned:
                 log.error("Multiawards")
