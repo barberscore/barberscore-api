@@ -3509,6 +3509,14 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        # First, denormalize the performances by performer
+        for performer in self.performers.all():
+            for performance in performer.performances.all():
+                performance.calculate()
+                performance.save()
+        for contest in self.contests.all():
+            contest.rank()
+        # Only handle multi-round contests.
         return
 
     # @transition(field=status, source='*', target=STATUS.drafted)
