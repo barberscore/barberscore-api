@@ -1,7 +1,7 @@
 arrow==0.7.0
-awscli==1.10.27
+awscli==1.10.28
 Babel==2.3.4
-botocore==1.4.18
+botocore==1.4.19
 colorama==0.3.7
 dj-database-url==0.4.1
 django-autoslug==1.9.3
@@ -31,6 +31,7 @@ fake-factory==0.5.7
 fuzzywuzzy==0.10.0
 nameparser==0.3.16
 phonenumbers==7.3.2
+phonenumberslite==7.3.2
 Pillow==3.2.0
 psycopg2==2.6.1
 python-dateutil==2.5.3
