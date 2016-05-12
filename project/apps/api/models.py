@@ -3133,6 +3133,19 @@ class Round(TimeStampedModel):
         return {'success': 'resorted {0} performances'.format(i)}
 
     def promote(self):
+        promotions = self.performances.filter(
+            is_advancing=True,
+        ).order_by('?')
+        next_round = self.session.rounds.get(
+            num=(self.num + 1),
+        )
+        i = 1
+        for promotion in promotions:
+            next_round.performances.create(
+                performer=promotion.performer,
+                slot=i,
+            )
+            i += 1
         return
 
     @transition(field=status, source='*', target=STATUS.started)
