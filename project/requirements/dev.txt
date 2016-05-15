@@ -2,3 +2,7 @@
 
 ipython==4.2.0
 django-debug-toolbar==1.4
+nose
+django-nose
+codecov
+coverage

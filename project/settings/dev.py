@@ -23,8 +23,18 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:4200',
 )
 
+# Test Settings
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = [
+    '--nologcapture',
+    '--with-coverage',
+    '--cover-package=apps.api',
+]
+
+
 INSTALLED_APPS += (
     'debug_toolbar',
+    'django_nose',
 )
 
 LOGGING = {
