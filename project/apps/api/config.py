@@ -9,5 +9,4 @@ class ApiConfig(AppConfig):
     def ready(self):
         from .signals import (
             performer_post_save,
-            session_post_save,
         )

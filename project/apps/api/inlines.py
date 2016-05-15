@@ -7,7 +7,6 @@ from super_inlines.admin import SuperInlineModelAdmin
 
 
 from .models import (
-    Assistant,
     Award,
     Certification,
     Contest,
@@ -18,7 +17,6 @@ from .models import (
     Group,
     Judge,
     Member,
-    Participant,
     Performance,
     Organization,
     Score,
@@ -27,25 +25,6 @@ from .models import (
     Role,
     Song,
 )
-
-
-class AssistantInline(admin.TabularInline):
-    model = Assistant
-    fields = (
-        'name',
-        'kind',
-        'person',
-        'session',
-        'organization',
-    )
-    extra = 0
-    readonly_fields = [
-        'name',
-    ]
-    raw_id_fields = [
-        'person',
-        'session',
-    ]
 
 
 class AwardInline(admin.TabularInline):
@@ -302,29 +281,6 @@ class JudgeInline(admin.TabularInline):
     can_delete = True
     show_change_link = True
     classes = ('grp-collapse grp-closed',)
-
-
-class ParticipantInline(admin.TabularInline):
-    model = Participant
-    fields = (
-        'organization',
-        'convention',
-        'status',
-    )
-    extra = 0
-    raw_id_fields = (
-        'organization',
-        'convention',
-    )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'organization',
-            'convention',
-        ]
-    }
-    can_delete = True
-    show_change_link = True
-    classes = ('grp-collapse grp-open',)
 
 
 class PerformanceInline(admin.TabularInline):

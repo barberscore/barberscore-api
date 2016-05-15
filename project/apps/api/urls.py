@@ -1,7 +1,6 @@
 from rest_framework import routers
 
 from .views import (
-    AssistantViewSet,
     AwardViewSet,
     CertificationViewSet,
     ChapterViewSet,
@@ -13,7 +12,6 @@ from .views import (
     JudgeViewSet,
     MemberViewSet,
     OrganizationViewSet,
-    ParticipantViewSet,
     PerformanceViewSet,
     PerformerViewSet,
     PersonViewSet,
@@ -28,7 +26,6 @@ from .views import (
 
 router = routers.DefaultRouter(trailing_slash=False)
 
-router.register(r'assistant', AssistantViewSet)
 router.register(r'award', AwardViewSet)
 router.register(r'certification', CertificationViewSet)
 router.register(r'chapter', ChapterViewSet)
@@ -40,7 +37,6 @@ router.register(r'group', GroupViewSet)
 router.register(r'judge', JudgeViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'organization', OrganizationViewSet)
-router.register(r'participant', ParticipantViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'performer', PerformerViewSet)
 router.register(r'person', PersonViewSet)

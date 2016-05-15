@@ -5,7 +5,6 @@ from fsm_admin.mixins import FSMTransitionMixin
 from grappelli_autocomplete_fk_edit_link import AutocompleteEditLinkAdminMixin
 
 from .inlines import (
-    AssistantInline,
     AwardInline,
     CertificationInline,
     ContestInline,
@@ -16,7 +15,6 @@ from .inlines import (
     GroupInline,
     JudgeInline,
     MemberInline,
-    ParticipantInline,
     PerformanceInline,
     ScoreInline,
     RoundInline,
@@ -27,7 +25,6 @@ from .inlines import (
 )
 
 from .models import (
-    Assistant,
     Award,
     Certification,
     Chapter,
@@ -60,52 +57,6 @@ from super_inlines.admin import SuperModelAdmin
 # @admin.register(StateLog)
 # class StateLogAdmin(admin.ModelAdmin):
 #     pass
-
-
-@admin.register(Assistant)
-class AssistantAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
-
-    fields = [
-        'name',
-        'status',
-        'kind',
-        'person',
-        'session',
-        'organization',
-    ]
-
-    list_display = [
-        'name',
-        'status',
-        'person',
-        'session',
-        'organization',
-    ]
-
-    list_filter = [
-        'status',
-        'kind',
-    ]
-
-    readonly_fields = [
-        'name',
-    ]
-
-    search_fields = [
-        'name',
-    ]
-
-    raw_id_fields = [
-        'session',
-        'person',
-    ]
-
-    ordering = (
-        'session',
-        'person',
-        'organization',
-    )
 
 
 @admin.register(Award)
@@ -450,7 +401,6 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
 
     inlines = [
         SessionInline,
-        ParticipantInline,
     ]
 
     readonly_fields = (
@@ -1098,7 +1048,6 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         PerformerInline,
         JudgeInline,
         ContestInline,
-        AssistantInline,
     ]
 
     list_select_related = [

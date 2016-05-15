@@ -27,7 +27,6 @@ from .filters import (
 
 
 from .models import (
-    Assistant,
     Award,
     Certification,
     Chapter,
@@ -39,7 +38,6 @@ from .models import (
     Judge,
     Member,
     Organization,
-    Participant,
     Performance,
     Performer,
     Person,
@@ -53,7 +51,6 @@ from .models import (
 )
 
 from .serializers import (
-    AssistantSerializer,
     AwardSerializer,
     CertificationSerializer,
     ChapterSerializer,
@@ -65,7 +62,6 @@ from .serializers import (
     JudgeSerializer,
     MemberSerializer,
     OrganizationSerializer,
-    ParticipantSerializer,
     PerformanceSerializer,
     PerformerSerializer,
     PersonSerializer,
@@ -79,20 +75,6 @@ from .serializers import (
 )
 
 log = logging.getLogger(__name__)
-
-
-class AssistantViewSet(viewsets.ModelViewSet):
-    queryset = Assistant.objects.select_related(
-        'session',
-        'person',
-        'organization',
-    ).order_by(
-        'session',
-        'person',
-        'organization',
-    )
-    serializer_class = AssistantSerializer
-    resource_name = "assistant"
 
 
 class AwardViewSet(viewsets.ModelViewSet):
@@ -191,7 +173,6 @@ class ConventionViewSet(
         'venue',
         'drcj',
     ).prefetch_related(
-        'participants',
         'sessions',
     ).order_by(
         'date',
@@ -268,15 +249,6 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     resource_name = "organization"
 
 
-class ParticipantViewSet(viewsets.ModelViewSet):
-    queryset = Participant.objects.select_related(
-        'organization',
-        'convention',
-    )
-    serializer_class = ParticipantSerializer
-    resource_name = "participant"
-
-
 class PerformanceViewSet(
     get_viewset_transition_action_mixin(Performance),
     viewsets.ModelViewSet,
@@ -339,7 +311,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'roles',
         'conventions',
         'certifications',
-        'assistants',
     ).order_by(
         'name',
     )
@@ -433,7 +404,6 @@ class SessionViewSet(
         'rounds',
         'judges',
         'contests',
-        'assistants',
     )
     serializer_class = SessionSerializer
     resource_name = "session"

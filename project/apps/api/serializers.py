@@ -13,7 +13,6 @@ from drf_extra_fields.fields import (
 )
 
 from .models import (
-    Assistant,
     Award,
     Certification,
     Chapter,
@@ -25,7 +24,6 @@ from .models import (
     Judge,
     Member,
     Organization,
-    Participant,
     Performance,
     Performer,
     Person,
@@ -48,22 +46,6 @@ class TimezoneField(serializers.Field):
             return pytz.timezone(str(data))
         except pytz.exceptions.UnknownTimeZoneError:
             raise ValidationError('Unknown timezone')
-
-
-class AssistantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Assistant
-        fields = (
-            'id',
-            'url',
-            'name',
-            'status',
-            'category',
-            'kind',
-            'person',
-            'session',
-            'organization',
-        )
 
 
 class AwardSerializer(serializers.ModelSerializer):
@@ -224,7 +206,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'organization',
             'drcj',
             'sessions',
-            'participants',
         )
 
 
@@ -321,24 +302,10 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'children',
             'awards',
             'lft',
-            'participants',
         )
         read_only_fields = [
             'picture',
         ]
-
-
-class ParticipantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Participant
-        fields = (
-            'id',
-            'url',
-            'name',
-            'organization',
-            'convention',
-            'is_qualifier',
-        )
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -459,7 +426,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'panels',
             'conventions',
             'certifications',
-            'assistants',
             'common_name',
             'full_name',
             'formal_name',
@@ -555,7 +521,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'contests',
             'judges',
             'rounds',
-            'assistants',
         )
 
 

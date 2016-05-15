@@ -79,89 +79,6 @@ def generate_image_filename(instance, filename):
     return '{0}{1}'.format(instance.id, ext)
 
 
-class Assistant(TimeStampedModel):
-    """Panel Judge."""
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    CATEGORY = Choices(
-        (10, 'aca', 'ACA'),
-        (20, 'other', 'Other'),
-    )
-
-    category = models.IntegerField(
-        choices=CATEGORY,
-        null=True,
-        blank=True,
-    )
-
-    KIND = Choices(
-        (10, 'official', 'Official'),
-        (20, 'practice', 'Practice'),
-        (25, 'guest', 'Guest'),
-        (30, 'composite', 'Composite'),
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='assistants',
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='assistants',
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='assistants',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.session.name,
-            self.person.name,
-        ]))
-        super(Assistant, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('session', 'person',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "assistant"
-
-
 class Award(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -421,6 +338,7 @@ class Certification(TimeStampedModel):
     person = models.ForeignKey(
         'Person',
         related_name='certifications',
+        on_delete=models.CASCADE,
     )
 
     def __unicode__(self):
@@ -772,11 +690,13 @@ class Contest(TimeStampedModel):
     session = models.ForeignKey(
         'Session',
         related_name='contests',
+        on_delete=models.CASCADE,
     )
 
     award = models.ForeignKey(
         'Award',
         related_name='contests',
+        on_delete=models.CASCADE,
     )
 
     champion = models.OneToOneField(
@@ -784,6 +704,7 @@ class Contest(TimeStampedModel):
         related_name='contests',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     def __unicode__(self):
@@ -918,11 +839,13 @@ class Contestant(TimeStampedModel):
     performer = models.ForeignKey(
         'Performer',
         related_name='contestants',
+        on_delete=models.CASCADE,
     )
 
     contest = models.ForeignKey(
         'Contest',
         related_name='contestants',
+        on_delete=models.CASCADE,
     )
 
     # Denormalization
@@ -1194,6 +1117,7 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
 
     drcj = models.ForeignKey(
@@ -1203,6 +1127,7 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The person managing the convention.""",
+        on_delete=models.CASCADE,
     )
 
     is_prelims = models.BooleanField(
@@ -1257,20 +1182,6 @@ class Convention(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
-
-    @property
-    def pre(self):
-        top = self.participants.aggregate(
-            min=models.Min('organization__level')
-        )['min']
-        if top == 2:
-            pre = self.participants.first().organization.parent.short_name
-        else:
-            pre = None
-        return pre
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
@@ -1581,6 +1492,7 @@ class Judge(TimeStampedModel):
     session = models.ForeignKey(
         'Session',
         related_name='judges',
+        on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
@@ -1877,6 +1789,7 @@ class Organization(MPTTModel, TimeStampedModel):
         related_name='organizations',
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
     )
 
     spots = models.IntegerField(
@@ -1975,66 +1888,6 @@ class Organization(MPTTModel, TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "organization"
-
-
-class Participant(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='participants',
-        null=True,
-        blank=True,
-    )
-
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='participants',
-        null=True,
-        blank=True,
-    )
-
-    is_qualifier = models.BooleanField(
-        default=False,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.convention.name,
-            self.organization.name,
-            str(self.is_qualifier),
-        ]))
-        super(Participant, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('organization', 'convention',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "participant"
 
 
 class Performance(TimeStampedModel):
@@ -2147,11 +2000,13 @@ class Performance(TimeStampedModel):
     round = models.ForeignKey(
         'Round',
         related_name='performances',
+        on_delete=models.CASCADE,
     )
 
     performer = models.ForeignKey(
         'Performer',
         related_name='performances',
+        on_delete=models.CASCADE,
     )
 
     def __unicode__(self):
@@ -2546,11 +2401,13 @@ class Performer(TimeStampedModel):
     session = models.ForeignKey(
         'Session',
         related_name='performers',
+        on_delete=models.CASCADE,
     )
 
     group = models.ForeignKey(
         'Group',
         related_name='performers',
+        on_delete=models.CASCADE,
     )
 
     def __unicode__(self):
@@ -2959,11 +2816,13 @@ class Role(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='roles',
+        on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='roles',
+        on_delete=models.CASCADE,
     )
 
     bhs_id = models.IntegerField(
@@ -3072,11 +2931,13 @@ class Round(TimeStampedModel):
         related_name='mic_tester',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     session = models.ForeignKey(
         'Session',
         related_name='rounds',
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -3283,11 +3144,13 @@ class Score(TimeStampedModel):
     song = models.ForeignKey(
         'Song',
         related_name='scores',
+        on_delete=models.CASCADE,
     )
 
     judge = models.ForeignKey(
         'Judge',
         related_name='scores',
+        on_delete=models.CASCADE,
     )
 
     CATEGORY = Choices(
@@ -3430,6 +3293,7 @@ class Session(TimeStampedModel):
         related_name='sessions_ca',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     ca = models.ForeignKey(
@@ -3437,6 +3301,7 @@ class Session(TimeStampedModel):
         related_name='sessions_ca',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     aca = models.ForeignKey(
@@ -3444,6 +3309,7 @@ class Session(TimeStampedModel):
         related_name='sessions_aca',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     cutoff = models.IntegerField(
@@ -3478,6 +3344,7 @@ class Session(TimeStampedModel):
     convention = models.ForeignKey(
         'Convention',
         related_name='sessions',
+        on_delete=models.CASCADE,
     )
 
     cursor = models.CharField(
@@ -3717,6 +3584,7 @@ class Song(TimeStampedModel):
     performance = models.ForeignKey(
         'Performance',
         related_name='songs',
+        on_delete=models.CASCADE,
     )
 
     class Meta:
