@@ -1,9 +1,5 @@
 from .base import *
 
-from urlparse import urlparse
-es = urlparse(get_env_variable("SEARCHBOX_URL"))
-
-
 # AWS S3  Settings
 # This was hellaciously confusing to set up.
 # `Static` means public-read, static resources like CSS, Images, etc.
@@ -36,7 +32,6 @@ MEDIA_URL = 'https://{0}.s3-us-west-1.amazonaws.com/'.format(
 DEFAULT_FILE_STORAGE = MEDIA_STORAGE
 STATICFILES_STORAGE = STATIC_STORAGE
 
-
 # CORS Settings
 CORS_ORIGIN_WHITELIST = (
     'barberscore-ember.herokuapp.com',
@@ -48,16 +43,6 @@ EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_USER = get_env_variable("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = get_env_variable("SENDGRID_PASSWORD")
 DEFAULT_FROM_EMAIL = 'admin@barberscore.com'
-
-# Haystack
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': es.scheme + '://' + es.hostname + ':80',
-        'INDEX_NAME': 'haystack',
-        'KWARGS': {"http_auth": es.username + ':' + es.password},
-    },
-}
 
 ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),

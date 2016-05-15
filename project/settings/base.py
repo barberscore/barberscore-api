@@ -123,20 +123,12 @@ JSON_API_FORMAT_KEYS = 'dasherize'
 # JSON_API_PLURALIZE_RELATION_TYPE = False
 APPEND_TRAILING_SLASH = False
 
+# JWT Settings
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = False
-
-# Haystack
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200',
-        'INDEX_NAME': 'haystack',
-    },
-}
 
 # Grappelli
 GRAPPELLI_ADMIN_TITLE = 'Barberscore Admin'
@@ -213,7 +205,6 @@ INSTALLED_APPS = (
     'fsm_admin',
     'django_fsm',
     # 'django_fsm_log',
-    'haystack',
     'easy_pdf',
     'timezone_field',
     'corsheaders',
