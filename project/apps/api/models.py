@@ -3050,6 +3050,10 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
+    num_songs = models.IntegerField(
+        default=2,
+    )
+
     date = DateTimeRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -3132,7 +3136,8 @@ class Round(TimeStampedModel):
             i += 1
         return {'success': 'resorted {0} performances'.format(i)}
 
-    def promote(self):
+    @transition(field=status, source='*', target=STATUS.ranked)
+    def promote(self, *args, **kwargs):
         promotions = self.performances.filter(
             is_advancing=True,
         ).order_by('?')
@@ -3141,10 +3146,31 @@ class Round(TimeStampedModel):
         )
         i = 1
         for promotion in promotions:
-            next_round.performances.create(
+            performance = next_round.performances.create(
                 performer=promotion.performer,
                 slot=i,
             )
+            s = 1
+            while s <= self.num_songs:
+                song = performance.songs.create(
+                    performance=performance,
+                    order=s,
+                )
+                s += 1
+                judges = self.session.judges.filter(
+                    category__in=[
+                        self.session.judges.model.CATEGORY.music,
+                        self.session.judges.model.CATEGORY.presentation,
+                        self.session.judges.model.CATEGORY.singing,
+                    ]
+                )
+                for judge in judges:
+                    judge.scores.create(
+                        judge=judge,
+                        song=song,
+                        category=judge.category,
+                        kind=judge.kind,
+                    )
             i += 1
         return
 
