@@ -40,7 +40,7 @@ class ChartFilter(filters.FilterSet):
     class Meta:
         model = Chart
         fields = {
-            'name': filters.ALL_LOOKUPS,
+            'name': '__all__',
         }
 
 
@@ -50,9 +50,9 @@ class ConventionFilter(filters.FilterSet):
     class Meta:
         model = Convention
         fields = {
-            'status': filters.ALL_LOOKUPS,
-            'year': filters.ALL_LOOKUPS,
-            # 'season': filters.ALL_LOOKUPS,
+            'status': '__all__',
+            'year': '__all__',
+            # 'season': '__all__',
         }
 
 
@@ -60,8 +60,8 @@ class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
         fields = {
-            'chap_name': filters.ALL_LOOKUPS,
-            'kind': filters.ALL_LOOKUPS,
+            'chap_name': '__all__',
+            'kind': '__all__',
         }
 
 
@@ -69,8 +69,8 @@ class CertificationFilter(filters.FilterSet):
     class Meta:
         model = Certification
         fields = {
-            'name': filters.ALL_LOOKUPS,
-            'category': filters.ALL_LOOKUPS,
+            'name': '__all__',
+            'category': '__all__',
         }
 
 
@@ -78,7 +78,7 @@ class ContestantFilter(filters.FilterSet):
     class Meta:
         model = Contestant
         fields = {
-            'name': filters.ALL_LOOKUPS,
+            'name': '__all__',
         }
 
 
@@ -86,7 +86,7 @@ class PerformerFilter(filters.FilterSet):
     class Meta:
         model = Performer
         fields = {
-            'name': filters.ALL_LOOKUPS,
+            'name': '__all__',
         }
 
 
@@ -99,9 +99,9 @@ class PersonFilter(filters.FilterSet):
             'status',
         ]
         fields = {
-            'name': filters.ALL_LOOKUPS,
-            'id_name': filters.ALL_LOOKUPS,
-            # 'certifications__category': filters.ALL_LOOKUPS,
+            'name': '__all__',
+            'id_name': '__all__',
+            # 'certifications__category': '__all__',
         }
 
 
@@ -109,8 +109,8 @@ class SubmissionFilter(filters.FilterSet):
     class Meta:
         model = Submission
         fields = {
-            'chart__name': filters.ALL_LOOKUPS,
-            'performer__id': filters.ALL_LOOKUPS,
+            'chart__name': '__all__',
+            'performer__id': '__all__',
         }
 
 
@@ -118,5 +118,5 @@ class VenueFilter(filters.FilterSet):
     class Meta:
         model = Venue
         fields = {
-            'name': filters.ALL_LOOKUPS,
+            'name': '__all__',
         }
