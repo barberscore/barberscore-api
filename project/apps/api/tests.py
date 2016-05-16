@@ -4,7 +4,13 @@ from rest_framework.test import APITestCase
 
 from .factories import (
     ConventionFactory,
-    OrganizationFactory,
+    InternationalFactory,
+    DistrictFactory,
+    AwardFactory,
+    ChartFactory,
+    QuartetFactory,
+    ChorusFactory,
+    PersonFactory,
 )
 
 
@@ -21,10 +27,56 @@ class ConventionTests(APITestCase):
 
 class OrganizationTests(APITestCase):
     def setUp(self):
-        OrganizationFactory.create()
+        InternationalFactory.create()
+        DistrictFactory.create()
 
     def test_get_organizations(self):
         """Ensure we can get the organization list."""
         url = reverse('organization-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class AwardTests(APITestCase):
+    def setUp(self):
+        AwardFactory.create()
+
+    def test_get_awards(self):
+        """Ensure we can get the award list."""
+        url = reverse('award-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ChartTests(APITestCase):
+    def setUp(self):
+        ChartFactory.create()
+
+    def test_get_charts(self):
+        """Ensure we can get the chart list."""
+        url = reverse('chart-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GroupTests(APITestCase):
+    def setUp(self):
+        QuartetFactory.create()
+        ChorusFactory.create()
+
+    def test_get_groups(self):
+        """Ensure we can get the group list."""
+        url = reverse('group-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class PersonTests(APITestCase):
+    def setUp(self):
+        PersonFactory.create()
+
+    def test_get_persons(self):
+        """Ensure we can get the person list."""
+        url = reverse('person-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

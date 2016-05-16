@@ -1221,6 +1221,61 @@ class Group(TimeStampedModel):
         }
     )
 
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+        (50, 'dup', 'Duplicate',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    KIND = Choices(
+        (1, 'quartet', 'Quartet'),
+        (2, 'chorus', 'Chorus'),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of group; choices are Quartet or Chorus.""",
+        choices=KIND,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
+    )
+
+    chapter = models.ForeignKey(
+        'Chapter',
+        related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
+        related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -1300,61 +1355,6 @@ class Group(TimeStampedModel):
         help_text="""
             Notes (for internal use only).""",
         blank=True,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-        (50, 'dup', 'Duplicate',),
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    KIND = Choices(
-        (1, 'quartet', 'Quartet'),
-        (2, 'chorus', 'Chorus'),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of group; choices are Quartet or Chorus.""",
-        choices=KIND,
-    )
-
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
-    is_novice = models.BooleanField(
-        default=False,
-    )
-
-    chapter = models.ForeignKey(
-        'Chapter',
-        related_name='groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     chap_name = models.CharField(
