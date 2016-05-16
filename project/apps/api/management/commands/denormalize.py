@@ -4,64 +4,54 @@ from django.core.management.base import (
 
 from apps.api.models import (
     Award,
-    Convention,
-    Performer,
-    Performance,
-    Song,
-    Group,
-    # Judge,
-    Contestant,
+    Certification,
+    Chapter,
+    Chart,
     Contest,
+    Contestant,
+    Convention,
+    Group,
+    Judge,
+    Member,
+    Organization,
+    Performance,
+    Performer,
+    Person,
+    Role,
     Round,
-    Session,
     Score,
+    Session,
+    Song,
+    Submission,
+    Venue,
 )
 
 
 class Command(BaseCommand):
-    help = "Command to denormailze data."
+    help = "Command to denormalize names."
 
     def handle(self, *args, **options):
-        ws = Award.objects.all()
-        for w in ws:
-            w.save()
-        cs = Convention.objects.all()
-        for c in cs:
-            c.save()
-        ps = Session.objects.all()
-        for p in ps:
-            p.save()
-        ss = Round.objects.all()
-        for s in ss:
-            s.save()
-        gs = Group.objects.all()
-        for g in gs:
-            g.save()
-        cs = Performer.objects.all()
-        for c in cs:
-            c.save()
-        rs = Contest.objects.all()
-        for r in rs:
-            r.save()
-        rs = Contestant.objects.all()
-        for r in rs:
-            r.save()
-        ps = Performance.objects.all()
-        for p in ps:
-            p.save()
-        ss = Song.objects.all()
-        for s in ss:
-            s.save()
-        zs = Score.objects.all()
-        for s in zs:
-            s.save()
-        # ss = Singer.objects.all()
-        # for s in ss:
-        #     s.save()
-        # js = Judge.objects.all()
-        # for j in js:
-        #     j.save()
-        # ds = Director.objects.all()
-        # for d in ds:
-        #     d.save()
+        # Primitives
+        [i.save() for i in Award.objects.all()]
+        [i.save() for i in Chapter.objects.all()]
+        [i.save() for i in Chart.objects.all()]
+        [i.save() for i in Convention.objects.all()]
+        [i.save() for i in Group.objects.all()]
+        [i.save() for i in Organization.objects.all()]
+        [i.save() for i in Person.objects.all()]
+        [i.save() for i in Venue.objects.all()]
+        # Branches
+        [i.save() for i in Session.objects.all()]
+        [i.save() for i in Certification.objects.all()]
+        [i.save() for i in Judge.objects.all()]
+        [i.save() for i in Member.objects.all()]
+        [i.save() for i in Role.objects.all()]
+        [i.save() for i in Round.objects.all()]
+        [i.save() for i in Contest.objects.all()]
+        [i.save() for i in Performer.objects.all()]
+        [i.save() for i in Contestant.objects.all()]
+        [i.save() for i in Performance.objects.all()]
+        [i.save() for i in Submission.objects.all()]
+        [i.save() for i in Song.objects.all()]
+        [i.save() for i in Score.objects.all()]
         return "Done"
