@@ -924,6 +924,8 @@ class Contestant(TimeStampedModel):
             song__performance__performer=self.performer,
             song__performance__round__num__lte=self.contest.award.num_rounds,
         ).exclude(
+            points=None,
+        ).exclude(
             kind=Score.KIND.practice,
         ).order_by(
             'category',
@@ -2445,6 +2447,8 @@ class Performer(TimeStampedModel):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
             song__performance__performer=self,
+        ).exclude(
+            points=None,
         ).exclude(
             kind=Score.KIND.practice,
         ).order_by(
