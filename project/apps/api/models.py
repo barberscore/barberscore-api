@@ -2997,44 +2997,6 @@ class Round(TimeStampedModel):
             i += 1
         return {'success': 'resorted {0} performances'.format(i)}
 
-    @transition(field=status, source='*', target=STATUS.ranked)
-    def promote(self, *args, **kwargs):
-        promotions = self.performances.filter(
-            is_advancing=True,
-        ).order_by('?')
-        next_round = self.session.rounds.get(
-            num=(self.num + 1),
-        )
-        i = 1
-        for promotion in promotions:
-            performance = next_round.performances.create(
-                performer=promotion.performer,
-                slot=i,
-            )
-            s = 1
-            while s <= self.num_songs:
-                song = performance.songs.create(
-                    performance=performance,
-                    order=s,
-                )
-                s += 1
-                judges = self.session.judges.filter(
-                    category__in=[
-                        self.session.judges.model.CATEGORY.music,
-                        self.session.judges.model.CATEGORY.presentation,
-                        self.session.judges.model.CATEGORY.singing,
-                    ]
-                )
-                for judge in judges:
-                    judge.scores.create(
-                        judge=judge,
-                        song=song,
-                        category=judge.category,
-                        kind=judge.kind,
-                    )
-            i += 1
-        return
-
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
@@ -3106,6 +3068,44 @@ class Round(TimeStampedModel):
         for performance in performances:
             performance.is_advancing = True
             performance.save()
+        return
+
+    @transition(field=status, source='*', target=STATUS.ranked)
+    def promote(self, *args, **kwargs):
+        promotions = self.performances.filter(
+            is_advancing=True,
+        ).order_by('?')
+        next_round = self.session.rounds.get(
+            num=(self.num + 1),
+        )
+        i = 1
+        for promotion in promotions:
+            performance = next_round.performances.create(
+                performer=promotion.performer,
+                slot=i,
+            )
+            s = 1
+            while s <= self.num_songs:
+                song = performance.songs.create(
+                    performance=performance,
+                    order=s,
+                )
+                s += 1
+                judges = self.session.judges.filter(
+                    category__in=[
+                        self.session.judges.model.CATEGORY.music,
+                        self.session.judges.model.CATEGORY.presentation,
+                        self.session.judges.model.CATEGORY.singing,
+                    ]
+                )
+                for judge in judges:
+                    judge.scores.create(
+                        judge=judge,
+                        song=song,
+                        category=judge.category,
+                        kind=judge.kind,
+                    )
+            i += 1
         return
 
 
