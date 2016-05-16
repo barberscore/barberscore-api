@@ -54,4 +54,4 @@ class Command(BaseCommand):
         [i.save() for i in Submission.objects.all()]
         [i.save() for i in Song.objects.all()]
         [i.save() for i in Score.objects.all()]
-        return "Done"
+        return "Denormalized"
