@@ -2038,6 +2038,8 @@ class Performance(TimeStampedModel):
         scores = Score.objects.filter(
             song__performance=self,
         ).exclude(
+            points=None,
+        ).exclude(
             kind=Score.KIND.practice,
         ).order_by(
             'category',
@@ -3608,6 +3610,8 @@ class Song(TimeStampedModel):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
             song=self,
+        ).exclude(
+            points=None,
         ).exclude(
             kind=Score.KIND.practice,
         ).order_by(
