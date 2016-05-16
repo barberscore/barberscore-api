@@ -1,102 +1,79 @@
-from django.utils import timezone
+from factory.django import (
+    DjangoModelFactory,
+)
 
-from .models import (
+from factory import (
+    SubFactory,
+)
+
+from datetime import datetime
+
+from psycopg2.extras import DateTimeTZRange
+
+from apps.api.models import (
+    Award,
     Certification,
+    Chapter,
+    Chart,
+    Contest,
+    Contestant,
+    Convention,
     Group,
     Judge,
+    Member,
+    Organization,
     Performance,
     Performer,
+    Person,
+    Role,
     Round,
+    Score,
     Session,
+    Song,
+    Submission,
+    Venue,
 )
 
 
-def add_rounds(session):
-    # TODO Wonky.  Do these need kinds?
-    rounds = session.rounds
-    k = rounds
-    i = 1
-    while i <= rounds:
-        Round.objects.create(
-            session=session,
-            num=i,
-            kind=k,
-        )
-        i += 1
-        k -= 1
+class ConventionFactory(DjangoModelFactory):
+    class Meta:
+        model = Convention
 
-
-def add_judges(session, size):
-    admin = Certification.objects.filter(
-        category=Certification.CATEGORY.admin,
-    ).order_by('?').first()
-    round = session.rounds.get(num=1)
-    Judge.objects.create(
-        person=admin.person,
-        round=round,
-        category=admin.category,
-        kind=Judge.KIND.official,
+    status = Convention.STATUS.new
+    kind = Convention.KIND.international
+    season = Convention.SEASON.international
+    risers = [13, ]
+    year = 2016
+    date = DateTimeTZRange(
+        lower=datetime(2016, 07, 01, 12, 00),
+        upper=datetime(2016, 07, 04, 12, 00),
+        bounds='[)',
     )
-    categories = [
-        'music',
-        'presentation',
-        'singing',
-    ]
-    i = 1
-    for category in categories:
-        certifications = Certification.objects.filter(
-            category=getattr(Certification.CATEGORY, category),
-        ).order_by('?')[:size]
-        for certification in certifications:
-            Judge.objects.create(
-                person=certification.person,
-                round=round,
-                slot=i,
-                category=getattr(Judge.CATEGORY, category),
-                kind=Judge.KIND.official,
-            )
-            i += 1
-    return "Judges Impaneled"
+    organization = SubFactory(
+        'apps.api.factories.OrganizationFactory'
+    )
+    venue = SubFactory(
+        'apps.api.factories.VenueFactory'
+    )
 
 
-def add_performers(session, number=20):
-    if session.kind == Session.KIND.chorus:
-        kind = Group.KIND.chorus
-    else:
-        kind = Group.KIND.quartet
-    groups = Group.objects.filter(
-        kind=kind,
-        status=Group.STATUS.active,
-    ).order_by('?')[:number]
-    for group in groups:
-        performer = Performer.objects.create(
-            session=session,
-            group=group,
-        )
-        performer.qualify()
-        performer.accept()
-        performer.save()
-    return "Performers Added"
+class OrganizationFactory(DjangoModelFactory):
+    class Meta:
+        model = Organization
+
+    name = 'International'
+    status = Organization.STATUS.active
+    level = Organization.LEVEL.international
+    kind = Organization.KIND.international
+    short_name = 'BHS'
+    long_name = 'International'
 
 
-def add_performances(session):
-    performers = session.performers.order_by('?')
-    round = session.rounds.get(num=1)
-    position = 0
-    for performer in performers:
-        Performance.objects.create(
-            performer=performer,
-            round=round,
-            position=position,
-        )
-        position += 1
-    return "Performances Added"
+class VenueFactory(DjangoModelFactory):
+    class Meta:
+        model = Venue
 
-
-def schedule_performances(round):
-    performances = round.performances.all()
-    for performance in performances:
-        performance.start_time = timezone.now()
-        performance.prep()
-        performance.save()
-    return "Performances scheduled"
+    location = 'Nashville Convention Center'
+    city = 'Nashville'
+    state = 'Tennessee'
+    timezone = 'US/Central'
