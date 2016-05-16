@@ -57,13 +57,5 @@ LOGGING = {
             'level': 'DEBUG',
             'handlers': ['console'],
         },
-        'apps.website': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        },
-        'utils': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        },
     },
 }
