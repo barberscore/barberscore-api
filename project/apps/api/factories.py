@@ -4,6 +4,8 @@ from factory.django import (
 
 from factory import (
     SubFactory,
+    Iterator,
+    PostGenerationMethodCall,
 )
 
 from datetime import datetime
@@ -32,7 +34,25 @@ from apps.api.models import (
     Song,
     Submission,
     Venue,
+    User,
 )
+
+
+class UserFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+    email = 'user@barberscore.com'
+    password = PostGenerationMethodCall('set_password', 'password')
+    name = 'Test User'
+
+
+class AdminFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+    email = 'admin@barberscore.com'
+    password = PostGenerationMethodCall('set_password', 'password')
+    name = 'Admin User'
+    is_staff = True
 
 
 class ConventionFactory(DjangoModelFactory):
@@ -93,7 +113,6 @@ class VenueFactory(DjangoModelFactory):
 class AwardFactory(DjangoModelFactory):
     class Meta:
         model = Award
-
     status = Award.STATUS.active
     kind = Award.KIND.quartet
     season = Award.SEASON.international
@@ -257,14 +276,27 @@ class PerformerFactory(DjangoModelFactory):
         model = Performer
 
     status = Performer.STATUS.new
-    representing = SubFactory(
-        'apps.api.factories.DistrictFactory'
-    )
+    # representing = SubFactory(
+    #     'apps.api.factories.DistrictFactory'
+    # )
     session = SubFactory(
         'apps.api.factories.SessionFactory'
     )
     group = SubFactory(
         'apps.api.factories.QuartetFactory'
+    )
+
+
+class SubmissionFactory(DjangoModelFactory):
+    class Meta:
+        model = Submission
+
+    status = Submission.STATUS.new
+    performer = SubFactory(
+        'apps.api.factories.PerformerFactory'
+    )
+    chart = SubFactory(
+        'apps.api.factories.ChartFactory'
     )
 
 
@@ -277,5 +309,51 @@ class ContestantFactory(DjangoModelFactory):
         'apps.api.factories.PerformerFactory'
     )
     contest = SubFactory(
-        'apps.api.factories.ContestFactory'
+        'apps.api.factories.ContestFactory',
+        # session=Iterator(Session.objects.all())
     )
+
+
+class PerformanceFactory(DjangoModelFactory):
+    class Meta:
+        model = Performance
+
+    status = Performance.STATUS.new
+    performer = SubFactory(
+        'apps.api.factories.PerformerFactory',
+    )
+    round = SubFactory(
+        'apps.api.factories.RoundFactory',
+        # session=Iterator(Session.objects.all())
+    )
+
+
+class SongFactory(DjangoModelFactory):
+    class Meta:
+        model = Song
+
+    status = Performance.STATUS.new
+    order = 1
+    performance = SubFactory(
+        'apps.api.factories.PerformanceFactory',
+    )
+    submission = SubFactory(
+        'apps.api.factories.SubmissionFactory',
+        # performer=Iterator(Performer.objects.all())
+    )
+
+
+class ScoreFactory(DjangoModelFactory):
+    class Meta:
+        model = Score
+
+    status = Score.STATUS.new
+    judge = SubFactory(
+        'apps.api.factories.JudgeFactory',
+    )
+    song = SubFactory(
+        'apps.api.factories.SongFactory',
+        # performer=Performer.objects.all().first()
+    )
+    category = 1
+    kind = 10

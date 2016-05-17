@@ -49,9 +49,9 @@ class Command(BaseCommand):
         [i.save() for i in Round.objects.all()]
         [i.save() for i in Contest.objects.all()]
         [i.save() for i in Performer.objects.all()]
+        [i.save() for i in Submission.objects.all()]
         [i.save() for i in Contestant.objects.all()]
         [i.save() for i in Performance.objects.all()]
-        [i.save() for i in Submission.objects.all()]
         [i.save() for i in Song.objects.all()]
         [i.save() for i in Score.objects.all()]
         return "Denormalized"
