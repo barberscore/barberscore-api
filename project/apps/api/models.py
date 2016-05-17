@@ -2412,7 +2412,6 @@ class Performer(TimeStampedModel):
     #         raise ValidationError('There can not be more than four persons in a quartet.')
 
     def save(self, *args, **kwargs):
-        # NOTE Calls post-save signal on create.  Only way to do it with UUID
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
             str(self.session.convention.get_division_display()),

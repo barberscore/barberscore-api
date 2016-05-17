@@ -7,6 +7,4 @@ class ApiConfig(AppConfig):
     name = 'apps.api'
 
     def ready(self):
-        from .signals import (
-            performer_post_save,
-        )
+        pass
