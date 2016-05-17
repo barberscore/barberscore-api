@@ -502,7 +502,7 @@ class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
         'status',
         'session',
-        'person',
+        'certification',
         'organization',
         ('category', 'kind',),
     ]
@@ -510,7 +510,7 @@ class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     list_display = [
         'name',
         'status',
-        'person',
+        'certification',
         'organization',
     ]
 
@@ -521,18 +521,18 @@ class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     list_select_related = [
         'organization',
         'session',
-        'person',
+        'certification',
     ]
 
     raw_id_fields = (
         'session',
-        'person',
+        'certification',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'session',
-            'person',
+            'certification',
         ]
     }
 

@@ -11,6 +11,9 @@ from .factories import (
     QuartetFactory,
     ChorusFactory,
     PersonFactory,
+    SessionFactory,
+    CertificationFactory,
+    JudgeFactory,
 )
 
 
@@ -78,5 +81,38 @@ class PersonTests(APITestCase):
     def test_get_persons(self):
         """Ensure we can get the person list."""
         url = reverse('person-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class SessionTests(APITestCase):
+    def setUp(self):
+        SessionFactory.create()
+
+    def test_get_sessions(self):
+        """Ensure we can get the person list."""
+        url = reverse('session-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class CertificationTests(APITestCase):
+    def setUp(self):
+        CertificationFactory.create()
+
+    def test_get_certifications(self):
+        """Ensure we can get the person list."""
+        url = reverse('certification-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class JudgeTests(APITestCase):
+    def setUp(self):
+        JudgeFactory.create()
+
+    def test_get_judges(self):
+        """Ensure we can get the judge list."""
+        url = reverse('judge-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -159,3 +159,38 @@ class PersonFactory(DjangoModelFactory):
 
     name = 'Test Person'
     status = Person.STATUS.active
+
+
+class SessionFactory(DjangoModelFactory):
+    class Meta:
+        model = Session
+
+    kind = Session.KIND.quartet
+    convention = SubFactory(
+        'apps.api.factories.ConventionFactory',
+    )
+
+
+class CertificationFactory(DjangoModelFactory):
+    class Meta:
+        model = Certification
+
+    status = Certification.STATUS.active
+    category = Certification.CATEGORY.admin
+    person = SubFactory(
+        'apps.api.factories.PersonFactory'
+    )
+
+
+class JudgeFactory(DjangoModelFactory):
+    class Meta:
+        model = Judge
+
+    category = Judge.CATEGORY.admin
+    kind = Judge.KIND.official
+    session = SubFactory(
+        'apps.api.factories.SessionFactory'
+    )
+    certification = SubFactory(
+        'apps.api.factories.CertificationFactory'
+    )

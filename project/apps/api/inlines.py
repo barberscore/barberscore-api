@@ -258,7 +258,7 @@ class GroupInline(admin.TabularInline):
 class JudgeInline(admin.TabularInline):
     model = Judge
     fields = (
-        'person',
+        'certification',
         # 'organization',
         'category',
         'kind',
@@ -271,11 +271,11 @@ class JudgeInline(admin.TabularInline):
     )
     extra = 0
     raw_id_fields = (
-        'person',
+        'certification',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'person',
+            'certification',
         ]
     }
     can_delete = True

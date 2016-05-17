@@ -423,7 +423,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'roles',
-            'panels',
             'conventions',
             'certifications',
             'common_name',

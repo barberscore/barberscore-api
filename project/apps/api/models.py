@@ -305,17 +305,6 @@ class Certification(TimeStampedModel):
         editable=False,
     )
 
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New'),
         (1, 'active', 'Active'),
@@ -326,6 +315,17 @@ class Certification(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
     )
 
     date = DateRangeField(
@@ -1476,8 +1476,6 @@ class Judge(TimeStampedModel):
 
     KIND = Choices(
         (10, 'official', 'Official'),
-        (12, 'ca', 'CA'),
-        (14, 'aca', 'ACA'),
         (20, 'practice', 'Practice'),
         (30, 'composite', 'Composite'),
     )
@@ -1495,14 +1493,6 @@ class Judge(TimeStampedModel):
         'Session',
         related_name='judges',
         on_delete=models.CASCADE,
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='panels',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     certification = models.ForeignKey(
