@@ -649,7 +649,7 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     fields = (
         'performance',
         'order',
-        'chart',
+        'submission',
         # 'title',
         ('mus_points', 'prs_points', 'sng_points',),
     )
@@ -670,11 +670,11 @@ class SongStackedInline(SuperInlineModelAdmin, admin.StackedInline):
     show_change_link = True
     # classes = ('grp-collapse grp-open',)
     raw_id_fields = (
-        'chart',
+        'submission',
     )
     autocomplete_lookup_fields = {
         'fk': [
-            'chart',
+            'submission',
         ]
     }
 

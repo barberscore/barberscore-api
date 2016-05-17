@@ -3394,58 +3394,6 @@ class Session(TimeStampedModel):
         return
 
 
-class Submission(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    performer = models.ForeignKey(
-        'Performer',
-        related_name='submissions',
-        on_delete=models.CASCADE,
-    )
-
-    chart = models.ForeignKey(
-        'Chart',
-        related_name='submissions',
-        on_delete=models.CASCADE,
-    )
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    class Meta:
-        unique_together = (
-            ('performer', 'chart',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "submission"
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
-        )
-        super(Submission, self).save(*args, **kwargs)
-
-
 class Song(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3536,14 +3484,6 @@ class Song(TimeStampedModel):
         editable=False,
     )
 
-    chart = models.ForeignKey(
-        'Chart',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     submission = models.ForeignKey(
         'Submission',
         related_name='songs',
@@ -3621,6 +3561,58 @@ class Song(TimeStampedModel):
             ]) / 3, 1)
         except TypeError:
             self.total_score = None
+
+
+class Submission(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    performer = models.ForeignKey(
+        'Performer',
+        related_name='submissions',
+        on_delete=models.CASCADE,
+    )
+
+    chart = models.ForeignKey(
+        'Chart',
+        related_name='submissions',
+        on_delete=models.CASCADE,
+    )
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    class Meta:
+        unique_together = (
+            ('performer', 'chart',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "submission"
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0}".format(
+            self.id.hex,
+        )
+        super(Submission, self).save(*args, **kwargs)
 
 
 class Venue(TimeStampedModel):

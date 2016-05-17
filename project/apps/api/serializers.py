@@ -122,7 +122,6 @@ class ChartSerializer(serializers.ModelSerializer):
             'is_generic',
             'is_parody',
             'is_medley',
-            'songs',
             'submissions',
         )
 

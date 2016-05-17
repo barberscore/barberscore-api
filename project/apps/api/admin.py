@@ -1099,7 +1099,7 @@ class SongAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
         # 'status',
         # 'title',
-        'chart',
+        'submission',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -1114,7 +1114,7 @@ class SongAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
         # 'status',
         'performance',
-        'chart',
+        'submission',
         'order',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
@@ -1143,12 +1143,12 @@ class SongAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     )
     raw_id_fields = (
         'performance',
-        'chart',
+        'submission',
     )
     autocomplete_lookup_fields = {
         'fk': [
             'performance',
-            'chart',
+            'submission',
         ]
     }
 
