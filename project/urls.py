@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^api-token-auth/', views.obtain_jwt_token),
+    url(r'^api-token-auth/', views.obtain_jwt_token, name='obtain-jwt-token'),
     url(r'^api-token-refresh/', views.refresh_jwt_token),
     url(r'^api-token-verify/', views.verify_jwt_token),
     url(r'^api/', include('apps.api.urls')),

@@ -9,7 +9,6 @@ from drf_fsm_transitions.viewset_mixins import (
 
 from rest_framework import (
     viewsets,
-    permissions,
 )
 
 from .filters import (
@@ -142,13 +141,6 @@ class ContestViewSet(viewsets.ModelViewSet):
     resource_name = "contest"
 
 
-    # @detail_route(methods=['put'])
-    # def build(self, request, pk=None):
-    #     performance = self.get_object()
-    #     response = performance.build()
-    #     return Response(response)
-
-
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'performer',
@@ -179,19 +171,6 @@ class ConventionViewSet(
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
     resource_name = "convention"
-
-
-    # @detail_route(methods=['put'])
-    # def start(self, request, pk=None):
-    #     convention = self.get_object()
-    #     response = convention.start()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def finish(self, request, pk=None):
-    #     convention = self.get_object()
-    #     response = convention.finish()
-    #     return Response(response)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -344,37 +323,6 @@ class RoundViewSet(
     resource_name = "round"
 
 
-    # @detail_route(methods=['put'])
-    # def draw(self, request, pk=None):
-    #     round = self.get_object()
-    #     response = round.draw()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def promote(self, request, pk=None):
-    #     round = self.get_object()
-    #     response = round.promote()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def resort(self, request, pk=None):
-    #     round = self.get_object()
-    #     response = round.resort()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def start(self, request, pk=None):
-    #     round = self.get_object()
-    #     response = round.start()
-    #     return Response(response)
-
-    # @detail_route(methods=['put'])
-    # def finish(self, request, pk=None):
-    #     round = self.get_object()
-    #     response = round.finish()
-    #     return Response(response)
-
-
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
@@ -384,9 +332,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'judge',
     )
     serializer_class = ScoreSerializer
-    permission_classes = [
-        permissions.DjangoModelPermissions,
-    ]
     resource_name = "score"
 
 
@@ -414,9 +359,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         'songs',
     )
     serializer_class = SubmissionSerializer
-    permission_classes = [
-        permissions.DjangoModelPermissions,
-    ]
     filter_class = SubmissionFilter
     resource_name = "submission"
 
@@ -444,4 +386,3 @@ class VenueViewSet(viewsets.ModelViewSet):
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     resource_name = "venue"
-
