@@ -194,3 +194,75 @@ class JudgeFactory(DjangoModelFactory):
     certification = SubFactory(
         'apps.api.factories.CertificationFactory'
     )
+
+
+class MemberFactory(DjangoModelFactory):
+    class Meta:
+        model = Member
+
+    status = Member.STATUS.active
+    chapter = SubFactory(
+        'apps.api.factories.ChapterFactory'
+    )
+    person = SubFactory(
+        'apps.api.factories.PersonFactory'
+    )
+
+
+class RoleFactory(DjangoModelFactory):
+    class Meta:
+        model = Role
+
+    status = Role.STATUS.active
+    person = SubFactory(
+        'apps.api.factories.PersonFactory'
+    )
+
+
+class TenorFactory(RoleFactory):
+    part = Role.PART.tenor
+    group = SubFactory(
+        'apps.api.factories.QuartetFactory'
+    )
+
+
+class RoundFactory(DjangoModelFactory):
+    class Meta:
+        model = Round
+
+    status = Round.STATUS.new
+    kind = Round.KIND.finals
+    num = 1
+    session = SubFactory(
+        'apps.api.factories.SessionFactory'
+    )
+
+
+class ContestFactory(DjangoModelFactory):
+    class Meta:
+        model = Contest
+
+    status = Contest.STATUS.new
+    cycle = 2016
+    session = SubFactory(
+        'apps.api.factories.SessionFactory'
+    )
+    award = SubFactory(
+        'apps.api.factories.AwardFactory'
+    )
+
+
+class PerformerFactory(DjangoModelFactory):
+    class Meta:
+        model = Performer
+
+    status = Performer.STATUS.new
+    representing = SubFactory(
+        'apps.api.factories.DistrictFactory'
+    )
+    session = SubFactory(
+        'apps.api.factories.SessionFactory'
+    )
+    group = SubFactory(
+        'apps.api.factories.QuartetFactory'
+    )

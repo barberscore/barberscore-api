@@ -89,8 +89,6 @@ class CertificationSerializer(serializers.ModelSerializer):
             'date',
             'person',
             'judges',
-            'sessions_ca',
-            'sessions_aca',
         )
 
 
@@ -512,9 +510,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'kind',
             'convention',
             'date',
-            'administrator',
-            'ca',
-            'aca',
             'cursor',
             'performers',
             'contests',

@@ -99,8 +99,6 @@ class CertificationViewSet(viewsets.ModelViewSet):
         'person',
     ).prefetch_related(
         'judges',
-        'sessions_ca',
-        'sessions_aca',
     )
     serializer_class = CertificationSerializer
     filter_class = CertificationFilter
@@ -398,7 +396,6 @@ class SessionViewSet(
 ):
     queryset = Session.objects.select_related(
         'convention',
-        'administrator',
     ).prefetch_related(
         'performers',
         'rounds',

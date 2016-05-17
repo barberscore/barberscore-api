@@ -990,9 +990,6 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'convention',
         'kind',
         'date',
-        'administrator',
-        'ca',
-        'aca',
         'cursor',
         'cutoff',
         'entry_form',
@@ -1007,8 +1004,6 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'status',
         'convention',
         'kind',
-        'ca',
-        'aca',
         'song_list',
         # 'size',
         # 'num_rounds',
@@ -1025,17 +1020,11 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
 
     raw_id_fields = (
         'convention',
-        'administrator',
-        'ca',
-        'aca',
     )
 
     autocomplete_lookup_fields = {
         'fk': [
             'convention',
-            'administrator',
-            'ca',
-            'aca',
         ]
     }
 

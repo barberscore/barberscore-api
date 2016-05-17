@@ -14,6 +14,11 @@ from .factories import (
     SessionFactory,
     CertificationFactory,
     JudgeFactory,
+    MemberFactory,
+    TenorFactory,
+    RoundFactory,
+    ContestFactory,
+    PerformerFactory,
 )
 
 
@@ -114,5 +119,60 @@ class JudgeTests(APITestCase):
     def test_get_judges(self):
         """Ensure we can get the judge list."""
         url = reverse('judge-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class MemberTests(APITestCase):
+    def setUp(self):
+        MemberFactory.create()
+
+    def test_get_members(self):
+        """Ensure we can get the member list."""
+        url = reverse('member-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class RoleTests(APITestCase):
+    def setUp(self):
+        TenorFactory.create()
+
+    def test_get_roles(self):
+        """Ensure we can get the role list."""
+        url = reverse('role-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class RoundTests(APITestCase):
+    def setUp(self):
+        RoundFactory.create()
+
+    def test_get_rounds(self):
+        """Ensure we can get the round list."""
+        url = reverse('round-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ContestTests(APITestCase):
+    def setUp(self):
+        ContestFactory.create()
+
+    def test_get_contests(self):
+        """Ensure we can get the contest list."""
+        url = reverse('contest-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class PerformerTests(APITestCase):
+    def setUp(self):
+        PerformerFactory.create()
+
+    def test_get_performers(self):
+        """Ensure we can get the performer list."""
+        url = reverse('performer-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

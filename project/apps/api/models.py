@@ -3284,30 +3284,6 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    administrator = models.ForeignKey(
-        'Person',
-        related_name='sessions_ca',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    ca = models.ForeignKey(
-        'Certification',
-        related_name='sessions_ca',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    aca = models.ForeignKey(
-        'Certification',
-        related_name='sessions_aca',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     cutoff = models.IntegerField(
         null=True,
         blank=True,
