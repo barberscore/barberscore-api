@@ -266,3 +266,16 @@ class PerformerFactory(DjangoModelFactory):
     group = SubFactory(
         'apps.api.factories.QuartetFactory'
     )
+
+
+class ContestantFactory(DjangoModelFactory):
+    class Meta:
+        model = Contestant
+
+    status = Contestant.STATUS.new
+    performer = SubFactory(
+        'apps.api.factories.PerformerFactory'
+    )
+    contest = SubFactory(
+        'apps.api.factories.ContestFactory'
+    )
