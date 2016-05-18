@@ -35,12 +35,12 @@ class Command(BaseCommand):
         [i.save() for i in Award.objects.all()]
         [i.save() for i in Chapter.objects.all()]
         [i.save() for i in Chart.objects.all()]
-        [i.save() for i in Convention.objects.all()]
         [i.save() for i in Group.objects.all()]
         [i.save() for i in Organization.objects.all()]
         [i.save() for i in Person.objects.all()]
         [i.save() for i in Venue.objects.all()]
         # Branches
+        [i.save() for i in Convention.objects.all()]
         [i.save() for i in Session.objects.all()]
         [i.save() for i in Certification.objects.all()]
         [i.save() for i in Judge.objects.all()]
