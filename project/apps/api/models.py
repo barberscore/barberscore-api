@@ -3168,12 +3168,6 @@ class Score(TimeStampedModel):
         choices=KIND,
     )
 
-    dixon_test = models.NullBooleanField(
-    )
-
-    asterisk_test = models.NullBooleanField(
-    )
-
     points = models.IntegerField(
         help_text="""
             The number of points (0-100)""",

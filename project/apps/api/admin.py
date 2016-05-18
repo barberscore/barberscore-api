@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
-from grappelli_autocomplete_fk_edit_link import AutocompleteEditLinkAdminMixin
 
 from .inlines import (
     AwardInline,
@@ -19,8 +18,6 @@ from .inlines import (
     ScoreInline,
     RoundInline,
     RoleInline,
-    SongStackedInline,
-    OrganizationInline,
     SubmissionInline,
 )
 
@@ -49,8 +46,6 @@ from .models import (
     Venue,
 )
 
-from super_inlines.admin import SuperModelAdmin
-
 # from django_fsm_log.models import StateLog
 
 
@@ -60,8 +55,7 @@ from super_inlines.admin import SuperModelAdmin
 
 
 @admin.register(Award)
-class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class AwardAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
@@ -80,7 +74,6 @@ class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'num_rounds',
         'cutoff',
         'minimum',
-        # 'panel_size',
         'stix_num',
         'stix_name',
     ]
@@ -139,8 +132,7 @@ class AwardAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Certification)
-class CertificationAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class CertificationAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
@@ -175,16 +167,9 @@ class CertificationAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'name',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'person',
-        ]
-    }
-
 
 @admin.register(Chart)
-class ChartAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class ChartAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
@@ -219,7 +204,7 @@ class ChartAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Chapter)
-class ChapterAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
+class ChapterAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
         'code',
@@ -260,8 +245,7 @@ class ChapterAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class ContestAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'cycle',
@@ -301,17 +285,9 @@ class ContestAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'session',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'award',
-            'session',
-        ]
-    }
-
 
 @admin.register(Contestant)
-class ContestantAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class ContestantAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
@@ -325,13 +301,6 @@ class ContestantAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
     list_filter = (
         'status',
     )
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'performer',
-            'contest',
-        ]
-    }
 
     readonly_fields = [
         'name',
@@ -350,13 +319,12 @@ class ContestantAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Convention)
-class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.ModelAdmin):
+class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     fsm_field = [
         'status',
     ]
 
-    change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = (
         'name',
     )
@@ -414,13 +382,6 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
         'venue',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'drcj',
-            'venue',
-        ]
-    }
-
     ordering = (
         '-year',
         'level',
@@ -431,7 +392,7 @@ class ConventionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.
 
 
 @admin.register(Group)
-class GroupAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
+class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
         'chapter__name',
@@ -485,18 +446,11 @@ class GroupAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'chapter',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'chapter',
-        ]
-    }
-
     save_on_top = True
 
 
 @admin.register(Judge)
-class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class JudgeAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
@@ -529,13 +483,6 @@ class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'certification',
     )
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'session',
-            'certification',
-        ]
-    }
-
     readonly_fields = [
         'name',
     ]
@@ -546,7 +493,7 @@ class JudgeAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Member)
-class MemberAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
+class MemberAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'chapter',
@@ -558,13 +505,6 @@ class MemberAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'chapter',
         'person',
     ]
-
-    autocomplete_lookup_fields = {
-        'fk': [
-            'chapter',
-            'person',
-        ]
-    }
 
 
 @admin.register(Organization)
@@ -613,26 +553,15 @@ class OrganizationAdmin(MPTTModelAdmin):
         'representative',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'representative',
-        ]
-    }
-
 
 @admin.register(Performance)
-class PerformanceAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperModelAdmin):
+class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
 
     save_on_top = True
-    change_list_template = "admin/change_list_filter_sidebar.html"
 
-    inlines = [
-        SongStackedInline,
-        # RoundInline,
-    ]
     list_display = [
         'name',
         'status',
@@ -672,11 +601,6 @@ class PerformanceAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, Super
     raw_id_fields = (
         'performer',
     )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'performer',
-        ]
-    }
 
     search_fields = (
         'name',
@@ -684,12 +608,10 @@ class PerformanceAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, Super
 
 
 @admin.register(Performer)
-class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.ModelAdmin):
+class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
-
-    change_list_template = "admin/change_list_filter_sidebar.html"
 
     inlines = [
         PerformanceInline,
@@ -730,18 +652,6 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
         'codirector',
     )
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'session',
-            'group',
-            'tenor',
-            'lead',
-            'baritone',
-            'bass',
-            'director',
-            'codirector',
-        ]
-    }
     fields = (
         'name',
         'status',
@@ -773,7 +683,7 @@ class PerformerAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.M
 
 
 @admin.register(Person)
-class PersonAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
+class PersonAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
     )
@@ -827,8 +737,7 @@ class PersonAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Role)
-class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class RoleAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
@@ -867,22 +776,14 @@ class RoleAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'person',
     )
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'group',
-            'person',
-        ]
-    }
-
 
 @admin.register(Round)
-class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.ModelAdmin):
+class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
 
     save_on_top = True
-    change_list_template = "admin/change_list_filter_sidebar.html"
     list_display = [
         'name',
         'status',
@@ -914,13 +815,6 @@ class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.Model
         'mt',
     )
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'session',
-            'mt',
-        ]
-    }
-
     inlines = [
         PerformanceInline,
     ]
@@ -931,8 +825,7 @@ class RoundAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, admin.Model
 
 
 @admin.register(Score)
-class ScoreAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class ScoreAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
@@ -963,13 +856,6 @@ class ScoreAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'judge',
     ]
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'song',
-            'judge',
-        ]
-    }
-
     ordering = [
         'song',
         'judge',
@@ -977,12 +863,11 @@ class ScoreAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Session)
-class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperModelAdmin):
+class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
 
-    change_list_template = "admin/change_list_filter_sidebar.html"
     save_on_top = True
     fields = [
         'name',
@@ -1022,12 +907,6 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
         'convention',
     )
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'convention',
-        ]
-    }
-
     readonly_fields = [
         'name',
     ]
@@ -1053,8 +932,7 @@ class SessionAdmin(AutocompleteEditLinkAdminMixin, FSMTransitionMixin, SuperMode
 
 
 @admin.register(Submission)
-class SubmissionAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class SubmissionAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
@@ -1079,21 +957,13 @@ class SubmissionAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'chart',
     )
 
-    autocomplete_lookup_fields = {
-        'fk': [
-            'performer',
-            'chart',
-        ]
-    }
-
     readonly_fields = [
         'name',
     ]
 
 
 @admin.register(Song)
-class SongAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
-    change_list_template = "admin/change_list_filter_sidebar.html"
+class SongAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'name',
@@ -1145,12 +1015,6 @@ class SongAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
         'performance',
         'submission',
     )
-    autocomplete_lookup_fields = {
-        'fk': [
-            'performance',
-            'submission',
-        ]
-    }
 
     ordering = (
         'name',
@@ -1159,7 +1023,7 @@ class SongAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(Venue)
-class VenueAdmin(AutocompleteEditLinkAdminMixin, admin.ModelAdmin):
+class VenueAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',

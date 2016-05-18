@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 from rest_framework_jwt import views
 
 urlpatterns = [
-    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^api-token-auth/', views.obtain_jwt_token, name='obtain-jwt-token'),
