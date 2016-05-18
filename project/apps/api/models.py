@@ -65,6 +65,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from nameparser import HumanName
 
+from dry_rest_permissions.generics import (
+    allow_staff_or_superuser,
+)
+
 from ranking import Ranking
 
 from .managers import (
@@ -251,6 +255,10 @@ class Award(TimeStampedModel):
         editable=False,
     )
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -340,6 +348,10 @@ class Certification(TimeStampedModel):
         related_name='certifications',
         on_delete=models.CASCADE,
     )
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -474,6 +486,10 @@ class Chapter(TimeStampedModel):
         max_length=255,
         blank=True,
     )
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -612,6 +628,10 @@ class Chart(TimeStampedModel):
         default=False,
     )
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -706,6 +726,10 @@ class Contest(TimeStampedModel):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -904,6 +928,11 @@ class Contestant(TimeStampedModel):
         blank=True,
         editable=False,
     )
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1185,6 +1214,10 @@ class Convention(TimeStampedModel):
     def finish(self, *args, **kwargs):
         return
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             str(self.organization.short_name),
@@ -1415,6 +1448,10 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -1524,6 +1561,10 @@ class Judge(TimeStampedModel):
         )
         return designation
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -1595,6 +1636,10 @@ class Member(TimeStampedModel):
         related_name='members',
         on_delete=models.CASCADE,
     )
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return self.name
@@ -1869,6 +1914,10 @@ class Organization(MPTTModel, TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2000,6 +2049,11 @@ class Performance(TimeStampedModel):
         related_name='performances',
         on_delete=models.CASCADE,
     )
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2404,6 +2458,11 @@ class Performer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2712,6 +2771,10 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2830,6 +2893,10 @@ class Role(TimeStampedModel):
         blank=True,
         null=True,
     )
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2953,6 +3020,10 @@ class Round(TimeStampedModel):
             str(self.session.convention.year),
         ]))
         super(Round, self).save(*args, **kwargs)
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3212,8 +3283,10 @@ class Score(TimeStampedModel):
         ]
     )
 
-    class JSONAPIMeta:
-        resource_name = "score"
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3223,6 +3296,9 @@ class Score(TimeStampedModel):
             self.id.hex,
         ]))
         super(Score, self).save(*args, **kwargs)
+
+    class JSONAPIMeta:
+        resource_name = "score"
 
 
 class Session(TimeStampedModel):
@@ -3321,6 +3397,10 @@ class Session(TimeStampedModel):
     @property
     def completed_rounds(self):
         return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3500,6 +3580,11 @@ class Song(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "song"
 
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3591,6 +3676,11 @@ class Submission(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3649,6 +3739,13 @@ class Venue(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "venue"
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.location,
@@ -3657,9 +3754,6 @@ class Venue(TimeStampedModel):
             self.state,
         ]))
         super(Venue, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
 
 
 class User(AbstractBaseUser, PermissionsMixin):

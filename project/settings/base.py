@@ -118,7 +118,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
+        'dry_rest_permissions.generics.DRYPermissions',
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework_filters.backends.DjangoFilterBackend',
@@ -177,13 +178,14 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
+    'corsheaders',
     'fsm_admin',
     'django_fsm',
     # 'django_fsm_log',
     'easy_pdf',
     'timezone_field',
-    'corsheaders',
     'mptt',
     'rest_framework',
+    'dry_rest_permissions',
     'apps.api',
 )
