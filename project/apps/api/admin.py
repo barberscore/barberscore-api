@@ -335,7 +335,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'level',
-        'division',
         'season',
         'date',
         # 'location',
@@ -363,7 +362,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'organization',
         'year',
         'level',
-        'division',
         'season',
     )
 

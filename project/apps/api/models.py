@@ -1172,37 +1172,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    DIVISION = Choices(
-        (200, 'evgd1', "EVG Division I"),
-        (210, 'evgd2', "EVG Division II"),
-        (220, 'evgd3', "EVG Division III"),
-        (230, 'evgd4', "EVG Division IV"),
-        (240, 'evgd5', "EVG Division V"),
-        (250, 'fwdaz', "FWD Arizona Division"),
-        (260, 'fwdnenw', "FWD NE/NW Divisions"),
-        (270, 'fwdsesw', "FWD SE/SW Divisions"),
-        (280, 'lolp1', "LOL Division One/Packerland Divisions"),
-        (290, 'lolnp', "LOL Northern Plains Division"),
-        (300, 'lol10sw', "LOL 10,000 Lakes and Southwest Divisions"),
-        # (310, 'madatl', "Atlantic Division"),  <- LEGACY
-        # (320, 'madnw', "Northern and Western Divisions"), <- LEGACY
-        (322, 'madnth', "MAD Northern Division"),
-        (324, 'madcen', "MAD Central Division"),
-        (330, 'madsth', "MAD Southern Division"),
-        (340, 'nedsun', "NED Sunrise Division"),
-        (342, 'nedwst', "NED Western Regional"),
-        (344, 'nedest', "NED Eastern Regional"),
-        (350, 'swdnenwsesw', "SWD NE/NW/SE/SW Divisions"),
-    )
-
-    division = models.IntegerField(
-        help_text="""
-            Detail if division/regional convention.""",
-        choices=DIVISION,
-        null=True,
-        blank=True,
-    )
-
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
@@ -1324,8 +1293,12 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.kind:
+            org = None
+        else:
+            org = str(self.organization.short_name)
         self.name = " ".join(filter(None, [
-            str(self.organization.short_name),
+            org,
             str(self.get_kind_display()),
             self.get_season_display(),
             u"Convention",
@@ -1335,7 +1308,7 @@ class Convention(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('organization', 'season', 'year', 'division',),
+            ('organization', 'season', 'year', 'kind',),
         )
 
     class JSONAPIMeta:
