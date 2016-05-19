@@ -156,6 +156,18 @@ class ConventionFactory(DjangoModelFactory):
     )
 
 
+class OrganizationFactory(DjangoModelFactory):
+    class Meta:
+        model = Organization
+
+    status = Organization.STATUS.active
+    name = 'International'
+    level = Organization.LEVEL.international
+    kind = Organization.KIND.international
+    short_name = 'BHS'
+    long_name = 'International'
+
+
 class DistrictFactory(DjangoModelFactory):
     class Meta:
         model = Organization
@@ -224,7 +236,9 @@ class PerformanceFactory(DjangoModelFactory):
 class PerformerFactory(DjangoModelFactory):
     class Meta:
         model = Performer
-
+        django_get_or_create = (
+            'status',
+        )
     status = Performer.STATUS.new
     # representing = SubFactory(
     #     'apps.api.factories.DistrictFactory'
@@ -243,6 +257,19 @@ class PersonFactory(DjangoModelFactory):
 
     name = 'Test Person'
     status = Person.STATUS.active
+
+
+class GroupFactory(DjangoModelFactory):
+    class Meta:
+        model = Group
+
+    status = Group.STATUS.active
+
+    name = 'Test Quartet'
+    kind = Group.KIND.quartet
+    organization = SubFactory(
+        'apps.api.factories.DistrictFactory',
+    )
 
 
 class QuartetFactory(DjangoModelFactory):
@@ -289,6 +316,9 @@ class ScoreFactory(DjangoModelFactory):
 class SessionFactory(DjangoModelFactory):
     class Meta:
         model = Session
+        django_get_or_create = (
+            'kind',
+        )
 
     kind = Session.KIND.quartet
     convention = SubFactory(
@@ -324,6 +354,20 @@ class SubmissionFactory(DjangoModelFactory):
     )
 
 
+class RoleFactory(DjangoModelFactory):
+    class Meta:
+        model = Role
+
+    status = Role.STATUS.active
+    person = SubFactory(
+        'apps.api.factories.PersonFactory'
+    )
+    part = Role.PART.tenor
+    group = SubFactory(
+        'apps.api.factories.QuartetFactory'
+    )
+
+
 class TenorFactory(DjangoModelFactory):
     class Meta:
         model = Role
@@ -349,7 +393,12 @@ class UserFactory(DjangoModelFactory):
 class VenueFactory(DjangoModelFactory):
     class Meta:
         model = Venue
-
+        django_get_or_create = (
+            'location',
+            'city',
+            'state',
+            'timezone',
+        )
     location = 'Nashville Convention Center'
     city = 'Nashville'
     state = 'Tennessee'

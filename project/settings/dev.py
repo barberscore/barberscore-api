@@ -27,8 +27,8 @@ CORS_ORIGIN_WHITELIST = (
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '--nologcapture',
-    # '--with-coverage',
-    # '--cover-package=apps.api',
+    '--with-coverage',
+    '--cover-package=apps.api',
 ]
 
 

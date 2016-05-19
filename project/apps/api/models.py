@@ -259,6 +259,18 @@ class Award(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -352,6 +364,18 @@ class Certification(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -490,6 +514,18 @@ class Chapter(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -632,6 +668,18 @@ class Chart(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -731,6 +779,18 @@ class Contest(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -760,6 +820,14 @@ class Contest(TimeStampedModel):
             str(self.session.convention.year),
         ]))
         super(Contest, self).save(*args, **kwargs)
+
+    def ranking(self, point_total):
+        contestants = self.contestants.all()
+        points = [c.official_total_points for c in contestants]
+        points = sorted(points, reverse=True)
+        ranking = Ranking(points, start=1)
+        rank = ranking.rank(point_total)
+        return rank
 
     def build(self):
         # TODO Future Award/Contestant mapping
@@ -932,6 +1000,14 @@ class Contestant(TimeStampedModel):
             tot=models.Sum('songs__scores__points')
         )['tot']
 
+    @property
+    def official_rank(self):
+        return self.performer.performances.filter(
+            songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
     @staticmethod
     def has_read_permission(request):
         return True
@@ -940,11 +1016,12 @@ class Contestant(TimeStampedModel):
         return True
 
     @staticmethod
+    @allow_staff_or_superuser
     def has_write_permission(request):
         return False
 
-    @staticmethod
-    def has_create_permission(request):
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
         return False
 
     def __unicode__(self):
@@ -1231,6 +1308,21 @@ class Convention(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             str(self.organization.short_name),
@@ -1465,6 +1557,18 @@ class Group(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -1578,6 +1682,18 @@ class Judge(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -1653,6 +1769,18 @@ class Member(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return self.name
@@ -1931,6 +2059,18 @@ class Organization(MPTTModel, TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2072,8 +2212,19 @@ class Performance(TimeStampedModel):
         )['tot']
 
     @staticmethod
-    @allow_staff_or_superuser
     def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
         return False
 
     def __unicode__(self):
@@ -2491,6 +2642,18 @@ class Performer(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2803,6 +2966,18 @@ class Person(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -2925,6 +3100,18 @@ class Role(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3052,6 +3239,18 @@ class Round(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3316,6 +3515,19 @@ class Score(TimeStampedModel):
     def has_read_permission(request):
         return False
 
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return False
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3429,6 +3641,18 @@ class Session(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3620,6 +3844,18 @@ class Song(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
     def __unicode__(self):
         return u"{0}".format(self.name)
 
@@ -3712,8 +3948,19 @@ class Submission(TimeStampedModel):
     )
 
     @staticmethod
-    @allow_staff_or_superuser
     def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
         return False
 
     def __unicode__(self):
@@ -3777,6 +4024,18 @@ class Venue(TimeStampedModel):
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)

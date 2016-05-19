@@ -1,6 +1,8 @@
-from django.core.urlresolvers import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_assured.testcases import (
+    BaseRESTAPITestCase,
+    ReadRESTAPITestCaseMixin,
+    ReadWriteRESTAPITestCaseMixin,
+)
 
 from .factories import (
     AdminFactory,
@@ -11,458 +13,138 @@ from .factories import (
     ContestantFactory,
     ContestFactory,
     ConventionFactory,
-    DistrictFactory,
-    InternationalFactory,
+    OrganizationFactory,
+    # DistrictFactory,
+    # InternationalFactory,
     JudgeFactory,
     MemberFactory,
     PerformanceFactory,
     PerformerFactory,
     PersonFactory,
-    QuartetFactory,
+    GroupFactory,
+    # QuartetFactory,
+    RoleFactory,
+    # TenorFactory,
     RoundFactory,
     ScoreFactory,
     SessionFactory,
     SongFactory,
     SubmissionFactory,
-    TenorFactory,
     VenueFactory,
 )
 
 
-class PublicModelTests(APITestCase):
-    def setUp(self):
-        self.international = InternationalFactory()
-        self.district = DistrictFactory()
-        self.award = AwardFactory(
-            organization=self.international,
-        )
-        self.chapter = ChapterFactory(
-            organization=self.district,
-        )
-        self.chart = ChartFactory()
-        self.person = PersonFactory()
-        self.quartet = QuartetFactory(
-            organization=self.district,
-        )
-        self.venue = VenueFactory()
-        self.convention = ConventionFactory(
-            organization=self.international,
-            venue=self.venue,
-        )
-        self.session = SessionFactory(
-            convention=self.convention,
-        )
-        self.contest = ContestFactory(
-            session=self.session,
-            award=self.award,
-        )
-        self.certification = CertificationFactory(
-            person=self.person,
-        )
-        self.judge = JudgeFactory(
-            session=self.session,
-            certification=self.certification,
-        )
-        self.round = RoundFactory(
-            session=self.session,
-        )
-        self.performer = PerformerFactory(
-            session=self.session,
-            group=self.quartet,
-        )
-        self.contestant = ContestantFactory(
-            performer=self.performer,
-            contest=self.contest,
-        )
-        self.member = MemberFactory(
-            chapter=self.chapter,
-            person=self.person,
-        )
-        self.role = TenorFactory(
-            group=self.quartet,
-            person=self.person,
-        )
-        self.submission = SubmissionFactory(
-            performer=self.performer,
-            chart=self.chart,
-        )
-        self.performance = PerformanceFactory(
-            performer=self.performer,
-            round=self.round,
-        )
-        self.song = SongFactory(
-            performance=self.performance,
-            submission=self.submission
-        )
-        self.score = ScoreFactory(
-            song=self.song,
-            judge=self.judge,
-        )
-
-    def test_get_awards(self):
-        """Ensure we can get the award list."""
-        url = reverse('award-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_certifications(self):
-        """Ensure we can get the certification list."""
-        url = reverse('certification-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_chapters(self):
-        """Ensure we can get the chapter list."""
-        url = reverse('chapter-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_charts(self):
-        """Ensure we can get the chart list."""
-        url = reverse('chart-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_contests(self):
-        """Ensure we can get the contest list."""
-        url = reverse('contest-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_block_contestants(self):
-        """Ensure we can get the contestant list."""
-        url = reverse('contestant-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_get_conventions(self):
-        """Ensure we can get the convention list."""
-        url = reverse('convention-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_groups(self):
-        """Ensure we can get the group list."""
-        url = reverse('group-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_judges(self):
-        """Ensure we can get the judge list."""
-        url = reverse('judge-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_members(self):
-        """Ensure we can get the member list."""
-        url = reverse('member-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_organizations(self):
-        """Ensure we can get the member list."""
-        url = reverse('organization-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 2)
-
-    def test_block_performances(self):
-        """Ensure we can get the performance list."""
-        url = reverse('performance-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_get_performers(self):
-        """Ensure we can get the performer list."""
-        url = reverse('performer-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_persons(self):
-        """Ensure we can get the person list."""
-        url = reverse('person-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_roles(self):
-        """Ensure we can get the role list."""
-        url = reverse('role-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_get_rounds(self):
-        """Ensure we can get the round list."""
-        url = reverse('round-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_block_scores(self):
-        """Ensure we can get the score list."""
-        url = reverse('score-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_get_sessions(self):
-        """Ensure we can get the session list."""
-        url = reverse('session-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
-
-    def test_block_songs(self):
-        """Ensure we can get the song list."""
-        url = reverse('song-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_block_submissions(self):
-        """Ensure we can not get the submission list."""
-        url = reverse('submission-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_get_venues(self):
-        """Ensure we can get the venue list."""
-        url = reverse('venue-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
+# Public CRUD Tests
+class AwardPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'award'
+    factory_class = AwardFactory
 
 
-class AdminModelTests(APITestCase):
-    def setUp(self):
-        AdminFactory()
-        jwt = reverse('obtain-jwt-token')
-        data = {
-            'email': 'admin@barberscore.com',
-            'password': 'password'
-        }
-        login = self.client.post(jwt, data)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + login.data['token'])
-        self.international = InternationalFactory()
-        self.district = DistrictFactory()
-        self.award = AwardFactory(
-            organization=self.international,
-        )
-        self.chapter = ChapterFactory(
-            organization=self.district,
-        )
-        self.chart = ChartFactory()
-        self.person = PersonFactory()
-        self.quartet = QuartetFactory(
-            organization=self.district,
-        )
-        self.venue = VenueFactory()
-        self.convention = ConventionFactory(
-            organization=self.international,
-            venue=self.venue,
-        )
-        self.session = SessionFactory(
-            convention=self.convention,
-        )
-        self.contest = ContestFactory(
-            session=self.session,
-            award=self.award,
-        )
-        self.certification = CertificationFactory(
-            person=self.person,
-        )
-        self.judge = JudgeFactory(
-            session=self.session,
-            certification=self.certification,
-        )
-        self.round = RoundFactory(
-            session=self.session,
-        )
-        self.performer = PerformerFactory(
-            session=self.session,
-            group=self.quartet,
-        )
-        self.contestant = ContestantFactory(
-            performer=self.performer,
-            contest=self.contest,
-        )
-        self.member = MemberFactory(
-            chapter=self.chapter,
-            person=self.person,
-        )
-        self.role = TenorFactory(
-            group=self.quartet,
-            person=self.person,
-        )
-        self.submission = SubmissionFactory(
-            performer=self.performer,
-            chart=self.chart,
-        )
-        self.performance = PerformanceFactory(
-            performer=self.performer,
-            round=self.round,
-        )
-        self.song = SongFactory(
-            performance=self.performance,
-            submission=self.submission
-        )
-        self.score = ScoreFactory(
-            song=self.song,
-            judge=self.judge,
-        )
+class CertificationPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'certification'
+    factory_class = CertificationFactory
 
-    # def test_get_awards(self):
-    #     """Ensure we can get the award list."""
-    #     url = reverse('award-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_certifications(self):
-    #     """Ensure we can get the certification list."""
-    #     url = reverse('certification-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class ChapterPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'chapter'
+    factory_class = ChapterFactory
 
-    # def test_get_chapters(self):
-    #     """Ensure we can get the chapter list."""
-    #     url = reverse('chapter-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_charts(self):
-    #     """Ensure we can get the chart list."""
-    #     url = reverse('chart-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class ChartPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'chart'
+    factory_class = ChartFactory
 
-    # def test_get_contests(self):
-    #     """Ensure we can get the contest list."""
-    #     url = reverse('contest-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_contestants(self):
-    #     """Ensure we can get the contestant list."""
-    #     url = reverse('contestant-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class ContestantPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'contestant'
+    factory_class = ContestantFactory
 
-    # def test_get_conventions(self):
-    #     """Ensure we can get the convention list."""
-    #     url = reverse('convention-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_groups(self):
-    #     """Ensure we can get the group list."""
-    #     url = reverse('group-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class ContestPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'contest'
+    factory_class = ContestFactory
 
-    # def test_get_judges(self):
-    #     """Ensure we can get the judge list."""
-    #     url = reverse('judge-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_members(self):
-    #     """Ensure we can get the member list."""
-    #     url = reverse('member-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class ConventionPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'convention'
+    factory_class = ConventionFactory
 
-    # def test_get_organizations(self):
-    #     """Ensure we can get the member list."""
-    #     url = reverse('organization-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 2)
 
-    # def test_get_performances(self):
-    #     """Ensure we can get the performance list."""
-    #     url = reverse('performance-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class OrganizationPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'organization'
+    factory_class = OrganizationFactory
 
-    # def test_get_performers(self):
-    #     """Ensure we can get the performer list."""
-    #     url = reverse('performer-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_persons(self):
-    #     """Ensure we can get the person list."""
-    #     url = reverse('person-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class JudgePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'judge'
+    factory_class = JudgeFactory
 
-    # def test_get_roles(self):
-    #     """Ensure we can get the role list."""
-    #     url = reverse('role-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_rounds(self):
-    #     """Ensure we can get the round list."""
-    #     url = reverse('round-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class MemberPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'member'
+    factory_class = MemberFactory
 
-    # def test_get_scores(self):
-    #     """Ensure we can get the score list."""
-    #     url = reverse('score-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    # def test_get_sessions(self):
-    #     """Ensure we can get the session list."""
-    #     url = reverse('session-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class PerformancePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'performance'
+    factory_class = PerformanceFactory
 
-    # def test_get_songs(self):
-    #     """Ensure we can get the song list."""
-    #     url = reverse('song-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
 
-    def test_get_submissions(self):
-        """Ensure we can get the submission list."""
-        url = reverse('submission-list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['meta']['pagination']['count'], 1)
+class PerformerPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'performer'
+    factory_class = PerformerFactory
 
-    # def test_get_venues(self):
-    #     """Ensure we can get the venue list."""
-    #     url = reverse('venue-list')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data['meta']['pagination']['count'], 1)
+
+class PersonPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'person'
+    factory_class = PersonFactory
+
+
+class GroupPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'group'
+    factory_class = GroupFactory
+
+
+class RolePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'role'
+    factory_class = RoleFactory
+
+
+class RoundPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'round'
+    factory_class = RoundFactory
+
+
+class ScorePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'score'
+    factory_class = ScoreFactory
+    user_factory = AdminFactory
+
+
+class SessionPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'session'
+    factory_class = SessionFactory
+
+
+class SongPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'song'
+    factory_class = SongFactory
+
+
+class SubmissionPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'submission'
+    factory_class = SubmissionFactory
+
+
+class VenuePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'venue'
+    factory_class = VenueFactory
+
+
+# Admin CRUD Tests
+class ChartAdminTest(ReadWriteRESTAPITestCaseMixin, BaseRESTAPITestCase):
+    base_name = 'chart'
+    factory_class = ChartFactory
+    user_factory = AdminFactory
+    create_data = {'title': 'The Older Songs'}
+    update_data = {'title': 'The Oldest Songs'}
