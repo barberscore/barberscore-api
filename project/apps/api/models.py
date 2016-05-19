@@ -190,9 +190,6 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    championship_rounds = models.IntegerField(
-    )
-
     is_primary = models.BooleanField(
         help_text="""No secondary award critera.""",
         default=False,
@@ -214,6 +211,13 @@ class Award(TimeStampedModel):
 
     idiom = models.CharField(
         max_length=200,
+        null=True,
+        blank=True,
+    )
+
+    championship_rounds = models.IntegerField()
+
+    qualifier_rounds = models.IntegerField(
         null=True,
         blank=True,
     )
