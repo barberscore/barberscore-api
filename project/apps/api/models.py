@@ -768,12 +768,7 @@ class Contest(TimeStampedModel):
     def rank(self):
         if self.award.is_manual:
             return
-        # if self.award.num_rounds > self.session.completed_rounds:
-        #     return
         contestants = self.contestants.all()
-        for contestant in self.contestants.all():
-            contestant.calculate()
-            contestant.save()
         contestants = self.contestants.order_by('-total_points')
         points = [contestant.total_points for contestant in contestants]
         ranking = Ranking(points, start=1)
@@ -929,9 +924,28 @@ class Contestant(TimeStampedModel):
         editable=False,
     )
 
+    @property
+    def official_total_points(self):
+        return self.performer.performances.filter(
+            songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
     @staticmethod
     def has_read_permission(request):
         return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        return False
+
+    @staticmethod
+    def has_create_permission(request):
+        return False
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2049,6 +2063,14 @@ class Performance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    @property
+    def official_total_points(self):
+        return self.songs.filter(
+            scores__kind=10,  # TODO Hard coded; need to find the right solution here.
+        ).aggregate(
+            tot=models.Sum('scores__points')
+        )['tot']
+
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -2456,6 +2478,14 @@ class Performer(TimeStampedModel):
         related_name='performers',
         on_delete=models.CASCADE,
     )
+
+    @property
+    def official_total_points(self):
+        return self.performances.filter(
+            songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
 
     @staticmethod
     def has_read_permission(request):
@@ -3569,6 +3599,14 @@ class Song(TimeStampedModel):
         related_name='songs',
         on_delete=models.CASCADE,
     )
+
+    @property
+    def official_total_points(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
 
     class Meta:
         unique_together = (
