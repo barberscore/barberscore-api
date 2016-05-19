@@ -930,9 +930,8 @@ class Contestant(TimeStampedModel):
     )
 
     @staticmethod
-    @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2459,9 +2458,8 @@ class Performer(TimeStampedModel):
     )
 
     @staticmethod
-    @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3581,9 +3579,8 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     @staticmethod
-    @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
+        return True
 
     def __unicode__(self):
         return u"{0}".format(self.name)
