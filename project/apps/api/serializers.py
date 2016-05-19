@@ -196,7 +196,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'risers',
             'level',
             'is_prelims',
-            'division',
             'year',
             'date',
             'venue',
