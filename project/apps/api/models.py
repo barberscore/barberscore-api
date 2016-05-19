@@ -194,10 +194,12 @@ class Award(TimeStampedModel):
     )
 
     is_primary = models.BooleanField(
+        help_text="""No secondary award critera.""",
         default=False,
     )
 
     is_improved = models.BooleanField(
+        help_text="""Designates 'Most-Improved'.  Implies manual.""",
         default=False,
     )
 
@@ -206,6 +208,7 @@ class Award(TimeStampedModel):
     )
 
     is_manual = models.BooleanField(
+        help_text="""Award must be determined manually.""",
         default=False,
     )
 
@@ -3240,33 +3243,6 @@ class Round(TimeStampedModel):
             performance.save()
             i += 1
         return {'success': 'drew {0} performances'.format(i)}
-
-    def resort(self):
-        i = 1
-        if self.session.kind == self.session.KIND.chorus:
-            duration = 10
-            slack = 10
-        else:
-            duration = 10
-            slack = 2
-        cursor = None
-        for performance in self.performances.order_by('slot'):
-            if self.date:
-                if not cursor:
-                    cursor = (
-                        self.date.lower,
-                        self.date.lower + datetime.timedelta(minutes=duration),
-                    )
-                else:
-                    cursor = (
-                        cursor[1] + datetime.timedelta(minutes=slack),
-                        cursor[1] + datetime.timedelta(minutes=(duration + slack))
-                    )
-                performance.scheduled = cursor
-            performance.slot = i
-            performance.save()
-            i += 1
-        return {'success': 'resorted {0} performances'.format(i)}
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
