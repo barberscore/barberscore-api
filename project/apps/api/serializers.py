@@ -65,7 +65,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'is_improved',
             'is_novice',
             'idiom',
-            'cutoff',
+            'threshold',
             'level',
             'organization',
             'contests',

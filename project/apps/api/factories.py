@@ -54,7 +54,7 @@ class AwardFactory(DjangoModelFactory):
     season = Award.SEASON.international
     championship_rounds = 3
     is_primary = True
-    cutoff = 76.0
+    threshold = 76.0
     minimum = 73.0
     organization = SubFactory(
         'apps.api.factories.InternationalFactory'

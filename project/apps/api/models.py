@@ -222,7 +222,7 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    cutoff = models.FloatField(
+    threshold = models.FloatField(
         null=True,
         blank=True,
     )
@@ -851,7 +851,7 @@ class Contest(TimeStampedModel):
             if self.is_qualifier:
                 if self.award.level == self.award.LEVEL.international:
                     if self.award.kind == self.award.KIND.quartet:
-                        if contestant.total_score >= self.award.cutoff:
+                        if contestant.total_score >= self.award.threshold:
                             contestant.status = contestant.STATUS.qualified
                         elif contestant.total_score < self.award.minimum:
                             contestant.status = contestant.STATUS.ineligible
@@ -874,7 +874,7 @@ class Contest(TimeStampedModel):
                             contestant.status = contestant.STATUS.qualified
                         elif contestant.total_score < self.award.minimum:
                             contestant.status = contestant.STATUS.ineligible
-                        elif contestant.total_score >= self.award.cutoff:
+                        elif contestant.total_score >= self.award.threshold:
                             contestant.status = contestant.STATUS.qualified
                         else:
                             contestant.rank = contestant.STATUS.eligible
@@ -3551,7 +3551,7 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    cutoff = models.IntegerField(
+    threshold = models.IntegerField(
         null=True,
         blank=True,
     )
