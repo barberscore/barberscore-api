@@ -71,7 +71,7 @@ class AwardAdmin(admin.ModelAdmin):
         'scope_range',
         ('is_primary', 'is_improved', 'is_novice'),
         'idiom',
-        'num_rounds',
+        'championship_rounds',
         'cutoff',
         'minimum',
         'stix_num',
@@ -91,7 +91,7 @@ class AwardAdmin(admin.ModelAdmin):
         'is_improved',
         'is_novice',
         'idiom',
-        'num_rounds',
+        'championship_rounds',
         'stix_name',
     ]
 
@@ -879,7 +879,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'song_list',
         # 'year',
         # # 'size',
-        # 'num_rounds',
+        # 'championship_rounds',
     ]
 
     list_display = [
@@ -889,7 +889,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'song_list',
         # 'size',
-        # 'num_rounds',
+        # 'championship_rounds',
     ]
 
     list_filter = (

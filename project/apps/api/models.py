@@ -190,7 +190,7 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    num_rounds = models.IntegerField(
+    championship_rounds = models.IntegerField(
     )
 
     is_primary = models.BooleanField(
@@ -1044,7 +1044,7 @@ class Contestant(TimeStampedModel):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
             song__performance__performer=self.performer,
-            song__performance__round__num__lte=self.contest.award.num_rounds,
+            song__performance__round__num__lte=self.contest.award.championship_rounds,
         ).exclude(
             points=None,
         ).exclude(
@@ -3267,7 +3267,7 @@ class Round(TimeStampedModel):
         for contest in self.session.contests.all():
             contest.rank()
         # Only handle multi-round contests.
-        for contest in self.session.contests.filter(award__num_rounds__gt=1):
+        for contest in self.session.contests.filter(award__championship_rounds__gt=1):
             # Qualifiers have an absolute score cutoff
             if contest.is_qualifier:
                 # International cutoff is 73.0 or creater.
@@ -3297,7 +3297,7 @@ class Round(TimeStampedModel):
         diff = spots - len(advancing)
         if diff > 0:
             additional = self.session.performers.filter(
-                contestants__contest__award__num_rounds__gt=1,
+                contestants__contest__award__championship_rounds__gt=1,
             ).exclude(
                 id__in=obj_list,
             )

@@ -60,7 +60,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'season',
             'size',
             'scope',
-            'num_rounds',
+            'championship_rounds',
             'is_primary',
             'is_improved',
             'is_novice',

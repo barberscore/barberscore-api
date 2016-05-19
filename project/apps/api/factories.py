@@ -52,7 +52,7 @@ class AwardFactory(DjangoModelFactory):
     status = Award.STATUS.active
     kind = Award.KIND.quartet
     season = Award.SEASON.international
-    num_rounds = 3
+    championship_rounds = 3
     is_primary = True
     cutoff = 76.0
     minimum = 73.0
