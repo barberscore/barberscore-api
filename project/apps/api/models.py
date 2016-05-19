@@ -215,19 +215,40 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    championship_rounds = models.IntegerField()
+    is_multi = models.BooleanField(
+        help_text="""Award spans conventions; must be determined manually.""",
+        default=False,
+    )
+
+    championship_rounds = models.IntegerField(
+        help_text="""Number of rounds to determine the championship""",
+    )
+
+    is_qualification_required = models.BooleanField(
+        help_text="""Boolean; true means qualification is required.""",
+        default=False,
+    )
 
     qualifier_rounds = models.IntegerField(
+        help_text="""Number of rounds to qualify for the award.""",
         null=True,
         blank=True,
     )
 
     threshold = models.FloatField(
+        help_text="""The score threshold for automatic qualification (if any.)""",
         null=True,
         blank=True,
     )
 
     minimum = models.FloatField(
+        help_text="""The minimum score required for qualification (if any.)""",
+        null=True,
+        blank=True,
+    )
+
+    advance = models.FloatField(
+        help_text="""The score threshold to advance to next round (if any) in multi-round qualification.""",
         null=True,
         blank=True,
     )
