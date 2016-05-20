@@ -35,6 +35,7 @@ from django.core.validators import (
 from django_fsm import (
     transition,
     FSMIntegerField,
+    RETURN_VALUE,
 )
 
 # from django_fsm_log.decorators import fsm_log_by
@@ -2107,9 +2108,9 @@ class Performance(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
-        (30, 'completed', 'Completed',),
-        (50, 'confirmed', 'Confirmed',),
-        (90, 'final', 'Final',),
+        # (30, 'completed', 'Completed',),
+        # (50, 'confirmed', 'Confirmed',),
+        # (90, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -2257,84 +2258,84 @@ class Performance(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "performance"
 
-    def calculate(self):
-        Score = apps.get_model('api', 'Score')
-        scores = Score.objects.filter(
-            song__performance=self,
-        ).exclude(
-            points=None,
-        ).exclude(
-            kind=Score.KIND.practice,
-        ).order_by(
-            'category',
-        ).values(
-            'category',
-        ).annotate(
-            total=models.Sum('points'),
-            average=models.Avg('points'),
-        )
-        for score in scores:
-            if score['category'] == Score.CATEGORY.music:
-                self.mus_points = score['total']
-                self.mus_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.presentation:
-                self.prs_points = score['total']
-                self.prs_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.singing:
-                self.sng_points = score['total']
-                self.sng_score = round(score['average'], 1)
+    # def calculate(self):
+    #     Score = apps.get_model('api', 'Score')
+    #     scores = Score.objects.filter(
+    #         song__performance=self,
+    #     ).exclude(
+    #         points=None,
+    #     ).exclude(
+    #         kind=Score.KIND.practice,
+    #     ).order_by(
+    #         'category',
+    #     ).values(
+    #         'category',
+    #     ).annotate(
+    #         total=models.Sum('points'),
+    #         average=models.Avg('points'),
+    #     )
+    #     for score in scores:
+    #         if score['category'] == Score.CATEGORY.music:
+    #             self.mus_points = score['total']
+    #             self.mus_score = round(score['average'], 1)
+    #         if score['category'] == Score.CATEGORY.presentation:
+    #             self.prs_points = score['total']
+    #             self.prs_score = round(score['average'], 1)
+    #         if score['category'] == Score.CATEGORY.singing:
+    #             self.sng_points = score['total']
+    #             self.sng_score = round(score['average'], 1)
 
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
+    #     # Calculate total points.
+    #     try:
+    #         self.total_points = sum([
+    #             self.mus_points,
+    #             self.prs_points,
+    #             self.sng_points,
+    #         ])
+    #     except TypeError:
+    #         self.total_points = None
 
-        # Calculate total score.
-        try:
-            self.total_score = round(sum([
-                self.mus_score,
-                self.prs_score,
-                self.sng_score,
-            ]) / 3, 1)
-        except TypeError:
-            self.total_score = None
+    #     # Calculate total score.
+    #     try:
+    #         self.total_score = round(sum([
+    #             self.mus_score,
+    #             self.prs_score,
+    #             self.sng_score,
+    #         ]) / 3, 1)
+    #     except TypeError:
+    #         self.total_score = None
 
-    def scratch(self):
-        i = self.slot
-        self.slot = -1
-        self.save()
-        performances = self.round.performances.filter(
-            slot__gt=i,
-        ).order_by('slot')
-        for performance in performances:
-            performance.slot -= 1
-            performance.save()
-        self.performer.status = self.performer.STATUS.dropped
-        self.performer.save()
-        self.delete()
-        return {'success': 'scratched'}
+    # def scratch(self):
+    #     i = self.slot
+    #     self.slot = -1
+    #     self.save()
+    #     performances = self.round.performances.filter(
+    #         slot__gt=i,
+    #     ).order_by('slot')
+    #     for performance in performances:
+    #         performance.slot -= 1
+    #         performance.save()
+    #     self.performer.status = self.performer.STATUS.dropped
+    #     self.performer.save()
+    #     self.delete()
+    #     return {'success': 'scratched'}
 
-    def build(self):
-        i = 1
-        while i <= 2:
-            song, c = self.songs.get_or_create(
-                performance=self,
-                order=i,
-            )
-            for judge in self.round.session.judges.all():
-                song.scores.get_or_create(
-                    song=song,
-                    judge=judge,
-                    category=judge.category,
-                    kind=judge.kind,
-                )
-            i += 1
-        return
+    # def build(self):
+    #     i = 1
+    #     while i <= 2:
+    #         song, c = self.songs.get_or_create(
+    #             performance=self,
+    #             order=i,
+    #         )
+    #         for judge in self.round.session.judges.all():
+    #             song.scores.get_or_create(
+    #                 song=song,
+    #                 judge=judge,
+    #                 category=judge.category,
+    #                 kind=judge.kind,
+    #             )
+    #         i += 1
+    #     return
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
@@ -2352,10 +2353,10 @@ class Performance(TimeStampedModel):
         )
         return
 
-    @transition(field=status, source='*', target=STATUS.completed)
-    def complete(self, *args, **kwargs):
-        self.calculate()
-        return
+    # @transition(field=status, source='*', target=STATUS.completed)
+    # def complete(self, *args, **kwargs):
+    #     self.calculate()
+    #     return
 
 
 class Performer(TimeStampedModel):
@@ -3284,11 +3285,12 @@ class Score(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (20, 'entered', 'Entered',),
+        # (20, 'entered', 'Entered',),
+        (25, 'cleared', 'Cleared',),
         (30, 'flagged', 'Flagged',),
-        (35, 'validated', 'Validated',),
+        (35, 'revised', 'Revised',),
         (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
+        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -3389,6 +3391,13 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
+
+    @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
+    def check(self):
+        if self.points < 0:
+            return self.STATUS.cleared
+        else:
+            return self.STATUS.flagged
 
     def __unicode__(self):
         return u"{0}".format(self.name)
