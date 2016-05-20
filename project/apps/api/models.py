@@ -2304,74 +2304,6 @@ class Performance(TimeStampedModel):
         except TypeError:
             self.total_score = None
 
-    def move_top(self):
-        performances = self.round.performances.filter(
-            slot__lt=self.slot,
-        ).order_by('-slot')
-        top = performances.last().scheduled
-        slot_cursor = self.slot
-        scheduled_cursor = self.scheduled
-        for performance in performances:
-            prior_slot = performance.slot
-            prior_scheduled = performance.scheduled
-            performance.slot = slot_cursor
-            performance.scheduled = scheduled_cursor
-            performance.save()
-            slot_cursor = prior_slot
-            scheduled_cursor = prior_scheduled
-        self.slot = 1
-        self.scheduled = top
-        self.save()
-        return {'success': 'moved'}
-
-    def move_up(self):
-        old_slot = self.slot
-        if old_slot == 1:
-            return {'success': 'already at top'}
-        self.slot = -1
-        self.save()
-        new_slot = old_slot - 1
-        replaced = self.round.performances.get(
-            slot=new_slot,
-        )
-        replaced.slot = old_slot
-        replaced.save()
-        self.slot = new_slot
-        self.save()
-        return {'success': 'moved'}
-
-    def move_down(self):
-        old_slot = self.slot
-        max_slot = self.round.performances.aggregate(m=models.Max('slot'))['m']
-        if old_slot == max_slot:
-            return {'success': 'already at bottom'}
-        self.slot = -1
-        self.save()
-        new_slot = old_slot + 1
-        replaced = self.round.performances.get(
-            slot=new_slot,
-        )
-        replaced.slot = old_slot
-        replaced.save()
-        self.slot = new_slot
-        self.save()
-        return {'success': 'moved'}
-
-    def move_bottom(self):
-        i = self.slot
-        self.slot = -1
-        self.save()
-        performances = self.round.performances.filter(
-            slot__gt=i,
-        ).order_by('slot')
-        total = performances.aggregate(m=models.Max('slot'))['m']
-        for performance in performances:
-            performance.slot -= 1
-            performance.save()
-        self.slot = total
-        self.save()
-        return {'success': 'moved'}
-
     def scratch(self):
         i = self.slot
         self.slot = -1
@@ -2441,7 +2373,7 @@ class Performer(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'qualified', 'Qualified',),
+        (10, 'invited', 'Invited',),
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
@@ -3541,9 +3473,9 @@ class Session(TimeStampedModel):
         (20, 'started', 'Started',),
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
-        (40, 'drafted', 'Drafted',),
+        # (40, 'drafted', 'Drafted',),
         (45, 'published', 'Published',),
-        (50, 'final', 'Final',),
+        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -3673,21 +3605,7 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        # First, denormalize the performances by performer
-        for performer in self.performers.all():
-            for performance in performer.performances.all():
-                performance.calculate()
-                performance.save()
-        for contest in self.contests.all():
-            contest.rank()
-        # Only handle multi-round contests.
         return
-
-    # @transition(field=status, source='*', target=STATUS.drafted)
-    # def draft(self, *args, **kwargs):
-    #     for contest in self.contests.all():
-    #         contest.rank()
-    #     return
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
