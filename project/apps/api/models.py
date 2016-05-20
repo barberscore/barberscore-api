@@ -2373,15 +2373,16 @@ class Performer(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'invited', 'Invited',),
+        (10, 'registered', 'Registered',),
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
-        (45, 'evaluation', 'Evaluation',),
-        (50, 'official', 'Official',),
+        # (45, 'evaluation', 'Evaluation',),
+        (50, 'enrolled', 'Enrolled',),
+        (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
         (60, 'finished', 'Finished',),
-        (90, 'final', 'Final',),
+        # (90, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -2620,58 +2621,12 @@ class Performer(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "performer"
 
-    def calculate(self):
-        Score = apps.get_model('api', 'Score')
-        scores = Score.objects.filter(
-            song__performance__performer=self,
-        ).exclude(
-            points=None,
-        ).exclude(
-            kind=Score.KIND.practice,
-        ).order_by(
-            'category',
-        ).values(
-            'category',
-        ).annotate(
-            total=models.Sum('points'),
-            average=models.Avg('points'),
-        )
-        for score in scores:
-            if score['category'] == Score.CATEGORY.music:
-                self.mus_points = score['total']
-                self.mus_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.presentation:
-                self.prs_points = score['total']
-                self.prs_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.singing:
-                self.sng_points = score['total']
-                self.sng_score = round(score['average'], 1)
-
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
-
-        # Calculate total score.
-        try:
-            self.total_score = round(sum([
-                self.mus_score,
-                self.prs_score,
-                self.sng_score,
-            ]) / 3, 1)
-        except TypeError:
-            self.total_score = None
-
-    def build(self):
-        # TODO Future work for automated award mapping
+    @transition(field=status, source='*', target=STATUS.enrolled)
+    def enroll(self, *args, **kwargs):
         return
 
-    def scratch(self):
+    @transition(field=status, source='*', target=STATUS.scratched)
+    def scratch(self, *args, **kwargs):
         performances = self.performances.exclude(
             status=self.performances.model.STATUS.final,
         )
@@ -2686,11 +2641,11 @@ class Performer(TimeStampedModel):
                 other.slot -= 1
                 other.save()
             performance.delete()
-        self.status = self.STATUS.dropped
         self.save()
         return {'success': 'scratched'}
 
-    def disqualify(self):
+    @transition(field=status, source='*', target=STATUS.disqualified)
+    def disqualify(self, *args, **kwargs):
         performances = self.performances.exclude(
             status=self.performances.model.STATUS.final,
         )
@@ -2704,9 +2659,12 @@ class Performer(TimeStampedModel):
             for other in others:
                 other.slot -= 1
                 other.save()
-        self.status = self.STATUS.disqualified
         self.save()
-        return {'success': 'scratched'}
+        return {'success': 'disqualified'}
+
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
 
 
 class Person(TimeStampedModel):
