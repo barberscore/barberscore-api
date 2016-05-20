@@ -3473,6 +3473,7 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (2, 'listed', 'Listed',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'validated', 'Validated',),
