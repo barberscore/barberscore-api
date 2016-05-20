@@ -3393,7 +3393,7 @@ class Score(TimeStampedModel):
         return False
 
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
-    def check(self):
+    def ck(self, *args, **kwargs):
         if self.points < 0:
             return self.STATUS.cleared
         else:
