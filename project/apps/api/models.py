@@ -1156,6 +1156,7 @@ class Convention(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (2, 'scheduled', 'Scheduled',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'validated', 'Validated',),
@@ -3825,6 +3826,8 @@ class Submission(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'pre', 'Pre-Submitted',),
+        (20, 'post', 'Post-Submitted',),
     )
 
     status = FSMIntegerField(
