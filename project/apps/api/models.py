@@ -746,12 +746,15 @@ class Contest(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (20, 'started', 'Started',),
-        # (25, 'ranked', 'Ranked',),
-        (30, 'finished', 'Finished',),
-        (40, 'drafted', 'Drafted',),
+        # (20, 'started', 'Started',),
+        # # (25, 'ranked', 'Ranked',),
+        # (30, 'finished', 'Finished',),
+        # (40, 'drafted', 'Drafted',),
+        (10, 'opened', 'Opened',),
+        (15, 'closed', 'Closed',),
+        (35, 'validated', 'Validated',),
         (45, 'published', 'Published',),
-        (50, 'final', 'Final',),
+        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -3333,6 +3336,23 @@ class Score(TimeStampedModel):
     points = models.IntegerField(
         help_text="""
             The number of points (0-100)""",
+        null=True,
+        blank=True,
+        validators=[
+            MaxValueValidator(
+                100,
+                message='Points must be between 0 - 100',
+            ),
+            MinValueValidator(
+                0,
+                message='Points must be between 0 - 100',
+            ),
+        ]
+    )
+
+    original = models.IntegerField(
+        help_text="""
+            The original score (before revision).""",
         null=True,
         blank=True,
         validators=[
