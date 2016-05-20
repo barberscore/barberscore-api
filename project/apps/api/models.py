@@ -578,6 +578,7 @@ class Chart(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New'),
+        (10, 'active', 'Active'),
     )
 
     status = FSMIntegerField(
@@ -837,7 +838,7 @@ class Contest(TimeStampedModel):
                 self.award.level == self.award.LEVEL.international,
             ]),
             all([
-                self.session.convention.division,
+                self.session.convention.kind,
                 self.award.level != self.award.LEVEL.division,
             ]),
         ]):
@@ -944,10 +945,13 @@ class Contestant(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'eligible', 'Eligible',),
         (20, 'ineligible', 'Ineligible',),
-        (30, 'dnq', 'Did Not Qualify',),
+        # (30, 'dnq', 'Did Not Qualify',),
+        (40, 'rep', 'District Representative',),
         (50, 'qualified', 'Qualified',),
         (60, 'ranked', 'Ranked',),
-        (90, 'final', 'Final',),
+        (70, 'scratched', 'Scratched',),
+        (80, 'disqualified', 'Disqualified',),
+        # (90, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -1116,6 +1120,18 @@ class Contestant(TimeStampedModel):
             ]) / 3, 1)
         except TypeError:
             self.total_score = None
+
+    @transition(field=status, source='*', target=STATUS.disqualified)
+    def process(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.scratched)
+    def scratch(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.disqualified)
+    def disqualify(self, *args, **kwargs):
+        return
 
     class Meta:
         unique_together = (
@@ -2243,7 +2259,7 @@ class Performance(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.round.session.convention.organization.name,
-            str(self.round.session.convention.get_division_display()),
+            str(self.round.session.convention.get_kind_display()),
             self.round.session.convention.get_season_display(),
             self.round.session.get_kind_display(),
             self.round.get_kind_display(),
@@ -2607,7 +2623,7 @@ class Performer(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
-            str(self.session.convention.get_division_display()),
+            str(self.session.convention.get_kind_display()),
             self.session.convention.get_season_display(),
             str(self.session.convention.year),
             self.session.get_kind_display(),
@@ -3129,7 +3145,7 @@ class Round(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
-            str(self.session.convention.get_division_display()),
+            str(self.session.convention.get_kind_display()),
             self.session.convention.get_season_display(),
             self.session.get_kind_display(),
             self.get_kind_display(),
@@ -3545,13 +3561,13 @@ class Session(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.organization = self.convention.organization
-        if self.convention.division:
-            division = str(self.convention.get_division_display())
+        if self.convention.kind:
+            kind = str(self.convention.get_kind_display())
         else:
-            division = None
+            kind = None
         self.name = " ".join(filter(None, [
             self.convention.organization.name,
-            division,
+            kind,
             self.convention.get_season_display(),
             self.get_kind_display(),
             "Session",
@@ -3864,6 +3880,17 @@ class Venue(TimeStampedModel):
         max_length=200,
         unique=True,
         editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
     )
 
     location = models.CharField(
