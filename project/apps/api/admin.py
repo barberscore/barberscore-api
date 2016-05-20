@@ -877,7 +877,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'date',
         'cursor',
-        'threshold',
         'entry_form',
         'song_list',
         # 'year',
