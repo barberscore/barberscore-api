@@ -3098,12 +3098,13 @@ class Round(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'built', 'Built',),
-        (15, 'ready', 'Ready',),
+        # (10, 'built', 'Built',),
+        # (15, 'ready', 'Ready',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
-        (28, 'ranked', 'Ranked',),
-        (30, 'final', 'Final',),
+        # (28, 'ranked', 'Ranked',),
+        # (30, 'final', 'Final',),
+        (50, 'published', 'Published',),
     )
 
     status = FSMIntegerField(
@@ -3193,14 +3194,6 @@ class Round(TimeStampedModel):
     def __unicode__(self):
         return u"{0}".format(self.name)
 
-    def draw(self):
-        i = 1
-        for performance in self.performances.order_by('?'):
-            performance.slot = i
-            performance.save()
-            i += 1
-        return {'success': 'drew {0} performances'.format(i)}
-
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
@@ -3274,8 +3267,8 @@ class Round(TimeStampedModel):
             performance.save()
         return
 
-    @transition(field=status, source='*', target=STATUS.ranked)
-    def promote(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
         promotions = self.performances.filter(
             is_advancing=True,
         ).order_by('?')
