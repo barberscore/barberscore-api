@@ -2448,6 +2448,12 @@ class Performer(TimeStampedModel):
         default=True,
     )
 
+    is_private = models.BooleanField(
+        help_text="""
+            Keep scores private.""",
+        default=False,
+    )
+
     tenor = models.ForeignKey(
         'Role',
         null=True,

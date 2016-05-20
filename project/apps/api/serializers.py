@@ -362,6 +362,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'men',
             'risers',
             'is_evaluation',
+            'is_private',
             'director',
             'codirector',
             'picture',
