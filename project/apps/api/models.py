@@ -1156,12 +1156,15 @@ class Convention(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'scheduled', 'Scheduled',),
-        (15, 'upcoming', 'Upcoming',),
+        (4, 'opened', 'Opened',),
+        (8, 'closed', 'Closed',),
+        (10, 'validated', 'Validated',),
         (20, 'started', 'Started',),
+        # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
-        (40, 'recent', 'Recent',),
-        (50, 'final', 'Final',),
+        # (40, 'drafted', 'Drafted',),
+        (45, 'published', 'Published',),
+        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
