@@ -46,18 +46,104 @@ class AdminFactory(DjangoModelFactory):
     is_staff = True
 
 
+# Organizations
+class OrganizationFactory(DjangoModelFactory):
+    class Meta:
+        model = Organization
+
+    status = Organization.STATUS.active
+
+
+class BHSFactory(OrganizationFactory):
+    level = Organization.LEVEL.international
+    kind = Organization.KIND.international
+    name = 'International'
+    short_name = 'BHS'
+    long_name = 'International'
+    parent = None
+
+
+class DistrictFactory(OrganizationFactory):
+    level = Organization.LEVEL.district
+    kind = Organization.KIND.district
+    parent = SubFactory(
+        'apps.api.factories.BHSFactory',
+    )
+
+
+class DivisionOrganizationFactory(OrganizationFactory):
+    level = Organization.LEVEL.division
+    kind = Organization.KIND.division
+
+
+class FHTFactory(OrganizationFactory):
+    level = Organization.LEVEL.district
+    kind = Organization.KIND.noncomp
+    name = 'Frank Thorne District'
+    short_name = 'FHT'
+    long_name = 'Frank Thorne'
+    parent = SubFactory(
+        'apps.api.factories.BHSFactory',
+    )
+
+
+class AffiliateDistrictOrganizationFactory(OrganizationFactory):
+    level = Organization.LEVEL.district
+    kind = Organization.KIND.affiliate
+    parent = SubFactory(
+        'apps.api.factories.BHSFactory',
+    )
+
+
+# Awards
 class AwardFactory(DjangoModelFactory):
     class Meta:
         model = Award
     status = Award.STATUS.active
+
+
+class InternationalQuartetAward(AwardFactory):
     kind = Award.KIND.quartet
     season = Award.SEASON.international
     championship_rounds = 3
+    qualifier_rounds = 2
     is_primary = True
     threshold = 76.0
     minimum = 73.0
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory'
+        'apps.api.factories.BHSFactory'
+    )
+
+
+class InternationalChorusAward(AwardFactory):
+    kind = Award.KIND.chorus
+    season = Award.SEASON.international
+    championship_rounds = 1
+    is_primary = True
+    organization = SubFactory(
+        'apps.api.factories.BHSFactory'
+    )
+
+
+class DistrictQuartetAward(AwardFactory):
+    kind = Award.KIND.quartet
+    season = Award.SEASON.district
+    championship_rounds = 2
+    is_primary = True
+    # threshold = 76.0
+    # minimum = 73.0
+    organization = SubFactory(
+        'apps.api.factories.DistrictFactory'
+    )
+
+
+class DistrictChorusAward(AwardFactory):
+    kind = Award.KIND.chorus
+    season = Award.SEASON.district
+    championship_rounds = 1
+    is_primary = True
+    organization = SubFactory(
+        'apps.api.factories.DistrictFactory'
     )
 
 
@@ -139,6 +225,12 @@ class ConventionFactory(DjangoModelFactory):
         model = Convention
 
     status = Convention.STATUS.new
+    venue = SubFactory(
+        'apps.api.factories.VenueFactory'
+    )
+
+
+class SummerConventionFactory(ConventionFactory):
     kind = Convention.KIND.international
     season = Convention.SEASON.international
     risers = [13, ]
@@ -149,47 +241,47 @@ class ConventionFactory(DjangoModelFactory):
         bounds='[)',
     )
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory'
-    )
-    venue = SubFactory(
-        'apps.api.factories.VenueFactory'
+        'apps.api.factories.BHSFactory',
     )
 
 
-class OrganizationFactory(DjangoModelFactory):
-    class Meta:
-        model = Organization
-
-    status = Organization.STATUS.active
-    name = 'International'
-    level = Organization.LEVEL.international
-    kind = Organization.KIND.international
-    short_name = 'BHS'
-    long_name = 'International'
-
-
-class DistrictFactory(DjangoModelFactory):
-    class Meta:
-        model = Organization
-
-    status = Organization.STATUS.active
-    name = 'Cardinal District'
-    level = Organization.LEVEL.district
-    kind = Organization.KIND.district
-    short_name = 'CAR'
-    long_name = 'Cardinal'
+class MidwinterConventionFactory(ConventionFactory):
+    kind = Convention.KIND.international
+    season = Convention.SEASON.midwinter
+    risers = [0, ]
+    year = 2016
+    date = DateTimeTZRange(
+        lower=datetime(2016, 01, 29, 12, 00),
+        upper=datetime(2016, 01, 30, 12, 00),
+        bounds='[)',
+    )
+    organization = SubFactory(
+        'apps.api.factories.BHSFactory',
+    )
 
 
-class InternationalFactory(DjangoModelFactory):
-    class Meta:
-        model = Organization
+class SpringConventionFactory(ConventionFactory):
+    kind = Convention.KIND.district
+    season = Convention.SEASON.spring
+    risers = [5, 7, 9, ]
+    year = 2016
+    date = DateTimeTZRange(
+        lower=datetime(2016, 04, 01, 12, 00),
+        upper=datetime(2016, 04, 02, 12, 00),
+        bounds='[)',
+    )
 
-    status = Organization.STATUS.active
-    name = 'International'
-    level = Organization.LEVEL.international
-    kind = Organization.KIND.international
-    short_name = 'BHS'
-    long_name = 'International'
+
+class FallConventionFactory(ConventionFactory):
+    kind = Convention.KIND.district
+    season = Convention.SEASON.fall
+    risers = [5, 7, 9, ]
+    year = 2016
+    date = DateTimeTZRange(
+        lower=datetime(2016, 10, 01, 12, 00),
+        upper=datetime(2016, 10, 02, 12, 00),
+        bounds='[)',
+    )
 
 
 class JudgeFactory(DjangoModelFactory):

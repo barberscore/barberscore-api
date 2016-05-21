@@ -1,8 +1,5 @@
 import logging
 
-# from rest_framework.response import Response
-# from rest_framework.decorators import detail_route
-
 from drf_fsm_transitions.viewset_mixins import (
     get_viewset_transition_action_mixin,
 )
