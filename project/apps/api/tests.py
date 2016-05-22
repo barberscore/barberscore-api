@@ -90,7 +90,7 @@ class ConventionPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
 
 class OrganizationPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
     base_name = 'organization'
-    factory_class = BHSFactory
+    factory_class = OrganizationFactory
 
 
 class JudgePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
@@ -170,50 +170,57 @@ class ChartAdminTest(ReadWriteRESTAPITestCaseMixin, BaseRESTAPITestCase):
 
 # Round Tests
 
-def setup_car_spring():
-    venue = VenueFactory()
-    car_district = DistrictFactory(
-        name='Cardinal District',
-        short_name='CAR',
-        long_name='Cardinal',
-    )
-    convention = SpringConventionFactory(
-        venue=venue,
-        organization=car_district,
-    )
-    quartet_session = SessionFactory(
-        kind=Session.KIND.quartet,
-        convention=convention,
-    )
-    chorus_session = SessionFactory(
-        kind=Session.KIND.chorus,
-        convention=convention,
-    )
-    quartet_qualifier = AwardFactory(
-        kind=Award.KIND.quartet,
-        season=Award.SEASON.spring,
-        championship_rounds=2,
-        is_primary=True,
-        organization=car_district,
-    )
-    quartet_qualifier = AwardFactory(
-        kind=Award.KIND.quartet,
-        season=Award.SEASON.spring,
-        championship_rounds=2,
-        is_primary=True,
-        organization=car_district,
-    )
-    quartet_contest = ContestFactory(
-        session=quartet_session,
-        award=quartet_qualifier,
-    )
+# def setup_car_spring():
+#     venue = VenueFactory()
+#     bhs = InternationalFactory()
+#     car_district = DistrictFactory(
+#         name='Cardinal District',
+#         short_name='CAR',
+#         long_name='Cardinal',
+#     )
+#     convention = SpringConventionFactory(
+#         venue=venue,
+#         organization=car_district,
+#     )
+#     quartet_session = SessionFactory(
+#         kind=Session.KIND.quartet,
+#         convention=convention,
+#     )
+#     chorus_session = SessionFactory(
+#         kind=Session.KIND.chorus,
+#         convention=convention,
+#     )
+#     quartet_qualifier = AwardFactory(
+#         kind=Award.KIND.quartet,
+#         championship_season=Award.SEASON.international,
+#         championship_rounds=3,
+#         is_primary=True,
+#         is_qualification_required=True,
+#         qualifier_season=Award.SEASON.spring,
+#         qualifier_rounds=2,
+#         threshold=76,
+#         minimum=70,
+#         advance=73,
+#         organization=bhs,
+#     )
+#     quartet_qualifier = AwardFactory(
+#         kind=Award.KIND.quartet,
+#         season=Award.SEASON.spring,
+#         championship_rounds=2,
+#         is_primary=True,
+#         organization=car_district,
+#     )
+#     quartet_contest = ContestFactory(
+#         session=quartet_session,
+#         award=quartet_qualifier,
+#     )
 
-    chorus_contest = ContestFactory(
-        session=chorus_session,
-        award=chorus_qualifier
-    )
+#     chorus_contest = ContestFactory(
+#         session=chorus_session,
+#         award=chorus_qualifier
+#     )
 
 
-@with_setup(setup_car_spring)
-def test_district_quartet():
-    assert True
+# @with_setup(setup_car_spring)
+# def test_district_quartet():
+#     assert True

@@ -128,7 +128,13 @@ class Award(TimeStampedModel):
         (9, 'video', 'Video',),
     )
 
-    season = models.IntegerField(
+    championship_season = models.IntegerField(
+        choices=SEASON,
+        null=True,
+        blank=True,
+    )
+
+    qualifier_season = models.IntegerField(
         choices=SEASON,
         null=True,
         blank=True,
