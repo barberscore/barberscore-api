@@ -5,6 +5,7 @@ from factory.django import (
 from factory import (
     SubFactory,
     PostGenerationMethodCall,
+    Faker,
 )
 
 from datetime import datetime
@@ -63,7 +64,7 @@ class AwardFactory(DjangoModelFactory):
     status = Award.STATUS.active
 
 
-class InternationalQuartetAward(AwardFactory):
+class InternationalQuartetAwardFactory(AwardFactory):
     kind = Award.KIND.quartet
     championship_season = Award.SEASON.international
     championship_rounds = 3
@@ -79,7 +80,7 @@ class InternationalQuartetAward(AwardFactory):
     )
 
 
-class InternationalChorusAward(AwardFactory):
+class InternationalChorusAwardFactory(AwardFactory):
     kind = Award.KIND.chorus
     championship_season = Award.SEASON.international
     championship_rounds = 1
@@ -92,7 +93,7 @@ class InternationalChorusAward(AwardFactory):
     )
 
 
-class InternationalSeniorsAward(AwardFactory):
+class InternationalSeniorsAwardFactory(AwardFactory):
     kind = Award.KIND.seniors
     championship_season = Award.SEASON.midwinter
     championship_rounds = 1
@@ -105,7 +106,7 @@ class InternationalSeniorsAward(AwardFactory):
     )
 
 
-class InternationalYouthAward(AwardFactory):
+class InternationalYouthAwardFactory(AwardFactory):
     kind = Award.KIND.youth
     championship_season = Award.SEASON.international
     championship_rounds = 1
@@ -121,7 +122,7 @@ class InternationalYouthAward(AwardFactory):
     )
 
 
-class DistrictQuartetAward(AwardFactory):
+class DistrictQuartetAwardFactory(AwardFactory):
     kind = Award.KIND.quartet
     championship_season = Award.SEASON.fall
     championship_rounds = 2
@@ -137,7 +138,7 @@ class DistrictQuartetAward(AwardFactory):
     )
 
 
-class DistrictChorusAward(AwardFactory):
+class DistrictChorusAwardFactory(AwardFactory):
     kind = Award.KIND.chorus
     championship_season = Award.SEASON.spring
     championship_rounds = 1
@@ -150,7 +151,7 @@ class DistrictChorusAward(AwardFactory):
     )
 
 
-class DistrictSeniorsAward(AwardFactory):
+class DistrictSeniorsAwardFactory(AwardFactory):
     kind = Award.KIND.seniors
     championship_season = Award.SEASON.fall
     championship_rounds = 1
@@ -163,7 +164,7 @@ class DistrictSeniorsAward(AwardFactory):
     )
 
 
-class DistrictYouthAward(AwardFactory):
+class DistrictYouthAwardFactory(AwardFactory):
     kind = Award.KIND.youth
     championship_season = Award.SEASON.fall
     championship_rounds = 1
@@ -179,7 +180,7 @@ class DistrictYouthAward(AwardFactory):
     )
 
 
-class DivisionQuartetAward(AwardFactory):
+class DivisionQuartetAwardFactory(AwardFactory):
     kind = Award.KIND.quartet
     championship_season = Award.SEASON.spring
     championship_rounds = 2
@@ -190,7 +191,7 @@ class DivisionQuartetAward(AwardFactory):
     )
 
 
-class DivisionChorusAward(AwardFactory):
+class DivisionChorusAwardFactory(AwardFactory):
     kind = Award.KIND.chorus
     championship_season = Award.SEASON.spring
     championship_rounds = 1
@@ -201,7 +202,7 @@ class DivisionChorusAward(AwardFactory):
     )
 
 
-class DivisionSeniorsAward(AwardFactory):
+class DivisionSeniorsAwardFactory(AwardFactory):
     kind = Award.KIND.seniors
     championship_season = Award.SEASON.spring
     championship_rounds = 1
@@ -212,7 +213,7 @@ class DivisionSeniorsAward(AwardFactory):
     )
 
 
-class DivisionYouthAward(AwardFactory):
+class DivisionYouthAwardFactory(AwardFactory):
     kind = Award.KIND.youth
     championship_season = Award.SEASON.spring
     championship_rounds = 1
@@ -228,7 +229,6 @@ class ChapterFactory(DjangoModelFactory):
     class Meta:
         model = Chapter
     status = Chapter.STATUS.active
-    code = 'Z-999'
 
 
 class DistrictChapterFactory(ChapterFactory):
@@ -249,18 +249,17 @@ class AffiliateChapterFactory(ChapterFactory):
 class ChartFactory(DjangoModelFactory):
     class Meta:
         model = Chart
-
-    title = 'The Old Songs'
+    title = Faker('company')
 
 
 # Groups
 class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
+    name = Faker('company')
 
 
 class QuartetFactory(GroupFactory):
-    name = 'Test Quartet'
     kind = Group.KIND.quartet
     organization = SubFactory(
         'apps.api.factories.DistrictFactory',
@@ -268,7 +267,6 @@ class QuartetFactory(GroupFactory):
 
 
 class ChorusFactory(GroupFactory):
-    name = 'Test Chorus'
     kind = Group.KIND.chorus
     organization = SubFactory(
         'apps.api.factories.DistrictFactory',
@@ -282,7 +280,6 @@ class ChorusFactory(GroupFactory):
 class OrganizationFactory(DjangoModelFactory):
     class Meta:
         model = Organization
-
     status = Organization.STATUS.active
 
 
@@ -343,21 +340,14 @@ class AffiliateFactory(OrganizationFactory):
 class PersonFactory(DjangoModelFactory):
     class Meta:
         model = Person
-
-    name = 'Test Person'
     status = Person.STATUS.active
+    name = Faker('name_male')
 
 
 # Venues
 class VenueFactory(DjangoModelFactory):
     class Meta:
         model = Venue
-        django_get_or_create = (
-            'location',
-            'city',
-            'state',
-            'timezone',
-        )
     location = 'Nashville Convention Center'
     city = 'Nashville'
     state = 'Tennessee'
@@ -418,19 +408,47 @@ class JudgeFactory(DjangoModelFactory):
     class Meta:
         model = Judge
 
-    session = SubFactory(
-        'apps.api.factories.InternationalQuartetSessionFactory'
-    )
-    certification = SubFactory(
-        'apps.api.factories.CertificationFactory'
-    )
+
+# class InternationalQuartetOfficialAdminJudgeFactory(JudgeFactory):
+#     session = SubFactory(
+#         'apps.api.factories.InternationalQuartetSessionFactory'
+#     )
+#     certification = SubFactory(
+#         'apps.api.factories.OfficialAdminCertificationFactory'
+#     )
+
+
+# class InternationalQuartetOfficialMusicJudgeFactory(JudgeFactory):
+#     session = SubFactory(
+#         'apps.api.factories.InternationalQuartetSessionFactory'
+#     )
+#     certification = SubFactory(
+#         'apps.api.factories.OfficialMusicCertificationFactory'
+#     )
+
+
+# class InternationalQuartetOfficialPresentationJudgeFactory(JudgeFactory):
+#     session = SubFactory(
+#         'apps.api.factories.InternationalQuartetSessionFactory'
+#     )
+#     certification = SubFactory(
+#         'apps.api.factories.OfficialPresentationCertificationFactory'
+#     )
+
+
+# class InternationalQuartetOfficialSingingJudgeFactory(JudgeFactory):
+#     session = SubFactory(
+#         'apps.api.factories.InternationalQuartetSessionFactory'
+#     )
+#     certification = SubFactory(
+#         'apps.api.factories.OfficialSingingCertificationFactory'
+#     )
 
 
 # Submissions
 class SubmissionFactory(DjangoModelFactory):
     class Meta:
         model = Submission
-
     status = Submission.STATUS.new
     performer = SubFactory(
         'apps.api.factories.PerformerFactory'
@@ -573,45 +591,42 @@ class RegionalConventionFactory(ConventionFactory):
 class SessionFactory(DjangoModelFactory):
     class Meta:
         model = Session
-        django_get_or_create = (
-            'kind',
-        )
     status = Session.STATUS.new
 
 
-class InternationalQuartetSession(SessionFactory):
+class InternationalQuartetSessionFactory(SessionFactory):
     kind = Session.KIND.quartet
     convention = SubFactory(
-        'apps.api.factories.SummerConvention',
+        'apps.api.factories.SummerConventionFactory',
     )
 
 
-class InternationalChorusSession(SessionFactory):
+class InternationalChorusSessionFactory(SessionFactory):
     kind = Session.KIND.chorus
     convention = SubFactory(
-        'apps.api.factories.SummerConvention',
+        'apps.api.factories.SummerConventionFactory',
     )
 
 
-class InternationalSeniorsSession(SessionFactory):
+class InternationalSeniorsSessionFactory(SessionFactory):
     kind = Session.KIND.seniors
     convention = SubFactory(
         'apps.api.factories.MidwinterConvention',
     )
 
 
-class InternationalYouthSession(SessionFactory):
+class InternationalYouthSessionFactory(SessionFactory):
     kind = Session.KIND.youth
     convention = SubFactory(
-        'apps.api.factories.SummerConvention',
+        'apps.api.factories.SummerConventionFactory',
     )
 
 
-class QuartetSession(SessionFactory):
+class QuartetSessionFactory(SessionFactory):
     kind = Session.KIND.quartet
 
 
-class DistrictChorusSession(SessionFactory):
+class DistrictChorusSessionFactory(SessionFactory):
     kind = Session.KIND.chorus
 
 
@@ -634,22 +649,13 @@ class ContestFactory(DjangoModelFactory):
 class RoundFactory(DjangoModelFactory):
     class Meta:
         model = Round
-
     status = Round.STATUS.new
-    kind = Round.KIND.finals
-    num = 1
-    session = SubFactory(
-        'apps.api.factories.InternationalQuartetSessionFactory'
-    )
 
 
 # Performers
 class PerformerFactory(DjangoModelFactory):
     class Meta:
         model = Performer
-        django_get_or_create = (
-            'status',
-        )
     status = Performer.STATUS.new
     # representing = SubFactory(
     #     'apps.api.factories.DistrictFactory'
