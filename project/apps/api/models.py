@@ -921,7 +921,6 @@ class Contest(TimeStampedModel):
                 if contestant.rank == 1:
                     self.champion = contestant
             contestant.save()
-        self.status = self.STATUS.drafted
         self.save()
         return
 
@@ -2287,52 +2286,52 @@ class Performance(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "performance"
 
-    # def calculate(self):
-    #     Score = apps.get_model('api', 'Score')
-    #     scores = Score.objects.filter(
-    #         song__performance=self,
-    #     ).exclude(
-    #         points=None,
-    #     ).exclude(
-    #         kind=Score.KIND.practice,
-    #     ).order_by(
-    #         'category',
-    #     ).values(
-    #         'category',
-    #     ).annotate(
-    #         total=models.Sum('points'),
-    #         average=models.Avg('points'),
-    #     )
-    #     for score in scores:
-    #         if score['category'] == Score.CATEGORY.music:
-    #             self.mus_points = score['total']
-    #             self.mus_score = round(score['average'], 1)
-    #         if score['category'] == Score.CATEGORY.presentation:
-    #             self.prs_points = score['total']
-    #             self.prs_score = round(score['average'], 1)
-    #         if score['category'] == Score.CATEGORY.singing:
-    #             self.sng_points = score['total']
-    #             self.sng_score = round(score['average'], 1)
+    def calculate(self):
+        Score = apps.get_model('api', 'Score')
+        scores = Score.objects.filter(
+            song__performance=self,
+        ).exclude(
+            points=None,
+        ).exclude(
+            kind=Score.KIND.practice,
+        ).order_by(
+            'category',
+        ).values(
+            'category',
+        ).annotate(
+            total=models.Sum('points'),
+            average=models.Avg('points'),
+        )
+        for score in scores:
+            if score['category'] == Score.CATEGORY.music:
+                self.mus_points = score['total']
+                self.mus_score = round(score['average'], 1)
+            if score['category'] == Score.CATEGORY.presentation:
+                self.prs_points = score['total']
+                self.prs_score = round(score['average'], 1)
+            if score['category'] == Score.CATEGORY.singing:
+                self.sng_points = score['total']
+                self.sng_score = round(score['average'], 1)
 
-    #     # Calculate total points.
-    #     try:
-    #         self.total_points = sum([
-    #             self.mus_points,
-    #             self.prs_points,
-    #             self.sng_points,
-    #         ])
-    #     except TypeError:
-    #         self.total_points = None
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
 
-    #     # Calculate total score.
-    #     try:
-    #         self.total_score = round(sum([
-    #             self.mus_score,
-    #             self.prs_score,
-    #             self.sng_score,
-    #         ]) / 3, 1)
-    #     except TypeError:
-    #         self.total_score = None
+        # Calculate total score.
+        try:
+            self.total_score = round(sum([
+                self.mus_score,
+                self.prs_score,
+                self.sng_score,
+            ]) / 3, 1)
+        except TypeError:
+            self.total_score = None
 
     # def scratch(self):
     #     i = self.slot
@@ -2635,6 +2634,53 @@ class Performer(TimeStampedModel):
     # def clean(self):
     #     if self.singers.count() > 4:
     #         raise ValidationError('There can not be more than four persons in a quartet.')
+
+    def calculate(self):
+        Score = apps.get_model('api', 'Score')
+        scores = Score.objects.filter(
+            song__performance__performer=self,
+        ).exclude(
+            points=None,
+        ).exclude(
+            kind=Score.KIND.practice,
+        ).order_by(
+            'category',
+        ).values(
+            'category',
+        ).annotate(
+            total=models.Sum('points'),
+            average=models.Avg('points'),
+        )
+        for score in scores:
+            if score['category'] == Score.CATEGORY.music:
+                self.mus_points = score['total']
+                self.mus_score = round(score['average'], 1)
+            if score['category'] == Score.CATEGORY.presentation:
+                self.prs_points = score['total']
+                self.prs_score = round(score['average'], 1)
+            if score['category'] == Score.CATEGORY.singing:
+                self.sng_points = score['total']
+                self.sng_score = round(score['average'], 1)
+
+        # Calculate total points.
+        try:
+            self.total_points = sum([
+                self.mus_points,
+                self.prs_points,
+                self.sng_points,
+            ])
+        except TypeError:
+            self.total_points = None
+
+        # Calculate total score.
+        try:
+            self.total_score = round(sum([
+                self.mus_score,
+                self.prs_score,
+                self.sng_score,
+            ]) / 3, 1)
+        except TypeError:
+            self.total_score = None
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
