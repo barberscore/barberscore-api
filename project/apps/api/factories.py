@@ -258,8 +258,8 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
-    status = Group.STATUS.active
 
+class QuartetFactory(GroupFactory):
     name = 'Test Quartet'
     kind = Group.KIND.quartet
     organization = SubFactory(
@@ -267,32 +267,14 @@ class GroupFactory(DjangoModelFactory):
     )
 
 
-class QuartetFactory(DjangoModelFactory):
-    class Meta:
-        model = Group
-
-    status = Group.STATUS.active
-
-    name = 'Test Quartet'
-    kind = Group.KIND.quartet
-    organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
-    )
-
-
-class ChorusFactory(DjangoModelFactory):
-    class Meta:
-        model = Group
-
-    status = Group.STATUS.active
-
+class ChorusFactory(GroupFactory):
     name = 'Test Chorus'
     kind = Group.KIND.chorus
-    chapter = SubFactory(
-        'apps.api.factories.ChapterFactory'
-    )
     organization = SubFactory(
         'apps.api.factories.DistrictFactory',
+    )
+    chapter = SubFactory(
+        'apps.api.factories.DistrictChapterFactory'
     )
 
 
@@ -382,30 +364,65 @@ class VenueFactory(DjangoModelFactory):
     timezone = 'US/Central'
 
 
+# Certifications
+class CertificationFactory(DjangoModelFactory):
+    class Meta:
+        model = Certification
+    person = SubFactory(
+        'apps.api.factories.PersonFactory'
+    )
+
+
+class OfficialAdminCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.admin
+    status = Certification.STATUS.active
+
+
+class OfficialMusicCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.music
+    status = Certification.STATUS.active
+
+
+class OfficialPresentationCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.presentation
+    status = Certification.STATUS.active
+
+
+class OfficialSingingCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.singing
+    status = Certification.STATUS.active
+
+
+class CandidateAdminCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.admin
+    status = Certification.STATUS.candidate
+
+
+class CandidateMusicCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.music
+    status = Certification.STATUS.candidate
+
+
+class CandidatePresentationCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.presentation
+    status = Certification.STATUS.candidate
+
+
+class CandidateSingingCertificationFactory(CertificationFactory):
+    category = Certification.CATEGORY.singing
+    status = Certification.STATUS.candidate
+
+
 # Judges
 class JudgeFactory(DjangoModelFactory):
     class Meta:
         model = Judge
 
-    category = Judge.CATEGORY.admin
-    kind = Judge.KIND.official
     session = SubFactory(
-        'apps.api.factories.SessionFactory'
+        'apps.api.factories.InternationalQuartetSessionFactory'
     )
     certification = SubFactory(
         'apps.api.factories.CertificationFactory'
-    )
-
-
-# Certifications
-class CertificationFactory(DjangoModelFactory):
-    class Meta:
-        model = Certification
-
-    status = Certification.STATUS.active
-    category = Certification.CATEGORY.admin
-    person = SubFactory(
-        'apps.api.factories.PersonFactory'
     )
 
 
@@ -430,7 +447,7 @@ class MemberFactory(DjangoModelFactory):
 
     status = Member.STATUS.active
     chapter = SubFactory(
-        'apps.api.factories.ChapterFactory'
+        'apps.api.factories.DistrictChapterFactory'
     )
     person = SubFactory(
         'apps.api.factories.PersonFactory'
@@ -606,10 +623,10 @@ class ContestFactory(DjangoModelFactory):
     status = Contest.STATUS.new
     cycle = 2016
     session = SubFactory(
-        'apps.api.factories.SessionFactory'
+        'apps.api.factories.InternationalQuartetSessionFactory'
     )
     award = SubFactory(
-        'apps.api.factories.AwardFactory'
+        'apps.api.factories.InternationalQuartetAwardFactory'
     )
 
 
@@ -622,7 +639,7 @@ class RoundFactory(DjangoModelFactory):
     kind = Round.KIND.finals
     num = 1
     session = SubFactory(
-        'apps.api.factories.SessionFactory'
+        'apps.api.factories.InternationalQuartetSessionFactory'
     )
 
 
@@ -638,7 +655,7 @@ class PerformerFactory(DjangoModelFactory):
     #     'apps.api.factories.DistrictFactory'
     # )
     session = SubFactory(
-        'apps.api.factories.SessionFactory'
+        'apps.api.factories.InternationalQuartetSessionFactory'
     )
     group = SubFactory(
         'apps.api.factories.QuartetFactory'

@@ -3933,7 +3933,6 @@ class Venue(TimeStampedModel):
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the venue.""",
-        default='US/Pacific',
     )
 
     class JSONAPIMeta:
