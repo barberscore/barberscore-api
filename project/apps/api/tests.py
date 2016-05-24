@@ -175,6 +175,7 @@ from apps.api.models import (
 # Round Tests
 
 def setup_international():
+    AdminFactory()
     bhs = InternationalFactory()
     quartet_award = InternationalQuartetAwardFactory(
         organization=bhs,
