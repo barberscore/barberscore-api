@@ -1,5 +1,7 @@
+# Standard Libary
 from datetime import datetime
 
+# Third-Party
 from factory import (
     Faker,
     PostGenerationMethodCall,
@@ -8,6 +10,7 @@ from factory import (
 from factory.django import DjangoModelFactory
 from psycopg2.extras import DateTimeTZRange
 
+# First-Party
 from apps.api.models import (
     Award,
     Certification,

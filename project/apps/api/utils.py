@@ -1,13 +1,18 @@
+# Standard Libary
 import csv
 import logging
 
+# Third-Party
 import arrow
-from django.db import IntegrityError
-from django.db.models import Q
 from nameparser import HumanName
 from psycopg2.extras import DateRange
 from unidecode import unidecode
 
+# Django
+from django.db import IntegrityError
+from django.db.models import Q
+
+# Local
 from .models import (
     Award,
     Chapter,

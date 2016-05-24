@@ -1,5 +1,7 @@
+# Django
 from django.core.management.base import BaseCommand
 
+# First-Party
 from apps.api.models import (
     Award,
     Certification,

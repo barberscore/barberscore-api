@@ -1,5 +1,7 @@
+# Django
 from django.conf import settings
 
+# First-Party
 from storages.backends.s3boto import S3BotoStorage
 
 

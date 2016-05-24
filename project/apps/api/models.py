@@ -1,10 +1,32 @@
+# Future
 from __future__ import division
 
+# Standard Libary
 import datetime
 import logging
 import os
 import uuid
 
+# Third-Party
+from django_fsm import (
+    RETURN_VALUE,
+    FSMIntegerField,
+    transition,
+)
+from dry_rest_permissions.generics import allow_staff_or_superuser
+from model_utils import Choices
+from model_utils.models import TimeStampedModel
+from mptt.models import (
+    MPTTModel,
+    TreeForeignKey,
+)
+from nameparser import HumanName
+from phonenumber_field.modelfields import PhoneNumberField
+from psycopg2.extras import DateTimeTZRange
+from ranking import Ranking
+from timezone_field import TimeZoneField
+
+# Django
 from django.apps import apps
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -24,24 +46,8 @@ from django.core.validators import (
 )
 from django.db import models
 from django.utils import timezone
-from django_fsm import (
-    RETURN_VALUE,
-    FSMIntegerField,
-    transition,
-)
-from dry_rest_permissions.generics import allow_staff_or_superuser
-from model_utils import Choices
-from model_utils.models import TimeStampedModel
-from mptt.models import (
-    MPTTModel,
-    TreeForeignKey,
-)
-from nameparser import HumanName
-from phonenumber_field.modelfields import PhoneNumberField
-from psycopg2.extras import DateTimeTZRange
-from ranking import Ranking
-from timezone_field import TimeZoneField
 
+# Local
 from .managers import UserManager
 
 # from django_fsm_log.decorators import fsm_log_by

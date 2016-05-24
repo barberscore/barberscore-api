@@ -1,10 +1,13 @@
+# Standard Libary
 from optparse import make_option
 
+# Django
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
 
+# First-Party
 from apps.api.models import (
     Contestant,
     Performance,

@@ -1,4 +1,4 @@
-from django.test import TestCase
+# Third-Party
 from nose import with_setup
 from nose.tools import eq_ as eq
 from nose.tools import ok_ as ok
@@ -8,6 +8,10 @@ from rest_assured.testcases import (
     ReadWriteRESTAPITestCaseMixin,
 )
 
+# Django
+from django.test import TestCase
+
+# First-Party
 from apps.api.factories import (
     AdminFactory,
     AwardFactory,

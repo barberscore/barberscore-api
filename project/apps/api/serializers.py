@@ -1,12 +1,16 @@
+# Third-Party
 import pytz
 import six
-from django.core.exceptions import ValidationError
 from drf_extra_fields.fields import (
     DateRangeField,
     DateTimeRangeField,
 )
 from rest_framework_json_api import serializers
 
+# Django
+from django.core.exceptions import ValidationError
+
+# Local
 from .models import (
     Award,
     Certification,

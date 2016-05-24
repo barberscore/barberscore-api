@@ -1,7 +1,11 @@
+# Standard Libary
 import datetime
 import os
 
+# Third-Party
 import dj_database_url
+
+# Django
 from django.core.exceptions import ImproperlyConfigured
 
 

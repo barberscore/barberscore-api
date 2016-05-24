@@ -1,3 +1,4 @@
+# Local
 from .base import *
 
 ALLOWED_HOSTS = [

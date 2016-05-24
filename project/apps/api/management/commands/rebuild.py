@@ -1,6 +1,8 @@
+# Django
 from django.core.files import File
 from django.core.management.base import BaseCommand
 
+# First-Party
 from apps.api.models import Convention
 from apps.api.utils import (
     extract_contestants,

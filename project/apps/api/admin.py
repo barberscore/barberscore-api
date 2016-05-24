@@ -1,7 +1,11 @@
-from django.contrib import admin
+# Third-Party
 from fsm_admin.mixins import FSMTransitionMixin
 from mptt.admin import MPTTModelAdmin
 
+# Django
+from django.contrib import admin
+
+# Local
 from .inlines import (
     AwardInline,
     CertificationInline,
