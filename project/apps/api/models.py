@@ -58,14 +58,6 @@ from .managers import UserManager
 # )
 
 
-
-
-
-
-
-
-
-
 log = logging.getLogger(__name__)
 
 
@@ -75,6 +67,12 @@ def generate_image_filename(instance, filename):
 
 
 class Award(TimeStampedModel):
+    """
+    Award Model.
+
+    The specific award conferred by an organization.  Typically given once a year.
+    """
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -82,6 +80,7 @@ class Award(TimeStampedModel):
     )
 
     name = models.CharField(
+        help_text="""Award Name (auto-generated).""",
         max_length=255,
         unique=True,
         editable=False,
@@ -261,6 +260,7 @@ class Award(TimeStampedModel):
         default="",
     )
 
+    # FKs
     organization = TreeForeignKey(
         'Organization',
         related_name='awards',
@@ -280,21 +280,22 @@ class Award(TimeStampedModel):
         editable=False,
     )
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
+    # Internals
+    class Meta:
+        unique_together = (
+            (
+                'organization',
+                'is_improved',
+                'is_novice',
+                'size',
+                'scope',
+                'idiom',
+                'kind',
+            ),
+        )
 
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "award"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -320,21 +321,22 @@ class Award(TimeStampedModel):
         ]))
         super(Award, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            (
-                'organization',
-                'is_improved',
-                'is_novice',
-                'size',
-                'scope',
-                'idiom',
-                'kind',
-            ),
-        )
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    class JSONAPIMeta:
-        resource_name = "award"
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Certification(TimeStampedModel):
@@ -380,12 +382,33 @@ class Certification(TimeStampedModel):
         blank=True,
     )
 
+    # FKs
     person = models.ForeignKey(
         'Person',
         related_name='certifications',
         on_delete=models.CASCADE,
     )
 
+    # Internals
+    class Meta:
+        unique_together = (
+            ('category', 'person',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "certification"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0} - {1}".format(
+            self.person,
+            self.get_category_display(),
+        )
+        super(Certification, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -401,24 +424,6 @@ class Certification(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0} - {1}".format(
-            self.person,
-            self.get_category_display(),
-        )
-        super(Certification, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('category', 'person',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "certification"
 
 
 class Chapter(TimeStampedModel):
@@ -457,6 +462,7 @@ class Chapter(TimeStampedModel):
         null=True,
     )
 
+    # FKs
     organization = TreeForeignKey(
         'Organization',
         related_name='chapters',
@@ -465,6 +471,7 @@ class Chapter(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    # Legacy
     bhs_id = models.IntegerField(
         unique=True,
         blank=True,
@@ -536,6 +543,14 @@ class Chapter(TimeStampedModel):
         blank=True,
     )
 
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "chapter"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -551,12 +566,6 @@ class Chapter(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    class JSONAPIMeta:
-        resource_name = "chapter"
 
 
 class Chart(TimeStampedModel):
@@ -613,6 +622,7 @@ class Chart(TimeStampedModel):
         max_length=200,
     )
 
+    # Legacy
     bhs_id = models.IntegerField(
         null=True,
         blank=True,
@@ -690,21 +700,14 @@ class Chart(TimeStampedModel):
         default=False,
     )
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
+    # Internals
+    class Meta:
+        unique_together = (
+            ('title', 'bhs_marketplace',),
+        )
 
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "chart"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -720,13 +723,22 @@ class Chart(TimeStampedModel):
         ]))
         super(Chart, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('title', 'bhs_marketplace',),
-        )
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    class JSONAPIMeta:
-        resource_name = "chart"
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Contest(TimeStampedModel):
@@ -772,18 +784,7 @@ class Contest(TimeStampedModel):
         default=False,
     )
 
-    # Denorm
-    stix_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    stix_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
+    # FKs
     session = models.ForeignKey(
         'Session',
         related_name='contests',
@@ -804,21 +805,26 @@ class Contest(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
+    # Legacy
+    stix_num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    def has_object_read_permission(self, request):
-        return True
+    stix_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
+    # Internals
+    class Meta:
+        unique_together = (
+            ('session', 'award',)
+        )
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "contest"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -850,6 +856,24 @@ class Contest(TimeStampedModel):
         ]))
         super(Contest, self).save(*args, **kwargs)
 
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+    # Transitions
     def ranking(self, point_total):
         contestants = self.contestants.all()
         points = [c.official_total_points for c in contestants]
@@ -914,14 +938,6 @@ class Contest(TimeStampedModel):
         self.save()
         return
 
-    class Meta:
-        unique_together = (
-            ('session', 'award',)
-        )
-
-    class JSONAPIMeta:
-        resource_name = "contest"
-
 
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
@@ -954,6 +970,7 @@ class Contestant(TimeStampedModel):
         default=STATUS.new,
     )
 
+    # FKs
     performer = models.ForeignKey(
         'Performer',
         related_name='contestants',
@@ -1039,6 +1056,29 @@ class Contestant(TimeStampedModel):
             tot=models.Sum('songs__scores__points')
         )['tot']
 
+    # Internals
+    class Meta:
+        unique_together = (
+            ('performer', 'contest',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "contestant"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.contest.award.name,
+            str(self.performer.session.convention.year),
+            # self.performer.group.name,
+            # self.contest.award.name,
+            self.performer.name,
+        ]))
+        super(Contestant, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -1055,19 +1095,7 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.contest.award.name,
-            str(self.performer.session.convention.year),
-            # self.performer.group.name,
-            # self.contest.award.name,
-            self.performer.name,
-        ]))
-        super(Contestant, self).save(*args, **kwargs)
-
+    # Transitions
     def calculate(self):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
@@ -1127,14 +1155,6 @@ class Contestant(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.disqualified)
     def disqualify(self, *args, **kwargs):
         return
-
-    class Meta:
-        unique_together = (
-            ('performer', 'contest',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "contestant"
 
 
 class Convention(TimeStampedModel):
@@ -1237,6 +1257,11 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    is_prelims = models.BooleanField(
+        default=False,
+    )
+
+    # FKs
     venue = models.ForeignKey(
         'Venue',
         null=True,
@@ -1267,15 +1292,6 @@ class Convention(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    is_prelims = models.BooleanField(
-        default=False,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     # Denormalization
     LEVEL = Choices(
         (0, 'international', "International"),
@@ -1292,6 +1308,11 @@ class Convention(TimeStampedModel):
     )
 
     # Legacy
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     stix_name = models.CharField(
         max_length=200,
         null=True,
@@ -1312,29 +1333,14 @@ class Convention(TimeStampedModel):
         null=True,
     )
 
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
+    # Internals
+    class Meta:
+        unique_together = (
+            ('organization', 'season', 'year', 'kind',),
+        )
 
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        return
-
-    @staticmethod
-    def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "convention"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1358,13 +1364,31 @@ class Convention(TimeStampedModel):
         ]))
         super(Convention, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('organization', 'season', 'year', 'kind',),
-        )
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    class JSONAPIMeta:
-        resource_name = "convention"
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
 
 
 class Group(TimeStampedModel):
@@ -1379,9 +1403,6 @@ class Group(TimeStampedModel):
             The name of the resource.""",
         max_length=200,
         blank=False,
-        error_messages={
-            'unique': 'The name must be unique.  Add middle initials, suffixes, years, or other identifiers to make the name unique.',
-        }
     )
 
     STATUS = Choices(
@@ -1421,22 +1442,6 @@ class Group(TimeStampedModel):
 
     is_novice = models.BooleanField(
         default=False,
-    )
-
-    chapter = models.ForeignKey(
-        'Chapter',
-        related_name='groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     date = DateRangeField(
@@ -1520,6 +1525,24 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
+    # FKs
+    chapter = models.ForeignKey(
+        'Chapter',
+        related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    organization = models.ForeignKey(
+        'Organization',
+        related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    # Denormalizations
     chap_name = models.CharField(
         max_length=255,
         null=True,
@@ -1527,6 +1550,7 @@ class Group(TimeStampedModel):
         editable=False,
     )
 
+    # Legacy
     bhs_id = models.IntegerField(
         unique=True,
         null=True,
@@ -1578,21 +1602,9 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "group"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1611,13 +1623,25 @@ class Group(TimeStampedModel):
             self.chap_name = self.name
         super(Group, self).save(*args, **kwargs)
 
-    class JSONAPIMeta:
-        resource_name = "group"
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Judge(TimeStampedModel):
-    """Panel Judge."""
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1668,6 +1692,7 @@ class Judge(TimeStampedModel):
         blank=True,
     )
 
+    # FKs
     session = models.ForeignKey(
         'Session',
         related_name='judges',
@@ -1690,11 +1715,7 @@ class Judge(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    bhs_panel_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
+    # Denormalizations
     @property
     def designation(self):
         designation = u"{0[0]}{1:1d}".format(
@@ -1703,21 +1724,20 @@ class Judge(TimeStampedModel):
         )
         return designation
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
+    # Legacy
+    bhs_panel_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
-    def has_object_read_permission(self, request):
-        return True
+    # Internals
+    class Meta:
+        unique_together = (
+            ('session', 'category', 'kind', 'slot'),
+        )
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "judge"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1746,13 +1766,22 @@ class Judge(TimeStampedModel):
         )
         super(Judge, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('session', 'category', 'kind', 'slot'),
-        )
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    class JSONAPIMeta:
-        resource_name = "judge"
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Member(TimeStampedModel):
@@ -1779,6 +1808,7 @@ class Member(TimeStampedModel):
         default=STATUS.new,
     )
 
+    # FKs
     chapter = models.ForeignKey(
         'Chapter',
         related_name='members',
@@ -1791,6 +1821,26 @@ class Member(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    # Internals
+    class Meta:
+        unique_together = (
+            ('chapter', 'person',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "member"
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.chapter.name,
+            self.person.name,
+        ]))
+        super(Member, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -1806,24 +1856,6 @@ class Member(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
-
-    def __unicode__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.chapter.name,
-            self.person.name,
-        ]))
-        super(Member, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('chapter', 'person',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "member"
 
 
 class Organization(MPTTModel, TimeStampedModel):
@@ -1889,6 +1921,33 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
+    short_name = models.CharField(
+        help_text="""
+            A short-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
+    long_name = models.CharField(
+        help_text="""
+            A long-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
+    code = models.CharField(
+        help_text="""
+            The chapter code.""",
+        max_length=200,
+        blank=True,
+        null=True,
+    )
+
+    spots = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -1965,26 +2024,14 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
-    short_name = models.CharField(
-        help_text="""
-            A short-form name for the resource.""",
-        blank=True,
-        max_length=200,
-    )
-
-    long_name = models.CharField(
-        help_text="""
-            A long-form name for the resource.""",
-        blank=True,
-        max_length=200,
-    )
-
-    code = models.CharField(
-        help_text="""
-            The chapter code.""",
-        max_length=200,
-        blank=True,
+    # FKs
+    parent = TreeForeignKey(
+        'self',
         null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
     )
 
     representative = models.ForeignKey(
@@ -1995,11 +2042,7 @@ class Organization(MPTTModel, TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    spots = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
+    # Legacy
     bhs_id = models.IntegerField(
         unique=True,
         blank=True,
@@ -2071,15 +2114,20 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
-    parent = TreeForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
+    # Internals
+    class MPTTMeta:
+        order_insertion_by = [
+            'kind',
+            'short_name',
+        ]
 
+    class JSONAPIMeta:
+        resource_name = "organization"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -2095,18 +2143,6 @@ class Organization(MPTTModel, TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    class MPTTMeta:
-        order_insertion_by = [
-            'kind',
-            'short_name',
-        ]
-
-    class JSONAPIMeta:
-        resource_name = "organization"
 
 
 class Performance(TimeStampedModel):
@@ -2157,6 +2193,19 @@ class Performance(TimeStampedModel):
 
     is_advancing = models.BooleanField(
         default=False,
+    )
+
+    # FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='performances',
+        on_delete=models.CASCADE,
+    )
+
+    performer = models.ForeignKey(
+        'Performer',
+        related_name='performances',
+        on_delete=models.CASCADE,
     )
 
     # Denormalized
@@ -2216,18 +2265,6 @@ class Performance(TimeStampedModel):
         editable=False,
     )
 
-    round = models.ForeignKey(
-        'Round',
-        related_name='performances',
-        on_delete=models.CASCADE,
-    )
-
-    performer = models.ForeignKey(
-        'Performer',
-        related_name='performances',
-        on_delete=models.CASCADE,
-    )
-
     @property
     def official_total_points(self):
         return self.songs.filter(
@@ -2236,21 +2273,14 @@ class Performance(TimeStampedModel):
             tot=models.Sum('scores__points')
         )['tot']
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
+    # Internals
+    # class Meta:
+    #     unique_together = (
+    #         ('round', 'slot',),
+    #     )
 
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "performance"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2268,14 +2298,24 @@ class Performance(TimeStampedModel):
         ]))
         super(Performance, self).save(*args, **kwargs)
 
-    # class Meta:
-    #     unique_together = (
-    #         ('round', 'slot',),
-    #     )
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    class JSONAPIMeta:
-        resource_name = "performance"
+    def has_object_read_permission(self, request):
+        return True
 
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+    # Transitions
     def calculate(self):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
@@ -2450,6 +2490,19 @@ class Performer(TimeStampedModel):
         default=False,
     )
 
+    # FKs
+    session = models.ForeignKey(
+        'Session',
+        related_name='performers',
+        on_delete=models.CASCADE,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='performers',
+        on_delete=models.CASCADE,
+    )
+
     tenor = models.ForeignKey(
         'Role',
         null=True,
@@ -2504,11 +2557,6 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     # Denormalized
@@ -2582,18 +2630,6 @@ class Performer(TimeStampedModel):
         editable=False,
     )
 
-    session = models.ForeignKey(
-        'Session',
-        related_name='performers',
-        on_delete=models.CASCADE,
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        related_name='performers',
-        on_delete=models.CASCADE,
-    )
-
     @property
     def official_total_points(self):
         return self.performances.filter(
@@ -2602,6 +2638,41 @@ class Performer(TimeStampedModel):
             tot=models.Sum('songs__scores__points')
         )['tot']
 
+    # Legacy
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('group', 'session',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "performer"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.session.convention.organization.name,
+            str(self.session.convention.get_kind_display()),
+            self.session.convention.get_season_display(),
+            str(self.session.convention.year),
+            self.session.get_kind_display(),
+            "Performer",
+            self.group.name,
+        ]))
+        super(Performer, self).save(*args, **kwargs)
+
+    # def clean(self):
+    #     if self.singers.count() > 4:
+    #         raise ValidationError('There can not be more than four persons in a quartet.')
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -2618,13 +2689,7 @@ class Performer(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    # def clean(self):
-    #     if self.singers.count() > 4:
-    #         raise ValidationError('There can not be more than four persons in a quartet.')
-
+    # Transitions
     def calculate(self):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
@@ -2671,27 +2736,6 @@ class Performer(TimeStampedModel):
             ]) / 3, 1)
         except TypeError:
             self.total_score = None
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.session.convention.organization.name,
-            str(self.session.convention.get_kind_display()),
-            self.session.convention.get_season_display(),
-            str(self.session.convention.year),
-            self.session.get_kind_display(),
-            "Performer",
-            self.group.name,
-        ]))
-
-        super(Performer, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            ('group', 'session',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "performer"
 
     @transition(field=status, source='*', target=STATUS.enrolled)
     def enroll(self, *args, **kwargs):
@@ -2740,7 +2784,6 @@ class Performer(TimeStampedModel):
 
 
 class Person(TimeStampedModel):
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2767,6 +2810,11 @@ class Person(TimeStampedModel):
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    birth_date = models.DateField(
+        null=True,
+        blank=True,
     )
 
     date = DateRangeField(
@@ -2850,18 +2898,46 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
-    birth_date = models.DateField(
+    # FKs
+    organization = TreeForeignKey(
+        'Organization',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
-    bhs_id = models.IntegerField(
+    chapter = models.ForeignKey(
+        'Chapter',
         null=True,
         blank=True,
-        unique=True,
+        on_delete=models.SET_NULL,
     )
 
-    # Denormalization for searching
+    # Denormalizations
+    @property
+    def first_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            return name.first
+        else:
+            return None
+
+    @property
+    def last_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            return name.last
+        else:
+            return None
+
+    @property
+    def nick_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            return name.nickname
+        else:
+            return None
+
     common_name = models.CharField(
         max_length=255,
         blank=True,
@@ -2869,7 +2945,6 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    # Denormalization for searching
     id_name = models.CharField(
         max_length=255,
         null=True,
@@ -2884,7 +2959,6 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    # Denormalization for searching
     formal_name = models.CharField(
         max_length=255,
         blank=True,
@@ -2892,18 +2966,11 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    organization = TreeForeignKey(
-        'Organization',
+    # Legacy
+    bhs_id = models.IntegerField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    chapter = models.ForeignKey(
-        'Chapter',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        unique=True,
     )
 
     bhs_name = models.CharField(
@@ -2930,21 +2997,9 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "person"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -2970,37 +3025,25 @@ class Person(TimeStampedModel):
         ]))
         super(Person, self).save(*args, **kwargs)
 
-    class JSONAPIMeta:
-        resource_name = "person"
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    @property
-    def first_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.first
-        else:
-            return None
+    def has_object_read_permission(self, request):
+        return True
 
-    @property
-    def last_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.last
-        else:
-            return None
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
 
-    @property
-    def nick_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.nickname
-        else:
-            return None
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Role(TimeStampedModel):
-    """Quartet Relation."""
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3042,6 +3085,7 @@ class Role(TimeStampedModel):
         blank=True,
     )
 
+    # FKs
     group = models.ForeignKey(
         'Group',
         related_name='roles',
@@ -3054,6 +3098,7 @@ class Role(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    # Legacy
     bhs_id = models.IntegerField(
         null=True,
         blank=True,
@@ -3065,24 +3110,20 @@ class Role(TimeStampedModel):
         null=True,
     )
 
-    @staticmethod
-    def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "role"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.group.name,
+            self.person.name,
+            self.get_part_display(),
+        ]))
+        super(Role, self).save(*args, **kwargs)
 
     # def clean(self):
     #     if all([
@@ -3101,16 +3142,22 @@ class Role(TimeStampedModel):
         #     )].count(self.part) > 1:
         #         raise ValidationError('There can not be more than one of the same part in a quartet.')
 
-    class JSONAPIMeta:
-        resource_name = "role"
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.group.name,
-            self.person.name,
-            self.get_part_display(),
-        ]))
-        super(Role, self).save(*args, **kwargs)
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Round(TimeStampedModel):
@@ -3166,10 +3213,11 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
-    stix_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
+    # FKs
+    session = models.ForeignKey(
+        'Session',
+        related_name='rounds',
+        on_delete=models.CASCADE,
     )
 
     mt = models.ForeignKey(
@@ -3180,12 +3228,14 @@ class Round(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    session = models.ForeignKey(
-        'Session',
-        related_name='rounds',
-        on_delete=models.CASCADE,
+    # Legacy
+    stix_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
     )
 
+    # Internals
     class Meta:
         unique_together = (
             ('session', 'kind',),
@@ -3193,6 +3243,9 @@ class Round(TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "round"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
@@ -3205,6 +3258,7 @@ class Round(TimeStampedModel):
         ]))
         super(Round, self).save(*args, **kwargs)
 
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -3221,9 +3275,7 @@ class Round(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
+    # Transitions
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
@@ -3337,11 +3389,6 @@ class Round(TimeStampedModel):
 
 
 class Score(TimeStampedModel):
-    """The Score is never released publicly.
-
-    These are the actual Judge's scores.
-    """
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3367,18 +3414,6 @@ class Score(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    song = models.ForeignKey(
-        'Song',
-        related_name='scores',
-        on_delete=models.CASCADE,
-    )
-
-    judge = models.ForeignKey(
-        'Judge',
-        related_name='scores',
-        on_delete=models.CASCADE,
     )
 
     CATEGORY = Choices(
@@ -3462,6 +3497,33 @@ class Score(TimeStampedModel):
         ]
     )
 
+    # FKs
+    song = models.ForeignKey(
+        'Song',
+        related_name='scores',
+        on_delete=models.CASCADE,
+    )
+
+    judge = models.ForeignKey(
+        'Judge',
+        related_name='scores',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "score"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(Score, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -3480,24 +3542,13 @@ class Score(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
+    # Transitions
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
     def ck(self, *args, **kwargs):
         if self.points < 0:
             return self.STATUS.cleared
         else:
             return self.STATUS.flagged
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.id.hex,
-        ]))
-        super(Score, self).save(*args, **kwargs)
-
-    class JSONAPIMeta:
-        resource_name = "score"
 
 
 class Session(TimeStampedModel):
@@ -3542,7 +3593,9 @@ class Session(TimeStampedModel):
 
     kind = models.IntegerField(
         help_text="""
-            The kind of session.  Generally this will be either quartet or chorus, with the exception being International and Midwinter which hold exclusive Collegiate and Senior sessions respectively.""",
+            The kind of session.  Generally this will be either quartet or chorus,
+            with the exception being International and Midwinter which hold exclusive
+            Collegiate and Senior sessions respectively.""",
         choices=KIND,
     )
 
@@ -3553,6 +3606,18 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    cursor = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    # Denormalizations
+    @property
+    def completed_rounds(self):
+        return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
+
+    # Legacy
     scoresheet_pdf = models.FileField(
         help_text="""
             The historical PDF OSS.""",
@@ -3577,37 +3642,21 @@ class Session(TimeStampedModel):
         null=True,
     )
 
+    # FKs
     convention = models.ForeignKey(
         'Convention',
         related_name='sessions',
         on_delete=models.CASCADE,
     )
 
-    cursor = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
+    # Internals
+    class Meta:
+        unique_together = (
+            ('convention', 'kind',),
+        )
 
-    @property
-    def completed_rounds(self):
-        return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
-
-    @staticmethod
-    def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+    class JSONAPIMeta:
+        resource_name = "session"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -3628,14 +3677,24 @@ class Session(TimeStampedModel):
         ]))
         super(Session, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = (
-            ('convention', 'kind',),
-        )
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
 
-    class JSONAPIMeta:
-        resource_name = "session"
+    def has_object_read_permission(self, request):
+        return True
 
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+    # Transitions
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         return
@@ -3702,7 +3761,22 @@ class Song(TimeStampedModel):
         default=False,
     )
 
-    # Denormalized values
+    # FKs
+    submission = models.ForeignKey(
+        'Submission',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    performance = models.ForeignKey(
+        'Performance',
+        related_name='songs',
+        on_delete=models.CASCADE,
+    )
+
+    # Denormalizations
     mus_points = models.IntegerField(
         null=True,
         blank=True,
@@ -3751,20 +3825,6 @@ class Song(TimeStampedModel):
         editable=False,
     )
 
-    submission = models.ForeignKey(
-        'Submission',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='songs',
-        on_delete=models.CASCADE,
-    )
-
     @property
     def official_total_points(self):
         return self.scores.filter(
@@ -3773,6 +3833,7 @@ class Song(TimeStampedModel):
             tot=models.Sum('points')
         )['tot']
 
+    # Internals
     class Meta:
         unique_together = (
             ('performance', 'order',),
@@ -3781,6 +3842,16 @@ class Song(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "song"
 
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(Song, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -3797,15 +3868,7 @@ class Song(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.id.hex,
-        ]))
-        super(Song, self).save(*args, **kwargs)
-
+    # Transitions
     def calculate(self):
         Score = apps.get_model('api', 'Score')
         scores = Score.objects.filter(
@@ -3878,6 +3941,7 @@ class Submission(TimeStampedModel):
         default=STATUS.new,
     )
 
+    # FKs
     performer = models.ForeignKey(
         'Performer',
         related_name='submissions',
@@ -3890,6 +3954,25 @@ class Submission(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    # Internals
+    class Meta:
+        unique_together = (
+            ('performer', 'chart',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "submission"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = u"{0}".format(
+            self.id.hex,
+        )
+        super(Submission, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -3905,23 +3988,6 @@ class Submission(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    class Meta:
-        unique_together = (
-            ('performer', 'chart',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "submission"
-
-    def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
-        )
-        super(Submission, self).save(*args, **kwargs)
 
 
 class Venue(TimeStampedModel):
@@ -3971,9 +4037,23 @@ class Venue(TimeStampedModel):
             The local timezone of the venue.""",
     )
 
+    # Internals
     class JSONAPIMeta:
         resource_name = "venue"
 
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.location,
+            " - ",
+            "{0},".format(self.city),
+            self.state,
+        ]))
+        super(Venue, self).save(*args, **kwargs)
+
+    # Permissions
     @staticmethod
     def has_read_permission(request):
         return True
@@ -3990,18 +4070,6 @@ class Venue(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.location,
-            " - ",
-            "{0},".format(self.city),
-            self.state,
-        ]))
-        super(Venue, self).save(*args, **kwargs)
-
 
 class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
@@ -4016,27 +4084,33 @@ class User(AbstractBaseUser, PermissionsMixin):
         unique=True,
         help_text="""Your email address will be your username.""",
     )
+
     name = models.CharField(
         max_length=200,
         help_text="""Your full name.""",
     )
+
     is_active = models.BooleanField(
         default=True,
     )
+
     is_staff = models.BooleanField(
         default=False,
     )
+
     date_joined = models.DateField(
         auto_now_add=True,
     )
 
     objects = UserManager()
 
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "user"
+
+    # Methods
     def get_full_name(self):
         return self.email
 
     def get_short_name(self):
         return self.email
-
-    class JSONAPIMeta:
-        resource_name = "user"
