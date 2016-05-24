@@ -1,16 +1,11 @@
-from rest_framework_json_api import serializers
-
-import six
 import pytz
-
-from django.core.exceptions import (
-    ValidationError,
-)
-
+import six
+from django.core.exceptions import ValidationError
 from drf_extra_fields.fields import (
-    DateTimeRangeField,
     DateRangeField,
+    DateTimeRangeField,
 )
+from rest_framework_json_api import serializers
 
 from .models import (
     Award,
@@ -31,8 +26,8 @@ from .models import (
     Round,
     Score,
     Session,
-    Submission,
     Song,
+    Submission,
     Venue,
 )
 

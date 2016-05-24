@@ -1,18 +1,12 @@
 import csv
-
-from django.db.models import Q
-
-from django.db import IntegrityError
-
-from unidecode import unidecode
-
-from psycopg2.extras import DateRange
-
-import arrow
-
 import logging
 
+import arrow
+from django.db import IntegrityError
+from django.db.models import Q
 from nameparser import HumanName
+from psycopg2.extras import DateRange
+from unidecode import unidecode
 
 from .models import (
     Award,
@@ -31,8 +25,8 @@ from .models import (
     Round,
     Score,
     Session,
-    Submission,
     Song,
+    Submission,
 )
 
 log = logging.getLogger(__name__)

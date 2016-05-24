@@ -1,26 +1,24 @@
 from django.contrib import admin
-
-from mptt.admin import MPTTModelAdmin
 from fsm_admin.mixins import FSMTransitionMixin
+from mptt.admin import MPTTModelAdmin
 
 from .inlines import (
     AwardInline,
     CertificationInline,
-    ContestInline,
     ContestantInline,
+    ContestInline,
     ConventionInline,
-    SessionInline,
-    PerformerInline,
     GroupInline,
     JudgeInline,
     MemberInline,
     PerformanceInline,
-    ScoreInline,
-    RoundInline,
+    PerformerInline,
     RoleInline,
+    RoundInline,
+    ScoreInline,
+    SessionInline,
     SubmissionInline,
 )
-
 from .models import (
     Award,
     Certification,
@@ -40,11 +38,12 @@ from .models import (
     Round,
     Score,
     Session,
-    Submission,
     Song,
+    Submission,
     User,
     Venue,
 )
+
 
 # from django_fsm_log.models import StateLog
 

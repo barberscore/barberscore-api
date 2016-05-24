@@ -1,17 +1,16 @@
 import rest_framework_filters as filters
-from rest_framework.filters import BaseFilterBackend
-
 from django_filters import Filter
 from django_filters.fields import Lookup
+from rest_framework.filters import BaseFilterBackend
 
 from .models import (
-    Chart,
     Certification,
+    Chart,
     Contestant,
     Convention,
     Group,
-    Person,
     Performer,
+    Person,
     Submission,
     Venue,
 )

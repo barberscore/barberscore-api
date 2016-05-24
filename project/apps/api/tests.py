@@ -5,7 +5,7 @@ from nose.tools import ok_ as ok
 from rest_assured.testcases import (
     BaseRESTAPITestCase,
     ReadRESTAPITestCaseMixin,
-    ReadWriteRESTAPITestCaseMixin
+    ReadWriteRESTAPITestCaseMixin,
 )
 
 from apps.api.factories import (
@@ -40,7 +40,7 @@ from apps.api.factories import (
     SubmissionFactory,
     SummerConventionFactory,
     TenorFactory,
-    VenueFactory
+    VenueFactory,
 )
 from apps.api.models import (
     Award,
@@ -48,7 +48,7 @@ from apps.api.models import (
     Judge,
     Organization,
     Round,
-    Session
+    Session,
 )
 
 

@@ -1,80 +1,64 @@
 from __future__ import division
 
-import os
-
+import datetime
 import logging
-
+import os
 import uuid
 
-import datetime
-
-from psycopg2.extras import DateTimeTZRange
-
-from django.utils import timezone
-
-from django.db import (
-    models,
-)
-
 from django.apps import apps
-
-from django.contrib.postgres.fields import (
-    DateRangeField,
-    DateTimeRangeField,
-    IntegerRangeField,
-    FloatRangeField,
-    ArrayField,
-)
-
-from django.core.validators import (
-    RegexValidator,
-    MaxValueValidator,
-    MinValueValidator,
-)
-
-from django_fsm import (
-    transition,
-    FSMIntegerField,
-    RETURN_VALUE,
-)
-
-# from django_fsm_log.decorators import fsm_log_by
-
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
+from django.contrib.postgres.fields import (
+    ArrayField,
+    DateRangeField,
+    DateTimeRangeField,
+    FloatRangeField,
+    IntegerRangeField,
+)
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+    RegexValidator,
+)
+from django.db import models
+from django.utils import timezone
+from django_fsm import (
+    RETURN_VALUE,
+    FSMIntegerField,
+    transition,
+)
+from dry_rest_permissions.generics import allow_staff_or_superuser
+from model_utils import Choices
+from model_utils.models import TimeStampedModel
+from mptt.models import (
+    MPTTModel,
+    TreeForeignKey,
+)
+from nameparser import HumanName
+from phonenumber_field.modelfields import PhoneNumberField
+from psycopg2.extras import DateTimeTZRange
+from ranking import Ranking
+from timezone_field import TimeZoneField
+
+from .managers import UserManager
+
+# from django_fsm_log.decorators import fsm_log_by
+
 
 # from django.core.exceptions import (
 #     ValidationError,
 # )
 
-from model_utils.models import (
-    TimeStampedModel,
-)
 
-from model_utils import Choices
 
-from mptt.models import (
-    MPTTModel,
-    TreeForeignKey,
-)
 
-from timezone_field import TimeZoneField
 
-from phonenumber_field.modelfields import PhoneNumberField
 
-from nameparser import HumanName
 
-from dry_rest_permissions.generics import (
-    allow_staff_or_superuser,
-)
 
-from ranking import Ranking
 
-from .managers import (
-    UserManager,
-)
 
 log = logging.getLogger(__name__)
 

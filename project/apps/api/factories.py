@@ -1,15 +1,11 @@
-from factory.django import (
-    DjangoModelFactory,
-)
-
-from factory import (
-    SubFactory,
-    PostGenerationMethodCall,
-    Faker,
-)
-
 from datetime import datetime
 
+from factory import (
+    Faker,
+    PostGenerationMethodCall,
+    SubFactory,
+)
+from factory.django import DjangoModelFactory
 from psycopg2.extras import DateTimeTZRange
 
 from apps.api.models import (

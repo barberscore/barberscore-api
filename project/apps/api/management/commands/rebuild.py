@@ -1,26 +1,20 @@
-from django.core.management.base import (
-    BaseCommand,
-)
+from django.core.files import File
+from django.core.management.base import BaseCommand
 
-from apps.api.models import (
-    Convention,
-)
-
+from apps.api.models import Convention
 from apps.api.utils import (
-    import_convention,
-    extract_sessions,
-    extract_rounds,
-    extract_panel,
-    extract_performers,
-    extract_contests,
     extract_contestants,
+    extract_contests,
+    extract_panel,
     extract_performances,
-    extract_songs,
+    extract_performers,
+    extract_rounds,
     extract_scores,
+    extract_sessions,
+    extract_songs,
+    import_convention,
     rank,
 )
-
-from django.core.files import File
 
 
 class Command(BaseCommand):

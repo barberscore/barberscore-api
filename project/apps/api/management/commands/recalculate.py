@@ -6,10 +6,10 @@ from django.core.management.base import (
 )
 
 from apps.api.models import (
-    Session,
     Contestant,
     Performance,
     Performer,
+    Session,
     Song,
 )
 

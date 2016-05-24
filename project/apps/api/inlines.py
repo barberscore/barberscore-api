@@ -6,16 +6,16 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Session,
-    Performer,
     Group,
     Judge,
     Member,
     Performance,
-    Score,
-    Submission,
-    Round,
+    Performer,
     Role,
+    Round,
+    Score,
+    Session,
+    Submission,
 )
 
 

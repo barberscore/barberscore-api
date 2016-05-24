@@ -5,8 +5,8 @@ from .views import (
     CertificationViewSet,
     ChapterViewSet,
     ChartViewSet,
-    ContestViewSet,
     ContestantViewSet,
+    ContestViewSet,
     ConventionViewSet,
     GroupViewSet,
     JudgeViewSet,
@@ -19,8 +19,8 @@ from .views import (
     RoundViewSet,
     ScoreViewSet,
     SessionViewSet,
-    SubmissionViewSet,
     SongViewSet,
+    SubmissionViewSet,
     VenueViewSet,
 )
 

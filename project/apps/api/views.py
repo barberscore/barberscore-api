@@ -1,17 +1,13 @@
 import logging
 
-from drf_fsm_transitions.viewset_mixins import (
-    get_viewset_transition_action_mixin,
-)
-
-from rest_framework import (
-    viewsets,
-)
+from drf_fsm_transitions.viewset_mixins import \
+    get_viewset_transition_action_mixin
+from rest_framework import viewsets
 
 from .filters import (
-    CoalesceFilterBackend,
     CertificationFilter,
     ChartFilter,
+    CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
     GroupFilter,
@@ -20,8 +16,6 @@ from .filters import (
     SubmissionFilter,
     VenueFilter,
 )
-
-
 from .models import (
     Award,
     Certification,
@@ -41,18 +35,17 @@ from .models import (
     Round,
     Score,
     Session,
-    Submission,
     Song,
+    Submission,
     Venue,
 )
-
 from .serializers import (
     AwardSerializer,
     CertificationSerializer,
     ChapterSerializer,
     ChartSerializer,
-    ContestSerializer,
     ContestantSerializer,
+    ContestSerializer,
     ConventionSerializer,
     GroupSerializer,
     JudgeSerializer,
@@ -65,8 +58,8 @@ from .serializers import (
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
-    SubmissionSerializer,
     SongSerializer,
+    SubmissionSerializer,
     VenueSerializer,
 )
 

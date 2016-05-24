@@ -12,6 +12,11 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 indent_style = space
 indent_size = 2
+# isort settings
+force_grid_wrap = true
+skip = migrations
+multi_line_output = 3
+include_trailing_comma = true
 
 [*.js]
 indent_style = space
