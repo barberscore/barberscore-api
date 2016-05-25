@@ -48,7 +48,10 @@ from django.db import models
 from django.utils import timezone
 
 # Local
-from .managers import UserManager
+from .managers import (
+    ScoreManager,
+    UserManager,
+)
 
 # from django_fsm_log.decorators import fsm_log_by
 
@@ -222,6 +225,11 @@ class Award(TimeStampedModel):
 
     is_qualification_required = models.BooleanField(
         help_text="""Boolean; true means qualification is required.""",
+        default=False,
+    )
+
+    is_district_representative = models.BooleanField(
+        help_text="""Boolean; true means the district rep qualifies.""",
         default=False,
     )
 
@@ -876,15 +884,11 @@ class Contest(TimeStampedModel):
     # Transitions
     def ranking(self, point_total):
         contestants = self.contestants.all()
-        points = [c.official_total_points for c in contestants]
+        points = [c.official_points for c in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
         return rank
-
-    def build(self):
-        # TODO Future Award/Contestant mapping
-        return
 
     def rank(self):
         if self.award.is_manual:
@@ -1041,7 +1045,7 @@ class Contestant(TimeStampedModel):
     )
 
     @property
-    def official_total_points(self):
+    def official_points(self):
         return self.performer.performances.filter(
             songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
         ).aggregate(
@@ -1049,12 +1053,39 @@ class Contestant(TimeStampedModel):
         )['tot']
 
     @property
-    def official_rank(self):
+    def official_score(self):
         return self.performer.performances.filter(
             songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
         ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
+            avg=models.Avg('songs__scores__points')
+        )['avg']
+
+    @property
+    def official_rank(self):
+        return self.contest.ranking(self.official_points)
+
+    @property
+    def official_result(self):
+        if self.contest.is_qualifier:
+            if self.contest.award.is_district_representative:
+                if self.official_rank == 1:
+                    return self.STATUS.rep
+                if self.official_score < self.contest.award.minimum:
+                    return self.STATUS.ineligible
+                else:
+                    return self.STATUS.eligible
+            else:
+                if self.contest.award.minimum:
+                    if self.official_score < self.contest.award.minimum:
+                        return self.STATUS.ineligible
+                    elif self.official_score >= self.contest.award.threshold:
+                        return self.STATUS.qualified
+                    else:
+                        return self.STATUS.eligible
+                else:
+                    return self.STATUS.eligible
+        else:
+            return self.official_rank
 
     # Internals
     class Meta:
@@ -3510,6 +3541,9 @@ class Score(TimeStampedModel):
         related_name='scores',
         on_delete=models.CASCADE,
     )
+
+    # Managers
+    objects = ScoreManager()
 
     # Internals
     class JSONAPIMeta:
