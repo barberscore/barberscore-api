@@ -27,7 +27,6 @@ from ranking import Ranking
 from timezone_field import TimeZoneField
 
 # Django
-from django.apps import apps
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
@@ -842,17 +841,17 @@ class Contest(TimeStampedModel):
             self.cycle = self.session.convention.year
         else:
             self.cycle = self.session.convention.year + 1
-        if any([
-            all([
-                self.session.convention.level == self.session.convention.LEVEL.district,
-                self.award.level == self.award.LEVEL.international,
-            ]),
-            all([
-                self.session.convention.kind,
-                self.award.level != self.award.LEVEL.division,
-            ]),
-        ]):
-            self.is_qualifier = True
+        # if any([
+        #     all([
+        #         self.session.convention.level == self.session.convention.LEVEL.district,
+        #         self.award.level == self.award.LEVEL.international,
+        #     ]),
+        #     all([
+        #         self.session.convention.kind,
+        #         self.award.level != self.award.LEVEL.division,
+        #     ]),
+        # ]):
+        #     self.is_qualifier = True
         if self.is_qualifier:
             suffix = "Qualifier"
         else:
@@ -881,7 +880,7 @@ class Contest(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    # Transitions
+    # Methods
     def ranking(self, point_total):
         contestants = self.contestants.all()
         points = [c.official_points for c in contestants]
@@ -889,58 +888,6 @@ class Contest(TimeStampedModel):
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
         return rank
-
-    def rank(self):
-        if self.award.is_manual:
-            return
-        contestants = self.contestants.all()
-        contestants = self.contestants.order_by('-total_points')
-        points = [contestant.total_points for contestant in contestants]
-        ranking = Ranking(points, start=1)
-        for contestant in contestants:
-            if self.is_qualifier:
-                if self.award.level == self.award.LEVEL.international:
-                    if self.award.kind == self.award.KIND.quartet:
-                        if contestant.total_score >= self.award.threshold:
-                            contestant.status = contestant.STATUS.qualified
-                        elif contestant.total_score < self.award.minimum:
-                            contestant.status = contestant.STATUS.ineligible
-                        else:
-                            contestant.status = contestant.STATUS.eligible
-                    elif self.award.kind == self.award.KIND.chorus:
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.status = contestant.STATUS.qualified
-                        elif contestant.total_score < self.award.minimum:
-                            contestant.status = contestant.STATUS.ineligible
-                        else:
-                            contestant.status = contestant.STATUS.eligible
-                    elif self.award.kind == self.award.KIND.seniors:
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.status = contestant.STATUS.qualified
-                        else:
-                            contestant.status = contestant.STATUS.eligible
-                    elif self.award.kind == self.award.KIND.youth or self.award.kind == self.award.KIND.collegiate:
-                        if ranking.rank(contestant.total_points) == 1:
-                            contestant.status = contestant.STATUS.qualified
-                        elif contestant.total_score < self.award.minimum:
-                            contestant.status = contestant.STATUS.ineligible
-                        elif contestant.total_score >= self.award.threshold:
-                            contestant.status = contestant.STATUS.qualified
-                        else:
-                            contestant.rank = contestant.STATUS.eligible
-                    else:
-                        raise RuntimeError("No Award Kind")
-                else:
-                    log.error("District Qual not run")
-                    continue  # TODO DIstrict Quals
-            else:
-                contestant.rank = ranking.rank(contestant.total_points)
-                contestant.status = contestant.STATUS.ranked
-                if contestant.rank == 1:
-                    self.champion = contestant
-            contestant.save()
-        self.save()
-        return
 
 
 class Contestant(TimeStampedModel):
@@ -1127,54 +1074,6 @@ class Contestant(TimeStampedModel):
         return False
 
     # Transitions
-    def calculate(self):
-        Score = apps.get_model('api', 'Score')
-        scores = Score.objects.filter(
-            song__performance__performer=self.performer,
-            song__performance__round__num__lte=self.contest.award.championship_rounds,
-        ).exclude(
-            points=None,
-        ).exclude(
-            kind=Score.KIND.practice,
-        ).order_by(
-            'category',
-        ).values(
-            'category',
-        ).annotate(
-            total=models.Sum('points'),
-            average=models.Avg('points'),
-        )
-        for score in scores:
-            if score['category'] == Score.CATEGORY.music:
-                self.mus_points = score['total']
-                self.mus_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.presentation:
-                self.prs_points = score['total']
-                self.prs_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.singing:
-                self.sng_points = score['total']
-                self.sng_score = round(score['average'], 1)
-
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
-
-        # Calculate total score.
-        try:
-            self.total_score = round(sum([
-                self.mus_score,
-                self.prs_score,
-                self.sng_score,
-            ]) / 3, 1)
-        except TypeError:
-            self.total_score = None
-
     @transition(field=status, source='*', target=STATUS.disqualified)
     def process(self, *args, **kwargs):
         return
@@ -2148,8 +2047,9 @@ class Organization(MPTTModel, TimeStampedModel):
     # Internals
     class MPTTMeta:
         order_insertion_by = [
+            'level',
             'kind',
-            'short_name',
+            'name',
         ]
 
     class JSONAPIMeta:
@@ -2347,53 +2247,6 @@ class Performance(TimeStampedModel):
         return False
 
     # Transitions
-    def calculate(self):
-        Score = apps.get_model('api', 'Score')
-        scores = Score.objects.filter(
-            song__performance=self,
-        ).exclude(
-            points=None,
-        ).exclude(
-            kind=Score.KIND.practice,
-        ).order_by(
-            'category',
-        ).values(
-            'category',
-        ).annotate(
-            total=models.Sum('points'),
-            average=models.Avg('points'),
-        )
-        for score in scores:
-            if score['category'] == Score.CATEGORY.music:
-                self.mus_points = score['total']
-                self.mus_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.presentation:
-                self.prs_points = score['total']
-                self.prs_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.singing:
-                self.sng_points = score['total']
-                self.sng_score = round(score['average'], 1)
-
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
-
-        # Calculate total score.
-        try:
-            self.total_score = round(sum([
-                self.mus_score,
-                self.prs_score,
-                self.sng_score,
-            ]) / 3, 1)
-        except TypeError:
-            self.total_score = None
-
     # def scratch(self):
     #     i = self.slot
     #     self.slot = -1
@@ -2661,14 +2514,6 @@ class Performer(TimeStampedModel):
         editable=False,
     )
 
-    @property
-    def official_total_points(self):
-        return self.performances.filter(
-            songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
     # Legacy
     bhs_id = models.IntegerField(
         null=True,
@@ -2722,53 +2567,6 @@ class Performer(TimeStampedModel):
         return False
 
     # Transitions
-    def calculate(self):
-        Score = apps.get_model('api', 'Score')
-        scores = Score.objects.filter(
-            song__performance__performer=self,
-        ).exclude(
-            points=None,
-        ).exclude(
-            kind=Score.KIND.practice,
-        ).order_by(
-            'category',
-        ).values(
-            'category',
-        ).annotate(
-            total=models.Sum('points'),
-            average=models.Avg('points'),
-        )
-        for score in scores:
-            if score['category'] == Score.CATEGORY.music:
-                self.mus_points = score['total']
-                self.mus_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.presentation:
-                self.prs_points = score['total']
-                self.prs_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.singing:
-                self.sng_points = score['total']
-                self.sng_score = round(score['average'], 1)
-
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
-
-        # Calculate total score.
-        try:
-            self.total_score = round(sum([
-                self.mus_score,
-                self.prs_score,
-                self.sng_score,
-            ]) / 3, 1)
-        except TypeError:
-            self.total_score = None
-
     @transition(field=status, source='*', target=STATUS.enrolled)
     def enroll(self, *args, **kwargs):
         return
@@ -3904,52 +3702,6 @@ class Song(TimeStampedModel):
         return False
 
     # Transitions
-    def calculate(self):
-        Score = apps.get_model('api', 'Score')
-        scores = Score.objects.filter(
-            song=self,
-        ).exclude(
-            points=None,
-        ).exclude(
-            kind=Score.KIND.practice,
-        ).order_by(
-            'category',
-        ).values(
-            'category',
-        ).annotate(
-            total=models.Sum('points'),
-            average=models.Avg('points'),
-        )
-        for score in scores:
-            if score['category'] == Score.CATEGORY.music:
-                self.mus_points = score['total']
-                self.mus_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.presentation:
-                self.prs_points = score['total']
-                self.prs_score = round(score['average'], 1)
-            if score['category'] == Score.CATEGORY.singing:
-                self.sng_points = score['total']
-                self.sng_score = round(score['average'], 1)
-
-        # Calculate total points.
-        try:
-            self.total_points = sum([
-                self.mus_points,
-                self.prs_points,
-                self.sng_points,
-            ])
-        except TypeError:
-            self.total_points = None
-
-        # Calculate total score.
-        try:
-            self.total_score = round(sum([
-                self.mus_score,
-                self.prs_score,
-                self.sng_score,
-            ]) / 3, 1)
-        except TypeError:
-            self.total_score = None
 
 
 class Submission(TimeStampedModel):

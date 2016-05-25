@@ -1,5 +1,6 @@
 # Third-Party
 from nose import with_setup
+from factory.fuzzy import FuzzyInteger
 # from nose.tools import eq_ as eq
 # from nose.tools import ok_ as ok
 # from rest_assured.testcases import (
@@ -220,7 +221,7 @@ def setup_international():
     quartet_judges = []
     for category in categories:
         i = 1
-        while i < 5:
+        while i <= 5:
             certification = CertificationFactory(
                 status=Certification.STATUS.active,
                 category=getattr(Certification.CATEGORY, category),
@@ -279,7 +280,7 @@ def setup_international():
             group=quartet,
         )
         s = 1
-        while s < 4:
+        while s <= 4:
             SubmissionFactory(
                 performer=performer,
             )
@@ -304,7 +305,7 @@ def setup_international():
             group=chorus,
         )
         s = 1
-        while s < 4:
+        while s <= 4:
             SubmissionFactory(
                 performer=performer,
             )
@@ -320,36 +321,46 @@ def setup_international():
         )
         chorus_performances.append(performance)
         i += 1
-    i = 1
     for performance in quartet_performances:
-        while i < 2:
+        performance.center = FuzzyInteger(50, 95).fuzz()
+        i = 1
+        while i <= 2:
+            submissions = performance.performer.submissions.all()
             song = SongFactory(
                 performance=performance,
                 order=i,
+                submission=submissions[i],
             )
-            i += 1
             for judge in quartet_judges:
+                points = performance.center + FuzzyInteger(-4, 4).fuzz()
                 ScoreFactory(
                     song=song,
                     judge=judge,
                     category=judge.category,
                     kind=judge.kind,
+                    points=points,
                 )
-    i = 1
+            i += 1
     for performance in chorus_performances:
-        while i < 2:
+        performance.center = FuzzyInteger(50, 95).fuzz()
+        i = 1
+        while i <= 2:
+            submissions = performance.performer.submissions.all()
             song = SongFactory(
                 performance=performance,
                 order=i,
+                submission=submissions[i],
             )
-            i += 1
             for judge in chorus_judges:
+                points = performance.center + FuzzyInteger(-4, 4).fuzz()
                 ScoreFactory(
                     song=song,
                     judge=judge,
                     category=judge.category,
                     kind=judge.kind,
+                    points=points,
                 )
+            i += 1
 
 
 @with_setup(setup_international)
