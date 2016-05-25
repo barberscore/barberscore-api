@@ -248,6 +248,9 @@ class AffiliateChapterFactory(ChapterFactory):
 class ChartFactory(DjangoModelFactory):
     class Meta:
         model = Chart
+        django_get_or_create = (
+            'title',
+        )
     title = Faker('company')
 
 
@@ -705,10 +708,6 @@ class SongFactory(DjangoModelFactory):
     order = 1
     performance = SubFactory(
         'apps.api.factories.PerformanceFactory',
-    )
-    submission = SubFactory(
-        'apps.api.factories.SubmissionFactory',
-        # performer=Iterator(Performer.objects.all())
     )
 
 

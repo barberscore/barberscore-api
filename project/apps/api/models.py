@@ -2665,6 +2665,7 @@ class Performer(TimeStampedModel):
             self.session.get_kind_display(),
             "Performer",
             self.group.name,
+            self.group.id.hex,
         ]))
         super(Performer, self).save(*args, **kwargs)
 
