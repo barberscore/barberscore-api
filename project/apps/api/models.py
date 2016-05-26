@@ -1589,6 +1589,7 @@ class Judge(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
         (20, 'confirmed', 'Confirmed',),
+        (25, 'validated', 'Validated',),
         (30, 'final', 'Final',),
     )
 
