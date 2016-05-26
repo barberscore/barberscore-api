@@ -2045,6 +2045,11 @@ class Organization(MPTTModel, TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('level', 'kind', 'name')
+        )
+
     class MPTTMeta:
         order_insertion_by = [
             'level',

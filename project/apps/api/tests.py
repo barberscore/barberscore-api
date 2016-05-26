@@ -176,7 +176,7 @@ from apps.api.models import (
 
 # Round Tests
 
-def setup_international():
+def build_international():
     AdminFactory()
     venue = VenueFactory()
     bhs = InternationalFactory()
@@ -272,8 +272,6 @@ def setup_international():
         session=quartet_session,
     )
     quartets = QuartetFactory.create_batch(50)
-    quartet_performances = []
-    i = 1
     for quartet in quartets:
         performer = PerformerFactory(
             session=quartet_session,
@@ -289,16 +287,7 @@ def setup_international():
             contest=quartet_contest,
             performer=performer,
         )
-        performance = PerformanceFactory(
-            performer=performer,
-            round=quartet_quarters,
-            slot=i,
-        )
-        quartet_performances.append(performance)
-        i += 1
     choruses = ChorusFactory.create_batch(20)
-    chorus_performances = []
-    i = 1
     for chorus in choruses:
         performer = PerformerFactory(
             session=chorus_session,
@@ -314,13 +303,10 @@ def setup_international():
             contest=chorus_contest,
             performer=performer,
         )
-        performance = PerformanceFactory(
-            performer=performer,
-            round=chorus_finals,
-            slot=i,
-        )
-        chorus_performances.append(performance)
-        i += 1
+    return
+
+
+def draw_international(self):
     for performance in quartet_performances:
         performance.center = FuzzyInteger(50, 95).fuzz()
         i = 1
@@ -363,6 +349,6 @@ def setup_international():
             i += 1
 
 
-@with_setup(setup_international)
-def test_stub():
-    assert True
+# @with_setup(setup_international)
+# def test_stub():
+#     assert True

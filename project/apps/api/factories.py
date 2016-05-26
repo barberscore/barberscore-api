@@ -290,7 +290,7 @@ class InternationalFactory(OrganizationFactory):
     level = Organization.LEVEL.international
     kind = Organization.KIND.international
     name = 'Test Interational'
-    short_name = 'TI'
+    short_name = 'BHS'
     long_name = 'International'
     parent = None
 
