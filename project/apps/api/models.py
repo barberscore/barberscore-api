@@ -910,6 +910,7 @@ class Contestant(TimeStampedModel):
         # (30, 'dnq', 'Did Not Qualify',),
         (40, 'rep', 'District Representative',),
         (50, 'qualified', 'Qualified',),
+        (55, 'validated', 'Validated',),
         (60, 'ranked', 'Ranked',),
         (70, 'scratched', 'Scratched',),
         (80, 'disqualified', 'Disqualified',),
@@ -2326,7 +2327,7 @@ class Performer(TimeStampedModel):
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
         # (45, 'evaluation', 'Evaluation',),
-        (50, 'enrolled', 'Enrolled',),
+        (50, 'validated', 'Validated',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
         (60, 'finished', 'Finished',),
@@ -2572,8 +2573,8 @@ class Performer(TimeStampedModel):
         return False
 
     # Transitions
-    @transition(field=status, source='*', target=STATUS.enrolled)
-    def enroll(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.validated)
+    def validate(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.scratched)
@@ -3011,7 +3012,7 @@ class Round(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         # (10, 'built', 'Built',),
-        # (15, 'ready', 'Ready',),
+        (15, 'validated', 'Validated',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         # (28, 'ranked', 'Ranked',),
@@ -3726,6 +3727,7 @@ class Submission(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'pre', 'Pre-Submitted',),
         (20, 'post', 'Post-Submitted',),
+        (30, 'validated', 'Validated',),
     )
 
     status = FSMIntegerField(
