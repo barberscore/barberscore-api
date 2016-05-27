@@ -41,6 +41,9 @@ from apps.api.models import (
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
+        django_get_or_create = (
+            'email',
+        )
 
 
 class AdminFactory(UserFactory):
@@ -283,13 +286,14 @@ class ChorusFactory(GroupFactory):
 class OrganizationFactory(DjangoModelFactory):
     class Meta:
         model = Organization
+        django_get_or_create = ('name', 'level', 'kind',)
     status = Organization.STATUS.active
 
 
 class InternationalFactory(OrganizationFactory):
     level = Organization.LEVEL.international
     kind = Organization.KIND.international
-    name = 'Test Interational'
+    name = 'International'
     short_name = 'BHS'
     long_name = 'International'
     parent = None
@@ -303,6 +307,7 @@ class DistrictFactory(OrganizationFactory):
     long_name = 'District'
     parent = SubFactory(
         'apps.api.factories.InternationalFactory',
+        name='International',
     )
 
 

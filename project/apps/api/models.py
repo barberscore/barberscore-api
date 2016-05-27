@@ -769,6 +769,7 @@ class Contest(TimeStampedModel):
         (10, 'opened', 'Opened',),
         (15, 'closed', 'Closed',),
         (35, 'validated', 'Validated',),
+        (42, 'finished', 'Finished',),
         (45, 'published', 'Published',),
         # (50, 'final', 'Final',),
     )
@@ -789,6 +790,11 @@ class Contest(TimeStampedModel):
 
     is_qualifier = models.BooleanField(
         default=False,
+    )
+
+    num_rounds = models.IntegerField(
+        blank=True,
+        null=True,
     )
 
     # FKs
@@ -889,6 +895,14 @@ class Contest(TimeStampedModel):
         rank = ranking.rank(point_total)
         return rank
 
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        for contestant in self.contestants.all():
+            contestant.finish()
+            contestant.save()
+        return
+
 
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
@@ -911,7 +925,7 @@ class Contestant(TimeStampedModel):
         (40, 'rep', 'District Representative',),
         (50, 'qualified', 'Qualified',),
         (55, 'validated', 'Validated',),
-        (60, 'ranked', 'Ranked',),
+        (60, 'finished', 'Finished',),
         (70, 'scratched', 'Scratched',),
         (80, 'disqualified', 'Disqualified',),
         # (90, 'final', 'Final',),
@@ -993,20 +1007,68 @@ class Contestant(TimeStampedModel):
     )
 
     @property
-    def official_points(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
+    def official_total_points(self):
+        scores = filter(None, [i.official_total_points for i in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores)
+        else:
+            return None
 
     @property
-    def official_score(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=10,  # TODO Hard coded; need to find the right solution here.
-        ).aggregate(
-            avg=models.Avg('songs__scores__points')
-        )['avg']
+    def official_mus_points(self):
+        scores = filter(None, [i.official_mus_points for i in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_prs_points(self):
+        scores = filter(None, [i.official_prs_points for i in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_sng_points(self):
+        scores = filter(None, [i.official_sng_points for i in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_total_score(self):
+        scores = filter(None, [song.official_total_score for song in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_mus_score(self):
+        scores = filter(None, [song.official_mus_score for song in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_prs_score(self):
+        scores = filter(None, [song.official_prs_score for song in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_sng_score(self):
+        scores = filter(None, [song.official_sng_score for song in self.performer.performances.filter(round__num__lte=self.contest.num_rounds)])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
 
     @property
     def official_rank(self):
@@ -1085,6 +1147,14 @@ class Contestant(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.disqualified)
     def disqualify(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        self.total_points = self.official_points
+        self.total_score = self.official_score
+        self.rank = self.official_rank
+        self.save()
         return
 
 
@@ -2098,6 +2168,7 @@ class Performance(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (5, 'validated', 'Validated',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
         # (30, 'completed', 'Completed',),
@@ -2205,11 +2276,102 @@ class Performance(TimeStampedModel):
 
     @property
     def official_total_points(self):
+        scores = filter(None, [i.official_total_points for i in self.songs.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_mus_points(self):
+        scores = filter(None, [i.official_mus_points for i in self.songs.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_prs_points(self):
+        scores = filter(None, [i.official_prs_points for i in self.songs.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_sng_points(self):
+        scores = filter(None, [i.official_sng_points for i in self.songs.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_total_score(self):
+        scores = filter(None, [song.official_total_score for song in self.songs.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_mus_score(self):
+        scores = filter(None, [song.official_mus_score for song in self.songs.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_prs_score(self):
+        scores = filter(None, [song.official_prs_score for song in self.songs.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_sng_score(self):
+        scores = filter(None, [song.official_sng_score for song in self.songs.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_points(self):
         return self.songs.filter(
-            scores__kind=10,  # TODO Hard coded; need to find the right solution here.
+            scores__kind=self.scores.model.KIND.official,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
+
+    # @property
+    # def official_mus_score(self):
+    #     return self.songs.filter(
+    #         scores__kind=self.session.judges.model.KIND.official,
+    #         scores__category=self.session.judges.model.CATEGORY.music,
+    #     ).aggregate(
+    #         avg=models.Avg('scores__points')
+    #     )['avg']
+
+    # @property
+    # def official_prs_score(self):
+    #     return self.songs.filter(
+    #         scores__kind=self.session.judges.model.KIND.official,
+    #         scores__category=self.session.judges.model.CATEGORY.presentation,
+    #     ).aggregate(
+    #         avg=models.Avg('scores__points')
+    #     )['avg']
+
+    # @property
+    # def official_sng_score(self):
+    #     return self.songs.filter(
+    #         scores__kind=self.session.judges.model.KIND.official,
+    #         scores__category=self.session.judges.model.CATEGORY.singing,
+    #     ).aggregate(
+    #         avg=models.Avg('scores__points')
+    #     )['avg']
 
     # Internals
     # class Meta:
@@ -2331,6 +2493,7 @@ class Performer(TimeStampedModel):
         (50, 'validated', 'Validated',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
+        (57, 'started', 'Started',),
         (60, 'finished', 'Finished',),
         # (90, 'final', 'Final',),
     )
@@ -2521,6 +2684,148 @@ class Performer(TimeStampedModel):
         editable=False,
     )
 
+    @property
+    def official_total_points(self):
+        scores = filter(None, [i.official_total_points for i in self.performances.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_mus_points(self):
+        scores = filter(None, [i.official_mus_points for i in self.performances.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_prs_points(self):
+        scores = filter(None, [i.official_prs_points for i in self.performances.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_sng_points(self):
+        scores = filter(None, [i.official_sng_points for i in self.performances.all()])
+        if scores:
+            return sum(scores)
+        else:
+            return None
+
+    @property
+    def official_total_score(self):
+        scores = filter(None, [song.official_total_score for song in self.performances.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_mus_score(self):
+        scores = filter(None, [song.official_mus_score for song in self.performances.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_prs_score(self):
+        scores = filter(None, [song.official_prs_score for song in self.performances.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    @property
+    def official_sng_score(self):
+        scores = filter(None, [song.official_sng_score for song in self.performances.all()])
+        if scores:
+            return sum(scores) / len(scores)
+        else:
+            return None
+
+    # @property
+    # def official_points(self):
+    #     return self.songs.filter(
+    #         scores__kind=self.scores.model.KIND.official,
+    #     ).aggregate(
+    #         tot=models.Sum('scores__points')
+    #     )['tot']
+
+    # @property
+    # def official_points(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #     ).aggregate(
+    #         tot=models.Sum('songs__scores__points')
+    #     )['tot']
+
+    # @property
+    # def official_mus_points(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #         songs__scores__category=self.session.judges.model.CATEGORY.music,
+    #     ).aggregate(
+    #         tot=models.Sum('songs__scores__points')
+    #     )['tot']
+
+    # @property
+    # def official_prs_points(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #         songs__scores__category=self.session.judges.model.CATEGORY.presentation,
+    #     ).aggregate(
+    #         tot=models.Sum('songs__scores__points')
+    #     )['tot']
+
+    # @property
+    # def official_sng_points(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #         songs__scores__category=self.session.judges.model.CATEGORY.singing,
+    #     ).aggregate(
+    #         tot=models.Sum('songs__scores__points')
+    #     )['tot']
+
+    # @property
+    # def official_score(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #     ).aggregate(
+    #         avg=models.Avg('songs__scores__points')
+    #     )['avg']
+
+    # @property
+    # def official_mus_score(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #         songs__scores__category=self.session.judges.model.CATEGORY.music,
+    #     ).aggregate(
+    #         avg=models.Avg('songs__scores__points')
+    #     )['avg']
+
+    # @property
+    # def official_prs_score(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #         songs__scores__category=self.session.judges.model.CATEGORY.presentation,
+    #     ).aggregate(
+    #         avg=models.Avg('songs__scores__points')
+    #     )['avg']
+
+    # @property
+    # def official_sng_score(self):
+    #     return self.performances.filter(
+    #         songs__scores__kind=self.session.judges.model.KIND.official,
+    #         songs__scores__category=self.session.judges.model.CATEGORY.singing,
+    #     ).aggregate(
+    #         avg=models.Avg('songs__scores__points')
+    #     )['avg']
+
     # Legacy
     bhs_id = models.IntegerField(
         null=True,
@@ -2614,6 +2919,10 @@ class Performer(TimeStampedModel):
                 other.save()
         self.save()
         return {'success': 'disqualified'}
+
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
@@ -3120,7 +3429,12 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         if self.session.kind != self.session.KIND.quartet:
-            # Only relevant for quartet contests
+            # Finish all Performers and return
+            for performer in self.session.performers.filter(
+                status=self.session.performers.model.STATUS.started
+            ):
+                performer.finish()
+                performer.save()
             return
         if self.session.convention.kind == self.session.convention.KIND.international:
             # TODO: process for three-round contest.
@@ -3240,6 +3554,7 @@ class Score(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'validated', 'Validated',),
         # (20, 'entered', 'Entered',),
         (25, 'cleared', 'Cleared',),
         (30, 'flagged', 'Flagged',),
@@ -3549,10 +3864,17 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
+        # Start all Performers when Session Starts
+        for performer in self.performers.filter(status=self.performers.model.STATUS.validated):
+            performer.start()
+            performer.save()
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        for contest in self.contests.all():
+            contest.finish()
+            contest.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
@@ -3575,7 +3897,7 @@ class Song(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
+        (10, 'validated', 'Validated',),
         # (20, 'entered', 'Entered',),
         # (30, 'flagged', 'Flagged',),
         # (35, 'validated', 'Validated',),
@@ -3671,6 +3993,68 @@ class Song(TimeStampedModel):
             kind=self.scores.model.KIND.official,
         ).aggregate(
             tot=models.Sum('points')
+        )['tot']
+
+    @property
+    def official_mus_points(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.music,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+
+    @property
+    def official_prs_points(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.presentation,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+
+    @property
+    def official_sng_points(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.singing,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+
+    @property
+    def official_total_score(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+
+    @property
+    def official_mus_score(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.music,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+
+    @property
+    def official_prs_score(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.presentation,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+
+    @property
+    def official_sng_score(self):
+        return self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.singing,
+        ).aggregate(
+            tot=models.Avg('points')
         )['tot']
 
     # Internals

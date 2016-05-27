@@ -1,6 +1,8 @@
 # Third-Party
-from nose import with_setup
+# from nose import with_setup
 from factory.fuzzy import FuzzyInteger
+from django.core import management
+from django.db import IntegrityError
 # from nose.tools import eq_ as eq
 # from nose.tools import ok_ as ok
 # from rest_assured.testcases import (
@@ -50,11 +52,18 @@ from apps.api.factories import (
 from apps.api.models import (
     Award,
     Certification,
+    Contest,
+    Contestant,
     Judge,
     Convention,
     Organization,
+    Performance,
+    Performer,
     Round,
+    Score,
     Session,
+    Song,
+    Submission,
 )
 
 
@@ -175,9 +184,18 @@ from apps.api.models import (
 
 
 # Round Tests
+def tear_down():
+    management.call_command('flush', verbosity=0, interactive=False)
+    return
+
+
+def build_admin():
+    AdminFactory()
+    return
+
 
 def build_international():
-    AdminFactory()
+    build_admin()
     venue = VenueFactory()
     bhs = InternationalFactory()
     quartet_award = InternationalQuartetAwardFactory(
@@ -189,14 +207,17 @@ def build_international():
     convention = SummerConventionFactory(
         organization=bhs,
         venue=venue,
+        status=Convention.STATUS.validated,
     )
     quartet_session = SessionFactory(
         kind=Session.KIND.quartet,
         convention=convention,
+        status=Session.STATUS.validated,
     )
     chorus_session = SessionFactory(
         kind=Session.KIND.chorus,
         convention=convention,
+        status=Session.STATUS.validated,
     )
     admins = OfficialAdminCertificationFactory.create_batch(3)
     for admin in admins:
@@ -205,12 +226,14 @@ def build_international():
             certification=admin,
             category=Judge.CATEGORY.admin,
             kind=Judge.KIND.official,
+            status=Judge.STATUS.validated,
         )
         JudgeFactory(
             session=chorus_session,
             certification=admin,
             category=Judge.CATEGORY.admin,
             kind=Judge.KIND.official,
+            status=Judge.STATUS.validated,
         )
     categories = [
         'music',
@@ -232,6 +255,7 @@ def build_international():
                 category=getattr(Judge.CATEGORY, category),
                 kind=Judge.KIND.official,
                 slot=i,
+                status=Judge.STATUS.validated,
             )
             quartet_judges.append(quartet_judge)
             chorus_judge = JudgeFactory(
@@ -240,113 +264,164 @@ def build_international():
                 category=getattr(Judge.CATEGORY, category),
                 kind=Judge.KIND.official,
                 slot=i,
+                status=Judge.STATUS.validated,
             )
             chorus_judges.append(chorus_judge)
             i += 1
     quartet_contest = ContestFactory(
         session=quartet_session,
         award=quartet_award,
+        status=Contest.STATUS.validated,
     )
     chorus_contest = ContestFactory(
         session=chorus_session,
-        award=chorus_award
+        award=chorus_award,
+        status=Contest.STATUS.validated,
     )
     chorus_finals = RoundFactory(
         kind=Round.KIND.finals,
         num=1,
         session=chorus_session,
+        status=Round.STATUS.validated,
     )
     RoundFactory(
         kind=Round.KIND.finals,
         num=3,
         session=quartet_session,
+        status=Round.STATUS.validated,
     )
     RoundFactory(
         kind=Round.KIND.semis,
         num=2,
         session=quartet_session,
+        status=Round.STATUS.validated,
     )
     quartet_quarters = RoundFactory(
         kind=Round.KIND.quarters,
         num=1,
         session=quartet_session,
+        status=Round.STATUS.validated,
     )
     quartets = QuartetFactory.create_batch(50)
+    i = 1
     for quartet in quartets:
         performer = PerformerFactory(
             session=quartet_session,
             group=quartet,
+            status=Performer.STATUS.validated,
         )
         s = 1
         while s <= 4:
-            SubmissionFactory(
-                performer=performer,
-            )
+            try:
+                SubmissionFactory(
+                    performer=performer,
+                    status=Submission.STATUS.validated,
+                )
+            except IntegrityError:
+                SubmissionFactory(
+                    performer=performer,
+                    status=Submission.STATUS.validated,
+                )
             s += 1
         ContestantFactory(
             contest=quartet_contest,
             performer=performer,
+            status=Contestant.STATUS.validated,
         )
+        performance = PerformanceFactory(
+            performer=performer,
+            round=quartet_quarters,
+            slot=i,
+            status=Performance.STATUS.validated,
+        )
+        t = 1
+        while t <= 2:
+            song = SongFactory(
+                performance=performance,
+                order=t,
+                status=Song.STATUS.validated,
+            )
+            for judge in quartet_judges:
+                ScoreFactory(
+                    song=song,
+                    judge=judge,
+                    category=judge.category,
+                    kind=judge.kind,
+                    status=Score.STATUS.validated,
+                )
+            t += 1
+        i += 1
     choruses = ChorusFactory.create_batch(20)
+    i = 1
     for chorus in choruses:
         performer = PerformerFactory(
             session=chorus_session,
             group=chorus,
+            status=Performer.STATUS.validated,
         )
         s = 1
         while s <= 4:
-            SubmissionFactory(
-                performer=performer,
-            )
+            try:
+                SubmissionFactory(
+                    performer=performer,
+                    status=Submission.STATUS.validated,
+                )
+            except IntegrityError:
+                SubmissionFactory(
+                    performer=performer,
+                    status=Submission.STATUS.validated,
+                )
             s += 1
         ContestantFactory(
             contest=chorus_contest,
             performer=performer,
+            status=Contestant.STATUS.validated,
         )
+        performance = PerformanceFactory(
+            performer=performer,
+            round=chorus_finals,
+            slot=i,
+            status=Performance.STATUS.validated,
+        )
+        t = 1
+        while t <= 2:
+            song = SongFactory(
+                performance=performance,
+                order=t,
+                status=Song.STATUS.validated,
+            )
+            for judge in chorus_judges:
+                ScoreFactory(
+                    song=song,
+                    judge=judge,
+                    category=judge.category,
+                    kind=judge.kind,
+                    status=Score.STATUS.validated,
+                )
+            t += 1
+        i += 1
+
+
+def score_performance(performance):
+    performance.start()
+    performance.center = FuzzyInteger(50, 95).fuzz()
+    i = 1
+    for song in performance.songs.all():
+        song.submission = performance.performer.submissions.all()[i]
+        for score in song.scores.all():
+            score.points = performance.center + FuzzyInteger(-4, 4).fuzz()
+            score.save()
+        song.save()
+        i += 1
+    performance.finish()
+    performance.save()
     return
 
 
-def draw_international(self):
-    for performance in quartet_performances:
-        performance.center = FuzzyInteger(50, 95).fuzz()
-        i = 1
-        while i <= 2:
-            submissions = performance.performer.submissions.all()
-            song = SongFactory(
-                performance=performance,
-                order=i,
-                submission=submissions[i],
-            )
-            for judge in quartet_judges:
-                points = performance.center + FuzzyInteger(-4, 4).fuzz()
-                ScoreFactory(
-                    song=song,
-                    judge=judge,
-                    category=judge.category,
-                    kind=judge.kind,
-                    points=points,
-                )
-            i += 1
-    for performance in chorus_performances:
-        performance.center = FuzzyInteger(50, 95).fuzz()
-        i = 1
-        while i <= 2:
-            submissions = performance.performer.submissions.all()
-            song = SongFactory(
-                performance=performance,
-                order=i,
-                submission=submissions[i],
-            )
-            for judge in chorus_judges:
-                points = performance.center + FuzzyInteger(-4, 4).fuzz()
-                ScoreFactory(
-                    song=song,
-                    judge=judge,
-                    category=judge.category,
-                    kind=judge.kind,
-                    points=points,
-                )
-            i += 1
+def score_round(round):
+    for performance in round.performances.all():
+        score_performance(performance)
+    return
 
 
 # @with_setup(setup_international)
