@@ -793,8 +793,7 @@ class Contest(TimeStampedModel):
     )
 
     num_rounds = models.IntegerField(
-        blank=True,
-        null=True,
+        default=1,
     )
 
     # FKs
@@ -889,7 +888,7 @@ class Contest(TimeStampedModel):
     # Methods
     def ranking(self, point_total):
         contestants = self.contestants.all()
-        points = [c.official_points for c in contestants]
+        points = [c.official_total_points for c in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -898,9 +897,6 @@ class Contest(TimeStampedModel):
     # Transitions
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        for contestant in self.contestants.all():
-            contestant.finish()
-            contestant.save()
         return
 
 
@@ -1072,7 +1068,7 @@ class Contestant(TimeStampedModel):
 
     @property
     def official_rank(self):
-        return self.contest.ranking(self.official_points)
+        return self.contest.ranking(self.official_total_points)
 
     @property
     def official_result(self):
@@ -1151,10 +1147,6 @@ class Contestant(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        self.total_points = self.official_points
-        self.total_score = self.official_score
-        self.rank = self.official_rank
-        self.save()
         return
 
 
@@ -2338,13 +2330,13 @@ class Performance(TimeStampedModel):
         else:
             return None
 
-    @property
-    def official_points(self):
-        return self.songs.filter(
-            scores__kind=self.scores.model.KIND.official,
-        ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
+    # @property
+    # def official_points(self):
+    #     return self.songs.filter(
+    #         scores__kind=self.scores.model.KIND.official,
+    #     ).aggregate(
+    #         tot=models.Sum('scores__points')
+    #     )['tot']
 
     # @property
     # def official_mus_score(self):
@@ -3872,9 +3864,48 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        for performer in self.performers.all():
+            for performance in performer.performances.all():
+                for song in performance.songs.all():
+                    song.total_points = song.official_total_points
+                    song.mus_points = song.official_mus_points
+                    song.prs_points = song.official_prs_points
+                    song.sng_points = song.official_sng_points
+                    song.total_score = song.official_total_score
+                    song.mus_score = song.official_mus_score
+                    song.prs_score = song.official_prs_score
+                    song.sng_score = song.official_sng_score
+                    song.save()
+                performance.total_points = performance.official_total_points
+                performance.mus_points = performance.official_mus_points
+                performance.prs_points = performance.official_prs_points
+                performance.sng_points = performance.official_sng_points
+                performance.total_score = performance.official_total_score
+                performance.mus_score = performance.official_mus_score
+                performance.prs_score = performance.official_prs_score
+                performance.sng_score = performance.official_sng_score
+                performance.save()
+            performer.total_points = performer.official_total_points
+            performer.mus_points = performer.official_mus_points
+            performer.prs_points = performer.official_prs_points
+            performer.sng_points = performer.official_sng_points
+            performer.total_score = performer.official_total_score
+            performer.mus_score = performer.official_mus_score
+            performer.prs_score = performer.official_prs_score
+            performer.sng_score = performer.official_sng_score
+            performer.save()
         for contest in self.contests.all():
-            contest.finish()
-            contest.save()
+            for contestant in contest.contestants.all():
+                    contestant.total_points = contestant.official_total_points
+                    contestant.mus_points = contestant.official_mus_points
+                    contestant.prs_points = contestant.official_prs_points
+                    contestant.sng_points = contestant.official_sng_points
+                    contestant.total_score = contestant.official_total_score
+                    contestant.mus_score = contestant.official_mus_score
+                    contestant.prs_score = contestant.official_prs_score
+                    contestant.sng_score = contestant.official_sng_score
+                    contestant.rank = contestant.official_rank
+                    contestant.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
@@ -3901,6 +3932,7 @@ class Song(TimeStampedModel):
         # (20, 'entered', 'Entered',),
         # (30, 'flagged', 'Flagged',),
         # (35, 'validated', 'Validated',),
+        (38, 'finished', 'Finished',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
     )
@@ -4093,6 +4125,9 @@ class Song(TimeStampedModel):
         return False
 
     # Transitions
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
 
 
 class Submission(TimeStampedModel):
