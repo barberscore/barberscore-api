@@ -3906,6 +3906,8 @@ class Session(TimeStampedModel):
                     contestant.sng_score = contestant.official_sng_score
                     contestant.rank = contestant.official_rank
                     contestant.save()
+            contest.champion = contest.contestants.get(rank=1)
+            contest.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
