@@ -31,6 +31,7 @@ from .models import (
     Score,
     Session,
     Song,
+    SongScore,
     Submission,
     Venue,
 )
@@ -548,6 +549,7 @@ class SongSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'scores',
+            'songscore',
         )
 
         readonly_fields = [
@@ -559,6 +561,27 @@ class SongSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
+        ]
+
+
+class SongScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SongScore
+        fields = (
+            'song',
+            'url',
+            'd_total_points',
+        )
+
+        readonly_fields = [
+            'd_mus_points',
+            'd_prs_points',
+            'd_sng_points',
+            'd_total_points',
+            'd_mus_score',
+            'd_prs_score',
+            'd_sng_score',
+            'd_total_score',
         ]
 
 

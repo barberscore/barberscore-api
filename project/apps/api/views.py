@@ -39,6 +39,7 @@ from .models import (
     Score,
     Session,
     Song,
+    SongScore,
     Submission,
     Venue,
 )
@@ -62,6 +63,7 @@ from .serializers import (
     ScoreSerializer,
     SessionSerializer,
     SongSerializer,
+    SongScoreSerializer,
     SubmissionSerializer,
     VenueSerializer,
 )
@@ -360,6 +362,7 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'performance',
         'submission',
+        'songscore',
     ).prefetch_related(
         'scores',
     ).order_by(
@@ -368,6 +371,14 @@ class SongViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SongSerializer
     resource_name = "song"
+
+
+class SongScoreViewSet(viewsets.ModelViewSet):
+    queryset = SongScore.objects.select_related(
+        'song',
+    )
+    serializer_class = SongScoreSerializer
+    resource_name = "songscore"
 
 
 class VenueViewSet(viewsets.ModelViewSet):

@@ -22,6 +22,7 @@ from .views import (
     ScoreViewSet,
     SessionViewSet,
     SongViewSet,
+    SongScoreViewSet,
     SubmissionViewSet,
     VenueViewSet,
 )
@@ -48,5 +49,6 @@ router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)
 router.register(r'submission', SubmissionViewSet)
 router.register(r'song', SongViewSet)
+router.register(r'songscore', SongScoreViewSet)
 router.register(r'venue', VenueViewSet)
 urlpatterns = router.urls

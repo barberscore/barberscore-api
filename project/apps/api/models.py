@@ -4143,6 +4143,84 @@ class Song(TimeStampedModel):
         return
 
 
+class SongScore(TimeStampedModel):
+    song = models.OneToOneField(
+        'Song',
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    # Denormalizations
+    d_mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_total_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_mus_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_prs_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_sng_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    d_total_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    class JSONAPIMeta:
+        resource_name = "songscore"
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return False
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
 class Submission(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
