@@ -2456,11 +2456,6 @@ class Performance(TimeStampedModel):
         )
         return
 
-    # @transition(field=status, source='*', target=STATUS.completed)
-    # def complete(self, *args, **kwargs):
-    #     self.calculate()
-    #     return
-
 
 class Performer(TimeStampedModel):
     id = models.UUIDField(
@@ -3420,48 +3415,60 @@ class Round(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        if self.session.kind != self.session.KIND.quartet:
-            # Finish all Performers and return
+        if self.kind == self.KIND.finals:
+            # If the Finals, finishe performers and return
             for performer in self.session.performers.filter(
                 status=self.session.performers.model.STATUS.started
             ):
                 performer.finish()
                 performer.save()
             return
-        if self.session.convention.kind == self.session.convention.KIND.international:
-            # TODO: process for three-round contest.
+        # Hard-code the International Quartet Quarter-finals
+        if all([
+            self.session.convention.kind == self.session.convention.KIND.international,
+            self.session.kind == self.session.KIND.quartet,
+        ]):
+            if self.kind == self.KIND.quarters:
+                spots = 20
+            else:
+                spots = 10
+            contest = self.session.contests.get(award__is_primary=True)
+            contestants = list(contest.contestants.all())
+            for contestant in contestants:
+                if contestant.official_rank <= spots:
+                    performance = contestant.performer.performances.get(round=self)
+                    performance.is_advancing = True
+                    performance.save()
             return
+        # Remaining rounds are two-round
         # Get the number of spots available
         spots = self.session.convention.organization.spots
+        # Hard-code override the International Quartet Quarter-finals
         # Instantiate the list of advancing performers
         advancing = []
-        # First, denormalize the performances by contest
-        for performance in self.performances.all():
-            performance.calculate()
-            performance.save()
-        for contest in self.session.contests.all():
-            contest.rank()
         # Only handle multi-round contests.
         for contest in self.session.contests.filter(award__championship_rounds__gt=1):
             # Qualifiers have an absolute score cutoff
             if contest.is_qualifier:
-                # International cutoff is 73.0 or creater.
-                if contest.award.level == contest.award.LEVEL.international:
-                    contestants = contest.contestants.filter(total_score__gte=73)
-                    for contestant in contestants:
-                        advancing.append(contestant.performer)
-                # District qual variers by district
-                else:
-                    # TODO Distict qual
-                    pass
+                # Uses absolute cutoff.
+                contestants = contest.contestants.filter(
+                    total_score__gte=contest.award.advance,
+                )
+                for contestant in contestants:
+                    advancing.append(contestant.performer)
             # Championships are relative.
             else:
-                # Order championship by rank
-                contestants = contest.contestants.order_by('rank')
+                # Get contestants and create list  (to order by property)
+                contestants = list(contest.contestants.all())
+                contestants.sort(
+                    key=lambda x: x.official_rank,
+                    reverse=True,
+                )
                 # Get the top scorer, and accept scores within four points of top.
-                top = contestants.last().total_score - 4.0
+                top = contestants[0]
+                accept = top.official_total_score - 4.0
                 contestants = contest.contestants.filter(
-                    total_score__gte=top,
+                    total_score__gte=accept,
                 )
                 for contestant in contestants:
                     advancing.append(contestant.performer)
@@ -3476,9 +3483,13 @@ class Round(TimeStampedModel):
             ).exclude(
                 id__in=obj_list,
             )
-            perfs = self.performances.filter(
+            perfs = list(self.performances.filter(
                 performer__in=additional,
-            ).order_by('-total_score')[:diff]
+            ))
+            perfs.sort(
+                key=lambda x: x.official_total_points,
+                reverse=True,
+            )
             for p in perfs:
                 advancing.append(p.performer)
         # # Sort the list by score
