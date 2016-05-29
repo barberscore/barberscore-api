@@ -26,13 +26,16 @@ from .models import (
     Chart,
     Contest,
     Contestant,
+    ContestantScore,
     Convention,
     Group,
     Judge,
     Member,
     Organization,
     Performance,
+    PerformanceScore,
     Performer,
+    PerformerScore,
     Person,
     Role,
     Round,
@@ -49,6 +52,7 @@ from .serializers import (
     ChapterSerializer,
     ChartSerializer,
     ContestantSerializer,
+    ContestantScoreSerializer,
     ContestSerializer,
     ConventionSerializer,
     GroupSerializer,
@@ -56,7 +60,9 @@ from .serializers import (
     MemberSerializer,
     OrganizationSerializer,
     PerformanceSerializer,
+    PerformanceScoreSerializer,
     PerformerSerializer,
+    PerformerScoreSerializer,
     PersonSerializer,
     RoleSerializer,
     RoundSerializer,
@@ -140,6 +146,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'performer',
         'contest',
+        'contestantscore',
     ).order_by(
         'contest',
         '-total_points',
@@ -147,6 +154,14 @@ class ContestantViewSet(viewsets.ModelViewSet):
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
     resource_name = "contestant"
+
+
+class ContestantScoreViewSet(viewsets.ModelViewSet):
+    queryset = ContestantScore.objects.select_related(
+        'contestant',
+    )
+    serializer_class = ContestantScoreSerializer
+    resource_name = "contestantscore"
 
 
 class ConventionViewSet(
@@ -228,6 +243,7 @@ class PerformanceViewSet(
     queryset = Performance.objects.select_related(
         'round',
         'performer',
+        'performancescore',
     ).prefetch_related(
         'songs',
     ).order_by(
@@ -236,6 +252,14 @@ class PerformanceViewSet(
     )
     serializer_class = PerformanceSerializer
     resource_name = "performance"
+
+
+class PerformanceScoreViewSet(viewsets.ModelViewSet):
+    queryset = PerformanceScore.objects.select_related(
+        'performance',
+    )
+    serializer_class = PerformanceScoreSerializer
+    resource_name = "performancescore"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -249,6 +273,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
+        'performerscore',
     ).prefetch_related(
         'submissions',
         'performances',
@@ -273,6 +298,14 @@ class PerformerViewSet(viewsets.ModelViewSet):
     #     performer = self.get_object()
     #     response = performer.scratch()
     #     return Response(response)
+
+
+class PerformerScoreViewSet(viewsets.ModelViewSet):
+    queryset = PerformerScore.objects.select_related(
+        'performer',
+    )
+    serializer_class = PerformerScoreSerializer
+    resource_name = "performerscore"
 
 
 class PersonViewSet(viewsets.ModelViewSet):

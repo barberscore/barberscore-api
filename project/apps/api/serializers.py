@@ -18,13 +18,16 @@ from .models import (
     Chart,
     Contest,
     Contestant,
+    ContestantScore,
     Convention,
     Group,
     Judge,
     Member,
     Organization,
     Performance,
+    PerformanceScore,
     Performer,
+    PerformerScore,
     Person,
     Role,
     Round,
@@ -167,10 +170,40 @@ class ContestantSerializer(serializers.ModelSerializer):
             'total_score',
             'performer',
             'contest',
+            'contestantscore',
         )
 
         readonly_fields = [
             'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+        ]
+
+
+class ContestantScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContestantScore
+        fields = (
+            'contestant',
+            'url',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'contestant',
+        )
+
+        readonly_fields = [
             'mus_points',
             'prs_points',
             'sng_points',
@@ -332,6 +365,36 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'round',
             'performer',
             'songs',
+            'performancescore',
+        )
+
+        readonly_fields = [
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+        ]
+
+
+class PerformanceScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PerformanceScore
+        fields = (
+            'performance',
+            'url',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'performance',
         )
 
         readonly_fields = [
@@ -383,12 +446,42 @@ class PerformerSerializer(serializers.ModelSerializer):
             'performances',
             'contestants',
             'submissions',
+            'performerscore',
         )
         read_only_fields = [
             'picture',
             'seed',
             'prelim',
             'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+        ]
+
+
+class PerformerScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PerformerScore
+        fields = (
+            'performer',
+            'url',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'performer',
+        )
+
+        readonly_fields = [
             'mus_points',
             'prs_points',
             'sng_points',
@@ -570,18 +663,25 @@ class SongScoreSerializer(serializers.ModelSerializer):
         fields = (
             'song',
             'url',
-            'd_total_points',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
         )
 
         readonly_fields = [
-            'd_mus_points',
-            'd_prs_points',
-            'd_sng_points',
-            'd_total_points',
-            'd_mus_score',
-            'd_prs_score',
-            'd_sng_score',
-            'd_total_score',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
         ]
 
 
