@@ -888,7 +888,7 @@ class Contest(TimeStampedModel):
     # Methods
     def ranking(self, point_total):
         contestants = self.contestants.all()
-        points = [c.official_total_points for c in contestants]
+        points = [contestant.contestantscore.total_points for contestant in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -1003,10 +1003,6 @@ class Contestant(TimeStampedModel):
     )
 
     @property
-    def official_rank(self):
-        return self.contest.ranking(self.official_total_points)
-
-    @property
     def official_result(self):
         if self.contest.is_qualifier:
             if self.contest.award.is_district_representative:
@@ -1083,14 +1079,23 @@ class Contestant(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        for contestant in self.contestants.all():
+            contestant.contestantscore.objects.create(
+                contestant=contestant,
+            )
         return
 
 
 class ContestantScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
     contestant = models.OneToOneField(
         'Contestant',
         on_delete=models.CASCADE,
-        primary_key=True,
     )
 
     rank = models.IntegerField(
@@ -1157,7 +1162,7 @@ class ContestantScore(TimeStampedModel):
         return u"{0} Score".format(self.contestant)
 
     def save(self, *args, **kwargs):
-        self.total_points = self.calculate_total_points()
+        # self.rank = self.calculate_rank()
         self.total_points = self.calculate_total_points()
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -1188,6 +1193,9 @@ class ContestantScore(TimeStampedModel):
         return False
 
     # Denormalizations
+    def calculate_rank(self):
+        return self.contestant.contest.ranking(self.calculate_total_points())
+
     def calculate_total_points(self):
         return self.contestant.performer.performances.filter(
             songs__scores__kind=self.contestant.contest.session.judges.model.KIND.official,
@@ -2272,7 +2280,7 @@ class Performance(TimeStampedModel):
         (5, 'validated', 'Validated',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
-        # (30, 'completed', 'Completed',),
+        (30, 'entered', 'Entered',),
         # (50, 'confirmed', 'Confirmed',),
         # (90, 'final', 'Final',),
     )
@@ -2454,18 +2462,31 @@ class Performance(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        self.actual = DateTimeTZRange(
-            lower=self.actual.lower,
-            upper=timezone.now(),
-        )
+        #  When score is entered, update all denormalizations.
+        self.performancescore.save()
+        for song in self.songs.all():
+            song.songscore.save()
+        self.performer.performerscore.save()
+        for contestant in self.performer.contestants.all():
+            contestant.contestantscore.save()
         return
 
 
 class PerformanceScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
     performance = models.OneToOneField(
         'Performance',
         on_delete=models.CASCADE,
-        primary_key=True,
+    )
+
+    is_advancing = models.BooleanField(
+        default=False,
+        editable=False,
     )
 
     rank = models.IntegerField(
@@ -2532,7 +2553,7 @@ class PerformanceScore(TimeStampedModel):
         return u"{0} Score".format(self.performance)
 
     def save(self, *args, **kwargs):
-        self.total_points = self.calculate_total_points()
+        # self.rank = self.calculate_rank()
         self.total_points = self.calculate_total_points()
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -2563,6 +2584,9 @@ class PerformanceScore(TimeStampedModel):
         return False
 
     # Denormalizations
+    def calculate_rank(self):
+        return self.performance.round.ranking(self.total_points)
+
     def calculate_total_points(self):
         return self.performance.songs.filter(
             scores__kind=self.performance.round.session.judges.model.KIND.official,
@@ -2940,14 +2964,23 @@ class Performer(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        for performer in self.performers.all():
+            performer.performerscore.objects.create(
+                performer=performer,
+            )
         return
 
 
 class PerformerScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
     performer = models.OneToOneField(
         'Performer',
         on_delete=models.CASCADE,
-        primary_key=True,
     )
 
     rank = models.IntegerField(
@@ -3600,6 +3633,15 @@ class Round(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
+    # Methods
+    def ranking(self, point_total):
+        performances = self.performances.all()
+        points = [performance.performancescore.total_points for performance in performances]
+        points = sorted(points, reverse=True)
+        ranking = Ranking(points, start=1)
+        rank = ranking.rank(point_total)
+        return rank
+
     # Transitions
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
@@ -3608,7 +3650,7 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
-            # If the Finals, finishe performers and return
+            # If the Finals, finish performers and return
             for performer in self.session.performers.filter(
                 status=self.session.performers.model.STATUS.started
             ):
@@ -3624,76 +3666,60 @@ class Round(TimeStampedModel):
                 spots = 20
             else:
                 spots = 10
-            contest = self.session.contests.get(award__is_primary=True)
-            contestants = list(contest.contestants.all())
-            for contestant in contestants:
-                if contestant.official_rank <= spots:
-                    performance = contestant.performer.performances.get(round=self)
-                    performance.is_advancing = True
-                    performance.save()
+            for performance in self.performances.all():
+                performance.performancescore.rank = performance.performancescore.calculate_rank()
+                performance.performancescore.save()
+                if performance.performancescore.rank <= spots:
+                    performance.performancescore.is_advancing = True
+                    performance.performancescore.save()
             return
         # Remaining rounds are two-round
         # Get the number of spots available
         spots = self.session.convention.organization.spots
-        # Hard-code override the International Quartet Quarter-finals
-        # Instantiate the list of advancing performers
-        advancing = []
-        # Only handle multi-round contests.
+        # Only address multi-round contests.
         for contest in self.session.contests.filter(award__championship_rounds__gt=1):
             # Qualifiers have an absolute score cutoff
             if contest.is_qualifier:
                 # Uses absolute cutoff.
                 contestants = contest.contestants.filter(
-                    total_score__gte=contest.award.advance,
+                    contestantscore__total_score__gte=contest.award.advance,
                 )
                 for contestant in contestants:
-                    advancing.append(contestant.performer)
+                    for performance in self.performances.all():
+                        if performance.performer == contestant.performer:
+                            performance.performancescore.is_advancing = True
+                            performance.performancescore.save()
             # Championships are relative.
             else:
-                # Get contestants and create list  (to order by property)
-                contestants = list(contest.contestants.all())
-                contestants.sort(
-                    key=lambda x: x.official_rank,
-                    reverse=True,
-                )
-                # Get the top scorer, and accept scores within four points of top.
-                top = contestants[0]
-                accept = top.official_total_score - 4.0
+                # Get the top scorer
+                top = contest.contestants.filter(
+                    contestantscore__rank=1,
+                ).first()
+                # Derive the accept threshold from that top score.
+                accept = top.total_score - 4.0
                 contestants = contest.contestants.filter(
-                    total_score__gte=accept,
+                    contestantscore__total_score__gte=accept,
                 )
                 for contestant in contestants:
-                    advancing.append(contestant.performer)
-        # Remove duplicates
-        advancing = list(set(advancing))
+                    for performance in self.performances.all():
+                        if performance.performer == contestant.performer:
+                            performance.performancescore.is_advancing = True
+                            performance.performancescore.save()
         # Append up to spots available.
-        obj_list = [p.id for p in advancing]
-        diff = spots - len(advancing)
+        diff = spots - self.performances.performancescore.filter(
+            is_advancing=True,
+        ).count()
         if diff > 0:
-            additional = self.session.performers.filter(
-                contestants__contest__award__championship_rounds__gt=1,
-            ).exclude(
-                id__in=obj_list,
-            )
-            perfs = list(self.performances.filter(
-                performer__in=additional,
-            ))
-            perfs.sort(
-                key=lambda x: x.official_total_points,
-                reverse=True,
-            )
-            for p in perfs:
-                advancing.append(p.performer)
-        # # Sort the list by score
-        # # advancing.sort(key=lambda x: x.total_score, reverse=True)
-        # # return advancing
-        performances = self.performances.filter(
-            performer__in=advancing,
-        )
-        for performance in performances:
-            performance.is_advancing = True
-            performance.save()
-        return
+            adds = self.performances.filter(
+                performer__contestants__contest__award__championship_rounds__gt=1,
+                performancescore__is_advancing=False,
+            ).order_by(
+                '-performancescore__total_points',
+            )[:diff]
+            for add in adds:
+                performance.is_advancing = True
+                performance.save()
+            return
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
@@ -4067,50 +4093,6 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        for performer in self.performers.all():
-            for performance in performer.performances.all():
-                for song in performance.songs.all():
-                    song.total_points = song.official_total_points
-                    song.mus_points = song.official_mus_points
-                    song.prs_points = song.official_prs_points
-                    song.sng_points = song.official_sng_points
-                    song.total_score = song.official_total_score
-                    song.mus_score = song.official_mus_score
-                    song.prs_score = song.official_prs_score
-                    song.sng_score = song.official_sng_score
-                    song.save()
-                performance.total_points = performance.official_total_points
-                performance.mus_points = performance.official_mus_points
-                performance.prs_points = performance.official_prs_points
-                performance.sng_points = performance.official_sng_points
-                performance.total_score = performance.official_total_score
-                performance.mus_score = performance.official_mus_score
-                performance.prs_score = performance.official_prs_score
-                performance.sng_score = performance.official_sng_score
-                performance.save()
-            performer.total_points = performer.official_total_points
-            performer.mus_points = performer.official_mus_points
-            performer.prs_points = performer.official_prs_points
-            performer.sng_points = performer.official_sng_points
-            performer.total_score = performer.official_total_score
-            performer.mus_score = performer.official_mus_score
-            performer.prs_score = performer.official_prs_score
-            performer.sng_score = performer.official_sng_score
-            performer.save()
-        for contest in self.contests.all():
-            for contestant in contest.contestants.all():
-                    contestant.total_points = contestant.official_total_points
-                    contestant.mus_points = contestant.official_mus_points
-                    contestant.prs_points = contestant.official_prs_points
-                    contestant.sng_points = contestant.official_sng_points
-                    contestant.total_score = contestant.official_total_score
-                    contestant.mus_score = contestant.official_mus_score
-                    contestant.prs_score = contestant.official_prs_score
-                    contestant.sng_score = contestant.official_sng_score
-                    contestant.rank = contestant.official_rank
-                    contestant.save()
-            contest.champion = contest.contestants.get(rank=1)
-            contest.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
@@ -4266,10 +4248,15 @@ class Song(TimeStampedModel):
 
 
 class SongScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
     song = models.OneToOneField(
         'Song',
         on_delete=models.CASCADE,
-        primary_key=True,
     )
 
     mus_points = models.IntegerField(

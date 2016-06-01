@@ -386,6 +386,8 @@ class PerformanceScoreSerializer(serializers.ModelSerializer):
         fields = (
             'performance',
             'url',
+            'is_advancing',
+            'rank',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -398,6 +400,8 @@ class PerformanceScoreSerializer(serializers.ModelSerializer):
         )
 
         readonly_fields = [
+            'is_advancing',
+            'rank',
             'mus_points',
             'prs_points',
             'sng_points',

@@ -6,10 +6,6 @@ from django.db.models import (
     QuerySet,
 )
 
-# from django.apps import apps
-# Score = apps.get_model('api', 'Score')
-
-
 
 class UserManager(BaseUserManager):
 
@@ -39,19 +35,11 @@ class UserManager(BaseUserManager):
 
 class ScoreQuerySet(QuerySet):
     def officials(self):
-        return self.exclude(
-            points=None,
+        return self.filter(
+            kind=self.model.KIND.official,
         ).exclude(
-            kind=self.model.KIND.practice,
+            points=None,
         )
-        # .order_by(
-        #     'category',
-        # ).values(
-        #     'category',
-        # ).annotate(
-        #     total=models.Sum('points'),
-        #     average=models.Avg('points'),
-        # )
 
 
 class ScoreManager(Manager):
