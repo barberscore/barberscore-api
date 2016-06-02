@@ -213,11 +213,13 @@ def build_international():
         kind=Session.KIND.quartet,
         convention=convention,
         status=Session.STATUS.validated,
+        num_rounds=3,
     )
     chorus_session = SessionFactory(
         kind=Session.KIND.chorus,
         convention=convention,
         status=Session.STATUS.validated,
+        num_rounds=1,
     )
     admins = OfficialAdminCertificationFactory.create_batch(3)
     for admin in admins:
@@ -288,13 +290,13 @@ def build_international():
         kind=Round.KIND.finals,
         num=3,
         session=quartet_session,
-        status=Round.STATUS.validated,
+        status=Round.STATUS.new,
     )
     RoundFactory(
         kind=Round.KIND.semis,
         num=2,
         session=quartet_session,
-        status=Round.STATUS.validated,
+        status=Round.STATUS.new,
     )
     quartet_quarters = RoundFactory(
         kind=Round.KIND.quarters,

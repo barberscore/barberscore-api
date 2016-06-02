@@ -605,6 +605,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'kind',
             'convention',
             'date',
+            'num_rounds',
             'cursor',
             'performers',
             'contests',

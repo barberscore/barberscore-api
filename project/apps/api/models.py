@@ -3724,7 +3724,7 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         promotions = self.performances.filter(
-            is_advancing=True,
+            performancescore__is_advancing=True,
         ).order_by('?')
         next_round = self.session.rounds.get(
             num=(self.num + 1),
@@ -3978,6 +3978,11 @@ class Session(TimeStampedModel):
     date = DateTimeRangeField(
         help_text="""
             The active dates of the session.""",
+        null=True,
+        blank=True,
+    )
+
+    num_rounds = models.IntegerField(
         null=True,
         blank=True,
     )
