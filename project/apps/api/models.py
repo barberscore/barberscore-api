@@ -2309,6 +2309,20 @@ class Performance(TimeStampedModel):
         blank=True,
     )
 
+    actual_start = models.DateTimeField(
+        help_text="""
+            The actual performance window.""",
+        null=True,
+        blank=True,
+    )
+
+    actual_finish = models.DateTimeField(
+        help_text="""
+            The actual performance window.""",
+        null=True,
+        blank=True,
+    )
+
     is_advancing = models.BooleanField(
         default=False,
     )

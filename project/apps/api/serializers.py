@@ -353,6 +353,8 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'rank',
             'scheduled',
             'actual',
+            'actual_start',
+            'actual_finish',
             'is_advancing',
             'mus_points',
             'prs_points',
