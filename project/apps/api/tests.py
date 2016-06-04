@@ -304,6 +304,10 @@ def build_international():
         session=quartet_session,
         status=Round.STATUS.validated,
     )
+    quartet_session.current = quartet_quarters
+    quartet_session.save()
+    chorus_session.current = chorus_finals
+    chorus_session.save()
     quartets = QuartetFactory.create_batch(50)
     i = 1
     for quartet in quartets:

@@ -609,6 +609,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'date',
             'num_rounds',
             'cursor',
+            'current',
             'performers',
             'contests',
             'judges',

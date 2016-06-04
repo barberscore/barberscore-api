@@ -4011,6 +4011,14 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    current = models.ForeignKey(
+        'Round',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='current_session',
+    )
+
     # Denormalizations
     @property
     def completed_rounds(self):

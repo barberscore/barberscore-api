@@ -883,6 +883,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention',
         'kind',
         'date',
+        'current',
         'cursor',
         'entry_form',
         'song_list',
