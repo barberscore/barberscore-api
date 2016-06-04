@@ -3960,12 +3960,16 @@ class Session(TimeStampedModel):
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'validated', 'Validated',),
-        (20, 'started', 'Started',),
-        # (25, 'ranked', 'Ranked',),
-        (30, 'finished', 'Finished',),
-        # (40, 'drafted', 'Drafted',),
-        (45, 'published', 'Published',),
-        # (50, 'final', 'Final',),
+        (20, 'quarters_started', 'Quarters Started',),
+        (26, 'quarters_finished', 'Quarters Finished',),
+        (28, 'quarters_published', 'Quarters Published',),
+        (30, 'semis_started', 'Semis Started',),
+        (36, 'semis_finished', 'Semis Finished',),
+        (38, 'semis_published', 'Semis Published',),
+        (40, 'finals_started', 'Finals Started',),
+        (46, 'finals_finished', 'Finals Finished',),
+        (48, 'finals_published', 'Finals Published',),
+        # (90, 'published', 'Published',),
     )
 
     status = FSMIntegerField(
@@ -4102,20 +4106,40 @@ class Session(TimeStampedModel):
     def validate(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        # Start all Performers when Session Starts
-        for performer in self.performers.filter(status=self.performers.model.STATUS.validated):
-            performer.start()
-            performer.save()
+    @transition(field=status, source='*', target=STATUS.quarters_started)
+    def quarters_start(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.quarters_finished)
+    def quarters_finish(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.quarters_published)
+    def quarters_publish(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.semis_started)
+    def semis_start(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.semis_finished)
+    def semis_finish(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.semis_published)
+    def semis_publish(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finals_started)
+    def finals_start(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finals_finished)
+    def finals_finish(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finals_published)
+    def finals_publish(self, *args, **kwargs):
         return
 
 
