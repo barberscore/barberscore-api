@@ -3548,6 +3548,7 @@ class Round(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         # (10, 'built', 'Built',),
+        (10, 'drawn', 'Drawn',),
         (15, 'validated', 'Validated',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
@@ -3657,6 +3658,15 @@ class Round(TimeStampedModel):
         return rank
 
     # Transitions
+    @transition(field=status, source='*', target=STATUS.drawn)
+    def draw(self, *args, **kwargs):
+        i = 1
+        for performance in self.performances.order_by('?'):
+            performance.slot = i
+            performance.save()
+            i += 1
+        return
+
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
