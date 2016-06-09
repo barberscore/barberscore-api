@@ -8,4 +8,5 @@ class ApiConfig(AppConfig):
     name = 'apps.api'
 
     def ready(self):
-        from .signals import *
+        # from .signals import *
+        pass

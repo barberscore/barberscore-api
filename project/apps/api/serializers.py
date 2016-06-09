@@ -18,23 +18,19 @@ from .models import (
     Chart,
     Contest,
     Contestant,
-    ContestantScore,
     Convention,
     Group,
     Judge,
     Member,
     Organization,
     Performance,
-    PerformanceScore,
     Performer,
-    PerformerScore,
     Person,
     Role,
     Round,
     Score,
     Session,
     Song,
-    SongScore,
     Submission,
     Venue,
 )
@@ -49,6 +45,216 @@ class TimezoneField(serializers.Field):
             return pytz.timezone(str(data))
         except pytz.exceptions.UnknownTimeZoneError:
             raise ValidationError('Unknown timezone')
+
+
+class RankField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.rank
+        if obj.status == obj.STATUS.published:
+            return obj.rank
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class SlotField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.slot
+        if obj.status == obj.STATUS.published:
+            return obj.slot
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class MusPointsField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.mus_points
+        if obj.status == obj.STATUS.published:
+            return obj.mus_points
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class PrsPointsField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.prs_points
+        if obj.status == obj.STATUS.published:
+            return obj.prs_points
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class SngPointsField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.sng_points
+        if obj.status == obj.STATUS.published:
+            return obj.sng_points
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class TotalPointsField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.total_points
+        if obj.status == obj.STATUS.published:
+            return obj.total_points
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class MusScoreField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.mus_score
+        if obj.status == obj.STATUS.published:
+            return obj.mus_score
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class PrsScoreField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.prs_score
+        if obj.status == obj.STATUS.published:
+            return obj.prs_score
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class SngScoreField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.sng_score
+        if obj.status == obj.STATUS.published:
+            return obj.sng_score
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class TotalScoreField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.total_score
+        if obj.status == obj.STATUS.published:
+            return obj.total_score
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
 
 
 class AwardSerializer(serializers.ModelSerializer):
@@ -152,6 +358,16 @@ class ContestSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
+    rank = RankField()
+    mus_points = MusPointsField()
+    prs_points = PrsPointsField()
+    sng_points = SngPointsField()
+    total_points = TotalPointsField()
+    mus_score = MusScoreField()
+    prs_score = PrsScoreField()
+    sng_score = SngScoreField()
+    total_score = TotalScoreField()
+
     class Meta:
         model = Contestant
         fields = (
@@ -170,40 +386,10 @@ class ContestantSerializer(serializers.ModelSerializer):
             'total_score',
             'performer',
             'contest',
-            'contestantscore',
         )
 
         readonly_fields = [
             'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-        ]
-
-
-class ContestantScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContestantScore
-        fields = (
-            'contestant',
-            'url',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'contestant',
-        )
-
-        readonly_fields = [
             'mus_points',
             'prs_points',
             'sng_points',
@@ -341,6 +527,16 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class PerformanceSerializer(serializers.ModelSerializer):
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
+    slot = SlotField()
+    rank = RankField()
+    mus_points = MusPointsField()
+    prs_points = PrsPointsField()
+    sng_points = SngPointsField()
+    total_points = TotalPointsField()
+    mus_score = MusScoreField()
+    prs_score = PrsScoreField()
+    sng_score = SngScoreField()
+    total_score = TotalScoreField()
 
     class Meta:
         model = Performance
@@ -355,7 +551,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'actual',
             'actual_start',
             'actual_finish',
-            'is_advancing',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -367,43 +562,9 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'round',
             'performer',
             'songs',
-            'performancescore',
         )
 
         readonly_fields = [
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-        ]
-
-
-class PerformanceScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PerformanceScore
-        fields = (
-            'performance',
-            'url',
-            'is_advancing',
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'performance',
-        )
-
-        readonly_fields = [
-            'is_advancing',
-            'rank',
             'mus_points',
             'prs_points',
             'sng_points',
@@ -416,6 +577,16 @@ class PerformanceScoreSerializer(serializers.ModelSerializer):
 
 
 class PerformerSerializer(serializers.ModelSerializer):
+    rank = RankField()
+    mus_points = MusPointsField()
+    prs_points = PrsPointsField()
+    sng_points = SngPointsField()
+    total_points = TotalPointsField()
+    mus_score = MusScoreField()
+    prs_score = PrsScoreField()
+    sng_score = SngScoreField()
+    total_score = TotalScoreField()
+
     class Meta:
         model = Performer
         fields = (
@@ -452,42 +623,12 @@ class PerformerSerializer(serializers.ModelSerializer):
             'performances',
             'contestants',
             'submissions',
-            'performerscore',
         )
         read_only_fields = [
             'picture',
             'seed',
             'prelim',
             'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-        ]
-
-
-class PerformerScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PerformerScore
-        fields = (
-            'performer',
-            'url',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'performer',
-        )
-
-        readonly_fields = [
             'mus_points',
             'prs_points',
             'sng_points',
@@ -610,6 +751,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'num_rounds',
             'cursor',
             'current',
+            'primary',
             'performers',
             'contests',
             'judges',
@@ -631,6 +773,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
+    mus_points = MusPointsField()
+    prs_points = PrsPointsField()
+    sng_points = SngPointsField()
+    total_points = TotalPointsField()
+    mus_score = MusScoreField()
+    prs_score = PrsScoreField()
+    sng_score = SngScoreField()
+    total_score = TotalScoreField()
+
     class Meta:
         model = Song
         fields = (
@@ -650,35 +801,6 @@ class SongSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'scores',
-            'songscore',
-        )
-
-        readonly_fields = [
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-        ]
-
-
-class SongScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SongScore
-        fields = (
-            'song',
-            'url',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
         )
 
         readonly_fields = [

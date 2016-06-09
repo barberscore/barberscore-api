@@ -286,18 +286,18 @@ def build_international():
         session=chorus_session,
         status=Round.STATUS.validated,
     )
-    RoundFactory(
-        kind=Round.KIND.finals,
-        num=3,
-        session=quartet_session,
-        status=Round.STATUS.new,
-    )
-    RoundFactory(
-        kind=Round.KIND.semis,
-        num=2,
-        session=quartet_session,
-        status=Round.STATUS.new,
-    )
+    # RoundFactory(
+    #     kind=Round.KIND.finals,
+    #     num=3,
+    #     session=quartet_session,
+    #     status=Round.STATUS.new,
+    # )
+    # RoundFactory(
+    #     kind=Round.KIND.semis,
+    #     num=2,
+    #     session=quartet_session,
+    #     status=Round.STATUS.new,
+    # )
     quartet_quarters = RoundFactory(
         kind=Round.KIND.quarters,
         num=1,
@@ -305,8 +305,10 @@ def build_international():
         status=Round.STATUS.validated,
     )
     quartet_session.current = quartet_quarters
+    quartet_session.primary = quartet_contest
     quartet_session.save()
     chorus_session.current = chorus_finals
+    chorus_session.primary = chorus_contest
     chorus_session.save()
     quartets = QuartetFactory.create_batch(50)
     i = 1
