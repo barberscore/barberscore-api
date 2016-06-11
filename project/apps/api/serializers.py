@@ -89,6 +89,48 @@ class SlotField(serializers.Field):
         return data
 
 
+class AdvancingField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.is_advancing
+        if obj.status == obj.STATUS.published:
+            return obj.is_advancing
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
+class ChampionField(serializers.Field):
+    def get_attribute(self, obj):
+        # We pass the object instance onto `to_representation`,
+        # not just the field attribute.
+        return obj
+
+    def to_representation(self, obj):
+        # for read functionality
+        if self.context['request'].user.is_staff:
+            return obj.champion
+        if obj.status == obj.STATUS.published:
+            return obj.champion
+        else:
+            return None
+
+    def to_internal_value(self, data):
+        # for write functionality
+        # check if data is valid and if not raise ValidationError
+        return data
+
+
 class MusPointsField(serializers.Field):
     def get_attribute(self, obj):
         # We pass the object instance onto `to_representation`,
@@ -337,9 +379,7 @@ class ChartSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    # champion = serializers.StringRelatedField(
-    #     read_only=True,
-    # )
+    champion = ChampionField()
 
     class Meta:
         model = Contest
@@ -546,6 +586,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'slot',
+            'is_advancing',
             'rank',
             'scheduled',
             'actual',

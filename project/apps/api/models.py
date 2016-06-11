@@ -5,6 +5,7 @@ from __future__ import division
 import datetime
 import logging
 import os
+import random
 import uuid
 
 # Third-Party
@@ -22,7 +23,6 @@ from mptt.models import (
 )
 from nameparser import HumanName
 from phonenumber_field.modelfields import PhoneNumberField
-from psycopg2.extras import DateTimeTZRange
 from ranking import Ranking
 from timezone_field import TimeZoneField
 
@@ -44,7 +44,6 @@ from django.core.validators import (
     RegexValidator,
 )
 from django.db import models
-from django.utils import timezone
 
 # Local
 from .managers import (
@@ -793,7 +792,16 @@ class Contest(TimeStampedModel):
     )
 
     num_rounds = models.IntegerField(
-        default=1,
+        null=True,
+        blank=True,
+    )
+
+    # Denormalization
+    champion = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        editable=False,
     )
 
     # FKs
@@ -809,12 +817,11 @@ class Contest(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    champion = models.OneToOneField(
-        'Contestant',
-        related_name='contests',
+    champion = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        editable=False,
     )
 
     # Legacy
@@ -846,17 +853,6 @@ class Contest(TimeStampedModel):
             self.cycle = self.session.convention.year
         else:
             self.cycle = self.session.convention.year + 1
-        # if any([
-        #     all([
-        #         self.session.convention.level == self.session.convention.LEVEL.district,
-        #         self.award.level == self.award.LEVEL.international,
-        #     ]),
-        #     all([
-        #         self.session.convention.kind,
-        #         self.award.level != self.award.LEVEL.division,
-        #     ]),
-        # ]):
-        #     self.is_qualifier = True
         if self.is_qualifier:
             suffix = "Qualifier"
         else:
@@ -866,6 +862,20 @@ class Contest(TimeStampedModel):
             suffix,
             str(self.session.convention.year),
         ]))
+        if self.is_qualifier:
+            champion = None
+        else:
+            try:
+                champion = self.contestants.get(rank=1).performer.group.name
+            except self.contestants.model.DoesNotExist:
+                champion = None
+            except self.contestants.model.MultipleObjectsReturned:
+                champion = self.contestants.filter(rank=1).order_by(
+                    '-sng_points',
+                    '-mus_points',
+                    '-prs_points',
+                ).first().performer.group.name
+        self.champion = champion
         super(Contest, self).save(*args, **kwargs)
 
     # Permissions
@@ -887,8 +897,10 @@ class Contest(TimeStampedModel):
 
     # Methods
     def ranking(self, point_total):
+        if not point_total:
+            return None
         contestants = self.contestants.all()
-        points = [contestant.total_points for contestant in contestants]
+        points = [contestant.calculate_total_points() for contestant in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -897,16 +909,6 @@ class Contest(TimeStampedModel):
     # Transitions
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        try:
-            champion = self.contestants.get(rank=1)
-        except self.contestants.model.MultipleObjectsReturned:
-            champion = self.contestants.filter(rank=1).order_by(
-                '-sng_points',
-                '-mus_points',
-                '-prs_points',
-            ).first()
-        self.champion = champion
-        self.save()
         return
 
 
@@ -1055,7 +1057,6 @@ class Contestant(TimeStampedModel):
             # self.contest.award.name,
             self.performer.name,
         ]))
-        self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
@@ -1064,6 +1065,7 @@ class Contestant(TimeStampedModel):
         self.prs_score = self.calculate_prs_score()
         self.sng_score = self.calculate_sng_score()
         self.total_score = self.calculate_total_score()
+        self.rank = self.calculate_rank()
         super(Contestant, self).save(*args, **kwargs)
 
     # Permissions
@@ -1085,9 +1087,7 @@ class Contestant(TimeStampedModel):
 
     # Denormalizations
     def calculate_rank(self):
-        if self.total_points:
-            return self.contest.ranking(self.total_points)
-        return
+        return self.contest.ranking(self.calculate_total_points())
 
     def calculate_mus_points(self):
         return self.performer.performances.filter(
@@ -1174,10 +1174,10 @@ class Contestant(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        for contestant in self.contestants.all():
-            contestant.objects.create(
-                contestant=contestant,
-            )
+        return
+
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
         return
 
 
@@ -2328,7 +2328,6 @@ class Performance(TimeStampedModel):
             "Performance",
             self.id.hex,
         ]))
-        self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
@@ -2337,6 +2336,7 @@ class Performance(TimeStampedModel):
         self.prs_score = self.calculate_prs_score()
         self.sng_score = self.calculate_sng_score()
         self.total_score = self.calculate_total_score()
+        self.rank = self.calculate_rank()
         super(Performance, self).save(*args, **kwargs)
 
     # Permissions
@@ -2459,21 +2459,14 @@ class Performance(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        self.actual = DateTimeTZRange(
-            lower=timezone.now(),
-            upper=timezone.now() + datetime.timedelta(minutes=10),
-        )
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        #  When score is entered, update all denormalizations.
-        self.save()
-        for song in self.songs.all():
-            song.save()
-        self.performer.save()
-        for contestant in self.performer.contestants.all():
-            contestant.save()
+        return
+
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
         return
 
 
@@ -2550,6 +2543,12 @@ class Performer(TimeStampedModel):
             Keep scores private.""",
         default=False,
     )
+
+    # is_advancing = models.BooleanField(
+    #     help_text="""
+    #         Will advance to next round.""",
+    #     default=False,
+    # )
 
     # FKs
     session = models.ForeignKey(
@@ -2728,6 +2727,7 @@ class Performer(TimeStampedModel):
         self.prs_score = self.calculate_prs_score()
         self.sng_score = self.calculate_sng_score()
         self.total_score = self.calculate_total_score()
+        self.rank = self.calculate_rank()
         super(Performer, self).save(*args, **kwargs)
 
     # def clean(self):
@@ -2752,6 +2752,12 @@ class Performer(TimeStampedModel):
         return False
 
     # Denormalizations
+    def calculate_rank(self):
+        try:
+            return self.contestants.get(contest=self.session.primary).calculate_rank()
+        except self.contestants.model.DoesNotExist:
+            return None
+
     def calculate_mus_points(self):
         return self.performances.filter(
             songs__scores__kind=self.session.judges.model.KIND.official,
@@ -2819,42 +2825,42 @@ class Performer(TimeStampedModel):
     def validate(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.scratched)
-    def scratch(self, *args, **kwargs):
-        performances = self.performances.exclude(
-            status=self.performances.model.STATUS.final,
-        )
-        for performance in performances:
-            i = performance.slot
-            performance.slot = -1
-            performance.save()
-            others = performance.round.performances.filter(
-                slot__gt=i,
-            ).order_by('slot')
-            for other in others:
-                other.slot -= 1
-                other.save()
-            performance.delete()
-        self.save()
-        return {'success': 'scratched'}
+    # @transition(field=status, source='*', target=STATUS.scratched)
+    # def scratch(self, *args, **kwargs):
+    #     performances = self.performances.exclude(
+    #         status=self.performances.model.STATUS.final,
+    #     )
+    #     for performance in performances:
+    #         i = performance.slot
+    #         performance.slot = -1
+    #         performance.save()
+    #         others = performance.round.performances.filter(
+    #             slot__gt=i,
+    #         ).order_by('slot')
+    #         for other in others:
+    #             other.slot -= 1
+    #             other.save()
+    #         performance.delete()
+    #     self.save()
+    #     return {'success': 'scratched'}
 
-    @transition(field=status, source='*', target=STATUS.disqualified)
-    def disqualify(self, *args, **kwargs):
-        performances = self.performances.exclude(
-            status=self.performances.model.STATUS.final,
-        )
-        for performance in performances:
-            i = performance.slot
-            performance.slot = -1
-            performance.save()
-            others = performance.round.performances.filter(
-                slot__gt=i,
-            ).order_by('slot')
-            for other in others:
-                other.slot -= 1
-                other.save()
-        self.save()
-        return {'success': 'disqualified'}
+    # @transition(field=status, source='*', target=STATUS.disqualified)
+    # def disqualify(self, *args, **kwargs):
+    #     performances = self.performances.exclude(
+    #         status=self.performances.model.STATUS.final,
+    #     )
+    #     for performance in performances:
+    #         i = performance.slot
+    #         performance.slot = -1
+    #         performance.save()
+    #         others = performance.round.performances.filter(
+    #             slot__gt=i,
+    #         ).order_by('slot')
+    #         for other in others:
+    #             other.slot -= 1
+    #             other.save()
+    #     self.save()
+    #     return {'success': 'disqualified'}
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
@@ -2862,10 +2868,6 @@ class Performer(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        for performer in self.performers.all():
-            performer.objects.create(
-                performer=performer,
-            )
         return
 
 
@@ -3364,8 +3366,10 @@ class Round(TimeStampedModel):
 
     # Methods
     def ranking(self, point_total):
+        if not point_total:
+            return None
         performances = self.performances.all()
-        points = [performance.total_points for performance in performances]
+        points = [performance.calculate_total_points() for performance in performances]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -3383,13 +3387,15 @@ class Round(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.validated)
     def validate(self, *args, **kwargs):
-        for performance in self.performances.all():
-            performance.slot = performance.slot
-            performance.save()
         return
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
+        if self.num == 1:
+            # if the first round, start all performers
+            for performer in self.session.performers.all():
+                performer.start()
+                performer.save()
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
@@ -3401,28 +3407,58 @@ class Round(TimeStampedModel):
             ):
                 performer.finish()
                 performer.save()
+            for contest in self.session.contests.all():
+                for contestant in contest.contestants.all():
+                    contestant.finish()
+                    contestant.save()
+                contest.finish()
+                contest.save()
+            self.session.finish()
+            self.session.save()
             return
-        # Hard-code the International Quartet Quarter-finals
+        # Hard-code the International Quartet Contest
         if all([
             self.session.convention.kind == self.session.convention.KIND.international,
             self.session.kind == self.session.KIND.quartet,
         ]):
             if self.kind == self.KIND.quarters:
                 spots = 20
+                next_round = self.session.rounds.create(
+                    num=2,
+                    kind=self.session.rounds.model.KIND.semis,
+                )
             else:
                 spots = 10
-            for performance in self.performances.all():
-                performance.rank = performance.calculate_rank()
-                performance.save()
-                if performance.rank <= spots:
-                    performance.is_advancing = True
-                    performance.save()
+                next_round = self.session.rounds.create(
+                    num=3,
+                    kind=self.session.rounds.model.KIND.finals,
+                )
+            # Denormalization Hack.
+            [performer.save() for performer in self.session.performers.all()]
+            performers = self.session.performers.filter(
+                rank__lte=spots,
+            ).order_by('?')
+            print performers
+            i = 1
+            for performer in performers:
+                next_round.performances.get_or_create(
+                    performer=performer,
+                    slot=i,
+                )
+                i += 1
             return
-        # Remaining rounds are two-round
         # Get the number of spots available
         spots = self.session.convention.organization.spots
-        # Only address multi-round contests.
-        for contest in self.session.contests.filter(award__championship_rounds__gt=1):
+        # Create performances accordingly
+        next_round = self.session.rounds.create(
+            num=2,
+            kind=self.session.rounds.model.KIND.finals,
+        )
+        # Non-International Quartet Rounds
+        # Instantiate the advancing list
+        advancing = []
+        # Only address multi-round contests; single-round awards do not proceed.
+        for contest in self.session.contests.filter(num_rounds__gt=1):
             # Qualifiers have an absolute score cutoff
             if contest.is_qualifier:
                 # Uses absolute cutoff.
@@ -3430,10 +3466,7 @@ class Round(TimeStampedModel):
                     total_score__gte=contest.award.advance,
                 )
                 for contestant in contestants:
-                    for performance in self.performances.all():
-                        if performance.performer == contestant.performer:
-                            performance.is_advancing = True
-                            performance.save()
+                    advancing.append(contestant.performer)
             # Championships are relative.
             else:
                 # Get the top scorer
@@ -3441,67 +3474,38 @@ class Round(TimeStampedModel):
                     rank=1,
                 ).first()
                 # Derive the accept threshold from that top score.
-                accept = top.total_score - 4.0
+                accept = top.calculate_total_score() - 4.0
                 contestants = contest.contestants.filter(
                     total_score__gte=accept,
                 )
                 for contestant in contestants:
-                    for performance in self.performances.all():
-                        if performance.performer == contestant.performer:
-                            performance.is_advancing = True
-                            performance.save()
+                    advancing.append(contestant.performer)
+        # Remove duplicates
+        advancing = list(set(advancing))
         # Append up to spots available.
-        diff = spots - self.performances.filter(
-            is_advancing=True,
-        ).count()
+        diff = spots - len(advancing)
         if diff > 0:
             adds = self.performances.filter(
-                performer__contestants__contest__award__championship_rounds__gt=1,
-                is_advancing=False,
+                performer__contestants__contest__num_rounds__gt=1,
+            ).exclude(
+                performer__in=advancing,
             ).order_by(
                 '-total_points',
             )[:diff]
-            for add in adds:
-                performance.is_advancing = True
-                performance.save()
-            return
+            for a in adds:
+                advancing.append(a.performer)
+        random.shuffle(advancing)
+        i = 1
+        for performer in advancing:
+            next_round.performances.get_or_create(
+                performer=performer,
+                slot=i,
+            )
+            i += 1
+        return
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
-        promotions = self.performances.filter(
-            is_advancing=True,
-        ).order_by('?')
-        next_round = self.session.rounds.get(
-            num=(self.num + 1),
-        )
-        i = 1
-        for promotion in promotions:
-            performance = next_round.performances.create(
-                performer=promotion.performer,
-                slot=i,
-            )
-            s = 1
-            while s <= self.num_songs:
-                song = performance.songs.create(
-                    performance=performance,
-                    order=s,
-                )
-                s += 1
-                judges = self.session.judges.filter(
-                    category__in=[
-                        self.session.judges.model.CATEGORY.music,
-                        self.session.judges.model.CATEGORY.presentation,
-                        self.session.judges.model.CATEGORY.singing,
-                    ]
-                )
-                for judge in judges:
-                    judge.scores.create(
-                        judge=judge,
-                        song=song,
-                        category=judge.category,
-                        kind=judge.kind,
-                    )
-            i += 1
         return
 
 
@@ -3851,10 +3855,6 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        # Start all Performers when Session Starts
-        for performer in self.performers.filter(status=self.performers.model.STATUS.validated):
-            performer.start()
-            performer.save()
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
@@ -4080,8 +4080,8 @@ class Song(TimeStampedModel):
         )['tot']
 
     # Transitions
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
         return
 
 

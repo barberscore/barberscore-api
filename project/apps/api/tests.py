@@ -274,11 +274,13 @@ def build_international():
         session=quartet_session,
         award=quartet_award,
         status=Contest.STATUS.validated,
+        num_rounds=3,
     )
     chorus_contest = ContestFactory(
         session=chorus_session,
         award=chorus_award,
         status=Contest.STATUS.validated,
+        num_rounds=1,
     )
     chorus_finals = RoundFactory(
         kind=Round.KIND.finals,
