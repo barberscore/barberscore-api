@@ -1,7 +1,7 @@
 arrow==0.7.0
-awscli==1.10.30
+awscli==1.10.37
 Babel==2.3.4
-botocore==1.4.20
+botocore==1.4.27
 colorama==0.3.7
 dj-database-url==0.4.1
 django-autoslug==1.9.3
@@ -16,9 +16,8 @@ django-model-utils==2.5
 django-mptt==0.8.4
 django-phonenumber-field==1.1.0
 django-rest-assured==0.2.0
-django-super-inlines==0.1.4
 django-timezone-field==2.0rc1
-django==1.9.6
+django==1.9.7
 djangorestframework-filters==0.8.0
 djangorestframework-jsonapi==2.0.1
 djangorestframework-jwt==1.8.0
@@ -29,9 +28,8 @@ dry-rest-permissions==0.1.6
 factory-boy==2.7.0
 fake-factory==0.5.7
 fuzzywuzzy==0.10.0
-nameparser==0.3.16
-phonenumbers==7.4.0
-phonenumberslite==7.4.0
+nameparser==0.4.0
+phonenumberslite==7.4.2
 Pillow==3.2.0
 psycopg2==2.6.1
 python-dateutil==2.5.3

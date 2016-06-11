@@ -1,7 +1,7 @@
 -r base.txt
 
-codecov==2.0.3
-coverage==4.0.3
+codecov==2.0.5
+coverage==4.1.0
 django-debug-toolbar==1.4
 django-nose==1.4.3
 ipython==4.2.0
