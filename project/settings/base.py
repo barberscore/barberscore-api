@@ -123,7 +123,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         # 'rest_framework.permissions.IsAuthenticated',
-        # 'dry_rest_permissions.generics.DRYPermissions',
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework_filters.backends.DjangoFilterBackend',

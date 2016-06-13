@@ -4,6 +4,7 @@ import logging
 # Third-Party
 from drf_fsm_transitions.viewset_mixins import \
     get_viewset_transition_action_mixin
+from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 
 # Local
@@ -16,6 +17,7 @@ from .filters import (
     GroupFilter,
     PerformerFilter,
     PersonFilter,
+    RoundFilterBackend,
     SubmissionFilter,
     VenueFilter,
 )
@@ -82,6 +84,7 @@ class AwardViewSet(viewsets.ModelViewSet):
         'size',
         'scope',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = AwardSerializer
     resource_name = "award"
 
@@ -92,6 +95,7 @@ class CertificationViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'judges',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = CertificationSerializer
     filter_class = CertificationFilter
     resource_name = "certification"
@@ -106,6 +110,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
     ).order_by(
         'name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = ChapterSerializer
     resource_name = "chapter"
 
@@ -114,6 +119,7 @@ class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.prefetch_related(
         'submissions',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = ChartSerializer
     filter_class = ChartFilter
     resource_name = "chart"
@@ -130,6 +136,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         'award',
         'session',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = ContestSerializer
     resource_name = "contest"
 
@@ -142,6 +149,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'contest',
         '-total_points',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
     resource_name = "contestant"
@@ -161,6 +169,7 @@ class ConventionViewSet(
         'date',
         'organization__name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
     resource_name = "convention"
@@ -176,6 +185,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     ).order_by(
         'name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     resource_name = "group"
@@ -193,6 +203,7 @@ class JudgeViewSet(viewsets.ModelViewSet):
         'kind',
         'slot',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = JudgeSerializer
     resource_name = "judge"
     filter_backends = [
@@ -205,6 +216,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         'chapter',
         'person',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = MemberSerializer
     resource_name = "member"
 
@@ -215,6 +227,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         'level',
         'name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = OrganizationSerializer
     resource_name = "organization"
 
@@ -232,6 +245,7 @@ class PerformanceViewSet(
         'round',
         'slot',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = PerformanceSerializer
     resource_name = "performance"
 
@@ -256,6 +270,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         '-total_points',
         'group',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
     resource_name = "performer"
@@ -284,6 +299,7 @@ class PersonViewSet(viewsets.ModelViewSet):
     ).order_by(
         'name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = PersonSerializer
     filter_class = PersonFilter
     resource_name = "person"
@@ -296,6 +312,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     ).order_by(
         '-name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = RoleSerializer
     resource_name = "role"
 
@@ -312,7 +329,9 @@ class RoundViewSet(
         'session',
         'kind',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = RoundSerializer
+    filter_backends = (RoundFilterBackend,)
     resource_name = "round"
 
 
@@ -324,6 +343,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'song',
         'judge',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = ScoreSerializer
     resource_name = "score"
 
@@ -340,6 +360,7 @@ class SessionViewSet(
         'judges',
         'contests',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = SessionSerializer
     resource_name = "session"
 
@@ -351,6 +372,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'songs',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = SubmissionSerializer
     filter_class = SubmissionFilter
     resource_name = "submission"
@@ -366,6 +388,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'performance',
         'order',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = SongSerializer
     resource_name = "song"
 
@@ -376,6 +399,7 @@ class VenueViewSet(viewsets.ModelViewSet):
     ).order_by(
         'name',
     )
+    permission_classes = (DRYPermissions,)
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     resource_name = "venue"

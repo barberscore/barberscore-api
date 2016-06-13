@@ -2344,8 +2344,12 @@ class Performance(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        if self.status >= self.STATUS.validated:
+            return True
+        else:
+            return False
 
     @staticmethod
     @allow_staff_or_superuser
@@ -3352,8 +3356,13 @@ class Round(TimeStampedModel):
     def has_read_permission(request):
         return True
 
+    @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        print self.status
+        if self.status >= 10:
+            return True
+        else:
+            return False
 
     @staticmethod
     @allow_staff_or_superuser
@@ -3506,6 +3515,11 @@ class Round(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
+        if self.kind == self.KIND.finals:
+            return
+        else:
+            next_round = self.session.rounds.get(num=self.num + 1)
+            next_round.validate()
         return
 
 

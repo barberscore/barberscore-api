@@ -78,7 +78,7 @@ class SlotField(serializers.Field):
         # for read functionality
         if self.context['request'].user.is_staff:
             return obj.slot
-        if obj.status == obj.STATUS.published:
+        if obj.status >= obj.STATUS.published:
             return obj.slot
         else:
             return None

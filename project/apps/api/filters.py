@@ -2,6 +2,7 @@
 import rest_framework_filters as filters
 from django_filters import Filter
 from django_filters.fields import Lookup
+from dry_rest_permissions.generics import DRYPermissionFiltersBase
 from rest_framework.filters import BaseFilterBackend
 
 # Local
@@ -13,6 +14,7 @@ from .models import (
     Group,
     Performer,
     Person,
+    Round,
     Submission,
     Venue,
 )
@@ -29,6 +31,15 @@ class CoalesceFilterBackend(BaseFilterBackend):
             view.pagination_class = None
             queryset = queryset.filter(id__in=ids)
         return queryset
+
+
+class RoundFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
+        else:
+            return queryset.filter(status__gte=Round.STATUS.validated)
 
 
 class ListFilter(Filter):
