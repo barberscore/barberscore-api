@@ -567,7 +567,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class PerformanceSerializer(serializers.ModelSerializer):
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
-    slot = SlotField()
+    # slot = SlotField()
     rank = RankField()
     mus_points = MusPointsField()
     prs_points = PrsPointsField()

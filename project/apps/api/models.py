@@ -3358,7 +3358,6 @@ class Round(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        print self.status
         if self.status >= 10:
             return True
         else:
@@ -3447,7 +3446,6 @@ class Round(TimeStampedModel):
             performers = self.session.performers.filter(
                 rank__lte=spots,
             ).order_by('?')
-            print performers
             i = 1
             for performer in performers:
                 next_round.performances.get_or_create(
@@ -3516,10 +3514,28 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
-            return
+            for performance in self.performances.all():
+                performance.publish()
+                performance.save()
         else:
             next_round = self.session.rounds.get(num=self.num + 1)
             next_round.validate()
+            next_round.save()
+            # TODO This makes me REALLY nervous...
+            dnp = self.session.performers.exclude(
+                performances__round=next_round,
+            )
+            for performer in dnp:
+                for performance in performer.performances.all():
+                    for song in performance.songs.all():
+                        song.publish()
+                        song.save()
+                    performance.publish()
+                    performance.save()
+                performer.publish()
+                performer.save()
+            self.current = next_round
+            self.save()
         return
 
 
