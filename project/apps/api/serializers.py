@@ -398,15 +398,15 @@ class ContestSerializer(serializers.ModelSerializer):
 
 
 class ContestantSerializer(serializers.ModelSerializer):
-    rank = RankField()
-    mus_points = MusPointsField()
-    prs_points = PrsPointsField()
-    sng_points = SngPointsField()
-    total_points = TotalPointsField()
-    mus_score = MusScoreField()
-    prs_score = PrsScoreField()
-    sng_score = SngScoreField()
-    total_score = TotalScoreField()
+    rank = RankField(read_only=True)
+    mus_points = MusPointsField(read_only=True)
+    prs_points = PrsPointsField(read_only=True)
+    sng_points = SngPointsField(read_only=True)
+    total_points = TotalPointsField(read_only=True)
+    mus_score = MusScoreField(read_only=True)
+    prs_score = PrsScoreField(read_only=True)
+    sng_score = SngScoreField(read_only=True)
+    total_score = TotalScoreField(read_only=True)
 
     class Meta:
         model = Contestant
@@ -568,15 +568,15 @@ class PerformanceSerializer(serializers.ModelSerializer):
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
     # slot = SlotField()
-    rank = RankField()
-    mus_points = MusPointsField()
-    prs_points = PrsPointsField()
-    sng_points = SngPointsField()
-    total_points = TotalPointsField()
-    mus_score = MusScoreField()
-    prs_score = PrsScoreField()
-    sng_score = SngScoreField()
-    total_score = TotalScoreField()
+    rank = RankField(read_only=True)
+    mus_points = MusPointsField(read_only=True)
+    prs_points = PrsPointsField(read_only=True)
+    sng_points = SngPointsField(read_only=True)
+    total_points = TotalPointsField(read_only=True)
+    mus_score = MusScoreField(read_only=True)
+    prs_score = PrsScoreField(read_only=True)
+    sng_score = SngScoreField(read_only=True)
+    total_score = TotalScoreField(read_only=True)
 
     class Meta:
         model = Performance
@@ -618,15 +618,15 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 
 class PerformerSerializer(serializers.ModelSerializer):
-    rank = RankField()
-    mus_points = MusPointsField()
-    prs_points = PrsPointsField()
-    sng_points = SngPointsField()
-    total_points = TotalPointsField()
-    mus_score = MusScoreField()
-    prs_score = PrsScoreField()
-    sng_score = SngScoreField()
-    total_score = TotalScoreField()
+    rank = RankField(read_only=True)
+    mus_points = MusPointsField(read_only=True)
+    prs_points = PrsPointsField(read_only=True)
+    sng_points = SngPointsField(read_only=True)
+    total_points = TotalPointsField(read_only=True)
+    mus_score = MusScoreField(read_only=True)
+    prs_score = PrsScoreField(read_only=True)
+    sng_score = SngScoreField(read_only=True)
+    total_score = TotalScoreField(read_only=True)
 
     class Meta:
         model = Performer
@@ -814,14 +814,14 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    mus_points = MusPointsField()
-    prs_points = PrsPointsField()
-    sng_points = SngPointsField()
-    total_points = TotalPointsField()
-    mus_score = MusScoreField()
-    prs_score = PrsScoreField()
-    sng_score = SngScoreField()
-    total_score = TotalScoreField()
+    mus_points = MusPointsField(read_only=True)
+    prs_points = PrsPointsField(read_only=True)
+    sng_points = SngPointsField(read_only=True)
+    total_points = TotalPointsField(read_only=True)
+    mus_score = MusScoreField(read_only=True)
+    prs_score = PrsScoreField(read_only=True)
+    sng_score = SngScoreField(read_only=True)
+    total_score = TotalScoreField(read_only=True)
 
     class Meta:
         model = Song
