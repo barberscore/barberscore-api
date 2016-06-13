@@ -74,6 +74,7 @@ class GroupFilter(filters.FilterSet):
         fields = {
             'chap_name': '__all__',
             'kind': '__all__',
+            'status': '__all__',
         }
 
 
