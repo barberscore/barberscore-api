@@ -1636,13 +1636,17 @@ class Group(TimeStampedModel):
     def save(self, *args, **kwargs):
         if self.kind == self.KIND.chorus:
             try:
-                self.chap_name = u"{0} {1} - {2}".format(
+                self.chap_name = u"{0} {1} - {2} {3}".format(
                     self.chapter.code,
                     self.chapter.name,
                     self.name,
+                    self.bhs_id,
                 )
             except AttributeError:
-                self.chap_name = self.name
+                self.chap_name = u"{0} {1}".format(
+                    self.name,
+                    self.bhs_id,
+                )
         else:
             self.chap_name = self.name
         super(Group, self).save(*args, **kwargs)
