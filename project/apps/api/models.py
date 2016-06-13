@@ -1648,7 +1648,10 @@ class Group(TimeStampedModel):
                     self.bhs_id,
                 )
         else:
-            self.chap_name = self.name
+            self.chap_name = u"{0} {1}".format(
+                self.name,
+                self.bhs_id,
+            )
         super(Group, self).save(*args, **kwargs)
 
     # Permissions
