@@ -294,6 +294,10 @@ class ContestAdmin(admin.ModelAdmin):
         'session',
     ]
 
+    search_fields = [
+        'name',
+    ]
+
 
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
@@ -883,6 +887,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention',
         'kind',
         'date',
+        'primary',
         'current',
         'cursor',
         'entry_form',
@@ -913,6 +918,8 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     raw_id_fields = (
         'convention',
+        'current',
+        'primary',
     )
 
     readonly_fields = [
