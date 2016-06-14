@@ -379,7 +379,7 @@ class ChartSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
-    champion = ChampionField()
+    champion = ChampionField(read_only=True)
 
     class Meta:
         model = Contest
