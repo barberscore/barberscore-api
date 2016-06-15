@@ -255,16 +255,6 @@ class ChapterAdmin(admin.ModelAdmin):
 
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
-    list_filter = [
-        'status',
-        'cycle',
-        'award__is_primary',
-        'award__organization__level',
-        'award__organization',
-        'award__kind',
-        'is_qualifier',
-    ]
-
     fields = [
         'name',
         'status',
@@ -277,6 +267,22 @@ class ContestAdmin(admin.ModelAdmin):
         'stix_name',
     ]
 
+    list_display = (
+        'name',
+        'session',
+        # 'location',
+    )
+
+    list_filter = [
+        'status',
+        'cycle',
+        'award__is_primary',
+        'award__organization__level',
+        'award__organization',
+        'award__kind',
+        'is_qualifier',
+    ]
+
     save_on_top = True
 
     inlines = [
@@ -286,7 +292,6 @@ class ContestAdmin(admin.ModelAdmin):
     readonly_fields = [
         'name',
         'cycle',
-        'is_qualifier',
         'champion',
     ]
 
