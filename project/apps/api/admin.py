@@ -287,6 +287,7 @@ class ContestAdmin(admin.ModelAdmin):
         'name',
         'cycle',
         'is_qualifier',
+        'champion',
     ]
 
     raw_id_fields = [
