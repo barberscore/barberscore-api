@@ -42,6 +42,15 @@ class RoundFilterBackend(DRYPermissionFiltersBase):
             return queryset.filter(status__gte=Round.STATUS.validated)
 
 
+class ConventionFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
+        else:
+            return queryset.filter(status__gte=Round.STATUS.listed)
+
+
 class ListFilter(Filter):
     def filter(self, qs, value):
         value_list = value.split(u',')
