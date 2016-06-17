@@ -581,7 +581,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'total_score',
             'round',
             'performer',
-            'slot',
+            # 'slot',
             'songs',
         )
 
@@ -795,7 +795,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Song
+        model = Slot
         fields = (
             'id',
             'url',
