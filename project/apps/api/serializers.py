@@ -68,27 +68,6 @@ class RankField(serializers.Field):
         return data
 
 
-class SlotField(serializers.Field):
-    def get_attribute(self, obj):
-        # We pass the object instance onto `to_representation`,
-        # not just the field attribute.
-        return obj
-
-    def to_representation(self, obj):
-        # for read functionality
-        if self.context['request'].user.is_staff:
-            return obj.slot
-        if obj.status >= obj.STATUS.published:
-            return obj.slot
-        else:
-            return None
-
-    def to_internal_value(self, data):
-        # for write functionality
-        # check if data is valid and if not raise ValidationError
-        return data
-
-
 class AdvancingField(serializers.Field):
     def get_attribute(self, obj):
         # We pass the object instance onto `to_representation`,
@@ -567,7 +546,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class PerformanceSerializer(serializers.ModelSerializer):
     scheduled = DateTimeRangeField()
     actual = DateTimeRangeField()
-    # slot = SlotField()
     rank = RankField(read_only=True)
     mus_points = MusPointsField(read_only=True)
     prs_points = PrsPointsField(read_only=True)
@@ -585,7 +563,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'slot',
+            'num',
             'is_advancing',
             'rank',
             'scheduled',

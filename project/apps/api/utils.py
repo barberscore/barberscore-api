@@ -1765,7 +1765,7 @@ def extract_performances(convention):
             # And put together.
             performances.append({
                 'round': round,
-                'slot': order,
+                'num': order,
                 'position': (order - 1),
                 'performer': performer,
                 'status': Performance.STATUS.final,
@@ -1817,7 +1817,7 @@ def extract_songs(convention):
             performance = Performance.objects.get(
                 round=round,
                 performer=performer,
-                slot=order,
+                num=order,
             )
 
             # Next, get the song number
@@ -1885,7 +1885,7 @@ def extract_scores(convention):
             performance = Performance.objects.get(
                 round=round,
                 performer=performer,
-                slot=order,
+                num=order,
             )
             number = int(row[4].partition(":")[2].strip())
             song = performance.songs.get(
@@ -2202,5 +2202,5 @@ def import_submission(session):
         if oa:
             performance, c = performer.performances.get_or_create(
                 round=round,
-                slot=oa,
+                num=oa,
             )

@@ -243,7 +243,7 @@ class PerformanceViewSet(
         'songs',
     ).order_by(
         'round',
-        'slot',
+        'num',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = PerformanceSerializer

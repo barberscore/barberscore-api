@@ -341,7 +341,7 @@ def build_international():
         performance = PerformanceFactory(
             performer=performer,
             round=quartet_quarters,
-            slot=i,
+            num=i,
             status=Performance.STATUS.validated,
         )
         t = 1
@@ -390,7 +390,7 @@ def build_international():
         performance = PerformanceFactory(
             performer=performer,
             round=chorus_finals,
-            slot=i,
+            num=i,
             status=Performance.STATUS.validated,
         )
         t = 1

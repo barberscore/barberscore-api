@@ -582,7 +582,7 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'name',
         'status',
-        'slot',
+        'num',
         'total_score',
     ]
     list_filter = [
@@ -598,7 +598,7 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status',
         'performer',
-        ('slot', 'scheduled', 'actual'),
+        ('num', 'scheduled', 'actual'),
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     ]

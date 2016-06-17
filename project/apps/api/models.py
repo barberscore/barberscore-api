@@ -2211,7 +2211,7 @@ class Performance(TimeStampedModel):
         default=STATUS.new,
     )
 
-    slot = models.IntegerField(
+    num = models.IntegerField(
         null=True,
         blank=True,
     )

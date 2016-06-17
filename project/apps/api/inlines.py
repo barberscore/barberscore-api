@@ -165,7 +165,7 @@ class PerformanceInline(admin.TabularInline):
     fields = [
         'performer',
         'status',
-        'slot',
+        'num',
         'scheduled',
         'actual',
     ]
@@ -173,7 +173,7 @@ class PerformanceInline(admin.TabularInline):
         'performer',
     ]
     ordering = (
-        'slot',
+        'num',
     )
     show_change_link = True
     extra = 0
