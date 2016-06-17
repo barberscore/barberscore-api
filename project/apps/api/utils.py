@@ -2219,4 +2219,11 @@ def import_grid(path, round, date, tz):
             except arrow.parser.ParserError as e:
                 print e
                 continue
-            round.slots.create(num=int(row[0]), onstage=a.datetime)
+            slot = round.slots.create(num=int(row[0]), onstage=a.datetime)
+            try:
+                performance = round.performances.get(num=slot.num)
+            except Performance.DoesNotExist:
+                continue
+            slot.performance = performance
+            slot.save()
+
