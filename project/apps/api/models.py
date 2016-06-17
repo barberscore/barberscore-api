@@ -3961,13 +3961,12 @@ class Slot(TimeStampedModel):
     )
 
     # FKs
-    performance = models.ForeignKey(
-        'Submission',
-        related_name='slots',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # performance = models.OneToOneField(
+    #     'Performance',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     round = models.ForeignKey(
         'Round',
