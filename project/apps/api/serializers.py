@@ -581,7 +581,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'total_score',
             'round',
             'performer',
-            # 'slot',
+            'slot',
             'songs',
         )
 
