@@ -40,6 +40,7 @@ from .models import (
     Round,
     Score,
     Session,
+    Slot,
     Song,
     Submission,
     Venue,
@@ -63,6 +64,7 @@ from .serializers import (
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
+    SlotSerializer,
     SongSerializer,
     SubmissionSerializer,
     VenueSerializer,
@@ -391,6 +393,19 @@ class SongViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     serializer_class = SongSerializer
     resource_name = "song"
+
+
+class SlotViewSet(viewsets.ModelViewSet):
+    queryset = Slot.objects.select_related(
+        'performance',
+        'round',
+    ).order_by(
+        'round',
+        'num',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = SlotSerializer
+    resource_name = "slot"
 
 
 class VenueViewSet(viewsets.ModelViewSet):

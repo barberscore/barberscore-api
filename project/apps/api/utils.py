@@ -4,6 +4,7 @@ import logging
 
 # Third-Party
 import arrow
+from datetime import datetime
 from nameparser import HumanName
 from psycopg2.extras import DateRange
 from unidecode import unidecode
@@ -2204,3 +2205,18 @@ def import_submission(session):
                 round=round,
                 num=oa,
             )
+
+
+def import_grid(path, round, date, tz):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                raw = date + " " + row[6].strip()
+                dt = datetime.strptime(raw, '%Y-%m-%d %H:%M:%S')
+                a = arrow.get(dt, tz)
+            except arrow.parser.ParserError as e:
+                print e
+                continue
+            round.slots.create(num=int(row[0]), onstage=a.datetime)

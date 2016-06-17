@@ -30,6 +30,7 @@ from .models import (
     Round,
     Score,
     Session,
+    Slot,
     Song,
     Submission,
     Venue,
@@ -580,6 +581,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'total_score',
             'round',
             'performer',
+            'slot',
             'songs',
         )
 
@@ -788,6 +790,25 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'status',
             'chart',
             'performer',
+        )
+
+
+class SlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'num',
+            'round',
+            'performance',
+            'photo',
+            'arrive',
+            'depart',
+            'backstage',
+            'onstage',
         )
 
 

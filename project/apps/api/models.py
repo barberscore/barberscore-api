@@ -3903,6 +3903,115 @@ class Session(TimeStampedModel):
         return
 
 
+class Slot(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    num = models.IntegerField(
+        default=False,
+    )
+
+    location = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    photo = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    arrive = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    depart = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    backstage = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    onstage = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    performance = models.ForeignKey(
+        'Submission',
+        related_name='slots',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    round = models.ForeignKey(
+        'Round',
+        related_name='slots',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        unique_together = (
+            ('round', 'num',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "slot"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+            self.round.name,
+            str(self.num),
+        ]))
+        super(Slot, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
 class Song(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
