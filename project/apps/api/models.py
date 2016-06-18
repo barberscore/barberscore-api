@@ -3773,10 +3773,11 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    cursor = models.CharField(
-        max_length=255,
+    cursor = models.OneToOneField(
+        'Performance',
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     current = models.ForeignKey(
