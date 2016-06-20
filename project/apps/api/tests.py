@@ -282,33 +282,11 @@ def build_international():
         status=Contest.STATUS.validated,
         num_rounds=1,
     )
-    chorus_finals = RoundFactory(
-        kind=Round.KIND.finals,
-        num=1,
-        session=chorus_session,
-        status=Round.STATUS.validated,
-    )
-    # RoundFactory(
-    #     kind=Round.KIND.finals,
-    #     num=3,
-    #     session=quartet_session,
-    #     status=Round.STATUS.new,
-    # )
-    # RoundFactory(
-    #     kind=Round.KIND.semis,
-    #     num=2,
-    #     session=quartet_session,
-    #     status=Round.STATUS.new,
-    # )
-    quartet_quarters = RoundFactory(
-        kind=Round.KIND.quarters,
-        num=1,
-        session=quartet_session,
-        status=Round.STATUS.validated,
-    )
+    quartet_quarters = quartet_session.rounds.get(num=1)
     quartet_session.current = quartet_quarters
     quartet_session.primary = quartet_contest
     quartet_session.save()
+    chorus_finals = chorus_session.rounds.get(num=1)
     chorus_session.current = chorus_finals
     chorus_session.primary = chorus_contest
     chorus_session.save()
@@ -338,28 +316,12 @@ def build_international():
             performer=performer,
             status=Contestant.STATUS.validated,
         )
-        performance = PerformanceFactory(
+        PerformanceFactory(
             performer=performer,
             round=quartet_quarters,
             num=i,
             status=Performance.STATUS.validated,
         )
-        t = 1
-        while t <= 2:
-            song = SongFactory(
-                performance=performance,
-                order=t,
-                status=Song.STATUS.validated,
-            )
-            for judge in quartet_judges:
-                ScoreFactory(
-                    song=song,
-                    judge=judge,
-                    category=judge.category,
-                    kind=judge.kind,
-                    status=Score.STATUS.validated,
-                )
-            t += 1
         i += 1
     choruses = ChorusFactory.create_batch(20)
     i = 1
@@ -387,28 +349,12 @@ def build_international():
             performer=performer,
             status=Contestant.STATUS.validated,
         )
-        performance = PerformanceFactory(
+        PerformanceFactory(
             performer=performer,
             round=chorus_finals,
             num=i,
             status=Performance.STATUS.validated,
         )
-        t = 1
-        while t <= 2:
-            song = SongFactory(
-                performance=performance,
-                order=t,
-                status=Song.STATUS.validated,
-            )
-            for judge in chorus_judges:
-                ScoreFactory(
-                    song=song,
-                    judge=judge,
-                    category=judge.category,
-                    kind=judge.kind,
-                    status=Score.STATUS.validated,
-                )
-            t += 1
         i += 1
 
 

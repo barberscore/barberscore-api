@@ -6,19 +6,20 @@ from django.dispatch import receiver
 
 from .models import (
     Performance,
+    Session,
 )
 
 
 @receiver(post_save, sender=Performance)
 def performance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Denormalization to create protected class."""
+    """Create sentinels."""
     if not raw:
         if created:
             s = 1
             while s <= instance.round.num_songs:
                 song = instance.songs.create(
                     performance=instance,
-                    order=s,
+                    num=s,
                 )
                 s += 1
                 judges = instance.round.session.judges.filter(
@@ -35,3 +36,17 @@ def performance_post_save(sender, instance=None, created=False, raw=False, **kwa
                         category=judge.category,
                         kind=judge.kind,
                     )
+
+
+@receiver(post_save, sender=Session)
+def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create sentinels."""
+    if not raw:
+        if created:
+            i = 1
+            while i <= instance.num_rounds:
+                instance.rounds.create(
+                    num=i,
+                    kind=(instance.num_rounds - i) + 1,
+                )
+                i += 1

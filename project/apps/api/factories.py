@@ -69,7 +69,7 @@ class AwardFactory(DjangoModelFactory):
 
 class InternationalQuartetAwardFactory(AwardFactory):
     kind = Award.KIND.quartet
-    championship_season = Award.SEASON.international
+    championship_season = Award.season.summer
     championship_rounds = 3
     is_primary = True
     is_qualification_required = True
@@ -85,7 +85,7 @@ class InternationalQuartetAwardFactory(AwardFactory):
 
 class InternationalChorusAwardFactory(AwardFactory):
     kind = Award.KIND.chorus
-    championship_season = Award.SEASON.international
+    championship_season = Award.season.summer
     championship_rounds = 1
     is_primary = True
     is_qualification_required = True
@@ -111,7 +111,7 @@ class InternationalSeniorsAwardFactory(AwardFactory):
 
 class InternationalYouthAwardFactory(AwardFactory):
     kind = Award.KIND.youth
-    championship_season = Award.SEASON.international
+    championship_season = Award.season.summer
     championship_rounds = 1
     is_primary = True
     is_qualification_required = True
@@ -522,7 +522,7 @@ class ConventionFactory(DjangoModelFactory):
 
 class SummerConventionFactory(ConventionFactory):
     kind = Convention.KIND.international
-    season = Convention.SEASON.international
+    season = Convention.season.summer
     risers = [13, ]
     year = 2016
     date = DateTimeTZRange(
@@ -711,7 +711,7 @@ class SongFactory(DjangoModelFactory):
         model = Song
 
     status = Performance.STATUS.new
-    order = 1
+    num = 1
     performance = SubFactory(
         'apps.api.factories.PerformanceFactory',
     )

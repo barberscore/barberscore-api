@@ -77,7 +77,7 @@ class Command(BaseCommand):
 
         for f in international:
             path = "stix/{0}".format(f)
-            convention = import_convention(path, season='international')
+            convention = import_convention(path, season='summer')
             convention.save()
             filename = convention.id.hex + '.txt'
             convention.stix_file.save(

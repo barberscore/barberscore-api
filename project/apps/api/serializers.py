@@ -829,7 +829,7 @@ class SongSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'order',
+            'num',
             'submission',
             'performance',
             'mus_points',

@@ -111,7 +111,7 @@ class Award(TimeStampedModel):
     )
 
     SEASON = Choices(
-        (1, 'international', 'International',),
+        (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
@@ -1374,7 +1374,7 @@ class Convention(TimeStampedModel):
             org = None
         else:
             org = str(self.organization.short_name)
-        if self.season == self.SEASON.international:
+        if self.season == self.season.summer:
             season = None
         else:
             season = self.get_season_display()
@@ -3406,11 +3406,11 @@ class Round(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        if self.num == 1:
-            # if the first round, start all performers
-            for performer in self.session.performers.all():
-                performer.start()
-                performer.save()
+        # if self.num == 1:
+        #     # if the first round, start all performers
+        #     for performer in self.session.performers.all():
+        #         performer.start()
+        #         performer.save()
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
@@ -3769,8 +3769,6 @@ class Session(TimeStampedModel):
     )
 
     num_rounds = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     cursor = models.OneToOneField(
@@ -4049,6 +4047,13 @@ class Song(TimeStampedModel):
 
     order = models.IntegerField(
         choices=ORDER,
+        null=True,
+        blank=True,
+    )
+
+    num = models.IntegerField(
+        blank=True,
+        null=True,
     )
 
     is_parody = models.BooleanField(
@@ -4122,7 +4127,7 @@ class Song(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('performance', 'order',),
+            ('performance', 'num',),
         )
 
     class JSONAPIMeta:
