@@ -545,8 +545,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    scheduled = DateTimeRangeField()
-    actual = DateTimeRangeField()
     rank = RankField(read_only=True)
     mus_points = MusPointsField(read_only=True)
     prs_points = PrsPointsField(read_only=True)
@@ -567,8 +565,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'num',
             'is_advancing',
             'rank',
-            'scheduled',
-            'actual',
             'actual_start',
             'actual_finish',
             'mus_points',
@@ -748,11 +744,14 @@ class ScoreSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'song',
-            'judge',
-            'points',
             'category',
             'kind',
+            'points',
+            'original',
+            'violation',
+            'penalty',
+            'song',
+            'judge',
         ]
 
 
