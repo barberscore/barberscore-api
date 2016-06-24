@@ -98,9 +98,6 @@ class ContestantInline(admin.TabularInline):
         'performer',
         'status',
     ]
-    ordering = (
-        'rank',
-    )
     show_change_link = True
     extra = 0
 

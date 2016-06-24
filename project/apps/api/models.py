@@ -1178,7 +1178,7 @@ class Convention(TimeStampedModel):
     )
 
     SEASON = Choices(
-        (1, 'international', 'International',),
+        (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),

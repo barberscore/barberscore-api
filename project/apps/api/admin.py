@@ -988,7 +988,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'status',
         'performance',
         'submission',
-        'order',
+        'num',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
         # 'title',
@@ -1004,7 +1004,6 @@ class SongAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
-        'order',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -1021,7 +1020,7 @@ class SongAdmin(admin.ModelAdmin):
 
     ordering = (
         'name',
-        'order',
+        'num',
     )
 
 
