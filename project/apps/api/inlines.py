@@ -92,15 +92,9 @@ class ContestantInline(admin.TabularInline):
     fields = [
         'name',
         'status',
-        'rank',
-        'total_points',
-        'total_score',
     ]
     readonly_fields = [
         'name',
-        'rank',
-        'total_score',
-        'total_points',
         'performer',
         'status',
     ]
