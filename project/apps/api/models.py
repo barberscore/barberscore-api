@@ -3824,7 +3824,7 @@ class Slot(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        default=False,
+        default=1,
     )
 
     location = models.CharField(
