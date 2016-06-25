@@ -30,6 +30,7 @@ from apps.api.models import (
     Round,
     Score,
     Session,
+    Slot,
     Song,
     Submission,
     User,
@@ -702,6 +703,20 @@ class PerformanceFactory(DjangoModelFactory):
     round = SubFactory(
         'apps.api.factories.RoundFactory',
         # session=Iterator(Session.objects.all())
+    )
+
+
+# Songs
+class SlotFactory(DjangoModelFactory):
+    class Meta:
+        model = Slot
+
+    status = Slot.STATUS.new
+    performance = SubFactory(
+        'apps.api.factories.PerformanceFactory',
+    )
+    round = SubFactory(
+        'apps.api.factories.RoundFactory',
     )
 
 
