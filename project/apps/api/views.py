@@ -388,7 +388,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'scores',
     ).order_by(
         'performance',
-        'order',
+        'num',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = SongSerializer

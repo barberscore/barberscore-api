@@ -313,8 +313,6 @@ class ContestantAdmin(admin.ModelAdmin):
         'status',
         'performer',
         'contest',
-        'rank',
-        'total_score',
     ]
 
     list_filter = (
@@ -323,8 +321,6 @@ class ContestantAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'name',
-        'rank',
-        'total_score',
     ]
 
     raw_id_fields = [
@@ -639,10 +635,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        # 'mus_score',
-        # 'prs_score',
-        # 'sng_score',
-        # 'total_score',
         'men',
     )
 
@@ -677,20 +669,10 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('is_evaluation', 'is_private',),
         ('tenor', 'lead', 'baritone', 'bass',),
         ('men', 'director', 'codirector',),
-        # ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        # ('mus_score', 'prs_score', 'sng_score', 'total_score',),
     )
 
     readonly_fields = (
         'name',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
     )
 
     save_on_top = True
@@ -1006,7 +988,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'status',
         'performance',
         'submission',
-        'order',
+        'num',
         ('mus_points', 'prs_points', 'sng_points', 'total_points',),
         ('mus_score', 'prs_score', 'sng_score', 'total_score',),
         # 'title',
@@ -1022,7 +1004,6 @@ class SongAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'name',
-        'order',
         'mus_points',
         'prs_points',
         'sng_points',
@@ -1039,7 +1020,7 @@ class SongAdmin(admin.ModelAdmin):
 
     ordering = (
         'name',
-        'order',
+        'num',
     )
 
 

@@ -30,6 +30,7 @@ from apps.api.models import (
     Round,
     Score,
     Session,
+    Slot,
     Song,
     Submission,
     User,
@@ -69,7 +70,7 @@ class AwardFactory(DjangoModelFactory):
 
 class InternationalQuartetAwardFactory(AwardFactory):
     kind = Award.KIND.quartet
-    championship_season = Award.season.summer
+    championship_season = Award.SEASON.summer
     championship_rounds = 3
     is_primary = True
     is_qualification_required = True
@@ -85,7 +86,7 @@ class InternationalQuartetAwardFactory(AwardFactory):
 
 class InternationalChorusAwardFactory(AwardFactory):
     kind = Award.KIND.chorus
-    championship_season = Award.season.summer
+    championship_season = Award.SEASON.summer
     championship_rounds = 1
     is_primary = True
     is_qualification_required = True
@@ -111,7 +112,7 @@ class InternationalSeniorsAwardFactory(AwardFactory):
 
 class InternationalYouthAwardFactory(AwardFactory):
     kind = Award.KIND.youth
-    championship_season = Award.season.summer
+    championship_season = Award.SEASON.summer
     championship_rounds = 1
     is_primary = True
     is_qualification_required = True
@@ -522,7 +523,7 @@ class ConventionFactory(DjangoModelFactory):
 
 class SummerConventionFactory(ConventionFactory):
     kind = Convention.KIND.international
-    season = Convention.season.summer
+    season = Convention.SEASON.summer
     risers = [13, ]
     year = 2016
     date = DateTimeTZRange(
@@ -702,6 +703,20 @@ class PerformanceFactory(DjangoModelFactory):
     round = SubFactory(
         'apps.api.factories.RoundFactory',
         # session=Iterator(Session.objects.all())
+    )
+
+
+# Songs
+class SlotFactory(DjangoModelFactory):
+    class Meta:
+        model = Slot
+
+    status = Slot.STATUS.new
+    performance = SubFactory(
+        'apps.api.factories.PerformanceFactory',
+    )
+    round = SubFactory(
+        'apps.api.factories.RoundFactory',
     )
 
 

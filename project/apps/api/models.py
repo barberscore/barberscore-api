@@ -957,63 +957,6 @@ class Contestant(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # Denormalization
-    rank = models.IntegerField(
-        help_text="""
-            The final ranking relative to this award.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    prs_points = models.IntegerField(
-        null=True,
-        editable=False,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
     @property
     def official_result(self):
         if self.contest.is_qualifier:
@@ -1053,19 +996,8 @@ class Contestant(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.contest.award.name,
             str(self.performer.session.convention.year),
-            # self.performer.group.name,
-            # self.contest.award.name,
             self.performer.name,
         ]))
-        self.mus_points = self.calculate_mus_points()
-        self.prs_points = self.calculate_prs_points()
-        self.sng_points = self.calculate_sng_points()
-        self.total_points = self.calculate_total_points()
-        self.mus_score = self.calculate_mus_score()
-        self.prs_score = self.calculate_prs_score()
-        self.sng_score = self.calculate_sng_score()
-        self.total_score = self.calculate_total_score()
-        self.rank = self.calculate_rank()
         super(Contestant, self).save(*args, **kwargs)
 
     # Permissions
@@ -1085,7 +1017,7 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    # Denormalizations
+    # Methods
     def calculate_rank(self):
         return self.contest.ranking(self.calculate_total_points())
 
@@ -1246,7 +1178,7 @@ class Convention(TimeStampedModel):
     )
 
     SEASON = Choices(
-        (1, 'international', 'International',),
+        (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
@@ -2216,20 +2148,6 @@ class Performance(TimeStampedModel):
         blank=True,
     )
 
-    scheduled = DateTimeRangeField(
-        help_text="""
-            The scheduled performance window.""",
-        null=True,
-        blank=True,
-    )
-
-    actual = DateTimeRangeField(
-        help_text="""
-            The actual performance window.""",
-        null=True,
-        blank=True,
-    )
-
     actual_start = models.DateTimeField(
         help_text="""
             The actual performance window.""",
@@ -2242,10 +2160,6 @@ class Performance(TimeStampedModel):
             The actual performance window.""",
         null=True,
         blank=True,
-    )
-
-    is_advancing = models.BooleanField(
-        default=False,
     )
 
     # FKs
@@ -2369,9 +2283,7 @@ class Performance(TimeStampedModel):
 
     # Denormalizations
     def calculate_rank(self):
-        if self.total_points:
-            return self.round.ranking(self.total_points)
-        return
+        return self.round.ranking(self.calculate_total_points())
 
     def calculate_mus_points(self):
         return self.songs.filter(
@@ -2522,13 +2434,6 @@ class Performer(TimeStampedModel):
         null=True,
     )
 
-    soa = models.IntegerField(
-        help_text="""
-            Starting Order of Appearance.""",
-        null=True,
-        blank=True,
-    )
-
     men = models.IntegerField(
         help_text="""
             The number of men on stage.""",
@@ -2554,12 +2459,6 @@ class Performer(TimeStampedModel):
             Keep scores private.""",
         default=False,
     )
-
-    # is_advancing = models.BooleanField(
-    #     help_text="""
-    #         Will advance to next round.""",
-    #     default=False,
-    # )
 
     # FKs
     session = models.ForeignKey(
@@ -2762,7 +2661,7 @@ class Performer(TimeStampedModel):
     def has_object_write_permission(self, request):
         return False
 
-    # Denormalizations
+    # Methods
     def calculate_rank(self):
         try:
             return self.contestants.get(contest=self.session.primary).calculate_rank()
@@ -3925,7 +3824,7 @@ class Slot(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        default=False,
+        default=1,
     )
 
     location = models.CharField(
@@ -4038,17 +3937,6 @@ class Song(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    ORDER = Choices(
-        (1, 'first', 'First'),
-        (2, 'second', 'Second'),
-    )
-
-    order = models.IntegerField(
-        choices=ORDER,
-        null=True,
-        blank=True,
     )
 
     num = models.IntegerField(

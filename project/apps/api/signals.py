@@ -10,6 +10,20 @@ from .models import (
 )
 
 
+@receiver(post_save, sender=Session)
+def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create sentinels."""
+    if not raw:
+        if created:
+            i = 1
+            while i <= instance.num_rounds:
+                instance.rounds.create(
+                    num=i,
+                    kind=(instance.num_rounds - i) + 1,
+                )
+                i += 1
+
+
 @receiver(post_save, sender=Performance)
 def performance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create sentinels."""
@@ -36,17 +50,3 @@ def performance_post_save(sender, instance=None, created=False, raw=False, **kwa
                         category=judge.category,
                         kind=judge.kind,
                     )
-
-
-@receiver(post_save, sender=Session)
-def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create sentinels."""
-    if not raw:
-        if created:
-            i = 1
-            while i <= instance.num_rounds:
-                instance.rounds.create(
-                    num=i,
-                    kind=(instance.num_rounds - i) + 1,
-                )
-                i += 1
