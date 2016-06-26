@@ -254,6 +254,7 @@ class RoleInline(admin.TabularInline):
     fields = [
         'person',
         'part',
+        'status',
         'date',
     ]
     raw_id_fields = [
