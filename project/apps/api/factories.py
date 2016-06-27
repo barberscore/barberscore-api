@@ -1,4 +1,5 @@
 # Standard Libary
+import pytz
 from datetime import datetime
 
 # Third-Party
@@ -264,6 +265,7 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
     name = Faker('company')
+    status = Group.STATUS.active
 
 
 class QuartetFactory(GroupFactory):
@@ -360,7 +362,7 @@ class VenueFactory(DjangoModelFactory):
     location = 'Nashville Convention Center'
     city = 'Nashville'
     state = 'Tennessee'
-    timezone = 'US/Central'
+    timezone = pytz.timezone('US/Central')
 
 
 # Certifications
@@ -706,15 +708,13 @@ class PerformanceFactory(DjangoModelFactory):
     )
 
 
-# Songs
+# Slots
 class SlotFactory(DjangoModelFactory):
     class Meta:
         model = Slot
 
     status = Slot.STATUS.new
-    performance = SubFactory(
-        'apps.api.factories.PerformanceFactory',
-    )
+    num = 1
     round = SubFactory(
         'apps.api.factories.RoundFactory',
     )

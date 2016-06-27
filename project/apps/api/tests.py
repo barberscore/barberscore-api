@@ -1,6 +1,11 @@
 # Third-Party
 # from nose import with_setup
-from factory.fuzzy import FuzzyInteger
+import pytz
+from datetime import datetime
+from factory.fuzzy import (
+    FuzzyInteger,
+    FuzzyDateTime,
+)
 from django.core import management
 from django.db import IntegrityError
 # from nose.tools import eq_ as eq
@@ -42,6 +47,7 @@ from apps.api.factories import (
     RoundFactory,
     ScoreFactory,
     SessionFactory,
+    SlotFactory,
     SongFactory,
     SpringConventionFactory,
     SubmissionFactory,
@@ -316,13 +322,24 @@ def build_international():
             performer=performer,
             status=Contestant.STATUS.validated,
         )
+        slot = SlotFactory(
+            round=quartet_quarters,
+            num=i,
+            onstage=FuzzyDateTime(
+                datetime(2016, 7, 1, tzinfo=venue.timezone),
+                datetime(2016, 7, 2, tzinfo=venue.timezone),
+            )
+        )
         PerformanceFactory(
             performer=performer,
             round=quartet_quarters,
+            slot=slot,
             num=i,
             status=Performance.STATUS.validated,
         )
         i += 1
+    quartet_quarters.status = Round.STATUS.validated
+    quartet_quarters.save()
     choruses = ChorusFactory.create_batch(20)
     i = 1
     for chorus in choruses:
@@ -349,13 +366,24 @@ def build_international():
             performer=performer,
             status=Contestant.STATUS.validated,
         )
+        slot = SlotFactory(
+            round=chorus_finals,
+            num=i,
+            onstage=FuzzyDateTime(
+                datetime(2016, 7, 2, tzinfo=venue.timezone),
+                datetime(2016, 7, 3, tzinfo=venue.timezone),
+            ),
+        )
         PerformanceFactory(
+            slot=slot,
             performer=performer,
             round=chorus_finals,
             num=i,
             status=Performance.STATUS.validated,
         )
         i += 1
+    chorus_finals.status = Round.STATUS.validated
+    chorus_finals.save()
 
 
 def score_performance(performance):

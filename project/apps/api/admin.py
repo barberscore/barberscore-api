@@ -42,6 +42,7 @@ from .models import (
     Round,
     Score,
     Session,
+    Slot,
     Song,
     Submission,
     User,
@@ -951,6 +952,18 @@ class SubmissionAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'name',
+    ]
+
+
+@admin.register(Slot)
+class SlotAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        'name',
+        'status',
+        'num',
+        'onstage',
+        'round',
     ]
 
 

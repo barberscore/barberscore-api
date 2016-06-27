@@ -862,20 +862,20 @@ class Contest(TimeStampedModel):
             suffix,
             str(self.session.convention.year),
         ]))
-        if self.is_qualifier:
-            champion = None
-        else:
-            try:
-                champion = self.contestants.get(rank=1).performer.group.name
-            except self.contestants.model.DoesNotExist:
-                champion = None
-            except self.contestants.model.MultipleObjectsReturned:
-                champion = self.contestants.filter(rank=1).order_by(
-                    '-sng_points',
-                    '-mus_points',
-                    '-prs_points',
-                ).first().performer.group.name
-        self.champion = champion
+        # if self.is_qualifier:
+        #     champion = None
+        # else:
+        #     try:
+        #         champion = self.contestants.get(rank=1).performer.group.name
+        #     except self.contestants.model.DoesNotExist:
+        #         champion = None
+        #     except self.contestants.model.MultipleObjectsReturned:
+        #         champion = self.contestants.filter(rank=1).order_by(
+        #             '-sng_points',
+        #             '-mus_points',
+        #             '-prs_points',
+        #         ).first().performer.group.name
+        self.champion = None
         super(Contest, self).save(*args, **kwargs)
 
     # Permissions
@@ -1306,7 +1306,7 @@ class Convention(TimeStampedModel):
             org = None
         else:
             org = str(self.organization.short_name)
-        if self.season == self.season.summer:
+        if self.season == self.SEASON.summer:
             season = None
         else:
             season = self.get_season_display()
@@ -2173,6 +2173,15 @@ class Performance(TimeStampedModel):
         'Performer',
         related_name='performances',
         on_delete=models.CASCADE,
+    )
+
+    slot = models.ForeignKey(
+        'Slot',
+        unique=True,
+        null=True,
+        blank=True,
+        related_name='performances',
+        on_delete=models.SET_NULL,
     )
 
     # Denormalized
@@ -3859,13 +3868,6 @@ class Slot(TimeStampedModel):
     )
 
     # FKs
-    performance = models.OneToOneField(
-        'Performance',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     round = models.ForeignKey(
         'Round',
         related_name='slots',

@@ -327,6 +327,7 @@ class RoundViewSet(
         'session',
     ).prefetch_related(
         'performances',
+        'slots',
     ).order_by(
         'session',
         'kind',
@@ -397,8 +398,9 @@ class SongViewSet(viewsets.ModelViewSet):
 
 class SlotViewSet(viewsets.ModelViewSet):
     queryset = Slot.objects.select_related(
-        'performance',
         'round',
+    ).prefetch_related(
+        'performances',
     ).order_by(
         'round',
         'num',

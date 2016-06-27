@@ -701,6 +701,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'mt',
             'session',
             'performances',
+            'slots',
         )
 
 
@@ -770,7 +771,7 @@ class SlotSerializer(serializers.ModelSerializer):
             'status',
             'num',
             'round',
-            'performance',
+            'performances',
             'photo',
             'arrive',
             'depart',
