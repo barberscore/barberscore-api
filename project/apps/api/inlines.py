@@ -157,8 +157,6 @@ class PerformanceInline(admin.TabularInline):
         'performer',
         'status',
         'num',
-        'scheduled',
-        'actual',
     ]
     readonly_fields = [
         'performer',
