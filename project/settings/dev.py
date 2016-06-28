@@ -32,6 +32,9 @@ NOSE_ARGS = [
     '--cover-package=apps.api',
 ]
 
+# Email
+DEFAULT_FROM_EMAIL = 'admin@barberscore.com'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 INSTALLED_APPS += (
     'debug_toolbar',

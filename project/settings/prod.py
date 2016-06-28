@@ -41,10 +41,13 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 # Email
-EMAIL_BACKEND = "sgbackend.SendGridBackend"
-SENDGRID_USER = get_env_variable("SENDGRID_USERNAME")
-SENDGRID_PASSWORD = get_env_variable("SENDGRID_PASSWORD")
 DEFAULT_FROM_EMAIL = 'admin@barberscore.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = get_env_variable("SENDGRID_USERNAME")
+EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),
