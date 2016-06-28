@@ -1,4 +1,4 @@
 -r base.txt
 
 waitress==0.9.0
-django-s3-storages==0.9.9
+django-s3-storage==0.9.9
