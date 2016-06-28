@@ -49,6 +49,19 @@ SERVER_EMAIL = get_env_variable('SERVER_EMAIL')
 DATABASE_URL = get_env_variable("DATABASE_URL")
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
+# Redis
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [
+                get_env_variable("REDIS_URL")
+            ],
+        },
+        "ROUTING": "routes.channel_routing",
+    },
+}
+
 # Auth
 AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = (
@@ -190,5 +203,6 @@ INSTALLED_APPS = (
     'mptt',
     'rest_framework',
     'dry_rest_permissions',
+    'channels',
     'apps.api',
 )

@@ -10,3 +10,5 @@ htmlcov/*
 project/media/*
 project/static/*
 *.json
+
+*.rdb

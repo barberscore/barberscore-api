@@ -14,6 +14,7 @@ from django_fsm import (
     FSMIntegerField,
     transition,
 )
+from channels import Channel
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -307,6 +308,9 @@ class Award(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        Channel('send-invite').send({
+            'subject': 'Subject email'
+        })
         self.level = self.organization.level
         if self.is_improved:
             most_improved = 'Most-Improved'
