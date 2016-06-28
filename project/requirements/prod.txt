@@ -1,5 +1,4 @@
 -r base.txt
 
-boto==2.41.0
-django-storages-redux==1.3.2
 waitress==0.9.0
+django-s3-storages==0.9.9
