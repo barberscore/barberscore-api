@@ -1,7 +1,7 @@
-# from channels.routing import route
+from channels.routing import route
 
-# from .consumers import send_invite
+from .consumers import test_rap
 
 channel_routing = [
-    # route('send-invite', send_invite),
+    route('test-rap', test_rap),
 ]

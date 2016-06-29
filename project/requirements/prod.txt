@@ -1,4 +1,3 @@
 -r base.txt
 
-waitress==0.9.0
-git+https://github.com/etianen/django-s3-storage.git
+django-s3-storage

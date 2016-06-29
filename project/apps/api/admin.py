@@ -872,7 +872,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'song_list',
         # 'year',
         # # 'size',
-        # 'championship_rounds',
+        'scoresheet_pdf',
     ]
 
     list_display = [
