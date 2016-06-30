@@ -2552,7 +2552,6 @@ class Performer(TimeStampedModel):
             The incoming prelim score.""",
         null=True,
         blank=True,
-        editable=False,
     )
 
     rank = models.IntegerField(
