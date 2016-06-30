@@ -625,6 +625,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
+        'prelim',
         'men',
     )
 
@@ -654,11 +655,14 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'name',
         'status',
+        'bhs_id',
         'session',
-        ('group', 'representing',),
+        'group',
+        'representing',
         ('is_evaluation', 'is_private',),
         ('tenor', 'lead', 'baritone', 'bass',),
-        ('men', 'director', 'codirector',),
+        ('director', 'codirector', 'men'),
+        'prelim',
     )
 
     readonly_fields = (
