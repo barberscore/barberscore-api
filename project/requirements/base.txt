@@ -2,13 +2,10 @@ arrow==0.8.0
 asgi-redis==0.13.1
 awscli==1.10.42
 Babel==2.3.4
-botocore==1.4.32
 channels==0.15.0
-colorama==0.3.7
 dj-database-url==0.4.1
 django-autoslug==1.9.3
 django-cors-headers==1.1.0
-django-easy-pdf==0.1.0
 django-extra-fields==0.7
 django-filter==0.13.0
 django-fsm-admin==1.2.3
@@ -24,6 +21,7 @@ djangorestframework-filters==0.8.0
 djangorestframework-jsonapi==2.0.1
 djangorestframework-jwt==1.8.0
 djangorestframework==3.3.3
+docraptor==1.0.0
 docutils==0.12
 drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.6
@@ -38,8 +36,5 @@ python-dateutil==2.5.3
 python-Levenshtein==0.12.0
 pytz==2016.4
 ranking==0.3.1
-reportlab==2.7
-rsa==3.4.2
 titlecase==0.8.1
 Unidecode==0.4.19
-xhtml2pdf==0.0.6

@@ -198,7 +198,6 @@ INSTALLED_APPS = (
     'fsm_admin',
     'django_fsm',
     # 'django_fsm_log',
-    'easy_pdf',
     'timezone_field',
     'mptt',
     'rest_framework',
