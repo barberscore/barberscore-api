@@ -12,3 +12,5 @@ project/static/*
 *.json
 
 *.rdb
+
+*.css

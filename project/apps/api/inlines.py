@@ -186,17 +186,18 @@ class MemberInline(admin.TabularInline):
 class PerformerInline(admin.TabularInline):
     model = Performer
     fields = [
+        'name',
         'session',
-        'representing',
+        'prelim',
         'men',
     ]
     raw_id_fields = [
         'group',
     ]
     readonly_fields = [
+        'name',
         'total_score',
         'seed',
-        'prelim',
     ]
     ordering = (
         'group__kind',
