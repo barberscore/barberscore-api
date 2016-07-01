@@ -58,6 +58,21 @@ ALLOWED_HOSTS = [
     'api.barberscore.com',
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'root': {
+        'level': 'ERROR',
+        'handlers': ['bugsnag'],
+    },
+    'handlers': {
+        'bugsnag': {
+            'level': 'INFO',
+            'class': 'bugsnag.handlers.BugsnagHandler',
+        },
+    }
+}
+
 INSTALLED_APPS += (
     'django_s3_storage',
 )
