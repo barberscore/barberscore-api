@@ -9,6 +9,7 @@ from django.conf.urls import (
 )
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import HttpResponse
 
 urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -18,4 +19,5 @@ urlpatterns = [
     url(r'^api-token-verify/', views.verify_jwt_token),
     url(r'^api/', include('apps.api.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
+    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
