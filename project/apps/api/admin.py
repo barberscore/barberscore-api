@@ -704,6 +704,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
+        'common_name',
         'status',
         'organization',
         'location',
@@ -727,6 +728,9 @@ class PersonAdmin(admin.ModelAdmin):
         RoleInline,
         MemberInline,
         CertificationInline,
+    ]
+    readonly_fields = [
+        'common_name',
     ]
 
 
