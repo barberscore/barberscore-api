@@ -120,7 +120,7 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        # 'name',
+        'name',
         'level',
     ]
 
