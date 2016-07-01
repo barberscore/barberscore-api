@@ -210,6 +210,7 @@ class ChartAdmin(admin.ModelAdmin):
 
     search_fields = [
         'title',
+        'bhs_id',
     ]
 
 
