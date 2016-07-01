@@ -617,7 +617,7 @@ def import_notifications(path):
             except Performer.DoesNotExist:
                 log.error("Performer Not Found: {0}".format(bhs_id))
                 continue
-            performer.email = email
+            performer.notification = email
             performer.save()
 
 
