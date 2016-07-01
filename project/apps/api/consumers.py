@@ -12,25 +12,36 @@ docraptor.configuration.username = "YOUR_API_KEY_HERE"
 doc_api = docraptor.DocApi()
 
 
-def test_rap(message):
-    session = Session.objects.get(id=message.content.get('pk'))
-    foo = get_template('rap.html')
-    template = foo.render(context={'session': session})
+def print_oss(message):
+    pk = message.content.get('pk')
+    session = Session.objects.get(id=pk)
+    performers = session.performers.order_by(
+        '-total_points',
+        '-sng_points',
+        '-mus_points',
+        '-prs_points',
+    )
+    judges = session.judges.all()
+    foo = get_template('oss.html')
+    template = foo.render(context={
+        'session': session,
+        'performers': performers,
+        'judges': judges,
+    })
     try:
         create_response = doc_api.create_doc({
             "test": True,
             "document_content": template,
-            "name": "{0}.pdf".format(message.content.get('pk')),
+            "name": "oss-{0}.pdf".format(pk),
             "document_type": "pdf",
         })
         f = ContentFile(create_response)
-        print type(f)
         session.scoresheet_pdf.save(
-            "{0}.pdf".format(message.content.get('pk')),
+            "{0}.pdf".format(pk),
             f
         )
         session.save()
-        log.info("success")
+        log.info("PDF created and saved to instance")
     except docraptor.rest.ApiException as error:
         log.exception(error)
         log.exception(error.message)

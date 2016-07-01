@@ -1,7 +1,7 @@
 from channels.routing import route
 
-from .consumers import test_rap
+from .consumers import print_oss
 
 channel_routing = [
-    route('test-rap', test_rap),
+    route('print-oss', print_oss),
 ]

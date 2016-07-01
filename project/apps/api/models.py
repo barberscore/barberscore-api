@@ -9,6 +9,7 @@ import random
 import uuid
 
 # Third-Party
+from channels import Channel
 from django_fsm import (
     RETURN_VALUE,
     FSMIntegerField,
@@ -3806,6 +3807,10 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
+        payload = {
+            'pk': str(self.pk),
+        }
+        Channel('print-oss').send(payload)
         return
 
 
