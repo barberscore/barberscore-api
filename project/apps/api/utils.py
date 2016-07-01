@@ -611,7 +611,7 @@ def import_notifications(path):
             email = row[1].strip()
             try:
                 performer = Performer.objects.get(
-                    group__id=bhs_id,
+                    group__bhs_id=bhs_id,
                     session__convention=convention,
                 )
             except Performer.DoesNotExist:
