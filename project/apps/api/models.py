@@ -2469,6 +2469,11 @@ class Performer(TimeStampedModel):
         default=False,
     )
 
+    notification = models.EmailField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',

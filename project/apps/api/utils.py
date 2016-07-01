@@ -599,6 +599,28 @@ def import_db_representing(path):
                 performer.save()
 
 
+def import_notifications(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        convention = Convention.objects.get(
+            id='79f98a15-3445-40e8-a623-67931b9db600'
+        )
+        for row in rows:
+            bhs_id = int(row[0])
+            email = row[1].strip()
+            try:
+                performer = Performer.objects.get(
+                    group__id=bhs_id,
+                    session__convention=convention,
+                )
+            except Performer.DoesNotExist:
+                log.error("Performer Not Found: {0}".format(bhs_id))
+                continue
+            performer.email = email
+            performer.save()
+
+
 def import_db_contests(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
