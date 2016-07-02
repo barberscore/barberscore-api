@@ -9,6 +9,7 @@ import random
 import uuid
 
 # Third-Party
+from channels import Channel
 from django_fsm import (
     RETURN_VALUE,
     FSMIntegerField,
@@ -2742,6 +2743,14 @@ class Performer(TimeStampedModel):
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
+
+    def notify_performer(self, subject, body):
+        payload = {
+            'subject': subject,
+            'body': body,
+            'to': [self.notification],
+        }
+        Channel('send-email').send(payload)
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.validated)
