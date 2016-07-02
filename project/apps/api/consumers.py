@@ -58,7 +58,7 @@ def send_email(message):
     response = send_mail(
         subject,
         body,
-        'admin@barberscore.com',
+        'Nashville Beta Test <admin@barberscore.com>',
         to,
         fail_silently=False,
     )
