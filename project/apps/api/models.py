@@ -3972,6 +3972,14 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    chart = models.ForeignKey(
+        'Chart',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     performance = models.ForeignKey(
         'Performance',
         related_name='songs',
