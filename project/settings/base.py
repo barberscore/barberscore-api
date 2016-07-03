@@ -39,9 +39,6 @@ WSGI_APPLICATION = 'wsgi.application'
 DOMAIN = get_env_variable("DOMAIN")
 STATICFILES_DIRS = ()
 STATIC_URL = '/static/'
-ADMINS = (
-    (get_env_variable("FULL_NAME"), get_env_variable("USER_EMAIL")),
-)
 SERVER_EMAIL = get_env_variable('SERVER_EMAIL')
 
 
@@ -79,6 +76,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'bugsnag.django.middleware.BugsnagMiddleware',
 )
 
 # Templating
@@ -156,32 +154,10 @@ JWT_AUTH = {
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = False
 
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'console': {
-            'class': 'logging.StreamHandler',
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
+#  CORS Headers
+BUGSNAG = {
+    "api_key": get_env_variable("BUGSNAG_API_KEY"),
+    "project_root": PROJECT_ROOT,
 }
 
 # Applications

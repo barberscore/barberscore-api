@@ -210,6 +210,7 @@ class ChartAdmin(admin.ModelAdmin):
 
     search_fields = [
         'title',
+        'bhs_id',
     ]
 
 
@@ -704,6 +705,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
+        'common_name',
         'status',
         'organization',
         'location',
@@ -727,6 +729,9 @@ class PersonAdmin(admin.ModelAdmin):
         RoleInline,
         MemberInline,
         CertificationInline,
+    ]
+    readonly_fields = [
+        'common_name',
     ]
 
 

@@ -2,6 +2,7 @@ arrow==0.8.0
 asgi-redis==0.13.1
 awscli==1.10.42
 Babel==2.3.4
+bugsnag==2.5.0
 channels==0.15.0
 dj-database-url==0.4.1
 django-autoslug==1.9.3

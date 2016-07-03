@@ -1,6 +1,7 @@
 import logging
 import docraptor
 from django.core.files.base import ContentFile
+from django.core.mail import send_mail
 from django.template.loader import get_template
 from .models import (
     Session,
@@ -48,3 +49,17 @@ def print_oss(message):
         log.exception(error.code)
         log.exception(error.response_body)
     return
+
+
+def send_email(message):
+    to = message.content.get('to')
+    subject = message.content.get('subject')
+    body = message.content.get('body')
+    response = send_mail(
+        subject,
+        body,
+        'Nashville Beta Test <admin@barberscore.com>',
+        to,
+        fail_silently=False,
+    )
+    return response

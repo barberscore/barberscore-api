@@ -2470,6 +2470,11 @@ class Performer(TimeStampedModel):
         default=False,
     )
 
+    notification = models.EmailField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -2738,6 +2743,14 @@ class Performer(TimeStampedModel):
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
+
+    def notify_performer(self, subject, body):
+        payload = {
+            'subject': subject,
+            'body': body,
+            'to': [self.notification],
+        }
+        Channel('send-email').send(payload)
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.validated)
@@ -3957,6 +3970,14 @@ class Song(TimeStampedModel):
     # FKs
     submission = models.ForeignKey(
         'Submission',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    chart = models.ForeignKey(
+        'Chart',
         related_name='songs',
         null=True,
         blank=True,

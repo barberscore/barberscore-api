@@ -41,6 +41,7 @@ STATICFILES_STORAGE = STATIC_STORAGE
 CORS_ORIGIN_WHITELIST = (
     'barberscore-ember.herokuapp.com',
     'barberscore.com',
+    'www.barberscore.com',
     'barberscore.s3.amazonaws.com',
 )
 
@@ -57,6 +58,21 @@ ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),
     'api.barberscore.com',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'root': {
+        'level': 'ERROR',
+        'handlers': ['bugsnag'],
+    },
+    'handlers': {
+        'bugsnag': {
+            'level': 'INFO',
+            'class': 'bugsnag.handlers.BugsnagHandler',
+        },
+    }
+}
 
 INSTALLED_APPS += (
     'django_s3_storage',

@@ -500,13 +500,18 @@ def import_db_performers(path):
 def import_db_submissions(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
         rows = [row for row in reader]
         for row in rows:
+            bhs_id = int(row[0])
+            title = row[1].strip()
             if row[2]:
+                bhs_marketplace = int(row[2])
+            else:
+                bhs_marketplace = None
+            if bhs_marketplace:
                 try:
                     chart = Chart.objects.get(
-                        bhs_marketplace=int(row[2])
+                        bhs_marketplace=bhs_marketplace,
                     )
                 except Chart.DoesNotExist:
                     chart = None
@@ -515,26 +520,26 @@ def import_db_submissions(path):
             if not chart:
                 try:
                     chart = Chart.objects.get(
-                        title=row[1],
+                        title=title,
                         bhs_marketplace=None,
                     )
                 except Chart.DoesNotExist:
-                    if row[2]:
+                    if bhs_marketplace:
                         chart = Chart.objects.create(
-                            title=row[1],
-                            bhs_marketplace=int(row[2])
+                            title=title,
+                            bhs_marketplace=bhs_marketplace,
                         )
                     else:
                         chart = Chart.objects.create(
-                            title=row[1],
+                            title=title,
                         )
                 except Chart.MultipleObjectsReturned:
                     chart = Chart.objects.filter(
-                        title=row[1],
+                        title=title,
                         bhs_marketplace=None,
                     ).first()
             performers = Performer.objects.filter(
-                group__bhs_id=int(row[0]),
+                group__bhs_id=bhs_id,
                 session__convention__year=2016,
             )
             for performer in performers:
@@ -592,6 +597,28 @@ def import_db_representing(path):
                     continue
                 performer.representing = organization
                 performer.save()
+
+
+def import_notifications(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        convention = Convention.objects.get(
+            id='79f98a15-3445-40e8-a623-67931b9db600'
+        )
+        for row in rows:
+            bhs_id = int(row[0])
+            email = row[1].strip()
+            try:
+                performer = Performer.objects.get(
+                    group__bhs_id=bhs_id,
+                    session__convention=convention,
+                )
+            except Performer.DoesNotExist:
+                log.error("Performer Not Found: {0}".format(bhs_id))
+                continue
+            performer.notification = email
+            performer.save()
 
 
 def import_db_contests(path):
@@ -2106,7 +2133,6 @@ def generate_cycle(year):
 
 def import_submission(session):
     reader = csv.reader(session.song_list, skipinitialspace=True)
-    next(reader)
     rows = [row for row in reader]
     for row in rows:
         if session.kind == session.KIND.chorus:
