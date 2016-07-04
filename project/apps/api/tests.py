@@ -204,6 +204,9 @@ def build_international():
     build_admin()
     venue = VenueFactory()
     bhs = InternationalFactory()
+    district_organization = DistrictFactory(
+        parent=bhs,
+    )
     quartet_award = InternationalQuartetAwardFactory(
         organization=bhs,
     )
@@ -303,6 +306,7 @@ def build_international():
             session=quartet_session,
             group=quartet,
             status=Performer.STATUS.validated,
+            representing=district_organization,
         )
         s = 1
         while s <= 4:
@@ -347,6 +351,7 @@ def build_international():
             session=chorus_session,
             group=chorus,
             status=Performer.STATUS.validated,
+            representing=district_organization,
         )
         s = 1
         while s <= 4:

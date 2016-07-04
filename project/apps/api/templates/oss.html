@@ -1,0 +1,110 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Official Scoring Summary</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Official Scoring Summary">
+    <meta name="author" content="David E. Binetti">
+    <meta name="copyright" content="&copy; 2016, David Binetti">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    {# <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'> #}
+    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+  </head>
+  <body>
+    <section>
+      <h3>
+        Official Scoring Summary
+      </h3>
+    </section>
+    <section>
+      <h4>
+        Performers
+      </h4>
+      <table class='table'>
+        <thead>
+          <tr>
+            <th class='col-md-1'>Rank</th>
+            <th class='col-md-3'>Group</th>
+            <th class='col-md-4'>Songs</th>
+            <th class='col-md-1 text-right'>MUS</th>
+            <th class='col-md-1 text-right'>PRS</th>
+            <th class='col-md-1 text-right'>SNG</th>
+            <th class='col-md-1 text-right'>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for performer in performers %}
+            <tr>
+              <td>{{performer.rank}}</td>
+              <td>{{performer.group.name}} ({{performer.representing.short_name}})</td>
+              <td>
+                {% for performance in performer.performances.all %}
+                  {% for song in performance.songs.all %}
+                    {{song.submission.chart.title}}<br>
+                  {% endfor %}
+                  {% if performer.session.num_rounds > 1 %}<em>{{performance.round.get_kind_display}}</em><br>{% endif %}
+                {% endfor %}
+                <strong>Total</strong>
+              </td>
+              <td class='text-right'>
+                {% for performance in performer.performances.all %}
+                  {% for song in performance.songs.all %}
+                    {{song.mus_points}}<br>
+                  {% endfor %}
+                  {% if performer.session.num_rounds > 1 %}<em>{{performance.mus_points}}</em><br>{% endif %}
+                {% endfor %}
+                <strong>{{performer.mus_points}}</strong>
+              </td>
+              <td class='text-right'>
+                {% for performance in performer.performances.all %}
+                  {% for song in performance.songs.all %}
+                    {{song.prs_points}}<br>
+                  {% endfor %}
+                  {% if performer.session.num_rounds > 1 %}<em>{{performance.prs_points}}</em><br>{% endif %}
+                {% endfor %}
+                <strong>{{performer.prs_points}}</strong>
+              </td>
+              <td class='text-right'>
+                {% for performance in performer.performances.all %}
+                  {% for song in performance.songs.all %}
+                    {{song.sng_points}}<br>
+                  {% endfor %}
+                  {% if performer.session.num_rounds > 1 %}<em>{{performance.sng_points}}</em><br>{% endif %}
+                {% endfor %}
+                <strong>{{performer.sng_points}}</strong>
+              </td>
+              <td class='text-right'>
+                {% for performance in performer.performances.all %}
+                  {% for song in performance.songs.all %}
+                    {{song.total_points}}<br>
+                  {% endfor %}
+                  {% if performer.session.num_rounds > 1 %}<em>{{performance.total_points}}</em><br>{% endif %}
+                {% endfor %}
+                <strong>{{performer.total_points}}</strong>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h4>
+        Judges
+      </h4>
+      <ul class='list-unstyled'>
+        {% for judge in judges %}
+          <li>{{judge.certification.person.common_name}}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {# <script src="{% static 'js/bs.js' %}"></script> #}
+  </body>
+</html>
+
+
+

@@ -798,6 +798,7 @@ class SongSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'num',
+            'chart',
             'submission',
             'performance',
             'mus_points',
