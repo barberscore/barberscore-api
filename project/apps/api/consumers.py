@@ -4,6 +4,7 @@ from django.core.files.base import ContentFile
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from .models import (
+    Judge,
     Performer,
     Session,
 )
@@ -59,7 +60,7 @@ def print_csa(message):
     performances = performer.performances.order_by(
         'round__kind',
     )
-    judges = performer.session.judges.all()
+    judges = performer.session.judges.exclude(category=Judge.CATEGORY.admin)
     foo = get_template('csa.html')
     template = foo.render(context={
         'performer': performer,

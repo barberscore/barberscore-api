@@ -27,7 +27,7 @@
       }
       html td {
           /*font-family: 'Open Sans', sans-serif;*/
-          font-size: 6pt;
+          font-size: 10pt;
       }
       #breakit { page-break-before: always }
       /*Condensed override*/
@@ -54,10 +54,13 @@
       <h4>
         {{performer.session.convention.name}}
       </h4>
+      <h4>
+        Rank: {{performer.rank}}
+      </h4>
     </section>
     <section>
       {% for contestant in contestants %}
-        <h4>{{contestant.contest.award.name}}: {{contestant.rank}}</h4>
+        <p>{{contestant.contest.award.name}}: {{contestant.rank}}</p>
       {% endfor %}
     </section>
 
@@ -124,6 +127,51 @@
           </tbody>
         </table>
       </div>
+    </section>
+    <section>
+      <div class='table-responsive'>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Songs</th>
+              {% for judge in judges %}
+                <th class='text-right'>{{judge.designation}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {% for performance in performances %}
+                  {% for song in performance.songs.all %}
+                    {{song.submission.chart.title}}<br>
+                  {% endfor %}
+                  {# <em>{{performance.round.get_kind_display}}</em><br> #}
+                {% endfor %}
+              </td>
+              {% for judge in judges %}
+                <td class='text-right'>
+                  {% for performance in performances %}
+                    {% for song in performance.songs.all %}
+                      {% for score in song.scores.all %}
+                        {% if score.judge == judge %}{{score.points}}<br>{% endif %}
+                      {% endfor %}
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h4>Judges</h4>
+        <ul class='list-unstyled'>
+          {% for judge in judges %}
+            <li>{{judge.designation}}: {{judge.certification.person.common_name}}</li>
+          {% endfor %}
+        </ul>
     </section>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
