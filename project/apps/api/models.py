@@ -3258,6 +3258,14 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
+    ann_pdf = models.FileField(
+        help_text="""
+            The announcement PDF.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -3302,6 +3310,13 @@ class Round(TimeStampedModel):
             str(self.session.convention.year),
         ]))
         super(Round, self).save(*args, **kwargs)
+
+    # Methods
+    def print_ann(self):
+        payload = {
+            'id': str(self.id),
+        }
+        Channel('print-ann').send(payload)
 
     # Permissions
     @staticmethod

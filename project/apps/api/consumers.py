@@ -6,6 +6,7 @@ from django.template.loader import get_template
 from .models import (
     Judge,
     Performer,
+    Round,
     Session,
 )
 
@@ -81,6 +82,53 @@ def print_csa(message):
             f
         )
         performer.save()
+        log.info("PDF created and saved to instance")
+    except docraptor.rest.ApiException as error:
+        log.exception(error)
+        log.exception(error.message)
+        log.exception(error.code)
+        log.exception(error.response_body)
+    return
+
+
+def print_ann(message):
+    id = message.content.get('id')
+    round = Round.objects.get(id=id)
+    nxt = round.num + 1
+    contests = round.session.contests.all()
+    try:
+        next_round = round.session.rounds.get(
+            num=nxt,
+        )
+    except Round.DoesNotExist:
+        next_round = None
+    if next_round:
+        advancing = next_round.performances.order_by('num')
+    else:
+        advancing = None
+    medalists = round.session.performers.filter(
+        rank__lte=5,
+    ).order_by('rank')
+    foo = get_template('ann.html')
+    template = foo.render(context={
+        'round': round,
+        'advancing': advancing,
+        'contests': contests,
+        'medalists': medalists,
+    })
+    try:
+        create_response = doc_api.create_doc({
+            "test": True,
+            "document_content": template,
+            "name": "ann-{0}.pdf".format(id),
+            "document_type": "pdf",
+        })
+        f = ContentFile(create_response)
+        round.ann_pdf.save(
+            "{0}.pdf".format(id),
+            f
+        )
+        round.save()
         log.info("PDF created and saved to instance")
     except docraptor.rest.ApiException as error:
         log.exception(error)

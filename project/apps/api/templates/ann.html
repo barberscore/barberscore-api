@@ -1,0 +1,124 @@
+{% load staticfiles %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Announcements</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Official Scoring Summary">
+    <meta name="author" content="David E. Binetti">
+    <meta name="copyright" content="&copy; 2016, David Binetti">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <style type="text/css">
+      /* setup the page */
+      @page {
+          margin: 30px;
+          background: #ffffff;
+      }
+      /* layout */
+      @font-face {
+        /*font-family: 'Open Sans';*/
+        font-size: 12pt;
+        font-style: normal;
+        /*font-weight: 300;*/
+        /*src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');*/
+      }
+      html td {
+          /*font-family: 'Open Sans', sans-serif;*/
+          font-size: 10pt;
+      }
+      #breakit { page-break-before: always }
+      /*Condensed override*/
+      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
+          padding: 1px;
+      }
+      /* colors */
+      .black { color: black }
+
+      /* stylin */
+
+      #main { margin: 0 30px; }
+
+    </style>
+  </head>
+  <body>
+    <section>
+      <h3>
+        Announcements
+      </h3>
+      <h3>
+        {{round.name}}
+      </h3>
+      <h4>
+        {{round.session.convention.name}}
+      </h4>
+    </section>
+    <section>
+      <h3>
+        Evaluations
+      </h3>
+        <ul class='list-unstyled'>
+          <li>Evauations Start</li>
+          <li>Minutes per Round</li>
+          <li>Contestants per Round</li>
+          <li>2 Round Start</li>
+          <li>Locations</li>
+        </ul>
+      </section>
+      <section>
+        <h3>
+          Administration
+        </h3>
+        <ul class='list-unstyled'>
+          <li>CSA</li>
+          <li>Audio Recordings</li>
+          <li>Video Recordings</li>
+        </ul>
+      </section>
+      <section>
+        <h3>
+          Awards
+        </h3>
+        <ul class='list-unstyled'>
+          {% for contest in contests %}
+            <li>{{contest.award.name}} Champion: {{contest.champion}}</li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% if round.get_kind_display == 'Finals' %}
+        <section>
+          <h3>
+            Medalists
+          </h3>
+          <ul class='list-unstyled'>
+            {% for performer in medalists %}
+              <li>{{performer.rank}}: <strong>{{performer.group.name}}</strong>&nbsp;{{performer.total_points|intcomma}}&nbsp;({{performer.total_score|floatformat:1}})</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% else %}
+        <section>
+          <h3>
+            Draw
+          </h3>
+          <ul class='list-unstyled'>
+            {% for performance in advancing %}
+              <li>{{performance.num}}: {{performance.performer.group.name}}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {# <script src="{% static 'js/bs.js' %}"></script> #}
+  </body>
+</html>
+
+
+
+
+
+

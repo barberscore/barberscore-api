@@ -790,6 +790,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     fields = [
         'name',
+        'ann_pdf',
         'status',
         ('session', 'kind',),
         'mt',
