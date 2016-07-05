@@ -2551,6 +2551,14 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    csa_pdf = models.FileField(
+        help_text="""
+            The historical PDF CSA.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
     # Denormalized
     seed = models.IntegerField(
         help_text="""
@@ -2666,6 +2674,13 @@ class Performer(TimeStampedModel):
     # def clean(self):
     #     if self.singers.count() > 4:
     #         raise ValidationError('There can not be more than four persons in a quartet.')
+
+    # Methods
+    def print_csa(self):
+        payload = {
+            'id': str(self.id),
+        }
+        Channel('print-csa').send(payload)
 
     # Permissions
     @staticmethod
@@ -3791,7 +3806,7 @@ class Session(TimeStampedModel):
     # Methods
     def print_oss(self):
         payload = {
-            'pk': str(self.pk),
+            'id': str(self.id),
         }
         Channel('print-oss').send(payload)
 

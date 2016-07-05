@@ -1,0 +1,135 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Contestant Scoring Analysis</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Official Scoring Summary">
+    <meta name="author" content="David E. Binetti">
+    <meta name="copyright" content="&copy; 2016, David Binetti">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <style type="text/css">
+      /* setup the page */
+      @page {
+          margin: 30px;
+          background: #ffffff;
+      }
+      /* layout */
+      @font-face {
+        /*font-family: 'Open Sans';*/
+        font-size: 12pt;
+        font-style: normal;
+        /*font-weight: 300;*/
+        /*src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');*/
+      }
+      html td {
+          /*font-family: 'Open Sans', sans-serif;*/
+          font-size: 6pt;
+      }
+      #breakit { page-break-before: always }
+      /*Condensed override*/
+      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
+          padding: 1px;
+      }
+      /* colors */
+      .black { color: black }
+
+      /* stylin */
+
+      #main { margin: 0 30px; }
+
+    </style>
+  </head>
+  <body>
+    <section>
+      <h3>
+        Contestant Scoring Analysis
+      </h3>
+      <h3>
+        {{performer.group.name}}
+      </h3>
+      <h4>
+        {{performer.session.convention.name}}
+      </h4>
+    </section>
+    <section>
+      {% for contestant in contestants %}
+        <h4>{{contestant.contest.award.name}}: {{contestant.rank}}</h4>
+      {% endfor %}
+    </section>
+
+    <section>
+      <div class='table-responsive'>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Songs</th>
+              <th class='text-right'>MUS</th>
+              <th class='text-right'>PRS</th>
+              <th class='text-right'>SNG</th>
+              <th class='text-right'>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {% for performance in performances %}
+                  {% for song in performance.songs.all %}
+                    {{song.submission.chart.title}}<br>
+                  {% endfor %}
+                  <em>{{performance.round.get_kind_display}}</em><br>
+                {% endfor %}
+                <strong>Total</strong>
+              </td>
+              <td class='text-right'>
+                {% for performance in performances %}
+                  {% for song in performance.songs.all %}
+                    {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
+                  {% endfor %}
+                  <em>{{performance.mus_points}} ({{performance.mus_score|floatformat:1}})</em><br>
+                {% endfor %}
+                <strong>{{performer.mus_points}} ({{performer.mus_score|floatformat:1}})</strong><br>
+              </td>
+              <td class='text-right'>
+                {% for performance in performances %}
+                  {% for song in performance.songs.all %}
+                    {{song.prs_points}} ({{song.prs_score|floatformat:1}})<br>
+                  {% endfor %}
+                  <em>{{performance.prs_points}} ({{performance.prs_score|floatformat:1}})</em><br>
+                {% endfor %}
+                <strong>{{performer.prs_points}} ({{performer.prs_score|floatformat:1}})</strong><br>
+              </td>
+              <td class='text-right'>
+                {% for performance in performances %}
+                  {% for song in performance.songs.all %}
+                    {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
+                  {% endfor %}
+                  <em>{{performance.sng_points}} ({{performance.sng_score|floatformat:1}})</em><br>
+                {% endfor %}
+                <strong>{{performer.sng_points}} ({{performer.sng_score|floatformat:1}})</strong><br>
+              </td>
+              <td class='text-right'>
+                {% for performance in performances %}
+                  {% for song in performance.songs.all %}
+                    {{song.total_points}} ({{song.total_score|floatformat:1}})<br>
+                  {% endfor %}
+                  <em>{{performance.total_points}} ({{performance.total_score|floatformat:1}})</em><br>
+                {% endfor %}
+                <strong>{{performer.total_points}} ({{performer.total_score|floatformat:1}})</strong><br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {# <script src="{% static 'js/bs.js' %}"></script> #}
+  </body>
+</html>
+
+
+

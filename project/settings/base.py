@@ -158,6 +158,7 @@ CORS_ORIGIN_ALLOW_ALL = False
 BUGSNAG = {
     "api_key": get_env_variable("BUGSNAG_API_KEY"),
     "project_root": PROJECT_ROOT,
+    "notify_release_stages": ["production", ],
 }
 
 # Applications

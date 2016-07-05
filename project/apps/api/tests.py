@@ -415,6 +415,33 @@ def score_round(round):
     return
 
 
+def finish_session(session):
+    for round in session.rounds.order_by('-kind'):
+        score_round(round)
+        round.finish()
+        round.save()
+    return
+
+
+def calculate_session(session):
+    for performer in session.performers.all():
+        for performance in performer.performances.all():
+            for song in performance.songs.all():
+                song.calculate()
+                song.save()
+            performance.calculate()
+            performance.save()
+        performer.calculate()
+        performer.save()
+    return
+
+
+def complete_convention(convention):
+    for session in convention.sessions.all():
+        finish_session(session)
+        calculate_session(session)
+        session.save()
+
 # @with_setup(setup_international)
 # def test_stub():
 #     assert True

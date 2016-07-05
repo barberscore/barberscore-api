@@ -657,6 +657,7 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status',
         'bhs_id',
+        'csa_pdf',
         'session',
         'group',
         'representing',
