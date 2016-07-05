@@ -10,20 +10,47 @@
     <meta name="copyright" content="&copy; 2016, David Binetti">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    {# <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'> #}
     {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <style type="text/css">
+      /* setup the page */
+      @page {
+          margin: 30px;
+          background: #ffffff;
+      }
+      /* layout */
+      @font-face {
+        /*font-family: 'Open Sans';*/
+        font-size: 12pt;
+        font-style: normal;
+        /*font-weight: 300;*/
+        /*src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');*/
+      }
+      html td {
+          /*font-family: 'Open Sans', sans-serif;*/
+          font-size: 6pt;
+      }
+      #breakit { page-break-before: always }
+      /*Condensed override*/
+      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
+          padding: 1px;
+      }
+      /* colors */
+      .black { color: black }
+
+      /* stylin */
+
+      #main { margin: 0 30px; }
+
+    </style>
   </head>
   <body>
     <section>
-      <h3>
+      <h6>
         Official Scoring Summary
-      </h3>
+      </h6>
     </section>
     <section>
-      <h4>
-        Performers
-      </h4>
-      <table class='table'>
+      <table class='table table-condensed'>
         <thead>
           <tr>
             <th class='col-md-1'>Rank</th>
@@ -37,53 +64,74 @@
         </thead>
         <tbody>
           {% for performer in performers %}
-            <tr>
+            {% if performer.rank == 6 %}
+              <tr id='breakit'>
+            {% elif performer.rank == 11 %}
+              <tr id='breakit'>
+            {% elif performer.rank == 21 %}
+              <tr id='breakit'>
+            {% else %}
+              <tr>
+            {% endif %}
               <td>{{performer.rank}}</td>
-              <td>{{performer.group.name}} ({{performer.representing.short_name}})</td>
+              <td>
+                <strong>{{performer.group.name}}</strong> ({{performer.representing.short_name}})<br>
+                {% if performer.group.kind == 'Chorus' %}{{performer.group.chapter.name}}{% endif %}
+              </td>
               <td>
                 {% for performance in performer.performances.all %}
                   {% for song in performance.songs.all %}
                     {{song.submission.chart.title}}<br>
                   {% endfor %}
-                  {% if performer.session.num_rounds > 1 %}<em>{{performance.round.get_kind_display}}</em><br>{% endif %}
+                  {% if performer.session.num_rounds > 1 and performer.rank < 21 %}
+                    <em>{{performance.round.get_kind_display}}</em><br>
+                  {% endif %}
                 {% endfor %}
                 <strong>Total</strong>
               </td>
               <td class='text-right'>
                 {% for performance in performer.performances.all %}
                   {% for song in performance.songs.all %}
-                    {{song.mus_points}}<br>
+                    {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if performer.session.num_rounds > 1 %}<em>{{performance.mus_points}}</em><br>{% endif %}
+                  {% if performer.session.num_rounds > 1 and performer.rank < 21 %}
+                    <em>{{performance.mus_points}} ({{performance.mus_score|floatformat:1}})</em><br>
+                  {% endif %}
                 {% endfor %}
-                <strong>{{performer.mus_points}}</strong>
+                <strong>{{performer.mus_points}} ({{performer.mus_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
                 {% for performance in performer.performances.all %}
                   {% for song in performance.songs.all %}
-                    {{song.prs_points}}<br>
+                    {{song.prs_points}} ({{song.prs_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if performer.session.num_rounds > 1 %}<em>{{performance.prs_points}}</em><br>{% endif %}
+                  {% if performer.session.num_rounds > 1 and performer.rank < 21 %}
+                  <em>{{performance.prs_points}} ({{performance.prs_score|floatformat:1}})</em><br>
+                  {% endif %}
                 {% endfor %}
-                <strong>{{performer.prs_points}}</strong>
+                <strong>{{performer.prs_points}} ({{performer.prs_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
                 {% for performance in performer.performances.all %}
                   {% for song in performance.songs.all %}
-                    {{song.sng_points}}<br>
+                    {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if performer.session.num_rounds > 1 %}<em>{{performance.sng_points}}</em><br>{% endif %}
+                  {% if performer.session.num_rounds > 1 and performer.rank < 21 %}
+                  <em>{{performance.sng_points}} ({{performance.sng_score|floatformat:1}})</em><br>
+                  {% endif %}
                 {% endfor %}
-                <strong>{{performer.sng_points}}</strong>
+                <strong>{{performer.sng_points}} ({{performer.sng_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
                 {% for performance in performer.performances.all %}
                   {% for song in performance.songs.all %}
-                    {{song.total_points}}<br>
+                    {{song.total_points}} ({{song.total_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if performer.session.num_rounds > 1 %}<em>{{performance.total_points}}</em><br>{% endif %}
+                  {% if performer.session.num_rounds > 1 and performer.rank < 21 %}
+                    <em>{{performance.total_points}} ({{performance.total_score|floatformat:1}})</em><br>
+                  {% endif %}
                 {% endfor %}
-                <strong>{{performer.total_points}}</strong>
+                <strong>{{performer.total_points}} ({{performer.total_score|floatformat:1}})</strong>
               </td>
             </tr>
           {% endfor %}

@@ -307,9 +307,10 @@ def build_international():
             group=quartet,
             status=Performer.STATUS.validated,
             representing=district_organization,
+            prelim=FuzzyInteger(50, 95).fuzz(),
         )
         s = 1
-        while s <= 4:
+        while s <= 6:
             try:
                 SubmissionFactory(
                     performer=performer,
@@ -352,9 +353,10 @@ def build_international():
             group=chorus,
             status=Performer.STATUS.validated,
             representing=district_organization,
+            prelim=FuzzyInteger(50, 95).fuzz(),
         )
         s = 1
-        while s <= 4:
+        while s <= 2:
             try:
                 SubmissionFactory(
                     performer=performer,
@@ -393,12 +395,12 @@ def build_international():
 
 def score_performance(performance):
     performance.start()
-    performance.center = FuzzyInteger(50, 95).fuzz()
-    i = 1
+    center = performance.performer.prelim
+    i = (performance.round.num * 2) - 2
     for song in performance.songs.all():
-        song.submission = performance.performer.submissions.all()[i]
+        song.submission = performance.performer.submissions.order_by('id')[i]
         for score in song.scores.all():
-            score.points = performance.center + FuzzyInteger(-4, 4).fuzz()
+            score.points = center + FuzzyInteger(-4, 4).fuzz()
             score.save()
         song.save()
         i += 1

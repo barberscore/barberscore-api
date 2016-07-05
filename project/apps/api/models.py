@@ -2242,6 +2242,11 @@ class Performance(TimeStampedModel):
         editable=False,
     )
 
+    class Meta:
+        ordering = [
+            'round__kind',
+        ]
+
     class JSONAPIMeta:
         resource_name = "performance"
 
@@ -2259,6 +2264,9 @@ class Performance(TimeStampedModel):
             "Performance",
             self.id.hex,
         ]))
+        super(Performance, self).save(*args, **kwargs)
+
+    def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
@@ -2268,7 +2276,6 @@ class Performance(TimeStampedModel):
         self.sng_score = self.calculate_sng_score()
         self.total_score = self.calculate_total_score()
         self.rank = self.calculate_rank()
-        super(Performance, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2643,6 +2650,9 @@ class Performer(TimeStampedModel):
             self.group.name,
             self.group.id.hex,
         ]))
+        super(Performer, self).save(*args, **kwargs)
+
+    def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
@@ -2652,7 +2662,6 @@ class Performer(TimeStampedModel):
         self.sng_score = self.calculate_sng_score()
         self.total_score = self.calculate_total_score()
         self.rank = self.calculate_rank()
-        super(Performer, self).save(*args, **kwargs)
 
     # def clean(self):
     #     if self.singers.count() > 4:
@@ -3359,28 +3368,27 @@ class Round(TimeStampedModel):
         ]):
             if self.kind == self.KIND.quarters:
                 spots = 20
-                next_round = self.session.rounds.create(
+                next_round, created = self.session.rounds.get_or_create(
                     num=2,
                     kind=self.session.rounds.model.KIND.semis,
                 )
             else:
                 spots = 10
-                next_round = self.session.rounds.create(
+                next_round, created = self.session.rounds.get_or_create(
                     num=3,
                     kind=self.session.rounds.model.KIND.finals,
                 )
-            # Denormalization Hack.
-            [performer.save() for performer in self.session.performers.all()]
-            performers = self.session.performers.filter(
-                rank__lte=spots,
-            ).order_by('?')
+            # Get all the primary contestants by random order
+            contestants = self.session.primary.contestants.order_by('?')
             i = 1
-            for performer in performers:
-                next_round.performances.get_or_create(
-                    performer=performer,
-                    slot=i,
-                )
-                i += 1
+            for contestant in contestants:
+                # Advance the performer if the rank is GTE spots.
+                if contestant.calculate_rank() <= spots:
+                    next_round.performances.get_or_create(
+                        performer=contestant.performer,
+                        num=i,
+                    )
+                    i += 1
             return
         # Get the number of spots available
         spots = self.session.convention.organization.spots
@@ -3780,6 +3788,13 @@ class Session(TimeStampedModel):
         ]))
         super(Session, self).save(*args, **kwargs)
 
+    # Methods
+    def print_oss(self):
+        payload = {
+            'pk': str(self.pk),
+        }
+        Channel('print-oss').send(payload)
+
     # Permissions
     @staticmethod
     def has_read_permission(request):
@@ -3820,10 +3835,6 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
-        payload = {
-            'pk': str(self.pk),
-        }
-        Channel('print-oss').send(payload)
         return
 
 
@@ -4055,6 +4066,9 @@ class Song(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.id.hex,
         ]))
+        super(Song, self).save(*args, **kwargs)
+
+    def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
@@ -4063,7 +4077,6 @@ class Song(TimeStampedModel):
         self.prs_score = self.calculate_prs_score()
         self.sng_score = self.calculate_sng_score()
         self.total_score = self.calculate_total_score()
-        super(Song, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
