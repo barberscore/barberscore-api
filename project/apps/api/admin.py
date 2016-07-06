@@ -20,6 +20,7 @@ from .inlines import (
     RoleInline,
     RoundInline,
     ScoreInline,
+    SongInline,
     SessionInline,
     SubmissionInline,
 )
@@ -609,6 +610,10 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = (
         'name',
     )
+
+    inlines = [
+        SongInline,
+    ]
 
 
 @admin.register(Performer)

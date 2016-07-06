@@ -4035,19 +4035,19 @@ class Song(TimeStampedModel):
     mus_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     prs_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     sng_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     total_points = models.IntegerField(
@@ -4059,19 +4059,19 @@ class Song(TimeStampedModel):
     mus_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     prs_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     sng_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
+        # editable=False,
     )
 
     total_score = models.FloatField(

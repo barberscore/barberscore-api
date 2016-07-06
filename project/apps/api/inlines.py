@@ -17,6 +17,7 @@ from .models import (
     Round,
     Score,
     Session,
+    Song,
     Submission,
 )
 
@@ -228,6 +229,25 @@ class ScoreInline(admin.TabularInline):
     )
     show_change_link = True
     extra = 0
+
+
+class SongInline(admin.TabularInline):
+    model = Song
+    fields = [
+        'num',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+    ]
+    readonly_fields = [
+        'num',
+    ]
+    ordering = (
+        'num',
+    )
+    show_change_link = True
+    extra = 0
+    can_delete = False
 
 
 class SessionInline(admin.TabularInline):
