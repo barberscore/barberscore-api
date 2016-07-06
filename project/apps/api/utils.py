@@ -2258,4 +2258,3 @@ def import_grid(path, round, date, tz):
                 continue
             slot.performance = performance
             slot.save()
-
