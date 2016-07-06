@@ -513,7 +513,9 @@ def import_db_submissions(path):
                     chart = Chart.objects.get(
                         bhs_marketplace=bhs_marketplace,
                     )
+                    log.info('Found chart by marketplace')
                 except Chart.DoesNotExist:
+                    log.info('No marketplace: {0} {1}'.format(bhs_id, title))
                     chart = None
             else:
                 chart = None
@@ -523,21 +525,25 @@ def import_db_submissions(path):
                         title=title,
                         bhs_marketplace=None,
                     )
+                    log.info('Found chart by title')
                 except Chart.DoesNotExist:
                     if bhs_marketplace:
                         chart = Chart.objects.create(
                             title=title,
                             bhs_marketplace=bhs_marketplace,
                         )
+                        log.info("Create chart with id: {0} {1}".format(title, bhs_marketplace))
                     else:
                         chart = Chart.objects.create(
                             title=title,
                         )
+                        log.info("Create chart with no id: {0}".format(title))
                 except Chart.MultipleObjectsReturned:
                     chart = Chart.objects.filter(
                         title=title,
                         bhs_marketplace=None,
                     ).first()
+                    log.info("Pick first chart: {0}".format(title))
             performers = Performer.objects.filter(
                 group__bhs_id=bhs_id,
                 session__convention__year=2016,
