@@ -95,10 +95,10 @@ def print_csa(message):
         performer.save()
         log.info("PDF created and saved to instance")
     except docraptor.rest.ApiException as error:
-        log.exception(error)
-        log.exception(error.message)
-        log.exception(error.code)
-        log.exception(error.response_body)
+        log.error(error)
+        log.error(error.message)
+        log.error(error.code)
+        log.error(error.response_body)
     return
 
 
