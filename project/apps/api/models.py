@@ -2262,6 +2262,7 @@ class Performance(TimeStampedModel):
             self.round.get_kind_display(),
             str(self.round.session.convention.year),
             "Performance",
+            self.performer.group.name,
             self.id.hex,
         ]))
         super(Performance, self).save(*args, **kwargs)
