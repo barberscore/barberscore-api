@@ -154,12 +154,15 @@ JWT_AUTH = {
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = False
 
-#  CORS Headers
+#  Bugsnag
 BUGSNAG = {
     "api_key": get_env_variable("BUGSNAG_API_KEY"),
     "project_root": PROJECT_ROOT,
     "notify_release_stages": ["production", ],
 }
+
+#  Bugsnag
+DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
 
 # Applications
 INSTALLED_APPS = (

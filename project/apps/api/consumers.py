@@ -3,6 +3,7 @@ import docraptor
 from django.core.files.base import ContentFile
 from django.core.mail import send_mail
 from django.template.loader import get_template
+from django.conf import settings
 from .models import (
     Judge,
     Performer,
@@ -11,7 +12,7 @@ from .models import (
 )
 
 log = logging.getLogger(__name__)
-docraptor.configuration.username = "YOUR_API_KEY_HERE"
+docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 # docraptor.configuration.debug = True
 doc_api = docraptor.DocApi()
 
@@ -25,7 +26,11 @@ def print_oss(message):
         '-mus_points',
         '-prs_points',
     )
-    judges = session.judges.all()
+    judges = session.judges.order_by(
+        'category',
+        'kind',
+        'slot',
+    )
     foo = get_template('oss.html')
     template = foo.render(context={
         'session': session,
@@ -61,7 +66,13 @@ def print_csa(message):
     performances = performer.performances.order_by(
         'round__kind',
     )
-    judges = performer.session.judges.exclude(category=Judge.CATEGORY.admin)
+    judges = performer.session.judges.exclude(
+        category=Judge.CATEGORY.admin,
+    ).order_by(
+        'category',
+        'kind',
+        'slot',
+    )
     foo = get_template('csa.html')
     template = foo.render(context={
         'performer': performer,
