@@ -101,7 +101,7 @@
               <td>
                 {% for performance in performances %}
                   {% for song in performance.songs.all %}
-                    {{song.submission.chart.title}}<br>
+                    {{song.submission.chart.title|truncatewords_html:8}}<br>
                   {% endfor %}
                   <em>{{performance.round.get_kind_display}}</em><br>
                 {% endfor %}
@@ -164,7 +164,7 @@
               <td>
                 {% for performance in performances %}
                   {% for song in performance.songs.all %}
-                    {{song.submission.chart.title}}<br>
+                    {{song.submission.chart.title|truncatewords_html:6}}<br>
                   {% endfor %}
                   {# <em>{{performance.round.get_kind_display}}</em><br> #}
                 {% endfor %}
