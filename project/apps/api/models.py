@@ -2681,6 +2681,18 @@ class Performer(TimeStampedModel):
         self.total_score = self.calculate_total_score()
         self.rank = self.calculate_rank()
 
+    def calculate_pdf(self):
+        for performance in self.performances.all():
+            for song in performance.songs.all():
+                song.calculate()
+                song.save()
+            performance.calculate()
+            performance.save()
+        self.calculate()
+        self.save()
+        return
+
+
     # def clean(self):
     #     if self.singers.count() > 4:
     #         raise ValidationError('There can not be more than four persons in a quartet.')
