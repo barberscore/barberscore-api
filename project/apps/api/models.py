@@ -4102,6 +4102,10 @@ class Song(TimeStampedModel):
         unique_together = (
             ('performance', 'num',),
         )
+        ordering = [
+            'performance',
+            'num',
+        ]
 
     class JSONAPIMeta:
         resource_name = "song"
