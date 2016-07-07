@@ -2768,7 +2768,24 @@ class Performer(TimeStampedModel):
             tot=models.Avg('songs__scores__points')
         )['tot']
 
-    def notify_performer(self, subject, body):
+    def notify_performer(self, subject=None, body=None):
+        subject = """Nashville Beta Test CSA"""
+        body = """
+        Thank you for participating in our Beta Test.  Please remember
+        these are *unofficial* results that might be inaccurate or incomplete.
+        Your official CSA will be distributed as per the announced process.
+
+        Please don't share them outside your group (including posting to
+        social media, etc.)  We are still in the early stages of this process
+        and are not ready to share outside the beta.
+
+        Finally, we'd appreciate your feedback!  Please reply to this email,
+        or contact David Mills with your thoughts and opinions.
+
+        Here is the link to your CSA:
+
+        {0}
+        """.format(self.csa_pdf.url)
         payload = {
             'subject': subject,
             'body': body,
