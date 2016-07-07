@@ -20,7 +20,11 @@ doc_api = docraptor.DocApi()
 def print_oss(message):
     id = message.content.get('id')
     session = Session.objects.get(id=id)
-    performers = session.performers.order_by(
+    performers = session.performers.filter(
+        rank__gt=20,
+    ).exclude(
+        rank=None,
+    ).order_by(
         '-total_points',
         '-sng_points',
         '-mus_points',
