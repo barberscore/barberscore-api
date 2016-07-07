@@ -46,6 +46,16 @@ from django.core.validators import (
 )
 from django.db import models
 
+from django.conf import settings
+
+import docraptor
+from django.core.files.base import ContentFile
+from django.template.loader import get_template
+
+docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
+# docraptor.configuration.debug = True
+doc_api = docraptor.DocApi()
+
 # Local
 from .managers import (
     ScoreManager,
@@ -2676,11 +2686,51 @@ class Performer(TimeStampedModel):
     #         raise ValidationError('There can not be more than four persons in a quartet.')
 
     # Methods
+    # def print_csa(self):
+    #     payload = {
+    #         'id': str(self.id),
+    #     }
+    #     Channel('print-csa').send(payload)
+
     def print_csa(self):
-        payload = {
-            'id': str(self.id),
-        }
-        Channel('print-csa').send(payload)
+        performer = self
+        contestants = performer.contestants.all()
+        performances = performer.performances.order_by(
+            'round__kind',
+        )
+        judges = performer.session.judges.exclude(
+            category=Judge.CATEGORY.admin,
+        ).order_by(
+            'category',
+            'kind',
+            'slot',
+        )
+        foo = get_template('csa.html')
+        template = foo.render(context={
+            'performer': performer,
+            'performances': performances,
+            'judges': judges,
+            'contestants': contestants,
+        })
+        try:
+            create_response = doc_api.create_doc({
+                "test": True,
+                "document_content": template,
+                "name": "csa-{0}.pdf".format(id),
+                "document_type": "pdf",
+            })
+            f = ContentFile(create_response)
+            performer.csa_pdf.save(
+                "{0}.pdf".format(id),
+                f
+            )
+            performer.save()
+            log.info("PDF created and saved to instance")
+        except docraptor.rest.ApiException as error:
+            log.error(error)
+            log.error(error.message)
+            log.error(error.response_body)
+        return "Complete"
 
     # Permissions
     @staticmethod
