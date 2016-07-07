@@ -44,7 +44,9 @@
     </style>
   </head>
   <body>
-  <br><br>
+    <section>
+    <img src="https://s3-us-west-1.amazonaws.com/barberscore/static/images/bhs_logo.png">
+    </section>
     <section>
       <h3>
         Contestant Scoring Analysis
@@ -59,12 +61,15 @@
       <h3>
         {{performer.group.name}}
       </h3>
-      <h4>
+      <h5>
         {{performer.session.convention.name}}
-      </h4>
-      <h4>
+      </h5>
+      <h5>
         International {{performer.session.get_kind_display}} Contest
-      </h4>
+      </h5>
+      <h5>
+        July 6 - 9, 2016
+      </h5>
       {# <h4> #}
         {# {{performer.session.convention.date.upper|date:'%B %d, %Y'}} #}
       {# </h4> #}

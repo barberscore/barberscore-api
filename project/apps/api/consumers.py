@@ -97,7 +97,6 @@ def print_csa(message):
     except docraptor.rest.ApiException as error:
         log.error(error)
         log.error(error.message)
-        log.error(error.code)
         log.error(error.response_body)
     return
 
