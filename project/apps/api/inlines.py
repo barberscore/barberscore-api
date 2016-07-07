@@ -235,16 +235,17 @@ class SongInline(admin.TabularInline):
     model = Song
     fields = [
         'num',
+        'submission',
         'mus_points',
         'prs_points',
         'sng_points',
     ]
-    readonly_fields = [
-        'num',
-    ]
     ordering = (
         'num',
     )
+    raw_id_fields = [
+        'submission',
+    ]
     show_change_link = True
     extra = 0
     can_delete = False

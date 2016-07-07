@@ -960,6 +960,7 @@ class SubmissionAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
+        'performer',
     )
 
     raw_id_fields = (

@@ -4262,8 +4262,9 @@ class Submission(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0}".format(
-            self.id.hex,
+        self.name = u"{0} {1}".format(
+            self.chart.title,
+            self.id.hex[:8],
         )
         super(Submission, self).save(*args, **kwargs)
 
