@@ -15,6 +15,7 @@ from .models import (
     Performer,
     Person,
     Round,
+    Session,
     Submission,
     Venue,
 )
@@ -49,6 +50,15 @@ class ConventionFilterBackend(DRYPermissionFiltersBase):
             return queryset.all()
         else:
             return queryset.filter(status__gte=Round.STATUS.listed)
+
+
+class SessionFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
+        else:
+            return queryset.filter(status__gte=Session.STATUS.listed)
 
 
 class ListFilter(Filter):

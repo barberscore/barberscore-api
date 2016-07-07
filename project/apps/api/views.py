@@ -18,6 +18,7 @@ from .filters import (
     PerformerFilter,
     PersonFilter,
     RoundFilterBackend,
+    SessionFilterBackend,
     SubmissionFilter,
     VenueFilter,
 )
@@ -364,6 +365,7 @@ class SessionViewSet(
         'contests',
     )
     permission_classes = (DRYPermissions,)
+    filter_backends = (SessionFilterBackend,)
     serializer_class = SessionSerializer
     resource_name = "session"
 
