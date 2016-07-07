@@ -150,7 +150,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
         'contest',
     ).order_by(
         'contest',
-        '-total_points',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = ContestantSerializer
@@ -225,7 +224,9 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
-    queryset = Organization.objects.order_by(
+    queryset = Organization.objects.prefetch_related(
+        'awards',
+    ).order_by(
         'kind',
         'level',
         'name',
@@ -242,6 +243,7 @@ class PerformanceViewSet(
     queryset = Performance.objects.select_related(
         'round',
         'performer',
+        'slot',
     ).prefetch_related(
         'songs',
     ).order_by(
