@@ -16,6 +16,7 @@
       @page {
           margin: 30px;
           background: #ffffff;
+          size: US-Tabloid
       }
       /* layout */
       @font-face {
@@ -27,7 +28,7 @@
       }
       html td {
           /*font-family: 'Open Sans', sans-serif;*/
-          font-size: 6pt;
+          font-size: 8pt;
       }
       #breakit { page-break-before: always }
       /*Condensed override*/
@@ -64,15 +65,7 @@
         </thead>
         <tbody>
           {% for performer in performers %}
-            {% if performer.rank == 6 %}
-              <tr id='breakit'>
-            {% elif performer.rank == 11 %}
-              <tr id='breakit'>
-            {% elif performer.rank == 21 %}
-              <tr id='breakit'>
-            {% else %}
-              <tr>
-            {% endif %}
+            <tr>
               <td>{{performer.rank}}</td>
               <td>
                 <strong>{{performer.group.name}}</strong> ({{performer.representing.short_name}})<br>
