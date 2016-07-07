@@ -2769,7 +2769,7 @@ class Performer(TimeStampedModel):
         )['tot']
 
     def notify_performer(self, subject=None, body=None):
-        subject = """Nashville Beta Test CSA"""
+        subject = """Nashville Beta Test CSA for {0}""".format(self.group.name)
         body = """
         Thank you for participating in our Beta Test.  Please remember
         these are *unofficial* results that might be inaccurate or incomplete.

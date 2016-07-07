@@ -436,6 +436,18 @@ def calculate_session(session):
     return
 
 
+def calculate_performer(performer):
+    for performance in performer.performances.all():
+        for song in performance.songs.all():
+            song.calculate()
+            song.save()
+        performance.calculate()
+        performance.save()
+    performer.calculate()
+    performer.save()
+    return
+
+
 def complete_convention(convention):
     for session in convention.sessions.all():
         finish_session(session)
