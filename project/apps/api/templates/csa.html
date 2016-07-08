@@ -33,6 +33,21 @@
           /*font-family: 'Open Sans', sans-serif;*/
           font-size: 8pt;
       }
+
+      .shortp {
+        line-height: 10px;
+      }
+
+      .smallj {
+        font-size: 10px;
+      }
+
+      section {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+      }
       #breakit { page-break-before: always }
       /*Condensed override*/
       .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
@@ -55,28 +70,49 @@
       <h4>
         Contestant Scoring Analysis
       </h4>
+      {% comment %}
       <ul class='list-unstyled'>
         <li>{{performer.session.convention.name}}</li>
         <li>International {{performer.session.get_kind_display}} Contest</li>
         <li>July 6 - 9, 2016</li>
       </ul>
+      {% endcomment %}
+      {# <ul class='list-unstyled'> #}
+      <div class='shortp'>
+        <p><small>{{performer.session.convention.name}}</small></p>
+        <p><small>International {{performer.session.get_kind_display}} Contest</small></p>
+        <p><small>July 6 - 9, 2016</small></p>
+      </div>
+      {# </ul> #}
       {# {% if performer.picture %} #}
         {# <img src="{{performer.picture.url}}" height="100"> #}
       {# {% endif %} #}
+      </section>
+      <section>
       <h3>
         {{performer.group.name}}
       </h3>
+      <h4>
+        {% if performer.group.chapter.name %}
+          {{performer.group.chapter.name}}
+        {% endif %}
+      </h4>
       {# <h4> #}
         {# {{performer.session.convention.date.upper|date:'%B %d, %Y'}} #}
       {# </h4> #}
       <h4>
         Overall Rank: {{performer.rank}}
       </h4>
-      <ul class='list-unstyled'>
-        {% for performance in performances %}
-          <li>{{performance.round.get_kind_display}} Rank: {{performance.rank}}</li>
-        {% endfor %}
-      </ul>
+      <h6>
+        Men on Stage: {{performer.men}}
+      </h6>
+      {% comment %}
+        <ul class='list-unstyled'>
+          {% for performance in performances %}
+            <li>{{performance.round.get_kind_display}} Rank: {{performance.rank}}</li>
+          {% endfor %}
+        </ul>
+      {% endcomment %}
     </section>
     {% comment %}
     <section>
@@ -102,9 +138,9 @@
               <td>
                 {% for performance in performances %}
                   {% for song in performance.songs.all %}
-                    {{song.submission.chart.title|truncatewords_html:8}}<br>
+                    {{song.submission.chart.title|truncatewords_html:10}}<br>
                   {% endfor %}
-                  <em>{{performance.round.get_kind_display}}</em><br>
+                  {# <em>{{performance.round.get_kind_display}}</em><br> #}
                 {% endfor %}
                 <strong>Total</strong>
               </td>
@@ -113,7 +149,7 @@
                   {% for song in performance.songs.all %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.mus_points}} ({{performance.mus_score|floatformat:1}})</em><br>
+                  {# <em>{{performance.mus_points}} ({{performance.mus_score|floatformat:1}})</em><br> #}
                 {% endfor %}
                 <strong>{{performer.mus_points}} ({{performer.mus_score|floatformat:1}})</strong><br>
               </td>
@@ -122,7 +158,7 @@
                   {% for song in performance.songs.all %}
                     {{song.prs_points}} ({{song.prs_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.prs_points}} ({{performance.prs_score|floatformat:1}})</em><br>
+                  {# <em>{{performance.prs_points}} ({{performance.prs_score|floatformat:1}})</em><br> #}
                 {% endfor %}
                 <strong>{{performer.prs_points}} ({{performer.prs_score|floatformat:1}})</strong><br>
               </td>
@@ -131,7 +167,7 @@
                   {% for song in performance.songs.all %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.sng_points}} ({{performance.sng_score|floatformat:1}})</em><br>
+                  {# <em>{{performance.sng_points}} ({{performance.sng_score|floatformat:1}})</em><br> #}
                 {% endfor %}
                 <strong>{{performer.sng_points}} ({{performer.sng_score|floatformat:1}})</strong><br>
               </td>
@@ -140,7 +176,7 @@
                   {% for song in performance.songs.all %}
                     {{song.total_points}} ({{song.total_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.total_points}} ({{performance.total_score|floatformat:1}})</em><br>
+                  {# <em>{{performance.total_points}} ({{performance.total_score|floatformat:1}})</em><br> #}
                 {% endfor %}
                 <strong>{{performer.total_points}} ({{performer.total_score|floatformat:1}})</strong><br>
               </td>
@@ -186,6 +222,7 @@
         </table>
       </div>
     </section>
+    {% comment %}
     <section>
       <h4>Judges</h4>
         <ul class='list-unstyled'>
@@ -193,6 +230,25 @@
             <li>{{judge.designation}}: {{judge.certification.person.common_name}}</li>
           {% endfor %}
         </ul>
+    </section>
+    {% endcomment %}
+    <section>
+      <h4>Judges</h4>
+      {% regroup judges by get_category_display as judge_list %}
+      <table class='table'>
+        {% for category in judge_list %}
+        <tbody>
+            <div>
+            <tr>
+            <td class='smallj'><strong>{{category.grouper}}</strong></td>
+            {% for judge in category.list %}
+              <td class='smallj'>{{judge.designation}}: {{judge.certification.person.common_name}}</td>
+            {% endfor %}
+          </tr>
+          </div>
+        {% endfor %}
+        </tbody>
+      </table>
     </section>
     <section>
       <small>
