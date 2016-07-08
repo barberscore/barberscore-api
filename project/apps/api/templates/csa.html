@@ -103,9 +103,20 @@
       <h4>
         Overall Rank: {{performer.rank}}
       </h4>
-      <h6>
-        Men on Stage: {{performer.men}}
-      </h6>
+      {% comment %}
+      <div class='shortp'>
+        <p><small>Representing: {{performer.representing.long_name}}</small></p>
+        <p><small>Directed By: {{performer.director}}&nbsp;{{performer.codirector|default_if_none:""}}</small></p>
+        <p><small>Men on Stage: {{performer.men}}</small></p>
+        <p><small>Order of Appearance: {{performances.first.num}}</small></p>
+      </div>
+      {% endcomment %}
+      <ul class='list-unstyled'>
+        <li>Representing: {{performer.representing.long_name}}</li>
+        <li>Directed By: {{performer.director}}&nbsp;{{performer.codirector|default_if_none:""}}</li>
+        <li>Men on Stage: {{performer.men}}</li>
+        <li>Order of Appearance: {{performances.first.num}}</li>
+      </ul>
       {% comment %}
         <ul class='list-unstyled'>
           {% for performance in performances %}
