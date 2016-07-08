@@ -983,6 +983,9 @@ class SlotAdmin(admin.ModelAdmin):
         'onstage',
         'round',
     ]
+    readonly_fields = [
+        'name',
+    ]
 
 
 @admin.register(Song)
