@@ -986,6 +986,9 @@ class SlotAdmin(admin.ModelAdmin):
     readonly_fields = [
         'name',
     ]
+    raw_id_fields = [
+        'round',
+    ]
 
 
 @admin.register(Song)
