@@ -139,7 +139,7 @@ class JudgeInline(admin.TabularInline):
         'category',
         'kind',
         'session',
-        'num',
+        'slot',
     ]
     raw_id_fields = [
         'certification',
