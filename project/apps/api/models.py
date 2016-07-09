@@ -3906,9 +3906,7 @@ class Session(TimeStampedModel):
 
     def print_oss(self):
         session = self
-        performers = session.performers.filter(
-            rank__gt=10,
-        ).exclude(
+        performers = session.performers.exclude(
             rank=None,
         ).order_by(
             '-total_points',
