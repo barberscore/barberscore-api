@@ -2692,7 +2692,6 @@ class Performer(TimeStampedModel):
         self.save()
         return
 
-
     # def clean(self):
     #     if self.singers.count() > 4:
     #         raise ValidationError('There can not be more than four persons in a quartet.')
@@ -3982,6 +3981,16 @@ class Session(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        session = self
+        for performer in session.performers.all():
+            for performance in performer.performances.all():
+                for song in performance.songs.all():
+                    song.calculate()
+                    song.save()
+                performance.calculate()
+                performance.save()
+            performer.calculate()
+            performer.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
