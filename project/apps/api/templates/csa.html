@@ -101,7 +101,7 @@
         {# {{performer.session.convention.date.upper|date:'%B %d, %Y'}} #}
       {# </h4> #}
       <h4>
-        Overall Rank: {{performer.rank}}
+        Overall Rank: {{performer.rank|default_if_none:""}}
       </h4>
       {% comment %}
       <div class='shortp'>
