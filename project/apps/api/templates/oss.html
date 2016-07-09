@@ -78,7 +78,7 @@
               <td>{{performer.rank}}</td>
               <td>
                 <strong>{{performer.group.name}}</strong> ({{performer.representing.short_name}})<br>
-                {% if performer.group.kind == 'Chorus' %}{{performer.group.chapter.name}}{% endif %}
+                {% if performer.group.chapter %}{{performer.group.chapter.name}}{% endif %}
               </td>
               <td>
                 {% for performance in performer.performances.all %}
