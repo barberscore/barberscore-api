@@ -86,7 +86,7 @@
       {# {% endif %} #}
       </section>
       <section>
-    <img class='pull-right' src="{{performer.picture.url}}" height='100'>
+    <img class='pull-right' src="{{performer.picture.url}}">
     {# <img class='img-thumbnail pull-right' src="https://s3-us-west-1.amazonaws.com/barberscore/static/images/foo.jpg" > #}
       <h3>
         {{performer.group.name}}
@@ -97,10 +97,10 @@
       <h4>
         Overall Rank: {{performer.rank|default_if_none:""}}
       </h4>
-      <ul class='list-unstyled'>
-        <li>Representing: {{performer.representing.long_name}}&nbsp;District</li>
-        <li>Members: {{performer.tenor.person.name}}, {{performer.lead.person.name}}, {{performer.baritone.person.name}} & {{performer.bass.person.name}}</li>
-      </ul>
+      <div class='shortp'>
+        <p><small>Representing: {{performer.representing.long_name}}&nbsp;District</small></p>
+        <p><small>Members: {{performer.tenor.person.name}}, {{performer.lead.person.name}}, {{performer.baritone.person.name}} & {{performer.bass.person.name}}</small></p>
+      </div>
       {% comment %}
 
         <ul class='list-unstyled'>
