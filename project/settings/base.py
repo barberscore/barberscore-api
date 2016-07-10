@@ -162,7 +162,7 @@ CORS_ORIGIN_ALLOW_ALL = False
 # }
 
 #  Docraptor
-# DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
+DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
 
 # Applications
 INSTALLED_APPS = (
