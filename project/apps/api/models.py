@@ -28,6 +28,7 @@ from ranking import Ranking
 from timezone_field import TimeZoneField
 
 # Django
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
@@ -2186,12 +2187,10 @@ class Performance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    slot = models.ForeignKey(
+    slot = models.OneToOneField(
         'Slot',
-        unique=True,
         null=True,
         blank=True,
-        related_name='performances',
         on_delete=models.SET_NULL,
     )
 
@@ -3021,6 +3020,13 @@ class Person(TimeStampedModel):
     )
 
     # FKs
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     organization = TreeForeignKey(
         'Organization',
         null=True,
@@ -3836,6 +3842,14 @@ class Session(TimeStampedModel):
     def completed_rounds(self):
         return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
 
+    def authorized_users(self):
+        User = get_user_model()
+        users = User.objects.filter(
+            person__certifications__judges__session=self,
+            person__certifications__judges__category=self.judges.model.CATEGORY.admin,
+        )
+        return users
+
     # Legacy
     scoresheet_pdf = models.FileField(
         help_text="""
@@ -3956,10 +3970,12 @@ class Session(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user in self.authorized_users():
+            return True
         return False
 
     # Transitions

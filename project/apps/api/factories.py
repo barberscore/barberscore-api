@@ -38,7 +38,6 @@ from apps.api.models import (
     Venue,
 )
 
-
 # Users
 class UserFactory(DjangoModelFactory):
     class Meta:
@@ -237,7 +236,7 @@ class ChapterFactory(DjangoModelFactory):
 
 
 class DistrictChapterFactory(ChapterFactory):
-    name = 'Test District Chapter'
+    name = Faker('city')
     organization = SubFactory(
         'apps.api.factories.DistrictFactory',
     )
@@ -359,9 +358,9 @@ class PersonFactory(DjangoModelFactory):
 class VenueFactory(DjangoModelFactory):
     class Meta:
         model = Venue
-    location = 'Nashville Convention Center'
-    city = 'Nashville'
-    state = 'Tennessee'
+    location = Faker('company')
+    city = Faker('city')
+    state = Faker('state')
     timezone = pytz.timezone('US/Central')
 
 
@@ -492,24 +491,25 @@ class RoleFactory(DjangoModelFactory):
     person = SubFactory(
         'apps.api.factories.PersonFactory'
     )
-    part = Role.PART.tenor
     group = SubFactory(
         'apps.api.factories.QuartetFactory'
     )
 
 
-class TenorFactory(DjangoModelFactory):
-    class Meta:
-        model = Role
-
-    status = Role.STATUS.active
-    person = SubFactory(
-        'apps.api.factories.PersonFactory'
-    )
+class TenorFactory(RoleFactory):
     part = Role.PART.tenor
-    group = SubFactory(
-        'apps.api.factories.QuartetFactory'
-    )
+
+
+class LeadFactory(RoleFactory):
+    part = Role.PART.lead
+
+
+class BaritoneFactory(RoleFactory):
+    part = Role.PART.baritone
+
+
+class BassFactory(RoleFactory):
+    part = Role.PART.bass
 
 
 # Conventions

@@ -5,6 +5,7 @@ from drf_extra_fields.fields import (
     DateRangeField,
     DateTimeRangeField,
 )
+from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
 
 # Django
@@ -726,6 +727,7 @@ class ScoreSerializer(serializers.ModelSerializer):
 
 class SessionSerializer(serializers.ModelSerializer):
     date = DateTimeRangeField()
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Session
@@ -745,6 +747,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'contests',
             'judges',
             'rounds',
+            'permissions',
         )
 
 

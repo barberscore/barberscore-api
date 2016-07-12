@@ -1,6 +1,7 @@
 # Third-Party
 # from nose import with_setup
 import pytz
+import random
 from datetime import datetime
 from factory.fuzzy import (
     FuzzyInteger,
@@ -22,6 +23,7 @@ from django.db import IntegrityError
 # # First-Party
 from apps.api.factories import (
     AdminFactory,
+    PublicFactory,
     AwardFactory,
     CertificationFactory,
     ChapterFactory,
@@ -32,12 +34,22 @@ from apps.api.factories import (
     ConventionFactory,
     DistrictFactory,
     GroupFactory,
-    InternationalChorusAwardFactory,
     InternationalFactory,
     InternationalQuartetAwardFactory,
+    InternationalChorusAwardFactory,
+    InternationalSeniorsAwardFactory,
+    InternationalYouthAwardFactory,
+    DistrictQuartetAwardFactory,
+    DistrictChorusAwardFactory,
+    DistrictSeniorsAwardFactory,
+    DistrictYouthAwardFactory,
+    DistrictChapterFactory,
     JudgeFactory,
     MemberFactory,
     OfficialAdminCertificationFactory,
+    OfficialMusicCertificationFactory,
+    OfficialPresentationCertificationFactory,
+    OfficialSingingCertificationFactory,
     OrganizationFactory,
     PerformanceFactory,
     PerformerFactory,
@@ -53,8 +65,12 @@ from apps.api.factories import (
     SubmissionFactory,
     SummerConventionFactory,
     TenorFactory,
+    LeadFactory,
+    BaritoneFactory,
+    BassFactory,
     VenueFactory,
 )
+
 from apps.api.models import (
     Award,
     Certification,
@@ -200,9 +216,97 @@ def build_admin():
     return
 
 
+def build_primitives():
+    AdminFactory()
+    user = PublicFactory(
+        email='joe@barberscore.com',
+        name='Joe District',
+    )
+    representative = PersonFactory(
+        name='Joe District',
+        user=user,
+    )
+    bhs = InternationalFactory()
+    district = DistrictFactory(
+        parent=bhs,
+        representative=representative,
+    )
+    InternationalQuartetAwardFactory(
+        organization=bhs,
+    )
+    InternationalChorusAwardFactory(
+        organization=bhs,
+    )
+    InternationalSeniorsAwardFactory(
+        organization=bhs,
+    )
+    InternationalYouthAwardFactory(
+        organization=bhs,
+    )
+    DistrictQuartetAwardFactory(
+        organization=district,
+    )
+    DistrictChorusAwardFactory(
+        organization=district,
+    )
+    DistrictSeniorsAwardFactory(
+        organization=district,
+    )
+    DistrictYouthAwardFactory(
+        organization=district,
+    )
+
+    OfficialAdminCertificationFactory.create_batch(5)
+    OfficialMusicCertificationFactory.create_batch(10)
+    OfficialPresentationCertificationFactory.create_batch(10)
+    OfficialSingingCertificationFactory.create_batch(10)
+
+    chapters = DistrictChapterFactory.create_batch(
+        20,
+        organization=district,
+    )
+
+    for chapter in chapters:
+        ChorusFactory(
+            organization=district,
+            chapter=chapter,
+        )
+
+    persons = PersonFactory.create_batch(
+        1000,
+        chapter=random.choice(chapters),
+    )
+    quartets = QuartetFactory.create_batch(100)
+    for quartet in quartets:
+        TenorFactory(
+            group=quartet,
+            person=persons.pop()
+        )
+        LeadFactory(
+            group=quartet,
+            person=persons.pop()
+        )
+        BaritoneFactory(
+            group=quartet,
+            person=persons.pop()
+        )
+        BassFactory(
+            group=quartet,
+            person=persons.pop()
+        )
+
+    ChartFactory.create_batch(200)
+    VenueFactory.create_batch(10)
+    return
+
+
 def build_international():
     build_admin()
-    venue = VenueFactory()
+    venue = VenueFactory(
+        location='Bridgestone Arena',
+        city='Nashville',
+        state='Tennessee',
+    )
     bhs = InternationalFactory()
     district_organization = DistrictFactory(
         parent=bhs,

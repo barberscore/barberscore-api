@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^api-token-refresh/', views.refresh_jwt_token),
     url(r'^api-token-verify/', views.verify_jwt_token),
     url(r'^api/', include('apps.api.urls')),
+    url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
