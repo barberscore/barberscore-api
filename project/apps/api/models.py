@@ -400,6 +400,16 @@ class Certification(TimeStampedModel):
         blank=True,
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     person = models.ForeignKey(
         'Person',
@@ -1225,6 +1235,16 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     is_prelims = models.BooleanField(
         default=False,
     )
@@ -1415,6 +1435,16 @@ class Group(TimeStampedModel):
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
         null=True,
         blank=True,
     )
@@ -1927,6 +1957,16 @@ class Organization(MPTTModel, TimeStampedModel):
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
         null=True,
         blank=True,
     )
@@ -2945,6 +2985,16 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     location = models.CharField(
         help_text="""
             The geographical location of the resource.""",
@@ -3213,6 +3263,16 @@ class Role(TimeStampedModel):
         blank=True,
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     group = models.ForeignKey(
         'Group',
@@ -3338,6 +3398,16 @@ class Round(TimeStampedModel):
     date = DateTimeRangeField(
         help_text="""
             The active dates of the resource.""",
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
         null=True,
         blank=True,
     )
@@ -3807,6 +3877,16 @@ class Session(TimeStampedModel):
     date = DateTimeRangeField(
         help_text="""
             The active dates of the session.""",
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
         null=True,
         blank=True,
     )
