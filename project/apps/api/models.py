@@ -393,6 +393,20 @@ class Certification(TimeStampedModel):
         choices=CATEGORY,
     )
 
+    KIND = Choices(
+        (10, 'chair', 'Chair'),
+        (20, 'past', 'Past Chair'),
+        (30, 'specialist', 'Specialist'),
+        (40, 'certified', 'Certified'),
+        (50, 'candidate', 'Candidate'),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+        null=True,
+        blank=True
+    )
+
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",

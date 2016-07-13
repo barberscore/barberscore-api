@@ -318,6 +318,7 @@ class CertificationSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'category',
+            'kind',
             'status',
             'date',
             'start_date',
