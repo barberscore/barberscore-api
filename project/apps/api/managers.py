@@ -9,13 +9,15 @@ from django.db.models import (
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, password, **kwargs):
+    def create_user(self, email, password=None, **kwargs):
         user = self.model(
             email=self.normalize_email(email),
-            is_active=True,
+            is_active=False,
             **kwargs
         )
-        user.set_password(password)
+        if password:
+            user.set_password(password)
+            user.is_active = True
         user.save(using=self._db)
 
         return user
