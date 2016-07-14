@@ -4645,7 +4645,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                (lambda x: str(x)),
+                (lambda x: unicode(x).encode('utf-8')),
                 filter(
                     None, [
                         self.name,
