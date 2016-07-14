@@ -309,7 +309,6 @@ class AwardSerializer(serializers.ModelSerializer):
 
 
 class CertificationSerializer(serializers.ModelSerializer):
-    date = DateRangeField()
 
     class Meta:
         model = Certification
@@ -320,7 +319,6 @@ class CertificationSerializer(serializers.ModelSerializer):
             'category',
             'kind',
             'status',
-            'date',
             'start_date',
             'end_date',
             'person',

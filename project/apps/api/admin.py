@@ -149,7 +149,8 @@ class CertificationAdmin(admin.ModelAdmin):
         'name',
         'status',
         'category',
-        'date',
+        'start_date',
+        'end_date',
         'person',
     ]
 
@@ -157,7 +158,8 @@ class CertificationAdmin(admin.ModelAdmin):
         'name',
         'status',
         'category',
-        'date',
+        'start_date',
+        'end_date',
         'person',
     ]
 
