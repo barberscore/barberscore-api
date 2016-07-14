@@ -4603,6 +4603,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         editable=False,
     )
 
+    nomen = models.TextField(
+        max_length=255,
+        unique=True,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+        unique=True,
+    )
+
     email = models.EmailField(
         unique=True,
         help_text="""Your email address will be your username.""",
@@ -4628,12 +4642,26 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     # Internals
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                (lambda x: str(x)),
+                filter(
+                    None, [
+                        self.name,
+                        self.bhs_id,
+                    ]
+                )
+            )
+        )
+        super(User, self).save(*args, **kwargs)
+
     class JSONAPIMeta:
         resource_name = "user"
 
     # Methods
     def get_full_name(self):
-        return self.email
+        return self.nomen
 
     def get_short_name(self):
-        return self.email
+        return self.name
