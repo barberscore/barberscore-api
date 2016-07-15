@@ -91,7 +91,8 @@ class GroupFilter(filters.FilterSet):
     class Meta:
         model = Group
         fields = {
-            'chap_name': '__all__',
+            'name': '__all__',
+            'nomen': '__all__',
             'kind': '__all__',
             'status': '__all__',
         }
@@ -132,7 +133,7 @@ class PersonFilter(filters.FilterSet):
         ]
         fields = {
             'name': '__all__',
-            'id_name': '__all__',
+            'nomen': '__all__',
             # 'certifications__category': '__all__',
         }
 

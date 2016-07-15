@@ -475,6 +475,14 @@ class Chapter(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.TextField(
+        max_length=255,
+        unique=True,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         help_text="""
             The name of the resource.""",
@@ -591,6 +599,20 @@ class Chapter(TimeStampedModel):
 
     def __unicode__(self):
         return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                (lambda x: unicode(x).encode('utf-8')),
+                filter(
+                    None, [
+                        self.name,
+                        self.code,
+                    ]
+                )
+            )
+        )
+        super(Chapter, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1563,12 +1585,6 @@ class Group(TimeStampedModel):
     )
 
     # Denormalizations
-    chap_name = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        editable=False,
-    )
 
     # Legacy
     bhs_id = models.IntegerField(
@@ -2976,6 +2992,14 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.TextField(
+        max_length=255,
+        unique=True,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         help_text="""
             The name of the resource.""",
@@ -3148,13 +3172,6 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    id_name = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
     full_name = models.CharField(
         max_length=255,
         blank=True,
@@ -3208,6 +3225,17 @@ class Person(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                (lambda x: unicode(x).encode('utf-8')),
+                filter(
+                    None, [
+                        self.name,
+                        self.bhs_id,
+                    ]
+                )
+            )
+        )
         name = HumanName(self.name)
         if name.nickname:
             self.common_name = " ".join(filter(None, [
@@ -3217,10 +3245,6 @@ class Person(TimeStampedModel):
             ]))
         else:
             self.common_name = u'{0}'.format(self.name)
-        self.id_name = " ".join(filter(None, [
-            str(self.bhs_id),
-            self.name,
-        ]))
         self.formal_name = " ".join(filter(None, [
             u'{0}'.format(name.first),
             u'{0}'.format(name.last),
