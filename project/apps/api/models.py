@@ -1189,6 +1189,11 @@ class Convention(TimeStampedModel):
         default=False,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     venue = models.ForeignKey(
         'Venue',
@@ -1234,11 +1239,6 @@ class Convention(TimeStampedModel):
     )
 
     # Legacy
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     stix_name = models.CharField(
         max_length=200,
         null=True,
@@ -1376,6 +1376,12 @@ class Group(TimeStampedModel):
         default=False,
     )
 
+    bhs_id = models.IntegerField(
+        unique=True,
+        null=True,
+        blank=True,
+    )
+
     date = DateRangeField(
         help_text="""
             The active dates of the resource.""",
@@ -1484,60 +1490,6 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # Denormalizations
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        unique=True,
-        null=True,
-        blank=True,
-    )
-
-    bhs_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_chapter_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_chapter_code = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_website = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_district = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_location = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_contact = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_phone = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_expiration = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "group"
@@ -1629,6 +1581,11 @@ class Judge(TimeStampedModel):
         blank=True,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -1660,12 +1617,6 @@ class Judge(TimeStampedModel):
             self.slot,
         )
         return designation
-
-    # Legacy
-    bhs_panel_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
 
     # Internals
     class Meta:
@@ -1981,6 +1932,12 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
+    bhs_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
     # FKs
     parent = TreeForeignKey(
         'self',
@@ -1997,78 +1954,6 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-    )
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-    )
-
-    bhs_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_chapter_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_group_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_chapter_code = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_website = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_district = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_venue = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_address = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_city = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_state = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_zip = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_contact = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_phone = models.CharField(
-        max_length=255,
-        blank=True,
     )
 
     # Internals
@@ -2549,6 +2434,11 @@ class Performer(TimeStampedModel):
         null=True,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # Denormalized
     seed = models.IntegerField(
         help_text="""
@@ -2617,12 +2507,6 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         editable=False,
-    )
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     # Internals
@@ -3085,6 +2969,12 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+        unique=True,
+    )
+
     # FKs
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -3151,37 +3041,6 @@ class Person(TimeStampedModel):
         blank=True,
         editable=False,
         default='',
-    )
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-        unique=True,
-    )
-
-    bhs_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_city = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_state = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_phone = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_email = models.EmailField(
-        blank=True,
     )
 
     # Internals
@@ -3289,6 +3148,11 @@ class Role(TimeStampedModel):
         blank=True,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     group = models.ForeignKey(
         'Group',
@@ -3300,18 +3164,6 @@ class Role(TimeStampedModel):
         'Person',
         related_name='roles',
         on_delete=models.CASCADE,
-    )
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_file = models.FileField(
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
     )
 
     # Internals
@@ -3933,6 +3785,14 @@ class Session(TimeStampedModel):
         related_name='primary_session',
     )
 
+    scoresheet_pdf = models.FileField(
+        help_text="""
+            The historical PDF OSS.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
     # Denormalizations
     @property
     def completed_rounds(self):
@@ -3945,31 +3805,6 @@ class Session(TimeStampedModel):
             person__certifications__judges__category=self.judges.model.CATEGORY.admin,
         )
         return users
-
-    # Legacy
-    scoresheet_pdf = models.FileField(
-        help_text="""
-            The historical PDF OSS.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    entry_form = models.FileField(
-        help_text="""
-            The cj20 entry form.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    song_list = models.FileField(
-        help_text="""
-            The cj20 song list.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
 
     # FKs
     convention = models.ForeignKey(

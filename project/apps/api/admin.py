@@ -702,12 +702,6 @@ class PersonAdmin(admin.ModelAdmin):
         'email',
         'phone',
         'picture',
-        # 'bhs_id',
-        'bhs_name',
-        'bhs_city',
-        'bhs_state',
-        'bhs_phone',
-        'bhs_email',
     )
 
     fields = (
@@ -724,7 +718,6 @@ class PersonAdmin(admin.ModelAdmin):
         'bhs_id',
         'picture',
         'description',
-        'bhs_city',
         'notes',
     )
 
@@ -897,7 +890,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'convention',
         'kind',
-        'song_list',
         # 'size',
         # 'championship_rounds',
     ]
