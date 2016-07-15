@@ -3016,6 +3016,23 @@ class Person(TimeStampedModel):
         default=STATUS.new,
     )
 
+    KIND = Choices(
+        (0, 'new', 'New',),
+        (10, 'member', 'Member',),
+        (20, 'nonmember', 'Non-Member',),
+        (30, 'associate', 'Associate',),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+        default=KIND.new,
+    )
+
+    bhs_status = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     birth_date = models.DateField(
         null=True,
         blank=True,
@@ -3036,6 +3053,58 @@ class Person(TimeStampedModel):
     end_date = models.DateField(
         null=True,
         blank=True,
+    )
+
+    dues_thru = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    mon = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    spouse = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    address1 = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+    )
+
+    address2 = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+    )
+
+    city = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+    )
+
+    state = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+    )
+
+    country = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+    )
+
+    postal_code = models.CharField(
+        max_length=20,
+        blank=True,
+        default='',
     )
 
     location = models.CharField(
