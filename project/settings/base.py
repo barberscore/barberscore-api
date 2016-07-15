@@ -76,7 +76,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'bugsnag.django.middleware.BugsnagMiddleware',
+    'bugsnag.django.middleware.BugsnagMiddleware',
 )
 
 # Templating
@@ -155,11 +155,11 @@ JWT_AUTH = {
 CORS_ORIGIN_ALLOW_ALL = False
 
 #  Bugsnag
-# BUGSNAG = {
-#     "api_key": get_env_variable("BUGSNAG_API_KEY"),
-#     "project_root": PROJECT_ROOT,
-#     "notify_release_stages": ["production", ],
-# }
+BUGSNAG = {
+    "api_key": get_env_variable("BUGSNAG_API_KEY"),
+    "project_root": PROJECT_ROOT,
+    "notify_release_stages": ["production", ],
+}
 
 #  Docraptor
 DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
