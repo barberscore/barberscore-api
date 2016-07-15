@@ -479,8 +479,6 @@ class Chapter(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-        null=True,
-        blank=True,
     )
 
     name = models.CharField(
@@ -1426,8 +1424,6 @@ class Group(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-        null=True,
-        blank=True,
     )
 
     name = models.CharField(
@@ -2996,8 +2992,6 @@ class Person(TimeStampedModel):
         max_length=255,
         unique=True,
         editable=False,
-        null=True,
-        blank=True,
     )
 
     name = models.CharField(
