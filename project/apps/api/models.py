@@ -1400,6 +1400,14 @@ class Group(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.TextField(
+        max_length=255,
+        unique=True,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         help_text="""
             The name of the resource.""",
@@ -1622,24 +1630,17 @@ class Group(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.kind == self.KIND.chorus:
-            try:
-                self.chap_name = u"{0} {1} - {2} {3}".format(
-                    self.chapter.code,
-                    self.chapter.name,
-                    self.name,
-                    self.bhs_id,
+        self.nomen = " ".join(
+            map(
+                (lambda x: unicode(x).encode('utf-8')),
+                filter(
+                    None, [
+                        self.name,
+                        self.bhs_id,
+                    ]
                 )
-            except AttributeError:
-                self.chap_name = u"{0} {1}".format(
-                    self.name,
-                    self.bhs_id,
-                )
-        else:
-            self.chap_name = u"{0} {1}".format(
-                self.name,
-                self.bhs_id,
             )
+        )
         super(Group, self).save(*args, **kwargs)
 
     # Permissions
@@ -1826,6 +1827,16 @@ class Member(TimeStampedModel):
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -4607,13 +4618,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255,
         unique=True,
         editable=False,
-        null=True,
-        blank=True,
     )
 
     bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
         unique=True,
     )
 
