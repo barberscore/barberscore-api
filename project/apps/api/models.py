@@ -285,19 +285,6 @@ class Award(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # Denormalization
-    LEVEL = Choices(
-        (0, 'international', "International"),
-        (1, 'district', "District"),
-        (2, 'division', "Division"),
-        (3, 'chapter', "Chapter"),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-        editable=False,
-    )
-
     # Internals
     class Meta:
         unique_together = (
@@ -319,7 +306,6 @@ class Award(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.level = self.organization.level
         if self.is_improved:
             most_improved = 'Most-Improved'
         else:
@@ -399,19 +385,12 @@ class Certification(TimeStampedModel):
         (30, 'specialist', 'Specialist'),
         (40, 'certified', 'Certified'),
         (50, 'candidate', 'Candidate'),
+        (60, 'retired', 'Retired'),
+        (70, 'lapsed', 'Lapsed'),
     )
 
     kind = models.IntegerField(
         choices=KIND,
-        null=True,
-        blank=True
-    )
-
-    date = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
-        null=True,
-        blank=True,
     )
 
     start_date = models.DateField(
@@ -485,7 +464,6 @@ class Chapter(TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=200,
-        blank=False,
     )
 
     STATUS = Choices(
@@ -510,6 +488,10 @@ class Chapter(TimeStampedModel):
         null=True,
     )
 
+    bhs_id = models.IntegerField(
+        unique=True,
+    )
+
     # FKs
     organization = TreeForeignKey(
         'Organization',
@@ -517,78 +499,6 @@ class Chapter(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-    )
-
-    bhs_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_chapter_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_group_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_chapter_code = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_website = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_district = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_venue = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_address = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_city = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_state = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_zip = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_contact = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    bhs_phone = models.CharField(
-        max_length=255,
-        blank=True,
     )
 
     # Internals
@@ -873,11 +783,12 @@ class Contest(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    champion = models.CharField(
-        max_length=255,
+    champ = models.ForeignKey(
+        'Performer',
+        related_name='contests',
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        editable=False,
     )
 
     # Legacy

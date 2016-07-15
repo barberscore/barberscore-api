@@ -67,7 +67,6 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'is_manual',
         'organization',
-        'level',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -108,7 +107,7 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'is_manual',
-        'level',
+        'organization__level',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -122,7 +121,6 @@ class AwardAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'name',
-        'level',
     ]
 
     search_fields = [
@@ -130,7 +128,7 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'level',
+        'organization__level',
         'organization__name',
         'kind',
         '-is_primary',
