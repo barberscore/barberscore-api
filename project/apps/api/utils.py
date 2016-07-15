@@ -38,87 +38,43 @@ from .models import (
 log = logging.getLogger(__name__)
 
 
-def import_members(path):
+def import_db_members(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
         for row in rows:
+            if int(row[2]) != 2:
+                continue
+            chapter_id = int(row[0])
+            person_id = int(row[1])
             try:
                 p = Person.objects.get(
-                    bhs_id=row[0],
+                    bhs_id=person_id,
                 )
-                p.bhs_id = int(row[0])
-                p.bhs_name = row[1]
-                p.bhs_city = row[2]
-                p.bhs_state = row[3]
-                p.bhs_phone = row[4]
-                p.bhs_email = row[5]
-                p.save()
             except Person.DoesNotExist:
-                try:
-                    p = Person.objects.get(
-                        name__iexact=row[1],
-                    )
-                    p.bhs_id = int(row[0])
-                    p.bhs_name = row[1]
-                    p.bhs_city = row[2]
-                    p.bhs_state = row[3]
-                    p.bhs_phone = row[4]
-                    p.bhs_email = row[5]
-                    p.save()
-                except Person.MultipleObjectsReturned:
-                    log.error('DUPLICATE: {0}'.format(row[0]))
-                except Person.DoesNotExist:
-                    try:
-                        p = Person.objects.get(
-                            common_name__iexact=row[1],
-                        )
-                        p.bhs_id = int(row[0])
-                        p.bhs_name = row[1]
-                        p.bhs_city = row[2]
-                        p.bhs_state = row[3]
-                        p.bhs_phone = row[4]
-                        p.bhs_email = row[5]
-                        p.save()
-                    except Person.MultipleObjectsReturned:
-                        log.error('DUPLICATE: {0}'.format(row[0]))
-                    except Person.DoesNotExist:
-                        try:
-                            p = Person.objects.get(
-                                full_name__iexact=row[1],
-                            )
-                            p.bhs_id = int(row[0])
-                            p.bhs_name = row[1]
-                            p.bhs_city = row[2]
-                            p.bhs_state = row[3]
-                            p.bhs_phone = row[4]
-                            p.bhs_email = row[5]
-                            p.save()
-                        except Person.MultipleObjectsReturned:
-                            log.error('DUPLICATE: {0}'.format(row[0]))
-                        except Person.DoesNotExist:
-                            try:
-                                p = Person.objects.get(
-                                    formal_name__iexact=row[1],
-                                )
-                                p.bhs_id = int(row[0])
-                                p.bhs_name = row[1]
-                                p.bhs_city = row[2]
-                                p.bhs_state = row[3]
-                                p.bhs_phone = row[4]
-                                p.bhs_email = row[5]
-                                p.save()
-                            except Person.DoesNotExist:
-                                Person.objects.create(
-                                    name=unidecode(row[1]),
-                                    bhs_id=row[0],
-                                    bhs_name=row[1],
-                                    bhs_city=row[2],
-                                    bhs_state=row[3],
-                                    bhs_phone=row[4],
-                                    bhs_email=row[5],
-                                )
-
+                print 'No Person'
+                continue
+            try:
+                c = Chapter.objects.get(
+                    bhs_id=chapter_id,
+                )
+            except Chapter.DoesNotExist:
+                print 'No Chapter {0}'.format(chapter_id)
+                continue
+            start = arrow.get(row[3]).date()
+            end = arrow.get(row[4]).date()
+            try:
+                mem, create = Member.objects.get_or_create(
+                    person=p,
+                    chapter=c,
+                )
+            except IntegrityError:
+                print "Integrity {0} - {1}".format(c, p)
+                continue
+            mem.start_date = start
+            mem.end_date = end
+            mem.save()
+    return "Finished"
 
 def import_db_persons(path):
     with open(path) as f:
@@ -1186,6 +1142,88 @@ def import_awards(convention):
     for award in awards:
         Award.objects.get_or_create(**award)
     return
+
+
+def import_members(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                p = Person.objects.get(
+                    bhs_id=row[0],
+                )
+                p.bhs_id = int(row[0])
+                p.bhs_name = row[1]
+                p.bhs_city = row[2]
+                p.bhs_state = row[3]
+                p.bhs_phone = row[4]
+                p.bhs_email = row[5]
+                p.save()
+            except Person.DoesNotExist:
+                try:
+                    p = Person.objects.get(
+                        name__iexact=row[1],
+                    )
+                    p.bhs_id = int(row[0])
+                    p.bhs_name = row[1]
+                    p.bhs_city = row[2]
+                    p.bhs_state = row[3]
+                    p.bhs_phone = row[4]
+                    p.bhs_email = row[5]
+                    p.save()
+                except Person.MultipleObjectsReturned:
+                    log.error('DUPLICATE: {0}'.format(row[0]))
+                except Person.DoesNotExist:
+                    try:
+                        p = Person.objects.get(
+                            common_name__iexact=row[1],
+                        )
+                        p.bhs_id = int(row[0])
+                        p.bhs_name = row[1]
+                        p.bhs_city = row[2]
+                        p.bhs_state = row[3]
+                        p.bhs_phone = row[4]
+                        p.bhs_email = row[5]
+                        p.save()
+                    except Person.MultipleObjectsReturned:
+                        log.error('DUPLICATE: {0}'.format(row[0]))
+                    except Person.DoesNotExist:
+                        try:
+                            p = Person.objects.get(
+                                full_name__iexact=row[1],
+                            )
+                            p.bhs_id = int(row[0])
+                            p.bhs_name = row[1]
+                            p.bhs_city = row[2]
+                            p.bhs_state = row[3]
+                            p.bhs_phone = row[4]
+                            p.bhs_email = row[5]
+                            p.save()
+                        except Person.MultipleObjectsReturned:
+                            log.error('DUPLICATE: {0}'.format(row[0]))
+                        except Person.DoesNotExist:
+                            try:
+                                p = Person.objects.get(
+                                    formal_name__iexact=row[1],
+                                )
+                                p.bhs_id = int(row[0])
+                                p.bhs_name = row[1]
+                                p.bhs_city = row[2]
+                                p.bhs_state = row[3]
+                                p.bhs_phone = row[4]
+                                p.bhs_email = row[5]
+                                p.save()
+                            except Person.DoesNotExist:
+                                Person.objects.create(
+                                    name=unidecode(row[1]),
+                                    bhs_id=row[0],
+                                    bhs_name=row[1],
+                                    bhs_city=row[2],
+                                    bhs_state=row[3],
+                                    bhs_phone=row[4],
+                                    bhs_email=row[5],
+                                )
 
 
 def import_prelims(path):
