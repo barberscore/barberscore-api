@@ -1140,8 +1140,6 @@ class Convention(TimeStampedModel):
 
     kind = models.IntegerField(
         choices=KIND,
-        null=True,
-        blank=True,
     )
 
     SEASON = Choices(
@@ -1168,9 +1166,6 @@ class Convention(TimeStampedModel):
 
     year = models.IntegerField(
         choices=YEAR_CHOICES,
-        null=True,
-        blank=True,
-        # editable=False,
     )
 
     date = DateTimeRangeField(
@@ -1210,8 +1205,6 @@ class Convention(TimeStampedModel):
         help_text="""
             The organization hosting the convention.""",
         related_name='conventions',
-        null=True,
-        blank=True,
         on_delete=models.CASCADE,
     )
 
