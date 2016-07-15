@@ -23,6 +23,7 @@ from .models import (
     Convention,
     Group,
     Judge,
+    Member,
     Organization,
     Performance,
     Performer,
@@ -76,50 +77,96 @@ def import_db_members(path):
             mem.save()
     return "Finished"
 
+
 def import_db_persons(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            created = False
-            try:
-                p = Person.objects.get(
-                    bhs_id=int(row[0])
-                )
-            except Person.DoesNotExist:
-                first_name = row[4].strip()
-                nick_name = row[5].strip()
-                if nick_name:
-                    if nick_name != first_name:
-                        nick_name = "({0})".format(nick_name)
-                middle_name = row[6].strip()
-                last_name = row[7].strip()
-                suffix_name = row[8].strip()
-                prefix_name = row[2].strip()
-                email = row[9].strip()
-                name = " ".join(filter(None, [
-                    prefix_name,
-                    first_name,
-                    middle_name,
-                    last_name,
-                    suffix_name,
-                    nick_name,
-                ]))
-                try:
-                    birth_date = arrow.get(row[31]).date()
-                except arrow.parser.ParserError:
-                    birth_date = None
-                try:
-                    p, created = Person.objects.get_or_create(
-                        bhs_id=int(row[0]),
-                        name=unidecode(name),
-                        email=email,
-                        birth_date=birth_date,
+            bhs_id = int(row[0])
+            first_name = row[4].strip()
+            nick_name = row[5].strip()
+            if nick_name:
+                if nick_name != first_name:
+                    nick_name = "({0})".format(nick_name)
+            else:
+                nick_name = None
+            middle_name = row[6].strip()
+            last_name = row[7].strip()
+            suffix_name = row[8].strip()
+            prefix_name = row[2].strip()
+            name = " ".join(
+                map(
+                    (lambda x: unidecode(x)),
+                    filter(
+                        None, [
+                            prefix_name,
+                            first_name,
+                            middle_name,
+                            last_name,
+                            suffix_name,
+                            nick_name,
+                        ]
                     )
-                except UnicodeDecodeError:
-                    continue
-            print p, created
+                )
+            )
+            email = row[9].strip()
+            kind = int(row[62])
+            bhs_status = int(row[34])
+            spouse = row[38].strip()
+            try:
+                mon = int(row[78])
+            except ValueError:
+                mon = None
+            address1 = row[13].strip()
+            address2 = row[14].strip()
+            city = row[16].strip()
+            state = row[17].strip()
+            postal_code = row[18].strip()
+            country = row[19].strip()
+            if country == 'United States':
+                phone = "+1{0}{1}".format(
+                    str(row[22]),
+                    str(row[23]),
+                )
+            else:
+                phone = None
+            try:
+                start_date = arrow.get(row[58]).date()
+            except arrow.parser.ParserError:
+                start_date = None
+            try:
+                birth_date = arrow.get(row[31]).date()
+            except arrow.parser.ParserError:
+                birth_date = None
+            try:
+                dues_thru = arrow.get(row[36]).date()
+            except arrow.parser.ParserError:
+                dues_thru = None
+            defaults = {
+                'name': name,
+                'email': email,
+                'kind': kind,
+                'status': bhs_status,
+                'spouse': spouse,
+                'mon': mon,
+                'address1': address1,
+                'address2': address2,
+                'city': city,
+                'state': state,
+                'postal_code': postal_code,
+                'country': country,
+                'phone': phone,
+                'start_date': start_date,
+                'birth_date': birth_date,
+                'dues_thru': dues_thru,
+            }
+            person, created = Person.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            print person, created
 
 
 def import_db_quartets(path):
