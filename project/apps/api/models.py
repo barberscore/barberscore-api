@@ -1789,8 +1789,6 @@ class Organization(MPTTModel, TimeStampedModel):
 
     level = models.IntegerField(
         choices=LEVEL,
-        null=True,
-        blank=True,
     )
 
     KIND = Choices(
@@ -1815,8 +1813,6 @@ class Organization(MPTTModel, TimeStampedModel):
         help_text="""
             The kind of organization.""",
         choices=KIND,
-        null=True,
-        blank=True,
     )
 
     short_name = models.CharField(
@@ -1842,13 +1838,6 @@ class Organization(MPTTModel, TimeStampedModel):
     )
 
     spots = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    date = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
         null=True,
         blank=True,
     )
