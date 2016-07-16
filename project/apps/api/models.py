@@ -4046,8 +4046,6 @@ class Song(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        blank=True,
-        null=True,
     )
 
     is_parody = models.BooleanField(
