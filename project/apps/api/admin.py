@@ -741,7 +741,8 @@ class RoleAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
-        'date',
+        'start_date',
+        'end_date',
         'group',
         'person',
         'part',
@@ -751,7 +752,8 @@ class RoleAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'status',
-        'date',
+        'start_date',
+        'end_date',
         'group',
         'person',
         'part',

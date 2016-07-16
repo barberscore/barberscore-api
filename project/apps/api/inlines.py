@@ -276,13 +276,14 @@ class RoleInline(admin.TabularInline):
         'person',
         'part',
         'status',
-        'date',
+        'start_date',
+        'end_date',
     ]
     raw_id_fields = [
         'person',
     ]
     ordering = (
-        'date',
+        'start_date',
     )
     show_change_link = True
     extra = 0

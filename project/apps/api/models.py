@@ -2775,7 +2775,6 @@ class Person(TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=200,
-        blank=False,
     )
 
     STATUS = Choices(
@@ -2811,13 +2810,6 @@ class Person(TimeStampedModel):
     )
 
     birth_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    date = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
         null=True,
         blank=True,
     )
@@ -3120,13 +3112,6 @@ class Role(TimeStampedModel):
         choices=PART,
     )
 
-    date = DateRangeField(
-        help_text="""
-            Active Dates""",
-        null=True,
-        blank=True,
-    )
-
     start_date = models.DateField(
         null=True,
         blank=True,
@@ -3156,6 +3141,11 @@ class Role(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('group', 'person', 'start_date', 'end_date'),
+        )
+
     class JSONAPIMeta:
         resource_name = "role"
 
@@ -3252,13 +3242,6 @@ class Round(TimeStampedModel):
         default=2,
     )
 
-    date = DateTimeRangeField(
-        help_text="""
-            The active dates of the resource.""",
-        null=True,
-        blank=True,
-    )
-
     start_date = models.DateField(
         null=True,
         blank=True,
@@ -3302,7 +3285,7 @@ class Round(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('session', 'kind',),
+            ('session', 'kind', 'num',),
         )
 
     class JSONAPIMeta:
@@ -3643,6 +3626,11 @@ class Score(TimeStampedModel):
     objects = ScoreManager()
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('song', 'judge',)
+        )
+
     class JSONAPIMeta:
         resource_name = "score"
 
@@ -3727,15 +3715,8 @@ class Session(TimeStampedModel):
         help_text="""
             The kind of session.  Generally this will be either quartet or chorus,
             with the exception being International and Midwinter which hold exclusive
-            Collegiate and Senior sessions respectively.""",
+            Youth and Senior sessions respectively.""",
         choices=KIND,
-    )
-
-    date = DateTimeRangeField(
-        help_text="""
-            The active dates of the session.""",
-        null=True,
-        blank=True,
     )
 
     start_date = models.DateField(
@@ -3957,7 +3938,6 @@ class Slot(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        default=1,
     )
 
     location = models.CharField(
