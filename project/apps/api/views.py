@@ -80,7 +80,6 @@ class AwardViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'contests',
     ).order_by(
-        'level',
         'organization',
         '-is_primary',
         'kind',
@@ -168,7 +167,7 @@ class ConventionViewSet(
     ).prefetch_related(
         'sessions',
     ).order_by(
-        'date',
+        'start_date',
         'organization__name',
     )
     permission_classes = (DRYPermissions,)
@@ -404,7 +403,7 @@ class SlotViewSet(viewsets.ModelViewSet):
     queryset = Slot.objects.select_related(
         'round',
     ).prefetch_related(
-        'performances',
+        'performance',
     ).order_by(
         'round',
         'num',

@@ -295,13 +295,9 @@ class AwardSerializer(serializers.ModelSerializer):
             'is_novice',
             'idiom',
             'threshold',
-            'level',
             'organization',
             'contests',
         )
-        read_only_fields = [
-            'level',
-        ]
 
 
 class CertificationSerializer(serializers.ModelSerializer):
@@ -771,7 +767,7 @@ class SlotSerializer(serializers.ModelSerializer):
             'status',
             'num',
             'round',
-            'performances',
+            'performance',
             'photo',
             'arrive',
             'depart',
