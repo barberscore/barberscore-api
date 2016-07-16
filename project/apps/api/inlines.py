@@ -74,7 +74,7 @@ class ContestInline(admin.TabularInline):
         'is_qualifier',
     ]
     ordering = (
-        'award__level',
+        'award__organization__level',
         'award__organization__name',
         'award__kind',
         '-award__is_primary',

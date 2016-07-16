@@ -883,8 +883,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'primary',
         'current',
         'cursor',
-        'entry_form',
-        'song_list',
         # 'year',
         # # 'size',
         'scoresheet_pdf',
