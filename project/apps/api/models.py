@@ -773,7 +773,7 @@ class Contest(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    champ = models.ForeignKey(
+    champion = models.ForeignKey(
         'Performer',
         related_name='contests',
         on_delete=models.SET_NULL,

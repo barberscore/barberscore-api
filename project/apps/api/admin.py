@@ -263,7 +263,7 @@ class ContestAdmin(admin.ModelAdmin):
         'status',
         'award',
         'session',
-        'champ',
+        'champion',
         'cycle',
         'is_qualifier',
         'stix_num',
@@ -300,7 +300,7 @@ class ContestAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'award',
         'session',
-        'champ',
+        'champion',
     ]
 
     search_fields = [

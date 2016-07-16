@@ -362,7 +362,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'status',
             'cycle',
             'is_qualifier',
-            'champ',
+            'champion',
             'contestants',
             'award',
             'session',
