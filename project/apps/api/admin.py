@@ -748,7 +748,6 @@ class RoleAdmin(admin.ModelAdmin):
         'group',
         'person',
         'part',
-        'bhs_file',
     ]
 
     list_display = [
