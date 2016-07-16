@@ -354,7 +354,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'level',
         'season',
-        'date',
+        'start_date',
+        'end_date',
         # 'location',
     )
 
@@ -367,7 +368,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'bhs_id',
         'is_prelims',
         'risers',
-        'date',
+        'start_date',
+        'end_date',
         'year',
         'level',
         'season',
@@ -795,7 +797,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         ('session', 'kind',),
         'mt',
-        'date',
+        'start_date',
+        'end_date',
     ]
 
     readonly_fields = [
@@ -876,7 +879,8 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'convention',
         'kind',
-        'date',
+        'start_date',
+        'end_date',
         'primary',
         'current',
         'cursor',

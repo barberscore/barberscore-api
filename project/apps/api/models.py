@@ -35,8 +35,6 @@ from django.contrib.auth.models import (
 )
 from django.contrib.postgres.fields import (
     ArrayField,
-    DateRangeField,
-    DateTimeRangeField,
     FloatRangeField,
     IntegerRangeField,
 )
@@ -1168,13 +1166,6 @@ class Convention(TimeStampedModel):
         choices=YEAR_CHOICES,
     )
 
-    date = DateTimeRangeField(
-        help_text="""
-            The scheduled time frame for the convention.""",
-        null=True,
-        blank=True,
-    )
-
     start_date = models.DateField(
         null=True,
         blank=True,
@@ -1378,13 +1369,6 @@ class Group(TimeStampedModel):
 
     bhs_id = models.IntegerField(
         unique=True,
-        null=True,
-        blank=True,
-    )
-
-    date = DateRangeField(
-        help_text="""
-            The active dates of the resource.""",
         null=True,
         blank=True,
     )

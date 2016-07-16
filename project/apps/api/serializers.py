@@ -1,10 +1,6 @@
 # Third-Party
 import pytz
 import six
-from drf_extra_fields.fields import (
-    DateRangeField,
-    DateTimeRangeField,
-)
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
 
@@ -394,8 +390,6 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
-    date = DateTimeRangeField()
-
     class Meta:
         model = Convention
         fields = (
@@ -409,7 +403,8 @@ class ConventionSerializer(serializers.ModelSerializer):
             'level',
             'is_prelims',
             'year',
-            'date',
+            'start_date',
+            'end_date',
             'venue',
             'organization',
             'drcj',
@@ -418,7 +413,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    date = DateRangeField()
 
     class Meta:
         model = Group
@@ -428,7 +422,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'name',
             'name',
             'status',
-            'date',
             'start_date',
             'end_date',
             'location',
@@ -484,7 +477,6 @@ class MemberSerializer(serializers.ModelSerializer):
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    date = DateRangeField()
 
     class Meta:
         model = Organization
@@ -495,7 +487,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'status',
             'level',
             'kind',
-            'date',
             'start_date',
             'end_date',
             'spots',
@@ -633,7 +624,6 @@ class PerformerSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    date = DateRangeField()
 
     class Meta:
         model = Person
@@ -643,7 +633,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'name',
             'nomen',
             'status',
-            'date',
             'start_date',
             'end_date',
             'location',
@@ -678,7 +667,6 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
-    date = DateRangeField()
 
     class Meta:
         model = Role
@@ -690,14 +678,12 @@ class RoleSerializer(serializers.ModelSerializer):
             'group',
             'person',
             'part',
-            'date',
             'start_date',
             'end_date',
         )
 
 
 class RoundSerializer(serializers.ModelSerializer):
-    date = DateTimeRangeField()
 
     class Meta:
         model = Round
@@ -707,7 +693,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
-            'date',
             'start_date',
             'end_date',
             'num',
@@ -738,7 +723,6 @@ class ScoreSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    date = DateTimeRangeField()
     permissions = DRYPermissionsField()
 
     class Meta:
@@ -750,7 +734,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'convention',
-            'date',
             'start_date',
             'end_date',
             'num_rounds',
