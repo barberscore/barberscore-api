@@ -760,14 +760,6 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    # Denormalization
-    champion = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -840,7 +832,6 @@ class Contest(TimeStampedModel):
         #             '-mus_points',
         #             '-prs_points',
         #         ).first().performer.group.name
-        self.champion = None
         super(Contest, self).save(*args, **kwargs)
 
     # Permissions
@@ -2495,9 +2486,13 @@ class Performer(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.session.convention.kind:
+            kind = str(self.session.convention.get_kind_display())
+            if self.session.convention.kind == self.session.convention.KIND.international:
+                kind = None
         self.name = " ".join(filter(None, [
             self.session.convention.organization.name,
-            str(self.session.convention.get_kind_display()),
+            kind,
             self.session.convention.get_season_display(),
             str(self.session.convention.year),
             self.session.get_kind_display(),
@@ -3783,6 +3778,8 @@ class Session(TimeStampedModel):
         self.organization = self.convention.organization
         if self.convention.kind:
             kind = str(self.convention.get_kind_display())
+            if self.convention.kind == self.convention.KIND.international:
+                kind = None
         else:
             kind = None
         self.name = " ".join(filter(None, [
