@@ -729,6 +729,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
+            'title',
+            'arranger',
+            'source',
+            'is_medley',
+            'is_parody',
             'performer',
         )
 
