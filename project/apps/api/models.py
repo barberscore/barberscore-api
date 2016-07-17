@@ -1411,6 +1411,7 @@ class Group(TimeStampedModel):
     # FKs
     chapter = models.ForeignKey(
         'Chapter',
+        help_text="""Chapter is reserved for Choruses only.  Do NOT add chapter for quartet""",
         related_name='groups',
         null=True,
         blank=True,
