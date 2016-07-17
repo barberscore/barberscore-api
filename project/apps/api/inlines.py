@@ -312,6 +312,11 @@ class RoundInline(admin.TabularInline):
 class SubmissionInline(admin.TabularInline):
     model = Submission
     fields = [
+        'title',
+        'arranger',
+        'source',
+        'is_medley',
+        'is_parody',
         'performer',
     ]
 
