@@ -313,10 +313,7 @@ class SubmissionInline(admin.TabularInline):
     model = Submission
     fields = [
         'performer',
-        'chart',
     ]
-    raw_id_fields = [
-        'chart',
-    ]
+
     show_change_link = True
     extra = 0

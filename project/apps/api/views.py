@@ -10,7 +10,6 @@ from rest_framework import viewsets
 # Local
 from .filters import (
     CertificationFilter,
-    ChartFilter,
     CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
@@ -26,7 +25,6 @@ from .models import (
     Award,
     Certification,
     Chapter,
-    Chart,
     Contest,
     Contestant,
     Convention,
@@ -50,7 +48,6 @@ from .serializers import (
     AwardSerializer,
     CertificationSerializer,
     ChapterSerializer,
-    ChartSerializer,
     ContestantSerializer,
     ContestSerializer,
     ConventionSerializer,
@@ -115,16 +112,6 @@ class ChapterViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     serializer_class = ChapterSerializer
     resource_name = "chapter"
-
-
-class ChartViewSet(viewsets.ModelViewSet):
-    queryset = Chart.objects.prefetch_related(
-        'submissions',
-    )
-    permission_classes = (DRYPermissions,)
-    serializer_class = ChartSerializer
-    filter_class = ChartFilter
-    resource_name = "chart"
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -374,7 +361,6 @@ class SessionViewSet(
 class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.select_related(
         'performer',
-        'chart',
     ).prefetch_related(
         'songs',
     )

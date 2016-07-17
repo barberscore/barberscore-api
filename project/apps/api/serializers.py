@@ -12,7 +12,6 @@ from .models import (
     Award,
     Certification,
     Chapter,
-    Chart,
     Contest,
     Contestant,
     Convention,
@@ -330,25 +329,6 @@ class ChapterSerializer(serializers.ModelSerializer):
             'organization',
             'groups',
             'members',
-        )
-
-
-class ChartSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Chart
-        fields = (
-            'id',
-            'url',
-            'name',
-            'status',
-            'title',
-            'arranger',
-            'composer',
-            'lyricist',
-            'is_generic',
-            'is_parody',
-            'is_medley',
-            'submissions',
         )
 
 
@@ -749,7 +729,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'chart',
             'performer',
         )
 
@@ -791,7 +770,6 @@ class SongSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'num',
-            'chart',
             'submission',
             'performance',
             'mus_points',

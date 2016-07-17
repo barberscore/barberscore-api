@@ -6,7 +6,6 @@ from apps.api.models import (
     Award,
     Certification,
     Chapter,
-    Chart,
     Contest,
     Contestant,
     Convention,
@@ -34,7 +33,6 @@ class Command(BaseCommand):
         # Primitives
         [i.save() for i in Award.objects.all()]
         [i.save() for i in Chapter.objects.all()]
-        [i.save() for i in Chart.objects.all()]
         [i.save() for i in Group.objects.all()]
         [i.save() for i in Organization.objects.all()]
         [i.save() for i in Person.objects.all()]

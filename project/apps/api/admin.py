@@ -28,7 +28,6 @@ from .models import (
     Award,
     Certification,
     Chapter,
-    Chart,
     Contest,
     Contestant,
     Convention,
@@ -176,42 +175,6 @@ class CertificationAdmin(admin.ModelAdmin):
 
     search_fields = [
         'name',
-    ]
-
-
-@admin.register(Chart)
-class ChartAdmin(admin.ModelAdmin):
-
-    fields = [
-        'name',
-        'status',
-        'title',
-        'arranger',
-        'composer',
-        'lyricist',
-        'bhs_id',
-        ('is_medley', 'is_generic',),
-    ]
-
-    list_display = [
-        'name',
-        'status',
-        'title',
-        'arranger',
-        'bhs_id',
-    ]
-
-    list_filter = [
-        'status',
-    ]
-
-    readonly_fields = [
-        'name',
-    ]
-
-    search_fields = [
-        'title',
-        'bhs_id',
     ]
 
 
@@ -943,14 +906,12 @@ class SubmissionAdmin(admin.ModelAdmin):
         'name',
         'status',
         'performer',
-        'chart',
     ]
 
     list_display = [
         'name',
         'status',
         'performer',
-        'chart',
     ]
 
     list_filter = (
@@ -960,7 +921,6 @@ class SubmissionAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'performer',
-        'chart',
     )
 
     readonly_fields = [

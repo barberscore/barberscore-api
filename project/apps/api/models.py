@@ -675,179 +675,6 @@ class Chapter(TimeStampedModel):
         return False
 
 
-class Chart(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New'),
-        (10, 'active', 'Active'),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    is_generic = models.BooleanField(
-        default=False,
-    )
-
-    is_parody = models.BooleanField(
-        default=False,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    title = models.CharField(
-        max_length=200,
-    )
-
-    arranger = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    composer = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    lyricist = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    # Legacy
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-        unique=True,
-    )
-
-    bhs_marketplace = models.IntegerField(
-        null=True,
-        blank=True,
-        unique=True,
-    )
-
-    bhs_published = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_songname = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_arranger = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_fee = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_songname = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_copyright_date = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    bhs_copyright_owner = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
-    bhs_difficulty = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DIFFICULTY
-    )
-
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    bhs_tempo = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=TEMPO,
-    )
-
-    bhs_medley = models.BooleanField(
-        default=False,
-    )
-
-    # Internals
-    class Meta:
-        unique_together = (
-            ('title', 'bhs_marketplace',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "chart"
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        if self.bhs_marketplace:
-            bhs_marketplace = "[{0}]".format(self.bhs_marketplace)
-        else:
-            bhs_marketplace = None
-        self.name = " ".join(filter(None, [
-            self.title,
-            bhs_marketplace,
-        ]))
-        super(Chart, self).save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
-
-
 class Contest(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -4181,14 +4008,6 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    chart = models.ForeignKey(
-        'Chart',
-        related_name='songs',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Denormalizations
     mus_points = models.IntegerField(
         null=True,
@@ -4410,18 +4229,7 @@ class Submission(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    chart = models.ForeignKey(
-        'Chart',
-        related_name='submissions',
-        on_delete=models.CASCADE,
-    )
-
     # Internals
-    class Meta:
-        unique_together = (
-            ('performer', 'chart',),
-        )
-
     class JSONAPIMeta:
         resource_name = "submission"
 
@@ -4430,7 +4238,7 @@ class Submission(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = u"{0} {1}".format(
-            self.chart.title,
+            self.title,
             self.id.hex[:8],
         )
         super(Submission, self).save(*args, **kwargs)

@@ -16,7 +16,6 @@ from apps.api.models import (
     Award,
     Certification,
     Chapter,
-    Chart,
     Contest,
     Contestant,
     Convention,
@@ -249,16 +248,6 @@ class AffiliateChapterFactory(ChapterFactory):
     )
 
 
-# Charts
-class ChartFactory(DjangoModelFactory):
-    class Meta:
-        model = Chart
-        django_get_or_create = (
-            'title',
-        )
-    title = Faker('company')
-
-
 # Groups
 class GroupFactory(DjangoModelFactory):
     class Meta:
@@ -462,9 +451,6 @@ class SubmissionFactory(DjangoModelFactory):
     status = Submission.STATUS.new
     performer = SubFactory(
         'apps.api.factories.PerformerFactory'
-    )
-    chart = SubFactory(
-        'apps.api.factories.ChartFactory'
     )
 
 

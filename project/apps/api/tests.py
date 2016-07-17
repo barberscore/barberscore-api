@@ -27,7 +27,6 @@ from apps.api.factories import (
     AwardFactory,
     CertificationFactory,
     ChapterFactory,
-    ChartFactory,
     ChorusFactory,
     ContestantFactory,
     ContestFactory,
@@ -295,7 +294,6 @@ def build_primitives():
             person=persons.pop()
         )
 
-    ChartFactory.create_batch(200)
     VenueFactory.create_batch(10)
     return
 

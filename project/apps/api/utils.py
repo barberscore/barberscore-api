@@ -17,7 +17,6 @@ from django.db.models import Q
 from .models import (
     Award,
     Chapter,
-    Chart,
     Contest,
     Contestant,
     Convention,
@@ -404,43 +403,6 @@ def import_db_directors(path):
         return
 
 
-def import_db_charts(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            if not row[0]:
-                continue
-            try:
-                c = Chart.objects.get(
-                    bhs_marketplace=int(row[0]),
-                )
-            except Chart.DoesNotExist:
-                bhs_marketplace = int(row[0])
-                try:
-                    bhs_published = arrow.get(row[1]).date()
-                except arrow.parser.ParserError:
-                    bhs_published = None
-                title = row[2]
-                arranger = row[3]
-                try:
-                    bhs_fee = float(row[4])
-                except ValueError:
-                    bhs_fee = None
-                is_parody = bool(row[8])
-                is_medley = bool(row[9])
-                c, created = Chart.objects.get_or_create(
-                    bhs_marketplace=bhs_marketplace,
-                    title=title,
-                    bhs_published=bhs_published,
-                    arranger=arranger,
-                    bhs_fee=bhs_fee,
-                    is_parody=is_parody,
-                    is_medley=is_medley,
-                )
-
-
 def import_db_performers(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
@@ -500,63 +462,63 @@ def import_db_performers(path):
             performer.save()
 
 
-def import_db_submissions(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        rows = [row for row in reader]
-        for row in rows:
-            bhs_id = int(row[0])
-            title = row[1].strip()
-            if row[2]:
-                bhs_marketplace = int(row[2])
-            else:
-                bhs_marketplace = None
-            if bhs_marketplace:
-                try:
-                    chart = Chart.objects.get(
-                        bhs_marketplace=bhs_marketplace,
-                    )
-                    log.info('Found chart by marketplace')
-                except Chart.DoesNotExist:
-                    log.info('No marketplace: {0} {1}'.format(bhs_id, title))
-                    chart = None
-            else:
-                chart = None
-            if not chart:
-                try:
-                    chart = Chart.objects.get(
-                        title=title,
-                        bhs_marketplace=None,
-                    )
-                    log.info('Found chart by title')
-                except Chart.DoesNotExist:
-                    if bhs_marketplace:
-                        chart = Chart.objects.create(
-                            title=title,
-                            bhs_marketplace=bhs_marketplace,
-                        )
-                        log.info("Create chart with id: {0} {1}".format(title, bhs_marketplace))
-                    else:
-                        chart = Chart.objects.create(
-                            title=title,
-                        )
-                        log.info("Create chart with no id: {0}".format(title))
-                except Chart.MultipleObjectsReturned:
-                    chart = Chart.objects.filter(
-                        title=title,
-                        bhs_marketplace=None,
-                    ).first()
-                    log.info("Pick first chart: {0}".format(title))
-            performers = Performer.objects.filter(
-                group__bhs_id=bhs_id,
-                session__convention__year=2016,
-            )
-            for performer in performers:
-                submission, created = Submission.objects.get_or_create(
-                    performer=performer,
-                    chart=chart,
-                )
-                print submission, created
+# def import_db_submissions(path):
+#     with open(path) as f:
+#         reader = csv.reader(f, skipinitialspace=True)
+#         rows = [row for row in reader]
+#         for row in rows:
+#             bhs_id = int(row[0])
+#             title = row[1].strip()
+#             if row[2]:
+#                 bhs_marketplace = int(row[2])
+#             else:
+#                 bhs_marketplace = None
+#             if bhs_marketplace:
+#                 try:
+#                     chart = Chart.objects.get(
+#                         bhs_marketplace=bhs_marketplace,
+#                     )
+#                     log.info('Found chart by marketplace')
+#                 except Chart.DoesNotExist:
+#                     log.info('No marketplace: {0} {1}'.format(bhs_id, title))
+#                     chart = None
+#             else:
+#                 chart = None
+#             if not chart:
+#                 try:
+#                     chart = Chart.objects.get(
+#                         title=title,
+#                         bhs_marketplace=None,
+#                     )
+#                     log.info('Found chart by title')
+#                 except Chart.DoesNotExist:
+#                     if bhs_marketplace:
+#                         chart = Chart.objects.create(
+#                             title=title,
+#                             bhs_marketplace=bhs_marketplace,
+#                         )
+#                         log.info("Create chart with id: {0} {1}".format(title, bhs_marketplace))
+#                     else:
+#                         chart = Chart.objects.create(
+#                             title=title,
+#                         )
+#                         log.info("Create chart with no id: {0}".format(title))
+#                 except Chart.MultipleObjectsReturned:
+#                     chart = Chart.objects.filter(
+#                         title=title,
+#                         bhs_marketplace=None,
+#                     ).first()
+#                     log.info("Pick first chart: {0}".format(title))
+#             performers = Performer.objects.filter(
+#                 group__bhs_id=bhs_id,
+#                 session__convention__year=2016,
+#             )
+#             for performer in performers:
+#                 submission, created = Submission.objects.get_or_create(
+#                     performer=performer,
+#                     chart=chart,
+#                 )
+#                 print submission, created
 
 
 def import_db_representing(path):
@@ -1894,70 +1856,70 @@ def extract_performances(convention):
     return
 
 
-def extract_songs(convention):
-    reader = csv.reader(convention.stix_file, skipinitialspace=True)
-    rows = [row for row in reader]
-    songs = []
-    for row in rows:
-        if len(row) == 0:
-            continue
-        if row[0].startswith("Session: "):
-            # first retrieve the performance
-            kind = get_session_kind(row[0])
-            session = convention.sessions.get(
-                kind=kind,
-            )
-            performer_text = unidecode(row[1].partition(":")[2].strip())
+# def extract_songs(convention):
+#     reader = csv.reader(convention.stix_file, skipinitialspace=True)
+#     rows = [row for row in reader]
+#     songs = []
+#     for row in rows:
+#         if len(row) == 0:
+#             continue
+#         if row[0].startswith("Session: "):
+#             # first retrieve the performance
+#             kind = get_session_kind(row[0])
+#             session = convention.sessions.get(
+#                 kind=kind,
+#             )
+#             performer_text = unidecode(row[1].partition(":")[2].strip())
 
-            if performer_text == '(Not Found)':
-                continue
+#             if performer_text == '(Not Found)':
+#                 continue
 
-            if session.kind == Session.KIND.chorus:
-                try:
-                    performer = session.performers.get(
-                        group__chapter__name__iexact=performer_text,
-                    )
-                except Performer.DoesNotExist:
-                    log.error("Can not find chorus: {0}".format(performer_text))
-                    continue
-            else:
-                try:
-                    performer = session.performers.get(
-                        group__name__iexact=performer_text,
-                    )
-                except Performer.DoesNotExist:
-                    log.error("Can not find quartet: {0}".format(performer_text))
-                    continue
-            order = int(row[3].partition(":")[2].strip())
-            kind = get_round_kind(row[0])
-            round = session.rounds.get(
-                kind=getattr(Round.KIND, kind),
-            )
-            performance = Performance.objects.get(
-                round=round,
-                performer=performer,
-                num=order,
-            )
+#             if session.kind == Session.KIND.chorus:
+#                 try:
+#                     performer = session.performers.get(
+#                         group__chapter__name__iexact=performer_text,
+#                     )
+#                 except Performer.DoesNotExist:
+#                     log.error("Can not find chorus: {0}".format(performer_text))
+#                     continue
+#             else:
+#                 try:
+#                     performer = session.performers.get(
+#                         group__name__iexact=performer_text,
+#                     )
+#                 except Performer.DoesNotExist:
+#                     log.error("Can not find quartet: {0}".format(performer_text))
+#                     continue
+#             order = int(row[3].partition(":")[2].strip())
+#             kind = get_round_kind(row[0])
+#             round = session.rounds.get(
+#                 kind=getattr(Round.KIND, kind),
+#             )
+#             performance = Performance.objects.get(
+#                 round=round,
+#                 performer=performer,
+#                 num=order,
+#             )
 
-            # Next, get the song number
-            number = int(row[4].partition(":")[2].strip())
+#             # Next, get the song number
+#             number = int(row[4].partition(":")[2].strip())
 
-            # Next, get the song title
-            title = unidecode(row[5].partition(":")[2].strip())
+#             # Next, get the song title
+#             title = unidecode(row[5].partition(":")[2].strip())
 
-            chart, created = Chart.objects.get_or_create(
-                title=title,
-                is_generic=True,
-            )
+#             chart, created = Chart.objects.get_or_create(
+#                 title=title,
+#                 is_generic=True,
+#             )
 
-            songs.append({
-                'performance': performance,
-                'order': number,
-                'chart': chart,
-            })
-    for song in songs:
-        Song.objects.get_or_create(**song)
-    return
+#             songs.append({
+#                 'performance': performance,
+#                 'order': number,
+#                 'chart': chart,
+#             })
+#     for song in songs:
+#         Song.objects.get_or_create(**song)
+#     return
 
 
 def extract_scores(convention):
@@ -2222,106 +2184,106 @@ def generate_cycle(year):
 #     return
 
 
-def import_submission(session):
-    reader = csv.reader(session.song_list, skipinitialspace=True)
-    rows = [row for row in reader]
-    for row in rows:
-        if session.kind == session.KIND.chorus:
-            try:
-                group = Group.objects.get(
-                    status=Group.STATUS.active,
-                    chapter__code=row[1],
-                )
-            except Group.DoesNotExist:
-                raise RuntimeError("No chorus for: {0}, {1}, {2}".format(row[1], row[2], session))
-            try:
-                men = int(row[10])
-            except ValueError:
-                log.info("Can not parse men: {0}, {1}".format(row[10], group))
-                men = None
-        else:
-            try:
-                group = Group.objects.get(
-                    bhs_id=row[1],
-                )
-            except Group.DoesNotExist:
-                try:
-                    group = Group.objects.create(
-                        bhs_id=int(row[1]),
-                        name=row[2].strip(),
-                        kind=Group.KIND.quartet,
-                    )
-                    print "Created {0}, {1}".format(row[1], row[2],)
-                except IntegrityError:
-                    group = Group.objects.create(
-                        bhs_id=int(row[1]),
-                        name="{0} {1}".format(
-                            row[2].strip(),
-                            row[1]
-                        ),
-                        kind=Group.KIND.quartet,
-                    )
-                    print "Check {0} with {1}".format(
-                        row[2].strip(),
-                        int(row[1]),
-                    )
-            men = 4
-        if row[11] == 'MEDLEY':
-            is_medley = True
-        else:
-            is_medley = False
-        if row[0] == '0':
-            oa = None
-        else:
-            oa = int(row[0])
-        if row[7][:1].isdigit():
-            bhs_id = int(row[7].partition(' -')[0])
-        else:
-            bhs_id = None
-        round = session.rounds.get(num=1)
-        performer, c = session.performers.get_or_create(
-            group=group,
-        )
-        if group.kind == Group.KIND.chorus:
-            try:
-                performer.organization = group.chapter.organization
-            except AttributeError:
-                pass
-        performer.men = men
-        performer.save()
-        contests = session.contests.all()
-        for contest in contests:
-            Contestant.objects.get_or_create(
-                performer=performer,
-                contest=contest,
-            )
-        try:
-            chart, c = Chart.objects.get_or_create(
-                title=row[6],
-                arranger=unidecode(row[8]),
-                is_medley=is_medley,
-                bhs_copyright_date=row[12],
-                bhs_copyright_owner=row[13],
-                bhs_id=bhs_id,
-                composer=unidecode(row[14]),
-                lyricist=unidecode(row[15]),
-            )
-        except IntegrityError:
-            print "Duplicate chart: {0} {1} {2} {3}".format(
-                row[6],
-                unidecode(row[8]),
-                bhs_id,
-                performer,
-            )
-        Submission.objects.get_or_create(
-            performer=performer,
-            chart=chart,
-        )
-        if oa:
-            performance, c = performer.performances.get_or_create(
-                round=round,
-                num=oa,
-            )
+# def import_submission(session):
+#     reader = csv.reader(session.song_list, skipinitialspace=True)
+#     rows = [row for row in reader]
+#     for row in rows:
+#         if session.kind == session.KIND.chorus:
+#             try:
+#                 group = Group.objects.get(
+#                     status=Group.STATUS.active,
+#                     chapter__code=row[1],
+#                 )
+#             except Group.DoesNotExist:
+#                 raise RuntimeError("No chorus for: {0}, {1}, {2}".format(row[1], row[2], session))
+#             try:
+#                 men = int(row[10])
+#             except ValueError:
+#                 log.info("Can not parse men: {0}, {1}".format(row[10], group))
+#                 men = None
+#         else:
+#             try:
+#                 group = Group.objects.get(
+#                     bhs_id=row[1],
+#                 )
+#             except Group.DoesNotExist:
+#                 try:
+#                     group = Group.objects.create(
+#                         bhs_id=int(row[1]),
+#                         name=row[2].strip(),
+#                         kind=Group.KIND.quartet,
+#                     )
+#                     print "Created {0}, {1}".format(row[1], row[2],)
+#                 except IntegrityError:
+#                     group = Group.objects.create(
+#                         bhs_id=int(row[1]),
+#                         name="{0} {1}".format(
+#                             row[2].strip(),
+#                             row[1]
+#                         ),
+#                         kind=Group.KIND.quartet,
+#                     )
+#                     print "Check {0} with {1}".format(
+#                         row[2].strip(),
+#                         int(row[1]),
+#                     )
+#             men = 4
+#         if row[11] == 'MEDLEY':
+#             is_medley = True
+#         else:
+#             is_medley = False
+#         if row[0] == '0':
+#             oa = None
+#         else:
+#             oa = int(row[0])
+#         if row[7][:1].isdigit():
+#             bhs_id = int(row[7].partition(' -')[0])
+#         else:
+#             bhs_id = None
+#         round = session.rounds.get(num=1)
+#         performer, c = session.performers.get_or_create(
+#             group=group,
+#         )
+#         if group.kind == Group.KIND.chorus:
+#             try:
+#                 performer.organization = group.chapter.organization
+#             except AttributeError:
+#                 pass
+#         performer.men = men
+#         performer.save()
+#         contests = session.contests.all()
+#         for contest in contests:
+#             Contestant.objects.get_or_create(
+#                 performer=performer,
+#                 contest=contest,
+#             )
+#         try:
+#             chart, c = Chart.objects.get_or_create(
+#                 title=row[6],
+#                 arranger=unidecode(row[8]),
+#                 is_medley=is_medley,
+#                 bhs_copyright_date=row[12],
+#                 bhs_copyright_owner=row[13],
+#                 bhs_id=bhs_id,
+#                 composer=unidecode(row[14]),
+#                 lyricist=unidecode(row[15]),
+#             )
+#         except IntegrityError:
+#             print "Duplicate chart: {0} {1} {2} {3}".format(
+#                 row[6],
+#                 unidecode(row[8]),
+#                 bhs_id,
+#                 performer,
+#             )
+#         Submission.objects.get_or_create(
+#             performer=performer,
+#             chart=chart,
+#         )
+#         if oa:
+#             performance, c = performer.performances.get_or_create(
+#                 round=round,
+#                 num=oa,
+#             )
 
 
 def import_grid(path, round, date, tz):

@@ -83,7 +83,7 @@
               <td>
                 {% for performance in performer.performances.all %}
                   {% for song in performance.songs.all %}
-                    {{song.submission.chart.title|truncatechars:25}}<br>
+                    {{song.submission.title|truncatechars:25}}<br>
                   {% endfor %}
                   {% if performer.session.num_rounds > 1 and performer.rank < 21 %}
                     <em>{{performance.round.get_kind_display}}</em><br>

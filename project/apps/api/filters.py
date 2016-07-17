@@ -8,7 +8,6 @@ from rest_framework.filters import BaseFilterBackend
 # Local
 from .models import (
     Certification,
-    Chart,
     Contestant,
     Convention,
     Group,
@@ -65,14 +64,6 @@ class ListFilter(Filter):
     def filter(self, qs, value):
         value_list = value.split(u',')
         return super(ListFilter, self).filter(qs, Lookup(value_list, 'in'))
-
-
-class ChartFilter(filters.FilterSet):
-    class Meta:
-        model = Chart
-        fields = {
-            'name': '__all__',
-        }
 
 
 class ConventionFilter(filters.FilterSet):
@@ -142,7 +133,6 @@ class SubmissionFilter(filters.FilterSet):
     class Meta:
         model = Submission
         fields = {
-            'chart__name': '__all__',
             'performer__id': '__all__',
         }
 
