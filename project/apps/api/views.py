@@ -9,6 +9,7 @@ from rest_framework import viewsets
 
 # Local
 from .filters import (
+    CatalogFilter,
     CertificationFilter,
     CoalesceFilterBackend,
     ContestantFilter,
@@ -23,6 +24,7 @@ from .filters import (
 )
 from .models import (
     Award,
+    Catalog,
     Certification,
     Chapter,
     Contest,
@@ -46,6 +48,7 @@ from .models import (
 )
 from .serializers import (
     AwardSerializer,
+    CatalogSerializer,
     CertificationSerializer,
     ChapterSerializer,
     ContestantSerializer,
@@ -86,6 +89,16 @@ class AwardViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     serializer_class = AwardSerializer
     resource_name = "award"
+
+
+class CatalogViewSet(viewsets.ModelViewSet):
+    queryset = Catalog.objects.prefetch_related(
+        'submissions',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = CatalogSerializer
+    filter_class = CatalogFilter
+    resource_name = "catalog"
 
 
 class CertificationViewSet(viewsets.ModelViewSet):

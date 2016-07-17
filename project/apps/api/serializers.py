@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 # Local
 from .models import (
     Award,
+    Catalog,
     Certification,
     Chapter,
     Contest,
@@ -44,237 +45,6 @@ class TimezoneField(serializers.Field):
             raise ValidationError('Unknown timezone')
 
 
-# class RankField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.rank
-#         if obj.status == obj.STATUS.published:
-#             return obj.rank
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class AdvancingField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.is_advancing
-#         if obj.status == obj.STATUS.published:
-#             return obj.is_advancing
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class ChampionField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.champion
-#         if obj.status == obj.STATUS.published:
-#             return obj.champion
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class MusPointsField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.mus_points
-#         if obj.status == obj.STATUS.published:
-#             return obj.mus_points
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class PrsPointsField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.prs_points
-#         if obj.status == obj.STATUS.published:
-#             return obj.prs_points
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class SngPointsField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.sng_points
-#         if obj.status == obj.STATUS.published:
-#             return obj.sng_points
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class TotalPointsField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.total_points
-#         if obj.status == obj.STATUS.published:
-#             return obj.total_points
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class MusScoreField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.mus_score
-#         if obj.status == obj.STATUS.published:
-#             return obj.mus_score
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class PrsScoreField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.prs_score
-#         if obj.status == obj.STATUS.published:
-#             return obj.prs_score
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class SngScoreField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.sng_score
-#         if obj.status == obj.STATUS.published:
-#             return obj.sng_score
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
-# class TotalScoreField(serializers.Field):
-#     def get_attribute(self, obj):
-#         # We pass the object instance onto `to_representation`,
-#         # not just the field attribute.
-#         return obj
-
-#     def to_representation(self, obj):
-#         # for read functionality
-#         if self.context['request'].user.is_staff:
-#             return obj.total_score
-#         if obj.status == obj.STATUS.published:
-#             return obj.total_score
-#         else:
-#             return None
-
-#     def to_internal_value(self, data):
-#         # for write functionality
-#         # check if data is valid and if not raise ValidationError
-#         return data
-
-
 class AwardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Award
@@ -296,6 +66,29 @@ class AwardSerializer(serializers.ModelSerializer):
             'threshold',
             'organization',
             'contests',
+        )
+
+
+class CatalogSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Catalog
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'bhs_id',
+            'title',
+            'published',
+            'arranger',
+            'arranger_fee',
+            'difficulty',
+            'gender',
+            'tempo',
+            'is_medley',
+            'is_learning',
+            'voicing',
         )
 
 

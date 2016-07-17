@@ -7,6 +7,7 @@ from rest_framework.filters import BaseFilterBackend
 
 # Local
 from .models import (
+    Catalog,
     Certification,
     Contestant,
     Convention,
@@ -64,6 +65,15 @@ class ListFilter(Filter):
     def filter(self, qs, value):
         value_list = value.split(u',')
         return super(ListFilter, self).filter(qs, Lookup(value_list, 'in'))
+
+
+class CatalogFilter(filters.FilterSet):
+
+    class Meta:
+        model = Catalog
+        fields = {
+            'title': '__all__',
+        }
 
 
 class ConventionFilter(filters.FilterSet):

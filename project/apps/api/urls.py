@@ -4,6 +4,7 @@ from rest_framework import routers
 # Local
 from .views import (
     AwardViewSet,
+    CatalogViewSet,
     CertificationViewSet,
     ChapterViewSet,
     ContestantViewSet,
@@ -29,6 +30,7 @@ from .views import (
 router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'award', AwardViewSet)
+router.register(r'catalog', CatalogViewSet)
 router.register(r'certification', CertificationViewSet)
 router.register(r'chapter', ChapterViewSet)
 router.register(r'contest', ContestViewSet)

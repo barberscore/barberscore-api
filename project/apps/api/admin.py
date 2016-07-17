@@ -27,6 +27,7 @@ from .inlines import (
 from .models import (
     Award,
     Certification,
+    Catalog,
     Chapter,
     Contest,
     Contestant,
@@ -137,6 +138,43 @@ class AwardAdmin(admin.ModelAdmin):
         'is_novice',
         'idiom',
     )
+
+
+@admin.register(Catalog)
+class CatalogAdmin(admin.ModelAdmin):
+
+    fields = [
+        'name',
+        'status',
+        'bhs_id',
+        'title',
+        'published',
+        'arranger',
+        'arranger_fee',
+        'difficulty',
+        'gender',
+        'tempo',
+        'is_medley',
+        'is_learning',
+        'voicing',
+    ]
+
+    list_display = [
+        'name',
+        'status',
+    ]
+
+    list_filter = [
+        'status',
+    ]
+
+    readonly_fields = [
+        'name',
+    ]
+
+    search_fields = [
+        'name',
+    ]
 
 
 @admin.register(Certification)
