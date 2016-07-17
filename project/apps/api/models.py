@@ -1095,6 +1095,17 @@ class Convention(TimeStampedModel):
         choices=KIND,
     )
 
+    LEVEL = Choices(
+        (0, 'international', "International"),
+        (1, 'district', "District"),
+        (2, 'division', "Division"),
+        (3, 'chapter', "Chapter"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+    )
+
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
@@ -1167,21 +1178,6 @@ class Convention(TimeStampedModel):
         help_text="""
             The person managing the convention.""",
         on_delete=models.CASCADE,
-    )
-
-    # Denormalization
-    LEVEL = Choices(
-        (0, 'international', "International"),
-        (1, 'district', "District"),
-        (2, 'division', "Division"),
-        (3, 'chapter', "Chapter"),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-        null=True,
-        blank=True,
-        editable=False,
     )
 
     # Legacy
