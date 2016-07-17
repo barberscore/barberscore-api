@@ -4166,11 +4166,13 @@ class Song(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    is_parody = models.BooleanField(
-        default=False,
+    # FKs
+    performance = models.ForeignKey(
+        'Performance',
+        related_name='songs',
+        on_delete=models.CASCADE,
     )
 
-    # FKs
     submission = models.ForeignKey(
         'Submission',
         related_name='songs',
@@ -4185,12 +4187,6 @@ class Song(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )
-
-    performance = models.ForeignKey(
-        'Performance',
-        related_name='songs',
-        on_delete=models.CASCADE,
     )
 
     # Denormalizations
@@ -4383,6 +4379,28 @@ class Submission(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    title = models.CharField(
+        max_length=200,
+    )
+
+    arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    source = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_parody = models.BooleanField(
+        default=False,
     )
 
     # FKs
