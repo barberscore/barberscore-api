@@ -398,7 +398,7 @@ class Catalog(TimeStampedModel):
     difficulty = models.IntegerField(
         null=True,
         blank=True,
-        choices=DIFFICULTY
+        choices=DIFFICULTY,
     )
 
     GENDER = Choices(
@@ -456,7 +456,7 @@ class Catalog(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.name = " ".join(filter(None, [
             self.title,
-            self.bhs_id,
+            str(self.bhs_id),
         ]))
         super(Catalog, self).save(*args, **kwargs)
 
