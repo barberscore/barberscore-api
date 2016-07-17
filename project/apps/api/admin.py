@@ -818,7 +818,6 @@ class RoleAdmin(admin.ModelAdmin):
 class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'name',
-        'ann_pdf',
         'status',
         ('session', 'kind',),
         'num_songs',
