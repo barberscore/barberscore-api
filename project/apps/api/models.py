@@ -2363,13 +2363,11 @@ class Performer(TimeStampedModel):
         blank=True,
     )
 
-    # Denormalized
     seed = models.IntegerField(
         help_text="""
             The incoming rank based on prelim score.""",
         null=True,
         blank=True,
-        editable=False,
     )
 
     prelim = models.FloatField(
@@ -2379,6 +2377,7 @@ class Performer(TimeStampedModel):
         blank=True,
     )
 
+    # Denormalized
     rank = models.IntegerField(
         null=True,
         blank=True,
@@ -2898,20 +2897,6 @@ class Person(TimeStampedModel):
     # FKs
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    chapter = models.ForeignKey(
-        'Chapter',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

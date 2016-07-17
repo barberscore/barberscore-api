@@ -184,6 +184,7 @@ class CertificationAdmin(admin.ModelAdmin):
         'name',
         'status',
         'category',
+        'kind',
         'start_date',
         'end_date',
         'person',
@@ -193,6 +194,7 @@ class CertificationAdmin(admin.ModelAdmin):
         'name',
         'status',
         'category',
+        'kind',
         'start_date',
         'end_date',
         'person',
@@ -201,6 +203,7 @@ class CertificationAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'category',
+        'kind',
     ]
 
     readonly_fields = [
@@ -219,8 +222,7 @@ class CertificationAdmin(admin.ModelAdmin):
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
     search_fields = (
-        'name',
-        'code',
+        'nomen',
     )
 
     list_display = (
@@ -252,8 +254,7 @@ class ChapterAdmin(admin.ModelAdmin):
     save_on_top = True
 
     ordering = (
-        'code',
-        'name',
+        'nomen',
     )
 
 
@@ -267,14 +268,12 @@ class ContestAdmin(admin.ModelAdmin):
         'champion',
         'cycle',
         'is_qualifier',
-        'stix_num',
-        'stix_name',
+        'num_rounds',
     ]
 
     list_display = (
         'name',
         'session',
-        # 'location',
     )
 
     list_filter = [
@@ -340,12 +339,21 @@ class ContestantAdmin(admin.ModelAdmin):
 @admin.register(Convention)
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
-    fsm_field = [
-        'status',
-    ]
-
-    search_fields = (
+    fields = (
         'name',
+        'status',
+        'kind',
+        'level',
+        'organization',
+        'venue',
+        'bhs_id',
+        'is_prelims',
+        'risers',
+        'start_date',
+        'end_date',
+        'year',
+        'season',
+        'drcj',
     )
 
     list_display = (
@@ -360,24 +368,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'location',
     )
 
-    fields = (
-        'name',
-        'status',
-        'venue',
-        'kind',
-        'organization',
-        'bhs_id',
-        'is_prelims',
-        'risers',
-        'start_date',
-        'end_date',
-        'year',
-        'level',
-        'season',
-        'drcj',
-        'stix_file',
-    )
-
     list_filter = (
         'status',
         'organization',
@@ -386,14 +376,20 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
     )
 
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = (
+        'name',
+    )
+
     inlines = [
         SessionInline,
     ]
 
     readonly_fields = (
         'name',
-        # 'year',
-        'level',
     )
 
     raw_id_fields = [
@@ -413,9 +409,28 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     search_fields = (
+        'nomen',
+    )
+
+    fields = (
         'name',
-        'chapter__name',
+        'status',
+        'kind',
+        ('age', 'is_novice',),
+        'organization',
         'bhs_id',
+        'start_date',
+        'end_date',
+        'chapter',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        'notes',
     )
 
     list_display = (
@@ -430,25 +445,6 @@ class GroupAdmin(admin.ModelAdmin):
         'email',
         'phone',
         'picture',
-    )
-
-    fields = (
-        'name',
-        'status',
-        'kind',
-        ('age', 'is_novice',),
-        'organization',
-        'bhs_id',
-        'chapter',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-        'notes',
     )
 
     list_filter = (
@@ -474,10 +470,13 @@ class JudgeAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
+        'category',
+        'kind',
+        'slot',
+        'bhs_id',
         'session',
         'certification',
         'organization',
-        ('category', 'kind',),
     ]
 
     list_display = [
@@ -518,6 +517,8 @@ class MemberAdmin(admin.ModelAdmin):
         'chapter',
         'person',
         'status',
+        'start_date',
+        'end_date',
     ]
 
     raw_id_fields = [
@@ -532,8 +533,11 @@ class OrganizationAdmin(MPTTModelAdmin):
         'name',
         'status',
         'parent',
+        'level',
         'kind',
         'code',
+        'start_date',
+        'end_date',
         'short_name',
         'long_name',
         'location',
@@ -572,20 +576,32 @@ class OrganizationAdmin(MPTTModelAdmin):
         'representative',
     ]
 
+    readonly_fields = [
+        'level',
+    ]
+
 
 @admin.register(Performance)
 class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
+    fields = [
+        'name',
         'status',
+        'actual_start',
+        'actual_finish',
+        'performer',
+        'round',
+        'num',
+        'slot',
     ]
-
-    save_on_top = True
 
     list_display = [
         'name',
         'status',
+        'performer',
+        'round',
         'num',
     ]
+
     list_filter = [
         'status',
         'round__session__convention__year',
@@ -595,12 +611,11 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'round',
     ]
 
-    fields = [
-        'name',
+    fsm_field = [
         'status',
-        'performer',
-        'num',
     ]
+
+    save_on_top = True
 
     readonly_fields = [
         'name',
@@ -621,6 +636,40 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 @admin.register(Performer)
 class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fields = (
+        'name',
+        'status',
+        'bhs_id',
+        'picture',
+        'csa_pdf',
+        'session',
+        'group',
+        'representing',
+        'risers',
+        ('is_evaluation', 'is_private',),
+        ('tenor', 'lead', 'baritone', 'bass',),
+        ('director', 'codirector', 'men'),
+        'prelim',
+        'seed',
+    )
+
+    list_display = (
+        'name',
+        'status',
+        'prelim',
+        'men',
+        'risers',
+    )
+
+    list_filter = [
+        'status',
+        'risers',
+        'session__convention__year',
+        'session__convention__organization',
+        'session__convention__season',
+        'session__kind',
+    ]
+
     fsm_field = [
         'status',
     ]
@@ -629,21 +678,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         PerformanceInline,
         ContestantInline,
         SubmissionInline,
-    ]
-
-    list_display = (
-        'name',
-        'status',
-        'prelim',
-        'men',
-    )
-
-    list_filter = [
-        'status',
-        'session__convention__year',
-        'session__convention__organization',
-        'session__convention__season',
-        'session__kind',
     ]
 
     search_fields = (
@@ -661,21 +695,6 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'codirector',
     )
 
-    fields = (
-        'name',
-        'status',
-        'bhs_id',
-        'picture',
-        'csa_pdf',
-        'session',
-        'group',
-        'representing',
-        ('is_evaluation', 'is_private',),
-        ('tenor', 'lead', 'baritone', 'bass',),
-        ('director', 'codirector', 'men'),
-        'prelim',
-    )
-
     readonly_fields = (
         'name',
     )
@@ -689,11 +708,36 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    search_fields = (
+    fields = (
         'name',
+        'common_name',
+        'status',
+        'kind',
+        'birth_date',
+        'start_date',
+        'end_date',
+        'dues_thru',
+        'mon',
+        'spouse',
+        'address1',
+        'address2',
+        'city',
+        'state',
+        'country',
+        'postal_code',
+        # 'organization',
+        'location',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'bhs_id',
+        'picture',
+        'description',
+        'notes',
     )
 
-    save_on_top = True
     list_display = (
         'name',
         'status',
@@ -707,23 +751,6 @@ class PersonAdmin(admin.ModelAdmin):
         'picture',
     )
 
-    fields = (
-        'name',
-        'common_name',
-        'status',
-        'organization',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'bhs_id',
-        'picture',
-        'description',
-        'notes',
-    )
-
     list_filter = [
         'status',
     ]
@@ -733,6 +760,13 @@ class PersonAdmin(admin.ModelAdmin):
         MemberInline,
         CertificationInline,
     ]
+
+    search_fields = (
+        'nomen',
+    )
+
+    save_on_top = True
+
     readonly_fields = [
         'common_name',
     ]
@@ -782,29 +816,21 @@ class RoleAdmin(admin.ModelAdmin):
 
 @admin.register(Round)
 class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    save_on_top = True
-    list_display = [
-        'name',
-        'status',
-    ]
     fields = [
         'name',
         'ann_pdf',
         'status',
         ('session', 'kind',),
+        'num_songs',
         'mt',
         'start_date',
         'end_date',
+        'ann_pdf',
     ]
 
-    readonly_fields = [
+    list_display = [
         'name',
-        'session',
-        'kind',
+        'status',
     ]
 
     list_filter = [
@@ -813,6 +839,18 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session__convention__organization',
         'session__convention__season',
         'session__kind',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'name',
+        'session',
+        'kind',
     ]
 
     raw_id_fields = (
@@ -831,12 +869,16 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
-    save_on_top = True
     fields = [
         'name',
         # 'status',
         'song',
         'judge',
+        'category',
+        'kind',
+        'original',
+        'violation',
+        'penalty',
         'points',
     ]
 
@@ -865,6 +907,7 @@ class ScoreAdmin(admin.ModelAdmin):
         'song',
         'judge',
     ]
+    save_on_top = True
 
 
 @admin.register(Session)
@@ -879,11 +922,12 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'convention',
         'kind',
+        'num_rounds',
         'start_date',
         'end_date',
         'primary',
         'current',
-        'cursor',
+        # 'cursor',
         # 'year',
         # # 'size',
         'scoresheet_pdf',
@@ -937,6 +981,72 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
 
+@admin.register(Slot)
+class SlotAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        'name',
+        'status',
+        'num',
+        'onstage',
+        'round',
+    ]
+    readonly_fields = [
+        'name',
+    ]
+    raw_id_fields = [
+        'round',
+    ]
+
+
+@admin.register(Song)
+class SongAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        # 'status',
+        'performance',
+        'submission',
+        'num',
+
+        # 'title',
+    ]
+
+    list_display = (
+        'name',
+        # 'status',
+        # 'title',
+        'submission',
+        'num',
+    )
+
+    # list_filter = (
+    #     'status',
+    # )
+
+    search_fields = (
+        'name',
+    )
+
+    inlines = [
+        ScoreInline,
+    ]
+    save_on_top = True
+
+    readonly_fields = (
+        'name',
+    )
+
+    raw_id_fields = (
+        'performance',
+        'submission',
+    )
+
+    ordering = (
+        'name',
+        'num',
+    )
+
+
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -973,88 +1083,12 @@ class SubmissionAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Slot)
-class SlotAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        'name',
-        'status',
-        'num',
-        'onstage',
-        'round',
-    ]
-    readonly_fields = [
-        'name',
-    ]
-    raw_id_fields = [
-        'round',
-    ]
-
-
-@admin.register(Song)
-class SongAdmin(admin.ModelAdmin):
-    save_on_top = True
-    list_display = (
-        'name',
-        # 'status',
-        # 'title',
-        'submission',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points'
-    )
-
-    search_fields = (
-        'name',
-    )
-
-    fields = [
-        'name',
-        # 'status',
-        'performance',
-        'submission',
-        'num',
-        ('mus_points', 'prs_points', 'sng_points', 'total_points',),
-        ('mus_score', 'prs_score', 'sng_score', 'total_score',),
-        # 'title',
-    ]
-
-    inlines = [
-        ScoreInline,
-    ]
-
-    # list_filter = (
-    #     'status',
-    # )
-
-    readonly_fields = (
-        'name',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-    )
-    raw_id_fields = (
-        'performance',
-        'submission',
-    )
-
-    ordering = (
-        'name',
-        'num',
-    )
-
-
 @admin.register(Venue)
 class VenueAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
         'name',
+        'status',
         'location',
         'city',
         'state',
@@ -1069,6 +1103,10 @@ class VenueAdmin(admin.ModelAdmin):
         'state',
         'timezone',
     ]
+
+    list_filter = (
+        'status',
+    )
 
     search_fields = (
         'name',
