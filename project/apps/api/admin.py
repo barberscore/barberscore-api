@@ -906,11 +906,18 @@ class SubmissionAdmin(admin.ModelAdmin):
         'name',
         'status',
         'performer',
+        'title',
+        'arranger',
+        'source',
+        'is_medley',
+        'is_parody',
     ]
 
     list_display = [
         'name',
         'status',
+        'title',
+        'arranger',
         'performer',
     ]
 
