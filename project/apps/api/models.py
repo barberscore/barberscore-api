@@ -1417,9 +1417,17 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    organization = models.ForeignKey(
+    district = TreeForeignKey(
         'Organization',
-        related_name='groups',
+        related_name='district_groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    division = TreeForeignKey(
+        'Organization',
+        related_name='division_groups',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -2342,9 +2350,17 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    representing = TreeForeignKey(
+    district = TreeForeignKey(
         'Organization',
         related_name='performers',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    division = TreeForeignKey(
+        'Organization',
+        related_name='division_performers',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

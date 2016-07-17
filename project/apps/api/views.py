@@ -179,7 +179,8 @@ class ConventionViewSet(
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
         'chapter',
-        'organization',
+        'district',
+        'division',
     ).prefetch_related(
         'performers',
         'roles',
@@ -257,7 +258,6 @@ class PerformanceViewSet(
 class PerformerViewSet(viewsets.ModelViewSet):
     queryset = Performer.objects.select_related(
         'session',
-        'representing',
         'group',
         'tenor',
         'lead',
@@ -265,6 +265,9 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
+        'chapter',
+        'district',
+        'division',
     ).prefetch_related(
         'submissions',
         'performances',
@@ -294,8 +297,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        'organization',
-        'chapter',
+        'user',
     ).prefetch_related(
         'roles',
         'conventions',
