@@ -341,6 +341,143 @@ class Award(TimeStampedModel):
         return False
 
 
+class Catalog(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New'),
+        (10, 'active', 'Active'),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    bhs_id = models.IntegerField(
+        unique=True,
+    )
+
+    title = models.CharField(
+        max_length=200,
+    )
+
+    published = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    arranger_fee = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    DIFFICULTY = Choices(
+        (1, "Very Easy"),
+        (2, "Easy"),
+        (3, "Medium"),
+        (4, "Hard"),
+        (5, "Very Hard"),
+    )
+
+    difficulty = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=DIFFICULTY
+    )
+
+    GENDER = Choices(
+        (1, "Male"),
+        (2, "Female"),
+        (3, "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=GENDER,
+    )
+
+    TEMPO = Choices(
+        (1, "Ballad"),
+        (2, "Uptune"),
+        (3, "Mixed"),
+    )
+
+    tempo = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=TEMPO,
+    )
+
+    is_medley = models.BooleanField(
+        default=False,
+    )
+
+    is_learning = models.BooleanField(
+        default=False,
+    )
+
+    VOICING = Choices(
+        (1, "Barbershop"),
+        (2, "Chorus + Quartet"),
+        (3, "Double Quartet"),
+        (4, "Ensemble + Soloist"),
+    )
+
+    voicing = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=VOICING,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "catalog"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.title,
+            self.bhs_id,
+        ]))
+        super(Catalog, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
 class Certification(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
