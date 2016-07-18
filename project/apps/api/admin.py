@@ -720,18 +720,16 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'status',
-        'prelim',
-        'men',
-        'risers',
     )
 
     list_filter = [
         'status',
-        'risers',
+        'session__kind',
+        'session__convention__level',
+        'session__convention__season',
         'session__convention__year',
         'session__convention__organization',
-        'session__convention__season',
-        'session__kind',
+        'risers',
     ]
 
     fsm_field = [
@@ -810,8 +808,6 @@ class PersonAdmin(admin.ModelAdmin):
         'website',
         'facebook',
         'twitter',
-        'email',
-        'phone',
         'picture',
     )
 
@@ -854,14 +850,10 @@ class RoleAdmin(admin.ModelAdmin):
         'status',
         'start_date',
         'end_date',
-        'group',
-        'person',
-        'part',
     ]
 
     list_filter = [
         'status',
-        'group__kind',
     ]
 
     readonly_fields = [
@@ -898,10 +890,11 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'session__kind',
+        'session__convention__level',
+        'session__convention__season',
         'session__convention__year',
         'session__convention__organization',
-        'session__convention__season',
-        'session__kind',
     ]
 
     fsm_field = [
@@ -999,19 +992,15 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'name',
         'status',
-        'convention',
-        'kind',
-        # 'size',
-        # 'championship_rounds',
     ]
 
     list_filter = (
         'status',
         'kind',
-        'convention__year',
         'convention__level',
-        'convention__organization',
         'convention__season',
+        'convention__year',
+        'convention__organization',
     )
 
     raw_id_fields = (
@@ -1054,6 +1043,16 @@ class SlotAdmin(admin.ModelAdmin):
         'onstage',
         'round',
     ]
+    list_display = [
+        'name',
+        'status',
+        'onstage',
+    ]
+
+    list_filter = (
+        'status',
+    )
+
     readonly_fields = [
         'name',
     ]
@@ -1078,6 +1077,7 @@ class SongAdmin(admin.ModelAdmin):
         'name',
         # 'status',
         # 'title',
+        'performance',
         'submission',
         'num',
     )
@@ -1129,12 +1129,10 @@ class SubmissionAdmin(admin.ModelAdmin):
         'status',
         'title',
         'arranger',
-        'performer',
     ]
 
     list_filter = (
         'status',
-        'performer',
     )
 
     raw_id_fields = (
