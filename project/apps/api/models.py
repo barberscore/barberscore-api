@@ -569,6 +569,7 @@ class Certification(TimeStampedModel):
         self.name = u"{0} - {1}".format(
             self.person,
             self.get_category_display(),
+            self.get_kind_display(),
         )
         super(Certification, self).save(*args, **kwargs)
 
