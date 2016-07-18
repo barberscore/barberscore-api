@@ -1109,6 +1109,8 @@ class Convention(TimeStampedModel):
 
     kind = models.IntegerField(
         choices=KIND,
+        null=True,
+        blank=True,
     )
 
     LEVEL = Choices(
@@ -1183,7 +1185,9 @@ class Convention(TimeStampedModel):
         help_text="""
             The organization hosting the convention.""",
         related_name='conventions',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
     drcj = models.ForeignKey(
@@ -1193,7 +1197,7 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The person managing the convention.""",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
 
     # Legacy
