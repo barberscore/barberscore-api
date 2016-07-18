@@ -1489,6 +1489,80 @@ class Group(TimeStampedModel):
         return False
 
 
+class Host(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+        (20, 'inactive', 'Inactive',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    # FKs
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='hosts',
+        on_delete=models.CASCADE,
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='hosts',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('convention', 'organization',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "host"
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.convention.name,
+            self.host.name,
+        ]))
+        super(Host, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
 class Judge(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2073,6 +2147,10 @@ class Performance(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
+        if self.performer.session.convention.kind:
+            kind = str(self.performer.session.convention.get_kind_display())
+            if self.performer.session.convention.kind == self.performer.session.convention.KIND.international:
+                kind = None
         self.name = " ".join(filter(None, [
             self.round.session.convention.organization.name,
             str(self.round.session.convention.get_kind_display()),
@@ -2080,8 +2158,12 @@ class Performance(TimeStampedModel):
             self.round.session.get_kind_display(),
             self.round.get_kind_display(),
             str(self.round.session.convention.year),
-            "Performance",
-            self.id.hex,
+            self.performer.session.convention.organization.name,
+            kind,
+            self.performer.session.convention.get_season_display(),
+            str(self.performer.session.convention.year),
+            self.performer.session.get_kind_display(),
+            self.performer.group.name,
         ]))
         super(Performance, self).save(*args, **kwargs)
 
