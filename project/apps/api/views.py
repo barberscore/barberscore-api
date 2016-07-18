@@ -31,6 +31,7 @@ from .models import (
     Contestant,
     Convention,
     Group,
+    Host,
     Judge,
     Member,
     Organization,
@@ -55,6 +56,7 @@ from .serializers import (
     ContestSerializer,
     ConventionSerializer,
     GroupSerializer,
+    HostSerializer,
     JudgeSerializer,
     MemberSerializer,
     OrganizationSerializer,
@@ -191,6 +193,16 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     resource_name = "group"
+
+
+class HostViewSet(viewsets.ModelViewSet):
+    queryset = Host.objects.select_related(
+        'convention',
+        'organization',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = HostSerializer
+    resource_name = "host"
 
 
 class JudgeViewSet(viewsets.ModelViewSet):

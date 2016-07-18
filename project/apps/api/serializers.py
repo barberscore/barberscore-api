@@ -17,6 +17,7 @@ from .models import (
     Contestant,
     Convention,
     Group,
+    Host,
     Judge,
     Member,
     Organization,
@@ -209,6 +210,19 @@ class GroupSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'picture',
         ]
+
+
+class HostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Host
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'convention',
+            'organization',
+        )
 
 
 class JudgeSerializer(serializers.ModelSerializer):

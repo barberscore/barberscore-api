@@ -34,6 +34,7 @@ from .models import (
     Contestant,
     Convention,
     Group,
+    Host,
     Judge,
     Member,
     Organization,
@@ -354,7 +355,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'level',
-        'organization',
         'venue',
         'bhs_id',
         'is_prelims',
@@ -379,7 +379,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'kind',
         'season',
-        'organization',
         'year',
     )
 
@@ -408,7 +407,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         '-year',
         'level',
-        'organization__name',
     )
 
     save_on_top = True
@@ -475,6 +473,38 @@ class GroupAdmin(admin.ModelAdmin):
     ordering = (
         'name',
     )
+
+
+@admin.register(Host)
+class HostAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        'convention',
+        'organization',
+    ]
+
+    list_display = [
+        'name',
+        'status',
+        'convention',
+        'organization',
+    ]
+
+    list_filter = [
+        'status',
+    ]
+
+    raw_id_fields = [
+        'convention',
+    ]
+
+    ordering = (
+        'name',
+    )
+
+    search_fields = [
+        'name',
+    ]
 
 
 @admin.register(Judge)
