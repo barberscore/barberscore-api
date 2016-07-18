@@ -518,6 +518,7 @@ class Certification(TimeStampedModel):
         (10, 'chair', 'Chair'),
         (20, 'past', 'Past Chair'),
         (30, 'specialist', 'Specialist'),
+        (35, 'drcj', 'DRCJ'),
         (40, 'certified', 'Certified'),
         (50, 'candidate', 'Candidate'),
         (60, 'retired', 'Retired'),
