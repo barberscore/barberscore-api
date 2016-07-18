@@ -4320,6 +4320,14 @@ class Submission(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    catalog = models.ForeignKey(
+        'Catalog',
+        related_name='submissions',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     # Internals
     class JSONAPIMeta:
         resource_name = "submission"

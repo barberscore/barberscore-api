@@ -169,6 +169,10 @@ class CatalogAdmin(admin.ModelAdmin):
         'status',
     ]
 
+    # inlines = [
+    #     SubmissionInline,
+    # ]
+
     readonly_fields = [
         'name',
     ]
