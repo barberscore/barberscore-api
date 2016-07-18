@@ -494,8 +494,7 @@ class Certification(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New'),
         (1, 'active', 'Active'),
-        (2, 'candidate', 'Candidate'),
-        (3, 'inactive', 'Inactive'),
+        (2, 'inactive', 'Inactive'),
     )
 
     status = FSMIntegerField(
