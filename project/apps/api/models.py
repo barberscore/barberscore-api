@@ -557,7 +557,7 @@ class Certification(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('category', 'person',),
+            ('category', 'person', 'kind',),
         )
 
     class JSONAPIMeta:

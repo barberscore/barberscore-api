@@ -191,6 +191,7 @@ class CertificationAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
         'person',
+        'organization',
     ]
 
     list_display = [
@@ -212,6 +213,7 @@ class CertificationAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'person',
+        'organization',
     ]
 
     search_fields = [
