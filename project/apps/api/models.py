@@ -1234,23 +1234,21 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        # if self.kind > self.KIND.disdiv:
-        #     org = None
-        # else:
-        #     org = str(self.organization.short_name)
-        # if self.season == self.SEASON.summer:
-        #     season = None
-        # else:
-        #     season = self.get_season_display()
-
-        # self.name = " ".join(filter(None, [
-        #     org,
-        #     str(self.get_kind_display()),
-        #     season,
-        #     u"Convention",
-        #     str(self.year),
-        # ]))
-        self.name = self.id.hex
+        if self.kind > self.KIND.disdiv:
+            org = None
+        else:
+            org = str(self.organization.short_name)
+        if self.season == self.SEASON.summer:
+            season = None
+        else:
+            season = self.get_season_display()
+        hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
+        self.name = " ".join(filter(None, [
+            hosts,
+            season,
+            u"Convention",
+            str(self.year),
+        ]))
         super(Convention, self).save(*args, **kwargs)
 
     # Permissions
@@ -2573,7 +2571,7 @@ class Performer(TimeStampedModel):
             self.session.get_kind_display(),
             "Performer",
             self.group.name,
-            self.group.id.hex,
+            self.id.hex,
         ]))
         super(Performer, self).save(*args, **kwargs)
 
