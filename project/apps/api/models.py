@@ -566,10 +566,17 @@ class Certification(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = u"{0} - {1}".format(
-            self.person,
-            self.get_category_display(),
-            self.get_kind_display(),
+        self.name = " ".join(
+            map(
+                (lambda x: unicode(x).encode('utf-8')),
+                filter(
+                    None, [
+                        self.person.common_name,
+                        self.get_category_display(),
+                        self.get_kind_display(),
+                    ]
+                )
+            )
         )
         super(Certification, self).save(*args, **kwargs)
 
