@@ -1230,22 +1230,23 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.kind > self.KIND.disdiv:
-            org = None
-        else:
-            org = str(self.organization.short_name)
-        if self.season == self.SEASON.summer:
-            season = None
-        else:
-            season = self.get_season_display()
+        # if self.kind > self.KIND.disdiv:
+        #     org = None
+        # else:
+        #     org = str(self.organization.short_name)
+        # if self.season == self.SEASON.summer:
+        #     season = None
+        # else:
+        #     season = self.get_season_display()
 
-        self.name = " ".join(filter(None, [
-            org,
-            str(self.get_kind_display()),
-            season,
-            u"Convention",
-            str(self.year),
-        ]))
+        # self.name = " ".join(filter(None, [
+        #     org,
+        #     str(self.get_kind_display()),
+        #     season,
+        #     u"Convention",
+        #     str(self.year),
+        # ]))
+        self.name = self.id.hex
         super(Convention, self).save(*args, **kwargs)
 
     # Permissions
@@ -1539,10 +1540,11 @@ class Host(TimeStampedModel):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.convention.name,
-            self.host.name,
-        ]))
+        # self.name = " ".join(filter(None, [
+        #     self.convention.name,
+        #     self.organization.name,
+        # ]))
+        self.name = self.id.hex
         super(Host, self).save(*args, **kwargs)
 
     # Permissions

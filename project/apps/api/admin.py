@@ -13,6 +13,7 @@ from .inlines import (
     ContestInline,
     ConventionInline,
     GroupInline,
+    HostInline,
     JudgeInline,
     MemberInline,
     PerformanceInline,
@@ -391,6 +392,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     inlines = [
+        HostInline,
         SessionInline,
     ]
 

@@ -9,6 +9,7 @@ from .models import (
     Contestant,
     Convention,
     Group,
+    Host,
     Judge,
     Member,
     Performance,
@@ -128,6 +129,20 @@ class GroupInline(admin.TabularInline):
     ordering = (
         'name',
     )
+    show_change_link = True
+    extra = 0
+
+
+class HostInline(admin.TabularInline):
+    model = Host
+    fields = [
+        'convention',
+        'organization',
+        'status',
+    ]
+    raw_id_fields = [
+        'convention',
+    ]
     show_change_link = True
     extra = 0
 
