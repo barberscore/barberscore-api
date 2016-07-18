@@ -82,8 +82,6 @@ class AwardAdmin(admin.ModelAdmin):
         'threshold',
         'minimum',
         'advance',
-        'stix_num',
-        'stix_name',
     ]
 
     list_display = [
@@ -91,8 +89,6 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'is_manual',
         'kind',
-        'championship_season',
-        'qualifier_season',
         'size',
         'size_range',
         'scope',
@@ -100,27 +96,29 @@ class AwardAdmin(admin.ModelAdmin):
         'is_improved',
         'is_novice',
         'idiom',
-        'championship_rounds',
-        'stix_name',
+        'championship_season',
+        'qualifier_season',
     ]
 
     list_filter = [
         'status',
-        'is_manual',
+        'is_primary',
         'organization__level',
         'kind',
         'championship_season',
         'qualifier_season',
         'size',
         'scope',
-        'organization',
-        'is_primary',
+        'is_manual',
         'is_novice',
         'is_improved',
+        'organization',
     ]
 
     readonly_fields = [
         'name',
+        'stix_num',
+        'stix_name',
     ]
 
     search_fields = [
@@ -161,6 +159,7 @@ class CatalogAdmin(admin.ModelAdmin):
 
     list_display = [
         'name',
+        'arranger',
         'status',
     ]
 
@@ -175,6 +174,10 @@ class CatalogAdmin(admin.ModelAdmin):
     search_fields = [
         'name',
     ]
+
+    ordering = (
+        'name',
+    )
 
 
 @admin.register(Certification)
@@ -192,12 +195,9 @@ class CertificationAdmin(admin.ModelAdmin):
 
     list_display = [
         'name',
-        'status',
         'category',
         'kind',
-        'start_date',
-        'end_date',
-        'person',
+        'status',
     ]
 
     list_filter = [
@@ -218,6 +218,10 @@ class CertificationAdmin(admin.ModelAdmin):
         'name',
     ]
 
+    ordering = (
+        'name',
+    )
+
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
@@ -227,15 +231,14 @@ class ChapterAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'organization',
         'code',
+        'organization',
         'status',
-        'bhs_id',
     )
 
     list_filter = (
-        'organization',
         'status',
+        'organization',
     )
 
     fields = (
@@ -335,6 +338,10 @@ class ContestantAdmin(admin.ModelAdmin):
         'name',
     ]
 
+    ordering = (
+        'name',
+    )
+
 
 @admin.register(Convention)
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -358,22 +365,19 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'name',
-        'bhs_id',
         'status',
-        'kind',
-        'level',
-        'season',
         'start_date',
         'end_date',
-        # 'location',
+        'venue',
     )
 
     list_filter = (
         'status',
+        'level',
+        'kind',
+        'season',
         'organization',
         'year',
-        'level',
-        'season',
     )
 
     fsm_field = [
@@ -436,9 +440,9 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'chapter',
-        'bhs_id',
         'status',
+        'district',
+        'division',
         'location',
         'website',
         'facebook',
@@ -464,6 +468,10 @@ class GroupAdmin(admin.ModelAdmin):
 
     save_on_top = True
 
+    ordering = (
+        'name',
+    )
+
 
 @admin.register(Judge)
 class JudgeAdmin(admin.ModelAdmin):
@@ -483,12 +491,16 @@ class JudgeAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'status',
+        'kind',
+        'category',
         'certification',
         'organization',
     ]
 
     list_filter = (
         'status',
+        'category',
+        'kind',
     )
 
     list_select_related = [
@@ -513,18 +525,36 @@ class JudgeAdmin(admin.ModelAdmin):
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = [
-        'name',
+    fields = [
+        'status',
         'chapter',
         'person',
+        'start_date',
+        'end_date',
+    ]
+
+    list_display = [
+        'name',
         'status',
         'start_date',
         'end_date',
     ]
 
+    list_filter = [
+        'status',
+    ]
+
     raw_id_fields = [
         'chapter',
         'person',
+    ]
+
+    ordering = (
+        'name',
+    )
+
+    search_fields = [
+        'name',
     ]
 
 
@@ -562,9 +592,11 @@ class OrganizationAdmin(MPTTModelAdmin):
 
     list_display = [
         'name',
+        'status',
+        'code',
         'short_name',
         'long_name',
-        'status',
+        'level',
         'kind',
     ]
 

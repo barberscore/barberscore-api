@@ -2050,11 +2050,6 @@ class Performance(TimeStampedModel):
         editable=False,
     )
 
-    class Meta:
-        ordering = [
-            'round__kind',
-        ]
-
     class JSONAPIMeta:
         resource_name = "performance"
 
@@ -4060,10 +4055,6 @@ class Song(TimeStampedModel):
         unique_together = (
             ('performance', 'num',),
         )
-        ordering = [
-            'performance',
-            'num',
-        ]
 
     class JSONAPIMeta:
         resource_name = "song"
