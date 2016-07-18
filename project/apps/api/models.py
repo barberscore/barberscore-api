@@ -546,6 +546,14 @@ class Certification(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='certifications',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     class Meta:
         unique_together = (
