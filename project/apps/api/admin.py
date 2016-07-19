@@ -163,8 +163,14 @@ class CatalogAdmin(admin.ModelAdmin):
 
     list_display = [
         'name',
-        'arranger',
         'status',
+        'title',
+        'arranger',
+    ]
+
+    list_editable = [
+        'title',
+        'arranger',
     ]
 
     list_filter = [
