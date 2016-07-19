@@ -4,13 +4,13 @@ from django.core.management.base import BaseCommand
 # First-Party
 from apps.api.models import (
     Award,
-    Certification,
+    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
-    Judge,
+    Assignment,
     Member,
     Organization,
     Performance,
@@ -40,8 +40,8 @@ class Command(BaseCommand):
         # Branches
         [i.save() for i in Convention.objects.all()]
         [i.save() for i in Session.objects.all()]
-        [i.save() for i in Certification.objects.all()]
         [i.save() for i in Judge.objects.all()]
+        [i.save() for i in Assignment.objects.all()]
         [i.save() for i in Member.objects.all()]
         [i.save() for i in Role.objects.all()]
         [i.save() for i in Round.objects.all()]

@@ -14,13 +14,13 @@ from psycopg2.extras import DateTimeTZRange
 # First-Party
 from apps.api.models import (
     Award,
-    Certification,
+    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
-    Judge,
+    Assignment,
     Member,
     Organization,
     Performance,
@@ -353,94 +353,94 @@ class VenueFactory(DjangoModelFactory):
     timezone = pytz.timezone('US/Central')
 
 
-# Certifications
-class CertificationFactory(DjangoModelFactory):
+# Judges
+class JudgeFactory(DjangoModelFactory):
     class Meta:
-        model = Certification
+        model = Judge
     person = SubFactory(
         'apps.api.factories.PersonFactory'
     )
 
 
-class OfficialAdminCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.admin
-    status = Certification.STATUS.active
+class OfficialAdminJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.admin
+    status = Judge.STATUS.active
 
 
-class OfficialMusicCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.music
-    status = Certification.STATUS.active
+class OfficialMusicJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.music
+    status = Judge.STATUS.active
 
 
-class OfficialPresentationCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.presentation
-    status = Certification.STATUS.active
+class OfficialPresentationJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.presentation
+    status = Judge.STATUS.active
 
 
-class OfficialSingingCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.singing
-    status = Certification.STATUS.active
+class OfficialSingingJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.singing
+    status = Judge.STATUS.active
 
 
-class CandidateAdminCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.admin
-    status = Certification.STATUS.candidate
+class CandidateAdminJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.admin
+    status = Judge.STATUS.candidate
 
 
-class CandidateMusicCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.music
-    status = Certification.STATUS.candidate
+class CandidateMusicJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.music
+    status = Judge.STATUS.candidate
 
 
-class CandidatePresentationCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.presentation
-    status = Certification.STATUS.candidate
+class CandidatePresentationJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.presentation
+    status = Judge.STATUS.candidate
 
 
-class CandidateSingingCertificationFactory(CertificationFactory):
-    category = Certification.CATEGORY.singing
-    status = Certification.STATUS.candidate
+class CandidateSingingJudgeFactory(JudgeFactory):
+    category = Judge.CATEGORY.singing
+    status = Judge.STATUS.candidate
 
 
-# Judges
-class JudgeFactory(DjangoModelFactory):
+# Assignments
+class AssignmentFactory(DjangoModelFactory):
     class Meta:
-        model = Judge
+        model = Assignment
 
 
-# class InternationalQuartetOfficialAdminJudgeFactory(JudgeFactory):
+# class InternationalQuartetOfficialAdminAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
 #         'apps.api.factories.InternationalQuartetSessionFactory'
 #     )
-#     certification = SubFactory(
-#         'apps.api.factories.OfficialAdminCertificationFactory'
+#     judge = SubFactory(
+#         'apps.api.factories.OfficialAdminJudgeFactory'
 #     )
 
 
-# class InternationalQuartetOfficialMusicJudgeFactory(JudgeFactory):
+# class InternationalQuartetOfficialMusicAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
 #         'apps.api.factories.InternationalQuartetSessionFactory'
 #     )
-#     certification = SubFactory(
-#         'apps.api.factories.OfficialMusicCertificationFactory'
+#     judge = SubFactory(
+#         'apps.api.factories.OfficialMusicJudgeFactory'
 #     )
 
 
-# class InternationalQuartetOfficialPresentationJudgeFactory(JudgeFactory):
+# class InternationalQuartetOfficialPresentationAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
 #         'apps.api.factories.InternationalQuartetSessionFactory'
 #     )
-#     certification = SubFactory(
-#         'apps.api.factories.OfficialPresentationCertificationFactory'
+#     judge = SubFactory(
+#         'apps.api.factories.OfficialPresentationJudgeFactory'
 #     )
 
 
-# class InternationalQuartetOfficialSingingJudgeFactory(JudgeFactory):
+# class InternationalQuartetOfficialSingingAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
 #         'apps.api.factories.InternationalQuartetSessionFactory'
 #     )
-#     certification = SubFactory(
-#         'apps.api.factories.OfficialSingingCertificationFactory'
+#     judge = SubFactory(
+#         'apps.api.factories.OfficialSingingJudgeFactory'
 #     )
 
 
@@ -724,8 +724,8 @@ class ScoreFactory(DjangoModelFactory):
         model = Score
 
     status = Score.STATUS.new
-    judge = SubFactory(
-        'apps.api.factories.JudgeFactory',
+    assignment = SubFactory(
+        'apps.api.factories.AssignmentFactory',
     )
     song = SubFactory(
         'apps.api.factories.SongFactory',

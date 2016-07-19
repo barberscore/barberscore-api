@@ -11,14 +11,14 @@ from django.core.exceptions import ValidationError
 from .models import (
     Award,
     Catalog,
-    Certification,
+    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
     Host,
-    Judge,
+    Assignment,
     Member,
     Organization,
     Performance,
@@ -93,10 +93,10 @@ class CatalogSerializer(serializers.ModelSerializer):
         )
 
 
-class CertificationSerializer(serializers.ModelSerializer):
+class JudgeSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Certification
+        model = Judge
         fields = (
             'id',
             'url',
@@ -107,7 +107,7 @@ class CertificationSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'person',
-            'judges',
+            'assignments',
         )
 
 
@@ -203,7 +203,8 @@ class GroupSerializer(serializers.ModelSerializer):
             'age',
             'is_novice',
             'chapter',
-            'organization',
+            'district',
+            'division',
             'performers',
             'roles',
         )
@@ -225,9 +226,9 @@ class HostSerializer(serializers.ModelSerializer):
         )
 
 
-class JudgeSerializer(serializers.ModelSerializer):
+class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Judge
+        model = Assignment
         fields = (
             'id',
             'url',
@@ -237,7 +238,7 @@ class JudgeSerializer(serializers.ModelSerializer):
             'designation',
             'kind',
             'slot',
-            'certification',
+            'judge',
             'session',
             'scores',
         )
@@ -358,7 +359,8 @@ class PerformerSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'representing',
+            'district',
+            'division',
             'tenor',
             'lead',
             'baritone',
@@ -425,15 +427,13 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             'roles',
             'conventions',
-            'certifications',
+            'judges',
             'common_name',
             'full_name',
             'formal_name',
             'first_name',
             'last_name',
             'nick_name',
-            'organization',
-            'chapter',
         )
         read_only_fields = [
             'picture',
@@ -498,7 +498,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'violation',
             'penalty',
             'song',
-            'judge',
+            'assignment',
         ]
 
 
@@ -522,7 +522,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'primary',
             'performers',
             'contests',
-            'judges',
+            'assignments',
             'rounds',
             'permissions',
         )

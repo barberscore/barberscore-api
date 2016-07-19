@@ -10,13 +10,13 @@ from django.contrib import admin
 # Local
 from .inlines import (
     AwardInline,
-    CertificationInline,
+    JudgeInline,
     ContestantInline,
     ContestInline,
     ConventionInline,
     GroupInline,
     HostInline,
-    JudgeInline,
+    AssignmentInline,
     MemberInline,
     PerformanceInline,
     PerformerInline,
@@ -29,7 +29,7 @@ from .inlines import (
 )
 from .models import (
     Award,
-    Certification,
+    Judge,
     Catalog,
     Chapter,
     Contest,
@@ -37,7 +37,7 @@ from .models import (
     Convention,
     Group,
     Host,
-    Judge,
+    Assignment,
     Member,
     Organization,
     Performance,
@@ -194,8 +194,8 @@ class CatalogAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Certification)
-class CertificationAdmin(admin.ModelAdmin):
+@admin.register(Judge)
+class JudgeAdmin(admin.ModelAdmin):
 
     fields = [
         'name',
@@ -525,8 +525,8 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Judge)
-class JudgeAdmin(admin.ModelAdmin):
+@admin.register(Assignment)
+class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'name',
@@ -536,7 +536,7 @@ class JudgeAdmin(admin.ModelAdmin):
         'slot',
         'bhs_id',
         'session',
-        'certification',
+        'judge',
         'organization',
     ]
 
@@ -545,7 +545,7 @@ class JudgeAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'category',
-        'certification',
+        'judge',
         'organization',
     ]
 
@@ -558,12 +558,12 @@ class JudgeAdmin(admin.ModelAdmin):
     list_select_related = [
         'organization',
         'session',
-        'certification',
+        'judge',
     ]
 
     raw_id_fields = (
         'session',
-        'certification',
+        'judge',
     )
 
     readonly_fields = [
@@ -836,7 +836,7 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [
         RoleInline,
         MemberInline,
-        CertificationInline,
+        JudgeInline,
     ]
 
     search_fields = (
@@ -947,7 +947,7 @@ class ScoreAdmin(admin.ModelAdmin):
         'name',
         # 'status',
         'song',
-        'judge',
+        'assignment',
         'category',
         'kind',
         'original',
@@ -959,7 +959,7 @@ class ScoreAdmin(admin.ModelAdmin):
     readonly_fields = [
         'name',
         'song',
-        'judge',
+        'assignment',
     ]
 
     list_display = [
@@ -974,12 +974,12 @@ class ScoreAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'song',
-        'judge',
+        'assignment',
     ]
 
     ordering = [
         'song',
-        'judge',
+        'assignment',
     ]
     save_on_top = True
 
@@ -1034,7 +1034,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         RoundInline,
         PerformerInline,
-        JudgeInline,
+        AssignmentInline,
         ContestInline,
     ]
 

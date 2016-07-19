@@ -478,7 +478,7 @@ class Catalog(TimeStampedModel):
         return False
 
 
-class Certification(TimeStampedModel):
+class Judge(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -541,13 +541,13 @@ class Certification(TimeStampedModel):
     # FKs
     person = models.ForeignKey(
         'Person',
-        related_name='certifications',
+        related_name='judges',
         on_delete=models.CASCADE,
     )
 
     organization = TreeForeignKey(
         'Organization',
-        related_name='certifications',
+        related_name='judges',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -560,7 +560,7 @@ class Certification(TimeStampedModel):
         )
 
     class JSONAPIMeta:
-        resource_name = "certification"
+        resource_name = "judge"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -578,7 +578,7 @@ class Certification(TimeStampedModel):
                 )
             )
         )
-        super(Certification, self).save(*args, **kwargs)
+        super(Judge, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -959,8 +959,8 @@ class Contestant(TimeStampedModel):
 
     def calculate_mus_points(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
-            songs__scores__category=self.contest.session.judges.model.CATEGORY.music,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contest.session.assignments.model.CATEGORY.music,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
@@ -968,8 +968,8 @@ class Contestant(TimeStampedModel):
 
     def calculate_prs_points(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
-            songs__scores__category=self.contest.session.judges.model.CATEGORY.presentation,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contest.session.assignments.model.CATEGORY.presentation,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
@@ -977,8 +977,8 @@ class Contestant(TimeStampedModel):
 
     def calculate_sng_points(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
-            songs__scores__category=self.contest.session.judges.model.CATEGORY.singing,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contest.session.assignments.model.CATEGORY.singing,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
@@ -986,7 +986,7 @@ class Contestant(TimeStampedModel):
 
     def calculate_total_points(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
@@ -994,8 +994,8 @@ class Contestant(TimeStampedModel):
 
     def calculate_mus_score(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
-            songs__scores__category=self.contest.session.judges.model.CATEGORY.music,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contest.session.assignments.model.CATEGORY.music,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
@@ -1003,8 +1003,8 @@ class Contestant(TimeStampedModel):
 
     def calculate_prs_score(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
-            songs__scores__category=self.contest.session.judges.model.CATEGORY.presentation,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contest.session.assignments.model.CATEGORY.presentation,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
@@ -1012,8 +1012,8 @@ class Contestant(TimeStampedModel):
 
     def calculate_sng_score(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
-            songs__scores__category=self.contest.session.judges.model.CATEGORY.singing,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contest.session.assignments.model.CATEGORY.singing,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
@@ -1021,7 +1021,7 @@ class Contestant(TimeStampedModel):
 
     def calculate_total_score(self):
         return self.performer.performances.filter(
-            songs__scores__kind=self.contest.session.judges.model.KIND.official,
+            songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             round__num__lte=self.contest.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
@@ -1567,7 +1567,7 @@ class Host(TimeStampedModel):
         return False
 
 
-class Judge(TimeStampedModel):
+class Assignment(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1627,13 +1627,13 @@ class Judge(TimeStampedModel):
     # FKs
     session = models.ForeignKey(
         'Session',
-        related_name='judges',
+        related_name='assignments',
         on_delete=models.CASCADE,
     )
 
-    certification = models.ForeignKey(
-        'Certification',
-        related_name='judges',
+    judge = models.ForeignKey(
+        'Judge',
+        related_name='assignments',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1641,7 +1641,7 @@ class Judge(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
-        related_name='judges',
+        related_name='assignments',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1663,7 +1663,7 @@ class Judge(TimeStampedModel):
         )
 
     class JSONAPIMeta:
-        resource_name = "judge"
+        resource_name = "assignment"
 
     def __unicode__(self):
         return u"{0}".format(self.name)
@@ -1690,7 +1690,7 @@ class Judge(TimeStampedModel):
             self.get_category_display(),
             self.slot,
         )
-        super(Judge, self).save(*args, **kwargs)
+        super(Assignment, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2209,62 +2209,62 @@ class Performance(TimeStampedModel):
 
     def calculate_mus_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
-            scores__category=self.round.session.judges.model.CATEGORY.music,
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_prs_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
-            scores__category=self.round.session.judges.model.CATEGORY.presentation,
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_sng_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
-            scores__category=self.round.session.judges.model.CATEGORY.singing,
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_total_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
+            scores__kind=self.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_mus_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
-            scores__category=self.round.session.judges.model.CATEGORY.music,
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_prs_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
-            scores__category=self.round.session.judges.model.CATEGORY.presentation,
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_sng_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
-            scores__category=self.round.session.judges.model.CATEGORY.singing,
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_total_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.judges.model.KIND.official,
+            scores__kind=self.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
@@ -2292,12 +2292,12 @@ class Performance(TimeStampedModel):
     #             performance=self,
     #             order=i,
     #         )
-    #         for judge in self.round.session.judges.all():
+    #         for assignment in self.round.session.assignments.all():
     #             song.scores.get_or_create(
     #                 song=song,
-    #                 judge=judge,
-    #                 category=judge.category,
-    #                 kind=judge.kind,
+    #                 assignment=assignment,
+    #                 category=assignment.category,
+    #                 kind=assignment.kind,
     #             )
     #         i += 1
     #     return
@@ -2614,8 +2614,8 @@ class Performer(TimeStampedModel):
         performances = performer.performances.order_by(
             'round__kind',
         )
-        judges = performer.session.judges.exclude(
-            category=Judge.CATEGORY.admin,
+        assignments = performer.session.assignments.exclude(
+            category=Assignment.CATEGORY.admin,
         ).order_by(
             'category',
             'kind',
@@ -2625,7 +2625,7 @@ class Performer(TimeStampedModel):
         template = foo.render(context={
             'performer': performer,
             'performances': performances,
-            'judges': judges,
+            'assignments': assignments,
             'contestants': contestants,
         })
         try:
@@ -2674,62 +2674,62 @@ class Performer(TimeStampedModel):
 
     def calculate_mus_points(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
-            songs__scores__category=self.session.judges.model.CATEGORY.music,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
+            songs__scores__category=self.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_prs_points(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
-            songs__scores__category=self.session.judges.model.CATEGORY.presentation,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
+            songs__scores__category=self.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_sng_points(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
-            songs__scores__category=self.session.judges.model.CATEGORY.singing,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
+            songs__scores__category=self.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_total_points(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_mus_score(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
-            songs__scores__category=self.session.judges.model.CATEGORY.music,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
+            songs__scores__category=self.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_prs_score(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
-            songs__scores__category=self.session.judges.model.CATEGORY.presentation,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
+            songs__scores__category=self.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_sng_score(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
-            songs__scores__category=self.session.judges.model.CATEGORY.singing,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
+            songs__scores__category=self.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_total_score(self):
         return self.performances.filter(
-            songs__scores__kind=self.session.judges.model.KIND.official,
+            songs__scores__kind=self.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -3654,8 +3654,8 @@ class Score(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    judge = models.ForeignKey(
-        'Judge',
+    assignment = models.ForeignKey(
+        'Assignment',
         related_name='scores',
         on_delete=models.CASCADE,
     )
@@ -3666,7 +3666,7 @@ class Score(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('song', 'judge',)
+            ('song', 'assignment',)
         )
 
     class JSONAPIMeta:
@@ -3809,8 +3809,8 @@ class Session(TimeStampedModel):
     def authorized_users(self):
         User = get_user_model()
         users = User.objects.filter(
-            person__certifications__judges__session=self,
-            person__certifications__judges__category=self.judges.model.CATEGORY.admin,
+            person__judges__assignments__session=self,
+            person__judges__assignments__category=self.assignments.model.CATEGORY.admin,
         )
         return users
 
@@ -3868,7 +3868,7 @@ class Session(TimeStampedModel):
             '-mus_points',
             '-prs_points',
         )
-        judges = session.judges.order_by(
+        assignments = session.assignments.order_by(
             'category',
             'kind',
             'slot',
@@ -3877,7 +3877,7 @@ class Session(TimeStampedModel):
         template = foo.render(context={
             'session': session,
             'performers': performers,
-            'judges': judges,
+            'assignments': assignments,
         })
         try:
             create_response = doc_api.create_doc({

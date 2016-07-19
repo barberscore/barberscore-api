@@ -141,13 +141,13 @@
       </table>
     </section>
     <section>
-      <h4>Judges</h4>
-      {% regroup judges by get_category_display as judge_list %}
+      <h4>Assignments</h4>
+      {% regroup assignments by get_category_display as assignment_list %}
         <ul class='list-unstyled'>
-        {% for category in judge_list %}
+        {% for category in assignment_list %}
           <li class='smallj'><strong>{{category.grouper}}:</strong>
-            {% for judge in category.list %}
-              {{judge.certification.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+            {% for assignment in category.list %}
+              {{assignment.judge.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
             {% endfor %}
           </li>
         {% endfor %}

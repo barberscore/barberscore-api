@@ -25,7 +25,7 @@ from apps.api.factories import (
     AdminFactory,
     PublicFactory,
     AwardFactory,
-    CertificationFactory,
+    JudgeFactory,
     ChapterFactory,
     ChorusFactory,
     ContestantFactory,
@@ -43,12 +43,12 @@ from apps.api.factories import (
     DistrictSeniorsAwardFactory,
     DistrictYouthAwardFactory,
     DistrictChapterFactory,
-    JudgeFactory,
+    AssignmentFactory,
     MemberFactory,
-    OfficialAdminCertificationFactory,
-    OfficialMusicCertificationFactory,
-    OfficialPresentationCertificationFactory,
-    OfficialSingingCertificationFactory,
+    OfficialAdminJudgeFactory,
+    OfficialMusicJudgeFactory,
+    OfficialPresentationJudgeFactory,
+    OfficialSingingJudgeFactory,
     OrganizationFactory,
     PerformanceFactory,
     PerformerFactory,
@@ -72,10 +72,10 @@ from apps.api.factories import (
 
 from apps.api.models import (
     Award,
-    Certification,
+    Judge,
     Contest,
     Contestant,
-    Judge,
+    Assignment,
     Convention,
     Organization,
     Performance,
@@ -94,9 +94,9 @@ from apps.api.models import (
 # #     factory_class = InternationalQuartetAwardFactory
 
 
-# # class CertificationPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
-# #     base_name = 'certification'
-# #     factory_class = CertificationFactory
+# # class JudgePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+# #     base_name = 'judge'
+# #     factory_class = JudgeFactory
 
 
 # # class ChapterPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
@@ -129,9 +129,9 @@ from apps.api.models import (
 # #     factory_class = OrganizationFactory
 
 
-# # class JudgePublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
-# #     base_name = 'judge'
-# #     factory_class = JudgeFactory
+# # class AssignmentPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
+# #     base_name = 'assignment'
+# #     factory_class = AssignmentFactory
 
 
 # # class MemberPublicTest(ReadRESTAPITestCaseMixin, BaseRESTAPITestCase):
@@ -255,10 +255,10 @@ def build_primitives():
         organization=district,
     )
 
-    OfficialAdminCertificationFactory.create_batch(5)
-    OfficialMusicCertificationFactory.create_batch(10)
-    OfficialPresentationCertificationFactory.create_batch(10)
-    OfficialSingingCertificationFactory.create_batch(10)
+    OfficialAdminJudgeFactory.create_batch(5)
+    OfficialMusicJudgeFactory.create_batch(10)
+    OfficialPresentationJudgeFactory.create_batch(10)
+    OfficialSingingJudgeFactory.create_batch(10)
 
     chapters = DistrictChapterFactory.create_batch(
         20,
@@ -332,54 +332,54 @@ def build_international():
         status=Session.STATUS.validated,
         num_rounds=1,
     )
-    admins = OfficialAdminCertificationFactory.create_batch(3)
+    admins = OfficialAdminJudgeFactory.create_batch(3)
     for admin in admins:
-        JudgeFactory(
+        AssignmentFactory(
             session=quartet_session,
-            certification=admin,
-            category=Judge.CATEGORY.admin,
-            kind=Judge.KIND.official,
-            status=Judge.STATUS.validated,
+            judge=admin,
+            category=Assignment.CATEGORY.admin,
+            kind=Assignment.KIND.official,
+            status=Assignment.STATUS.validated,
         )
-        JudgeFactory(
+        AssignmentFactory(
             session=chorus_session,
-            certification=admin,
-            category=Judge.CATEGORY.admin,
-            kind=Judge.KIND.official,
-            status=Judge.STATUS.validated,
+            judge=admin,
+            category=Assignment.CATEGORY.admin,
+            kind=Assignment.KIND.official,
+            status=Assignment.STATUS.validated,
         )
     categories = [
         'music',
         'presentation',
         'singing',
     ]
-    chorus_judges = []
-    quartet_judges = []
+    chorus_assignments = []
+    quartet_assignments = []
     for category in categories:
         i = 1
         while i <= 5:
-            certification = CertificationFactory(
-                status=Certification.STATUS.active,
-                category=getattr(Certification.CATEGORY, category),
+            judge = JudgeFactory(
+                status=Judge.STATUS.active,
+                category=getattr(Judge.CATEGORY, category),
             )
-            quartet_judge = JudgeFactory(
+            quartet_assignment = AssignmentFactory(
                 session=quartet_session,
-                certification=certification,
-                category=getattr(Judge.CATEGORY, category),
-                kind=Judge.KIND.official,
+                judge=judge,
+                category=getattr(Assignment.CATEGORY, category),
+                kind=Assignment.KIND.official,
                 slot=i,
-                status=Judge.STATUS.validated,
+                status=Assignment.STATUS.validated,
             )
-            quartet_judges.append(quartet_judge)
-            chorus_judge = JudgeFactory(
+            quartet_assignments.append(quartet_assignment)
+            chorus_assignment = AssignmentFactory(
                 session=chorus_session,
-                certification=certification,
-                category=getattr(Judge.CATEGORY, category),
-                kind=Judge.KIND.official,
+                judge=judge,
+                category=getattr(Assignment.CATEGORY, category),
+                kind=Assignment.KIND.official,
                 slot=i,
-                status=Judge.STATUS.validated,
+                status=Assignment.STATUS.validated,
             )
-            chorus_judges.append(chorus_judge)
+            chorus_assignments.append(chorus_assignment)
             i += 1
     quartet_contest = ContestFactory(
         session=quartet_session,

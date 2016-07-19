@@ -21,7 +21,7 @@ from .models import (
     Contestant,
     Convention,
     Group,
-    Judge,
+    Assignment,
     Member,
     Organization,
     Performance,
@@ -1496,7 +1496,7 @@ def extract_rounds(convention):
 def extract_panel(convention):
     reader = csv.reader(convention.stix_file, skipinitialspace=True)
     rows = [row for row in reader]
-    judges = []
+    assignments = []
     for row in rows:
         if len(row) == 0:
             continue
@@ -1519,19 +1519,19 @@ def extract_panel(convention):
                 bhs_panel_id = int(parts[0].partition(" ")[0].strip())
                 category_raw = parts[0].partition(" ")[2][1:4]
                 if category_raw == 'MUS':
-                    category = Judge.CATEGORY.music
+                    category = Assignment.CATEGORY.music
                 elif category_raw == 'PRS':
-                    category = Judge.CATEGORY.presentation
+                    category = Assignment.CATEGORY.presentation
                 elif category_raw == 'SNG':
-                    category = Judge.CATEGORY.singing
+                    category = Assignment.CATEGORY.singing
                 else:
                     raise RuntimeError("Can't determine category")
                 nm = unidecode(parts[2])
                 name = str(HumanName(nm))
                 if bhs_panel_id < 50:
-                    kind = Judge.KIND.official
+                    kind = Assignment.KIND.official
                 else:
-                    kind = Judge.KIND.practice
+                    kind = Assignment.KIND.practice
                 try:
                     person = Person.objects.get(
                         Q(formal_name=name) | Q(common_name=name) | Q(full_name=name) | Q(name=name)
@@ -1547,16 +1547,16 @@ def extract_panel(convention):
                     for person in persons:
                         person.status = Person.STATUS.dup
                         person.save()
-                    person = persons.order_by('-is_judge').first()
+                    person = persons.order_by('-is_assignment').first()
                     person.save()
-                if not person.is_judge:
+                if not person.is_assignment:
                     person.status = Person.STATUS.stix
                     person.save()
                 if person.organization:
                     organization = person.organization
                 else:
                     organization = Organization.objects.get(name='BHS FHT')
-                judges.append({
+                assignments.append({
                     'kind': kind,
                     'person': person,
                     'session': round.session,
@@ -1564,13 +1564,13 @@ def extract_panel(convention):
                     'bhs_panel_id': bhs_panel_id,
                     'category': category,
                     'slot': bhs_panel_id,
-                    'status': Judge.STATUS.final,
+                    'status': Assignment.STATUS.final,
                 })
-    for judge in judges:
+    for assignment in assignments:
         try:
-            Judge.objects.get_or_create(**judge)
+            Assignment.objects.get_or_create(**assignment)
         except IntegrityError:
-            log.error("Already exists: {0}".format(judge))
+            log.error("Already exists: {0}".format(assignment))
             continue
     return
 
@@ -1929,8 +1929,8 @@ def extract_scores(convention):
     for row in rows:
         if len(row) == 0:
             continue
-        # if row[0].startswith("Judge Count: "):
-        #     judge_count = int(row[0].partition(":")[2].strip())
+        # if row[0].startswith("Assignment Count: "):
+        #     assignment_count = int(row[0].partition(":")[2].strip())
         if row[0].startswith("Session: "):
             # first retrieve the songs
             kind = get_session_kind(row[0])
@@ -1973,19 +1973,19 @@ def extract_scores(convention):
                 order=number,
             )
 
-            judges = session.judges.order_by('bhs_panel_id')
-            scores_raw = row[-judges.count():]
+            assignments = session.assignments.order_by('bhs_panel_id')
+            scores_raw = row[-assignments.count():]
             i = 0
-            for judge in judges:
+            for assignment in assignments:
                 try:
                     points = int(scores_raw[i])
                 except:
                     log.error("Can not parse points from panel: {0} - {1}".format(points, performance))
                 scores.append({
                     'song': song,
-                    'judge': judge,
-                    'category': judge.category,
-                    'kind': judge.kind,
+                    'assignment': assignment,
+                    'category': assignment.category,
+                    'kind': assignment.kind,
                     'points': points,
                 })
                 i += 1
@@ -1996,9 +1996,9 @@ def extract_scores(convention):
 
 def update_panel_size(convention):
     for session in convention.sessions.all():
-        session.size = session.judges.filter(
-            kind=Judge.KIND.official,
-            category=Judge.CATEGORY.music,
+        session.size = session.assignments.filter(
+            kind=Assignment.KIND.official,
+            category=Assignment.CATEGORY.music,
         ).count()
         session.save()
     return
@@ -2086,12 +2086,12 @@ def generate_cycle(year):
                     num=round.num,
                 )
                 log.info("{0}, {1}".format(new_r, f))
-            judges = session.judges.filter(kind=Judge.KIND.official)
-            for judge in judges:
-                new_j, f = new_s.judges.get_or_create(
-                    category=judge.category,
-                    kind=judge.kind,
-                    slot=judge.slot,
+            assignments = session.assignments.filter(kind=Assignment.KIND.official)
+            for assignment in assignments:
+                new_j, f = new_s.assignments.get_or_create(
+                    category=assignment.category,
+                    kind=assignment.kind,
+                    slot=assignment.slot,
                 )
                 log.info("{0}, {1}".format(new_j, f))
             contests = session.contests.all()

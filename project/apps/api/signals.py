@@ -36,17 +36,17 @@ def performance_post_save(sender, instance=None, created=False, raw=False, **kwa
                     num=s,
                 )
                 s += 1
-                judges = instance.round.session.judges.filter(
+                assignments = instance.round.session.assignments.filter(
                     category__in=[
-                        instance.round.session.judges.model.CATEGORY.music,
-                        instance.round.session.judges.model.CATEGORY.presentation,
-                        instance.round.session.judges.model.CATEGORY.singing,
+                        instance.round.session.assignments.model.CATEGORY.music,
+                        instance.round.session.assignments.model.CATEGORY.presentation,
+                        instance.round.session.assignments.model.CATEGORY.singing,
                     ]
                 )
-                for judge in judges:
-                    judge.scores.create(
-                        judge=judge,
+                for assignment in assignments:
+                    assignment.scores.create(
+                        assignment=assignment,
                         song=song,
-                        category=judge.category,
-                        kind=judge.kind,
+                        category=assignment.category,
+                        kind=assignment.kind,
                     )

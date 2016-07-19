@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.conf import settings
 from .models import (
-    Judge,
+    Assignment,
     Performer,
     Round,
     Session,
@@ -30,7 +30,7 @@ def print_oss(message):
         '-mus_points',
         '-prs_points',
     )
-    judges = session.judges.order_by(
+    assignments = session.assignments.order_by(
         'category',
         'kind',
         'slot',
@@ -39,7 +39,7 @@ def print_oss(message):
     template = foo.render(context={
         'session': session,
         'performers': performers,
-        'judges': judges,
+        'assignments': assignments,
     })
     try:
         create_response = doc_api.create_doc({
@@ -70,8 +70,8 @@ def print_csa(message):
     performances = performer.performances.order_by(
         'round__kind',
     )
-    judges = performer.session.judges.exclude(
-        category=Judge.CATEGORY.admin,
+    assignments = performer.session.assignments.exclude(
+        category=Assignment.CATEGORY.admin,
     ).order_by(
         'category',
         'kind',
@@ -81,7 +81,7 @@ def print_csa(message):
     template = foo.render(context={
         'performer': performer,
         'performances': performances,
-        'judges': judges,
+        'assignments': assignments,
         'contestants': contestants,
     })
     try:

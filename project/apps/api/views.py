@@ -10,7 +10,7 @@ from rest_framework import viewsets
 # Local
 from .filters import (
     CatalogFilter,
-    CertificationFilter,
+    JudgeFilter,
     CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
@@ -25,14 +25,14 @@ from .filters import (
 from .models import (
     Award,
     Catalog,
-    Certification,
+    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
     Host,
-    Judge,
+    Assignment,
     Member,
     Organization,
     Performance,
@@ -50,14 +50,14 @@ from .models import (
 from .serializers import (
     AwardSerializer,
     CatalogSerializer,
-    CertificationSerializer,
+    JudgeSerializer,
     ChapterSerializer,
     ContestantSerializer,
     ContestSerializer,
     ConventionSerializer,
     GroupSerializer,
     HostSerializer,
-    JudgeSerializer,
+    AssignmentSerializer,
     MemberSerializer,
     OrganizationSerializer,
     PerformanceSerializer,
@@ -103,16 +103,16 @@ class CatalogViewSet(viewsets.ModelViewSet):
     resource_name = "catalog"
 
 
-class CertificationViewSet(viewsets.ModelViewSet):
-    queryset = Certification.objects.select_related(
+class JudgeViewSet(viewsets.ModelViewSet):
+    queryset = Judge.objects.select_related(
         'person',
     ).prefetch_related(
-        'judges',
+        'assignments',
     )
     permission_classes = (DRYPermissions,)
-    serializer_class = CertificationSerializer
-    filter_class = CertificationFilter
-    resource_name = "certification"
+    serializer_class = JudgeSerializer
+    filter_class = JudgeFilter
+    resource_name = "judge"
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
@@ -205,10 +205,10 @@ class HostViewSet(viewsets.ModelViewSet):
     resource_name = "host"
 
 
-class JudgeViewSet(viewsets.ModelViewSet):
-    queryset = Judge.objects.select_related(
+class AssignmentViewSet(viewsets.ModelViewSet):
+    queryset = Assignment.objects.select_related(
         'session',
-        'certification',
+        'judge',
     ).prefetch_related(
         'scores',
     ).order_by(
@@ -218,8 +218,8 @@ class JudgeViewSet(viewsets.ModelViewSet):
         'slot',
     )
     permission_classes = (DRYPermissions,)
-    serializer_class = JudgeSerializer
-    resource_name = "judge"
+    serializer_class = AssignmentSerializer
+    resource_name = "assignment"
     filter_backends = [
         CoalesceFilterBackend,
     ]
@@ -277,7 +277,6 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
-        'chapter',
         'district',
         'division',
     ).prefetch_related(
@@ -313,7 +312,7 @@ class PersonViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'roles',
         'conventions',
-        'certifications',
+        'judges',
     ).order_by(
         'name',
     )
@@ -357,10 +356,10 @@ class RoundViewSet(
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
-        'judge',
+        'assignment',
     ).order_by(
         'song',
-        'judge',
+        'assignment',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = ScoreSerializer
@@ -376,7 +375,7 @@ class SessionViewSet(
     ).prefetch_related(
         'performers',
         'rounds',
-        'judges',
+        'assignments',
         'contests',
     )
     permission_classes = (DRYPermissions,)

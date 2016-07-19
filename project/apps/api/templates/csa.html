@@ -196,8 +196,8 @@
           <thead>
             <tr>
               <th>Songs</th>
-              {% for judge in judges %}
-                <th class='text-right'>{{judge.designation}}</th>
+              {% for assignment in assignments %}
+                <th class='text-right'>{{assignment.designation}}</th>
               {% endfor %}
             </tr>
           </thead>
@@ -210,12 +210,12 @@
                   {% endfor %}
                 {% endfor %}
               </td>
-              {% for judge in judges %}
+              {% for assignment in assignments %}
                 <td class='text-right'>
                   {% for performance in performances %}
                     {% for song in performance.songs.all %}
                       {% for score in song.scores.all %}
-                        {% if score.judge == judge %}{{score.points}}<br>{% endif %}
+                        {% if score.assignment == assignment %}{{score.points}}<br>{% endif %}
                       {% endfor %}
                     {% endfor %}
                   {% endfor %}
@@ -228,24 +228,24 @@
     </section>
     {% comment %}
     <section>
-      <h4>Judges</h4>
+      <h4>Assignments</h4>
         <ul class='list-unstyled'>
-          {% for judge in judges %}
-            <li>{{judge.designation}}: {{judge.certification.person.common_name}}</li>
+          {% for assignment in assignments %}
+            <li>{{assignment.designation}}: {{assignment.judge.person.common_name}}</li>
           {% endfor %}
         </ul>
     </section>
     {% endcomment %}
     <section>
-      {% regroup judges by get_category_display as judge_list %}
+      {% regroup assignments by get_category_display as assignment_list %}
       <table class='table'>
-        {% for category in judge_list %}
+        {% for category in assignment_list %}
         <tbody>
             <div>
             <tr>
             <td class='smallj'><strong>{{category.grouper}}</strong></td>
-            {% for judge in category.list %}
-              <td class='smallj'>{{judge.designation}}: {{judge.certification.person.common_name}}</td>
+            {% for assignment in category.list %}
+              <td class='smallj'>{{assignment.designation}}: {{assignment.judge.person.common_name}}</td>
             {% endfor %}
           </tr>
           </div>

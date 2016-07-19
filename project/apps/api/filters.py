@@ -8,7 +8,7 @@ from rest_framework.filters import BaseFilterBackend
 # Local
 from .models import (
     Catalog,
-    Certification,
+    Judge,
     Contestant,
     Convention,
     Group,
@@ -99,9 +99,9 @@ class GroupFilter(filters.FilterSet):
         }
 
 
-class CertificationFilter(filters.FilterSet):
+class JudgeFilter(filters.FilterSet):
     class Meta:
-        model = Certification
+        model = Judge
         fields = {
             'name': '__all__',
             'category': '__all__',
@@ -125,7 +125,7 @@ class PerformerFilter(filters.FilterSet):
 
 
 class PersonFilter(filters.FilterSet):
-    certifications__category = ListFilter(name='certifications__category')
+    judges__category = ListFilter(name='judges__category')
 
     class Meta:
         model = Person
@@ -135,7 +135,7 @@ class PersonFilter(filters.FilterSet):
         fields = {
             'name': '__all__',
             'nomen': '__all__',
-            # 'certifications__category': '__all__',
+            # 'judges__category': '__all__',
         }
 
 

@@ -4,13 +4,13 @@ from django.contrib import admin
 # Local
 from .models import (
     Award,
-    Certification,
+    Judge,
     Contest,
     Contestant,
     Convention,
     Group,
     Host,
-    Judge,
+    Assignment,
     Member,
     Performance,
     Performer,
@@ -41,8 +41,8 @@ class AwardInline(admin.TabularInline):
     show_change_link = True
 
 
-class CertificationInline(admin.TabularInline):
-    model = Certification
+class JudgeInline(admin.TabularInline):
+    model = Judge
     fields = [
         'name',
         'person',
@@ -147,17 +147,17 @@ class HostInline(admin.TabularInline):
     extra = 0
 
 
-class JudgeInline(admin.TabularInline):
-    model = Judge
+class AssignmentInline(admin.TabularInline):
+    model = Assignment
     fields = [
-        'certification',
+        'judge',
         'category',
         'kind',
         'session',
         'slot',
     ]
     raw_id_fields = [
-        'certification',
+        'judge',
     ]
     ordering = (
         'session',
@@ -228,7 +228,7 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
-        'judge',
+        'assignment',
         'category',
         'points',
     ]
@@ -238,10 +238,10 @@ class ScoreInline(admin.TabularInline):
     readonly_fields = [
         'song',
         'category',
-        'judge',
+        'assignment',
     ]
     ordering = (
-        'judge',
+        'assignment',
     )
     show_change_link = True
     extra = 0

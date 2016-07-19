@@ -5,14 +5,14 @@ from rest_framework import routers
 from .views import (
     AwardViewSet,
     CatalogViewSet,
-    CertificationViewSet,
+    JudgeViewSet,
     ChapterViewSet,
     ContestantViewSet,
     ContestViewSet,
     ConventionViewSet,
     GroupViewSet,
     HostViewSet,
-    JudgeViewSet,
+    AssignmentViewSet,
     MemberViewSet,
     OrganizationViewSet,
     PerformanceViewSet,
@@ -32,14 +32,14 @@ router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'award', AwardViewSet)
 router.register(r'catalog', CatalogViewSet)
-router.register(r'certification', CertificationViewSet)
+router.register(r'judge', JudgeViewSet)
 router.register(r'chapter', ChapterViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'group', GroupViewSet)
 router.register(r'host', HostViewSet)
-router.register(r'judge', JudgeViewSet)
+router.register(r'assignment', AssignmentViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'performance', PerformanceViewSet)
