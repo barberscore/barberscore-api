@@ -1234,10 +1234,6 @@ class Convention(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        if self.kind > self.KIND.disdiv:
-            org = None
-        else:
-            org = str(self.organization.short_name)
         if self.season == self.SEASON.summer:
             season = None
         else:
