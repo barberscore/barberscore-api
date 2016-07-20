@@ -1,7 +1,5 @@
 # Third-Party
 import rest_framework_filters as filters
-from django_filters import Filter
-from django_filters.fields import Lookup
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
 from rest_framework.filters import BaseFilterBackend
 
@@ -61,12 +59,6 @@ class SessionFilterBackend(DRYPermissionFiltersBase):
             return queryset.filter(status__gte=Session.STATUS.listed)
 
 
-class ListFilter(Filter):
-    def filter(self, qs, value):
-        value_list = value.split(u',')
-        return super(ListFilter, self).filter(qs, Lookup(value_list, 'in'))
-
-
 class CatalogFilter(filters.FilterSet):
 
     class Meta:
@@ -77,22 +69,21 @@ class CatalogFilter(filters.FilterSet):
 
 
 class ConventionFilter(filters.FilterSet):
-    season = ListFilter(name='season')
 
     class Meta:
         model = Convention
         fields = {
             'status': '__all__',
             'year': '__all__',
-            # 'season': '__all__',
         }
 
 
 class GroupFilter(filters.FilterSet):
+    name = filters.AllLookupsFilter(name='name')
+
     class Meta:
         model = Group
         fields = {
-            'name': '__all__',
             'nomen': '__all__',
             'kind': '__all__',
             'status': '__all__',
@@ -117,6 +108,8 @@ class ContestantFilter(filters.FilterSet):
 
 
 class PerformerFilter(filters.FilterSet):
+    group = filters.RelatedFilter(GroupFilter, name='group')
+
     class Meta:
         model = Performer
         fields = {
@@ -125,7 +118,6 @@ class PerformerFilter(filters.FilterSet):
 
 
 class PersonFilter(filters.FilterSet):
-    judges__category = ListFilter(name='judges__category')
 
     class Meta:
         model = Person
@@ -135,7 +127,6 @@ class PersonFilter(filters.FilterSet):
         fields = {
             'name': '__all__',
             'nomen': '__all__',
-            # 'judges__category': '__all__',
         }
 
 
