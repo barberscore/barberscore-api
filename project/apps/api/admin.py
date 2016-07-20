@@ -42,6 +42,7 @@ from .models import (
     Organization,
     Performance,
     Performer,
+    PerformerScore,
     Person,
     Role,
     Round,
@@ -775,6 +776,59 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'director',
         'codirector',
     )
+
+    readonly_fields = (
+        'name',
+    )
+
+    save_on_top = True
+
+    ordering = (
+        'name',
+    )
+
+
+@admin.register(PerformerScore)
+class PerformerScoreAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fields = (
+        'name',
+        'status',
+        'rank',
+        'mus_points',
+        'prs_points',
+        'sng_points',
+        'total_points',
+        'mus_score',
+        'prs_score',
+        'sng_score',
+        'total_score',
+    )
+
+    list_display = (
+        'name',
+        'status',
+    )
+
+    list_filter = [
+        'status',
+        'performer__session__convention__level',
+        'performer__session__kind',
+        'performer__session__convention__season',
+        'performer__session__convention__organization',
+        'performer__session__convention__year',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = (
+        'name',
+    )
+
+    # raw_id_fields = (
+    #     'performer',
+    # )
 
     readonly_fields = (
         'name',

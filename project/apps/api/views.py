@@ -15,6 +15,7 @@ from .filters import (
     GroupFilter,
     JudgeFilter,
     PerformerFilter,
+    PerformerScoreFilterBackend,
     PersonFilter,
     RoundFilterBackend,
     SessionFilterBackend,
@@ -36,6 +37,7 @@ from .models import (
     Organization,
     Performance,
     Performer,
+    PerformerScore,
     Person,
     Role,
     Round,
@@ -61,6 +63,7 @@ from .serializers import (
     OrganizationSerializer,
     PerformanceSerializer,
     PerformerSerializer,
+    PerformerScoreSerializer,
     PersonSerializer,
     RoleSerializer,
     RoundSerializer,
@@ -289,17 +292,17 @@ class PerformerViewSet(viewsets.ModelViewSet):
     filter_class = PerformerFilter
     resource_name = "performer"
 
-    # @detail_route(methods=['put'])
-    # def add_performance(self, request, pk=None):
-    #     performer = self.get_object()
-    #     response = performer.add_performance()
-    #     return Response(response)
 
-    # @detail_route(methods=['put'])
-    # def scratch(self, request, pk=None):
-    #     performer = self.get_object()
-    #     response = performer.scratch()
-    #     return Response(response)
+class PerformerScoreViewSet(viewsets.ModelViewSet):
+    queryset = PerformerScore.objects.select_related(
+        'performer',
+    ).order_by(
+        'name',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = PerformerScoreSerializer
+    filter_backends = (PerformerScoreFilterBackend,)
+    resource_name = "performerscore"
 
 
 class PersonViewSet(viewsets.ModelViewSet):

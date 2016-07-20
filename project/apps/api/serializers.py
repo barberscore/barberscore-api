@@ -23,6 +23,7 @@ from .models import (
     Organization,
     Performance,
     Performer,
+    PerformerScore,
     Person,
     Role,
     Round,
@@ -412,6 +413,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'contestants',
             'submissions',
             'permissions',
+            'performerscore',
         )
         read_only_fields = [
             'picture',
@@ -427,6 +429,30 @@ class PerformerSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
         ]
+
+
+class PerformerScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = PerformerScore
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'performer',
+            'permissions',
+        )
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -534,6 +560,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'penalty',
             'song',
             'assignment',
+            'permissions',
         ]
 
 

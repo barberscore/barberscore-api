@@ -2408,7 +2408,34 @@ class Performer(TimeStampedModel):
         blank=True,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    seed = models.IntegerField(
+        help_text="""
+            The incoming rank based on prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
     # FKs
+    performerscore = models.OneToOneField(
+        'PerformerScore',
+        related_name='performer',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='performers',
@@ -2485,33 +2512,6 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    csa_pdf = models.FileField(
-        help_text="""
-            The historical PDF CSA.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    seed = models.IntegerField(
-        help_text="""
-            The incoming rank based on prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
     # Denormalized
     rank = models.IntegerField(
         null=True,
@@ -2565,6 +2565,14 @@ class Performer(TimeStampedModel):
         null=True,
         blank=True,
         editable=False,
+    )
+
+    csa_pdf = models.FileField(
+        help_text="""
+            The historical PDF CSA.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
     )
 
     # Internals
@@ -2839,6 +2847,115 @@ class Performer(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
+
+
+class PerformerScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    csa_pdf = models.FileField(
+        help_text="""
+            The historical PDF CSA.""",
+        upload_to=generate_image_filename,
+        blank=True,
+        null=True,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "performerscore"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(PerformerScore, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Person(TimeStampedModel):

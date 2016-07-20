@@ -11,6 +11,7 @@ from .models import (
     Group,
     Judge,
     Performer,
+    PerformerScore,
     Person,
     Round,
     Session,
@@ -57,6 +58,15 @@ class SessionFilterBackend(DRYPermissionFiltersBase):
             return queryset.all()
         else:
             return queryset.filter(status__gte=Session.STATUS.listed)
+
+
+class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
+        else:
+            return queryset.filter(status__gte=PerformerScore.STATUS.published)
 
 
 class CatalogFilter(filters.FilterSet):

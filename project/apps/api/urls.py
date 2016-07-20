@@ -17,6 +17,7 @@ from .views import (
     OrganizationViewSet,
     PerformanceViewSet,
     PerformerViewSet,
+    PerformerScoreViewSet,
     PersonViewSet,
     RoleViewSet,
     RoundViewSet,
@@ -44,6 +45,7 @@ router.register(r'member', MemberViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'performer', PerformerViewSet)
+router.register(r'performerscore', PerformerScoreViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'role', RoleViewSet)
 router.register(r'round', RoundViewSet)
