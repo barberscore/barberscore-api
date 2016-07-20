@@ -1,35 +1,35 @@
 # Third-Party
 from fsm_admin.mixins import FSMTransitionMixin
 from mptt.admin import MPTTModelAdmin
-from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 from phonenumber_field.modelfields import PhoneNumberField
+from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
 # Django
 from django.contrib import admin
 
 # Local
 from .inlines import (
+    AssignmentInline,
     AwardInline,
-    JudgeInline,
     ContestantInline,
     ContestInline,
     ConventionInline,
     GroupInline,
     HostInline,
-    AssignmentInline,
+    JudgeInline,
     MemberInline,
     PerformanceInline,
     PerformerInline,
     RoleInline,
     RoundInline,
     ScoreInline,
-    SongInline,
     SessionInline,
+    SongInline,
     SubmissionInline,
 )
 from .models import (
+    Assignment,
     Award,
-    Judge,
     Catalog,
     Chapter,
     Contest,
@@ -37,7 +37,7 @@ from .models import (
     Convention,
     Group,
     Host,
-    Assignment,
+    Judge,
     Member,
     Organization,
     Performance,

@@ -6,10 +6,10 @@ from rest_framework.filters import BaseFilterBackend
 # Local
 from .models import (
     Catalog,
-    Judge,
     Contestant,
     Convention,
     Group,
+    Judge,
     Performer,
     Person,
     Round,

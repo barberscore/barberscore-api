@@ -1,4 +1,7 @@
+# Standard Libary
 import os
+
+# Third-Party
 import channels.asgi
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")

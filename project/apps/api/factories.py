@@ -1,8 +1,8 @@
 # Standard Libary
-import pytz
 from datetime import datetime
 
 # Third-Party
+import pytz
 from factory import (
     Faker,
     PostGenerationMethodCall,
@@ -13,14 +13,14 @@ from psycopg2.extras import DateTimeTZRange
 
 # First-Party
 from apps.api.models import (
+    Assignment,
     Award,
-    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
-    Assignment,
+    Judge,
     Member,
     Organization,
     Performance,
@@ -36,6 +36,7 @@ from apps.api.models import (
     User,
     Venue,
 )
+
 
 # Users
 class UserFactory(DjangoModelFactory):

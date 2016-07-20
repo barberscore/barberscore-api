@@ -1,9 +1,11 @@
+# Third-Party
 from channels.routing import route
 
+# Local
 from .consumers import (
+    print_ann,
     print_csa,
     print_oss,
-    print_ann,
     send_email,
 )
 

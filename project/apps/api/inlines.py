@@ -3,14 +3,14 @@ from django.contrib import admin
 
 # Local
 from .models import (
+    Assignment,
     Award,
-    Judge,
     Contest,
     Contestant,
     Convention,
     Group,
     Host,
-    Assignment,
+    Judge,
     Member,
     Performance,
     Performer,

@@ -9,16 +9,16 @@ from django.core.exceptions import ValidationError
 
 # Local
 from .models import (
+    Assignment,
     Award,
     Catalog,
-    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
     Host,
-    Assignment,
+    Judge,
     Member,
     Organization,
     Performance,

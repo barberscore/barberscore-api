@@ -3,14 +3,14 @@ from django.core.management.base import BaseCommand
 
 # First-Party
 from apps.api.models import (
+    Assignment,
     Award,
-    Judge,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
-    Assignment,
+    Judge,
     Member,
     Organization,
     Performance,

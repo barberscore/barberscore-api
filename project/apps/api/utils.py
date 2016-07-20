@@ -1,10 +1,10 @@
 # Standard Libary
 import csv
 import logging
+from datetime import datetime
 
 # Third-Party
 import arrow
-from datetime import datetime
 from nameparser import HumanName
 from psycopg2.extras import DateRange
 from unidecode import unidecode
@@ -15,13 +15,13 @@ from django.db.models import Q
 
 # Local
 from .models import (
+    Assignment,
     Award,
     Chapter,
     Contest,
     Contestant,
     Convention,
     Group,
-    Assignment,
     Member,
     Organization,
     Performance,

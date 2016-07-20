@@ -1,9 +1,16 @@
+# Standard Libary
 import logging
+
+# Third-Party
 import docraptor
+
+# Django
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.mail import send_mail
 from django.template.loader import get_template
-from django.conf import settings
+
+# Local
 from .models import (
     Assignment,
     Performer,

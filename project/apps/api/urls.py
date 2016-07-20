@@ -3,16 +3,16 @@ from rest_framework import routers
 
 # Local
 from .views import (
+    AssignmentViewSet,
     AwardViewSet,
     CatalogViewSet,
-    JudgeViewSet,
     ChapterViewSet,
     ContestantViewSet,
     ContestViewSet,
     ConventionViewSet,
     GroupViewSet,
     HostViewSet,
-    AssignmentViewSet,
+    JudgeViewSet,
     MemberViewSet,
     OrganizationViewSet,
     PerformanceViewSet,

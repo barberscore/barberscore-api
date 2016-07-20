@@ -1,49 +1,46 @@
 # Third-Party
 # from nose import with_setup
-import pytz
+# Standard Libary
 import random
 from datetime import datetime
+
+import pytz
 from factory.fuzzy import (
-    FuzzyInteger,
     FuzzyDateTime,
+    FuzzyInteger,
 )
+
+# Django
 from django.core import management
 from django.db import IntegrityError
-# from nose.tools import eq_ as eq
-# from nose.tools import ok_ as ok
-# from rest_assured.testcases import (
-#     BaseRESTAPITestCase,
-#     ReadRESTAPITestCaseMixin,
-#     ReadWriteRESTAPITestCaseMixin,
-# )
 
-# # Django
-# from django.test import SimpleTestCase
-
+# First-Party
 # # First-Party
 from apps.api.factories import (
     AdminFactory,
-    PublicFactory,
+    AssignmentFactory,
     AwardFactory,
-    JudgeFactory,
+    BaritoneFactory,
+    BassFactory,
     ChapterFactory,
     ChorusFactory,
     ContestantFactory,
     ContestFactory,
     ConventionFactory,
-    DistrictFactory,
-    GroupFactory,
-    InternationalFactory,
-    InternationalQuartetAwardFactory,
-    InternationalChorusAwardFactory,
-    InternationalSeniorsAwardFactory,
-    InternationalYouthAwardFactory,
-    DistrictQuartetAwardFactory,
+    DistrictChapterFactory,
     DistrictChorusAwardFactory,
+    DistrictFactory,
+    DistrictQuartetAwardFactory,
     DistrictSeniorsAwardFactory,
     DistrictYouthAwardFactory,
-    DistrictChapterFactory,
-    AssignmentFactory,
+    GroupFactory,
+    InternationalChorusAwardFactory,
+    InternationalFactory,
+    InternationalQuartetAwardFactory,
+    InternationalSeniorsAwardFactory,
+    InternationalYouthAwardFactory,
+    JudgeFactory,
+    LeadFactory,
     MemberFactory,
     OfficialAdminJudgeFactory,
     OfficialMusicJudgeFactory,
@@ -53,6 +50,7 @@ from apps.api.factories import (
     PerformanceFactory,
     PerformerFactory,
     PersonFactory,
+    PublicFactory,
     QuartetFactory,
     RoleFactory,
     RoundFactory,
@@ -64,19 +62,15 @@ from apps.api.factories import (
     SubmissionFactory,
     SummerConventionFactory,
     TenorFactory,
-    LeadFactory,
-    BaritoneFactory,
-    BassFactory,
     VenueFactory,
 )
-
 from apps.api.models import (
+    Assignment,
     Award,
-    Judge,
     Contest,
     Contestant,
-    Assignment,
     Convention,
+    Judge,
     Organization,
     Performance,
     Performer,
@@ -86,6 +80,20 @@ from apps.api.models import (
     Song,
     Submission,
 )
+
+
+# from nose.tools import eq_ as eq
+# from nose.tools import ok_ as ok
+# from rest_assured.testcases import (
+#     BaseRESTAPITestCase,
+#     ReadRESTAPITestCaseMixin,
+#     ReadWriteRESTAPITestCaseMixin,
+# )
+
+# # Django
+# from django.test import SimpleTestCase
+
+
 
 
 # # # Public CRUD Tests

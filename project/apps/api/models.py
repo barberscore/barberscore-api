@@ -9,6 +9,7 @@ import random
 import uuid
 
 # Third-Party
+import docraptor
 from channels import Channel
 from django_fsm import (
     RETURN_VALUE,
@@ -28,6 +29,7 @@ from ranking import Ranking
 from timezone_field import TimeZoneField
 
 # Django
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -38,28 +40,25 @@ from django.contrib.postgres.fields import (
     FloatRangeField,
     IntegerRangeField,
 )
+from django.core.files.base import ContentFile
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
 )
 from django.db import models
-
-from django.conf import settings
-
-import docraptor
-from django.core.files.base import ContentFile
 from django.template.loader import get_template
-
-docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-# docraptor.configuration.debug = True
-doc_api = docraptor.DocApi()
 
 # Local
 from .managers import (
     ScoreManager,
     UserManager,
 )
+
+docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
+# docraptor.configuration.debug = True
+doc_api = docraptor.DocApi()
+
 
 # from django_fsm_log.decorators import fsm_log_by
 

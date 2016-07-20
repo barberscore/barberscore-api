@@ -1,9 +1,8 @@
-from django.db.models.signals import (
-    post_save,
-)
-
+# Django
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+# Local
 from .models import (
     Performance,
     Session,
