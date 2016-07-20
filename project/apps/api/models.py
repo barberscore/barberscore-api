@@ -56,17 +56,7 @@ from .managers import (
 )
 
 docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-# docraptor.configuration.debug = True
 doc_api = docraptor.DocApi()
-
-
-# from django_fsm_log.decorators import fsm_log_by
-
-
-# from django.core.exceptions import (
-#     ValidationError,
-# )
-
 
 log = logging.getLogger(__name__)
 
@@ -333,11 +323,14 @@ class Award(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(self.organization.representative.user == request.user)
+        else:
+            return False
 
 
 class Catalog(TimeStampedModel):
@@ -824,11 +817,14 @@ class Contest(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(self.award.organization.representative.user == request.user)
+        else:
+            return False
 
     # Methods
     def ranking(self, point_total):
@@ -946,11 +942,14 @@ class Contestant(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(self.contest.award.organization.representative.user == request.user)
+        else:
+            return False
 
     # Methods
     def calculate_rank(self):
@@ -1257,11 +1256,18 @@ class Convention(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(
+                self.hosts.filter(
+                    organization__representative__user=request.user,
+                )
+            )
+        else:
+            return False
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.started)
@@ -1561,11 +1567,14 @@ class Host(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(self.organization.representative.user == request.user)
+        else:
+            return False
 
 
 class Assignment(TimeStampedModel):
@@ -2014,11 +2023,14 @@ class Organization(MPTTModel, TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(self.representative.user == request.user)
+        else:
+            return False
 
 
 class Performance(TimeStampedModel):
@@ -2198,11 +2210,19 @@ class Performance(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(
+                self.round.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                )
+            )
+        else:
+            return False
 
     # Denormalizations
     def calculate_rank(self):
@@ -2660,10 +2680,20 @@ class Performer(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.group.roles.filter(
+                    status=self.group.roles.model.STATUS.active,
+                    person__user=request.user,
+                ) or self.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.session.assignments.model.CATEGORY.admin,
+                )
+            )
         return False
 
     # Methods
@@ -3097,6 +3127,24 @@ class Person(TimeStampedModel):
             u'{0}'.format(name.suffix),
         ]))
         super(Person, self).save(*args, **kwargs)
+
+    # Methods
+    def create_user_from_person(self):
+        User = get_user_model()
+        if self.user:
+            raise RuntimeError('User already exists')
+        try:
+            user = User.objects.get(bhs_id=self.bhs_id)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                name=self.name,
+                bhs_id=self.bhs_id,
+                email=self.email,
+                password='password',
+                # password=self.bhs_id,
+            )
+        self.user = user
+        self.save()
 
     # Permissions
     @staticmethod

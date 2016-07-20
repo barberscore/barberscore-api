@@ -297,12 +297,12 @@ class ContestAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'cycle',
-        'award__is_primary',
         'award__organization__level',
-        'award__organization',
         'award__kind',
+        'award__is_primary',
         'is_qualifier',
+        'award__organization',
+        'cycle',
     ]
 
     save_on_top = True
@@ -391,6 +391,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'kind',
         'season',
+        'hosts__organization',
         'year',
     )
 
@@ -742,11 +743,11 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'session__kind',
         'session__convention__level',
+        'session__kind',
         'session__convention__season',
-        'session__convention__year',
         'session__convention__organization',
+        'session__convention__year',
         'risers',
     ]
 
