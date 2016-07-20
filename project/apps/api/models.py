@@ -1485,11 +1485,17 @@ class Group(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return bool(self.roles.filter(
+                status=self.roles.model.STATUS.active,
+                person__user=request.user,
+            ))
+        else:
+            return False
 
 
 class Host(TimeStampedModel):
@@ -3108,11 +3114,14 @@ class Person(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        if request.user.is_authenticated():
+            return self.user == request.user
+        else:
+            return False
 
 
 class Role(TimeStampedModel):
