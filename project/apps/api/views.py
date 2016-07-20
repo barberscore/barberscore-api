@@ -11,7 +11,6 @@ from rest_framework import viewsets
 from .filters import (
     CatalogFilter,
     JudgeFilter,
-    CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
     GroupFilter,
@@ -220,9 +219,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     serializer_class = AssignmentSerializer
     resource_name = "assignment"
-    filter_backends = [
-        CoalesceFilterBackend,
-    ]
 
 
 class MemberViewSet(viewsets.ModelViewSet):

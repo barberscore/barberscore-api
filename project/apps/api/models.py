@@ -4415,12 +4415,19 @@ class Venue(TimeStampedModel):
         return u"{0}".format(self.name)
 
     def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.location,
-            " - ",
-            "{0},".format(self.city),
-            self.state,
-        ]))
+        self.nomen = " ".join(
+            map(
+                (lambda x: unicode(x).encode('utf-8')),
+                filter(
+                    None, [
+                        self.name,
+                        self.city,
+                        ', ',
+                        self.state,
+                    ]
+                )
+            )
+        )
         super(Venue, self).save(*args, **kwargs)
 
     # Permissions

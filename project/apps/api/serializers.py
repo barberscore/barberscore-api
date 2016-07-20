@@ -47,6 +47,9 @@ class TimezoneField(serializers.Field):
 
 
 class AwardSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Award
         fields = (
@@ -67,10 +70,13 @@ class AwardSerializer(serializers.ModelSerializer):
             'threshold',
             'organization',
             'contests',
+            'permissions',
         )
 
 
 class CatalogSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Catalog
@@ -90,10 +96,13 @@ class CatalogSerializer(serializers.ModelSerializer):
             'is_medley',
             'is_learning',
             'voicing',
+            'permissions',
         )
 
 
 class JudgeSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Judge
@@ -108,10 +117,13 @@ class JudgeSerializer(serializers.ModelSerializer):
             'end_date',
             'person',
             'assignments',
+            'permissions',
         )
 
 
 class ChapterSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Chapter
         fields = (
@@ -123,10 +135,13 @@ class ChapterSerializer(serializers.ModelSerializer):
             'organization',
             'groups',
             'members',
+            'permissions',
         )
 
 
 class ContestSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Contest
         fields = (
@@ -140,10 +155,13 @@ class ContestSerializer(serializers.ModelSerializer):
             'contestants',
             'award',
             'session',
+            'permissions',
         )
 
 
 class ContestantSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Contestant
         fields = (
@@ -153,10 +171,13 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'performer',
             'contest',
+            'permissions',
         )
 
 
 class ConventionSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Convention
         fields = (
@@ -176,10 +197,14 @@ class ConventionSerializer(serializers.ModelSerializer):
             'organization',
             'drcj',
             'sessions',
+            'permissions',
+            'permissions',
         )
 
 
 class GroupSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Group
@@ -207,6 +232,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'performers',
             'roles',
+            'permissions',
         )
         read_only_fields = [
             'picture',
@@ -214,6 +240,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class HostSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Host
         fields = (
@@ -223,10 +251,13 @@ class HostSerializer(serializers.ModelSerializer):
             'status',
             'convention',
             'organization',
+            'permissions',
         )
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Assignment
         fields = (
@@ -241,10 +272,13 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'judge',
             'session',
             'scores',
+            'permissions',
         )
 
 
 class MemberSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Member
         fields = (
@@ -254,10 +288,13 @@ class MemberSerializer(serializers.ModelSerializer):
             'status',
             'person',
             'chapter',
+            'permissions',
         )
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Organization
@@ -286,6 +323,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'children',
             'awards',
             'lft',
+            'permissions',
         )
         read_only_fields = [
             'picture',
@@ -293,15 +331,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    # rank = RankField(read_only=True)
-    # mus_points = MusPointsField(read_only=True)
-    # prs_points = PrsPointsField(read_only=True)
-    # sng_points = SngPointsField(read_only=True)
-    # total_points = TotalPointsField(read_only=True)
-    # mus_score = MusScoreField(read_only=True)
-    # prs_score = PrsScoreField(read_only=True)
-    # sng_score = SngScoreField(read_only=True)
-    # total_score = TotalScoreField(read_only=True)
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Performance
@@ -326,6 +356,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'performer',
             'slot',
             'songs',
+            'permissions',
         )
 
         readonly_fields = [
@@ -342,15 +373,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
 
 class PerformerSerializer(serializers.ModelSerializer):
-    # rank = RankField(read_only=True)
-    # mus_points = MusPointsField(read_only=True)
-    # prs_points = PrsPointsField(read_only=True)
-    # sng_points = SngPointsField(read_only=True)
-    # total_points = TotalPointsField(read_only=True)
-    # mus_score = MusScoreField(read_only=True)
-    # prs_score = PrsScoreField(read_only=True)
-    # sng_score = SngScoreField(read_only=True)
-    # total_score = TotalScoreField(read_only=True)
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Performer
@@ -388,6 +411,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'performances',
             'contestants',
             'submissions',
+            'permissions',
         )
         read_only_fields = [
             'picture',
@@ -406,6 +430,8 @@ class PerformerSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Person
@@ -434,6 +460,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'nick_name',
+            'permissions',
         )
         read_only_fields = [
             'picture',
@@ -448,6 +475,8 @@ class PersonSerializer(serializers.ModelSerializer):
 
 class RoleSerializer(serializers.ModelSerializer):
 
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Role
         fields = (
@@ -460,10 +489,13 @@ class RoleSerializer(serializers.ModelSerializer):
             'part',
             'start_date',
             'end_date',
+            'permissions',
         )
 
 
 class RoundSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Round
@@ -480,10 +512,13 @@ class RoundSerializer(serializers.ModelSerializer):
             'session',
             'performances',
             'slots',
+            'permissions',
         )
 
 
 class ScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Score
         fields = [
@@ -525,10 +560,13 @@ class SessionSerializer(serializers.ModelSerializer):
             'assignments',
             'rounds',
             'permissions',
+            'permissions',
         )
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Submission
         fields = (
@@ -542,10 +580,13 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'is_medley',
             'is_parody',
             'performer',
+            'permissions',
         )
 
 
 class SlotSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Slot
         fields = (
@@ -561,18 +602,13 @@ class SlotSerializer(serializers.ModelSerializer):
             'depart',
             'backstage',
             'onstage',
+            'permissions',
         )
 
 
 class SongSerializer(serializers.ModelSerializer):
-    # mus_points = MusPointsField(read_only=True)
-    # prs_points = PrsPointsField(read_only=True)
-    # sng_points = SngPointsField(read_only=True)
-    # total_points = TotalPointsField(read_only=True)
-    # mus_score = MusScoreField(read_only=True)
-    # prs_score = PrsScoreField(read_only=True)
-    # sng_score = SngScoreField(read_only=True)
-    # total_score = TotalScoreField(read_only=True)
+
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = Song
@@ -593,6 +629,7 @@ class SongSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'scores',
+            'permissions',
         )
 
         readonly_fields = [
@@ -610,6 +647,8 @@ class SongSerializer(serializers.ModelSerializer):
 class VenueSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
 
+    permissions = DRYPermissionsField()
+
     class Meta:
         model = Venue
         fields = (
@@ -622,4 +661,5 @@ class VenueSerializer(serializers.ModelSerializer):
             'airport',
             'timezone',
             'conventions',
+            'permissions',
         )
