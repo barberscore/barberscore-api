@@ -31,7 +31,10 @@ from .views import (
     VenueViewSet,
 )
 
-router = routers.DefaultRouter(trailing_slash=False)
+router = routers.DefaultRouter(
+    trailing_slash=False,
+    schema_title='Barberscore API',
+)
 
 router.register(r'award', AwardViewSet)
 router.register(r'catalog', CatalogViewSet)

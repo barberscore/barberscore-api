@@ -5,6 +5,7 @@ Babel==2.3.4
 botocore==1.4.38
 bugsnag==2.5.0
 channels==0.17.0
+coreapi==1.32.0
 daphne==0.14.2
 dj-database-url==0.4.1
 django-autoslug==1.9.3
