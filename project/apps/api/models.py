@@ -1783,6 +1783,7 @@ class Member(TimeStampedModel):
         self.name = " ".join(filter(None, [
             self.chapter.name,
             self.person.name,
+            str(self.person.bhs_id),
         ]))
         super(Member, self).save(*args, **kwargs)
 
