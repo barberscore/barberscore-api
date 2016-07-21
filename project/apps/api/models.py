@@ -2083,6 +2083,7 @@ class Performance(TimeStampedModel):
     # FKs
     performancescore = models.OneToOneField(
         'PerformanceScore',
+        related_name='performance',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -4391,6 +4392,14 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    songscore = models.OneToOneField(
+        'SongScore',
+        related_name='song',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Denormalizations
     mus_points = models.IntegerField(
         null=True,
@@ -4552,6 +4561,100 @@ class Song(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
+
+
+class SongScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "songscore"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(SongScore, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Submission(TimeStampedModel):

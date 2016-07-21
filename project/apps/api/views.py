@@ -22,6 +22,7 @@ from .filters import (
     SubmissionFilter,
     VenueFilter,
 )
+
 from .models import (
     Assignment,
     Award,
@@ -46,6 +47,7 @@ from .models import (
     Session,
     Slot,
     Song,
+    SongScore,
     Submission,
     Venue,
 )
@@ -74,6 +76,7 @@ from .serializers import (
     SessionSerializer,
     SlotSerializer,
     SongSerializer,
+    SongScoreSerializer,
     SubmissionSerializer,
     VenueSerializer,
 )
@@ -417,6 +420,7 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'performance',
         'submission',
+        'songscore',
     ).prefetch_related(
         'scores',
     ).order_by(
@@ -426,6 +430,15 @@ class SongViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     serializer_class = SongSerializer
     resource_name = "song"
+
+
+class SongScoreViewSet(viewsets.ModelViewSet):
+    queryset = SongScore.objects.order_by(
+        'name',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = SongScoreSerializer
+    resource_name = "songscore"
 
 
 class SlotViewSet(viewsets.ModelViewSet):

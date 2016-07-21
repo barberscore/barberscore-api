@@ -51,6 +51,7 @@ from .models import (
     Session,
     Slot,
     Song,
+    SongScore,
     Submission,
     User,
     Venue,
@@ -1216,6 +1217,37 @@ class SongAdmin(admin.ModelAdmin):
     ordering = (
         'name',
         'num',
+    )
+
+
+@admin.register(SongScore)
+class SongScoreAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'status',
+    ]
+
+    list_display = (
+        'name',
+        'status',
+    )
+
+    list_filter = (
+        'status',
+    )
+
+    search_fields = (
+        'name',
+    )
+
+    save_on_top = True
+
+    readonly_fields = (
+        'name',
+    )
+
+    ordering = (
+        'name',
     )
 
 

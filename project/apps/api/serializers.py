@@ -32,6 +32,7 @@ from .models import (
     Session,
     Slot,
     Song,
+    SongScore,
     Submission,
     Venue,
 )
@@ -693,6 +694,29 @@ class SongSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
         ]
+
+
+class SongScoreSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = SongScore
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'permissions',
+        )
 
 
 class VenueSerializer(serializers.ModelSerializer):
