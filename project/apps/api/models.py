@@ -2434,7 +2434,7 @@ class PerformanceScore(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if self.status >= self.STATUS.validated:
+        if self.status >= self.STATUS.published:
             return True
         else:
             return False
