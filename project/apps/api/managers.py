@@ -9,9 +9,11 @@ from django.db.models import (
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, password=None, **kwargs):
+    def create_user(self, email, name, bhs_id, password=None, **kwargs):
         user = self.model(
             email=self.normalize_email(email),
+            name=name,
+            bhs_id=bhs_id,
             is_active=False,
             **kwargs
         )
@@ -22,11 +24,12 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, email, password, **kwargs):
+    def create_superuser(self, email, name, bhs_id, password, **kwargs):
         user = self.model(
             email=email,
+            name=name,
+            bhs_id=bhs_id,
             is_staff=True,
-            is_superuser=True,
             is_active=True,
             **kwargs
         )

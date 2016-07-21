@@ -4880,8 +4880,12 @@ class Venue(TimeStampedModel):
         return False
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser):
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'name',
+        'bhs_id',
+    ]
 
     id = models.UUIDField(
         primary_key=True,
@@ -4948,6 +4952,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.name
 
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+
+    def has_module_perms(self, app_label):
+        return self.is_staff
+
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
@@ -4966,5 +4976,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return False
-
-

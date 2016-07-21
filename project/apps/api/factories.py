@@ -52,7 +52,6 @@ class AdminFactory(UserFactory):
     password = PostGenerationMethodCall('set_password', 'password')
     name = 'Admin User'
     is_staff = True
-    is_superuser = True
 
 
 class PublicFactory(UserFactory):
