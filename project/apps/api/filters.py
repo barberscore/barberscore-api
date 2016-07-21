@@ -63,10 +63,11 @@ class SessionFilterBackend(DRYPermissionFiltersBase):
 class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        else:
-            return queryset.filter(status__gte=PerformerScore.STATUS.published)
+        return queryset.all()
+        # if request.user.is_staff:
+        #     return queryset.all()
+        # else:
+        #     return queryset.filter(status__gte=PerformerScore.STATUS.published)
 
 
 class CatalogFilter(filters.FilterSet):
