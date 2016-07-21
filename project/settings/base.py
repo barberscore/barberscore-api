@@ -108,7 +108,7 @@ PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
     # DJA settings
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 100,
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework_json_api.pagination.PageNumberPagination',

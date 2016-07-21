@@ -10,6 +10,7 @@ from rest_framework import viewsets
 # Local
 from .filters import (
     CatalogFilter,
+    CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
     GroupFilter,
@@ -322,7 +323,10 @@ class PerformerScoreViewSet(viewsets.ModelViewSet):
     )
     permission_classes = (DRYPermissions,)
     serializer_class = PerformerScoreSerializer
-    filter_backends = (PerformerScoreFilterBackend,)
+    filter_backends = (
+        CoalesceFilterBackend,
+        PerformerScoreFilterBackend,
+    )
     resource_name = "performerscore"
 
 
@@ -369,7 +373,10 @@ class RoundViewSet(
     )
     permission_classes = (DRYPermissions,)
     serializer_class = RoundSerializer
-    filter_backends = (RoundFilterBackend,)
+    filter_backends = (
+        CoalesceFilterBackend,
+        RoundFilterBackend,
+    )
     resource_name = "round"
 
 
@@ -397,9 +404,14 @@ class SessionViewSet(
         'rounds',
         'assignments',
         'contests',
+    ).order_by(
+        '-start_date',
     )
     permission_classes = (DRYPermissions,)
-    filter_backends = (SessionFilterBackend,)
+    filter_backends = (
+        CoalesceFilterBackend,
+        SessionFilterBackend,
+    )
     serializer_class = SessionSerializer
     resource_name = "session"
 

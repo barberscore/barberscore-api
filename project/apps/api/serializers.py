@@ -359,6 +359,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'performer',
             'slot',
             'songs',
+            'performancescore',
             'permissions',
         )
 
@@ -394,6 +395,7 @@ class PerformanceScoreSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
+            'performance',
             'permissions',
         )
 
@@ -681,6 +683,7 @@ class SongSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
             'scores',
+            'songscore',
             'permissions',
         )
 
@@ -715,6 +718,7 @@ class SongScoreSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
+            'song',
             'permissions',
         )
 
