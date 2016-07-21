@@ -314,15 +314,17 @@ class Award(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -454,16 +456,18 @@ class Catalog(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -574,16 +578,18 @@ class Judge(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -667,16 +673,18 @@ class Chapter(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -808,15 +816,17 @@ class Contest(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -933,15 +943,17 @@ class Contestant(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -1247,15 +1259,17 @@ class Convention(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -1477,15 +1491,17 @@ class Group(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -1558,15 +1574,17 @@ class Host(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -1704,16 +1722,18 @@ class Assignment(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -1789,16 +1809,18 @@ class Member(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -2018,12 +2040,13 @@ class Organization(MPTTModel, TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    def has_object_read_permission(self, request):
-        return True
-
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -2206,7 +2229,13 @@ class Performance(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
         return True
 
     @allow_staff_or_superuser
@@ -2215,11 +2244,6 @@ class Performance(TimeStampedModel):
             return True
         else:
             return False
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -2429,7 +2453,13 @@ class PerformanceScore(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
         return True
 
     @allow_staff_or_superuser
@@ -2438,11 +2468,6 @@ class PerformanceScore(TimeStampedModel):
         #     return True
         # else:
         #     return False
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
         return True
 
     @allow_staff_or_superuser
@@ -2801,15 +2826,17 @@ class Performer(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -3066,14 +3093,14 @@ class PerformerScore(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -3387,15 +3414,17 @@ class Person(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return True
 
     @allow_staff_or_superuser
@@ -3508,16 +3537,18 @@ class Role(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -3643,8 +3674,14 @@ class Round(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
         return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
@@ -3652,11 +3689,6 @@ class Round(TimeStampedModel):
             return True
         else:
             return False
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -3976,15 +4008,15 @@ class Score(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return False
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return False
 
     @allow_staff_or_superuser
@@ -4097,14 +4129,6 @@ class Session(TimeStampedModel):
     def completed_rounds(self):
         return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
 
-    def authorized_users(self):
-        User = get_user_model()
-        users = User.objects.filter(
-            person__judges__assignments__session=self,
-            person__judges__assignments__category=self.assignments.model.CATEGORY.admin,
-        )
-        return users
-
     # FKs
     convention = models.ForeignKey(
         'Convention',
@@ -4193,10 +4217,8 @@ class Session(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
@@ -4205,9 +4227,16 @@ class Session(TimeStampedModel):
         return True
 
     @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user in self.authorized_users():
-            return True
+        if request.user.is_authenticated():
+            return self.assignments.filter(
+                judge__person__user=request.user,
+                category=self.assignments.model.CATEGORY.admin,
+            )
         return False
 
     # Transitions
@@ -4330,16 +4359,18 @@ class Slot(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -4481,16 +4512,18 @@ class Song(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -4643,15 +4676,17 @@ class SongScore(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return False
 
     @allow_staff_or_superuser
@@ -4737,15 +4772,17 @@ class Submission(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
         return False
 
     @allow_staff_or_superuser
@@ -4825,16 +4862,18 @@ class Venue(TimeStampedModel):
 
     # Permissions
     @staticmethod
+    @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
-
-    def has_object_read_permission(self, request):
         return True
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -4908,3 +4947,24 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.name
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+

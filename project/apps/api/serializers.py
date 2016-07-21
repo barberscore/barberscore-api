@@ -344,17 +344,8 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'num',
-            'rank',
             'actual_start',
             'actual_finish',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
             'round',
             'performer',
             'slot',
@@ -362,18 +353,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'performancescore',
             'permissions',
         )
-
-        readonly_fields = [
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-        ]
 
 
 class PerformanceScoreSerializer(serializers.ModelSerializer):
@@ -425,15 +404,6 @@ class PerformerSerializer(serializers.ModelSerializer):
             'picture',
             'seed',
             'prelim',
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
             'session',
             'group',
             'performances',
@@ -444,17 +414,6 @@ class PerformerSerializer(serializers.ModelSerializer):
         )
         read_only_fields = [
             'picture',
-            'seed',
-            'prelim',
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
         ]
 
 
@@ -674,29 +633,10 @@ class SongSerializer(serializers.ModelSerializer):
             'num',
             'submission',
             'performance',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
             'scores',
             'songscore',
             'permissions',
         )
-
-        readonly_fields = [
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-        ]
 
 
 class SongScoreSerializer(serializers.ModelSerializer):
