@@ -2081,6 +2081,13 @@ class Performance(TimeStampedModel):
     )
 
     # FKs
+    performancescore = models.OneToOneField(
+        'PerformanceScore',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     round = models.ForeignKey(
         'Round',
         related_name='performances',
@@ -2334,6 +2341,127 @@ class Performance(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
+
+
+class PerformanceScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    rank = models.IntegerField(
+        help_text="""
+            The final ranking relative to this round.""",
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    class JSONAPIMeta:
+        resource_name = "performancescore"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(PerformanceScore, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        if self.status >= self.STATUS.validated:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.round.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                )
+            )
+        else:
+            return False
 
 
 class Performer(TimeStampedModel):
