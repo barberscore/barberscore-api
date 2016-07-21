@@ -2371,55 +2371,46 @@ class PerformanceScore(TimeStampedModel):
             The final ranking relative to this round.""",
         null=True,
         blank=True,
-        editable=False,
     )
 
     mus_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     prs_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     sng_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     total_points = models.IntegerField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     mus_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     prs_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     sng_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     total_score = models.FloatField(
         null=True,
         blank=True,
-        editable=False,
     )
 
     class JSONAPIMeta:

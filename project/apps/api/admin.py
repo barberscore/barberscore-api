@@ -41,6 +41,7 @@ from .models import (
     Member,
     Organization,
     Performance,
+    PerformanceScore,
     Performer,
     PerformerScore,
     Person,
@@ -715,6 +716,41 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         SongInline,
     ]
+
+
+@admin.register(PerformanceScore)
+class PerformanceScoreAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fields = [
+        'name',
+        'status',
+    ]
+
+    list_display = [
+        'name',
+        'status',
+    ]
+
+    list_filter = [
+        'status',
+        'performance__round__session__kind',
+        'performance__round__session__convention__season',
+        'performance__round__session__convention__year',
+        'performance__round__session__convention__organization',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'name',
+    ]
+
+    search_fields = (
+        'name',
+    )
 
 
 @admin.register(Performer)

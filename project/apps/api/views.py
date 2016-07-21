@@ -36,6 +36,7 @@ from .models import (
     Member,
     Organization,
     Performance,
+    PerformanceScore,
     Performer,
     PerformerScore,
     Person,
@@ -48,6 +49,7 @@ from .models import (
     Submission,
     Venue,
 )
+
 from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
@@ -62,6 +64,7 @@ from .serializers import (
     MemberSerializer,
     OrganizationSerializer,
     PerformanceSerializer,
+    PerformanceScoreSerializer,
     PerformerSerializer,
     PerformerScoreSerializer,
     PersonSerializer,
@@ -255,6 +258,7 @@ class PerformanceViewSet(
         'round',
         'performer',
         'slot',
+        'performancescore',
     ).prefetch_related(
         'songs',
     ).order_by(
@@ -264,6 +268,20 @@ class PerformanceViewSet(
     permission_classes = (DRYPermissions,)
     serializer_class = PerformanceSerializer
     resource_name = "performance"
+
+
+class PerformanceScoreViewSet(
+    get_viewset_transition_action_mixin(PerformanceScore),
+    viewsets.ModelViewSet,
+):
+    queryset = PerformanceScore.objects.select_related(
+        'performance',
+    ).order_by(
+        'name',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = PerformanceScoreSerializer
+    resource_name = "performancescore"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):

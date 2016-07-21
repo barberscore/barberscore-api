@@ -22,6 +22,7 @@ from .models import (
     Member,
     Organization,
     Performance,
+    PerformanceScore,
     Performer,
     PerformerScore,
     Person,
@@ -371,6 +372,29 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'sng_score',
             'total_score',
         ]
+
+
+class PerformanceScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = PerformanceScore
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'permissions',
+        )
 
 
 class PerformerSerializer(serializers.ModelSerializer):
