@@ -33,7 +33,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    PermissionsMixin,
 )
 from django.contrib.postgres.fields import (
     ArrayField,
@@ -741,6 +740,14 @@ class Contest(TimeStampedModel):
     )
 
     # FKs
+    contestscore = models.ForeignKey(
+        'ContestScore',
+        related_name='contest',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='contests',
@@ -851,6 +858,89 @@ class Contest(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
+
+
+class ContestScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    # FKs
+    champion = models.ForeignKey(
+        'Performer',
+        related_name='contestscore',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "contestscore"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(ContestScore, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.award.organization.representative.user == request.user or
+                self.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.session.assignments.model.category.ADMIN,
+                ) or
+                self.status == self.STATUS.published
+            )
+        else:
+            return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.award.organization.representative.user == request.user or
+                self.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.session.assignments.model.category.ADMIN,
+                )
+            )
+        else:
+            return False
 
 
 class Contestant(TimeStampedModel):
@@ -3100,10 +3190,19 @@ class PerformerScore(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        if self.status == self.STATUS.published:
+            return True
+        return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                )
+            )
         return False
 
 
@@ -4687,6 +4786,16 @@ class SongScore(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                ) or self.performer.group.roles.filter(
+                    person__user=request.user,
+                    status=self.performer.roles.model.STATUS.active,
+                )
+            )
         return False
 
     @allow_staff_or_superuser
@@ -4783,10 +4892,30 @@ class Submission(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                ) or self.performer.group.roles.filter(
+                    person__user=request.user,
+                    status=self.performer.roles.model.STATUS.active,
+                )
+            )
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                ) or self.performer.group.roles.filter(
+                    person__user=request.user,
+                    status=self.performer.roles.model.STATUS.active,
+                )
+            )
         return False
 
 

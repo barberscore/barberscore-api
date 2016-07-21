@@ -154,10 +154,24 @@ class ContestSerializer(serializers.ModelSerializer):
             'status',
             'cycle',
             'is_qualifier',
-            'champion',
             'contestants',
             'award',
             'session',
+            'permissions',
+        )
+
+
+class ContestScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Contest
+        fields = (
+            'id',
+            'url',
+            'name',
+            'status',
+            'champion',
             'permissions',
         )
 

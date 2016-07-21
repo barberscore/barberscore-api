@@ -37,6 +37,7 @@ from .models import (
     Catalog,
     Chapter,
     Contest,
+    ContestScore,
     Contestant,
     Convention,
     Group,
@@ -326,6 +327,37 @@ class ContestAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'award',
         'session',
+        'champion',
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+
+@admin.register(ContestScore)
+class ContestScoreAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'status',
+        'champion',
+    ]
+
+    list_display = (
+        'name',
+    )
+
+    list_filter = [
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'name',
+    ]
+
+    raw_id_fields = [
         'champion',
     ]
 

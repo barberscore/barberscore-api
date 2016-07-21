@@ -9,6 +9,7 @@ from .views import (
     ChapterViewSet,
     ContestantViewSet,
     ContestViewSet,
+    ContestScoreViewSet,
     ConventionViewSet,
     GroupViewSet,
     HostViewSet,
@@ -41,6 +42,7 @@ router.register(r'catalog', CatalogViewSet)
 router.register(r'judge', JudgeViewSet)
 router.register(r'chapter', ChapterViewSet)
 router.register(r'contest', ContestViewSet)
+router.register(r'contestscore', ContestScoreViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'group', GroupViewSet)
