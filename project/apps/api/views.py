@@ -20,6 +20,7 @@ from .filters import (
     PersonFilter,
     RoundFilterBackend,
     SessionFilterBackend,
+    SessionFilter,
     SubmissionFilter,
     VenueFilter,
 )
@@ -335,10 +336,10 @@ class PerformerScoreViewSet(viewsets.ModelViewSet):
     )
     permission_classes = (DRYPermissions,)
     serializer_class = PerformerScoreSerializer
-    filter_backends = (
-        CoalesceFilterBackend,
-        PerformerScoreFilterBackend,
-    )
+    # filter_backends = (
+    #     CoalesceFilterBackend,
+    #     PerformerScoreFilterBackend,
+    # )
     resource_name = "performerscore"
 
 
@@ -385,10 +386,10 @@ class RoundViewSet(
     )
     permission_classes = (DRYPermissions,)
     serializer_class = RoundSerializer
-    filter_backends = (
-        CoalesceFilterBackend,
-        RoundFilterBackend,
-    )
+    # filter_backends = (
+    #     CoalesceFilterBackend,
+    #     RoundFilterBackend,
+    # )
     resource_name = "round"
 
 
@@ -420,11 +421,11 @@ class SessionViewSet(
         '-start_date',
     )
     permission_classes = (DRYPermissions,)
-    filter_backends = (
-        CoalesceFilterBackend,
-        SessionFilterBackend,
-    )
+    # filter_backends = (
+    #     CoalesceFilterBackend,
+    # )
     serializer_class = SessionSerializer
+    filter_class = SessionFilter
     resource_name = "session"
 
 

@@ -180,6 +180,16 @@ class PersonFilter(filters.FilterSet):
         }
 
 
+class SessionFilter(filters.FilterSet):
+    convention = filters.RelatedFilter(ConventionFilter, name='convention')
+
+    class Meta:
+        model = Session
+        fields = {
+            'status': '__all__',
+        }
+
+
 class SubmissionFilter(filters.FilterSet):
     class Meta:
         model = Submission
