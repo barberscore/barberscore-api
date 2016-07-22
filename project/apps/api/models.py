@@ -988,6 +988,14 @@ class Contestant(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    contestantscore = models.OneToOneField(
+        'ContestantScore',
+        related_name='contestant',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     @property
     def official_result(self):
         if self.contest.is_qualifier:
@@ -1147,6 +1155,111 @@ class Contestant(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
+
+
+class ContestantScore(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    rank = models.IntegerField(
+        help_text="""
+            The final ranking relative to this round.""",
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "contestantscore"
+
+    def __unicode__(self):
+        return u"{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        self.name = " ".join(filter(None, [
+            self.id.hex,
+        ]))
+        super(ContestantScore, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Convention(TimeStampedModel):
@@ -4725,6 +4838,13 @@ class SongScore(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    rank = models.IntegerField(
+        help_text="""
+            The final ranking relative to this round.""",
+        null=True,
+        blank=True,
     )
 
     mus_points = models.IntegerField(
