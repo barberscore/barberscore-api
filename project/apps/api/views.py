@@ -311,8 +311,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
-        'district',
-        'division',
+        'representing',
     ).prefetch_related(
         'submissions',
         'performances',

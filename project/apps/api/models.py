@@ -2733,7 +2733,7 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    district = TreeForeignKey(
+    representing = TreeForeignKey(
         'Organization',
         related_name='performers',
         null=True,
@@ -3226,13 +3226,20 @@ class Person(TimeStampedModel):
     )
 
     STATUS = Choices(
+        # (0, 'new', 'New',),
+        # (10, 'active', 'Active',),
+        # (20, 'inactive', 'Inactive',),
+        # (30, 'retired', 'Retired',),
+        # (40, 'deceased', 'Deceased',),
+        # (50, 'stix', 'Stix Issue',),
+        # (60, 'dup', 'Possible Duplicate',),
         (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-        (30, 'retired', 'Retired',),
-        (40, 'deceased', 'Deceased',),
-        (50, 'stix', 'Stix Issue',),
-        (60, 'dup', 'Possible Duplicate',),
+        (1, 'active', 'Active',),
+        (2, 'inactive', 'Inactive',),
+        (3, 'retired', 'Retired',),
+        (5, 'deceased', 'Deceased',),
+        (6, 'six', '(Six)',),
+        (9, 'nine', '(Nine)',),
     )
 
     status = models.IntegerField(
