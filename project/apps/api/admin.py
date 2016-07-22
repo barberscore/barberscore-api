@@ -39,6 +39,7 @@ from .models import (
     Contest,
     ContestScore,
     Contestant,
+    ContestantScore,
     Convention,
     Group,
     Host,
@@ -74,27 +75,31 @@ from .models import (
 @admin.register(Award)
 class AwardAdmin(admin.ModelAdmin):
 
-    fields = [
-        'name',
-        'status',
-        'is_manual',
-        'organization',
-        'kind',
-        'championship_season',
-        'qualifier_season',
-        'size',
-        'size_range',
-        'scope',
-        'scope_range',
-        'idiom',
-        ('is_primary', 'is_improved', 'is_novice'),
-        ('is_multi', 'is_qualification_required',),
-        'championship_rounds',
-        'qualifier_rounds',
-        'threshold',
-        'minimum',
-        'advance',
-    ]
+    fieldsets = (
+        (None, {
+            'fields': (
+                'name',
+                'status',
+                'is_manual',
+                'organization',
+                'kind',
+                'championship_season',
+                'qualifier_season',
+                'size',
+                'size_range',
+                'scope',
+                'scope_range',
+                'idiom',
+                ('is_primary', 'is_improved', 'is_novice'),
+                ('is_multi', 'is_qualification_required',),
+                'championship_rounds',
+                'qualifier_rounds',
+                'threshold',
+                'minimum',
+                'advance',
+            )
+        }),
+    )
 
     list_display = [
         'name',
@@ -398,6 +403,30 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(ContestantScore)
+class ContestantScoreAdmin(admin.ModelAdmin):
+
+    fields = [
+        '__all__',
+    ]
+
+    list_filter = (
+        'status',
+    )
+
+    readonly_fields = [
+        'name',
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+    ordering = (
+        'name',
+    )
+
+
 @admin.register(Convention)
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
@@ -416,6 +445,10 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'drcj',
     )
+
+    fields = [
+        '__all__',
+    ]
 
     list_display = (
         'name',
@@ -466,31 +499,62 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    search_fields = (
-        'nomen',
+    fieldsets = (
+        (None, {
+            'fields': (
+                'name',
+                'status',
+                'kind',
+                ('age', 'is_novice',),
+                'description',
+                'notes',
+            )
+        }),
+        ('BHS', {
+            'fields': (
+                'bhs_id',
+                'start_date',
+                'end_date',
+                'chapter',
+                'district',
+                'division',
+            )
+        }),
+        ('Social', {
+            'classes': ('collapse',),
+            'fields': (
+                'location',
+                'website',
+                'facebook',
+                'twitter',
+                'email',
+                'phone',
+                'picture',
+            ),
+        }),
     )
 
-    fields = (
-        'name',
-        'status',
-        'kind',
-        ('age', 'is_novice',),
-        'bhs_id',
-        'start_date',
-        'end_date',
-        'chapter',
-        'district',
-        'division',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-        'notes',
-    )
+    # fields = (
+    #     'name',
+    #     'status',
+    #     'kind',
+    #     ('age', 'is_novice',),
+    #     'bhs_id',
+    #     'start_date',
+    #     'end_date',
+    #     'chapter',
+    #     'district',
+    #     'division',
+    #     'location',
+    #     'website',
+    #     'facebook',
+    #     'twitter',
+    #     'email',
+    #     'phone',
+    #     'picture',
+    #     'description',
+    #     'notes',
+    # )
 
     list_display = (
         'name',
@@ -521,6 +585,10 @@ class GroupAdmin(admin.ModelAdmin):
     ]
 
     save_on_top = True
+
+    search_fields = (
+        'nomen',
+    )
 
     ordering = (
         'name',

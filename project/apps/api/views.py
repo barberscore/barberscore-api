@@ -33,6 +33,7 @@ from .models import (
     Contest,
     ContestScore,
     Contestant,
+    ContestantScore,
     Convention,
     Group,
     Host,
@@ -60,9 +61,10 @@ from .serializers import (
     AwardSerializer,
     CatalogSerializer,
     ChapterSerializer,
-    ContestantSerializer,
     ContestSerializer,
     ContestScoreSerializer,
+    ContestantSerializer,
+    ContestantScoreSerializer,
     ConventionSerializer,
     GroupSerializer,
     HostSerializer,
@@ -178,6 +180,15 @@ class ContestantViewSet(viewsets.ModelViewSet):
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
     resource_name = "contestant"
+
+
+class ContestantScoreViewSet(viewsets.ModelViewSet):
+    queryset = Contestant.objects.order_by(
+        'name',
+    )
+    permission_classes = (DRYPermissions,)
+    serializer_class = ContestantScoreSerializer
+    resource_name = "contestantscore"
 
 
 class ConventionViewSet(
