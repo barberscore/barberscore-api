@@ -14,7 +14,7 @@ from .models import (
     Catalog,
     Chapter,
     Contest,
-    # ContestScore,
+    ContestScore,
     Contestant,
     Convention,
     Group,
@@ -23,9 +23,9 @@ from .models import (
     Member,
     Organization,
     Performance,
-    # PerformanceScore,
+    PerformanceScore,
     Performer,
-    # PerformerScore,
+    PerformerScore,
     Person,
     Role,
     Round,
@@ -33,7 +33,7 @@ from .models import (
     Session,
     Slot,
     Song,
-    # SongScore,
+    SongScore,
     Submission,
     Venue,
 )
@@ -158,23 +158,22 @@ class ContestSerializer(serializers.ModelSerializer):
             'contestants',
             'award',
             'session',
+            'contestscore',
             'permissions',
         )
 
 
-# class ContestScoreSerializer(serializers.ModelSerializer):
-#     permissions = DRYPermissionsField()
+class ContestScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
 
-#     class Meta:
-#         model = ContestScore
-#         fields = (
-#             'id',
-#             'url',
-#             'name',
-#             'status',
-#             'champion',
-#             'permissions',
-#         )
+    class Meta:
+        model = ContestScore
+        fields = (
+            'id',
+            'url',
+            'champion',
+            'permissions',
+        )
 
 
 class ContestantSerializer(serializers.ModelSerializer):
@@ -365,33 +364,30 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'performer',
             'slot',
             'songs',
-            # 'performancescore',
+            'performancescore',
             'permissions',
         )
 
 
-# class PerformanceScoreSerializer(serializers.ModelSerializer):
-#     permissions = DRYPermissionsField()
+class PerformanceScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
 
-#     class Meta:
-#         model = PerformanceScore
-#         fields = (
-#             'id',
-#             'url',
-#             'name',
-#             'status',
-#             'rank',
-#             'mus_points',
-#             'prs_points',
-#             'sng_points',
-#             'total_points',
-#             'mus_score',
-#             'prs_score',
-#             'sng_score',
-#             'total_score',
-#             'performance',
-#             'permissions',
-#         )
+    class Meta:
+        model = PerformanceScore
+        fields = (
+            'id',
+            'url',
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'permissions',
+        )
 
 
 class PerformerSerializer(serializers.ModelSerializer):
@@ -423,36 +419,33 @@ class PerformerSerializer(serializers.ModelSerializer):
             'performances',
             'contestants',
             'submissions',
+            'performerscore',
             'permissions',
-            # 'performerscore',
         )
         read_only_fields = [
             'picture',
         ]
 
 
-# class PerformerScoreSerializer(serializers.ModelSerializer):
-#     permissions = DRYPermissionsField()
+class PerformerScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
 
-#     class Meta:
-#         model = PerformerScore
-#         fields = (
-#             'id',
-#             'url',
-#             'name',
-#             'status',
-#             'rank',
-#             'mus_points',
-#             'prs_points',
-#             'sng_points',
-#             'total_points',
-#             'mus_score',
-#             'prs_score',
-#             'sng_score',
-#             'total_score',
-#             'performer',
-#             'permissions',
-#         )
+    class Meta:
+        model = PerformerScore
+        fields = (
+            'id',
+            'url',
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'permissions',
+        )
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -648,33 +641,30 @@ class SongSerializer(serializers.ModelSerializer):
             'submission',
             'performance',
             'scores',
-            # 'songscore',
+            'songscore',
             'permissions',
         )
 
 
-# class SongScoreSerializer(serializers.ModelSerializer):
+class SongScoreSerializer(serializers.ModelSerializer):
 
-#     permissions = DRYPermissionsField()
+    permissions = DRYPermissionsField()
 
-#     class Meta:
-#         model = SongScore
-#         fields = (
-#             'id',
-#             'url',
-#             'name',
-#             'status',
-#             'mus_points',
-#             'prs_points',
-#             'sng_points',
-#             'total_points',
-#             'mus_score',
-#             'prs_score',
-#             'sng_score',
-#             'total_score',
-#             'song',
-#             'permissions',
-#         )
+    class Meta:
+        model = SongScore
+        fields = (
+            'id',
+            'url',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
+            'permissions',
+        )
 
 
 class VenueSerializer(serializers.ModelSerializer):
