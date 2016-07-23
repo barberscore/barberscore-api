@@ -39,6 +39,7 @@ from .models import (
     Contest,
     ContestScore,
     Contestant,
+    ContestantScore,
     Convention,
     Group,
     Host,
@@ -368,6 +369,11 @@ class ContestantAdmin(admin.ModelAdmin):
     ordering = (
         'name',
     )
+
+
+@admin.register(ContestantScore)
+class ContestantScoreAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Convention)

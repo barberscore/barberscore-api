@@ -819,7 +819,7 @@ class Contest(TimeStampedModel):
         if not point_total:
             return None
         contestants = self.contestants.all()
-        points = [contestant.calculate_total_points() for contestant in contestants]
+        points = [contestant.contestantscore.calculate_total_points() for contestant in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -849,16 +849,16 @@ class ContestScore(Contest):
             champion = None
         else:
             try:
-                champion = self.contestants.get(rank=1).performer
+                champion = self.contestants.get(contestantscore__rank=1).performer
             except self.contestants.model.DoesNotExist:
                 champion = None
             except self.contestants.model.MultipleObjectsReturned:
-                champion = self.contestants.filter(rank=1).order_by(
-                    '-sng_points',
-                    '-mus_points',
-                    '-prs_points',
+                champion = self.contestants.filter(contestantscore__rank=1).order_by(
+                    '-contestantscore__sng_points',
+                    '-contestantscore__mus_points',
+                    '-contestantscore__prs_points',
                 ).first().performer
-        return champion
+        self.champion = champion
 
     # Permissions
     @staticmethod
@@ -944,29 +944,6 @@ class Contestant(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    @property
-    def official_result(self):
-        if self.contest.is_qualifier:
-            if self.contest.award.is_district_representative:
-                if self.official_rank == 1:
-                    return self.STATUS.rep
-                if self.official_score < self.contest.award.minimum:
-                    return self.STATUS.ineligible
-                else:
-                    return self.STATUS.eligible
-            else:
-                if self.contest.award.minimum:
-                    if self.official_score < self.contest.award.minimum:
-                        return self.STATUS.ineligible
-                    elif self.official_score >= self.contest.award.threshold:
-                        return self.STATUS.qualified
-                    else:
-                        return self.STATUS.eligible
-                else:
-                    return self.STATUS.eligible
-        else:
-            return self.official_rank
-
     # Internals
     class Meta:
         unique_together = (
@@ -1010,6 +987,114 @@ class Contestant(TimeStampedModel):
             return False
 
     # Methods
+
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.disqualified)
+    def process(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.scratched)
+    def scratch(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.disqualified)
+    def disqualify(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
+        return
+
+
+class ContestantScore(Contestant):
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    class JSONAPIMeta:
+        resource_name = "contestantscore"
+
+    # Properties
+    @property
+    def official_result(self):
+        if self.contest.is_qualifier:
+            if self.contest.award.is_district_representative:
+                if self.official_rank == 1:
+                    return self.STATUS.rep
+                if self.official_score < self.contest.award.minimum:
+                    return self.STATUS.ineligible
+                else:
+                    return self.STATUS.eligible
+            else:
+                if self.contest.award.minimum:
+                    if self.official_score < self.contest.award.minimum:
+                        return self.STATUS.ineligible
+                    elif self.official_score >= self.contest.award.threshold:
+                        return self.STATUS.qualified
+                    else:
+                        return self.STATUS.eligible
+                else:
+                    return self.STATUS.eligible
+        else:
+            return self.official_rank
+
+    # Methods
+    def calculate(self, *args, **kwargs):
+        self.mus_points = self.calculate_mus_points()
+        self.prs_points = self.calculate_prs_points()
+        self.sng_points = self.calculate_sng_points()
+        self.total_points = self.calculate_total_points()
+        self.mus_score = self.calculate_mus_score()
+        self.prs_score = self.calculate_prs_score()
+        self.sng_score = self.calculate_sng_score()
+        self.total_score = self.calculate_total_score()
+        self.rank = self.calculate_rank()
+
     def calculate_rank(self):
         return self.contest.ranking(self.calculate_total_points())
 
@@ -1083,26 +1168,27 @@ class Contestant(TimeStampedModel):
             tot=models.Avg('songs__scores__points')
         )['tot']
 
-    # Transitions
-    @transition(field=status, source='*', target=STATUS.disqualified)
-    def process(self, *args, **kwargs):
-        return
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
 
-    @transition(field=status, source='*', target=STATUS.scratched)
-    def scratch(self, *args, **kwargs):
-        return
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
 
-    @transition(field=status, source='*', target=STATUS.disqualified)
-    def disqualify(self, *args, **kwargs):
-        return
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
 
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
-        return
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(self.contest.award.organization.representative.user == request.user)
+        else:
+            return False
 
 
 class Convention(TimeStampedModel):

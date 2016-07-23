@@ -16,6 +16,7 @@ from .models import (
     Contest,
     ContestScore,
     Contestant,
+    ContestantScore,
     Convention,
     Group,
     Host,
@@ -188,6 +189,28 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'performer',
             'contest',
+            'contestantscore',
+            'permissions',
+        )
+
+
+class ContestantScoreSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = ContestantScore
+        fields = (
+            'id',
+            'url',
+            'rank',
+            'mus_points',
+            'prs_points',
+            'sng_points',
+            'total_points',
+            'mus_score',
+            'prs_score',
+            'sng_score',
+            'total_score',
             'permissions',
         )
 
