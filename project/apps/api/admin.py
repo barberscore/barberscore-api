@@ -37,7 +37,7 @@ from .models import (
     Catalog,
     Chapter,
     Contest,
-    ContestScore,
+    # ContestScore,
     Contestant,
     Convention,
     Group,
@@ -46,9 +46,9 @@ from .models import (
     Member,
     Organization,
     Performance,
-    PerformanceScore,
+    # PerformanceScore,
     Performer,
-    PerformerScore,
+    # PerformerScore,
     Person,
     Role,
     Round,
@@ -56,7 +56,7 @@ from .models import (
     Session,
     Slot,
     Song,
-    SongScore,
+    # SongScore,
     Submission,
     User,
     Venue,
@@ -292,7 +292,6 @@ class ContestAdmin(admin.ModelAdmin):
         'status',
         'award',
         'session',
-        'champion',
         'cycle',
         'is_qualifier',
         'num_rounds',
@@ -327,7 +326,6 @@ class ContestAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'award',
         'session',
-        'champion',
     ]
 
     search_fields = [
@@ -335,35 +333,35 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(ContestScore)
-class ContestScoreAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'status',
-        'champion',
-    ]
+# @admin.register(ContestScore)
+# class ContestScoreAdmin(admin.ModelAdmin):
+    # fields = [
+    #     'name',
+    #     'status',
+    #     'champion',
+    # ]
 
-    list_display = (
-        'name',
-    )
+    # list_display = (
+    #     'name',
+    # )
 
-    list_filter = [
-        'status',
-    ]
+    # list_filter = [
+    #     'status',
+    # ]
 
-    save_on_top = True
+    # save_on_top = True
 
-    readonly_fields = [
-        'name',
-    ]
+    # readonly_fields = [
+    #     'name',
+    # ]
 
-    raw_id_fields = [
-        'champion',
-    ]
+    # raw_id_fields = [
+    #     'champion',
+    # ]
 
-    search_fields = [
-        'name',
-    ]
+    # search_fields = [
+    #     'name',
+    # ]
 
 
 @admin.register(Contestant)
@@ -755,39 +753,39 @@ class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
 
-@admin.register(PerformanceScore)
-class PerformanceScoreAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fields = [
-        'name',
-        'status',
-    ]
+# @admin.register(PerformanceScore)
+# class PerformanceScoreAdmin(FSMTransitionMixin, admin.ModelAdmin):
+#     fields = [
+#         'name',
+#         'status',
+#     ]
 
-    list_display = [
-        'name',
-        'status',
-    ]
+#     list_display = [
+#         'name',
+#         'status',
+#     ]
 
-    list_filter = [
-        'status',
-        'performance__round__session__kind',
-        'performance__round__session__convention__season',
-        'performance__round__session__convention__year',
-        'performance__round__session__convention__organization',
-    ]
+#     list_filter = [
+#         'status',
+#         'performance__round__session__kind',
+#         'performance__round__session__convention__season',
+#         'performance__round__session__convention__year',
+#         'performance__round__session__convention__organization',
+#     ]
 
-    fsm_field = [
-        'status',
-    ]
+#     fsm_field = [
+#         'status',
+#     ]
 
-    save_on_top = True
+#     save_on_top = True
 
-    readonly_fields = [
-        'name',
-    ]
+#     readonly_fields = [
+#         'name',
+#     ]
 
-    search_fields = (
-        'name',
-    )
+#     search_fields = (
+#         'name',
+#     )
 
 
 @admin.register(Performer)
@@ -861,57 +859,57 @@ class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
 
-@admin.register(PerformerScore)
-class PerformerScoreAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fields = (
-        'name',
-        'status',
-        'rank',
-        'mus_points',
-        'prs_points',
-        'sng_points',
-        'total_points',
-        'mus_score',
-        'prs_score',
-        'sng_score',
-        'total_score',
-    )
+# @admin.register(PerformerScore)
+# class PerformerScoreAdmin(FSMTransitionMixin, admin.ModelAdmin):
+#     fields = (
+#         'name',
+#         'status',
+#         'rank',
+#         'mus_points',
+#         'prs_points',
+#         'sng_points',
+#         'total_points',
+#         'mus_score',
+#         'prs_score',
+#         'sng_score',
+#         'total_score',
+#     )
 
-    list_display = (
-        'name',
-        'status',
-    )
+#     list_display = (
+#         'name',
+#         'status',
+#     )
 
-    list_filter = [
-        'status',
-        'performer__session__convention__level',
-        'performer__session__kind',
-        'performer__session__convention__season',
-        'performer__session__convention__organization',
-        'performer__session__convention__year',
-    ]
+#     list_filter = [
+#         'status',
+#         'performer__session__convention__level',
+#         'performer__session__kind',
+#         'performer__session__convention__season',
+#         'performer__session__convention__organization',
+#         'performer__session__convention__year',
+#     ]
 
-    fsm_field = [
-        'status',
-    ]
+#     fsm_field = [
+#         'status',
+#     ]
 
-    search_fields = (
-        'name',
-    )
+#     search_fields = (
+#         'name',
+#     )
 
-    # raw_id_fields = (
-    #     'performer',
-    # )
+#     # raw_id_fields = (
+#     #     'performer',
+#     # )
 
-    readonly_fields = (
-        'name',
-    )
+#     readonly_fields = (
+#         'name',
+#     )
 
-    save_on_top = True
+#     save_on_top = True
 
-    ordering = (
-        'name',
-    )
+#     ordering = (
+#         'name',
+#     )
 
 
 @admin.register(Person)
@@ -1256,35 +1254,35 @@ class SongAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(SongScore)
-class SongScoreAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'status',
-    ]
+# @admin.register(SongScore)
+# class SongScoreAdmin(admin.ModelAdmin):
+#     fields = [
+#         'name',
+#         'status',
+#     ]
 
-    list_display = (
-        'name',
-        'status',
-    )
+#     list_display = (
+#         'name',
+#         'status',
+#     )
 
-    list_filter = (
-        'status',
-    )
+#     list_filter = (
+#         'status',
+#     )
 
-    search_fields = (
-        'name',
-    )
+#     search_fields = (
+#         'name',
+#     )
 
-    save_on_top = True
+#     save_on_top = True
 
-    readonly_fields = (
-        'name',
-    )
+#     readonly_fields = (
+#         'name',
+#     )
 
-    ordering = (
-        'name',
-    )
+#     ordering = (
+#         'name',
+#     )
 
 
 @admin.register(Submission)

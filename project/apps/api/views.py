@@ -31,7 +31,7 @@ from .models import (
     Catalog,
     Chapter,
     Contest,
-    ContestScore,
+    # ContestScore,
     Contestant,
     Convention,
     Group,
@@ -40,9 +40,9 @@ from .models import (
     Member,
     Organization,
     Performance,
-    PerformanceScore,
+    # PerformanceScore,
     Performer,
-    PerformerScore,
+    # PerformerScore,
     Person,
     Role,
     Round,
@@ -50,7 +50,7 @@ from .models import (
     Session,
     Slot,
     Song,
-    SongScore,
+    # SongScore,
     Submission,
     Venue,
 )
@@ -62,7 +62,7 @@ from .serializers import (
     ChapterSerializer,
     ContestantSerializer,
     ContestSerializer,
-    ContestScoreSerializer,
+    # ContestScoreSerializer,
     ConventionSerializer,
     GroupSerializer,
     HostSerializer,
@@ -70,9 +70,9 @@ from .serializers import (
     MemberSerializer,
     OrganizationSerializer,
     PerformanceSerializer,
-    PerformanceScoreSerializer,
+    # PerformanceScoreSerializer,
     PerformerSerializer,
-    PerformerScoreSerializer,
+    # PerformerScoreSerializer,
     PersonSerializer,
     RoleSerializer,
     RoundSerializer,
@@ -80,7 +80,7 @@ from .serializers import (
     SessionSerializer,
     SlotSerializer,
     SongSerializer,
-    SongScoreSerializer,
+    # SongScoreSerializer,
     SubmissionSerializer,
     VenueSerializer,
 )
@@ -158,13 +158,13 @@ class ContestViewSet(viewsets.ModelViewSet):
     resource_name = "contest"
 
 
-class ContestScoreViewSet(viewsets.ModelViewSet):
-    queryset = Contest.objects.select_related(
-        'champion',
-    )
-    permission_classes = (DRYPermissions,)
-    serializer_class = ContestScoreSerializer
-    resource_name = "contestscore"
+# class ContestScoreViewSet(viewsets.ModelViewSet):
+#     queryset = ContestScore.objects.select_related(
+#         'champion',
+#     )
+#     permission_classes = (DRYPermissions,)
+#     serializer_class = ContestScoreSerializer
+#     resource_name = "contestscore"
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -287,18 +287,18 @@ class PerformanceViewSet(
     resource_name = "performance"
 
 
-class PerformanceScoreViewSet(
-    get_viewset_transition_action_mixin(PerformanceScore),
-    viewsets.ModelViewSet,
-):
-    queryset = PerformanceScore.objects.select_related(
-        'performance',
-    ).order_by(
-        'name',
-    )
-    permission_classes = (DRYPermissions,)
-    serializer_class = PerformanceScoreSerializer
-    resource_name = "performancescore"
+# class PerformanceScoreViewSet(
+#     get_viewset_transition_action_mixin(PerformanceScore),
+#     viewsets.ModelViewSet,
+# ):
+#     queryset = PerformanceScore.objects.select_related(
+#         'performance',
+#     ).order_by(
+#         'name',
+#     )
+#     permission_classes = (DRYPermissions,)
+#     serializer_class = PerformanceScoreSerializer
+#     resource_name = "performancescore"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -327,19 +327,19 @@ class PerformerViewSet(viewsets.ModelViewSet):
     resource_name = "performer"
 
 
-class PerformerScoreViewSet(viewsets.ModelViewSet):
-    queryset = PerformerScore.objects.select_related(
-        'performer',
-    ).order_by(
-        'name',
-    )
-    permission_classes = (DRYPermissions,)
-    serializer_class = PerformerScoreSerializer
-    # filter_backends = (
-    #     CoalesceFilterBackend,
-    #     PerformerScoreFilterBackend,
-    # )
-    resource_name = "performerscore"
+# class PerformerScoreViewSet(viewsets.ModelViewSet):
+#     queryset = PerformerScore.objects.select_related(
+#         'performer',
+#     ).order_by(
+#         'name',
+#     )
+#     permission_classes = (DRYPermissions,)
+#     serializer_class = PerformerScoreSerializer
+#     # filter_backends = (
+#     #     CoalesceFilterBackend,
+#     #     PerformerScoreFilterBackend,
+#     # )
+#     resource_name = "performerscore"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -456,13 +456,13 @@ class SongViewSet(viewsets.ModelViewSet):
     resource_name = "song"
 
 
-class SongScoreViewSet(viewsets.ModelViewSet):
-    queryset = SongScore.objects.order_by(
-        'name',
-    )
-    permission_classes = (DRYPermissions,)
-    serializer_class = SongScoreSerializer
-    resource_name = "songscore"
+# class SongScoreViewSet(viewsets.ModelViewSet):
+#     queryset = SongScore.objects.order_by(
+#         'name',
+#     )
+#     permission_classes = (DRYPermissions,)
+#     serializer_class = SongScoreSerializer
+#     resource_name = "songscore"
 
 
 class SlotViewSet(viewsets.ModelViewSet):

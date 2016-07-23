@@ -213,7 +213,6 @@ class PerformerInline(admin.TabularInline):
     ]
     readonly_fields = [
         'name',
-        'total_score',
         'seed',
     ]
     ordering = (

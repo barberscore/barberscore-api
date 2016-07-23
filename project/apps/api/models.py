@@ -740,13 +740,13 @@ class Contest(TimeStampedModel):
     )
 
     # FKs
-    contestscore = models.ForeignKey(
-        'ContestScore',
-        related_name='contest',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # contestscore = models.ForeignKey(
+    #     'ContestScore',
+    #     related_name='contest',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     session = models.ForeignKey(
         'Session',
@@ -760,13 +760,13 @@ class Contest(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    champion = models.ForeignKey(
-        'Performer',
-        related_name='contests',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
+    # champion = models.ForeignKey(
+    #     'Performer',
+    #     related_name='contests',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    # )
 
     # Legacy
     stix_num = models.IntegerField(
@@ -860,87 +860,87 @@ class Contest(TimeStampedModel):
         return
 
 
-class ContestScore(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class ContestScore(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    name = models.CharField(
-        max_length=200,
-        editable=False,
-    )
+#     name = models.CharField(
+#         max_length=200,
+#         editable=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (90, 'published', 'Published',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (90, 'published', 'Published',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    # FKs
-    champion = models.ForeignKey(
-        'Performer',
-        related_name='contestscore',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
+#     # FKs
+#     champion = models.ForeignKey(
+#         'Performer',
+#         related_name='contestscore',
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#     )
 
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "contestscore"
+#     # Internals
+#     class JSONAPIMeta:
+#         resource_name = "contestscore"
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
+#     def __unicode__(self):
+#         return u"{0}".format(self.name)
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.id.hex,
-        ]))
-        super(ContestScore, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.name = " ".join(filter(None, [
+#             self.id.hex,
+#         ]))
+#         super(ContestScore, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return bool(
-                self.award.organization.representative.user == request.user or
-                self.session.assignments.filter(
-                    judge__person__user=request.user,
-                    category=self.session.assignments.model.category.ADMIN,
-                ) or
-                self.status == self.STATUS.published
-            )
-        else:
-            return False
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         if request.user.is_authenticated():
+#             return bool(
+#                 self.award.organization.representative.user == request.user or
+#                 self.session.assignments.filter(
+#                     judge__person__user=request.user,
+#                     category=self.session.assignments.model.category.ADMIN,
+#                 ) or
+#                 self.status == self.STATUS.published
+#             )
+#         else:
+#             return False
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return bool(
-                self.award.organization.representative.user == request.user or
-                self.session.assignments.filter(
-                    judge__person__user=request.user,
-                    category=self.session.assignments.model.category.ADMIN,
-                )
-            )
-        else:
-            return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return bool(
+#                 self.award.organization.representative.user == request.user or
+#                 self.session.assignments.filter(
+#                     judge__person__user=request.user,
+#                     category=self.session.assignments.model.category.ADMIN,
+#                 )
+#             )
+#         else:
+#             return False
 
 
 class Contestant(TimeStampedModel):
@@ -2195,13 +2195,13 @@ class Performance(TimeStampedModel):
     )
 
     # FKs
-    performancescore = models.OneToOneField(
-        'PerformanceScore',
-        related_name='performance',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # performancescore = models.OneToOneField(
+    #     'PerformanceScore',
+    #     related_name='performance',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     round = models.ForeignKey(
         'Round',
@@ -2222,62 +2222,62 @@ class Performance(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # Denormalized
-    rank = models.IntegerField(
-        help_text="""
-            The final ranking relative to this round.""",
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # # Denormalized
+    # rank = models.IntegerField(
+    #     help_text="""
+    #         The final ranking relative to this round.""",
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # mus_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # prs_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # sng_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # total_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # mus_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # prs_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # sng_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # total_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
     class JSONAPIMeta:
         resource_name = "performance"
@@ -2459,118 +2459,118 @@ class Performance(TimeStampedModel):
         return
 
 
-class PerformanceScore(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class PerformanceScore(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
+#     name = models.CharField(
+#         max_length=255,
+#         unique=True,
+#         editable=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (90, 'published', 'Published',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (90, 'published', 'Published',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    rank = models.IntegerField(
-        help_text="""
-            The final ranking relative to this round.""",
-        null=True,
-        blank=True,
-    )
+#     rank = models.IntegerField(
+#         help_text="""
+#             The final ranking relative to this round.""",
+#         null=True,
+#         blank=True,
+#     )
 
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     mus_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     prs_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     sng_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     total_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     mus_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     prs_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     sng_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     total_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    class JSONAPIMeta:
-        resource_name = "performancescore"
+#     class JSONAPIMeta:
+#         resource_name = "performancescore"
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
+#     def __unicode__(self):
+#         return u"{0}".format(self.name)
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.id.hex,
-        ]))
-        super(PerformanceScore, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.name = " ".join(filter(None, [
+#             self.id.hex,
+#         ]))
+#         super(PerformanceScore, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        # if self.status >= self.STATUS.published:
-        #     return True
-        # else:
-        #     return False
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         # if self.status >= self.STATUS.published:
+#         #     return True
+#         # else:
+#         #     return False
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return bool(
-                self.round.session.assignments.filter(
-                    judge__person__user=request.user,
-                    category=self.round.session.assignments.model.category.ADMIN,
-                )
-            )
-        else:
-            return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return bool(
+#                 self.round.session.assignments.filter(
+#                     judge__person__user=request.user,
+#                     category=self.round.session.assignments.model.category.ADMIN,
+#                 )
+#             )
+#         else:
+#             return False
 
 
 class Performer(TimeStampedModel):
@@ -2665,13 +2665,13 @@ class Performer(TimeStampedModel):
     )
 
     # FKs
-    performerscore = models.OneToOneField(
-        'PerformerScore',
-        related_name='performer',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # performerscore = models.OneToOneField(
+    #     'PerformerScore',
+    #     related_name='performer',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     session = models.ForeignKey(
         'Session',
@@ -2750,59 +2750,59 @@ class Performer(TimeStampedModel):
     )
 
     # Denormalized
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # rank = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # mus_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    prs_points = models.IntegerField(
-        null=True,
-        editable=False,
-        blank=True,
-    )
+    # prs_points = models.IntegerField(
+    #     null=True,
+    #     editable=False,
+    #     blank=True,
+    # )
 
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # sng_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # total_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # mus_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # prs_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # sng_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # total_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
     csa_pdf = models.FileField(
         help_text="""
@@ -3088,122 +3088,122 @@ class Performer(TimeStampedModel):
         return
 
 
-class PerformerScore(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class PerformerScore(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
+#     name = models.CharField(
+#         max_length=255,
+#         unique=True,
+#         editable=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (90, 'published', 'Published',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (90, 'published', 'Published',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     rank = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     mus_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     prs_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     sng_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     total_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     mus_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     prs_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     sng_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     total_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    csa_pdf = models.FileField(
-        help_text="""
-            The historical PDF CSA.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
+#     csa_pdf = models.FileField(
+#         help_text="""
+#             The historical PDF CSA.""",
+#         upload_to=generate_image_filename,
+#         blank=True,
+#         null=True,
+#     )
 
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "performerscore"
+#     # Internals
+#     class JSONAPIMeta:
+#         resource_name = "performerscore"
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
+#     def __unicode__(self):
+#         return u"{0}".format(self.name)
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.id.hex,
-        ]))
-        super(PerformerScore, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.name = " ".join(filter(None, [
+#             self.id.hex,
+#         ]))
+#         super(PerformerScore, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if self.status == self.STATUS.published:
-            return True
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         if self.status == self.STATUS.published:
+#             return True
+#         return False
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return bool(
-                self.performer.session.assignments.filter(
-                    judge__person__user=request.user,
-                    category=self.round.session.assignments.model.category.ADMIN,
-                )
-            )
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return bool(
+#                 self.performer.session.assignments.filter(
+#                     judge__person__user=request.user,
+#                     category=self.round.session.assignments.model.category.ADMIN,
+#                 )
+#             )
+#         return False
 
 
 class Person(TimeStampedModel):
@@ -4531,62 +4531,62 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    songscore = models.OneToOneField(
-        'SongScore',
-        related_name='song',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # songscore = models.OneToOneField(
+    #     'SongScore',
+    #     related_name='song',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     # Denormalizations
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-        # editable=False,
-    )
+    # mus_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     # editable=False,
+    # )
 
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-        # editable=False,
-    )
+    # prs_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     # editable=False,
+    # )
 
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-        # editable=False,
-    )
+    # sng_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     # editable=False,
+    # )
 
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # total_points = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-        # editable=False,
-    )
+    # mus_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     # editable=False,
+    # )
 
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-        # editable=False,
-    )
+    # prs_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     # editable=False,
+    # )
 
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-        # editable=False,
-    )
+    # sng_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     # editable=False,
+    # )
 
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    # total_score = models.FloatField(
+    #     null=True,
+    #     blank=True,
+    #     editable=False,
+    # )
 
     # Internals
     class Meta:
@@ -4704,110 +4704,110 @@ class Song(TimeStampedModel):
         return
 
 
-class SongScore(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class SongScore(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
+#     name = models.CharField(
+#         max_length=255,
+#         unique=True,
+#         editable=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (90, 'published', 'Published',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (90, 'published', 'Published',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     mus_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     prs_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     sng_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     total_points = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     mus_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     prs_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     sng_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
+#     total_score = models.FloatField(
+#         null=True,
+#         blank=True,
+#     )
 
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "songscore"
+#     # Internals
+#     class JSONAPIMeta:
+#         resource_name = "songscore"
 
-    def __unicode__(self):
-        return u"{0}".format(self.name)
+#     def __unicode__(self):
+#         return u"{0}".format(self.name)
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
-            self.id.hex,
-        ]))
-        super(SongScore, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.name = " ".join(filter(None, [
+#             self.id.hex,
+#         ]))
+#         super(SongScore, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return bool(
-                self.performer.session.assignments.filter(
-                    judge__person__user=request.user,
-                    category=self.round.session.assignments.model.category.ADMIN,
-                ) or self.performer.group.roles.filter(
-                    person__user=request.user,
-                    status=self.performer.roles.model.STATUS.active,
-                )
-            )
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         if request.user.is_authenticated():
+#             return bool(
+#                 self.performer.session.assignments.filter(
+#                     judge__person__user=request.user,
+#                     category=self.round.session.assignments.model.category.ADMIN,
+#                 ) or self.performer.group.roles.filter(
+#                     person__user=request.user,
+#                     status=self.performer.roles.model.STATUS.active,
+#                 )
+#             )
+#         return False
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         return False
 
 
 class Submission(TimeStampedModel):
