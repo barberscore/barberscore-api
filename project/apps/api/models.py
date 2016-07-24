@@ -2855,7 +2855,7 @@ class PerformerScore(Performer):
 
     def calculate_rank(self):
         try:
-            return self.contestants.get(contest=self.session.primary).calculate_rank()
+            return self.contestants.get(contest=self.session.primary).contestantscore.calculate_rank()
         except self.contestants.model.DoesNotExist:
             return None
 

@@ -1078,6 +1078,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
     )
 
+    search_fields = [
+        'name',
+    ]
 
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
