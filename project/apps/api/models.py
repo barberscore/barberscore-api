@@ -2321,6 +2321,8 @@ class Performance(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        self.num = 30
+        self.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
@@ -3875,11 +3877,56 @@ class Score(TimeStampedModel):
 
     # Transitions
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
-    def ck(self, *args, **kwargs):
-        if self.points < 0:
-            return self.STATUS.cleared
-        else:
+    def verify(self, *args, **kwargs):
+        variance = False
+        mus_avg = self.song.scores.filter(
+            kind=self.song.scores.model.KIND.official,
+            category=self.song.scores.model.CATEGORY.music,
+        ).aggregate(
+            avg=models.Avg('points')
+        )['avg']
+        if self.category == self.CATEGORY.music:
+            if abs(self.points - mus_avg) > 5:
+                log.info("Variance Music {0}".format(self))
+                variance = True
+        prs_avg = self.song.scores.filter(
+            kind=self.song.scores.model.KIND.official,
+            category=self.song.scores.model.CATEGORY.presentation,
+        ).aggregate(
+            avg=models.Avg('points')
+        )['avg']
+        if self.category == self.CATEGORY.presentation:
+            if abs(self.points - prs_avg) > 5:
+                log.info("Variance Presentation {0}".format(self))
+                variance = True
+        sng_avg = self.song.scores.filter(
+            kind=self.song.scores.model.KIND.official,
+            category=self.song.scores.model.CATEGORY.singing,
+        ).aggregate(
+            avg=models.Avg('points')
+        )['avg']
+        if self.category == self.CATEGORY.singing:
+            if abs(self.points - sng_avg) > 5:
+                log.info("Variance Singing {0}".format(self))
+                variance = True
+        ordered_asc = self.song.scores.filter(
+            kind=self.song.scores.model.KIND.official,
+        ).order_by('points')
+        if ordered_asc[1].points - ordered_asc[0].points > 5 and ordered_asc[0].points == self.points:
+            log.info("Variance Low {0}".format(self))
+            variance = True
+        ordered_dsc = self.song.scores.filter(
+            kind=self.song.scores.model.KIND.official,
+        ).order_by('-points')
+        if ordered_dsc[0].points - ordered_dsc[1].points > 5 and ordered_dsc[0].points == self.points:
+            log.info("Variance High {0}".format(self))
+            variance = True
+        if variance:
+            self.original = self.points
+            self.save()
             return self.STATUS.flagged
+        else:
+            return self.STATUS.cleared
 
 
 class Session(TimeStampedModel):
