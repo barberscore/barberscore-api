@@ -29,6 +29,7 @@ from ranking import Ranking
 from timezone_field import TimeZoneField
 
 # Django
+from django.apps import apps as api_apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
@@ -2208,6 +2209,8 @@ class Performance(TimeStampedModel):
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
         (30, 'entered', 'Entered',),
+        (40, 'flagged', 'Flagged',),
+        (60, 'cleared', 'Cleared',),
         # (50, 'confirmed', 'Confirmed',),
         (90, 'published', 'Published',),
     )
@@ -2319,11 +2322,19 @@ class Performance(TimeStampedModel):
     def start(self, *args, **kwargs):
         return
 
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        self.num = 30
-        self.save()
-        return
+    @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
+    def verify(self, *args, **kwargs):
+        config = api_apps.get_app_config('api')
+        Score = config.get_model('Score')
+        scores = Score.objects.filter(
+            song__performance=self,
+        )
+        flags = []
+        for score in scores:
+            flags.append(score.verify())
+        if any(flags):
+            return self.STATUS.flagged
+        return self.STATUS.cleared
 
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
@@ -3822,6 +3833,10 @@ class Score(TimeStampedModel):
         ]
     )
 
+    is_flagged = models.BooleanField(
+        default=False,
+    )
+
     # FKs
     song = models.ForeignKey(
         'Song',
@@ -3856,28 +3871,8 @@ class Score(TimeStampedModel):
         ]))
         super(Score, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
-
-    # Transitions
-    @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
-    def verify(self, *args, **kwargs):
+    # Methods
+    def verify(self):
         variance = False
         mus_avg = self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
@@ -3923,10 +3918,28 @@ class Score(TimeStampedModel):
             variance = True
         if variance:
             self.original = self.points
+            self.is_flagged = True
             self.save()
-            return self.STATUS.flagged
-        else:
-            return self.STATUS.cleared
+        return variance
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Session(TimeStampedModel):
