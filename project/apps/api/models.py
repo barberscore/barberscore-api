@@ -2324,7 +2324,16 @@ class Performance(TimeStampedModel):
 
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
     def verify(self, *args, **kwargs):
+        self.performancescore.calculate()
+        self.performancescore.save()
         config = api_apps.get_app_config('api')
+        Song = config.get_model('Song')
+        songs = Song.objects.filter(
+            performance=self,
+        )
+        for song in songs:
+            song.calculate()
+            song.save()
         Score = config.get_model('Score')
         scores = Score.objects.filter(
             song__performance=self,
@@ -2393,7 +2402,7 @@ class PerformanceScore(Performance):
 
     # Methods
     def calculate(self, *args, **kwargs):
-        self.rank = self.calculate_rank()
+        # self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
@@ -4352,6 +4361,11 @@ class Song(TimeStampedModel):
             self.id.hex,
         ]))
         super(Song, self).save(*args, **kwargs)
+
+    def calculate(self, *args, **kwargs):
+        self.songscore.calculate()
+        self.songscore.save()
+        return
 
     # Permissions
     @staticmethod
