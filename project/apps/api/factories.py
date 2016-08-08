@@ -357,6 +357,7 @@ class VenueFactory(DjangoModelFactory):
 class JudgeFactory(DjangoModelFactory):
     class Meta:
         model = Judge
+    status = Judge.STATUS.active
     person = SubFactory(
         'apps.api.factories.PersonFactory'
     )
@@ -364,42 +365,42 @@ class JudgeFactory(DjangoModelFactory):
 
 class OfficialAdminJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.admin
-    status = Judge.STATUS.active
+    kind = Judge.KIND.certified
 
 
 class OfficialMusicJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.music
-    status = Judge.STATUS.active
+    kind = Judge.KIND.certified
 
 
 class OfficialPresentationJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.presentation
-    status = Judge.STATUS.active
+    kind = Judge.KIND.certified
 
 
 class OfficialSingingJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.singing
-    status = Judge.STATUS.active
+    kind = Judge.KIND.certified
 
 
 class CandidateAdminJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.admin
-    status = Judge.STATUS.candidate
+    kind = Judge.KIND.candidate
 
 
 class CandidateMusicJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.music
-    status = Judge.STATUS.candidate
+    kind = Judge.KIND.candidate
 
 
 class CandidatePresentationJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.presentation
-    status = Judge.STATUS.candidate
+    kind = Judge.KIND.candidate
 
 
 class CandidateSingingJudgeFactory(JudgeFactory):
     category = Judge.CATEGORY.singing
-    status = Judge.STATUS.candidate
+    kind = Judge.KIND.candidate
 
 
 # Assignments
