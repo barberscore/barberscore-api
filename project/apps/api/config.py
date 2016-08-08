@@ -8,5 +8,8 @@ class ApiConfig(AppConfig):
     name = 'apps.api'
 
     def ready(self):
-        from .signals import *
+        from .signals import (
+            session_post_save,
+            performance_post_save,
+        )
         # pass
