@@ -2,27 +2,32 @@
 import logging
 
 # Third-Party
-from drf_fsm_transitions.viewset_mixins import \
-    get_viewset_transition_action_mixin
+from drf_fsm_transitions.viewset_mixins import (
+    get_viewset_transition_action_mixin,
+)
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.response import Response
+from rest_framework import status
 
 # Local
 from .filters import (
     CatalogFilter,
-    CoalesceFilterBackend,
+    # CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
     GroupFilter,
     JudgeFilter,
     PerformerFilter,
-    PerformerScoreFilterBackend,
+    # PerformerScoreFilterBackend,
     PersonFilter,
-    RoundFilterBackend,
-    SessionFilterBackend,
+    # RoundFilterBackend,
+    # SessionFilterBackend,
     SessionFilter,
     SubmissionFilter,
     VenueFilter,
+    # UserFilter,
 )
 
 from .models import (
@@ -54,6 +59,7 @@ from .models import (
     SongScore,
     Submission,
     Venue,
+    User,
 )
 
 from .serializers import (
@@ -85,6 +91,8 @@ from .serializers import (
     SongScoreSerializer,
     SubmissionSerializer,
     VenueSerializer,
+    UserSerializer,
+    PasswordSerializer,
 )
 
 log = logging.getLogger(__name__)
@@ -493,3 +501,34 @@ class VenueViewSet(viewsets.ModelViewSet):
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     resource_name = "venue"
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    permission_classes = (DRYPermissions,)
+    serializer_class = UserSerializer
+    # filter_class = UserFilter
+    resource_name = "user"
+
+    @detail_route(
+        methods=['post'],
+        permission_classes=[
+            DRYPermissions,
+        ],
+        url_path='change-password',
+    )
+    def change_password(self, request, pk=None):
+        user = self.get_object()
+        serializer = PasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.data['password'])
+            user.save()
+            return Response(
+                {'response': 'password changed'},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )

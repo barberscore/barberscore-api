@@ -37,6 +37,7 @@ from .models import (
     SongScore,
     Submission,
     Venue,
+    User,
 )
 
 
@@ -710,3 +711,29 @@ class VenueSerializer(serializers.ModelSerializer):
             'conventions',
             'permissions',
         )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'url',
+            'name',
+            'bhs_id',
+            'email',
+            'is_active',
+            'is_staff',
+            'date_joined',
+            'last_login',
+            'permissions',
+        )
+
+
+class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        style={'type': 'password'},
+        required=False
+    )

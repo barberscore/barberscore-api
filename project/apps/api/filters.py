@@ -16,6 +16,7 @@ from .models import (
     Session,
     Submission,
     Venue,
+    # User,
 )
 
 
