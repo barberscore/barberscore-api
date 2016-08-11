@@ -3944,6 +3944,16 @@ class Score(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return bool(
+                self.song.performance.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
+                ) or self.song.performance.performer.group.roles.filter(
+                    person__user=request.user,
+                    status=self.song.performance.performer.group.roles.model.STATUS.active,
+                )
+            )
         return False
 
     @allow_staff_or_superuser
@@ -4812,6 +4822,10 @@ class User(AbstractBaseUser):
             )
         )
         super(User, self).save(*args, **kwargs)
+
+    @property
+    def is_superuser(self):
+        return self.is_staff
 
     class JSONAPIMeta:
         resource_name = "user"

@@ -110,6 +110,20 @@ class SongScoreFilterBackend(DRYPermissionFiltersBase):
         #     return queryset.filter(status__gte=Round.STATUS.validated)
 
 
+class ScoreFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to performer if not superuser."""
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+            else:
+                return queryset.filter(
+                    song__performance__performer__group__roles__person__user=request.user,
+                )
+        else:
+            return queryset.none()
+
+
 class CatalogFilter(filters.FilterSet):
 
     class Meta:
