@@ -4856,6 +4856,8 @@ class User(AbstractBaseUser):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return self == request.user
         return False
 
     @allow_staff_or_superuser
