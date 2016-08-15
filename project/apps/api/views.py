@@ -7,7 +7,10 @@ from drf_fsm_transitions.viewset_mixins import (
 )
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import (
+    detail_route,
+    list_route,
+)
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -28,7 +31,7 @@ from .filters import (
     SessionFilter,
     SubmissionFilter,
     VenueFilter,
-    # UserFilter,
+    UserFilterBackend,
 )
 
 from .models import (
@@ -520,6 +523,29 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     # filter_class = UserFilter
     resource_name = "user"
+    filter_backends = (
+        UserFilterBackend,
+    )
+
+    @list_route(
+        methods=['get'],
+        permission_classes=[
+            DRYPermissions,
+        ],
+        url_path='me',
+    )
+    def me(self, request):
+        user = request.user
+        if user.is_authenticated():
+            serializer = self.get_serializer(user)
+            return Response(
+                serializer.data
+            )
+        else:
+            return Response(
+                {'errors': 'not authenticated'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     @detail_route(
         methods=['post'],
@@ -530,6 +556,11 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def change_password(self, request, pk=None):
         user = self.get_object()
+        if not user.is_authenticated():
+            return Response(
+                {'errors': 'not authenticated'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = PasswordSerializer(data=request.data)
         if serializer.is_valid():
             user.set_password(serializer.data['password'])
