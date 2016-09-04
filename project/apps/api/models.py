@@ -4780,6 +4780,13 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
+    sub = models.TextField(
+        max_length=255,
+        blank=True,
+        # unique=True,
+        # editable=False,
+    )
+
     bhs_id = models.IntegerField(
         unique=True,
     )

@@ -148,9 +148,41 @@ JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
 
 # JWT Settings
+import jwt
+import base64
+from django.contrib.auth import get_user_model
+
+AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
+AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
+
+def jwt_get_nickname(payload):
+    sub = payload.get('sub')
+    User = get_user_model()
+    email = User.objects.get(sub=sub)
+    return email
+
+def jwt_decode(token):
+    try:
+        foo = jwt.decode(
+            token,
+            base64.b64decode(
+                AUTH0_CLIENT_SECRET.replace("_","/").replace("-","+")
+            ),
+            audience=AUTH0_CLIENT_ID,
+        )
+    except Exception as e:
+        print "E: {0}".format(e)
+        raise e
+    return foo
+
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_DECODE_HANDLER': jwt_decode,
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_nickname,
+    # 'JWT_AUDIENCE': AUTH0_CLIENT_ID,
+    'JWT_SECRET_KEY': AUTH0_CLIENT_SECRET,
 }
+
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = False
 
