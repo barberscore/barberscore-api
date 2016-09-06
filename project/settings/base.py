@@ -154,6 +154,8 @@ from django.contrib.auth import get_user_model
 
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
+AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
+AUTH0_TOKEN = get_env_variable("AUTH0_TOKEN")
 
 def jwt_get_nickname(payload):
     sub = payload.get('sub')

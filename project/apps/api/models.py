@@ -3177,14 +3177,6 @@ class Person(TimeStampedModel):
         unique=True,
     )
 
-    # FKs
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Denormalizations
     @property
     def first_name(self):
@@ -3265,24 +3257,6 @@ class Person(TimeStampedModel):
             u'{0}'.format(name.suffix),
         ]))
         super(Person, self).save(*args, **kwargs)
-
-    # Methods
-    def create_user_from_person(self):
-        User = get_user_model()
-        if self.user:
-            raise RuntimeError('User already exists')
-        try:
-            user = User.objects.get(bhs_id=self.bhs_id)
-        except User.DoesNotExist:
-            user = User.objects.create_user(
-                name=self.name,
-                bhs_id=self.bhs_id,
-                email=self.email,
-                password='password',
-                # password=self.bhs_id,
-            )
-        self.user = user
-        self.save()
 
     # Permissions
     @staticmethod
@@ -4789,6 +4763,8 @@ class User(AbstractBaseUser):
 
     bhs_id = models.IntegerField(
         unique=True,
+        blank=True,
+        null=True,
     )
 
     email = models.EmailField(
@@ -4836,6 +4812,14 @@ class User(AbstractBaseUser):
 
     class JSONAPIMeta:
         resource_name = "user"
+
+    # FKs
+    person = models.OneToOneField(
+        'Person',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     # Methods
     def get_full_name(self):
