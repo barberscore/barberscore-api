@@ -603,7 +603,7 @@ class Chapter(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.TextField(
+    nomen = models.CharField(
         max_length=255,
         unique=True,
         editable=False,
@@ -1433,7 +1433,7 @@ class Group(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.TextField(
+    nomen = models.CharField(
         max_length=255,
         unique=True,
         editable=False,
@@ -2979,7 +2979,7 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.TextField(
+    nomen = models.CharField(
         max_length=255,
         unique=True,
         editable=False,
@@ -4748,13 +4748,13 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
-    nomen = models.TextField(
+    nomen = models.CharField(
         max_length=255,
         unique=True,
         editable=False,
     )
 
-    sub = models.TextField(
+    sub = models.CharField(
         max_length=255,
         blank=True,
         # unique=True,

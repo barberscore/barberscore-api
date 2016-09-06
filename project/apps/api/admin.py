@@ -1296,7 +1296,9 @@ class UserAdmin(BaseUserAdmin):
     list_display = [
         'name',
         'email',
+        'person',
         'bhs_id',
+        'sub',
         'is_active',
         'is_staff',
     ]
@@ -1308,7 +1310,7 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name', 'bhs_id')}),
+        ('Personal info', {'fields': ('name', 'person', 'bhs_id', 'sub')}),
         ('Permissions', {'fields': ('is_active', 'is_staff')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -1322,6 +1324,9 @@ class UserAdmin(BaseUserAdmin):
     search_fields = [
         'email',
         'name',
+    ]
+    raw_id_fields = [
+        'person',
     ]
     ordering = ('name',)
     filter_horizontal = ()
