@@ -44,6 +44,7 @@ CORS_ORIGIN_WHITELIST = (
     'barberscore.com',
     'www.barberscore.com',
     'barberscore.s3.amazonaws.com',
+    'barberscore.auth0.com',
 )
 
 # Email
