@@ -1,7 +1,7 @@
 arrow==0.8.0
 asgi-redis==0.14.0
-awscli==1.10.53
 auth0-python==2.0.1
+awscli==1.10.53
 Babel==2.3.4
 botocore==1.4.43
 bugsnag==2.5.0
@@ -32,6 +32,7 @@ drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.6
 factory-boy==2.7.0
 fake-factory==0.5.10
+nameparser==0.4.1
 nameparser==0.4.1
 phonenumberslite==7.5.1
 Pillow==3.3.0
