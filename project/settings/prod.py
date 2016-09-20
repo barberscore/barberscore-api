@@ -39,8 +39,6 @@ STATICFILES_STORAGE = STATIC_STORAGE
 
 # CORS Settings
 CORS_ORIGIN_WHITELIST = (
-    'www.barberscore.com.herokudns.com',
-    'barberscore.com.herokudns.com',
     'barberscore.com',
     'www.barberscore.com',
     'barberscore.s3.amazonaws.com',

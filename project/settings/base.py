@@ -44,7 +44,9 @@ SERVER_EMAIL = get_env_variable('SERVER_EMAIL')
 
 # Database
 DATABASE_URL = get_env_variable("DATABASE_URL")
-DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
+DATABASES = {
+    'default': dj_database_url.config(default=DATABASE_URL)
+}
 
 # Redis
 CHANNEL_LAYERS = {
@@ -168,7 +170,7 @@ def jwt_decode(token):
         foo = jwt.decode(
             token,
             base64.b64decode(
-                AUTH0_CLIENT_SECRET.replace("_","/").replace("-","+")
+                AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
             ),
             audience=AUTH0_CLIENT_ID,
         )
