@@ -51,7 +51,6 @@ from django.template.loader import get_template
 
 # Local
 from .managers import (
-    ScoreManager,
     UserManager,
 )
 
@@ -3832,9 +3831,6 @@ class Score(TimeStampedModel):
         related_name='scores',
         on_delete=models.CASCADE,
     )
-
-    # Managers
-    objects = ScoreManager()
 
     # Internals
     class Meta:
