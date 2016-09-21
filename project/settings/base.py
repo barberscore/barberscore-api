@@ -48,19 +48,6 @@ DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL)
 }
 
-# Redis
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [
-                get_env_variable("REDIS_URL")
-            ],
-        },
-        "ROUTING": "routes.channel_routing",
-    },
-}
-
 # Auth
 AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = (
@@ -159,11 +146,13 @@ AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 AUTH0_TOKEN = get_env_variable("AUTH0_TOKEN")
 
+
 def jwt_get_nickname(payload):
     sub = payload.get('sub')
     User = get_user_model()
     email = User.objects.get(sub=sub)
     return email
+
 
 def jwt_decode(token):
     try:
@@ -219,6 +208,5 @@ INSTALLED_APPS = (
     'mptt',
     'rest_framework',
     'dry_rest_permissions',
-    'channels',
     'apps.api',
 )

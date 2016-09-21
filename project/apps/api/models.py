@@ -10,7 +10,6 @@ import uuid
 
 # Third-Party
 import docraptor
-from channels import Channel
 from django_fsm import (
     RETURN_VALUE,
     FSMIntegerField,
@@ -39,14 +38,12 @@ from django.contrib.postgres.fields import (
     FloatRangeField,
     IntegerRangeField,
 )
-from django.core.files.base import ContentFile
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
 )
 from django.db import models
-from django.template.loader import get_template
 
 # Local
 from .managers import (
@@ -2833,45 +2830,45 @@ class PerformerScore(Performer):
         self.save()
         return
 
-    def print_csa(self):
-        performer = self
-        contestants = performer.contestants.all()
-        performances = performer.performances.order_by(
-            'round__kind',
-        )
-        assignments = performer.session.assignments.exclude(
-            category=Assignment.CATEGORY.admin,
-        ).order_by(
-            'category',
-            'kind',
-            'slot',
-        )
-        foo = get_template('csa.html')
-        template = foo.render(context={
-            'performer': performer,
-            'performances': performances,
-            'assignments': assignments,
-            'contestants': contestants,
-        })
-        try:
-            create_response = doc_api.create_doc({
-                "test": True,
-                "document_content": template,
-                "name": "csa-{0}.pdf".format(id),
-                "document_type": "pdf",
-            })
-            f = ContentFile(create_response)
-            performer.csa_pdf.save(
-                "{0}.pdf".format(id),
-                f
-            )
-            performer.save()
-            log.info("PDF created and saved to instance")
-        except docraptor.rest.ApiException as error:
-            log.error(error)
-            log.error(error.message)
-            log.error(error.response_body)
-        return "Complete"
+    # def print_csa(self):
+    #     performer = self
+    #     contestants = performer.contestants.all()
+    #     performances = performer.performances.order_by(
+    #         'round__kind',
+    #     )
+    #     assignments = performer.session.assignments.exclude(
+    #         category=Assignment.CATEGORY.admin,
+    #     ).order_by(
+    #         'category',
+    #         'kind',
+    #         'slot',
+    #     )
+    #     foo = get_template('csa.html')
+    #     template = foo.render(context={
+    #         'performer': performer,
+    #         'performances': performances,
+    #         'assignments': assignments,
+    #         'contestants': contestants,
+    #     })
+    #     try:
+    #         create_response = doc_api.create_doc({
+    #             "test": True,
+    #             "document_content": template,
+    #             "name": "csa-{0}.pdf".format(id),
+    #             "document_type": "pdf",
+    #         })
+    #         f = ContentFile(create_response)
+    #         performer.csa_pdf.save(
+    #             "{0}.pdf".format(id),
+    #             f
+    #         )
+    #         performer.save()
+    #         log.info("PDF created and saved to instance")
+    #     except docraptor.rest.ApiException as error:
+    #         log.error(error)
+    #         log.error(error.message)
+    #         log.error(error.response_body)
+    #     return "Complete"
 
     def calculate_rank(self):
         try:
@@ -3509,12 +3506,12 @@ class Round(TimeStampedModel):
         ]))
         super(Round, self).save(*args, **kwargs)
 
-    # Methods
-    def print_ann(self):
-        payload = {
-            'id': str(self.id),
-        }
-        Channel('print-ann').send(payload)
+    # # Methods
+    # def print_ann(self):
+    #     payload = {
+    #         'id': str(self.id),
+    #     }
+    #     Channel('print-ann').send(payload)
 
     # Permissions
     @staticmethod
@@ -4071,47 +4068,47 @@ class Session(TimeStampedModel):
     #     }
     #     Channel('print-oss').send(payload)
 
-    def print_oss(self):
-        session = self
-        performers = session.performers.exclude(
-            rank=None,
-        ).order_by(
-            '-total_points',
-            '-sng_points',
-            '-mus_points',
-            '-prs_points',
-        )
-        assignments = session.assignments.order_by(
-            'category',
-            'kind',
-            'slot',
-        )
-        foo = get_template('oss.html')
-        template = foo.render(context={
-            'session': session,
-            'performers': performers,
-            'assignments': assignments,
-        })
-        try:
-            create_response = doc_api.create_doc({
-                "test": True,
-                "document_content": template,
-                "name": "oss-{0}.pdf".format(id),
-                "document_type": "pdf",
-            })
-            f = ContentFile(create_response)
-            session.scoresheet_pdf.save(
-                "{0}.pdf".format(id),
-                f
-            )
-            session.save()
-            log.info("PDF created and saved to instance")
-        except docraptor.rest.ApiException as error:
-            log.exception(error)
-            log.exception(error.message)
-            log.exception(error.code)
-            log.exception(error.response_body)
-        return "Complete"
+    # def print_oss(self):
+    #     session = self
+    #     performers = session.performers.exclude(
+    #         rank=None,
+    #     ).order_by(
+    #         '-total_points',
+    #         '-sng_points',
+    #         '-mus_points',
+    #         '-prs_points',
+    #     )
+    #     assignments = session.assignments.order_by(
+    #         'category',
+    #         'kind',
+    #         'slot',
+    #     )
+    #     foo = get_template('oss.html')
+    #     template = foo.render(context={
+    #         'session': session,
+    #         'performers': performers,
+    #         'assignments': assignments,
+    #     })
+    #     try:
+    #         create_response = doc_api.create_doc({
+    #             "test": True,
+    #             "document_content": template,
+    #             "name": "oss-{0}.pdf".format(id),
+    #             "document_type": "pdf",
+    #         })
+    #         f = ContentFile(create_response)
+    #         session.scoresheet_pdf.save(
+    #             "{0}.pdf".format(id),
+    #             f
+    #         )
+    #         session.save()
+    #         log.info("PDF created and saved to instance")
+    #     except docraptor.rest.ApiException as error:
+    #         log.exception(error)
+    #         log.exception(error.message)
+    #         log.exception(error.code)
+    #         log.exception(error.response_body)
+    #     return "Complete"
 
     # Permissions
     @staticmethod
