@@ -31,7 +31,6 @@ from timezone_field import TimeZoneField
 # Django
 from django.apps import apps as api_apps
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
     AbstractBaseUser,
 )

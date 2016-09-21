@@ -1082,6 +1082,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
     ]
 
+
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
     save_on_top = True
