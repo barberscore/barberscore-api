@@ -1,8 +1,6 @@
 # Third-Party
 from fsm_admin.mixins import FSMTransitionMixin
 from mptt.admin import MPTTModelAdmin
-from phonenumber_field.modelfields import PhoneNumberField
-from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
 # Django
 from django import forms
@@ -503,12 +501,6 @@ class GroupAdmin(admin.ModelAdmin):
     ordering = (
         'name',
     )
-
-    formfield_overrides = {
-        PhoneNumberField: {
-            'widget': PhoneNumberInternationalFallbackWidget
-        },
-    }
 
 
 @admin.register(Host)

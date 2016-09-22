@@ -23,7 +23,6 @@ from mptt.models import (
     TreeForeignKey,
 )
 from nameparser import HumanName
-from phonenumber_field.modelfields import PhoneNumberField
 from ranking import Ranking
 from timezone_field import TimeZoneField
 
@@ -1542,11 +1541,12 @@ class Group(TimeStampedModel):
         default='',
     )
 
-    phone = PhoneNumberField(
+    phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
         blank=True,
         default='',
+        max_length=25,
     )
 
     picture = models.ImageField(
@@ -2092,11 +2092,12 @@ class Organization(MPTTModel, TimeStampedModel):
         blank=True,
     )
 
-    phone = PhoneNumberField(
+    phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
         blank=True,
-        null=True,
+        default='',
+        max_length=25,
     )
 
     picture = models.ImageField(
@@ -3138,11 +3139,12 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    phone = PhoneNumberField(
+    phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
         blank=True,
         default='',
+        max_length=25,
     )
 
     picture = models.ImageField(

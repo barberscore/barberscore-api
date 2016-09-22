@@ -34,7 +34,6 @@ from .views import (
 
 router = routers.DefaultRouter(
     trailing_slash=False,
-    schema_title='Barberscore API',
 )
 
 router.register(r'award', AwardViewSet)

@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 
 # Third-Party
-import arrow
+# import arrow
 from nameparser import HumanName
 from psycopg2.extras import DateRange
 from unidecode import unidecode
