@@ -223,7 +223,8 @@ class SubmissionFilter(filters.FilterSet):
     class Meta:
         model = Submission
         fields = {
-            'performer__id': '__all__',
+            # 'performer__id': '__all__',
+            'status': '__all__',
         }
 
 
