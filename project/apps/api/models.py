@@ -1544,6 +1544,7 @@ class Group(TimeStampedModel):
     phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
+        null=True,
         blank=True,
         default='',
         max_length=25,
@@ -2095,6 +2096,7 @@ class Organization(MPTTModel, TimeStampedModel):
     phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
+        null=True,
         blank=True,
         default='',
         max_length=25,
@@ -3142,6 +3144,7 @@ class Person(TimeStampedModel):
     phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
+        null=True,
         blank=True,
         default='',
         max_length=25,
