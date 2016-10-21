@@ -54,26 +54,26 @@ def performance_post_save(sender, instance=None, created=False, raw=False, **kwa
                     )
 
 
-@receiver(post_save, sender=User)
-def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Auth0 from user."""
-    if not raw:
-        if created:
-            auth0 = Auth0(
-                settings.AUTH0_DOMAIN,
-                settings.AUTH0_TOKEN,
-            )
-            payload = {
-                "connection": "Default",
-                "email": instance.email,
-                "password": 'changeme',
-                "user_metadata": {
-                    "name": instance.name
-                },
-                "app_metadata": {
-                    "bhs_id": instance.bhs_id
-                }
-            }
-            response = auth0.users.create(payload)
-            instance.sub = response['user_id']
-            instance.save()
+# @receiver(post_save, sender=User)
+# def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+#     """Create Auth0 from user."""
+#     if not raw:
+#         if created:
+#             auth0 = Auth0(
+#                 settings.AUTH0_DOMAIN,
+#                 settings.AUTH0_TOKEN,
+#             )
+#             payload = {
+#                 "connection": "Default",
+#                 "email": instance.email,
+#                 "password": 'changeme',
+#                 "user_metadata": {
+#                     "name": instance.name
+#                 },
+#                 "app_metadata": {
+#                     "bhs_id": instance.bhs_id
+#                 }
+#             }
+#             response = auth0.users.create(payload)
+#             instance.sub = response['user_id']
+#             instance.save()

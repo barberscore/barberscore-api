@@ -4741,46 +4741,17 @@ class Venue(TimeStampedModel):
 
 
 class User(AbstractBaseUser):
-    # USERNAME_FIELD = settings.USERNAME_FIELD
-    # REQUIRED_FIELDS = settings.REQUIRED_FIELDS
+    USERNAME_FIELD = settings.USERNAME_FIELD
+    REQUIRED_FIELDS = settings.REQUIRED_FIELDS
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = [
-        'name',
-        'bhs_id',
-    ]
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     username = models.CharField(
         max_length=255,
-        unique=True,
-        blank=True,
-        null=True,
-    )
-
-    email = models.EmailField(
-        unique=True,
-        # blank=True,
-        # null=True,
-    )
-
-    name = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-    )
-
-    bhs_id = models.IntegerField(
         unique=True,
         blank=True,
         null=True,
@@ -4796,18 +4767,6 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
-    # Internals
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            filter(
-                None, [
-                    self.name,
-                    self.bhs_id,
-                ]
-            )
-        )
-        super(User, self).save(*args, **kwargs)
-
     @property
     def is_superuser(self):
         return self.is_staff
@@ -4816,11 +4775,14 @@ class User(AbstractBaseUser):
         resource_name = "user"
 
     # Methods
+    def __unicode__(self):
+        return self.username
+
     def get_full_name(self):
-        return self.name
+        return self.username
 
     def get_short_name(self):
-        return self.name
+        return self.username
 
     def has_perm(self, perm, obj=None):
         return self.is_staff
