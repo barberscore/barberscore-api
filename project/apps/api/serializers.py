@@ -37,6 +37,7 @@ from .models import (
     SongScore,
     Submission,
     Venue,
+    User,
 )
 
 
@@ -710,3 +711,11 @@ class VenueSerializer(serializers.ModelSerializer):
             'conventions',
             'permissions',
         )
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = User

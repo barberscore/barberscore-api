@@ -6,7 +6,17 @@ from drf_fsm_transitions.viewset_mixins import (
     get_viewset_transition_action_mixin,
 )
 from dry_rest_permissions.generics import DRYPermissions
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets,
+    status,
+)
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from rest_framework.decorators import (
+    # detail_route,
+    list_route,
+)
 
 # Local
 from .filters import (
@@ -25,6 +35,7 @@ from .filters import (
     SessionFilter,
     SubmissionFilter,
     VenueFilter,
+    UserFilterBackend,
 )
 
 from .models import (
@@ -56,6 +67,7 @@ from .models import (
     SongScore,
     Submission,
     Venue,
+    User,
 )
 
 from .serializers import (
@@ -87,6 +99,7 @@ from .serializers import (
     SongScoreSerializer,
     SubmissionSerializer,
     VenueSerializer,
+    UserSerializer,
 )
 
 log = logging.getLogger(__name__)
@@ -505,3 +518,17 @@ class VenueViewSet(viewsets.ModelViewSet):
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     resource_name = "venue"
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (DRYPermissions,)
+    filter_backends = (UserFilterBackend,)
+
+    @list_route(methods=['get'], permission_classes=[AllowAny])
+    def me(self, request):
+        if request.user.is_authenticated:
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_404_NOT_FOUND)

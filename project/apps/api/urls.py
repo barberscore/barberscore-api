@@ -30,6 +30,7 @@ from .views import (
     SongScoreViewSet,
     SubmissionViewSet,
     VenueViewSet,
+    UserViewSet,
 )
 
 router = routers.DefaultRouter(
@@ -64,4 +65,5 @@ router.register(r'slot', SlotViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'songscore', SongScoreViewSet)
 router.register(r'venue', VenueViewSet)
+router.register(r'user', UserViewSet)
 urlpatterns = router.urls

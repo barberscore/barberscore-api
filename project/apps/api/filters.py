@@ -126,16 +126,11 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
 
 class UserFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to performer if not superuser."""
-        if request.user.is_authenticated():
-            if request.user.is_staff:
-                return queryset.all()
-            else:
-                return queryset.filter(
-                    id=request.user.id,
-                )
-        else:
-            return queryset.none()
+        if request.user.is_staff:
+            return queryset.all()
+        if request.user.is_authenticated:
+            return queryset.filter(pk=request.user.pk)
+        return queryset.none()
 
 
 class CatalogFilter(filters.FilterSet):
