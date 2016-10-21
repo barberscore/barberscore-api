@@ -715,7 +715,10 @@ class VenueSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    permissions = DRYPermissionsField()
-
     class Meta:
         model = User
+        fields = [
+            'id',
+            'url',
+            'username',
+        ]
