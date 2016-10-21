@@ -3223,6 +3223,14 @@ class Person(TimeStampedModel):
         default='',
     )
 
+    # FKs
+    user = models.OneToOneField(
+        'User',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     class JSONAPIMeta:
         resource_name = "person"
@@ -4733,12 +4741,14 @@ class Venue(TimeStampedModel):
 
 
 class User(AbstractBaseUser):
+    # USERNAME_FIELD = settings.USERNAME_FIELD
+    # REQUIRED_FIELDS = settings.REQUIRED_FIELDS
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
         'name',
         'bhs_id',
     ]
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -4751,14 +4761,8 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
-    sub = models.CharField(
+    username = models.CharField(
         max_length=255,
-        blank=True,
-        # unique=True,
-        # editable=False,
-    )
-
-    bhs_id = models.IntegerField(
         unique=True,
         blank=True,
         null=True,
@@ -4766,12 +4770,20 @@ class User(AbstractBaseUser):
 
     email = models.EmailField(
         unique=True,
-        help_text="""Your email address will be your username.""",
+        # blank=True,
+        # null=True,
     )
 
     name = models.CharField(
         max_length=200,
-        help_text="""Your full name.""",
+        blank=True,
+        null=True,
+    )
+
+    bhs_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
     )
 
     is_active = models.BooleanField(
@@ -4782,23 +4794,16 @@ class User(AbstractBaseUser):
         default=False,
     )
 
-    date_joined = models.DateField(
-        auto_now_add=True,
-    )
-
     objects = UserManager()
 
     # Internals
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
-            map(
-                (lambda x: unicode(x).encode('utf-8')),
-                filter(
-                    None, [
-                        self.name,
-                        self.bhs_id,
-                    ]
-                )
+            filter(
+                None, [
+                    self.name,
+                    self.bhs_id,
+                ]
             )
         )
         super(User, self).save(*args, **kwargs)
@@ -4810,17 +4815,9 @@ class User(AbstractBaseUser):
     class JSONAPIMeta:
         resource_name = "user"
 
-    # FKs
-    person = models.OneToOneField(
-        'Person',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Methods
     def get_full_name(self):
-        return self.nomen
+        return self.name
 
     def get_short_name(self):
         return self.name
@@ -4850,4 +4847,6 @@ class User(AbstractBaseUser):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return self == request.user
         return False

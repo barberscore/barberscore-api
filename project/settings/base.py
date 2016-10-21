@@ -53,6 +53,10 @@ AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
+USERNAME_FIELD = 'username'
+REQUIRED_FIELDS = [
+]
+
 
 # Middleware
 MIDDLEWARE_CLASSES = (
@@ -171,7 +175,7 @@ def jwt_decode(token):
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_DECODE_HANDLER': jwt_decode,
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_nickname,
+    # 'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_nickname,
     # 'JWT_AUDIENCE': AUTH0_CLIENT_ID,
     'JWT_SECRET_KEY': AUTH0_CLIENT_SECRET,
 }
