@@ -2,9 +2,11 @@
 import rest_framework_filters as filters
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
 from rest_framework.filters import BaseFilterBackend
+from django.db.models import Q
 
 # Local
 from .models import (
+    Assignment,
     Catalog,
     Contestant,
     Convention,
@@ -38,17 +40,23 @@ class ConventionFilterBackend(DRYPermissionFiltersBase):
         """Limit all list requests to at least validated if not superuser."""
         if request.user.is_staff:
             return queryset.all()
+        if request.user.is_authenticated:
+            return queryset.filter(
+                Q(drcj__user=request.user)
+            )
         else:
-            return queryset.filter(status__gte=Round.STATUS.listed)
+            return queryset.filter(status__gte=Convention.STATUS.listed)
 
 
 class SessionFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to at least validated if not superuser."""
         if request.user.is_staff:
             return queryset.all()
-        else:
-            return queryset.filter(status__gte=Session.STATUS.listed)
+        # if request.user.is_authenticated:
+        #     return queryset.filter(
+        #         Q(assignments__judge__person__user=request.user)
+        #     )
+        return queryset.filter(status__gte=Session.STATUS.listed)
 
 
 class RoundFilterBackend(DRYPermissionFiltersBase):
@@ -63,6 +71,8 @@ class RoundFilterBackend(DRYPermissionFiltersBase):
 class ContestFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
         return queryset.all()
         # if request.user.is_staff:
         #     return queryset.all()
@@ -70,9 +80,25 @@ class ContestFilterBackend(DRYPermissionFiltersBase):
         #     return queryset.filter(status__gte=Round.STATUS.published)
 
 
+class AssignmentFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
+        if request.user.is_authenticated:
+            return queryset.filter(
+                Q(judge__person__user=request.user) |
+                Q()
+            )
+        else:
+            return queryset.filter(status__gte=Assignment.STATUS.validated)
+
+
 class ContestantFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
         return queryset.all()
         # if request.user.is_staff:
         #     return queryset.all()
@@ -83,6 +109,8 @@ class ContestantFilterBackend(DRYPermissionFiltersBase):
 class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
         return queryset.all()
         # if request.user.is_staff:
         #     return queryset.all()
@@ -93,6 +121,8 @@ class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
 class PerformanceScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
         return queryset.all()
         # if request.user.is_staff:
         #     return queryset.all()
@@ -103,6 +133,8 @@ class PerformanceScoreFilterBackend(DRYPermissionFiltersBase):
 class SongScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
         return queryset.all()
         # if request.user.is_staff:
         #     return queryset.all()
@@ -113,6 +145,8 @@ class SongScoreFilterBackend(DRYPermissionFiltersBase):
 class ScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to performer if not superuser."""
+        if request.user.is_staff:
+            return queryset.all()
         if request.user.is_authenticated():
             if request.user.is_staff:
                 return queryset.all()

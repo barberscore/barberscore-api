@@ -360,6 +360,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'short_name',
             'code',
             'long_name',
+            'representative',
             'parent',
             'children',
             'awards',
@@ -495,6 +496,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'picture',
             'description',
             'roles',
+            'organizations',
             'conventions',
             'judges',
             'common_name',
@@ -504,7 +506,9 @@ class PersonSerializer(serializers.ModelSerializer):
             'last_name',
             'nick_name',
             'permissions',
+            'user',
         )
+        # fields = '__all__'
         read_only_fields = [
             'picture',
             'common_name',
@@ -721,4 +725,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'username',
+            'is_active',
+            'is_staff',
+            'person',
         ]

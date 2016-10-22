@@ -505,7 +505,7 @@ class Judge(TimeStampedModel):
 
     KIND = Choices(
         (10, 'chair', 'Chair'),
-        (20, 'past', 'Past Chair'),
+        (15, 'chair', 'Chair'),
         (30, 'specialist', 'Specialist'),
         (35, 'drcj', 'DRCJ'),
         (40, 'certified', 'Certified'),
@@ -557,15 +557,12 @@ class Judge(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.name = " ".join(
-            map(
-                (lambda x: unicode(x).encode('utf-8')),
-                filter(
-                    None, [
-                        self.person.common_name,
-                        self.get_category_display(),
-                        self.get_kind_display(),
-                    ]
-                )
+            filter(
+                None, [
+                    self.person.common_name,
+                    self.get_category_display(),
+                    self.get_kind_display(),
+                ]
             )
         )
         super(Judge, self).save(*args, **kwargs)

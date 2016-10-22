@@ -1010,7 +1010,7 @@ class ScoreAdmin(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class SessionAdmin(admin.ModelAdmin):
     fsm_field = [
         'status',
     ]

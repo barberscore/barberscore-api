@@ -31,7 +31,7 @@ from .filters import (
     PersonFilter,
     # RoundFilterBackend,
     ScoreFilterBackend,
-    # SessionFilterBackend,
+    SessionFilterBackend,
     SessionFilter,
     SubmissionFilter,
     VenueFilter,
@@ -449,9 +449,9 @@ class SessionViewSet(
         '-start_date',
     )
     permission_classes = (DRYPermissions,)
-    # filter_backends = (
-    #     CoalesceFilterBackend,
-    # )
+    filter_backends = (
+        SessionFilterBackend,
+    )
     serializer_class = SessionSerializer
     filter_class = SessionFilter
     resource_name = "session"
