@@ -324,9 +324,8 @@ class Award(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.organization.representative.user == request.user)
-        else:
-            return False
+            return self.organization.representative.user == request.user
+        return False
 
 
 class Catalog(TimeStampedModel):
@@ -679,6 +678,10 @@ class Chapter(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.organization.representative.user == request.user,
+            ])
         return False
 
 
@@ -802,9 +805,8 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.award.organization.representative.user == request.user)
-        else:
-            return False
+            return self.award.organization.representative.user == request.user
+        return False
 
     # Methods
     def ranking(self, point_total):
@@ -866,29 +868,27 @@ class ContestScore(Contest):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
-                self.award.organization.representative.user == request.user or
+            return any([
+                self.award.organization.representative.user == request.user,
                 self.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.session.assignments.model.category.ADMIN,
-                ) or
-                self.status == self.STATUS.published
-            )
-        else:
-            return False
+                ),
+                self.status == self.STATUS.published,
+            ])
+        return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
-                self.award.organization.representative.user == request.user or
+            return any([
+                self.award.organization.representative.user == request.user,
                 self.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.session.assignments.model.category.ADMIN,
-                )
-            )
-        else:
-            return False
+                ),
+            ])
+        return False
 
 
 class Contestant(TimeStampedModel):
@@ -974,9 +974,10 @@ class Contestant(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.contest.award.organization.representative.user == request.user)
-        else:
-            return False
+            return any([
+                self.contest.award.organization.representative.user == request.user,
+            ])
+        return False
 
     # Methods
 
@@ -1173,14 +1174,19 @@ class ContestantScore(Contestant):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        if request.user.is_authenticated():
+            return any([
+                self.contest.award.organization.representative.user == request.user,
+            ])
+        return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.contest.award.organization.representative.user == request.user)
-        else:
-            return False
+            return any([
+                self.contest.award.organization.representative.user == request.user,
+            ])
+        return False
 
 
 class Convention(TimeStampedModel):
@@ -1399,13 +1405,12 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.hosts.filter(
                     organization__representative__user=request.user,
-                )
-            )
-        else:
-            return False
+                ),
+            ])
+        return False
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.started)
@@ -1633,12 +1638,13 @@ class Group(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.roles.filter(
-                status=self.roles.model.STATUS.active,
-                person__user=request.user,
-            ))
-        else:
-            return False
+            return any([
+                self.roles.filter(
+                    status=self.roles.model.STATUS.active,
+                    person__user=request.user,
+                ),
+            ])
+        return False
 
 
 class Host(TimeStampedModel):
@@ -1716,9 +1722,10 @@ class Host(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.organization.representative.user == request.user)
-        else:
-            return False
+            return any([
+                self.organization.representative.user == request.user,
+            ])
+        return False
 
 
 class Assignment(TimeStampedModel):
@@ -2180,9 +2187,10 @@ class Organization(MPTTModel, TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(self.representative.user == request.user)
-        else:
-            return False
+            return any([
+                self.representative.user == request.user,
+            ])
+        return False
 
 
 class Performance(TimeStampedModel):
@@ -2295,22 +2303,18 @@ class Performance(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if self.status >= self.STATUS.validated:
-            return True
-        else:
-            return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.round.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
-                )
-            )
-        else:
-            return False
+                ),
+            ])
+        return False
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.started)
@@ -2485,23 +2489,18 @@ class PerformanceScore(Performance):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        # if self.status >= self.STATUS.published:
-        #     return True
-        # else:
-        #     return False
         return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.round.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
-                )
-            )
-        else:
-            return False
+                ),
+            ])
+        return False
 
 
 class Performer(TimeStampedModel):
@@ -2714,15 +2713,16 @@ class Performer(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.group.roles.filter(
                     status=self.group.roles.model.STATUS.active,
                     person__user=request.user,
-                ) or self.session.assignments.filter(
+                ),
+                self.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.session.assignments.model.CATEGORY.admin,
-                )
-            )
+                ),
+            ])
         return False
 
     # Methods
@@ -3282,8 +3282,7 @@ class Person(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return self.user == request.user
-        else:
-            return False
+        return False
 
 
 class Role(TimeStampedModel):
@@ -3403,6 +3402,10 @@ class Role(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.person.user == request.user,
+            ])
         return False
 
 
@@ -3536,10 +3539,7 @@ class Round(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if self.status >= 10:
-            return True
-        else:
-            return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
@@ -3921,19 +3921,31 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.song.performance.performer.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
-                ) or self.song.performance.performer.group.roles.filter(
+                ),
+                self.song.performance.performer.group.roles.filter(
                     person__user=request.user,
                     status=self.song.performance.performer.group.roles.model.STATUS.active,
-                )
-            )
+                ),
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.song.performance.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
+                ),
+                self.song.performance.performer.group.roles.filter(
+                    person__user=request.user,
+                    status=self.song.performance.performer.group.roles.model.STATUS.active,
+                ),
+            ])
         return False
 
 
@@ -4137,11 +4149,6 @@ class Session(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return self.assignments.filter(
-                judge__person__user=request.user,
-                category=self.assignments.model.CATEGORY.admin,
-            )
         return False
 
     # Transitions
@@ -4515,19 +4522,31 @@ class SongScore(Song):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
-                ) or self.performer.group.roles.filter(
+                ),
+                self.performer.group.roles.filter(
                     person__user=request.user,
                     status=self.performer.roles.model.STATUS.active,
-                )
-            )
+                ),
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.performer.session.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.round.session.assignments.model.category.ADMIN,
+                ),
+                self.performer.group.roles.filter(
+                    person__user=request.user,
+                    status=self.performer.roles.model.STATUS.active,
+                ),
+            ])
         return False
 
 
@@ -4621,29 +4640,31 @@ class Submission(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
-                ) or self.performer.group.roles.filter(
+                ),
+                self.performer.group.roles.filter(
                     person__user=request.user,
                     status=self.performer.roles.model.STATUS.active,
-                )
-            )
+                ),
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return bool(
+            return any([
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
-                ) or self.performer.group.roles.filter(
+                ),
+                self.performer.group.roles.filter(
                     person__user=request.user,
                     status=self.performer.roles.model.STATUS.active,
                 )
-            )
+            ])
         return False
 
 
