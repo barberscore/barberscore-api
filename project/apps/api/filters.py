@@ -6,7 +6,6 @@ from django.db.models import Q
 
 # Local
 from .models import (
-    Assignment,
     Catalog,
     Contestant,
     Convention,
@@ -14,7 +13,6 @@ from .models import (
     Judge,
     Performer,
     Person,
-    Round,
     Session,
     Submission,
     Venue,
@@ -35,118 +33,50 @@ class CoalesceFilterBackend(BaseFilterBackend):
         return queryset
 
 
-class ConventionFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        if request.user.is_authenticated:
-            return queryset.filter(
-                Q(drcj__user=request.user)
-            )
-        else:
-            return queryset.filter(status__gte=Convention.STATUS.listed)
-
-
-class SessionFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        if request.user.is_staff:
-            return queryset.all()
-        # if request.user.is_authenticated:
-        #     return queryset.filter(
-        #         Q(assignments__judge__person__user=request.user)
-        #     )
-        return queryset.filter(status__gte=Session.STATUS.listed)
-
-
-class RoundFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        else:
-            return queryset.filter(status__gte=Round.STATUS.validated)
-
-
-class ContestFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        return queryset.all()
-        # if request.user.is_staff:
-        #     return queryset.all()
-        # else:
-        #     return queryset.filter(status__gte=Round.STATUS.published)
-
-
-class AssignmentFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        if request.user.is_authenticated:
-            return queryset.filter(
-                Q(judge__person__user=request.user) |
-                Q()
-            )
-        else:
-            return queryset.filter(status__gte=Assignment.STATUS.validated)
-
-
 class ContestantFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        return queryset.all()
-        # if request.user.is_staff:
-        #     return queryset.all()
-        # else:
-        #     return queryset.filter(status__gte=Round.STATUS.validated)
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+        return queryset.none()
 
 
 class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        return queryset.all()
-        # if request.user.is_staff:
-        #     return queryset.all()
-        # else:
-        #     return queryset.filter(status__gte=PerformerScore.STATUS.published)
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+            return queryset.filter(
+                # group__roles__person__user=request.user,
+                Q(session__assignment__judge__person__user=request.user)
+                # session__assignment__judge__person__user=request.user,
+            )
+        return queryset.none()
 
 
 class PerformanceScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        return queryset.all()
-        # if request.user.is_staff:
-        #     return queryset.all()
-        # else:
-        #     return queryset.filter(status__gte=Round.STATUS.validated)
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+        return queryset.none()
 
 
 class SongScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
-        return queryset.all()
-        # if request.user.is_staff:
-        #     return queryset.all()
-        # else:
-        #     return queryset.filter(status__gte=Round.STATUS.validated)
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+        return queryset.none()
 
 
 class ScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to performer if not superuser."""
-        if request.user.is_staff:
-            return queryset.all()
         if request.user.is_authenticated():
             if request.user.is_staff:
                 return queryset.all()
@@ -154,14 +84,14 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
                 return queryset.filter(
                     song__performance__performer__group__roles__person__user=request.user,
                 )
-        else:
-            return queryset.none()
+        return queryset.none()
 
 
 class UserFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
-        if request.user.is_staff:
-            return queryset.all()
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
         if request.user.is_authenticated:
             return queryset.filter(pk=request.user.pk)
         return queryset.none()
