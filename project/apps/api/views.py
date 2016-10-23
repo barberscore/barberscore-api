@@ -14,8 +14,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from rest_framework.decorators import (
-    # detail_route,
+    detail_route,
     list_route,
+    parser_classes,
+)
+
+from rest_framework.parsers import (
+    FormParser,
+    MultiPartParser,
 )
 
 # Local
@@ -377,6 +383,21 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     filter_class = PersonFilter
     resource_name = "person"
+
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def picture(self, request, *args, **kwargs):
+        if 'upload' in request.data:
+            person = self.get_object()
+            person.picture.delete()
+
+            upload = request.data['upload']
+
+            person.picture.save(upload.name, upload)
+
+            return Response(status=status.HTTP_201_CREATED, headers={'Location': person.picture.url})
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RoleViewSet(viewsets.ModelViewSet):
