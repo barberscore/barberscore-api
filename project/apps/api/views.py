@@ -30,6 +30,8 @@ from .filters import (
     CoalesceFilterBackend,
     ContestantFilter,
     ConventionFilter,
+    ConventionFilterBackend,
+    OrganizationFilterBackend,
     GroupFilter,
     JudgeFilter,
     PerformerFilter,
@@ -38,6 +40,7 @@ from .filters import (
     PersonFilter,
     ScoreFilterBackend,
     SessionFilter,
+    SessionFilterBackend,
     SubmissionFilter,
     VenueFilter,
     UserFilterBackend,
@@ -228,6 +231,9 @@ class ConventionViewSet(
     permission_classes = (DRYPermissions,)
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
+    filter_backends = (
+        ConventionFilterBackend,
+    )
     resource_name = "convention"
 
 
@@ -295,6 +301,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     )
     permission_classes = (DRYPermissions,)
     serializer_class = OrganizationSerializer
+    filter_backends = [
+        OrganizationFilterBackend,
+    ]
     resource_name = "organization"
 
 
@@ -472,6 +481,9 @@ class SessionViewSet(
     )
     permission_classes = (DRYPermissions,)
     serializer_class = SessionSerializer
+    filter_backends = (
+        SessionFilterBackend,
+    )
     filter_class = SessionFilter
     resource_name = "session"
 

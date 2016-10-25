@@ -33,6 +33,34 @@ class CoalesceFilterBackend(BaseFilterBackend):
         return queryset
 
 
+class ConventionFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+            else:
+                return queryset.filter(
+                    Q(drcj__user=request.user) |
+                    Q(sessions__assignments__judge__person__user=request.user)
+                )
+        return queryset.none()
+
+
+class OrganizationFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+            else:
+                return queryset.filter(
+                    Q(representative__user=request.user) |
+                    Q(conventions__sessions__assignments__judge__person__user=request.user)
+                )
+        return queryset.none()
+
+
 class ContestantFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
@@ -62,6 +90,20 @@ class PerformanceScoreFilterBackend(DRYPermissionFiltersBase):
         if request.user.is_authenticated():
             if request.user.is_staff:
                 return queryset.all()
+        return queryset.none()
+
+
+class SessionFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Limit all list requests to at least validated if not superuser."""
+        if request.user.is_authenticated():
+            if request.user.is_staff:
+                return queryset.all()
+            else:
+                return queryset.filter(
+                    Q(convention__drcj__user=request.user) |
+                    Q(assignments__judge__person__user=request.user)
+                )
         return queryset.none()
 
 

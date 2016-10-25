@@ -805,7 +805,7 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return self.award.organization.representative.user == request.user
+            return self.session.convention.drcj.user == request.user
         return False
 
     # Methods
@@ -975,7 +975,10 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.contest.award.organization.representative.user == request.user,
+                self.contest.session.convention.drcj.user == request.user,
+                self.contest.session.assignments.filter(
+                    judge__person__user=request.user,
+                ),
             ])
         return False
 
@@ -1870,6 +1873,11 @@ class Assignment(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.session.convention.drcj.user == request.user,
+                self.judge.person.user == request.user,
+            ])
         return False
 
 
@@ -2309,10 +2317,11 @@ class Performance(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.round.session.assignments.filter(
-                    judge__person__user=request.user,
-                    category=self.round.session.assignments.model.category.ADMIN,
-                ),
+                # self.round.session.assignments.filter(
+                #     judge__person__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                self.performer.session.convention.drcj.user==request.user,
             ])
         return False
 
@@ -2722,6 +2731,7 @@ class Performer(TimeStampedModel):
                     judge__person__user=request.user,
                     category=self.session.assignments.model.CATEGORY.admin,
                 ),
+                self.session.convention.drcj.user == request.user,
             ])
         return False
 
@@ -4641,14 +4651,18 @@ class Submission(TimeStampedModel):
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
             return any([
+                # self.performer.session.assignments.filter(
+                #     judge__person__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.performer.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.performer.roles.model.STATUS.active,
+                # ),
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
-                    category=self.round.session.assignments.model.category.ADMIN,
                 ),
-                self.performer.group.roles.filter(
-                    person__user=request.user,
-                    status=self.performer.roles.model.STATUS.active,
-                ),
+                self.performer.session.convention.drcj.user == request.user,
             ])
         return False
 
@@ -4656,14 +4670,18 @@ class Submission(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
+                # self.performer.session.assignments.filter(
+                #     judge__person__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.performer.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.performer.roles.model.STATUS.active,
+                # )
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
-                    category=self.round.session.assignments.model.category.ADMIN,
                 ),
-                self.performer.group.roles.filter(
-                    person__user=request.user,
-                    status=self.performer.roles.model.STATUS.active,
-                )
+                self.performer.session.convention.drcj.user == request.user,
             ])
         return False
 

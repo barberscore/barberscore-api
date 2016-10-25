@@ -160,7 +160,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'contestants',
             'award',
             'session',
-            'contestscore',
+            # 'contestscore',
             'permissions',
         )
 
@@ -190,7 +190,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'performer',
             'contest',
-            'contestantscore',
+            # 'contestantscore',
             'permissions',
         )
 
@@ -238,7 +238,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'organization',
             'drcj',
             'sessions',
-            'permissions',
             'permissions',
         )
 
@@ -389,7 +388,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'performer',
             'slot',
             'songs',
-            'performancescore',
+            # 'performancescore',
             'permissions',
         )
 
@@ -444,7 +443,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'performances',
             'contestants',
             'submissions',
-            'performerscore',
+            # 'performerscore',
             'permissions',
         )
         read_only_fields = [
