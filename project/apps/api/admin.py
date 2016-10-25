@@ -1,5 +1,5 @@
 # Third-Party
-from fsm_admin.mixins import FSMTransitionMixin
+# from fsm_admin.mixins import FSMTransitionMixin
 from mptt.admin import MPTTModelAdmin
 
 # Django
@@ -375,7 +375,7 @@ class ContestantScoreAdmin(admin.ModelAdmin):
 
 
 @admin.register(Convention)
-class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class ConventionAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
@@ -677,7 +677,7 @@ class OrganizationAdmin(MPTTModelAdmin):
 
 
 @admin.register(Performance)
-class PerformanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class PerformanceAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
@@ -731,7 +731,7 @@ class PerformanceScoreAdmin(admin.ModelAdmin):
 
 
 @admin.register(Performer)
-class PerformerAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class PerformerAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'status',
@@ -914,7 +914,7 @@ class RoleAdmin(admin.ModelAdmin):
 
 
 @admin.register(Round)
-class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class RoundAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
