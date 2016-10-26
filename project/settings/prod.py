@@ -40,7 +40,6 @@ STATICFILES_STORAGE = STATIC_STORAGE
 # CORS Settings
 CORS_ORIGIN_WHITELIST = (
     'barberscore.com',
-    'www.barberscore.com',
     'barberscore.s3.amazonaws.com',
     'barberscore.auth0.com',
 )
@@ -56,7 +55,6 @@ EMAIL_USE_TLS = True
 
 ALLOWED_HOSTS = [
     get_env_variable("HEROKU_HOST"),
-    'api.barberscore.com',
 ]
 
 LOGGING = {
