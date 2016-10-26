@@ -26,19 +26,6 @@ def get_env_variable(var_name):
     return var
 
 
-def jwt_get_username_from_payload_handler(payload):
-    return payload.get('sub')
-
-
-def jwt_decode(token):
-    return jwt.decode(
-        token,
-        base64.b64decode(
-            AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
-        ),
-        audience=AUTH0_CLIENT_ID,
-    )
-
 DEBUG = get_env_variable("DEBUG")
 
 # Globals
@@ -163,11 +150,27 @@ AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 AUTH0_TOKEN = get_env_variable("AUTH0_TOKEN")
 
 
+def jwt_get_username_from_payload_handler(payload):
+    return payload.get('sub')
+
+
+def jwt_decode(token):
+    try:
+        j = jwt.decode(
+            token,
+            base64.b64decode(
+                AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
+            ),
+            audience=AUTH0_CLIENT_ID,
+        )
+    except Exception as e:
+        print e
+        return e
+
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_DECODE_HANDLER': jwt_decode,
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
-    'JWT_SECRET_KEY': AUTH0_CLIENT_SECRET,
 }
 
 #  CORS Headers
