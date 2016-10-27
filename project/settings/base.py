@@ -147,7 +147,6 @@ APPEND_TRAILING_SLASH = False
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
-AUTH0_TOKEN = get_env_variable("AUTH0_TOKEN")
 
 
 def jwt_get_username_from_payload_handler(payload):
@@ -155,17 +154,13 @@ def jwt_get_username_from_payload_handler(payload):
 
 
 def jwt_decode(token):
-    try:
-        j = jwt.decode(
-            token,
-            base64.b64decode(
-                AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
-            ),
-            audience=AUTH0_CLIENT_ID,
-        )
-    except Exception as e:
-        print e
-        return e
+    return jwt.decode(
+        token,
+        base64.b64decode(
+            AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
+        ),
+        audience=AUTH0_CLIENT_ID,
+    )
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
