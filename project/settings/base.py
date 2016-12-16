@@ -156,9 +156,10 @@ def jwt_get_username_from_payload_handler(payload):
 def jwt_decode(token):
     return jwt.decode(
         token,
-        base64.b64decode(
-            AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
-        ),
+        AUTH0_CLIENT_SECRET,
+        # base64.b64decode(
+        #     AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
+        # ),
         audience=AUTH0_CLIENT_ID,
     )
 
