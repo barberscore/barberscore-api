@@ -2334,7 +2334,7 @@ class Performance(TimeStampedModel):
     def verify(self, *args, **kwargs):
         self.performancescore.calculate()
         self.performancescore.save()
-        config = api_apps.get_app_config('api')
+        config = api_apps.get_app_config('app')
         Song = config.get_model('Song')
         songs = Song.objects.filter(
             performance=self,

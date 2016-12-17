@@ -29,7 +29,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '--nologcapture',
     '--with-coverage',
-    '--cover-package=apps.api',
+    '--cover-package=app',
 ]
 
 # Email
@@ -52,7 +52,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'apps.api': {
+        'app': {
             'level': 'DEBUG',
             'handlers': ['console'],
         },

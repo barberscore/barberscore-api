@@ -52,7 +52,7 @@ DATABASES = {
 }
 
 # Auth
-AUTH_USER_MODEL = "api.User"
+AUTH_USER_MODEL = "app.User"
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework_filters.backends.DjangoFilterBackend',
-        'apps.api.filters.CoalesceFilterBackend',
+        'app.filters.CoalesceFilterBackend',
     ],
 }
 
@@ -201,5 +201,5 @@ INSTALLED_APPS = (
     'mptt',
     'rest_framework',
     'dry_rest_permissions',
-    'apps.api',
+    'app',
 )

@@ -12,7 +12,7 @@ from factory.django import DjangoModelFactory
 from psycopg2.extras import DateTimeTZRange
 
 # First-Party
-from apps.api.models import (
+from app.models import (
     Assignment,
     Award,
     Chapter,
@@ -79,7 +79,7 @@ class InternationalQuartetAwardFactory(AwardFactory):
     minimum = 70
     advance = 73
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory'
+        'app.factories.InternationalFactory'
     )
 
 
@@ -92,7 +92,7 @@ class InternationalChorusAwardFactory(AwardFactory):
     qualifier_season = Award.SEASON.fall
     qualifier_rounds = 1
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory'
+        'app.factories.InternationalFactory'
     )
 
 
@@ -105,7 +105,7 @@ class InternationalSeniorsAwardFactory(AwardFactory):
     qualifier_season = Award.SEASON.spring
     qualifier_rounds = 1
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory'
+        'app.factories.InternationalFactory'
     )
 
 
@@ -121,7 +121,7 @@ class InternationalYouthAwardFactory(AwardFactory):
     minimum = 61
     advance = 70
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory'
+        'app.factories.InternationalFactory'
     )
 
 
@@ -137,7 +137,7 @@ class DistrictQuartetAwardFactory(AwardFactory):
     # minimum = 70
     # advance = 73
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory'
+        'app.factories.DistrictFactory'
     )
 
 
@@ -150,7 +150,7 @@ class DistrictChorusAwardFactory(AwardFactory):
     # qualifier_season = Award.SEASON.fall
     # qualifier_rounds = 1
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory'
+        'app.factories.DistrictFactory'
     )
 
 
@@ -163,7 +163,7 @@ class DistrictSeniorsAwardFactory(AwardFactory):
     # qualifier_season = Award.SEASON.spring
     # qualifier_rounds = 1
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory'
+        'app.factories.DistrictFactory'
     )
 
 
@@ -179,7 +179,7 @@ class DistrictYouthAwardFactory(AwardFactory):
     # minimum = 61
     # advance = 70
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory'
+        'app.factories.DistrictFactory'
     )
 
 
@@ -190,7 +190,7 @@ class DivisionQuartetAwardFactory(AwardFactory):
     is_primary = True
     is_qualification_required = False
     organization = SubFactory(
-        'apps.api.factories.DivisionFactory'
+        'app.factories.DivisionFactory'
     )
 
 
@@ -201,7 +201,7 @@ class DivisionChorusAwardFactory(AwardFactory):
     is_primary = True
     is_qualification_required = False
     organization = SubFactory(
-        'apps.api.factories.DivisionFactory'
+        'app.factories.DivisionFactory'
     )
 
 
@@ -212,7 +212,7 @@ class DivisionSeniorsAwardFactory(AwardFactory):
     is_primary = True
     is_qualification_required = False
     organization = SubFactory(
-        'apps.api.factories.DivisionFactory'
+        'app.factories.DivisionFactory'
     )
 
 
@@ -223,7 +223,7 @@ class DivisionYouthAwardFactory(AwardFactory):
     is_primary = True
     is_qualification_required = False
     organization = SubFactory(
-        'apps.api.factories.DivisionFactory'
+        'app.factories.DivisionFactory'
     )
 
 
@@ -237,14 +237,14 @@ class ChapterFactory(DjangoModelFactory):
 class DistrictChapterFactory(ChapterFactory):
     name = Faker('city')
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
 
 
 class AffiliateChapterFactory(ChapterFactory):
     name = 'Test Affiliate Chapter'
     organization = SubFactory(
-        'apps.api.factories.AffiliateFactory',
+        'app.factories.AffiliateFactory',
     )
 
 
@@ -259,17 +259,17 @@ class GroupFactory(DjangoModelFactory):
 class QuartetFactory(GroupFactory):
     kind = Group.KIND.quartet
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
 
 
 class ChorusFactory(GroupFactory):
     kind = Group.KIND.chorus
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
     chapter = SubFactory(
-        'apps.api.factories.DistrictChapterFactory'
+        'app.factories.DistrictChapterFactory'
     )
 
 
@@ -297,7 +297,7 @@ class DistrictFactory(OrganizationFactory):
     short_name = 'TDI'
     long_name = 'District'
     parent = SubFactory(
-        'apps.api.factories.InternationalFactory',
+        'app.factories.InternationalFactory',
         name='International',
     )
 
@@ -309,7 +309,7 @@ class DivisionFactory(OrganizationFactory):
     short_name = 'TDV'
     long_name = 'Test'
     parent = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
 
 
@@ -320,7 +320,7 @@ class NoncompFactory(OrganizationFactory):
     short_name = 'TNC'
     long_name = 'Frank Thorne'
     parent = SubFactory(
-        'apps.api.factories.InternationalFactory',
+        'app.factories.InternationalFactory',
     )
 
 
@@ -331,7 +331,7 @@ class AffiliateFactory(OrganizationFactory):
     short_name = 'TAF'
     long_name = 'Affiliate'
     parent = SubFactory(
-        'apps.api.factories.InternationalFactory',
+        'app.factories.InternationalFactory',
     )
 
 
@@ -359,7 +359,7 @@ class JudgeFactory(DjangoModelFactory):
         model = Judge
     status = Judge.STATUS.active
     person = SubFactory(
-        'apps.api.factories.PersonFactory'
+        'app.factories.PersonFactory'
     )
 
 
@@ -411,37 +411,37 @@ class AssignmentFactory(DjangoModelFactory):
 
 # class InternationalQuartetOfficialAdminAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
-#         'apps.api.factories.InternationalQuartetSessionFactory'
+#         'app.factories.InternationalQuartetSessionFactory'
 #     )
 #     judge = SubFactory(
-#         'apps.api.factories.OfficialAdminJudgeFactory'
+#         'app.factories.OfficialAdminJudgeFactory'
 #     )
 
 
 # class InternationalQuartetOfficialMusicAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
-#         'apps.api.factories.InternationalQuartetSessionFactory'
+#         'app.factories.InternationalQuartetSessionFactory'
 #     )
 #     judge = SubFactory(
-#         'apps.api.factories.OfficialMusicJudgeFactory'
+#         'app.factories.OfficialMusicJudgeFactory'
 #     )
 
 
 # class InternationalQuartetOfficialPresentationAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
-#         'apps.api.factories.InternationalQuartetSessionFactory'
+#         'app.factories.InternationalQuartetSessionFactory'
 #     )
 #     judge = SubFactory(
-#         'apps.api.factories.OfficialPresentationJudgeFactory'
+#         'app.factories.OfficialPresentationJudgeFactory'
 #     )
 
 
 # class InternationalQuartetOfficialSingingAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
-#         'apps.api.factories.InternationalQuartetSessionFactory'
+#         'app.factories.InternationalQuartetSessionFactory'
 #     )
 #     judge = SubFactory(
-#         'apps.api.factories.OfficialSingingJudgeFactory'
+#         'app.factories.OfficialSingingJudgeFactory'
 #     )
 
 
@@ -451,7 +451,7 @@ class SubmissionFactory(DjangoModelFactory):
         model = Submission
     status = Submission.STATUS.new
     performer = SubFactory(
-        'apps.api.factories.PerformerFactory'
+        'app.factories.PerformerFactory'
     )
 
 
@@ -462,10 +462,10 @@ class MemberFactory(DjangoModelFactory):
 
     status = Member.STATUS.active
     chapter = SubFactory(
-        'apps.api.factories.DistrictChapterFactory'
+        'app.factories.DistrictChapterFactory'
     )
     person = SubFactory(
-        'apps.api.factories.PersonFactory'
+        'app.factories.PersonFactory'
     )
 
 
@@ -476,10 +476,10 @@ class RoleFactory(DjangoModelFactory):
 
     status = Role.STATUS.active
     person = SubFactory(
-        'apps.api.factories.PersonFactory'
+        'app.factories.PersonFactory'
     )
     group = SubFactory(
-        'apps.api.factories.QuartetFactory'
+        'app.factories.QuartetFactory'
     )
 
 
@@ -506,7 +506,7 @@ class ConventionFactory(DjangoModelFactory):
 
     status = Convention.STATUS.new
     venue = SubFactory(
-        'apps.api.factories.VenueFactory'
+        'app.factories.VenueFactory'
     )
 
 
@@ -521,7 +521,7 @@ class SummerConventionFactory(ConventionFactory):
         bounds='[)',
     )
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory',
+        'app.factories.InternationalFactory',
     )
 
 
@@ -536,7 +536,7 @@ class MidwinterConventionFactory(ConventionFactory):
         bounds='[)',
     )
     organization = SubFactory(
-        'apps.api.factories.InternationalFactory',
+        'app.factories.InternationalFactory',
     )
 
 
@@ -551,7 +551,7 @@ class SpringConventionFactory(ConventionFactory):
         bounds='[)',
     )
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
 
 
@@ -566,7 +566,7 @@ class FallConventionFactory(ConventionFactory):
         bounds='[)',
     )
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
 
 
@@ -581,7 +581,7 @@ class RegionalConventionFactory(ConventionFactory):
         bounds='[)',
     )
     organization = SubFactory(
-        'apps.api.factories.DistrictFactory',
+        'app.factories.DistrictFactory',
     )
 
 
@@ -595,28 +595,28 @@ class SessionFactory(DjangoModelFactory):
 class InternationalQuartetSessionFactory(SessionFactory):
     kind = Session.KIND.quartet
     convention = SubFactory(
-        'apps.api.factories.SummerConventionFactory',
+        'app.factories.SummerConventionFactory',
     )
 
 
 class InternationalChorusSessionFactory(SessionFactory):
     kind = Session.KIND.chorus
     convention = SubFactory(
-        'apps.api.factories.SummerConventionFactory',
+        'app.factories.SummerConventionFactory',
     )
 
 
 class InternationalSeniorsSessionFactory(SessionFactory):
     kind = Session.KIND.seniors
     convention = SubFactory(
-        'apps.api.factories.MidwinterConvention',
+        'app.factories.MidwinterConvention',
     )
 
 
 class InternationalYouthSessionFactory(SessionFactory):
     kind = Session.KIND.youth
     convention = SubFactory(
-        'apps.api.factories.SummerConventionFactory',
+        'app.factories.SummerConventionFactory',
     )
 
 
@@ -636,10 +636,10 @@ class ContestFactory(DjangoModelFactory):
     status = Contest.STATUS.new
     cycle = 2016
     session = SubFactory(
-        'apps.api.factories.InternationalQuartetSessionFactory'
+        'app.factories.InternationalQuartetSessionFactory'
     )
     award = SubFactory(
-        'apps.api.factories.InternationalQuartetAwardFactory'
+        'app.factories.InternationalQuartetAwardFactory'
     )
 
 
@@ -656,13 +656,13 @@ class PerformerFactory(DjangoModelFactory):
         model = Performer
     status = Performer.STATUS.new
     # representing = SubFactory(
-    #     'apps.api.factories.DistrictFactory'
+    #     'app.factories.DistrictFactory'
     # )
     session = SubFactory(
-        'apps.api.factories.InternationalQuartetSessionFactory'
+        'app.factories.InternationalQuartetSessionFactory'
     )
     group = SubFactory(
-        'apps.api.factories.QuartetFactory'
+        'app.factories.QuartetFactory'
     )
 
 
@@ -673,10 +673,10 @@ class ContestantFactory(DjangoModelFactory):
 
     status = Contestant.STATUS.new
     performer = SubFactory(
-        'apps.api.factories.PerformerFactory'
+        'app.factories.PerformerFactory'
     )
     contest = SubFactory(
-        'apps.api.factories.ContestFactory',
+        'app.factories.ContestFactory',
     )
 
 
@@ -687,10 +687,10 @@ class PerformanceFactory(DjangoModelFactory):
 
     status = Performance.STATUS.new
     performer = SubFactory(
-        'apps.api.factories.PerformerFactory',
+        'app.factories.PerformerFactory',
     )
     round = SubFactory(
-        'apps.api.factories.RoundFactory',
+        'app.factories.RoundFactory',
         # session=Iterator(Session.objects.all())
     )
 
@@ -703,7 +703,7 @@ class SlotFactory(DjangoModelFactory):
     status = Slot.STATUS.new
     num = 1
     round = SubFactory(
-        'apps.api.factories.RoundFactory',
+        'app.factories.RoundFactory',
     )
 
 
@@ -715,7 +715,7 @@ class SongFactory(DjangoModelFactory):
     status = Performance.STATUS.new
     num = 1
     performance = SubFactory(
-        'apps.api.factories.PerformanceFactory',
+        'app.factories.PerformanceFactory',
     )
 
 
@@ -726,10 +726,10 @@ class ScoreFactory(DjangoModelFactory):
 
     status = Score.STATUS.new
     assignment = SubFactory(
-        'apps.api.factories.AssignmentFactory',
+        'app.factories.AssignmentFactory',
     )
     song = SubFactory(
-        'apps.api.factories.SongFactory',
+        'app.factories.SongFactory',
         # performer=Performer.objects.all().first()
     )
     category = 1

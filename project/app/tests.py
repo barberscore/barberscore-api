@@ -16,7 +16,7 @@ from django.db import IntegrityError
 
 # First-Party
 # # First-Party
-from apps.api.factories import (
+from app.factories import (
     AdminFactory,
     AssignmentFactory,
     AwardFactory,
@@ -64,7 +64,7 @@ from apps.api.factories import (
     TenorFactory,
     VenueFactory,
 )
-from apps.api.models import (
+from app.models import (
     Assignment,
     Award,
     Contest,
