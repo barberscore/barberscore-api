@@ -150,7 +150,7 @@ AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 
 
 def jwt_get_username_from_payload_handler(payload):
-    return payload.get('sub')
+    return payload.get('email')
 
 
 def jwt_decode(token):
