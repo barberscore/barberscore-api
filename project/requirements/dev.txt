@@ -2,7 +2,7 @@
 
 codecov==2.0.5
 coverage==4.2
-django-debug-toolbar==1.5
+django-debug-toolbar==1.6
 django-nose==1.4.4
 ipython==5.1.0
 isort==4.2.5
