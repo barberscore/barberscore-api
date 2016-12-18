@@ -5,6 +5,10 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
 # Static Server Config
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
