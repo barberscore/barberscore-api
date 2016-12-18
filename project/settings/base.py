@@ -29,7 +29,7 @@ DEBUG = get_env_variable("DEBUG")
 
 # Globals
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-PROJECT_NAME = 'barberscore'
+PROJECT_NAME = get_env_variable('PROJECT_NAME')
 TIME_ZONE = get_env_variable("TZ")
 USE_TZ = True
 LANGUAGE_CODE = 'en-us'
@@ -61,7 +61,7 @@ REQUIRED_FIELDS = [
 
 
 # Middleware
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,8 +71,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bugsnag.django.middleware.BugsnagMiddleware',
-)
+]
 
 # Templating
 TEMPLATES = [
@@ -170,26 +169,6 @@ JWT_AUTH = {
 
 #  CORS Headers
 CORS_ORIGIN_ALLOW_ALL = False
-
-# Middleware
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-#  Bugsnag
-BUGSNAG = {
-    "api_key": get_env_variable("BUGSNAG_API_KEY"),
-    "project_root": PROJECT_ROOT,
-    "notify_release_stages": ["production", ],
-    "release_stage": get_env_variable("BUGSNAG_RELEASE_STAGE"),
-}
 
 #  Docraptor
 DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")

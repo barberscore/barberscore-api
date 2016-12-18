@@ -39,13 +39,23 @@ STATICFILES_STORAGE = STATIC_STORAGE
 
 # CORS Settings
 CORS_ORIGIN_WHITELIST = (
-    'barberscore.com',
-    'barberscore.s3.amazonaws.com',
-    'barberscore.auth0.com',
+    '{0}.com'.format(PROJECT_NAME),
+    '{0}.s3.amazonaws.com'.format(PROJECT_NAME),
+    '{0}.auth0.com'.format(PROJECT_NAME),
 )
 
+#  Bugsnag
+BUGSNAG = {
+    "api_key": get_env_variable("BUGSNAG_API_KEY"),
+    "project_root": PROJECT_ROOT,
+}
+MIDDLEWARE = [
+    'bugsnag.django.middleware.BugsnagMiddleware',
+] + MIDDLEWARE
+
+
 # Email
-DEFAULT_FROM_EMAIL = 'admin@barberscore.com'
+DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = get_env_variable("SENDGRID_USERNAME")
@@ -60,18 +70,20 @@ ALLOWED_HOSTS = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+
+    'root': {
+        'level': get_env_variable('DJANGO_LOG_LEVEL'),
+        'handlers': ['bugsnag'],
+    },
+
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+        'bugsnag': {
+            'level': 'INFO',
+            'class': 'bugsnag.handlers.BugsnagHandler',
         },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': get_env_variable('DJANGO_LOG_LEVEL'),
-        },
-    },
+    }
 }
+
 INSTALLED_APPS += (
     'django_s3_storage',
 )

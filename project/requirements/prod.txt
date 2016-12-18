@@ -2,3 +2,4 @@
 
 django-s3-storage
 waitress
+bugsnag

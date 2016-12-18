@@ -33,7 +33,7 @@ NOSE_ARGS = [
 ]
 
 # Email
-DEFAULT_FROM_EMAIL = 'admin@barberscore.com'
+DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Debug Toolbar
