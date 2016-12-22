@@ -78,7 +78,7 @@ LOGGING = {
 
     'handlers': {
         'bugsnag': {
-            'level': 'INFO',
+            'level': get_env_variable('DJANGO_LOG_LEVEL'),
             'class': 'bugsnag.handlers.BugsnagHandler',
         },
     }
