@@ -150,6 +150,7 @@ class JudgeViewSet(viewsets.ModelViewSet):
     serializer_class = JudgeSerializer
     filter_class = JudgeFilter
     resource_name = "judge"
+    pagination_class = None
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
