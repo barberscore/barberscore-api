@@ -4695,9 +4695,8 @@ class Venue(TimeStampedModel):
 
     nomen = models.CharField(
         max_length=255,
-        null=True,
-        # unique=True,
-        # editable=False,
+        unique=True,
+        editable=False,
     )
 
     name = models.CharField(
