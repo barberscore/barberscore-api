@@ -1200,9 +1200,9 @@ class SubmissionAdmin(admin.ModelAdmin):
 class VenueAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
-        'name',
+        'nomen',
         'status',
-        'location',
+        'name',
         'city',
         'state',
         'airport',
@@ -1210,8 +1210,8 @@ class VenueAdmin(admin.ModelAdmin):
     )
 
     list_display = [
+        'nomen',
         'name',
-        'location',
         'city',
         'state',
         'timezone',
@@ -1222,11 +1222,11 @@ class VenueAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        'name',
+        'nomen',
     )
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     inlines = [

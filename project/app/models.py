@@ -4752,9 +4752,8 @@ class Venue(TimeStampedModel):
                 (lambda x: unicode(x).encode('utf-8')),
                 filter(
                     None, [
-                        self.name,
-                        self.city,
-                        ', ',
+                        "{0} -".format(self.name),
+                        "{0},".format(self.city),
                         self.state,
                     ]
                 )
