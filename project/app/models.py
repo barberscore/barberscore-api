@@ -2321,7 +2321,7 @@ class Performance(TimeStampedModel):
                 #     judge__person__user=request.user,
                 #     category=self.round.session.assignments.model.category.ADMIN,
                 # ),
-                self.performer.session.convention.drcj.user==request.user,
+                self.performer.session.convention.drcj.user == request.user,
             ])
         return False
 
@@ -4693,10 +4693,17 @@ class Venue(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
+        help_text="""
+            The name of the resource.""",
         max_length=200,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -4738,7 +4745,7 @@ class Venue(TimeStampedModel):
         resource_name = "venue"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return u"{0}".format(self.nomen)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
