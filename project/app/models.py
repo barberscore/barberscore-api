@@ -73,6 +73,13 @@ class Award(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         help_text="""Award Name (auto-generated).""",
         max_length=255,
@@ -335,6 +342,13 @@ class Catalog(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -472,6 +486,13 @@ class Judge(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -692,6 +713,13 @@ class Contest(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=200,
         editable=False,
@@ -896,6 +924,13 @@ class Contestant(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -1197,6 +1232,13 @@ class Convention(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -1657,6 +1699,13 @@ class Host(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -1736,6 +1785,13 @@ class Assignment(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -1888,6 +1944,13 @@ class Member(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -1973,6 +2036,13 @@ class Organization(MPTTModel, TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -2206,6 +2276,13 @@ class Performance(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -2517,6 +2594,13 @@ class Performer(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -3302,6 +3386,13 @@ class Role(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         editable=False,
@@ -3424,6 +3515,13 @@ class Round(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -3728,6 +3826,13 @@ class Score(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -3964,6 +4069,13 @@ class Session(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -4204,6 +4316,13 @@ class Slot(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -4304,6 +4423,13 @@ class Song(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
     )
 
     name = models.CharField(
@@ -4567,6 +4693,13 @@ class Submission(TimeStampedModel):
         editable=False,
     )
 
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -4739,14 +4872,8 @@ class Venue(TimeStampedModel):
             The local timezone of the venue.""",
     )
 
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "venue"
-
-    def __unicode__(self):
-        return u"{0}".format(self.nomen)
-
-    def save(self, *args, **kwargs):
+    # Methods
+    def calculate_nomen(self):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -4759,7 +4886,13 @@ class Venue(TimeStampedModel):
                 )
             )
         )
-        super(Venue, self).save(*args, **kwargs)
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "venue"
+
+    def __unicode__(self):
+        return u"{0}".format(self.nomen)
 
     # Permissions
     @staticmethod
