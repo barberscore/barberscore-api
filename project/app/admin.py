@@ -74,7 +74,7 @@ from .models import (
 class AwardAdmin(admin.ModelAdmin):
 
     fields = [
-        'name',
+        # 'name',
         'status',
         'is_manual',
         'organization',
@@ -96,7 +96,7 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'is_manual',
         'kind',
@@ -127,13 +127,11 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'name',
-        'stix_num',
-        'stix_name',
+        'nomen',
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
     ordering = (
@@ -153,7 +151,7 @@ class AwardAdmin(admin.ModelAdmin):
 class CatalogAdmin(admin.ModelAdmin):
 
     fields = [
-        'name',
+        # 'name',
         'status',
         'bhs_id',
         'title',
@@ -169,7 +167,7 @@ class CatalogAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'title',
         'arranger',
@@ -189,15 +187,15 @@ class CatalogAdmin(admin.ModelAdmin):
     # ]
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
     ordering = (
-        'name',
+        'nomen',
     )
 
 
@@ -216,7 +214,7 @@ class JudgeAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'category',
         'kind',
         'status',
@@ -229,7 +227,7 @@ class JudgeAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     raw_id_fields = [
@@ -238,11 +236,11 @@ class JudgeAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
     ordering = (
-        'name',
+        'nomen',
     )
 
 
@@ -253,7 +251,7 @@ class ChapterAdmin(admin.ModelAdmin):
     )
 
     list_display = (
-        'name',
+        'nomen',
         'code',
         'organization',
         'status',
@@ -265,12 +263,16 @@ class ChapterAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        'name',
+        'nomen',
         'status',
         'organization',
         'code',
         'bhs_id',
     )
+
+    readonly_fields = [
+        'nomen',
+    ]
 
     inlines = [
         GroupInline,
@@ -297,7 +299,7 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
     list_display = (
-        'name',
+        'nomen',
         'session',
     )
 
@@ -318,7 +320,7 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'name',
+        'nomen',
         'cycle',
     ]
 
@@ -328,7 +330,7 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
 
@@ -352,7 +354,7 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     raw_id_fields = [
@@ -361,11 +363,11 @@ class ContestantAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
     ordering = (
-        'name',
+        'nomen',
     )
 
 
@@ -378,7 +380,7 @@ class ContestantScoreAdmin(admin.ModelAdmin):
 class ConventionAdmin(admin.ModelAdmin):
 
     fields = (
-        'name',
+        'nomen',
         'status',
         'kind',
         'level',
@@ -394,7 +396,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     list_display = (
-        'name',
+        'nomen',
         'status',
         'start_date',
         'end_date',
@@ -415,7 +417,7 @@ class ConventionAdmin(admin.ModelAdmin):
     ]
 
     search_fields = (
-        'name',
+        'nomen',
     )
 
     inlines = [
@@ -424,7 +426,7 @@ class ConventionAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = (
-        'name',
+        'nomen',
     )
 
     raw_id_fields = [
@@ -447,7 +449,7 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        'name',
+        'nomen',
         'status',
         'kind',
         ('age', 'is_novice',),
@@ -469,7 +471,9 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     list_display = (
+        'nomen',
         'name',
+        'bhs_id',
         'status',
         'district',
         'division',
@@ -488,18 +492,22 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        RoleInline,
-        PerformerInline,
+        # RoleInline,
+        # PerformerInline,
     ]
 
     raw_id_fields = [
         'chapter',
     ]
 
+    readonly_fields = [
+        'nomen',
+    ]
+
     save_on_top = True
 
     ordering = (
-        'name',
+        'nomen',
     )
 
 
@@ -512,7 +520,7 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'convention',
         'organization',
@@ -527,11 +535,15 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'name',
+        'nomen',
     )
 
     search_fields = [
-        'name',
+        'nomen',
+    ]
+
+    readonly_fields = [
+        'nomen',
     ]
 
 
@@ -551,7 +563,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'kind',
         'category',
@@ -577,7 +589,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     inlines = [
@@ -596,7 +608,7 @@ class MemberAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'start_date',
         'end_date',
@@ -612,11 +624,15 @@ class MemberAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'name',
+        'nomen',
     )
 
+    readonly_fields = [
+        'nomen',
+    ]
+
     search_fields = [
-        'name',
+        'nomen',
     ]
 
 
@@ -653,7 +669,7 @@ class OrganizationAdmin(MPTTModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'code',
         'short_name',
@@ -665,6 +681,10 @@ class OrganizationAdmin(MPTTModelAdmin):
     inlines = [
         AwardInline,
         # OrganizationInline,
+    ]
+
+    readonly_fields = [
+        'nomen',
     ]
 
     raw_id_fields = [
@@ -690,7 +710,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
     ]
 
@@ -709,7 +729,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     raw_id_fields = (
@@ -717,7 +737,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        'name',
+        'nomen',
     )
 
     inlines = [
@@ -751,7 +771,7 @@ class PerformerAdmin(admin.ModelAdmin):
     )
 
     list_display = (
-        'name',
+        'nomen',
         'status',
     )
 
@@ -776,7 +796,7 @@ class PerformerAdmin(admin.ModelAdmin):
     ]
 
     search_fields = (
-        'name',
+        'nomen',
     )
 
     raw_id_fields = (
@@ -791,13 +811,13 @@ class PerformerAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
-        'name',
+        'nomen',
     )
 
     save_on_top = True
 
     ordering = (
-        'name',
+        'nomen',
     )
 
 
@@ -840,7 +860,7 @@ class PersonAdmin(admin.ModelAdmin):
     )
 
     list_display = (
-        'name',
+        'nomen',
         'status',
         'bhs_id',
         'location',
@@ -858,9 +878,13 @@ class PersonAdmin(admin.ModelAdmin):
         'user',
     ]
 
+    readonly_fields = [
+        'nomen',
+    ]
+
     inlines = [
         RoleInline,
-        MemberInline,
+        # MemberInline,
         JudgeInline,
     ]
 
@@ -889,7 +913,7 @@ class RoleAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'start_date',
         'end_date',
@@ -900,11 +924,11 @@ class RoleAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
     raw_id_fields = (
@@ -927,7 +951,7 @@ class RoundAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
     ]
 
@@ -947,7 +971,7 @@ class RoundAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = [
-        'name',
+        'nomen',
         'session',
         'kind',
     ]
@@ -962,7 +986,7 @@ class RoundAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
 
@@ -982,13 +1006,13 @@ class ScoreAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'name',
+        'nomen',
         'song',
         'assignment',
     ]
 
     list_display = [
-        'name',
+        'nomen',
         # 'status',
         'points',
     ]
@@ -1033,7 +1057,7 @@ class SessionAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
     ]
 
@@ -1053,7 +1077,7 @@ class SessionAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
     inlines = [
@@ -1076,7 +1100,7 @@ class SessionAdmin(admin.ModelAdmin):
     )
 
     search_fields = [
-        'name',
+        'nomen',
     ]
 
 
@@ -1091,7 +1115,7 @@ class SlotAdmin(admin.ModelAdmin):
         'round',
     ]
     list_display = [
-        'name',
+        'nomen',
         'status',
         'onstage',
     ]
@@ -1101,7 +1125,7 @@ class SlotAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
     raw_id_fields = [
         'round',
@@ -1121,7 +1145,7 @@ class SongAdmin(admin.ModelAdmin):
     ]
 
     list_display = (
-        'name',
+        'nomen',
         # 'status',
         # 'title',
         'performance',
@@ -1134,7 +1158,7 @@ class SongAdmin(admin.ModelAdmin):
     # )
 
     search_fields = (
-        'name',
+        'nomen',
     )
 
     inlines = [
@@ -1143,7 +1167,7 @@ class SongAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = (
-        'name',
+        'nomen',
     )
 
     raw_id_fields = (
@@ -1152,7 +1176,7 @@ class SongAdmin(admin.ModelAdmin):
     )
 
     ordering = (
-        'name',
+        'nomen',
         'num',
     )
 
@@ -1177,7 +1201,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'name',
+        'nomen',
         'status',
         'title',
         'arranger',
@@ -1192,7 +1216,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = [
-        'name',
+        'nomen',
     ]
 
 
@@ -1211,7 +1235,7 @@ class VenueAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'name',
+        'nomen',
         'city',
         'state',
         'timezone',
@@ -1230,7 +1254,7 @@ class VenueAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        ConventionInline,
+        # ConventionInline,
     ]
 
 

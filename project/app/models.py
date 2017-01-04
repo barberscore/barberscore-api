@@ -60,6 +60,163 @@ def generate_image_filename(instance, filename):
     return '{0}{1}'.format(instance.id, ext)
 
 
+class Assignment(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'scheduled', 'Scheduled',),
+        (20, 'confirmed', 'Confirmed',),
+        (25, 'validated', 'Validated',),
+        (30, 'final', 'Final',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    CATEGORY = Choices(
+        (0, 'admin', 'Admin'),
+        (1, 'music', 'Music'),
+        (2, 'presentation', 'Presentation'),
+        (3, 'singing', 'Singing'),
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+    )
+
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    slot = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    session = models.ForeignKey(
+        'Session',
+        related_name='assignments',
+        on_delete=models.CASCADE,
+    )
+
+    judge = models.ForeignKey(
+        'Judge',
+        related_name='assignments',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    organization = TreeForeignKey(
+        'Organization',
+        related_name='assignments',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    # Denormalizations
+    @property
+    def designation(self):
+        designation = u"{0[0]}{1:1d}".format(
+            self.get_category_display(),
+            self.slot,
+        )
+        return designation
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('session', 'category', 'kind', 'slot'),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "assignment"
+
+    def __unicode__(self):
+        return self.nomen
+
+    def calculate_nomen(self):
+        # Very hacky slot designator
+        if not self.slot:
+            try:
+                self.slot = self.__class__.objects.filter(
+                    session=self.session,
+                    category=self.category,
+                    kind=self.kind,
+                ).aggregate(
+                    max=models.Max('slot')
+                )['max'] + 1
+            except TypeError:
+                if self.kind == self.KIND.practice:
+                    self.slot = 6
+                else:
+                    self.slot = 1
+        slot_str = str(self.slot)
+        self.nomen = " ".join(filter(None, [
+            self.session.nomen,
+            self.get_kind_display(),
+            self.get_category_display(),
+            slot_str,
+        ]))
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.session.convention.drcj.user == request.user,
+                self.judge.person.user == request.user,
+            ])
+        return False
+
+
 class Award(TimeStampedModel):
     """
     Award Model.
@@ -291,9 +448,9 @@ class Award(TimeStampedModel):
         resource_name = "award"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         if self.is_improved:
             most_improved = 'Most-Improved'
         else:
@@ -302,7 +459,7 @@ class Award(TimeStampedModel):
             novice = 'Novice'
         else:
             novice = None
-        self.name = " ".join(filter(None, [
+        self.nomen = " ".join(filter(None, [
             self.organization.name,
             most_improved,
             novice,
@@ -311,7 +468,6 @@ class Award(TimeStampedModel):
             self.idiom,
             self.get_kind_display(),
         ]))
-        super(Award, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -452,140 +608,13 @@ class Catalog(TimeStampedModel):
         resource_name = "catalog"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.title,
             str(self.bhs_id),
         ]))
-        super(Catalog, self).save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
-
-
-class Judge(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    nomen = models.CharField(
-        max_length=255,
-        null=True,
-        # unique=True,
-        # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New'),
-        (1, 'active', 'Active'),
-        (2, 'inactive', 'Inactive'),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
-
-    KIND = Choices(
-        (10, 'chair', 'Chair'),
-        (15, 'chair', 'Chair'),
-        (30, 'specialist', 'Specialist'),
-        (35, 'drcj', 'DRCJ'),
-        (40, 'certified', 'Certified'),
-        (50, 'candidate', 'Candidate'),
-        (60, 'retired', 'Retired'),
-        (70, 'lapsed', 'Lapsed'),
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    # FKs
-    person = models.ForeignKey(
-        'Person',
-        related_name='judges',
-        on_delete=models.CASCADE,
-    )
-
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='judges',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # Internals
-    class Meta:
-        unique_together = (
-            ('category', 'person', 'kind',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "judge"
-
-    def __unicode__(self):
-        return u"{0}".format(self.name)
-
-    def save(self, *args, **kwargs):
-        self.name = " ".join(
-            filter(
-                None, [
-                    self.person.common_name,
-                    self.get_category_display(),
-                    self.get_kind_display(),
-                ]
-            )
-        )
-        super(Judge, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -666,9 +695,9 @@ class Chapter(TimeStampedModel):
         resource_name = "chapter"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -680,7 +709,6 @@ class Chapter(TimeStampedModel):
                 )
             )
         )
-        super(Chapter, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -797,9 +825,9 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         if self.session.convention.season == self.session.convention.SEASON.spring:
             self.cycle = self.session.convention.year
         else:
@@ -808,12 +836,11 @@ class Contest(TimeStampedModel):
             suffix = "Qualifier"
         else:
             suffix = "Championship"
-        self.name = " ".join(filter(None, [
+        self.nomen = " ".join(filter(None, [
             self.award.name,
             suffix,
             str(self.session.convention.year),
         ]))
-        super(Contest, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -981,15 +1008,14 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.contest.award.name,
             str(self.performer.session.convention.year),
             self.performer.name,
         ]))
-        super(Contestant, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1416,21 +1442,20 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         if self.season == self.SEASON.summer:
             season = None
         else:
             season = self.get_season_display()
         hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
-        self.name = " ".join(filter(None, [
+        self.nomen = " ".join(filter(None, [
             hosts,
             season,
             u"Convention",
             str(self.year),
         ]))
-        super(Convention, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1649,9 +1674,9 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -1663,7 +1688,6 @@ class Group(TimeStampedModel):
                 )
             )
         )
-        super(Group, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1746,15 +1770,14 @@ class Host(TimeStampedModel):
         resource_name = "host"
 
     def __unicode__(self):
-        return self.name
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         # self.name = " ".join(filter(None, [
         #     self.convention.name,
         #     self.organization.name,
         # ]))
-        self.name = self.id.hex
-        super(Host, self).save(*args, **kwargs)
+        self.nomen = self.id.hex
 
     # Permissions
     @staticmethod
@@ -1780,7 +1803,7 @@ class Host(TimeStampedModel):
         return False
 
 
-class Assignment(TimeStampedModel):
+class Judge(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1801,14 +1824,12 @@ class Assignment(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'scheduled', 'Scheduled',),
-        (20, 'confirmed', 'Confirmed',),
-        (25, 'validated', 'Validated',),
-        (30, 'final', 'Final',),
+        (0, 'new', 'New'),
+        (1, 'active', 'Active'),
+        (2, 'inactive', 'Inactive'),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1825,92 +1846,67 @@ class Assignment(TimeStampedModel):
     )
 
     KIND = Choices(
-        (10, 'official', 'Official'),
-        (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
+        (10, 'chair', 'Chair'),
+        (15, 'chair', 'Chair'),
+        (30, 'specialist', 'Specialist'),
+        (35, 'drcj', 'DRCJ'),
+        (40, 'certified', 'Certified'),
+        (50, 'candidate', 'Candidate'),
+        (60, 'retired', 'Retired'),
+        (70, 'lapsed', 'Lapsed'),
     )
 
     kind = models.IntegerField(
         choices=KIND,
     )
 
-    slot = models.IntegerField(
+    start_date = models.DateField(
         null=True,
         blank=True,
     )
 
-    bhs_id = models.IntegerField(
+    end_date = models.DateField(
         null=True,
         blank=True,
     )
 
     # FKs
-    session = models.ForeignKey(
-        'Session',
-        related_name='assignments',
+    person = models.ForeignKey(
+        'Person',
+        related_name='judges',
         on_delete=models.CASCADE,
-    )
-
-    judge = models.ForeignKey(
-        'Judge',
-        related_name='assignments',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     organization = TreeForeignKey(
         'Organization',
-        related_name='assignments',
+        related_name='judges',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
 
-    # Denormalizations
-    @property
-    def designation(self):
-        designation = u"{0[0]}{1:1d}".format(
-            self.get_category_display(),
-            self.slot,
-        )
-        return designation
-
     # Internals
     class Meta:
         unique_together = (
-            ('session', 'category', 'kind', 'slot'),
+            ('category', 'person', 'kind',),
         )
 
     class JSONAPIMeta:
-        resource_name = "assignment"
+        resource_name = "judge"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        # Very hacky slot designator
-        if not self.slot:
-            try:
-                self.slot = self.__class__.objects.filter(
-                    session=self.session,
-                    category=self.category,
-                    kind=self.kind,
-                ).aggregate(
-                    max=models.Max('slot')
-                )['max'] + 1
-            except TypeError:
-                if self.kind == self.KIND.practice:
-                    self.slot = 6
-                else:
-                    self.slot = 1
-        self.name = u"{0} {1} {2} {3}".format(
-            self.session,
-            self.get_kind_display(),
-            self.get_category_display(),
-            self.slot,
+    def calculate_nomen(self):
+        self.nomen = " ".join(
+            filter(
+                None, [
+                    self.person.common_name,
+                    self.get_category_display(),
+                    self.get_kind_display(),
+                ]
+            )
         )
-        super(Assignment, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1929,11 +1925,6 @@ class Assignment(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.session.convention.drcj.user == request.user,
-                self.judge.person.user == request.user,
-            ])
         return False
 
 
@@ -2001,15 +1992,14 @@ class Member(TimeStampedModel):
         resource_name = "member"
 
     def __unicode__(self):
-        return self.name
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.chapter.name,
             self.person.name,
             str(self.person.bhs_id),
         ]))
-        super(Member, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2246,7 +2236,10 @@ class Organization(MPTTModel, TimeStampedModel):
         resource_name = "organization"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
+
+    def calculate_nomen(self):
+        self.nomen = self.name
 
     # Permissions
     @staticmethod
@@ -2352,14 +2345,14 @@ class Performance(TimeStampedModel):
         resource_name = "performance"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         if self.performer.session.convention.kind:
             kind = str(self.performer.session.convention.get_kind_display())
             if self.performer.session.convention.kind == self.performer.session.convention.KIND.international:
                 kind = None
-        self.name = " ".join(filter(None, [
+        self.nomen = " ".join(filter(None, [
             self.round.session.convention.organization.name,
             str(self.round.session.convention.get_kind_display()),
             self.round.session.convention.get_season_display(),
@@ -2373,7 +2366,6 @@ class Performance(TimeStampedModel):
             self.performer.session.get_kind_display(),
             self.performer.group.name,
         ]))
-        super(Performance, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2769,14 +2761,14 @@ class Performer(TimeStampedModel):
         resource_name = "performer"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         if self.session.convention.kind:
             kind = str(self.session.convention.get_kind_display())
             if self.session.convention.kind == self.session.convention.KIND.international:
                 kind = None
-        self.name = " ".join(filter(None, [
+        self.nomen = " ".join(filter(None, [
             self.session.convention.organization.name,
             kind,
             self.session.convention.get_season_display(),
@@ -2786,7 +2778,6 @@ class Performer(TimeStampedModel):
             self.group.name,
             self.id.hex,
         ]))
-        super(Performer, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2893,13 +2884,12 @@ class PerformerScore(Performer):
         resource_name = "performerscore"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.id.hex,
         ]))
-        super(PerformerScore, self).save(*args, **kwargs)
 
     # Methods
     def calculate(self, *args, **kwargs):
@@ -3327,9 +3317,9 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -3341,6 +3331,8 @@ class Person(TimeStampedModel):
                 )
             )
         )
+
+    def calculate_name(self):
         name = HumanName(self.name)
         if name.nickname:
             self.common_name = " ".join(filter(None, [
@@ -3355,7 +3347,6 @@ class Person(TimeStampedModel):
             u'{0}'.format(name.last),
             u'{0}'.format(name.suffix),
         ]))
-        super(Person, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -3459,15 +3450,14 @@ class Role(TimeStampedModel):
         resource_name = "role"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.group.name,
             self.person.name,
             self.get_part_display(),
         ]))
-        super(Role, self).save(*args, **kwargs)
 
     # def clean(self):
     #     if all([
@@ -3614,10 +3604,10 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.session.convention.organization.name,
             str(self.session.convention.get_kind_display()),
             self.session.convention.get_season_display(),
@@ -3625,7 +3615,6 @@ class Round(TimeStampedModel):
             self.get_kind_display(),
             str(self.session.convention.year),
         ]))
-        super(Round, self).save(*args, **kwargs)
 
     # # Methods
     # def print_ann(self):
@@ -3963,13 +3952,12 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.id.hex,
         ]))
-        super(Score, self).save(*args, **kwargs)
 
     # Methods
     def verify(self):
@@ -4185,9 +4173,9 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
+    def calculate_nomen(self):
         self.organization = self.convention.organization
         if self.convention.kind:
             kind = str(self.convention.get_kind_display())
@@ -4195,7 +4183,7 @@ class Session(TimeStampedModel):
                 kind = None
         else:
             kind = None
-        self.name = " ".join(filter(None, [
+        self.nomen = " ".join(filter(None, [
             self.convention.organization.name,
             kind,
             self.convention.get_season_display(),
@@ -4203,7 +4191,6 @@ class Session(TimeStampedModel):
             "Session",
             str(self.convention.year),
         ]))
-        super(Session, self).save(*args, **kwargs)
 
     # Methods
     # def print_oss(self):
@@ -4388,15 +4375,14 @@ class Slot(TimeStampedModel):
         resource_name = "slot"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.id.hex,
             self.round.name,
             str(self.num),
         ]))
-        super(Slot, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -4483,13 +4469,12 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = " ".join(filter(None, [
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.id.hex,
         ]))
-        super(Song, self).save(*args, **kwargs)
 
     def calculate(self, *args, **kwargs):
         self.songscore.calculate()
@@ -4760,14 +4745,13 @@ class Submission(TimeStampedModel):
         resource_name = "submission"
 
     def __unicode__(self):
-        return u"{0}".format(self.name)
+        return self.nomen
 
-    def save(self, *args, **kwargs):
-        self.name = u"{0} {1}".format(
+    def calculate_nomen(self):
+        self.nomen = " ".join(filter(None, [
             self.title,
             self.id.hex[:8],
-        )
-        super(Submission, self).save(*args, **kwargs)
+        ]))
 
     # Permissions
     @staticmethod
@@ -4892,7 +4876,7 @@ class Venue(TimeStampedModel):
         resource_name = "venue"
 
     def __unicode__(self):
-        return u"{0}".format(self.nomen)
+        return self.nomen
 
     # Permissions
     @staticmethod

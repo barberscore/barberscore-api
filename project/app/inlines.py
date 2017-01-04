@@ -203,7 +203,7 @@ class MemberInline(admin.TabularInline):
 class PerformerInline(admin.TabularInline):
     model = Performer
     fields = [
-        'name',
+        'nomen',
         'session',
         'prelim',
         'men',
@@ -212,7 +212,7 @@ class PerformerInline(admin.TabularInline):
         'group',
     ]
     readonly_fields = [
-        'name',
+        'nomen',
         'seed',
     ]
     ordering = (
