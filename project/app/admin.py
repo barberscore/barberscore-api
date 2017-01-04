@@ -70,6 +70,56 @@ from .models import (
 #     pass
 
 
+@admin.register(Assignment)
+class AssignmentAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        # 'name',
+        'status',
+        'category',
+        'kind',
+        'slot',
+        'bhs_id',
+        'session',
+        'judge',
+        'organization',
+    ]
+
+    list_display = [
+        'nomen',
+        'status',
+        'kind',
+        'category',
+        'judge',
+        'organization',
+    ]
+
+    list_filter = (
+        'status',
+        'category',
+        'kind',
+    )
+
+    list_select_related = [
+        'organization',
+        'session',
+        'judge',
+    ]
+
+    raw_id_fields = (
+        'session',
+        'judge',
+    )
+
+    readonly_fields = [
+        'nomen',
+    ]
+
+    inlines = [
+        ScoreInline,
+    ]
+
+
 @admin.register(Award)
 class AwardAdmin(admin.ModelAdmin):
 
@@ -199,51 +249,6 @@ class CatalogAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Judge)
-class JudgeAdmin(admin.ModelAdmin):
-
-    fields = [
-        'name',
-        'status',
-        'category',
-        'kind',
-        'start_date',
-        'end_date',
-        'person',
-        'organization',
-    ]
-
-    list_display = [
-        'nomen',
-        'category',
-        'kind',
-        'status',
-    ]
-
-    list_filter = [
-        'status',
-        'category',
-        'kind',
-    ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    raw_id_fields = [
-        'person',
-        'organization',
-    ]
-
-    search_fields = [
-        'nomen',
-    ]
-
-    ordering = (
-        'nomen',
-    )
-
-
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
     search_fields = (
@@ -289,7 +294,7 @@ class ChapterAdmin(admin.ModelAdmin):
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
     fields = [
-        'name',
+        # 'name',
         'status',
         'award',
         'session',
@@ -343,7 +348,7 @@ class ContestScoreAdmin(admin.ModelAdmin):
 class ContestantAdmin(admin.ModelAdmin):
 
     fields = [
-        'name',
+        # 'name',
         'status',
         'performer',
         'contest',
@@ -547,54 +552,49 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Assignment)
-class AssignmentAdmin(admin.ModelAdmin):
-    save_on_top = True
+@admin.register(Judge)
+class JudgeAdmin(admin.ModelAdmin):
+
     fields = [
-        'name',
+        # 'name',
         'status',
         'category',
         'kind',
-        'slot',
-        'bhs_id',
-        'session',
-        'judge',
+        'start_date',
+        'end_date',
+        'person',
         'organization',
     ]
 
     list_display = [
         'nomen',
-        'status',
-        'kind',
         'category',
-        'judge',
-        'organization',
+        'kind',
+        'status',
     ]
 
-    list_filter = (
+    list_filter = [
         'status',
         'category',
         'kind',
-    )
-
-    list_select_related = [
-        'organization',
-        'session',
-        'judge',
     ]
-
-    raw_id_fields = (
-        'session',
-        'judge',
-    )
 
     readonly_fields = [
         'nomen',
     ]
 
-    inlines = [
-        ScoreInline,
+    raw_id_fields = [
+        'person',
+        'organization',
     ]
+
+    search_fields = [
+        'nomen',
+    ]
+
+    ordering = (
+        'nomen',
+    )
 
 
 @admin.register(Member)
@@ -699,7 +699,7 @@ class OrganizationAdmin(MPTTModelAdmin):
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
     fields = [
-        'name',
+        # 'name',
         'status',
         'actual_start',
         'actual_finish',
@@ -741,7 +741,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        SongInline,
+        # SongInline,
     ]
 
 
@@ -753,14 +753,14 @@ class PerformanceScoreAdmin(admin.ModelAdmin):
 @admin.register(Performer)
 class PerformerAdmin(admin.ModelAdmin):
     fields = (
-        'name',
+        # 'name',
         'status',
         'bhs_id',
         'picture',
-        'csa_pdf',
+        # 'csa_pdf',
         'session',
         'group',
-        'district',
+        # 'district',
         'division',
         'risers',
         ('is_evaluation', 'is_private',),
@@ -903,7 +903,7 @@ class PersonAdmin(admin.ModelAdmin):
 class RoleAdmin(admin.ModelAdmin):
 
     fields = [
-        'name',
+        # 'name',
         'status',
         'start_date',
         'end_date',
@@ -940,7 +940,7 @@ class RoleAdmin(admin.ModelAdmin):
 @admin.register(Round)
 class RoundAdmin(admin.ModelAdmin):
     fields = [
-        'name',
+        # 'name',
         'status',
         ('session', 'kind',),
         'num_songs',
@@ -993,7 +993,7 @@ class RoundAdmin(admin.ModelAdmin):
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
     fields = [
-        'name',
+        # 'name',
         # 'status',
         'song',
         'assignment',
@@ -1041,7 +1041,7 @@ class SessionAdmin(admin.ModelAdmin):
 
     save_on_top = True
     fields = [
-        'name',
+        # 'name',
         'status',
         'convention',
         'kind',
@@ -1108,7 +1108,7 @@ class SessionAdmin(admin.ModelAdmin):
 class SlotAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
-        'name',
+        # 'name',
         'status',
         'num',
         'onstage',
@@ -1135,7 +1135,7 @@ class SlotAdmin(admin.ModelAdmin):
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
     fields = [
-        'name',
+        # 'name',
         # 'status',
         'performance',
         'submission',
@@ -1190,7 +1190,7 @@ class SongScoreAdmin(admin.ModelAdmin):
 class SubmissionAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
-        'name',
+        # 'name',
         'status',
         'performer',
         'title',
