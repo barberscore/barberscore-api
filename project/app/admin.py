@@ -298,7 +298,6 @@ class ContestAdmin(admin.ModelAdmin):
         'status',
         'award',
         'session',
-        'cycle',
         'is_qualifier',
         'num_rounds',
     ]
@@ -315,7 +314,6 @@ class ContestAdmin(admin.ModelAdmin):
         'award__is_primary',
         'is_qualifier',
         'award__organization',
-        'cycle',
     ]
 
     save_on_top = True
@@ -326,7 +324,6 @@ class ContestAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'cycle',
     ]
 
     raw_id_fields = [

@@ -634,7 +634,6 @@ class ContestFactory(DjangoModelFactory):
         model = Contest
 
     status = Contest.STATUS.new
-    cycle = 2016
     session = SubFactory(
         'app.factories.InternationalQuartetSessionFactory'
     )

@@ -761,14 +761,14 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    CYCLE_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-        CYCLE_CHOICES.append((r, r))
+    # CYCLE_CHOICES = []
+    # for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+    #     CYCLE_CHOICES.append((r, r))
 
-    cycle = models.IntegerField(
-        choices=CYCLE_CHOICES,
-        editable=False,
-    )
+    # cycle = models.IntegerField(
+    #     choices=CYCLE_CHOICES,
+    #     editable=False,
+    # )
 
     is_qualifier = models.BooleanField(
         default=False,
@@ -819,10 +819,10 @@ class Contest(TimeStampedModel):
         return self.id.hex
 
     def calculate_nomen(self):
-        if self.session.convention.season == self.session.convention.SEASON.spring:
-            self.cycle = self.session.convention.year
-        else:
-            self.cycle = self.session.convention.year + 1
+        # if self.session.convention.season == self.session.convention.SEASON.spring:
+        #     self.cycle = self.session.convention.year
+        # else:
+        #     self.cycle = self.session.convention.year + 1
         if self.is_qualifier:
             suffix = "Qualifier"
         else:
