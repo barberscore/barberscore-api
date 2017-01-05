@@ -267,16 +267,12 @@ class SongInline(admin.TabularInline):
 class SessionInline(admin.TabularInline):
     model = Session
     fields = [
-        'nomen',
-        'status',
         'convention',
         'kind',
+        'num_rounds',
     ]
     raw_id_fields = [
         'convention',
-    ]
-    readonly_fields = [
-        'nomen',
     ]
     show_change_link = True
     extra = 0

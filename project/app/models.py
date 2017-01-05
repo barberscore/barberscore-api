@@ -160,7 +160,9 @@ class Assignment(TimeStampedModel):
         resource_name = "assignment"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         # Very hacky slot designator
@@ -440,7 +442,9 @@ class Award(TimeStampedModel):
         resource_name = "award"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         if self.is_improved:
@@ -594,7 +598,9 @@ class Catalog(TimeStampedModel):
         resource_name = "catalog"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -681,7 +687,9 @@ class Chapter(TimeStampedModel):
         resource_name = "chapter"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(
@@ -806,7 +814,9 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         if self.session.convention.season == self.session.convention.SEASON.spring:
@@ -983,7 +993,9 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -1416,7 +1428,9 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         if self.season == self.SEASON.summer:
@@ -1648,7 +1662,9 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(
@@ -1738,7 +1754,9 @@ class Host(TimeStampedModel):
         resource_name = "host"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         # self.name = " ".join(filter(None, [
@@ -1857,7 +1875,9 @@ class Judge(TimeStampedModel):
         resource_name = "judge"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(
@@ -1948,7 +1968,9 @@ class Member(TimeStampedModel):
         resource_name = "member"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -2192,7 +2214,9 @@ class Organization(MPTTModel, TimeStampedModel):
         resource_name = "organization"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = self.name
@@ -2295,7 +2319,9 @@ class Performance(TimeStampedModel):
         resource_name = "performance"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         if self.performer.session.convention.kind:
@@ -2705,7 +2731,9 @@ class Performer(TimeStampedModel):
         resource_name = "performer"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         if self.session.convention.kind:
@@ -2828,7 +2856,9 @@ class PerformerScore(Performer):
         resource_name = "performerscore"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -3261,7 +3291,9 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(
@@ -3389,7 +3421,9 @@ class Role(TimeStampedModel):
         resource_name = "role"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -3537,7 +3571,9 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -3879,7 +3915,9 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -4094,7 +4132,9 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.organization = self.convention.organization
@@ -4105,11 +4145,7 @@ class Session(TimeStampedModel):
         else:
             kind = None
         self.nomen = " ".join(filter(None, [
-            self.convention.organization.name,
-            kind,
-            self.convention.get_season_display(),
             self.get_kind_display(),
-            "Session",
             str(self.convention.year),
         ]))
 
@@ -4290,7 +4326,9 @@ class Slot(TimeStampedModel):
         resource_name = "slot"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -4378,7 +4416,9 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -4648,7 +4688,9 @@ class Submission(TimeStampedModel):
         resource_name = "submission"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     def calculate_nomen(self):
         self.nomen = " ".join(filter(None, [
@@ -4779,7 +4821,9 @@ class Venue(TimeStampedModel):
         resource_name = "venue"
 
     def __unicode__(self):
-        return self.nomen
+        if self.nomen:
+            return self.nomen
+        return self.id.hex
 
     # Permissions
     @staticmethod
