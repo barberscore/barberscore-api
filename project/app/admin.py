@@ -1226,7 +1226,6 @@ class VenueAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'status',
-        'name',
         'city',
         'state',
         'airport',

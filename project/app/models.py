@@ -234,8 +234,6 @@ class Award(TimeStampedModel):
     name = models.CharField(
         help_text="""Award Name.""",
         max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -639,8 +637,8 @@ class Chapter(TimeStampedModel):
 
     name = models.CharField(
         help_text="""
-            The name of the resource.""",
-        max_length=200,
+            Chapter Name.""",
+        max_length=255,
     )
 
     STATUS = Choices(
@@ -1246,7 +1244,6 @@ class Convention(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
-        editable=False,
     )
 
     STATUS = Choices(
