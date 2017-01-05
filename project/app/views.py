@@ -330,7 +330,7 @@ class PerformanceViewSet(
 
 class PerformanceScoreViewSet(viewsets.ModelViewSet):
     queryset = PerformanceScore.objects.order_by(
-        'name',
+        'nomen',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = PerformanceScoreSerializer
@@ -368,7 +368,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
 
 class PerformerScoreViewSet(viewsets.ModelViewSet):
     queryset = PerformerScore.objects.order_by(
-        'name',
+        'nomen',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = PerformerScoreSerializer
@@ -415,7 +415,7 @@ class RoleViewSet(viewsets.ModelViewSet):
         'person',
         'group',
     ).order_by(
-        '-name',
+        '-nomen',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = RoleSerializer
@@ -519,7 +519,7 @@ class SongViewSet(viewsets.ModelViewSet):
 
 class SongScoreViewSet(viewsets.ModelViewSet):
     queryset = SongScore.objects.order_by(
-        'name',
+        'nomen',
     )
     permission_classes = (DRYPermissions,)
     serializer_class = SongScoreSerializer
