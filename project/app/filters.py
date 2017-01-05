@@ -174,7 +174,7 @@ class JudgeFilter(filters.FilterSet):
     class Meta:
         model = Judge
         fields = {
-            'name': '__all__',
+            'nomen': '__all__',
             'category': '__all__',
         }
 
@@ -183,7 +183,7 @@ class ContestantFilter(filters.FilterSet):
     class Meta:
         model = Contestant
         fields = {
-            'name': '__all__',
+            'nomen': '__all__',
         }
 
 
@@ -193,7 +193,7 @@ class PerformerFilter(filters.FilterSet):
     class Meta:
         model = Performer
         fields = {
-            'name': '__all__',
+            'nomen': '__all__',
         }
 
 

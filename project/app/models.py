@@ -74,12 +74,6 @@ class Assignment(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
@@ -238,7 +232,7 @@ class Award(TimeStampedModel):
     )
 
     name = models.CharField(
-        help_text="""Award Name (auto-generated).""",
+        help_text="""Award Name.""",
         max_length=255,
         unique=True,
         editable=False,
@@ -505,12 +499,6 @@ class Catalog(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New'),
         (10, 'active', 'Active'),
@@ -748,11 +736,6 @@ class Contest(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=200,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         # (20, 'started', 'Started',),
@@ -958,12 +941,6 @@ class Contestant(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -1730,12 +1707,6 @@ class Host(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -1815,12 +1786,6 @@ class Judge(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -1940,12 +1905,6 @@ class Member(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -2278,12 +2237,6 @@ class Performance(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (5, 'validated', 'Validated',),
@@ -2593,12 +2546,6 @@ class Performer(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -3384,11 +3331,6 @@ class Role(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
@@ -3512,12 +3454,6 @@ class Round(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -3822,12 +3758,6 @@ class Score(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'validated', 'Validated',),
@@ -4064,12 +3994,6 @@ class Session(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -4310,12 +4234,6 @@ class Slot(TimeStampedModel):
         # editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
     )
@@ -4416,12 +4334,6 @@ class Song(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(
@@ -4683,12 +4595,6 @@ class Submission(TimeStampedModel):
         null=True,
         # unique=True,
         # editable=False,
-    )
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
     )
 
     STATUS = Choices(

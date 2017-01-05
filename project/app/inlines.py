@@ -44,7 +44,6 @@ class AwardInline(admin.TabularInline):
 class JudgeInline(admin.TabularInline):
     model = Judge
     fields = [
-        'name',
         'person',
         'status',
         'category',
@@ -53,7 +52,7 @@ class JudgeInline(admin.TabularInline):
         'person',
     ]
     readonly_fields = [
-        'name',
+        'nomen',
     ]
     extra = 0
     show_change_link = True
@@ -71,7 +70,6 @@ class ContestInline(admin.TabularInline):
         'award',
     ]
     readonly_fields = [
-        'name',
         'is_qualifier',
     ]
     ordering = (
@@ -92,11 +90,11 @@ class ContestInline(admin.TabularInline):
 class ContestantInline(admin.TabularInline):
     model = Contestant
     fields = [
-        'name',
+        'nomen',
         'status',
     ]
     readonly_fields = [
-        'name',
+        'nomen',
         'performer',
         'status',
     ]
@@ -107,13 +105,13 @@ class ContestantInline(admin.TabularInline):
 class ConventionInline(admin.TabularInline):
     model = Convention
     fields = (
-        'name',
+        'nomen',
     )
     ordering = (
-        'name',
+        'nomen',
     )
     readonly_fields = [
-        'name',
+        'nomen',
     ]
     show_change_link = True
     extra = 0
@@ -269,7 +267,7 @@ class SongInline(admin.TabularInline):
 class SessionInline(admin.TabularInline):
     model = Session
     fields = [
-        'name',
+        'nomen',
         'status',
         'convention',
         'kind',
@@ -278,7 +276,7 @@ class SessionInline(admin.TabularInline):
         'convention',
     ]
     readonly_fields = [
-        'name',
+        'nomen',
     ]
     show_change_link = True
     extra = 0
@@ -306,7 +304,7 @@ class RoleInline(admin.TabularInline):
 class RoundInline(admin.TabularInline):
     model = Round
     fields = [
-        'name',
+        'nomen',
         'session',
         'kind',
         'status',
@@ -317,7 +315,7 @@ class RoundInline(admin.TabularInline):
         'kind',
     )
     readonly_fields = [
-        'name',
+        'nomen',
     ]
     show_change_link = True
     extra = 0
