@@ -74,7 +74,6 @@ from .models import (
 class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
-        # 'name',
         'status',
         'category',
         'kind',
@@ -124,7 +123,7 @@ class AssignmentAdmin(admin.ModelAdmin):
 class AwardAdmin(admin.ModelAdmin):
 
     fields = [
-        # 'name',
+        'name',
         'status',
         'is_manual',
         'organization',
@@ -201,7 +200,7 @@ class AwardAdmin(admin.ModelAdmin):
 class CatalogAdmin(admin.ModelAdmin):
 
     fields = [
-        # 'name',
+        'name',
         'status',
         'bhs_id',
         'title',
@@ -251,6 +250,15 @@ class CatalogAdmin(admin.ModelAdmin):
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'nomen',
+        'status',
+        'organization',
+        'code',
+        'bhs_id',
+    ]
+
     search_fields = (
         'nomen',
     )
@@ -265,14 +273,6 @@ class ChapterAdmin(admin.ModelAdmin):
     list_filter = (
         'status',
         'organization',
-    )
-
-    fields = (
-        'nomen',
-        'status',
-        'organization',
-        'code',
-        'bhs_id',
     )
 
     readonly_fields = [
@@ -385,7 +385,7 @@ class ContestantScoreAdmin(admin.ModelAdmin):
 class ConventionAdmin(admin.ModelAdmin):
 
     fields = (
-        'nomen',
+        'name',
         'status',
         'kind',
         'level',
@@ -454,7 +454,7 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        'nomen',
+        'name',
         'status',
         'kind',
         ('age', 'is_novice',),
@@ -1224,7 +1224,7 @@ class SubmissionAdmin(admin.ModelAdmin):
 class VenueAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
-        'nomen',
+        'name',
         'status',
         'name',
         'city',
@@ -1235,7 +1235,7 @@ class VenueAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'nomen',
+        'name',
         'city',
         'state',
         'timezone',

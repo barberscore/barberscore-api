@@ -13,6 +13,7 @@ class Command(BaseCommand):
             'Award',
             'Catalog',
             'Chapter',
+            'Convention',
             'Group',
             'Organization',
             'Person',
@@ -26,7 +27,6 @@ class Command(BaseCommand):
                 i.save()
 
         branches = [
-            'Convention',
             'Host',
             'Session',
             'Judge',

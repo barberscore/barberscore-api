@@ -62,6 +62,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'name',
             'status',
             'kind',
             'championship_season',
@@ -90,6 +91,7 @@ class CatalogSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'name',
             'status',
             'bhs_id',
             'title',
@@ -135,6 +137,7 @@ class ChapterSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'name',
             'status',
             'code',
@@ -224,6 +227,7 @@ class ConventionSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'name',
             'status',
             'kind',
@@ -341,6 +345,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'name',
             'status',
             'level',
@@ -481,8 +486,8 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'name',
             'nomen',
+            'name',
             'status',
             'start_date',
             'end_date',
@@ -705,6 +710,7 @@ class VenueSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'name',
             'location',
             'city',
