@@ -164,29 +164,28 @@ class Assignment(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         # Very hacky slot designator
-        if not self.slot:
-            try:
-                self.slot = self.__class__.objects.filter(
-                    session=self.session,
-                    category=self.category,
-                    kind=self.kind,
-                ).aggregate(
-                    max=models.Max('slot')
-                )['max'] + 1
-            except TypeError:
-                if self.kind == self.KIND.practice:
-                    self.slot = 6
-                else:
-                    self.slot = 1
-        slot_str = str(self.slot)
+        # if not self.slot:
+        #     try:
+        #         self.slot = self.__class__.objects.filter(
+        #             session=self.session,
+        #             category=self.category,
+        #             kind=self.kind,
+        #         ).aggregate(
+        #             max=models.Max('slot')
+        #         )['max'] + 1
+        #     except TypeError:
+        #         if self.kind == self.KIND.practice:
+        #             self.slot = 6
+        #         else:
+        #             self.slot = 1
+        # slot_str = str(self.slot)
         self.nomen = " ".join(filter(None, [
-            self.session.nomen,
             self.get_kind_display(),
             self.get_category_display(),
-            slot_str,
         ]))
+        super(Assignment, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -217,7 +216,8 @@ class Award(TimeStampedModel):
     """
     Award Model.
 
-    The specific award conferred by an organization.  Typically given once a year.
+    The specific award conferred by an organization.
+    Typically given once a year.
     """
 
     id = models.UUIDField(
@@ -389,7 +389,9 @@ class Award(TimeStampedModel):
     )
 
     threshold = models.FloatField(
-        help_text="""The score threshold for automatic qualification (if any.)""",
+        help_text="""
+            The score threshold for automatic qualification (if any.)
+        """,
         null=True,
         blank=True,
     )
@@ -401,7 +403,10 @@ class Award(TimeStampedModel):
     )
 
     advance = models.FloatField(
-        help_text="""The score threshold to advance to next round (if any) in multi-round qualification.""",
+        help_text="""
+            The score threshold to advance to next round (if any) in
+            multi-round qualification.
+        """,
         null=True,
         blank=True,
     )
@@ -446,7 +451,7 @@ class Award(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         if self.is_improved:
             most_improved = 'Most-Improved'
         else:
@@ -464,6 +469,7 @@ class Award(TimeStampedModel):
             self.idiom,
             self.get_kind_display(),
         ]))
+        super(Award, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -602,11 +608,12 @@ class Catalog(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.title,
             str(self.bhs_id),
         ]))
+        super(Catalog, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -691,7 +698,7 @@ class Chapter(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -703,6 +710,7 @@ class Chapter(TimeStampedModel):
                 )
             )
         )
+        super(Chapter, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -818,7 +826,7 @@ class Contest(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         # if self.session.convention.season == self.session.convention.SEASON.spring:
         #     self.cycle = self.session.convention.year
         # else:
@@ -832,6 +840,7 @@ class Contest(TimeStampedModel):
             suffix,
             str(self.session.convention.year),
         ]))
+        super(Contest, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -997,12 +1006,12 @@ class Contestant(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.contest.award.name,
             str(self.performer.session.convention.year),
-            self.performer.name,
         ]))
+        super(Contestant, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1432,7 +1441,7 @@ class Convention(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         if self.season == self.SEASON.summer:
             season = None
         else:
@@ -1444,6 +1453,7 @@ class Convention(TimeStampedModel):
             u"Convention",
             str(self.year),
         ]))
+        super(Convention, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1666,7 +1676,7 @@ class Group(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -1678,6 +1688,7 @@ class Group(TimeStampedModel):
                 )
             )
         )
+        super(Group, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1758,12 +1769,13 @@ class Host(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         # self.name = " ".join(filter(None, [
         #     self.convention.name,
         #     self.organization.name,
         # ]))
         self.nomen = self.id.hex
+        super(Host, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1879,7 +1891,7 @@ class Judge(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(
             filter(
                 None, [
@@ -1889,6 +1901,7 @@ class Judge(TimeStampedModel):
                 ]
             )
         )
+        super(Judge, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1972,12 +1985,13 @@ class Member(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.chapter.name,
             self.person.name,
             str(self.person.bhs_id),
         ]))
+        super(Member, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2218,8 +2232,9 @@ class Organization(MPTTModel, TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = self.name
+        super(Organization, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2323,7 +2338,7 @@ class Performance(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         if self.performer.session.convention.kind:
             kind = str(self.performer.session.convention.get_kind_display())
             if self.performer.session.convention.kind == self.performer.session.convention.KIND.international:
@@ -2342,6 +2357,7 @@ class Performance(TimeStampedModel):
             self.performer.session.get_kind_display(),
             self.performer.group.name,
         ]))
+        super(Performance, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2735,7 +2751,7 @@ class Performer(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         if self.session.convention.kind:
             kind = str(self.session.convention.get_kind_display())
             if self.session.convention.kind == self.session.convention.KIND.international:
@@ -2750,6 +2766,7 @@ class Performer(TimeStampedModel):
             self.group.name,
             self.id.hex,
         ]))
+        super(Performer, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2854,16 +2871,6 @@ class PerformerScore(Performer):
     # Internals
     class JSONAPIMeta:
         resource_name = "performerscore"
-
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
-
-    def calculate_nomen(self):
-        self.nomen = " ".join(filter(None, [
-            self.id.hex,
-        ]))
 
     # Methods
     def calculate(self, *args, **kwargs):
@@ -3295,7 +3302,7 @@ class Person(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -3307,6 +3314,7 @@ class Person(TimeStampedModel):
                 )
             )
         )
+        super(Person, self).save(*args, **kwargs)
 
     def calculate_name(self):
         name = HumanName(self.name)
@@ -3425,12 +3433,13 @@ class Role(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.group.name,
             self.person.name,
             self.get_part_display(),
         ]))
+        super(Role, self).save(*args, **kwargs)
 
     # def clean(self):
     #     if all([
@@ -3575,7 +3584,7 @@ class Round(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.session.convention.organization.name,
             str(self.session.convention.get_kind_display()),
@@ -3584,6 +3593,7 @@ class Round(TimeStampedModel):
             self.get_kind_display(),
             str(self.session.convention.year),
         ]))
+        super(Round, self).save(*args, **kwargs)
 
     # # Methods
     # def print_ann(self):
@@ -3919,10 +3929,11 @@ class Score(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.id.hex,
         ]))
+        super(Score, self).save(*args, **kwargs)
 
     # Methods
     def verify(self):
@@ -4136,18 +4147,19 @@ class Session(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
-        self.organization = self.convention.organization
-        if self.convention.kind:
-            kind = str(self.convention.get_kind_display())
-            if self.convention.kind == self.convention.KIND.international:
-                kind = None
-        else:
-            kind = None
+    def save(self, *args, **kwargs):
+        # self.organization = self.convention.organization
+        # if self.convention.kind:
+        #     kind = str(self.convention.get_kind_display())
+        #     if self.convention.kind == self.convention.KIND.international:
+        #         kind = None
+        # else:
+        #     kind = None
         self.nomen = " ".join(filter(None, [
             self.get_kind_display(),
             str(self.convention.year),
         ]))
+        super(Session, self).save(*args, **kwargs)
 
     # Methods
     # def print_oss(self):
@@ -4330,12 +4342,12 @@ class Slot(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.id.hex,
-            self.round.name,
             str(self.num),
         ]))
+        super(Slot, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -4420,10 +4432,11 @@ class Song(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.id.hex,
         ]))
+        super(Song, self).save(*args, **kwargs)
 
     def calculate(self, *args, **kwargs):
         self.songscore.calculate()
@@ -4692,11 +4705,12 @@ class Submission(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.title,
             self.id.hex[:8],
         ]))
+        super(Submission, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -4802,7 +4816,7 @@ class Venue(TimeStampedModel):
     )
 
     # Methods
-    def calculate_nomen(self):
+    def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
                 (lambda x: unicode(x).encode('utf-8')),
@@ -4815,6 +4829,7 @@ class Venue(TimeStampedModel):
                 )
             )
         )
+        super(Venue, self).save(*args, **kwargs)
 
     # Internals
     class JSONAPIMeta:

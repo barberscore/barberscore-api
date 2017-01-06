@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         config = api_apps.get_app_config('app')
 
-        primitives = [
+        models = [
             'Award',
             'Catalog',
             'Chapter',
@@ -18,15 +18,7 @@ class Command(BaseCommand):
             'Organization',
             'Person',
             'Venue',
-        ]
-
-        for primitive in primitives:
-            model = config.get_model(primitive)
-            for i in model.objects.all():
-                i.calculate_nomen()
-                i.save()
-
-        branches = [
+            # Branches,
             'Host',
             'Session',
             'Judge',
@@ -44,10 +36,9 @@ class Command(BaseCommand):
             'Score',
         ]
 
-        for branch in branches:
-            model = config.get_model(branch)
-            for i in model.objects.all():
-                i.calculate_nomen()
-                i.save()
+        for model in models:
+            Model = config.get_model(model)
+            for instance in Model.objects.all():
+                instance.save()
 
         return "Rebuilt nomens."
