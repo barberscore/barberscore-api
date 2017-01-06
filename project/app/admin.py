@@ -969,8 +969,8 @@ class RoundAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'session',
-        'kind',
+        # 'session',
+        # 'kind',
     ]
 
     raw_id_fields = (
