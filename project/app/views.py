@@ -78,6 +78,10 @@ from .models import (
     User,
 )
 
+from .paginators import (
+    PersonPaginator,
+)
+
 from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
@@ -128,6 +132,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     serializer_class = AwardSerializer
     resource_name = "award"
+    pagination_class = None
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
@@ -302,9 +307,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     )
     permission_classes = (DRYPermissions,)
     serializer_class = OrganizationSerializer
-    filter_backends = [
-        OrganizationFilterBackend,
-    ]
+    # filter_backends = [
+    #     OrganizationFilterBackend,
+    # ]
     resource_name = "organization"
 
 
@@ -393,6 +398,7 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     filter_class = PersonFilter
     resource_name = "person"
+    pagination_class = PersonPaginator
 
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))

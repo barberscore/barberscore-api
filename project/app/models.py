@@ -166,21 +166,20 @@ class Assignment(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         # Very hacky slot designator
-        # if not self.slot:
-        #     try:
-        #         self.slot = self.__class__.objects.filter(
-        #             session=self.session,
-        #             category=self.category,
-        #             kind=self.kind,
-        #         ).aggregate(
-        #             max=models.Max('slot')
-        #         )['max'] + 1
-        #     except TypeError:
-        #         if self.kind == self.KIND.practice:
-        #             self.slot = 6
-        #         else:
-        #             self.slot = 1
-        # slot_str = str(self.slot)
+        if self._state.adding:
+            try:
+                self.slot = self.__class__.objects.filter(
+                    session=self.session,
+                    category=self.category,
+                    kind=self.kind,
+                ).aggregate(
+                    max=models.Max('slot')
+                )['max'] + 1
+            except TypeError:
+                if self.kind == self.KIND.practice:
+                    self.slot = 6
+                else:
+                    self.slot = 1
         self.nomen = " ".join(filter(None, [
             self.get_kind_display(),
             self.get_category_display(),
@@ -4225,8 +4224,16 @@ class Session(TimeStampedModel):
     def has_object_read_permission(self, request):
         return True
 
-    @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.convention.drcj.user == request.user,
+                self.assignments.filter(
+                    judge__person__user=request.user,
+                    category=self.assignments.model.CATEGORY.admin,
+                ),
+                self.convention.drcj.user == request.user,
+            ])
         return False
 
     # Transitions

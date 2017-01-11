@@ -159,8 +159,6 @@ class ConventionFilter(filters.FilterSet):
 
 
 class GroupFilter(filters.FilterSet):
-    name = filters.AllLookupsFilter(name='name')
-
     class Meta:
         model = Group
         fields = {
@@ -201,12 +199,10 @@ class PersonFilter(filters.FilterSet):
 
     class Meta:
         model = Person
-        fields = [
-            'status',
-        ]
         fields = {
             'name': '__all__',
             'nomen': '__all__',
+            'status': '__all__',
         }
 
 
