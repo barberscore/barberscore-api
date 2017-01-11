@@ -42,7 +42,10 @@ from django.core.validators import (
     MinValueValidator,
     RegexValidator,
 )
-from django.db import models
+from django.db import (
+    models,
+    transaction,
+)
 
 # Local
 from .managers import (
@@ -2751,19 +2754,59 @@ class Performer(TimeStampedModel):
         return self.id.hex
 
     def save(self, *args, **kwargs):
-        if self.session.convention.kind:
-            kind = str(self.session.convention.get_kind_display())
-            if self.session.convention.kind == self.session.convention.KIND.international:
-                kind = None
+        if self._state.adding:
+            try:
+                self.lead = self.group.roles.get(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.lead,
+                )
+            except Exception:
+                pass
+            try:
+                self.tenor = self.group.roles.get(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.tenor,
+                )
+            except Exception:
+                pass
+            try:
+                self.baritone = self.group.roles.get(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.baritone,
+                )
+            except Exception:
+                pass
+            try:
+                self.bass = self.group.roles.get(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.bass,
+                )
+            except Exception:
+                pass
+            try:
+                self.director = self.group.roles.filter(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.director,
+                )[:0]
+            except Exception:
+                pass
+            try:
+                self.codirector = self.group.roles.filter(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.director,
+                )[:1]
+            except Exception:
+                pass
+            try:
+                self.representing = self.group.roles.filter(
+                    status=self.group.roles.model.STATUS.active,
+                    part=self.group.roles.model.PART.director,
+                )[:1]
+            except Exception:
+                pass
         self.nomen = " ".join(filter(None, [
-            self.session.convention.organization.name,
-            kind,
-            self.session.convention.get_season_display(),
-            str(self.session.convention.year),
-            self.session.get_kind_display(),
-            "Performer",
-            self.group.name,
-            self.id.hex,
+            self.session.nomen,
+            self.group.nomen,
         ]))
         super(Performer, self).save(*args, **kwargs)
 
