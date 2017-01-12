@@ -135,15 +135,15 @@ class AwardViewSet(viewsets.ModelViewSet):
         'scope',
     )
     serializer_class = AwardSerializer
-    resource_name = "award"
-    pagination_class = PageNumberPagination
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "award"
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
@@ -152,14 +152,14 @@ class CatalogViewSet(viewsets.ModelViewSet):
     )
     serializer_class = CatalogSerializer
     filter_class = CatalogFilter
-    resource_name = "catalog"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "catalog"
 
 
 class JudgeViewSet(viewsets.ModelViewSet):
@@ -170,14 +170,14 @@ class JudgeViewSet(viewsets.ModelViewSet):
     )
     serializer_class = JudgeSerializer
     filter_class = JudgeFilter
-    resource_name = "judge"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "judge"
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
@@ -190,15 +190,15 @@ class ChapterViewSet(viewsets.ModelViewSet):
         'name',
     )
     serializer_class = ChapterSerializer
-    resource_name = "chapter"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "chapter"
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -214,15 +214,15 @@ class ContestViewSet(viewsets.ModelViewSet):
         'session',
     )
     serializer_class = ContestSerializer
-    resource_name = "contest"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "contest"
 
 
 class ContestScoreViewSet(viewsets.ModelViewSet):
@@ -230,15 +230,15 @@ class ContestScoreViewSet(viewsets.ModelViewSet):
         'champion',
     )
     serializer_class = ContestScoreSerializer
-    resource_name = "contestscore"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "contestscore"
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -250,14 +250,14 @@ class ContestantViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
-    resource_name = "contestant"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "contestant"
 
 
 class ContestantScoreViewSet(viewsets.ModelViewSet):
@@ -265,15 +265,15 @@ class ContestantScoreViewSet(viewsets.ModelViewSet):
         'name',
     )
     serializer_class = ContestantScoreSerializer
-    resource_name = "contestantscore"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "contestantscore"
 
 
 class ConventionViewSet(
@@ -295,11 +295,11 @@ class ConventionViewSet(
     filter_backends = [
         ConventionFilterBackend,
     ]
-    resource_name = "convention"
     pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "convention"
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -315,14 +315,14 @@ class GroupViewSet(viewsets.ModelViewSet):
     )
     serializer_class = GroupSerializer
     filter_class = GroupFilter
-    resource_name = "group"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "group"
 
 
 class HostViewSet(viewsets.ModelViewSet):
@@ -331,15 +331,15 @@ class HostViewSet(viewsets.ModelViewSet):
         'organization',
     )
     serializer_class = HostSerializer
-    resource_name = "host"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "host"
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
@@ -355,15 +355,15 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         'slot',
     )
     serializer_class = AssignmentSerializer
-    resource_name = "assignment"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "assignment"
 
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -372,11 +372,15 @@ class MemberViewSet(viewsets.ModelViewSet):
         'person',
     )
     serializer_class = MemberSerializer
-    resource_name = "member"
+    filter_class = None
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
     pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "member"
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -388,15 +392,15 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         'name',
     )
     serializer_class = OrganizationSerializer
-    resource_name = "organization"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "organization"
 
 
 class PerformanceViewSet(
@@ -415,15 +419,15 @@ class PerformanceViewSet(
         'num',
     )
     serializer_class = PerformanceSerializer
-    resource_name = "performance"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "performance"
 
 
 class PerformanceScoreViewSet(viewsets.ModelViewSet):
@@ -431,15 +435,15 @@ class PerformanceScoreViewSet(viewsets.ModelViewSet):
         'nomen',
     )
     serializer_class = PerformanceScoreSerializer
-    resource_name = "performancescore"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         PerformanceScoreFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "performancescore"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -464,14 +468,14 @@ class PerformerViewSet(viewsets.ModelViewSet):
     )
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
-    resource_name = "performer"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "performer"
 
 
 class PerformerScoreViewSet(viewsets.ModelViewSet):
@@ -479,16 +483,15 @@ class PerformerScoreViewSet(viewsets.ModelViewSet):
         'nomen',
     )
     serializer_class = PerformerScoreSerializer
+    filter_class = None
     filter_backends = [
-        # CoalesceFilterBackend,
         PerformerScoreFilterBackend,
     ]
-    resource_name = "performerscore"
     pagination_class = None
-    filter_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "performerscore"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -503,14 +506,14 @@ class PersonViewSet(viewsets.ModelViewSet):
     )
     serializer_class = PersonSerializer
     filter_class = PersonFilter
-    resource_name = "person"
-    pagination_class = PersonPaginator
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = PersonPaginator
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "person"
 
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
@@ -536,12 +539,15 @@ class RoleViewSet(viewsets.ModelViewSet):
         '-nomen',
     )
     serializer_class = RoleSerializer
-    resource_name = "role"
     pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "role"
 
 
 class RoundViewSet(
@@ -558,15 +564,15 @@ class RoundViewSet(
         'kind',
     )
     serializer_class = RoundSerializer
+    filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
     ]
-    resource_name = "round"
     pagination_class = None
-    filter_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "round"
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -583,16 +589,16 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'song',
         'assignment',
     )
+    serializer_class = ScoreSerializer
+    filter_class = None
     filter_backends = [
         ScoreFilterBackend,
     ]
-    serializer_class = ScoreSerializer
-    resource_name = "score"
     pagination_class = None
-    filter_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "score"
 
 
 class SessionViewSet(
@@ -610,15 +616,15 @@ class SessionViewSet(
         '-start_date',
     )
     serializer_class = SessionSerializer
+    filter_class = SessionFilter
     filter_backends = [
         SessionFilterBackend,
     ]
-    filter_class = SessionFilter
-    resource_name = "session"
     pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "session"
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -629,14 +635,14 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     )
     serializer_class = SubmissionSerializer
     filter_class = SubmissionFilter
-    resource_name = "submission"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "submission"
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -651,15 +657,15 @@ class SongViewSet(viewsets.ModelViewSet):
         'num',
     )
     serializer_class = SongSerializer
-    resource_name = "song"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "song"
 
 
 class SongScoreViewSet(viewsets.ModelViewSet):
@@ -667,15 +673,15 @@ class SongScoreViewSet(viewsets.ModelViewSet):
         'nomen',
     )
     serializer_class = SongScoreSerializer
-    resource_name = "songscore"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "songscore"
 
 
 class SlotViewSet(viewsets.ModelViewSet):
@@ -688,15 +694,15 @@ class SlotViewSet(viewsets.ModelViewSet):
         'num',
     )
     serializer_class = SlotSerializer
-    resource_name = "slot"
-    pagination_class = None
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "slot"
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -707,25 +713,28 @@ class VenueViewSet(viewsets.ModelViewSet):
     )
     serializer_class = VenueSerializer
     filter_class = VenueFilter
-    resource_name = "venue"
-    pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "venue"
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_backends = (UserFilterBackend,)
-    pagination_class = None
     filter_class = None
+    filter_backends = [
+        UserFilterBackend,
+    ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
+    resource_name = "user"
 
     @list_route(methods=['get'], permission_classes=[AllowAny])
     def me(self, request):
