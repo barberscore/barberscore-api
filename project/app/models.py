@@ -186,6 +186,7 @@ class Assignment(TimeStampedModel):
         self.nomen = " ".join(filter(None, [
             self.get_kind_display(),
             self.get_category_display(),
+            str(self.slot),
         ]))
         super(Assignment, self).save(*args, **kwargs)
 
@@ -209,7 +210,6 @@ class Assignment(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 self.session.convention.drcj.user == request.user,
-                self.judge.person.user == request.user,
             ])
         return False
 
@@ -3628,12 +3628,7 @@ class Round(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
-            self.session.convention.organization.name,
-            str(self.session.convention.get_kind_display()),
-            self.session.convention.get_season_display(),
-            self.session.get_kind_display(),
             self.get_kind_display(),
-            str(self.session.convention.year),
         ]))
         super(Round, self).save(*args, **kwargs)
 
@@ -4132,6 +4127,11 @@ class Session(TimeStampedModel):
     num_rounds = models.IntegerField(
     )
 
+    panel_size = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     cursor = models.OneToOneField(
         'Performance',
         null=True,
@@ -4197,6 +4197,36 @@ class Session(TimeStampedModel):
         #         kind = None
         # else:
         #     kind = None
+        if self._state.adding:
+            with transaction.atomic():
+                # Add Rounds
+                i = 1
+                while i <= self.num_rounds:
+                    self.rounds.create(
+                        num=i,
+                        kind=(self.num_rounds - i) + 1,
+                    )
+                    i += 1
+                # Add Assignments
+                self.assignments.create(
+                    category=self.assignments.model.CATEGORY.admin,
+                    kind=self.assignments.model.KIND.official,
+                )
+                j = 1
+                while j <= self.panel_size:
+                    self.assignments.create(
+                        category=self.assignments.model.CATEGORY.music,
+                        kind=self.assignments.model.KIND.official,
+                    )
+                    self.assignments.create(
+                        category=self.assignments.model.CATEGORY.presentation,
+                        kind=self.assignments.model.KIND.official,
+                    )
+                    self.assignments.create(
+                        category=self.assignments.model.CATEGORY.singing,
+                        kind=self.assignments.model.KIND.official,
+                    )
+                    j += 1
         self.nomen = " ".join(filter(None, [
             self.get_kind_display(),
             str(self.convention.year),

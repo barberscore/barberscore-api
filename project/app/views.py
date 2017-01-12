@@ -122,6 +122,31 @@ from .serializers import (
 log = logging.getLogger(__name__)
 
 
+class AssignmentViewSet(viewsets.ModelViewSet):
+    queryset = Assignment.objects.select_related(
+        'session',
+        'judge',
+    ).prefetch_related(
+        'scores',
+    ).order_by(
+        'session',
+        'category',
+        'kind',
+        'slot',
+    )
+    serializer_class = AssignmentSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "assignment"
+
+
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
         'organization',
@@ -139,7 +164,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
@@ -216,6 +241,7 @@ class ContestViewSet(viewsets.ModelViewSet):
     serializer_class = ContestSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -340,30 +366,6 @@ class HostViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "host"
-
-
-class AssignmentViewSet(viewsets.ModelViewSet):
-    queryset = Assignment.objects.select_related(
-        'session',
-        'judge',
-    ).prefetch_related(
-        'scores',
-    ).order_by(
-        'session',
-        'category',
-        'kind',
-        'slot',
-    )
-    serializer_class = AssignmentSerializer
-    filter_class = None
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    pagination_class = None
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "assignment"
 
 
 class MemberViewSet(viewsets.ModelViewSet):
