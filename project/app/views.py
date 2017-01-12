@@ -2,6 +2,7 @@
 import logging
 
 # Third-Party
+from dry_rest_permissions.generics import DRYPermissions
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_fsm_transitions.viewset_mixins import (
     get_viewset_transition_action_mixin,
@@ -140,6 +141,9 @@ class AwardViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
@@ -152,6 +156,9 @@ class CatalogViewSet(viewsets.ModelViewSet):
     pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -167,6 +174,9 @@ class JudgeViewSet(viewsets.ModelViewSet):
     pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -185,6 +195,9 @@ class ChapterViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -207,6 +220,9 @@ class ContestViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class ContestScoreViewSet(viewsets.ModelViewSet):
@@ -219,6 +235,9 @@ class ContestScoreViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -236,6 +255,9 @@ class ContestantViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class ContestantScoreViewSet(viewsets.ModelViewSet):
@@ -248,6 +270,9 @@ class ContestantScoreViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -272,6 +297,9 @@ class ConventionViewSet(
     ]
     resource_name = "convention"
     pagination_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -292,6 +320,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class HostViewSet(viewsets.ModelViewSet):
@@ -305,6 +336,9 @@ class HostViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -327,6 +361,9 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -337,6 +374,9 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     resource_name = "member"
     pagination_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -353,6 +393,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -378,6 +421,9 @@ class PerformanceViewSet(
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class PerformanceScoreViewSet(viewsets.ModelViewSet):
@@ -390,6 +436,9 @@ class PerformanceScoreViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         PerformanceScoreFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -420,6 +469,9 @@ class PerformerViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class PerformerScoreViewSet(viewsets.ModelViewSet):
@@ -434,6 +486,9 @@ class PerformerScoreViewSet(viewsets.ModelViewSet):
     resource_name = "performerscore"
     pagination_class = None
     filter_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -452,6 +507,9 @@ class PersonViewSet(viewsets.ModelViewSet):
     pagination_class = PersonPaginator
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
@@ -506,6 +564,9 @@ class RoundViewSet(
     resource_name = "round"
     pagination_class = None
     filter_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -529,6 +590,9 @@ class ScoreViewSet(viewsets.ModelViewSet):
     resource_name = "score"
     pagination_class = None
     filter_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class SessionViewSet(
@@ -552,6 +616,9 @@ class SessionViewSet(
     filter_class = SessionFilter
     resource_name = "session"
     pagination_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -566,6 +633,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     pagination_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -587,6 +657,9 @@ class SongViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class SongScoreViewSet(viewsets.ModelViewSet):
@@ -599,6 +672,9 @@ class SongScoreViewSet(viewsets.ModelViewSet):
     filter_class = None
     filter_backends = [
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
     ]
 
 
@@ -618,6 +694,9 @@ class SlotViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -633,6 +712,9 @@ class VenueViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
+    permission_classes = [
+        DRYPermissions,
+    ]
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -641,6 +723,9 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (UserFilterBackend,)
     pagination_class = None
     filter_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
 
     @list_route(methods=['get'], permission_classes=[AllowAny])
     def me(self, request):
