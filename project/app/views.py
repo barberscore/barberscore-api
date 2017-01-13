@@ -187,24 +187,6 @@ class CatalogViewSet(viewsets.ModelViewSet):
     resource_name = "catalog"
 
 
-class JudgeViewSet(viewsets.ModelViewSet):
-    queryset = Judge.objects.select_related(
-        'person',
-    ).prefetch_related(
-        'assignments',
-    )
-    serializer_class = JudgeSerializer
-    filter_class = JudgeFilter
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    pagination_class = None
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "judge"
-
-
 class ChapterViewSet(viewsets.ModelViewSet):
     queryset = Chapter.objects.select_related(
         'organization',
@@ -366,6 +348,24 @@ class HostViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "host"
+
+
+class JudgeViewSet(viewsets.ModelViewSet):
+    queryset = Judge.objects.select_related(
+        'person',
+    ).prefetch_related(
+        'assignments',
+    )
+    serializer_class = JudgeSerializer
+    filter_class = JudgeFilter
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    pagination_class = None
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "judge"
 
 
 class MemberViewSet(viewsets.ModelViewSet):
