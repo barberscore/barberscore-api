@@ -4297,15 +4297,19 @@ class Session(TimeStampedModel):
     def has_object_read_permission(self, request):
         return True
 
+    @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
+            if self.convention.drcj:
+                drcj = bool(self.convention.drcj.user == request.user)
+            else:
+                drcj = False
             return any([
-                self.convention.drcj.user == request.user,
+                drcj,
                 self.assignments.filter(
                     judge__person__user=request.user,
                     category=self.assignments.model.CATEGORY.admin,
                 ),
-                self.convention.drcj.user == request.user,
             ])
         return False
 
