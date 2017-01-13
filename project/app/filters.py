@@ -26,6 +26,16 @@ class CatalogFilter(filters.FilterSet):
         }
 
 
+class ContestantFilter(filters.FilterSet):
+    class Meta:
+        model = Contestant
+        fields = {
+            'nomen': [
+                'icontains',
+            ],
+        }
+
+
 class ConventionFilter(filters.FilterSet):
     class Meta:
         model = Convention
@@ -64,16 +74,6 @@ class JudgeFilter(filters.FilterSet):
             ],
             'category': [
                 'exact',
-            ],
-        }
-
-
-class ContestantFilter(filters.FilterSet):
-    class Meta:
-        model = Contestant
-        fields = {
-            'nomen': [
-                'icontains',
             ],
         }
 
