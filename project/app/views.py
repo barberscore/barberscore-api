@@ -28,13 +28,16 @@ from rest_framework.parsers import (
 # Local
 from .backends import (
     CoalesceFilterBackend,
-    ConventionFilterBackend,
+    ContestScoreFilterBackend,
+    # ConventionFilterBackend,
+    # GroupFilterBackend,
     # OrganizationFilterBackend,
     PerformanceScoreFilterBackend,
     PerformerScoreFilterBackend,
+    SongScoreFilterBackend,
     ScoreFilterBackend,
-    SessionFilterBackend,
-    UserFilterBackend,
+    # SessionFilterBackend,
+    # UserFilterBackend,
 )
 
 from .filters import (
@@ -162,6 +165,7 @@ class AwardViewSet(viewsets.ModelViewSet):
     serializer_class = AwardSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -178,6 +182,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
     serializer_class = CatalogSerializer
     filter_class = CatalogFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -199,6 +204,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
     serializer_class = ChapterSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -240,7 +246,8 @@ class ContestScoreViewSet(viewsets.ModelViewSet):
     serializer_class = ContestScoreSerializer
     filter_class = None
     filter_backends = [
-        DjangoFilterBackend,
+        CoalesceFilterBackend,
+        ContestScoreFilterBackend,
     ]
     pagination_class = None
     permission_classes = [
@@ -259,6 +266,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -275,6 +283,7 @@ class ContestantScoreViewSet(viewsets.ModelViewSet):
     serializer_class = ContestantScoreSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -299,11 +308,12 @@ class ConventionViewSet(
         'organization__name',
     )
     serializer_class = ConventionSerializer
-    filter_class = ConventionFilter
+    filter_class = None
     filter_backends = [
-        ConventionFilterBackend,
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
     ]
-    pagination_class = None
+    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -324,13 +334,26 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = None
+    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
     resource_name = "group"
+
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def picture(self, request, *args, **kwargs):
+        if 'upload' in request.data:
+            group = self.get_object()
+            group.picture.delete()
+            upload = request.data['upload']
+            group.picture.save(upload.name, upload)
+            return Response(status=status.HTTP_201_CREATED, headers={'Location': group.picture.url})
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class HostViewSet(viewsets.ModelViewSet):
@@ -341,6 +364,7 @@ class HostViewSet(viewsets.ModelViewSet):
     serializer_class = HostSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -359,6 +383,7 @@ class JudgeViewSet(viewsets.ModelViewSet):
     serializer_class = JudgeSerializer
     filter_class = JudgeFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -376,6 +401,7 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -396,6 +422,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -423,6 +450,7 @@ class PerformanceViewSet(
     serializer_class = PerformanceSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -471,6 +499,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -509,6 +538,7 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     filter_class = PersonFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = PersonPaginator
@@ -544,6 +574,7 @@ class RoleViewSet(viewsets.ModelViewSet):
     pagination_class = None
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -569,6 +600,7 @@ class RoundViewSet(
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
+        DjangoFilterBackend,
     ]
     pagination_class = None
     permission_classes = [
@@ -594,6 +626,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     serializer_class = ScoreSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         ScoreFilterBackend,
     ]
     pagination_class = None
@@ -620,9 +653,10 @@ class SessionViewSet(
     serializer_class = SessionSerializer
     filter_class = SessionFilter
     filter_backends = [
-        SessionFilterBackend,
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
     ]
-    pagination_class = None
+    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -638,6 +672,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     filter_class = SubmissionFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -661,6 +696,7 @@ class SongViewSet(viewsets.ModelViewSet):
     serializer_class = SongSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -677,7 +713,7 @@ class SongScoreViewSet(viewsets.ModelViewSet):
     serializer_class = SongScoreSerializer
     filter_class = None
     filter_backends = [
-        DjangoFilterBackend,
+        SongScoreFilterBackend,
     ]
     pagination_class = None
     permission_classes = [
@@ -698,6 +734,7 @@ class SlotViewSet(viewsets.ModelViewSet):
     serializer_class = SlotSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -716,6 +753,7 @@ class VenueViewSet(viewsets.ModelViewSet):
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     filter_backends = [
+        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     pagination_class = None
@@ -730,7 +768,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_class = None
     filter_backends = [
-        UserFilterBackend,
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
     ]
     pagination_class = None
     permission_classes = [
