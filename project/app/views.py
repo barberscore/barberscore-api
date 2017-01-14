@@ -87,7 +87,6 @@ from .models import (
 
 from .paginators import (
     PageNumberPagination,
-    PersonPaginator,
 )
 
 from .serializers import (
@@ -541,7 +540,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PersonPaginator
+    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
