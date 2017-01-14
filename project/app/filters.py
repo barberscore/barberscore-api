@@ -1,5 +1,6 @@
 # Third-Party
 from django_filters import rest_framework as filters
+from django_filters import STRICTNESS
 
 # Local
 from .models import (
@@ -24,6 +25,7 @@ class CatalogFilter(filters.FilterSet):
                 'icontains',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class ContestantFilter(filters.FilterSet):
@@ -34,6 +36,7 @@ class ContestantFilter(filters.FilterSet):
                 'icontains',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class ConventionFilter(filters.FilterSet):
@@ -47,6 +50,7 @@ class ConventionFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class GroupFilter(filters.FilterSet):
@@ -63,6 +67,7 @@ class GroupFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class JudgeFilter(filters.FilterSet):
@@ -76,6 +81,7 @@ class JudgeFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class PerformerFilter(filters.FilterSet):
@@ -89,6 +95,7 @@ class PerformerFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class PersonFilter(filters.FilterSet):
@@ -102,6 +109,7 @@ class PersonFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class SessionFilter(filters.FilterSet):
@@ -115,6 +123,7 @@ class SessionFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class SubmissionFilter(filters.FilterSet):
@@ -125,6 +134,7 @@ class SubmissionFilter(filters.FilterSet):
                 'exact',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
 
 class VenueFilter(filters.FilterSet):
@@ -135,3 +145,4 @@ class VenueFilter(filters.FilterSet):
                 'icontains',
             ],
         }
+        strict = STRICTNESS.RAISE_VALIDATION_ERROR
