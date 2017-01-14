@@ -1,5 +1,4 @@
 # Third-Party
-# from fsm_admin.mixins import FSMTransitionMixin
 from mptt.admin import MPTTModelAdmin
 
 # Django
@@ -15,7 +14,7 @@ from .inlines import (
     AwardInline,
     ContestantInline,
     ContestInline,
-    ConventionInline,
+    # ConventionInline,
     GroupInline,
     HostInline,
     JudgeInline,
@@ -26,7 +25,7 @@ from .inlines import (
     RoundInline,
     ScoreInline,
     SessionInline,
-    SongInline,
+    # SongInline,
     SubmissionInline,
 )
 from .models import (
@@ -60,14 +59,6 @@ from .models import (
     User,
     Venue,
 )
-
-
-# from django_fsm_log.models import StateLog
-
-
-# @admin.register(StateLog)
-# class StateLogAdmin(admin.ModelAdmin):
-#     pass
 
 
 @admin.register(Assignment)
