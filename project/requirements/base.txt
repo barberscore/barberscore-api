@@ -4,7 +4,7 @@ awscli==1.11.36
 botocore==1.4.93
 dj-database-url==0.4.2
 django-cors-headers==2.0.0
-django-filter==0.15.3
+django-filter==1.0.1
 django-fsm==2.4.0
 django-model-utils==2.6.1
 django-mptt==0.8.7
