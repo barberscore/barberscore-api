@@ -71,7 +71,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'slot',
         'bhs_id',
         'session',
-        'judge',
+        'person',
         'organization',
     ]
 
@@ -80,7 +80,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'category',
-        'judge',
+        'person',
         'organization',
     ]
 
@@ -93,12 +93,12 @@ class AssignmentAdmin(admin.ModelAdmin):
     list_select_related = [
         'organization',
         'session',
-        'judge',
+        'person',
     ]
 
     raw_id_fields = (
         'session',
-        'judge',
+        'person',
     )
 
     readonly_fields = [
