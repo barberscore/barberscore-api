@@ -8,6 +8,7 @@ from .models import (
     Convention,
     Group,
     Judge,
+    Organization,
     Performer,
     Person,
     Session,
@@ -79,6 +80,19 @@ class JudgeFilter(filters.FilterSet):
                 'exact',
             ],
             'person__user': [
+                'exact',
+            ],
+        }
+
+
+class OrganizationFilter(filters.FilterSet):
+    class Meta:
+        model = Organization
+        fields = {
+            'nomen': [
+                'icontains',
+            ],
+            'representative__user': [
                 'exact',
             ],
         }

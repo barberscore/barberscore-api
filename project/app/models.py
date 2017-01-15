@@ -136,6 +136,14 @@ class Assignment(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    person = models.ForeignKey(
+        'Person',
+        related_name='assignments',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     organization = TreeForeignKey(
         'Organization',
         related_name='assignments',

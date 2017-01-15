@@ -41,6 +41,7 @@ from .filters import (
     ConventionFilter,
     GroupFilter,
     JudgeFilter,
+    OrganizationFilter,
     PerformerFilter,
     PersonFilter,
     SessionFilter,
@@ -414,7 +415,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         'name',
     )
     serializer_class = OrganizationSerializer
-    filter_class = None
+    filter_class = OrganizationFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
