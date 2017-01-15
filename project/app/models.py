@@ -3952,6 +3952,14 @@ class Score(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    person = models.ForeignKey(
+        'Person',
+        related_name='scores',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     # Internals
     class Meta:
         unique_together = (
