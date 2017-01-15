@@ -123,7 +123,7 @@ log = logging.getLogger(__name__)
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'session',
-        'judge',
+        'person',
     ).prefetch_related(
         'scores',
     ).order_by(
@@ -372,8 +372,6 @@ class HostViewSet(viewsets.ModelViewSet):
 class JudgeViewSet(viewsets.ModelViewSet):
     queryset = Judge.objects.select_related(
         'person',
-    ).prefetch_related(
-        'assignments',
     )
     serializer_class = JudgeSerializer
     filter_class = JudgeFilter
@@ -610,7 +608,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'assignment',
         'song__performance__performer__session',
         'song__performance__round',
-        'assignment__judge__person',
+        'assignment__judge',
     ).prefetch_related(
         'song__performance__performer__group__roles',
         'song__performance__round__session__assignments',

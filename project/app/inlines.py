@@ -148,14 +148,14 @@ class HostInline(admin.TabularInline):
 class AssignmentInline(admin.TabularInline):
     model = Assignment
     fields = [
-        'judge_old',
+        'judge',
         'category',
         'kind',
         'session',
         'slot',
     ]
     raw_id_fields = [
-        'judge_old',
+        'judge',
     ]
     ordering = (
         'session',

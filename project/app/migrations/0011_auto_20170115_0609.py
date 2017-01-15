@@ -12,5 +12,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField('Assignment', 'judge', 'judge_old'),
+        migrations.RenameField('Assignment', 'judge', 'judge'),
     ]
