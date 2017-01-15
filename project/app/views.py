@@ -29,15 +29,10 @@ from rest_framework.parsers import (
 from .backends import (
     CoalesceFilterBackend,
     ContestScoreFilterBackend,
-    # ConventionFilterBackend,
-    # GroupFilterBackend,
-    # OrganizationFilterBackend,
     PerformanceScoreFilterBackend,
     PerformerScoreFilterBackend,
     SongScoreFilterBackend,
     ScoreFilterBackend,
-    # SessionFilterBackend,
-    # UserFilterBackend,
 )
 
 from .filters import (
