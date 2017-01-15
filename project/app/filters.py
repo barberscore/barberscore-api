@@ -140,7 +140,7 @@ class SessionFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'assignments__person__user': [
+            'assignments__judge__user': [
                 'exact',
             ],
         }

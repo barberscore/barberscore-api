@@ -136,7 +136,7 @@ class Assignment(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    person = models.ForeignKey(
+    judge = models.ForeignKey(
         'Person',
         related_name='assignments',
         null=True,
