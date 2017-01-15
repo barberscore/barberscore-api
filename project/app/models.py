@@ -128,7 +128,7 @@ class Assignment(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    judge = models.ForeignKey(
+    judge_old = models.ForeignKey(
         'Judge',
         related_name='assignments',
         null=True,
