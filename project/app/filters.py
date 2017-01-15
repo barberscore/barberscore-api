@@ -122,6 +122,12 @@ class SessionFilter(filters.FilterSet):
             'convention': [
                 'exact',
             ],
+            'nomen': [
+                'icontains',
+            ],
+            'assignments__judge__person__user': [
+                'exact',
+            ],
         }
         strict = STRICTNESS.RAISE_VALIDATION_ERROR
 
