@@ -294,6 +294,7 @@ class ConventionViewSet(
     queryset = Convention.objects.select_related(
         'organization',
         'venue',
+        'drcj',
     ).prefetch_related(
         'sessions',
     ).order_by(

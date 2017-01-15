@@ -239,6 +239,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'end_date',
             'venue',
             'organization',
+            'drcj',
             'sessions',
             'permissions',
         )
@@ -362,6 +363,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'short_name',
             'code',
             'long_name',
+            'representative',
             'parent',
             'children',
             'awards',
