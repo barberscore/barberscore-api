@@ -62,6 +62,9 @@ class GroupFilter(filters.FilterSet):
             'status': [
                 'exact',
             ],
+            'roles__person__user': [
+                'exact',
+            ],
         }
 
 
@@ -73,6 +76,9 @@ class JudgeFilter(filters.FilterSet):
                 'icontains',
             ],
             'category': [
+                'exact',
+            ],
+            'person__user': [
                 'exact',
             ],
         }
@@ -101,6 +107,9 @@ class PersonFilter(filters.FilterSet):
             'status': [
                 'exact',
             ],
+            'user': [
+                'exact',
+            ],
         }
 
 
@@ -112,6 +121,9 @@ class SessionFilter(filters.FilterSet):
                 'exact',
             ],
             'convention': [
+                'exact',
+            ],
+            'assignments__judge__person__user': [
                 'exact',
             ],
         }
