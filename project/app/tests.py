@@ -229,15 +229,7 @@ def build_primitives():
         email='joe@barberscore.com',
         name='Joe District',
     )
-    representative = PersonFactory(
-        name='Joe District',
-        user=user,
-    )
     bhs = InternationalFactory()
-    district = DistrictFactory(
-        parent=bhs,
-        representative=representative,
-    )
     InternationalQuartetAwardFactory(
         organization=bhs,
     )

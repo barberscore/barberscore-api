@@ -207,10 +207,6 @@ class Assignment(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.session.convention.drcj.user == request.user,
-            ])
         return False
 
 
@@ -490,8 +486,6 @@ class Award(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return self.organization.representative.user == request.user
         return False
 
 
@@ -731,10 +725,6 @@ class Chapter(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.organization.representative.user == request.user,
-            ])
         return False
 
 
@@ -861,8 +851,6 @@ class Contest(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return self.session.convention.drcj.user == request.user
         return False
 
     # Methods
@@ -926,7 +914,6 @@ class ContestScore(Contest):
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.award.organization.representative.user == request.user,
                 self.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.session.assignments.model.category.ADMIN,
@@ -939,7 +926,6 @@ class ContestScore(Contest):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.award.organization.representative.user == request.user,
                 self.session.assignments.filter(
                     judge__person__user=request.user,
                     category=self.session.assignments.model.category.ADMIN,
@@ -1034,7 +1020,6 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.contest.session.convention.drcj.user == request.user,
                 self.contest.session.assignments.filter(
                     judge__person__user=request.user,
                 ),
@@ -1236,18 +1221,10 @@ class ContestantScore(Contestant):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.contest.award.organization.representative.user == request.user,
-            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.contest.award.organization.representative.user == request.user,
-            ])
         return False
 
 
@@ -1398,7 +1375,7 @@ class Convention(TimeStampedModel):
         blank=True
     )
 
-    drcj = models.ForeignKey(
+    drcj_old = models.ForeignKey(
         'Person',
         null=True,
         blank=True,
@@ -1474,12 +1451,6 @@ class Convention(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.hosts.filter(
-                    organization__representative__user=request.user,
-                ),
-            ])
         return False
 
     # Transitions
@@ -1796,10 +1767,6 @@ class Host(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.organization.representative.user == request.user,
-            ])
         return False
 
 
@@ -2205,7 +2172,7 @@ class Organization(MPTTModel, TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    representative = models.ForeignKey(
+    representative_old = models.ForeignKey(
         'Person',
         related_name='organizations',
         blank=True,
@@ -2254,10 +2221,6 @@ class Organization(MPTTModel, TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.representative.user == request.user,
-            ])
         return False
 
 
@@ -2378,14 +2341,6 @@ class Performance(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                # self.round.session.assignments.filter(
-                #     judge__person__user=request.user,
-                #     category=self.round.session.assignments.model.category.ADMIN,
-                # ),
-                self.performer.session.convention.drcj.user == request.user,
-            ])
         return False
 
     # Transitions
@@ -2837,7 +2792,6 @@ class Performer(TimeStampedModel):
                     judge__person__user=request.user,
                     category=self.session.assignments.model.CATEGORY.admin,
                 ),
-                self.session.convention.drcj.user == request.user,
             ])
         return False
 
@@ -4300,12 +4254,7 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            if self.convention.drcj:
-                drcj = bool(self.convention.drcj.user == request.user)
-            else:
-                drcj = False
             return any([
-                drcj,
                 self.assignments.filter(
                     judge__person__user=request.user,
                     category=self.assignments.model.CATEGORY.admin,
@@ -4822,7 +4771,6 @@ class Submission(TimeStampedModel):
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
                 ),
-                self.performer.session.convention.drcj.user == request.user,
             ])
         return False
 
@@ -4841,7 +4789,6 @@ class Submission(TimeStampedModel):
                 self.performer.session.assignments.filter(
                     judge__person__user=request.user,
                 ),
-                self.performer.session.convention.drcj.user == request.user,
             ])
         return False
 

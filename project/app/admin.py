@@ -385,7 +385,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'end_date',
         'year',
         'season',
-        'drcj',
     )
 
     list_display = (
@@ -423,7 +422,6 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = [
-        'drcj',
         'venue',
     ]
 
@@ -638,7 +636,6 @@ class OrganizationAdmin(MPTTModelAdmin):
         'short_name',
         'long_name',
         'location',
-        'representative',
         'spots',
         'website',
         'facebook',
@@ -673,10 +670,6 @@ class OrganizationAdmin(MPTTModelAdmin):
 
     readonly_fields = [
         'nomen',
-    ]
-
-    raw_id_fields = [
-        'representative',
     ]
 
     readonly_fields = [
