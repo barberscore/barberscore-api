@@ -52,6 +52,26 @@ class TimezoneField(serializers.Field):
             raise ValidationError('Unknown timezone')
 
 
+class AssignmentSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Assignment
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'category',
+            'designation',
+            'kind',
+            'slot',
+            'person',
+            'session',
+            'permissions',
+        )
+
+
 class AwardSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
@@ -91,7 +111,6 @@ class CatalogSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
-            'name',
             'status',
             'bhs_id',
             'title',
@@ -104,27 +123,6 @@ class CatalogSerializer(serializers.ModelSerializer):
             'is_medley',
             'is_learning',
             'voicing',
-            'permissions',
-        )
-
-
-class JudgeSerializer(serializers.ModelSerializer):
-
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Judge
-        fields = (
-            'id',
-            'url',
-            'nomen',
-            'category',
-            'kind',
-            'status',
-            'start_date',
-            'end_date',
-            'person',
-            'assignments',
             'permissions',
         )
 
@@ -298,23 +296,22 @@ class HostSerializer(serializers.ModelSerializer):
         )
 
 
-class AssignmentSerializer(serializers.ModelSerializer):
+class JudgeSerializer(serializers.ModelSerializer):
+
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = Assignment
+        model = Judge
         fields = (
             'id',
             'url',
             'nomen',
-            'status',
             'category',
-            'designation',
             'kind',
-            'slot',
-            'judge',
-            'session',
-            'scores',
+            'status',
+            'start_date',
+            'end_date',
+            'person',
             'permissions',
         )
 
@@ -501,7 +498,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'roles',
             'organizations',
             'conventions',
-            'judges',
             'common_name',
             'full_name',
             'formal_name',
@@ -584,7 +580,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'penalty',
             'is_flagged',
             'song',
-            'assignment',
+            'person',
             'permissions',
         ]
 

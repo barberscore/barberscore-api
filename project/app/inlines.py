@@ -225,7 +225,7 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
-        'assignment',
+        'person',
         'category',
         'points',
     ]
@@ -235,10 +235,10 @@ class ScoreInline(admin.TabularInline):
     readonly_fields = [
         'song',
         'category',
-        'assignment',
+        'person',
     ]
     ordering = (
-        'assignment',
+        'person',
     )
     show_change_link = True
     extra = 0

@@ -124,8 +124,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'session',
         'person',
-    ).prefetch_related(
-        'scores',
     ).order_by(
         'session',
         'category',
@@ -524,7 +522,6 @@ class PersonViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'roles',
         'conventions',
-        'judges',
     ).order_by(
         'name',
     )
@@ -605,16 +602,14 @@ class RoundViewSet(
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
-        'assignment',
+        'person',
         'song__performance__performer__session',
         'song__performance__round',
-        'assignment__judge',
     ).prefetch_related(
         'song__performance__performer__group__roles',
         'song__performance__round__session__assignments',
     ).order_by(
         'song',
-        'assignment',
     )
     serializer_class = ScoreSerializer
     filter_class = None

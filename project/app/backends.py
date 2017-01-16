@@ -25,7 +25,7 @@ class ContestScoreFilterBackend(DRYPermissionFiltersBase):
                 return queryset.all()
             return queryset.filter(
                 # group__roles__person__user=request.user,
-                Q(session__assignment__judge__user=request.user)
+                Q(session__assignment__person__user=request.user)
                 # session__assignment__judge__user=request.user,
             )
         return queryset.none()
@@ -39,7 +39,7 @@ class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
                 return queryset.all()
             return queryset.filter(
                 # group__roles__person__user=request.user,
-                Q(session__assignment__judge__user=request.user)
+                Q(session__assignment__person__user=request.user)
                 # session__assignment__judge__user=request.user,
             )
         return queryset.none()

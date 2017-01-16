@@ -928,7 +928,7 @@ class ContestScore(Contest):
             return any([
                 self.award.organization.representative.user == request.user,
                 self.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.session.assignments.model.category.ADMIN,
                 ),
                 self.status == self.STATUS.published,
@@ -941,7 +941,7 @@ class ContestScore(Contest):
             return any([
                 self.award.organization.representative.user == request.user,
                 self.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.session.assignments.model.category.ADMIN,
                 ),
             ])
@@ -1036,7 +1036,7 @@ class Contestant(TimeStampedModel):
             return any([
                 self.contest.session.convention.drcj.user == request.user,
                 self.contest.session.assignments.filter(
-                    judge__user=request.user,
+                    person__user=request.user,
                 ),
             ])
         return False
@@ -2568,7 +2568,7 @@ class PerformanceScore(Performance):
         if request.user.is_authenticated():
             return any([
                 self.round.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
                 ),
             ])
@@ -2834,7 +2834,7 @@ class Performer(TimeStampedModel):
                     person__user=request.user,
                 ),
                 self.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.session.assignments.model.CATEGORY.admin,
                 ),
                 self.session.convention.drcj.user == request.user,
@@ -3067,7 +3067,7 @@ class PerformerScore(Performer):
         if request.user.is_authenticated():
             return bool(
                 self.performer.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
                 )
             )
@@ -3946,12 +3946,6 @@ class Score(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    assignment = models.ForeignKey(
-        'Assignment',
-        related_name='scores',
-        on_delete=models.CASCADE,
-    )
-
     person = models.ForeignKey(
         'Person',
         related_name='scores',
@@ -3959,12 +3953,6 @@ class Score(TimeStampedModel):
         null=True,
         blank=True,
     )
-
-    # Internals
-    class Meta:
-        unique_together = (
-            ('song', 'assignment',)
-        )
 
     class JSONAPIMeta:
         resource_name = "score"
@@ -4047,7 +4035,7 @@ class Score(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 self.song.performance.performer.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
                 ),
                 self.song.performance.performer.group.roles.filter(
@@ -4062,7 +4050,7 @@ class Score(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 self.song.performance.performer.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
                 ),
                 self.song.performance.performer.group.roles.filter(
@@ -4315,7 +4303,7 @@ class Session(TimeStampedModel):
             return any([
                 drcj,
                 self.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.assignments.model.CATEGORY.admin,
                 ),
             ])
@@ -4699,7 +4687,7 @@ class SongScore(Song):
         if request.user.is_authenticated():
             return any([
                 self.performer.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
                 ),
                 self.performer.group.roles.filter(
@@ -4714,7 +4702,7 @@ class SongScore(Song):
         if request.user.is_authenticated():
             return any([
                 self.performer.session.assignments.filter(
-                    judge__user=request.user,
+                    # judge__user=request.user,
                     category=self.round.session.assignments.model.category.ADMIN,
                 ),
                 self.performer.group.roles.filter(
@@ -4827,9 +4815,9 @@ class Submission(TimeStampedModel):
                 #     person__user=request.user,
                 #     status=self.performer.roles.model.STATUS.active,
                 # ),
-                self.performer.session.assignments.filter(
-                    judge__user=request.user,
-                ),
+                # self.performer.session.assignments.filter(
+                #     judge__user=request.user,
+                # ),
                 self.performer.session.convention.drcj.user == request.user,
             ])
         return False
@@ -4846,9 +4834,9 @@ class Submission(TimeStampedModel):
                 #     person__user=request.user,
                 #     status=self.performer.roles.model.STATUS.active,
                 # )
-                self.performer.session.assignments.filter(
-                    judge__user=request.user,
-                ),
+                # self.performer.session.assignments.filter(
+                #     judge__user=request.user,
+                # ),
                 self.performer.session.convention.drcj.user == request.user,
             ])
         return False

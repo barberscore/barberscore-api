@@ -105,10 +105,6 @@ class AssignmentAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    inlines = [
-        ScoreInline,
-    ]
-
 
 @admin.register(Award)
 class AwardAdmin(admin.ModelAdmin):
@@ -191,7 +187,7 @@ class AwardAdmin(admin.ModelAdmin):
 class CatalogAdmin(admin.ModelAdmin):
 
     fields = [
-        'name',
+        'nomen',
         'status',
         'bhs_id',
         'title',
@@ -984,7 +980,7 @@ class ScoreAdmin(admin.ModelAdmin):
         # 'name',
         # 'status',
         'song',
-        'assignment',
+        'person',
         'category',
         'kind',
         'original',
@@ -996,7 +992,7 @@ class ScoreAdmin(admin.ModelAdmin):
     readonly_fields = [
         'nomen',
         'song',
-        'assignment',
+        'person',
     ]
 
     list_display = [
@@ -1011,12 +1007,12 @@ class ScoreAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'song',
-        'assignment',
+        'person',
     ]
 
     ordering = [
         'song',
-        'assignment',
+        'person',
     ]
     save_on_top = True
 
