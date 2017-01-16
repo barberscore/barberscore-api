@@ -3,6 +3,7 @@ from django_filters import rest_framework as filters
 
 # Local
 from .models import (
+    Award,
     Catalog,
     Contestant,
     Convention,
@@ -15,6 +16,16 @@ from .models import (
     Submission,
     Venue,
 )
+
+
+class AwardFilter(filters.FilterSet):
+    class Meta:
+        model = Award
+        fields = {
+            'nomen': [
+                'icontains',
+            ],
+        }
 
 
 class CatalogFilter(filters.FilterSet):
@@ -108,6 +119,9 @@ class PerformerFilter(filters.FilterSet):
             'group': [
                 'exact',
             ],
+            'group__roles__person__user': [
+                'exact',
+            ],
         }
 
 
@@ -141,6 +155,9 @@ class SessionFilter(filters.FilterSet):
                 'icontains',
             ],
             'assignments__person__user': [
+                'exact',
+            ],
+            'performers__group__roles__person__user': [
                 'exact',
             ],
         }

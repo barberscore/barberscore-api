@@ -36,6 +36,7 @@ from .backends import (
 )
 
 from .filters import (
+    AwardFilter,
     CatalogFilter,
     ContestantFilter,
     ConventionFilter,
@@ -156,7 +157,7 @@ class AwardViewSet(viewsets.ModelViewSet):
         'scope',
     )
     serializer_class = AwardSerializer
-    filter_class = None
+    filter_class = AwardFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
