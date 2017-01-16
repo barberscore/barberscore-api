@@ -96,6 +96,11 @@ class AssignmentAdmin(admin.ModelAdmin):
         'person',
     ]
 
+    search_fields = [
+        'nomen',
+        'person__nomen',
+    ]
+
     raw_id_fields = (
         'session',
         'person',
