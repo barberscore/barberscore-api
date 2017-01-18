@@ -495,6 +495,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
+            'judges',
             'roles',
             'organizations',
             'conventions',
