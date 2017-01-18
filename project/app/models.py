@@ -209,7 +209,7 @@ class Assignment(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.session.convention.drcj.user == request.user,
+                self.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -862,7 +862,7 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return self.session.convention.drcj.user == request.user
+            return self.session.convention.drcj == request.user.person
         return False
 
     # Methods
@@ -1034,7 +1034,7 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.contest.session.convention.drcj.user == request.user,
+                self.contest.session.convention.drcj == request.user.person,
                 self.contest.session.assignments.filter(
                     person__user=request.user,
                 ),
@@ -2384,7 +2384,7 @@ class Performance(TimeStampedModel):
                 #     judge__user=request.user,
                 #     category=self.round.session.assignments.model.category.ADMIN,
                 # ),
-                self.performer.session.convention.drcj.user == request.user,
+                self.performer.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -2837,7 +2837,7 @@ class Performer(TimeStampedModel):
                     # judge__user=request.user,
                     category=self.session.assignments.model.CATEGORY.admin,
                 ),
-                self.session.convention.drcj.user == request.user,
+                self.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -4297,7 +4297,7 @@ class Session(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             if self.convention.drcj:
-                drcj = bool(self.convention.drcj.user == request.user)
+                drcj = bool(self.convention.drcj == request.user.person)
             else:
                 drcj = False
             return any([
@@ -4818,7 +4818,7 @@ class Submission(TimeStampedModel):
                 # self.performer.session.assignments.filter(
                 #     judge__user=request.user,
                 # ),
-                self.performer.session.convention.drcj.user == request.user,
+                self.performer.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -4837,7 +4837,7 @@ class Submission(TimeStampedModel):
                 # self.performer.session.assignments.filter(
                 #     judge__user=request.user,
                 # ),
-                self.performer.session.convention.drcj.user == request.user,
+                self.performer.session.convention.drcj == request.user.person,
             ])
         return False
 

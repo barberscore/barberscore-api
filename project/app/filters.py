@@ -58,6 +58,9 @@ class ConventionFilter(filters.FilterSet):
             'year': [
                 'exact',
             ],
+            'drcj__user': [
+                'exact',
+            ],
         }
 
 
