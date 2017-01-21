@@ -459,6 +459,7 @@ class PerformanceScoreViewSet(viewsets.ModelViewSet):
     serializer_class = PerformanceScoreSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         PerformanceScoreFilterBackend,
     ]
     pagination_class = PageNumberPagination
@@ -508,6 +509,7 @@ class PerformerScoreViewSet(viewsets.ModelViewSet):
     serializer_class = PerformerScoreSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         PerformerScoreFilterBackend,
     ]
     pagination_class = PageNumberPagination
@@ -702,6 +704,7 @@ class SongScoreViewSet(viewsets.ModelViewSet):
     serializer_class = SongScoreSerializer
     filter_class = None
     filter_backends = [
+        CoalesceFilterBackend,
         SongScoreFilterBackend,
     ]
     pagination_class = PageNumberPagination
