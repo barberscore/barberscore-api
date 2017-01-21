@@ -157,10 +157,10 @@ class SessionFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'assignments__person__user': [
+            'performers__group__roles__person__user': [
                 'exact',
             ],
-            'performers__group__roles__person__user': [
+            'convention__drcj__user': [
                 'exact',
             ],
         }
