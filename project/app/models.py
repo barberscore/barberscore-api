@@ -1012,6 +1012,7 @@ class Contestant(TimeStampedModel):
         self.nomen = " ".join(filter(None, [
             self.contest.award.name,
             str(self.performer.session.convention.year),
+            self.performer.group.name,
         ]))
         super(Contestant, self).save(*args, **kwargs)
 
