@@ -2676,7 +2676,7 @@ class Performer(TimeStampedModel):
     )
 
     tenor = models.ForeignKey(
-        'Role',
+        'Person',
         null=True,
         blank=True,
         related_name='performers_tenor',
@@ -2684,7 +2684,7 @@ class Performer(TimeStampedModel):
     )
 
     lead = models.ForeignKey(
-        'Role',
+        'Person',
         null=True,
         blank=True,
         related_name='performers_lead',
@@ -2692,7 +2692,7 @@ class Performer(TimeStampedModel):
     )
 
     baritone = models.ForeignKey(
-        'Role',
+        'Person',
         null=True,
         blank=True,
         related_name='performers_baritone',
@@ -2700,7 +2700,7 @@ class Performer(TimeStampedModel):
     )
 
     bass = models.ForeignKey(
-        'Role',
+        'Person',
         null=True,
         blank=True,
         related_name='performers_bass',
@@ -2708,7 +2708,7 @@ class Performer(TimeStampedModel):
     )
 
     director = models.ForeignKey(
-        'Role',
+        'Person',
         null=True,
         blank=True,
         related_name='performers_director',
@@ -2716,7 +2716,7 @@ class Performer(TimeStampedModel):
     )
 
     codirector = models.ForeignKey(
-        'Role',
+        'Person',
         null=True,
         blank=True,
         related_name='performers_codirector',
