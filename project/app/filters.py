@@ -141,6 +141,15 @@ class PersonFilter(filters.FilterSet):
             'user': [
                 'exact',
             ],
+            'judges__category': [
+                'exact',
+            ],
+            'judges__status': [
+                'exact',
+            ],
+            'judges__kind': [
+                'exact',
+            ],
         }
 
 
