@@ -169,6 +169,9 @@ class SessionFilter(filters.FilterSet):
             'performers__group__roles__person__user': [
                 'exact',
             ],
+            'assignments__person__user': [
+                'exact',
+            ],
             'convention__drcj__user': [
                 'exact',
             ],
