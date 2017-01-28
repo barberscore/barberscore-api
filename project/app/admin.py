@@ -32,23 +32,27 @@ from .models import (
     Assignment,
     Award,
     Catalog,
-    Chapter,
+    # Chapter,
     Contest,
     ContestScore,
     Contestant,
     ContestantScore,
     Convention,
-    Group,
+    # Group,
+    Entity,
     Host,
-    Judge,
-    Member,
-    Organization,
+    # Judge,
+    Office,
+    Officer,
+    Membership,
+    # Member,
+    # Organization,
     Performance,
     PerformanceScore,
     Performer,
     PerformerScore,
     Person,
-    Role,
+    # Role,
     Round,
     Score,
     Session,
@@ -60,6 +64,47 @@ from .models import (
     Venue,
 )
 
+@admin.register(Office)
+class OfficeAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'short_name',
+        'kind',
+    ]
+    search_fields = [
+        'nomen',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+    ]
+
+@admin.register(Officer)
+class OfficerAdmin(admin.ModelAdmin):
+    raw_id_fields = [
+        'office',
+        'membership',
+    ]
+    list_filter = [
+        'office__name',
+    ]
+
+
+@admin.register(Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    raw_id_fields = [
+        'person',
+        'entity',
+    ]
+    search_fields = [
+        'nomen',
+    ]
+    list_filter = [
+        'status',
+        'part',
+        'entity__kind',
+    ]
 
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
@@ -240,7 +285,7 @@ class CatalogAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Chapter)
+# @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
     fields = [
         'name',
@@ -436,7 +481,73 @@ class ConventionAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Group)
+@admin.register(Entity)
+class EntityAdmin(MPTTModelAdmin):
+    exclude = [
+        'level',
+    ]
+    # fields = [
+    #     'name',
+    #     'status',
+    #     'parent',
+    #     'level',
+    #     'kind',
+    #     'code',
+    #     'start_date',
+    #     'end_date',
+    #     'short_name',
+    #     'long_name',
+    #     'location',
+    #     'representative',
+    #     'spots',
+    #     'website',
+    #     'facebook',
+    #     'twitter',
+    #     'email',
+    #     'phone',
+    #     'picture',
+    #     'description',
+    #     'notes',
+    # ]
+
+    list_filter = [
+        'status',
+        'kind',
+    ]
+
+    search_fields = [
+        'nomen',
+    ]
+
+    # list_display = [
+    #     'nomen',
+    #     'status',
+    #     'code',
+    #     'short_name',
+    #     'long_name',
+    #     'level',
+    #     'kind',
+    # ]
+
+    # inlines = [
+    #     AwardInline,
+    #     # OrganizationInline,
+    # ]
+
+    # readonly_fields = [
+    #     'nomen',
+    # ]
+
+    raw_id_fields = [
+        'parent',
+    ]
+
+    # readonly_fields = [
+    #     'level',
+    # ]
+
+
+# @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     search_fields = (
         'nomen',
@@ -541,7 +652,7 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Judge)
+# @admin.register(Judge)
 class JudgeAdmin(admin.ModelAdmin):
 
     fields = [
@@ -586,7 +697,7 @@ class JudgeAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Member)
+# @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
@@ -625,7 +736,7 @@ class MemberAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Organization)
+# @admin.register(Organization)
 class OrganizationAdmin(MPTTModelAdmin):
     fields = [
         'name',
@@ -888,7 +999,7 @@ class PersonAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Role)
+# @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
 
     fields = [

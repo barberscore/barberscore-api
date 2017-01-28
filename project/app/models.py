@@ -78,6 +78,7 @@ class Assignment(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'archived', 'Archived',),
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
         (20, 'confirmed', 'Confirmed',),
@@ -138,6 +139,14 @@ class Assignment(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
+        related_name='assignments',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    entity = TreeForeignKey(
+        'Entity',
         related_name='assignments',
         null=True,
         blank=True,
@@ -241,9 +250,9 @@ class Award(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
     )
 
     status = FSMIntegerField(
@@ -431,6 +440,14 @@ class Award(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    entity = TreeForeignKey(
+        'Entity',
+        related_name='awards',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     class Meta:
         unique_together = (
@@ -510,6 +527,7 @@ class Catalog(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New'),
         (10, 'active', 'Active'),
     )
@@ -685,6 +703,14 @@ class Chapter(TimeStampedModel):
     # FKs
     organization = TreeForeignKey(
         'Organization',
+        related_name='chapters',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    entity = TreeForeignKey(
+        'Entity',
         related_name='chapters',
         null=True,
         blank=True,
@@ -1391,12 +1417,18 @@ class Convention(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
-        help_text="""
-            The organization hosting the convention.""",
         related_name='conventions',
         on_delete=models.SET_NULL,
         null=True,
         blank=True
+    )
+
+    entity = TreeForeignKey(
+        'Entity',
+        related_name='conventions',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     drcj = models.ForeignKey(
@@ -1491,6 +1523,264 @@ class Convention(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
+
+
+class Entity(MPTTModel, TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        # unique=True,
+        # editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.""",
+        max_length=200,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    LEVEL = Choices(
+        (0, 'organization', 'Organization'),
+        (1, 'district', 'District'),
+        (2, 'division', 'Division'),
+        (3, 'group', 'Group'),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+    )
+
+    KIND = Choices(
+        ('International', [
+            (1, 'bhs', "Barbershop Harmony Society"),
+            (2, 'hi', "Harmony Incorporated"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Division', [
+            (21, 'division', "Division"),
+        ]),
+        ('Group', [
+            (31, 'quartet', "Quartet"),
+            (32, 'chorus', "Chorus"),
+            (33, 'vlq', "Very Large Quartet"),
+        ]),
+        # ('Leadership', [
+        #     (14, 'cj', "Contest and Judging"),
+        # ]),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of organization.""",
+        choices=KIND,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
+    )
+
+    short_name = models.CharField(
+        help_text="""
+            A short-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
+    long_name = models.CharField(
+        help_text="""
+            A long-form name for the resource.""",
+        blank=True,
+        max_length=200,
+    )
+
+    code = models.CharField(
+        help_text="""
+            The chapter code.""",
+        max_length=200,
+        blank=True,
+        null=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=200,
+        blank=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+    )
+
+    twitter = models.CharField(
+        help_text="""
+            The twitter handle (in form @twitter_handle) of the resource.""",
+        blank=True,
+        max_length=16,
+        validators=[
+            RegexValidator(
+                regex=r'@([A-Za-z0-9_]+)',
+                message="""
+                    Must be a single Twitter handle
+                    in the form `@twitter_handle`.
+                """,
+            ),
+        ],
+    )
+
+    email = models.EmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+    )
+
+    phone = models.CharField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        null=True,
+        blank=True,
+        default='',
+        max_length=25,
+    )
+
+    picture = models.ImageField(
+        upload_to=generate_image_filename,
+        help_text="""
+            The picture/logo of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A description/bio of the resource.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
+    # FKs
+    parent = TreeForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
+    legacy_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    legacy_parent = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    # Internals
+    class Meta:
+        verbose_name_plural = 'entities'
+
+    class MPTTMeta:
+        order_insertion_by = [
+            'level',
+            'kind',
+        ]
+
+    class JSONAPIMeta:
+        resource_name = "entity"
+
+    def __unicode__(self):
+        return self.nomen
+
+    def save(self, *args, **kwargs):
+        self.nomen = self.name
+        super(Entity, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
 
 
 class Group(TimeStampedModel):
@@ -1735,9 +2025,9 @@ class Host(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
     )
 
     status = models.IntegerField(
@@ -1756,6 +2046,14 @@ class Host(TimeStampedModel):
         'Organization',
         related_name='hosts',
         on_delete=models.CASCADE,
+    )
+
+    entity = TreeForeignKey(
+        'Entity',
+        related_name='hosts',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Internals
@@ -1819,9 +2117,9 @@ class Judge(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New'),
         (1, 'active', 'Active'),
-        (2, 'inactive', 'Inactive'),
     )
 
     status = FSMIntegerField(
@@ -1874,6 +2172,14 @@ class Judge(TimeStampedModel):
 
     organization = TreeForeignKey(
         'Organization',
+        related_name='judges',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    entity = TreeForeignKey(
+        'Entity',
         related_name='judges',
         null=True,
         blank=True,
@@ -1995,6 +2301,276 @@ class Member(TimeStampedModel):
             str(self.person.bhs_id),
         ]))
         super(Member, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
+class Membership(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        # unique=True,
+        # editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
+        (5, 'director', 'Director'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    entity = TreeForeignKey(
+        'Entity',
+        related_name='memberships',
+        on_delete=models.CASCADE,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='memberships',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "membership"
+
+    def __unicode__(self):
+        return self.nomen
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(filter(None, [
+            self.entity.name,
+            self.person.name,
+        ]))
+        super(Membership, self).save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
+class Office(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        # unique=True,
+        # editable=False,
+    )
+
+    name = models.CharField(
+        max_length=200,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    KIND = Choices(
+        (0, 'new', 'New',),
+        (1, 'one', 'One',),
+        (10, 'ten', 'Ten',),
+        (20, 'twenty', 'Twenty',),
+        (30, 'thirty', 'Thirty',),
+    )
+
+    kind = FSMIntegerField(
+        choices=KIND,
+        default=KIND.new,
+    )
+
+    short_name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    long_name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    # Methods
+    def save(self, *args, **kwargs):
+        self.nomen = self.name
+        super(Office, self).save(*args, **kwargs)
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "office"
+
+    def __unicode__(self):
+        return self.nomen
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+
+class Officer(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        # unique=True,
+        # editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    office = models.ForeignKey(
+        'Office',
+        related_name='officers',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    membership = models.ForeignKey(
+        'Membership',
+        related_name='officers',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "officer"
+
+    def __unicode__(self):
+        return self.nomen
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(filter(None, [
+            self.office.name,
+            self.membership.nomen,
+        ]))
+        super(Officer, self).save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2676,6 +3252,14 @@ class Performer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    entity = TreeForeignKey(
+        'Entity',
+        related_name='performers',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
     tenor = models.ForeignKey(
         'Person',
         null=True,
@@ -3102,9 +3686,10 @@ class Person(TimeStampedModel):
         # (40, 'deceased', 'Deceased',),
         # (50, 'stix', 'Stix Issue',),
         # (60, 'dup', 'Possible Duplicate',),
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (1, 'active', 'Active',),
-        (2, 'inactive', 'Inactive',),
+        # (2, 'inactive', 'Inactive',),
         (3, 'retired', 'Retired',),
         (5, 'deceased', 'Deceased',),
         (6, 'six', '(Six)',),
@@ -4863,9 +5448,9 @@ class Venue(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
     )
 
     status = FSMIntegerField(
