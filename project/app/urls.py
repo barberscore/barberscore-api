@@ -12,10 +12,14 @@ from .views import (
     ContestScoreViewSet,
     ConventionViewSet,
     # GroupViewSet,
+    EntityViewSet,
     HostViewSet,
     # JudgeViewSet,
     # MemberViewSet,
     # OrganizationViewSet,
+    MembershipViewSet,
+    OfficeViewSet,
+    OfficerViewSet,
     PerformanceViewSet,
     PerformanceScoreViewSet,
     PerformerViewSet,
@@ -46,11 +50,15 @@ router.register(r'contestscore', ContestScoreViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'contestantscore', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
+router.register(r'entity', EntityViewSet)
 # router.register(r'group', GroupViewSet)
 router.register(r'host', HostViewSet)
 router.register(r'assignment', AssignmentViewSet)
 # router.register(r'member', MemberViewSet)
 # router.register(r'organization', OrganizationViewSet)
+router.register(r'membership', MembershipViewSet)
+router.register(r'office', OfficeViewSet)
+router.register(r'officer', OfficerViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'performancescore', PerformanceScoreViewSet)
 router.register(r'performer', PerformerViewSet)

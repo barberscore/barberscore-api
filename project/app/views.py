@@ -60,11 +60,15 @@ from .models import (
     Contestant,
     ContestantScore,
     Convention,
+    Entity,
     # Group,
     Host,
     # Judge,
     # Member,
     # Organization,
+    Membership,
+    Office,
+    Officer,
     Performance,
     PerformanceScore,
     Performer,
@@ -97,6 +101,10 @@ from .serializers import (
     ContestScoreSerializer,
     ConventionSerializer,
     # GroupSerializer,
+    EntitySerializer,
+    MembershipSerializer,
+    OfficeSerializer,
+    OfficerSerializer,
     HostSerializer,
     # JudgeSerializer,
     # MemberSerializer,
@@ -119,6 +127,66 @@ from .serializers import (
 )
 
 log = logging.getLogger(__name__)
+
+
+class EntityViewSet(viewsets.ModelViewSet):
+    queryset = Entity.objects.all()
+    serializer_class = EntitySerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "entity"
+
+
+class MembershipViewSet(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "membership"
+
+
+class OfficerViewSet(viewsets.ModelViewSet):
+    queryset = Officer.objects.all()
+    serializer_class = OfficerSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "officer"
+
+
+class OfficeViewSet(viewsets.ModelViewSet):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "office"
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):

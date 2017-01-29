@@ -18,10 +18,14 @@ from .models import (
     Contestant,
     ContestantScore,
     Convention,
+    Entity,
     # Group,
     Host,
     # Judge,
     # Member,
+    Membership,
+    Office,
+    Officer,
     # Organization,
     Performance,
     PerformanceScore,
@@ -39,6 +43,58 @@ from .models import (
     Venue,
     User,
 )
+
+
+class EntitySerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Entity
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'permissions',
+        ]
+
+
+class MembershipSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Membership
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'permissions',
+        ]
+
+
+class OfficeSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Office
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'permissions',
+        ]
+
+
+class OfficerSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Officer
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'permissions',
+        ]
 
 
 class TimezoneField(serializers.Field):
