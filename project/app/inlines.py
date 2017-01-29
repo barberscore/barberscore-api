@@ -8,13 +8,9 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    # Group,
     Host,
-    # Judge,
-    # Member,
     Performance,
     Performer,
-    # Role,
     Round,
     Score,
     Session,
@@ -27,7 +23,6 @@ class AwardInline(admin.TabularInline):
     model = Award
     fields = [
         'name',
-        # 'organization',
         'kind',
         'championship_rounds',
         'size',
@@ -39,23 +34,6 @@ class AwardInline(admin.TabularInline):
     ]
     extra = 0
     show_change_link = True
-
-
-# class JudgeInline(admin.TabularInline):
-#     model = Judge
-#     fields = [
-#         'person',
-#         'status',
-#         'category',
-#     ]
-#     raw_id_fields = [
-#         'person',
-#     ]
-#     readonly_fields = [
-#         'nomen',
-#     ]
-#     extra = 0
-#     show_change_link = True
 
 
 class ContestInline(admin.TabularInline):
@@ -73,8 +51,6 @@ class ContestInline(admin.TabularInline):
         'is_qualifier',
     ]
     ordering = (
-        # 'award__organization__level',
-        # 'award__organization__name',
         'award__kind',
         '-award__is_primary',
         'award__is_improved',
@@ -117,25 +93,10 @@ class ConventionInline(admin.TabularInline):
     extra = 0
 
 
-# class GroupInline(admin.TabularInline):
-#     model = Group
-#     fields = [
-#         'name',
-#         'status',
-
-#     ]
-#     ordering = (
-#         'name',
-#     )
-#     show_change_link = True
-#     extra = 0
-
-
 class HostInline(admin.TabularInline):
     model = Host
     fields = [
         'convention',
-        # 'organization',
         'status',
     ]
     raw_id_fields = [
@@ -183,21 +144,6 @@ class PerformanceInline(admin.TabularInline):
     extra = 0
 
 
-# class MemberInline(admin.TabularInline):
-#     model = Member
-#     fields = [
-#         'chapter',
-#         'person',
-#         'status',
-#     ]
-#     raw_id_fields = [
-#         'chapter',
-#         'person',
-#     ]
-#     show_change_link = True
-#     extra = 0
-
-
 class PerformerInline(admin.TabularInline):
     model = Performer
     fields = [
@@ -206,17 +152,10 @@ class PerformerInline(admin.TabularInline):
         'prelim',
         'men',
     ]
-    # raw_id_fields = [
-    #     'group',
-    # ]
     readonly_fields = [
         'nomen',
         'seed',
     ]
-    # ordering = (
-    #     'group__kind',
-    #     'group',
-    # )
     show_change_link = True
     extra = 0
 
@@ -276,25 +215,6 @@ class SessionInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
-
-
-# class RoleInline(admin.TabularInline):
-#     model = Role
-#     fields = [
-#         'person',
-#         'part',
-#         'status',
-#         'start_date',
-#         'end_date',
-#     ]
-#     raw_id_fields = [
-#         'person',
-#     ]
-#     ordering = (
-#         'start_date',
-#     )
-#     show_change_link = True
-#     extra = 0
 
 
 class RoundInline(admin.TabularInline):

@@ -11,17 +11,13 @@ from django.contrib.auth.models import Group as AuthGroup
 # Local
 from .inlines import (
     AssignmentInline,
-    AwardInline,
+    # AwardInline,
     ContestantInline,
     ContestInline,
     # ConventionInline,
-    # GroupInline,
     HostInline,
-    # JudgeInline,
-    # MemberInline,
     PerformanceInline,
     PerformerInline,
-    # RoleInline,
     RoundInline,
     ScoreInline,
     SessionInline,
@@ -32,27 +28,21 @@ from .models import (
     Assignment,
     Award,
     Catalog,
-    # Chapter,
     Contest,
     ContestScore,
     Contestant,
     ContestantScore,
     Convention,
-    # Group,
     Entity,
     Host,
-    # Judge,
     Office,
     Officer,
     Membership,
-    # Member,
-    # Organization,
     Performance,
     PerformanceScore,
     Performer,
     PerformerScore,
     Person,
-    # Role,
     Round,
     Score,
     Session,
@@ -120,7 +110,6 @@ class AssignmentAdmin(admin.ModelAdmin):
         'bhs_id',
         'session',
         'person',
-        # 'organization',
     ]
 
     list_display = [
@@ -129,7 +118,6 @@ class AssignmentAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'person',
-        # 'organization',
     ]
 
     list_filter = (
@@ -139,7 +127,6 @@ class AssignmentAdmin(admin.ModelAdmin):
     )
 
     list_select_related = [
-        # 'organization',
         'session',
         'person',
     ]
@@ -166,7 +153,6 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'status',
         'is_manual',
-        # 'organization',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -203,7 +189,6 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'is_primary',
-        # 'organization__level',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -212,7 +197,6 @@ class AwardAdmin(admin.ModelAdmin):
         'is_manual',
         'is_novice',
         'is_improved',
-        # 'organization',
     ]
 
     readonly_fields = [
@@ -224,8 +208,6 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        # 'organization__level',
-        # 'organization__name',
         'kind',
         '-is_primary',
         'is_improved',
@@ -288,53 +270,9 @@ class CatalogAdmin(admin.ModelAdmin):
     )
 
 
-# @admin.register(Chapter)
-class ChapterAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'nomen',
-        'status',
-        'organization',
-        'code',
-        'bhs_id',
-    ]
-
-    search_fields = (
-        'nomen',
-    )
-
-    list_display = (
-        'nomen',
-        'code',
-        'organization',
-        'status',
-    )
-
-    list_filter = (
-        'status',
-        'organization',
-    )
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    # inlines = [
-    #     GroupInline,
-    #     MemberInline,
-    # ]
-
-    save_on_top = True
-
-    ordering = (
-        'nomen',
-    )
-
-
 @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
     fields = [
-        # 'name',
         'status',
         'award',
         'session',
@@ -349,11 +287,9 @@ class ContestAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        # 'award__organization__level',
         'award__kind',
         'award__is_primary',
         'is_qualifier',
-        # 'award__organization',
     ]
 
     save_on_top = True
@@ -385,7 +321,6 @@ class ContestScoreAdmin(admin.ModelAdmin):
 class ContestantAdmin(admin.ModelAdmin):
 
     fields = [
-        # 'name',
         'status',
         'performer',
         'contest',
@@ -450,7 +385,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'level',
         'kind',
         'season',
-        # 'hosts__organization',
         'year',
     )
 
@@ -550,88 +484,17 @@ class EntityAdmin(MPTTModelAdmin):
     # ]
 
 
-# @admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
-    search_fields = (
-        'nomen',
-    )
-
-    fields = (
-        'name',
-        'status',
-        'kind',
-        ('age', 'is_novice',),
-        'bhs_id',
-        'start_date',
-        'end_date',
-        # 'chapter',
-        # 'district',
-        # 'division',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-        'notes',
-    )
-
-    list_display = (
-        'nomen',
-        'name',
-        'bhs_id',
-        'status',
-        # 'district',
-        # 'division',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-    )
-
-    list_filter = (
-        'kind',
-        'status',
-    )
-
-    inlines = [
-        # RoleInline,
-        # PerformerInline,
-    ]
-
-    raw_id_fields = [
-        'chapter',
-    ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    save_on_top = True
-
-    ordering = (
-        'nomen',
-    )
-
-
 @admin.register(Host)
 class HostAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'convention',
-        # 'organization',
     ]
 
     list_display = [
         'nomen',
         'status',
         'convention',
-        # 'organization',
     ]
 
     list_filter = [
@@ -652,150 +515,6 @@ class HostAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-    ]
-
-
-# @admin.register(Judge)
-class JudgeAdmin(admin.ModelAdmin):
-
-    fields = [
-        # 'name',
-        'status',
-        'category',
-        'kind',
-        'start_date',
-        'end_date',
-        'person',
-        # 'organization',
-    ]
-
-    list_display = [
-        'nomen',
-        'category',
-        'kind',
-        'status',
-    ]
-
-    list_filter = [
-        'status',
-        'category',
-        'kind',
-    ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    raw_id_fields = [
-        'person',
-        # 'organization',
-    ]
-
-    search_fields = [
-        'nomen',
-    ]
-
-    ordering = (
-        'nomen',
-    )
-
-
-# @admin.register(Member)
-class MemberAdmin(admin.ModelAdmin):
-    fields = [
-        'status',
-        # 'chapter',
-        'person',
-        'start_date',
-        'end_date',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-        'start_date',
-        'end_date',
-    ]
-
-    list_filter = [
-        'status',
-    ]
-
-    raw_id_fields = [
-        # 'chapter',
-        'person',
-    ]
-
-    ordering = (
-        'nomen',
-    )
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    search_fields = [
-        'nomen',
-    ]
-
-
-# @admin.register(Organization)
-class OrganizationAdmin(MPTTModelAdmin):
-    fields = [
-        'name',
-        'status',
-        'parent',
-        'level',
-        'kind',
-        'code',
-        'start_date',
-        'end_date',
-        'short_name',
-        'long_name',
-        'location',
-        # 'representative',
-        'spots',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'picture',
-        'description',
-        'notes',
-    ]
-
-    list_filter = [
-        'status',
-        'level',
-        'kind',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-        'code',
-        'short_name',
-        'long_name',
-        'level',
-        'kind',
-    ]
-
-    inlines = [
-        AwardInline,
-        # OrganizationInline,
-    ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    # raw_id_fields = [
-    #     'representative',
-    # ]
-
-    readonly_fields = [
-        'level',
     ]
 
 
@@ -1000,44 +719,6 @@ class PersonAdmin(admin.ModelAdmin):
     readonly_fields = [
         'common_name',
     ]
-
-
-# @admin.register(Role)
-class RoleAdmin(admin.ModelAdmin):
-
-    fields = [
-        # 'name',
-        'status',
-        'start_date',
-        'end_date',
-        'group',
-        'person',
-        'part',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-        'start_date',
-        'end_date',
-    ]
-
-    list_filter = [
-        'status',
-    ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    search_fields = [
-        'nomen',
-    ]
-
-    raw_id_fields = (
-        # 'group',
-        'person',
-    )
 
 
 @admin.register(Round)
@@ -1449,5 +1130,4 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-# admin.site.register(User, UserAdmin)
 admin.site.unregister(AuthGroup)

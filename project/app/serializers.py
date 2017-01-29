@@ -12,27 +12,21 @@ from .models import (
     Assignment,
     Award,
     Catalog,
-    # Chapter,
     Contest,
     ContestScore,
     Contestant,
     ContestantScore,
     Convention,
     Entity,
-    # Group,
     Host,
-    # Judge,
-    # Member,
     Membership,
     Office,
     Officer,
-    # Organization,
     Performance,
     PerformanceScore,
     Performer,
     PerformerScore,
     Person,
-    # Role,
     Round,
     Score,
     Session,
@@ -193,7 +187,6 @@ class AwardSerializer(serializers.ModelSerializer):
             'is_novice',
             'idiom',
             'threshold',
-            # 'organization',
             'contests',
             'permissions',
         )
@@ -225,25 +218,6 @@ class CatalogSerializer(serializers.ModelSerializer):
         )
 
 
-# class ChapterSerializer(serializers.ModelSerializer):
-#     permissions = DRYPermissionsField()
-
-#     class Meta:
-#         model = Chapter
-#         fields = (
-#             'id',
-#             'url',
-#             'nomen',
-#             'name',
-#             'status',
-#             'code',
-#             'organization',
-#             'groups',
-#             'members',
-#             'permissions',
-#         )
-
-
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -258,7 +232,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'contestants',
             'award',
             'session',
-            # 'contestscore',
             'permissions',
         )
 
@@ -288,7 +261,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'performer',
             'contest',
-            # 'contestantscore',
             'permissions',
         )
 
@@ -334,48 +306,11 @@ class ConventionSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'venue',
-            # 'organization',
+            'hosts'
             # 'drcj',
             'sessions',
             'permissions',
         )
-
-
-# class GroupSerializer(serializers.ModelSerializer):
-
-#     permissions = DRYPermissionsField()
-
-#     class Meta:
-#         model = Group
-#         fields = (
-#             'id',
-#             'url',
-#             'name',
-#             'nomen',
-#             'status',
-#             'start_date',
-#             'end_date',
-#             'location',
-#             'website',
-#             'facebook',
-#             'twitter',
-#             'email',
-#             'phone',
-#             'picture',
-#             'description',
-#             'kind',
-#             'age',
-#             'is_novice',
-#             'chapter',
-#             'district',
-#             'division',
-#             'performers',
-#             'roles',
-#             'permissions',
-#         )
-#         read_only_fields = [
-#             'picture',
-#         ]
 
 
 class HostSerializer(serializers.ModelSerializer):
@@ -389,85 +324,9 @@ class HostSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'convention',
-            # 'organization',
+            'entity',
             'permissions',
         )
-
-
-# class JudgeSerializer(serializers.ModelSerializer):
-
-#     permissions = DRYPermissionsField()
-
-#     class Meta:
-#         model = Judge
-#         fields = (
-#             'id',
-#             'url',
-#             'nomen',
-#             'category',
-#             'kind',
-#             'status',
-#             'start_date',
-#             'end_date',
-#             'person',
-#             'permissions',
-#         )
-
-
-# class MemberSerializer(serializers.ModelSerializer):
-#     permissions = DRYPermissionsField()
-
-#     class Meta:
-#         model = Member
-#         fields = (
-#             'id',
-#             'url',
-#             'nomen',
-#             'status',
-#             'person',
-#             'chapter',
-#             'permissions',
-#         )
-
-
-# class OrganizationSerializer(serializers.ModelSerializer):
-
-#     permissions = DRYPermissionsField()
-
-#     class Meta:
-#         model = Organization
-#         fields = (
-#             'id',
-#             'url',
-#             'nomen',
-#             'name',
-#             'status',
-#             'level',
-#             'kind',
-#             'start_date',
-#             'end_date',
-#             'spots',
-#             'location',
-#             'website',
-#             'facebook',
-#             'twitter',
-#             'email',
-#             'phone',
-#             'picture',
-#             'description',
-#             'short_name',
-#             'code',
-#             'long_name',
-#             'representative',
-#             'parent',
-#             'children',
-#             'awards',
-#             'lft',
-#             'permissions',
-#         )
-#         read_only_fields = [
-#             'picture',
-#         ]
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -487,7 +346,6 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'performer',
             'slot',
             'songs',
-            # 'performancescore',
             'permissions',
         )
 
@@ -538,11 +396,10 @@ class PerformerSerializer(serializers.ModelSerializer):
             'seed',
             'prelim',
             'session',
-            # 'group',
+            'entity',
             'performances',
             'contestants',
             'submissions',
-            # 'performerscore',
             'permissions',
         )
         read_only_fields = [
@@ -593,10 +450,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            # 'judges',
-            # 'roles',
-            # 'organizations',
-            # 'conventions',
+            'entities',
             'common_name',
             'full_name',
             'formal_name',
@@ -616,26 +470,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'last_name',
             'nick_name',
         ]
-
-
-# class RoleSerializer(serializers.ModelSerializer):
-
-#     permissions = DRYPermissionsField()
-
-#     class Meta:
-#         model = Role
-#         fields = (
-#             'id',
-#             'url',
-#             'nomen',
-#             'status',
-#             'group',
-#             'person',
-#             'part',
-#             'start_date',
-#             'end_date',
-#             'permissions',
-#         )
 
 
 class RoundSerializer(serializers.ModelSerializer):

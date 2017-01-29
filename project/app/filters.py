@@ -7,9 +7,6 @@ from .models import (
     Catalog,
     Contestant,
     Convention,
-    # Group,
-    # Judge,
-    # Organization,
     Performer,
     Person,
     Session,
@@ -58,58 +55,7 @@ class ConventionFilter(filters.FilterSet):
             'year': [
                 'exact',
             ],
-            # 'drcj__user': [
-            #     'exact',
-            # ],
         }
-
-
-# class GroupFilter(filters.FilterSet):
-#     class Meta:
-#         model = Group
-#         fields = {
-#             'nomen': [
-#                 'icontains',
-#             ],
-#             'kind': [
-#                 'exact',
-#             ],
-#             'status': [
-#                 'exact',
-#             ],
-#             'roles__person__user': [
-#                 'exact',
-#             ],
-#         }
-
-
-# class JudgeFilter(filters.FilterSet):
-#     class Meta:
-#         model = Judge
-#         fields = {
-#             'nomen': [
-#                 'icontains',
-#             ],
-#             'category': [
-#                 'exact',
-#             ],
-#             'person__user': [
-#                 'exact',
-#             ],
-#         }
-
-
-# class OrganizationFilter(filters.FilterSet):
-#     class Meta:
-#         model = Organization
-#         fields = {
-#             'nomen': [
-#                 'icontains',
-#             ],
-#             'representative__user': [
-#                 'exact',
-#             ],
-#         }
 
 
 class PerformerFilter(filters.FilterSet):
@@ -119,12 +65,6 @@ class PerformerFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
-            # 'group': [
-            #     'exact',
-            # ],
-            # 'group__roles__person__user': [
-            #     'exact',
-            # ],
         }
 
 
@@ -141,15 +81,6 @@ class PersonFilter(filters.FilterSet):
             'user': [
                 'exact',
             ],
-            # 'judges__category': [
-            #     'exact',
-            # ],
-            # 'judges__status': [
-            #     'exact',
-            # ],
-            # 'judges__kind': [
-            #     'exact',
-            # ],
         }
 
 
@@ -166,15 +97,9 @@ class SessionFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
-            # 'performers__group__roles__person__user': [
-            #     'exact',
-            # ],
             'assignments__person__user': [
                 'exact',
             ],
-            # 'convention__drcj__user': [
-            #     'exact',
-            # ],
         }
 
 
