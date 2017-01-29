@@ -40,9 +40,9 @@ from .filters import (
     CatalogFilter,
     ContestantFilter,
     ConventionFilter,
-    GroupFilter,
-    JudgeFilter,
-    OrganizationFilter,
+    # GroupFilter,
+    # JudgeFilter,
+    # OrganizationFilter,
     PerformerFilter,
     PersonFilter,
     SessionFilter,
@@ -54,23 +54,23 @@ from .models import (
     Assignment,
     Award,
     Catalog,
-    Chapter,
+    # Chapter,
     Contest,
     ContestScore,
     Contestant,
     ContestantScore,
     Convention,
-    Group,
+    # Group,
     Host,
-    Judge,
-    Member,
-    Organization,
+    # Judge,
+    # Member,
+    # Organization,
     Performance,
     PerformanceScore,
     Performer,
     PerformerScore,
     Person,
-    Role,
+    # Role,
     Round,
     Score,
     Session,
@@ -90,23 +90,23 @@ from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
     CatalogSerializer,
-    ChapterSerializer,
+    # ChapterSerializer,
     ContestantSerializer,
     ContestantScoreSerializer,
     ContestSerializer,
     ContestScoreSerializer,
     ConventionSerializer,
-    GroupSerializer,
+    # GroupSerializer,
     HostSerializer,
-    JudgeSerializer,
-    MemberSerializer,
-    OrganizationSerializer,
+    # JudgeSerializer,
+    # MemberSerializer,
+    # OrganizationSerializer,
     PerformanceSerializer,
     PerformanceScoreSerializer,
     PerformerSerializer,
     PerformerScoreSerializer,
     PersonSerializer,
-    RoleSerializer,
+    # RoleSerializer,
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
@@ -146,11 +146,11 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
-        'organization',
+        # 'organization',
     ).prefetch_related(
         'contests',
     ).order_by(
-        'organization',
+        # 'organization',
         '-is_primary',
         'kind',
         'size',
@@ -186,26 +186,26 @@ class CatalogViewSet(viewsets.ModelViewSet):
     resource_name = "catalog"
 
 
-class ChapterViewSet(viewsets.ModelViewSet):
-    queryset = Chapter.objects.select_related(
-        'organization',
-    ).prefetch_related(
-        'groups',
-        'members',
-    ).order_by(
-        'name',
-    )
-    serializer_class = ChapterSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "chapter"
+# class ChapterViewSet(viewsets.ModelViewSet):
+#     queryset = Chapter.objects.select_related(
+#         'organization',
+#     ).prefetch_related(
+#         'groups',
+#         'members',
+#     ).order_by(
+#         'name',
+#     )
+#     serializer_class = ChapterSerializer
+#     filter_class = None
+#     filter_backends = [
+#         CoalesceFilterBackend,
+#         DjangoFilterBackend,
+#     ]
+#     pagination_class = PageNumberPagination
+#     permission_classes = [
+#         DRYPermissions,
+#     ]
+#     resource_name = "chapter"
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -292,14 +292,14 @@ class ConventionViewSet(
     viewsets.ModelViewSet
 ):
     queryset = Convention.objects.select_related(
-        'organization',
+        # 'organization',
         'venue',
-        'drcj',
+        # 'drcj',
     ).prefetch_related(
         'sessions',
     ).order_by(
         'start_date',
-        'organization__name',
+        # 'organization__name',
     )
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
@@ -314,46 +314,46 @@ class ConventionViewSet(
     resource_name = "convention"
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.select_related(
-        'chapter',
-        'district',
-        'division',
-    ).prefetch_related(
-        'performers',
-        'roles',
-    ).order_by(
-        'name',
-    )
-    serializer_class = GroupSerializer
-    filter_class = GroupFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "group"
+# class GroupViewSet(viewsets.ModelViewSet):
+#     queryset = Group.objects.select_related(
+#         'chapter',
+#         'district',
+#         'division',
+#     ).prefetch_related(
+#         'performers',
+#         'roles',
+#     ).order_by(
+#         'name',
+#     )
+#     serializer_class = GroupSerializer
+#     filter_class = GroupFilter
+#     filter_backends = [
+#         CoalesceFilterBackend,
+#         DjangoFilterBackend,
+#     ]
+#     pagination_class = PageNumberPagination
+#     permission_classes = [
+#         DRYPermissions,
+#     ]
+#     resource_name = "group"
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def picture(self, request, *args, **kwargs):
-        if 'upload' in request.data:
-            group = self.get_object()
-            group.picture.delete()
-            upload = request.data['upload']
-            group.picture.save(upload.name, upload)
-            return Response(status=status.HTTP_201_CREATED, headers={'Location': group.picture.url})
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+#     @detail_route(methods=['POST'], permission_classes=[AllowAny])
+#     @parser_classes((FormParser, MultiPartParser,))
+#     def picture(self, request, *args, **kwargs):
+#         if 'upload' in request.data:
+#             group = self.get_object()
+#             group.picture.delete()
+#             upload = request.data['upload']
+#             group.picture.save(upload.name, upload)
+#             return Response(status=status.HTTP_201_CREATED, headers={'Location': group.picture.url})
+#         else:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class HostViewSet(viewsets.ModelViewSet):
     queryset = Host.objects.select_related(
         'convention',
-        'organization',
+        # 'organization',
     )
     serializer_class = HostSerializer
     filter_class = None
@@ -368,60 +368,60 @@ class HostViewSet(viewsets.ModelViewSet):
     resource_name = "host"
 
 
-class JudgeViewSet(viewsets.ModelViewSet):
-    queryset = Judge.objects.select_related(
-        'person',
-    )
-    serializer_class = JudgeSerializer
-    filter_class = JudgeFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "judge"
+# class JudgeViewSet(viewsets.ModelViewSet):
+#     queryset = Judge.objects.select_related(
+#         'person',
+#     )
+#     serializer_class = JudgeSerializer
+#     filter_class = JudgeFilter
+#     filter_backends = [
+#         CoalesceFilterBackend,
+#         DjangoFilterBackend,
+#     ]
+#     pagination_class = PageNumberPagination
+#     permission_classes = [
+#         DRYPermissions,
+#     ]
+#     resource_name = "judge"
 
 
-class MemberViewSet(viewsets.ModelViewSet):
-    queryset = Member.objects.select_related(
-        'chapter',
-        'person',
-    )
-    serializer_class = MemberSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "member"
+# class MemberViewSet(viewsets.ModelViewSet):
+#     queryset = Member.objects.select_related(
+#         'chapter',
+#         'person',
+#     )
+#     serializer_class = MemberSerializer
+#     filter_class = None
+#     filter_backends = [
+#         CoalesceFilterBackend,
+#         DjangoFilterBackend,
+#     ]
+#     pagination_class = PageNumberPagination
+#     permission_classes = [
+#         DRYPermissions,
+#     ]
+#     resource_name = "member"
 
 
-class OrganizationViewSet(viewsets.ModelViewSet):
-    queryset = Organization.objects.prefetch_related(
-        'awards',
-    ).order_by(
-        'kind',
-        'level',
-        'name',
-    )
-    serializer_class = OrganizationSerializer
-    filter_class = OrganizationFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "organization"
+# class OrganizationViewSet(viewsets.ModelViewSet):
+#     queryset = Organization.objects.prefetch_related(
+#         'awards',
+#     ).order_by(
+#         'kind',
+#         'level',
+#         'name',
+#     )
+#     serializer_class = OrganizationSerializer
+#     filter_class = OrganizationFilter
+#     filter_backends = [
+#         CoalesceFilterBackend,
+#         DjangoFilterBackend,
+#     ]
+#     pagination_class = PageNumberPagination
+#     permission_classes = [
+#         DRYPermissions,
+#     ]
+#     resource_name = "organization"
 
 
 class PerformanceViewSet(
@@ -472,14 +472,14 @@ class PerformanceScoreViewSet(viewsets.ModelViewSet):
 class PerformerViewSet(viewsets.ModelViewSet):
     queryset = Performer.objects.select_related(
         'session',
-        'group',
+        # 'group',
         'tenor',
         'lead',
         'baritone',
         'bass',
         'director',
         'codirector',
-        'representing',
+        # 'representing',
         'performerscore',
     ).prefetch_related(
         'submissions',
@@ -487,7 +487,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'contestants',
     ).order_by(
         'session',
-        'group',
+        # 'group',
     )
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
@@ -523,8 +523,8 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
     ).prefetch_related(
-        'roles',
-        'conventions',
+        # 'roles',
+        # 'conventions',
     ).order_by(
         'name',
     )
@@ -556,24 +556,24 @@ class PersonViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class RoleViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.select_related(
-        'person',
-        'group',
-    ).order_by(
-        '-nomen',
-    )
-    serializer_class = RoleSerializer
-    pagination_class = PageNumberPagination
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "role"
+# class RoleViewSet(viewsets.ModelViewSet):
+#     queryset = Role.objects.select_related(
+#         'person',
+#         'group',
+#     ).order_by(
+#         '-nomen',
+#     )
+#     serializer_class = RoleSerializer
+#     pagination_class = PageNumberPagination
+#     filter_class = None
+#     filter_backends = [
+#         CoalesceFilterBackend,
+#         DjangoFilterBackend,
+#     ]
+#     permission_classes = [
+#         DRYPermissions,
+#     ]
+#     resource_name = "role"
 
 
 class RoundViewSet(
@@ -609,7 +609,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'song__performance__performer__session',
         'song__performance__round',
     ).prefetch_related(
-        'song__performance__performer__group__roles',
+        # 'song__performance__performer__group__roles',
         'song__performance__round__session__assignments',
     ).order_by(
         'song',

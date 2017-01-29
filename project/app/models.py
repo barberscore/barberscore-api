@@ -137,13 +137,13 @@ class Assignment(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='assignments',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # organization = TreeForeignKey(
+    #     'Organization',
+    #     related_name='assignments',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     entity = TreeForeignKey(
         'Entity',
@@ -434,11 +434,11 @@ class Award(TimeStampedModel):
     )
 
     # FKs
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='awards',
-        on_delete=models.CASCADE,
-    )
+    # organization = TreeForeignKey(
+    #     'Organization',
+    #     related_name='awards',
+    #     on_delete=models.CASCADE,
+    # )
 
     entity = TreeForeignKey(
         'Entity',
@@ -449,18 +449,18 @@ class Award(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            (
-                'organization',
-                'is_improved',
-                'is_novice',
-                'size',
-                'scope',
-                'idiom',
-                'kind',
-            ),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         (
+    #             'organization',
+    #             'is_improved',
+    #             'is_novice',
+    #             'size',
+    #             'scope',
+    #             'idiom',
+    #             'kind',
+    #         ),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "award"
@@ -479,15 +479,16 @@ class Award(TimeStampedModel):
             novice = 'Novice'
         else:
             novice = None
-        self.nomen = " ".join(filter(None, [
-            self.organization.name,
-            most_improved,
-            novice,
-            self.get_size_display(),
-            self.get_scope_display(),
-            self.idiom,
-            self.get_kind_display(),
-        ]))
+        # self.nomen = " ".join(filter(None, [
+        #     self.organization.name,
+        #     most_improved,
+        #     novice,
+        #     self.get_size_display(),
+        #     self.get_scope_display(),
+        #     self.idiom,
+        #     self.get_kind_display(),
+        # ]))
+        self.nomen = self.id.hex
         super(Award, self).save(*args, **kwargs)
 
     # Permissions
@@ -655,113 +656,113 @@ class Catalog(TimeStampedModel):
         return False
 
 
-class Chapter(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class Chapter(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    nomen = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
+#     nomen = models.CharField(
+#         max_length=255,
+#         unique=True,
+#         editable=False,
+#     )
 
-    name = models.CharField(
-        help_text="""
-            Chapter Name.""",
-        max_length=255,
-    )
+#     name = models.CharField(
+#         help_text="""
+#             Chapter Name.""",
+#         max_length=255,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-        (30, 'affiliate', 'Affiliate',),
-        (50, 'dup', 'Duplicate',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (10, 'active', 'Active',),
+#         (20, 'inactive', 'Inactive',),
+#         (30, 'affiliate', 'Affiliate',),
+#         (50, 'dup', 'Duplicate',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    code = models.CharField(
-        help_text="""
-            The chapter code.""",
-        unique=True,
-        max_length=200,
-        blank=True,
-        null=True,
-    )
+#     code = models.CharField(
+#         help_text="""
+#             The chapter code.""",
+#         unique=True,
+#         max_length=200,
+#         blank=True,
+#         null=True,
+#     )
 
-    bhs_id = models.IntegerField(
-        unique=True,
-    )
+#     bhs_id = models.IntegerField(
+#         unique=True,
+#     )
 
-    # FKs
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='chapters',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     # FKs
+#     organization = TreeForeignKey(
+#         'Organization',
+#         related_name='chapters',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    entity = TreeForeignKey(
-        'Entity',
-        related_name='chapters',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     entity = TreeForeignKey(
+#         'Entity',
+#         related_name='chapters',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "chapter"
+#     # Internals
+#     class JSONAPIMeta:
+#         resource_name = "chapter"
 
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+#     def __unicode__(self):
+#         if self.nomen:
+#             return self.nomen
+#         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                (lambda x: unicode(x).encode('utf-8')),
-                filter(
-                    None, [
-                        self.name,
-                        self.code,
-                    ]
-                )
-            )
-        )
-        super(Chapter, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.nomen = " ".join(
+#             map(
+#                 (lambda x: unicode(x).encode('utf-8')),
+#                 filter(
+#                     None, [
+#                         self.name,
+#                         self.code,
+#                     ]
+#                 )
+#             )
+#         )
+#         super(Chapter, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.organization.representative.user == request.user,
-            ])
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return any([
+#                 self.organization.representative.user == request.user,
+#             ])
+#         return False
 
 
 class Contest(TimeStampedModel):
@@ -1035,11 +1036,12 @@ class Contestant(TimeStampedModel):
         return self.id.hex
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.contest.award.name,
-            str(self.performer.session.convention.year),
-            self.performer.group.name,
-        ]))
+        # self.nomen = " ".join(filter(None, [
+        #     self.contest.award.name,
+        #     str(self.performer.session.convention.year),
+        #     self.performer.group.name,
+        # ]))
+        self.nomen = self.id.hex
         super(Contestant, self).save(*args, **kwargs)
 
     # Permissions
@@ -1415,13 +1417,13 @@ class Convention(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='conventions',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    # organization = TreeForeignKey(
+    #     'Organization',
+    #     related_name='conventions',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True
+    # )
 
     entity = TreeForeignKey(
         'Entity',
@@ -1431,15 +1433,15 @@ class Convention(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    drcj = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='conventions',
-        help_text="""
-            The person managing the convention.""",
-        on_delete=models.SET_NULL,
-    )
+    # drcj = models.ForeignKey(
+    #     'Person',
+    #     null=True,
+    #     blank=True,
+    #     related_name='conventions',
+    #     help_text="""
+    #         The person managing the convention.""",
+    #     on_delete=models.SET_NULL,
+    # )
 
     # Legacy
     stix_name = models.CharField(
@@ -1463,27 +1465,25 @@ class Convention(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('organization', 'season', 'year', 'kind',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('organization', 'season', 'year', 'kind',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "convention"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
         if self.season == self.SEASON.summer:
             season = None
         else:
             season = self.get_season_display()
-        hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
+        # hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
         self.nomen = " ".join(filter(None, [
-            hosts,
+            # hosts,
             season,
             u"Convention",
             str(self.year),
@@ -1508,11 +1508,12 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return any([
-                self.hosts.filter(
-                    organization__representative__user=request.user,
-                ),
-            ])
+            return True
+            # return any([
+            #     # self.hosts.filter(
+                #     organization__representative__user=request.user,
+                # ),
+            # ])
         return False
 
     # Transitions
@@ -1783,231 +1784,231 @@ class Entity(MPTTModel, TimeStampedModel):
         return False
 
 
-class Group(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class Group(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    nomen = models.CharField(
-        max_length=255,
-        unique=True,
-        editable=False,
-    )
+#     nomen = models.CharField(
+#         max_length=255,
+#         unique=True,
+#         editable=False,
+#     )
 
-    name = models.CharField(
-        help_text="""
-            The name of the resource.""",
-        max_length=200,
-        blank=False,
-    )
+#     name = models.CharField(
+#         help_text="""
+#             The name of the resource.""",
+#         max_length=200,
+#         blank=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-        (50, 'dup', 'Duplicate',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (10, 'active', 'Active',),
+#         (20, 'inactive', 'Inactive',),
+#         (50, 'dup', 'Duplicate',),
+#     )
 
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = models.IntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    KIND = Choices(
-        (1, 'quartet', 'Quartet'),
-        (2, 'chorus', 'Chorus'),
-    )
+#     KIND = Choices(
+#         (1, 'quartet', 'Quartet'),
+#         (2, 'chorus', 'Chorus'),
+#     )
 
-    kind = models.IntegerField(
-        help_text="""
-            The kind of group; choices are Quartet or Chorus.""",
-        choices=KIND,
-    )
+#     kind = models.IntegerField(
+#         help_text="""
+#             The kind of group; choices are Quartet or Chorus.""",
+#         choices=KIND,
+#     )
 
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
+#     AGE = Choices(
+#         (10, 'seniors', 'Seniors',),
+#         (20, 'collegiate', 'Collegiate',),
+#         (30, 'youth', 'Youth',),
+#     )
 
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
+#     age = models.IntegerField(
+#         choices=AGE,
+#         null=True,
+#         blank=True,
+#     )
 
-    is_novice = models.BooleanField(
-        default=False,
-    )
+#     is_novice = models.BooleanField(
+#         default=False,
+#     )
 
-    bhs_id = models.IntegerField(
-        unique=True,
-        null=True,
-        blank=True,
-    )
+#     bhs_id = models.IntegerField(
+#         unique=True,
+#         null=True,
+#         blank=True,
+#     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     start_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     end_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=200,
-        blank=True,
-        default='',
-    )
+#     location = models.CharField(
+#         help_text="""
+#             The geographical location of the resource.""",
+#         max_length=200,
+#         blank=True,
+#         default='',
+#     )
 
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-        default='',
-    )
+#     website = models.URLField(
+#         help_text="""
+#             The website URL of the resource.""",
+#         blank=True,
+#         default='',
+#     )
 
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-        default='',
-    )
+#     facebook = models.URLField(
+#         help_text="""
+#             The facebook URL of the resource.""",
+#         blank=True,
+#         default='',
+#     )
 
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
-        blank=True,
-        default='',
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
+#     twitter = models.CharField(
+#         help_text="""
+#             The twitter handle (in form @twitter_handle) of the resource.""",
+#         blank=True,
+#         default='',
+#         max_length=16,
+#         validators=[
+#             RegexValidator(
+#                 regex=r'@([A-Za-z0-9_]+)',
+#                 message="""
+#                     Must be a single Twitter handle
+#                     in the form `@twitter_handle`.
+#                 """,
+#             ),
+#         ],
+#     )
 
-    email = models.EmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-        default='',
-    )
+#     email = models.EmailField(
+#         help_text="""
+#             The contact email of the resource.""",
+#         blank=True,
+#         default='',
+#     )
 
-    phone = models.CharField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        null=True,
-        blank=True,
-        default='',
-        max_length=25,
-    )
+#     phone = models.CharField(
+#         help_text="""
+#             The phone number of the resource.  Include country code.""",
+#         null=True,
+#         blank=True,
+#         default='',
+#         max_length=25,
+#     )
 
-    picture = models.ImageField(
-        upload_to=generate_image_filename,
-        help_text="""
-            The picture/logo of the resource.""",
-        blank=True,
-        null=True,
-    )
+#     picture = models.ImageField(
+#         upload_to=generate_image_filename,
+#         help_text="""
+#             The picture/logo of the resource.""",
+#         blank=True,
+#         null=True,
+#     )
 
-    description = models.TextField(
-        help_text="""
-            A description/bio of the resource.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
+#     description = models.TextField(
+#         help_text="""
+#             A description/bio of the resource.  Max 1000 characters.""",
+#         blank=True,
+#         max_length=1000,
+#     )
 
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
-    )
+#     notes = models.TextField(
+#         help_text="""
+#             Notes (for internal use only).""",
+#         blank=True,
+#     )
 
-    # FKs
-    chapter = models.ForeignKey(
-        'Chapter',
-        help_text="""Chapter is reserved for Choruses only.  Do NOT add chapter for quartet""",
-        related_name='groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     # FKs
+#     chapter = models.ForeignKey(
+#         'Chapter',
+#         help_text="""Chapter is reserved for Choruses only.  Do NOT add chapter for quartet""",
+#         related_name='groups',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    district = TreeForeignKey(
-        'Organization',
-        related_name='district_groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     district = TreeForeignKey(
+#         'Organization',
+#         related_name='district_groups',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    division = TreeForeignKey(
-        'Organization',
-        related_name='division_groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     division = TreeForeignKey(
+#         'Organization',
+#         related_name='division_groups',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "group"
+#     # Internals
+#     class JSONAPIMeta:
+#         resource_name = "group"
 
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+#     def __unicode__(self):
+#         if self.nomen:
+#             return self.nomen
+#         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                (lambda x: unicode(x).encode('utf-8')),
-                filter(
-                    None, [
-                        self.name,
-                        self.bhs_id,
-                    ]
-                )
-            )
-        )
-        super(Group, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.nomen = " ".join(
+#             map(
+#                 (lambda x: unicode(x).encode('utf-8')),
+#                 filter(
+#                     None, [
+#                         self.name,
+#                         self.bhs_id,
+#                     ]
+#                 )
+#             )
+#         )
+#         super(Group, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.roles.filter(
-                    status=self.roles.model.STATUS.active,
-                    person__user=request.user,
-                ),
-            ])
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return any([
+#                 self.roles.filter(
+#                     status=self.roles.model.STATUS.active,
+#                     person__user=request.user,
+#                 ),
+#             ])
+#         return False
 
 
 class Host(TimeStampedModel):
@@ -2042,11 +2043,11 @@ class Host(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='hosts',
-        on_delete=models.CASCADE,
-    )
+    # organization = TreeForeignKey(
+    #     'Organization',
+    #     related_name='hosts',
+    #     on_delete=models.CASCADE,
+    # )
 
     entity = TreeForeignKey(
         'Entity',
@@ -2057,10 +2058,10 @@ class Host(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('convention', 'organization',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('convention', 'organization',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "host"
@@ -2102,224 +2103,224 @@ class Host(TimeStampedModel):
         return False
 
 
-class Judge(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class Judge(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    nomen = models.CharField(
-        max_length=255,
-        null=True,
-        # unique=True,
-        # editable=False,
-    )
+#     nomen = models.CharField(
+#         max_length=255,
+#         null=True,
+#         # unique=True,
+#         # editable=False,
+#     )
 
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New'),
-        (1, 'active', 'Active'),
-    )
+#     STATUS = Choices(
+#         (-10, 'inactive', 'Inactive',),
+#         (0, 'new', 'New'),
+#         (1, 'active', 'Active'),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
+#     CATEGORY = Choices(
+#         (0, 'admin', 'Admin'),
+#         (1, 'music', 'Music'),
+#         (2, 'presentation', 'Presentation'),
+#         (3, 'singing', 'Singing'),
+#     )
 
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
+#     category = models.IntegerField(
+#         choices=CATEGORY,
+#     )
 
-    KIND = Choices(
-        (10, 'chair', 'Chair'),
-        (15, 'chair', 'Chair'),
-        (30, 'specialist', 'Specialist'),
-        (35, 'drcj', 'DRCJ'),
-        (40, 'certified', 'Certified'),
-        (50, 'candidate', 'Candidate'),
-        (60, 'retired', 'Retired'),
-        (70, 'lapsed', 'Lapsed'),
-    )
+#     KIND = Choices(
+#         (10, 'chair', 'Chair'),
+#         (15, 'chair', 'Chair'),
+#         (30, 'specialist', 'Specialist'),
+#         (35, 'drcj', 'DRCJ'),
+#         (40, 'certified', 'Certified'),
+#         (50, 'candidate', 'Candidate'),
+#         (60, 'retired', 'Retired'),
+#         (70, 'lapsed', 'Lapsed'),
+#     )
 
-    kind = models.IntegerField(
-        choices=KIND,
-    )
+#     kind = models.IntegerField(
+#         choices=KIND,
+#     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     start_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     end_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    # FKs
-    person = models.ForeignKey(
-        'Person',
-        related_name='judges',
-        on_delete=models.CASCADE,
-    )
+#     # FKs
+#     person = models.ForeignKey(
+#         'Person',
+#         related_name='judges',
+#         on_delete=models.CASCADE,
+#     )
 
-    organization = TreeForeignKey(
-        'Organization',
-        related_name='judges',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     organization = TreeForeignKey(
+#         'Organization',
+#         related_name='judges',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    entity = TreeForeignKey(
-        'Entity',
-        related_name='judges',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+#     entity = TreeForeignKey(
+#         'Entity',
+#         related_name='judges',
+#         null=True,
+#         blank=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    # Internals
-    class Meta:
-        unique_together = (
-            ('category', 'person', 'kind',),
-        )
+#     # Internals
+#     class Meta:
+#         unique_together = (
+#             ('category', 'person', 'kind',),
+#         )
 
-    class JSONAPIMeta:
-        resource_name = "judge"
+#     class JSONAPIMeta:
+#         resource_name = "judge"
 
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+#     def __unicode__(self):
+#         if self.nomen:
+#             return self.nomen
+#         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            filter(
-                None, [
-                    self.person.common_name,
-                    self.get_category_display(),
-                    self.get_kind_display(),
-                ]
-            )
-        )
-        super(Judge, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.nomen = " ".join(
+#             filter(
+#                 None, [
+#                     self.person.common_name,
+#                     self.get_category_display(),
+#                     self.get_kind_display(),
+#                 ]
+#             )
+#         )
+#         super(Judge, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         return False
 
 
-class Member(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class Member(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    nomen = models.CharField(
-        max_length=255,
-        null=True,
-        # unique=True,
-        # editable=False,
-    )
+#     nomen = models.CharField(
+#         max_length=255,
+#         null=True,
+#         # unique=True,
+#         # editable=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (10, 'active', 'Active',),
+#         (20, 'inactive', 'Inactive',),
+#     )
 
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = models.IntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     start_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     end_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    # FKs
-    chapter = models.ForeignKey(
-        'Chapter',
-        related_name='members',
-        on_delete=models.CASCADE,
-    )
+#     # FKs
+#     chapter = models.ForeignKey(
+#         'Chapter',
+#         related_name='members',
+#         on_delete=models.CASCADE,
+#     )
 
-    person = models.ForeignKey(
-        'Person',
-        related_name='members',
-        on_delete=models.CASCADE,
-    )
+#     person = models.ForeignKey(
+#         'Person',
+#         related_name='members',
+#         on_delete=models.CASCADE,
+#     )
 
-    # Internals
-    class Meta:
-        unique_together = (
-            ('chapter', 'person',),
-        )
+#     # Internals
+#     class Meta:
+#         unique_together = (
+#             ('chapter', 'person',),
+#         )
 
-    class JSONAPIMeta:
-        resource_name = "member"
+#     class JSONAPIMeta:
+#         resource_name = "member"
 
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+#     def __unicode__(self):
+#         if self.nomen:
+#             return self.nomen
+#         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.chapter.name,
-            self.person.name,
-            str(self.person.bhs_id),
-        ]))
-        super(Member, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.nomen = " ".join(filter(None, [
+#             self.chapter.name,
+#             self.person.name,
+#             str(self.person.bhs_id),
+#         ]))
+#         super(Member, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         return False
 
 
 class Membership(TimeStampedModel):
@@ -2592,250 +2593,250 @@ class Officer(TimeStampedModel):
         return False
 
 
-class Organization(MPTTModel, TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class Organization(MPTTModel, TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    nomen = models.CharField(
-        max_length=255,
-        null=True,
-        # unique=True,
-        # editable=False,
-    )
+#     nomen = models.CharField(
+#         max_length=255,
+#         null=True,
+#         # unique=True,
+#         # editable=False,
+#     )
 
-    name = models.CharField(
-        help_text="""
-            The name of the resource.""",
-        max_length=200,
-    )
+#     name = models.CharField(
+#         help_text="""
+#             The name of the resource.""",
+#         max_length=200,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (10, 'active', 'Active',),
+#         (20, 'inactive', 'Inactive',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    LEVEL = Choices(
-        (0, 'international', "International"),
-        (1, 'district', "District/Affiliates"),
-        (2, 'division', "Division"),
-        (3, 'chapter', "Chapter"),
-    )
+#     LEVEL = Choices(
+#         (0, 'international', "International"),
+#         (1, 'district', "District/Affiliates"),
+#         (2, 'division', "Division"),
+#         (3, 'chapter', "Chapter"),
+#     )
 
-    level = models.IntegerField(
-        choices=LEVEL,
-    )
+#     level = models.IntegerField(
+#         choices=LEVEL,
+#     )
 
-    KIND = Choices(
-        ('International', [
-            (0, 'international', "International"),
-            (50, 'hi', "Harmony Incorporated"),
-        ]),
-        ('District', [
-            (10, 'district', "District"),
-            (20, 'noncomp', "Noncompetitive"),
-            (30, 'affiliate', "Affiliate"),
-        ]),
-        ('Division', [
-            (40, 'division', "Division"),
-        ]),
-        ('Chapter', [
-            (60, 'chapter', "Chapter"),
-        ]),
-    )
+#     KIND = Choices(
+#         ('International', [
+#             (0, 'international', "International"),
+#             (50, 'hi', "Harmony Incorporated"),
+#         ]),
+#         ('District', [
+#             (10, 'district', "District"),
+#             (20, 'noncomp', "Noncompetitive"),
+#             (30, 'affiliate', "Affiliate"),
+#         ]),
+#         ('Division', [
+#             (40, 'division', "Division"),
+#         ]),
+#         ('Chapter', [
+#             (60, 'chapter', "Chapter"),
+#         ]),
+#     )
 
-    kind = models.IntegerField(
-        help_text="""
-            The kind of organization.""",
-        choices=KIND,
-    )
+#     kind = models.IntegerField(
+#         help_text="""
+#             The kind of organization.""",
+#         choices=KIND,
+#     )
 
-    short_name = models.CharField(
-        help_text="""
-            A short-form name for the resource.""",
-        blank=True,
-        max_length=200,
-    )
+#     short_name = models.CharField(
+#         help_text="""
+#             A short-form name for the resource.""",
+#         blank=True,
+#         max_length=200,
+#     )
 
-    long_name = models.CharField(
-        help_text="""
-            A long-form name for the resource.""",
-        blank=True,
-        max_length=200,
-    )
+#     long_name = models.CharField(
+#         help_text="""
+#             A long-form name for the resource.""",
+#         blank=True,
+#         max_length=200,
+#     )
 
-    code = models.CharField(
-        help_text="""
-            The chapter code.""",
-        max_length=200,
-        blank=True,
-        null=True,
-    )
+#     code = models.CharField(
+#         help_text="""
+#             The chapter code.""",
+#         max_length=200,
+#         blank=True,
+#         null=True,
+#     )
 
-    spots = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     spots = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     start_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     end_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=200,
-        blank=True,
-    )
+#     location = models.CharField(
+#         help_text="""
+#             The geographical location of the resource.""",
+#         max_length=200,
+#         blank=True,
+#     )
 
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-    )
+#     website = models.URLField(
+#         help_text="""
+#             The website URL of the resource.""",
+#         blank=True,
+#     )
 
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-    )
+#     facebook = models.URLField(
+#         help_text="""
+#             The facebook URL of the resource.""",
+#         blank=True,
+#     )
 
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
+#     twitter = models.CharField(
+#         help_text="""
+#             The twitter handle (in form @twitter_handle) of the resource.""",
+#         blank=True,
+#         max_length=16,
+#         validators=[
+#             RegexValidator(
+#                 regex=r'@([A-Za-z0-9_]+)',
+#                 message="""
+#                     Must be a single Twitter handle
+#                     in the form `@twitter_handle`.
+#                 """,
+#             ),
+#         ],
+#     )
 
-    email = models.EmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-    )
+#     email = models.EmailField(
+#         help_text="""
+#             The contact email of the resource.""",
+#         blank=True,
+#     )
 
-    phone = models.CharField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        null=True,
-        blank=True,
-        default='',
-        max_length=25,
-    )
+#     phone = models.CharField(
+#         help_text="""
+#             The phone number of the resource.  Include country code.""",
+#         null=True,
+#         blank=True,
+#         default='',
+#         max_length=25,
+#     )
 
-    picture = models.ImageField(
-        upload_to=generate_image_filename,
-        help_text="""
-            The picture/logo of the resource.""",
-        blank=True,
-        null=True,
-    )
+#     picture = models.ImageField(
+#         upload_to=generate_image_filename,
+#         help_text="""
+#             The picture/logo of the resource.""",
+#         blank=True,
+#         null=True,
+#     )
 
-    description = models.TextField(
-        help_text="""
-            A description/bio of the resource.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
+#     description = models.TextField(
+#         help_text="""
+#             A description/bio of the resource.  Max 1000 characters.""",
+#         blank=True,
+#         max_length=1000,
+#     )
 
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
-    )
+#     notes = models.TextField(
+#         help_text="""
+#             Notes (for internal use only).""",
+#         blank=True,
+#     )
 
-    bhs_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-    )
+#     bhs_id = models.IntegerField(
+#         unique=True,
+#         blank=True,
+#         null=True,
+#     )
 
-    # FKs
-    parent = TreeForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
+#     # FKs
+#     parent = TreeForeignKey(
+#         'self',
+#         null=True,
+#         blank=True,
+#         related_name='children',
+#         db_index=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    representative = models.ForeignKey(
-        'Person',
-        related_name='organizations',
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
+#     representative = models.ForeignKey(
+#         'Person',
+#         related_name='organizations',
+#         blank=True,
+#         null=True,
+#         on_delete=models.SET_NULL,
+#     )
 
-    # Internals
-    class Meta:
-        unique_together = (
-            ('level', 'kind', 'name')
-        )
+#     # Internals
+#     class Meta:
+#         unique_together = (
+#             ('level', 'kind', 'name')
+#         )
 
-    class MPTTMeta:
-        order_insertion_by = [
-            'level',
-            'kind',
-            'name',
-        ]
+#     class MPTTMeta:
+#         order_insertion_by = [
+#             'level',
+#             'kind',
+#             'name',
+#         ]
 
-    class JSONAPIMeta:
-        resource_name = "organization"
+#     class JSONAPIMeta:
+#         resource_name = "organization"
 
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+#     def __unicode__(self):
+#         if self.nomen:
+#             return self.nomen
+#         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        self.nomen = self.name
-        super(Organization, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.nomen = self.name
+#         super(Organization, self).save(*args, **kwargs)
 
-    # Permissions
-    @staticmethod
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.representative.user == request.user,
-            ])
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return any([
+#                 self.representative.user == request.user,
+#             ])
+#         return False
 
 
 class Performance(TimeStampedModel):
@@ -2918,24 +2919,25 @@ class Performance(TimeStampedModel):
         return self.id.hex
 
     def save(self, *args, **kwargs):
-        if self.performer.session.convention.kind:
-            kind = str(self.performer.session.convention.get_kind_display())
-            if self.performer.session.convention.kind == self.performer.session.convention.KIND.international:
-                kind = None
-        self.nomen = " ".join(filter(None, [
-            self.round.session.convention.organization.name,
-            str(self.round.session.convention.get_kind_display()),
-            self.round.session.convention.get_season_display(),
-            self.round.session.get_kind_display(),
-            self.round.get_kind_display(),
-            str(self.round.session.convention.year),
-            self.performer.session.convention.organization.name,
-            kind,
-            self.performer.session.convention.get_season_display(),
-            str(self.performer.session.convention.year),
-            self.performer.session.get_kind_display(),
-            self.performer.group.name,
-        ]))
+        # if self.performer.session.convention.kind:
+        #     kind = str(self.performer.session.convention.get_kind_display())
+        #     if self.performer.session.convention.kind == self.performer.session.convention.KIND.international:
+        #         kind = None
+        # self.nomen = " ".join(filter(None, [
+        #     self.round.session.convention.organization.name,
+        #     str(self.round.session.convention.get_kind_display()),
+        #     self.round.session.convention.get_season_display(),
+        #     self.round.session.get_kind_display(),
+        #     self.round.get_kind_display(),
+        #     str(self.round.session.convention.year),
+        #     self.performer.session.convention.organization.name,
+        #     kind,
+        #     self.performer.session.convention.get_season_display(),
+        #     str(self.performer.session.convention.year),
+        #     self.performer.session.get_kind_display(),
+        #     self.performer.group.name,
+        # ]))
+        self.nomen = self.id.hex
         super(Performance, self).save(*args, **kwargs)
 
     # Permissions
@@ -3246,11 +3248,11 @@ class Performer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    group = models.ForeignKey(
-        'Group',
-        related_name='performers',
-        on_delete=models.CASCADE,
-    )
+    # group = models.ForeignKey(
+    #     'Group',
+    #     related_name='performers',
+    #     on_delete=models.CASCADE,
+    # )
 
     entity = TreeForeignKey(
         'Entity',
@@ -3308,27 +3310,27 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    representing = TreeForeignKey(
-        'Organization',
-        related_name='performers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # representing = TreeForeignKey(
+    #     'Organization',
+    #     related_name='performers',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
-    division = TreeForeignKey(
-        'Organization',
-        related_name='division_performers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # division = TreeForeignKey(
+    #     'Organization',
+    #     related_name='division_performers',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
-    # Internals
-    class Meta:
-        unique_together = (
-            ('group', 'session',),
-        )
+    # # Internals
+    # class Meta:
+    #     unique_together = (
+    #         ('group', 'session',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "performer"
@@ -3339,60 +3341,61 @@ class Performer(TimeStampedModel):
         return self.id.hex
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            try:
-                self.lead = self.group.roles.get(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.lead,
-                )
-            except Exception:
-                pass
-            try:
-                self.tenor = self.group.roles.get(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.tenor,
-                )
-            except Exception:
-                pass
-            try:
-                self.baritone = self.group.roles.get(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.baritone,
-                )
-            except Exception:
-                pass
-            try:
-                self.bass = self.group.roles.get(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.bass,
-                )
-            except Exception:
-                pass
-            try:
-                self.director = self.group.roles.filter(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.director,
-                )[:0]
-            except Exception:
-                pass
-            try:
-                self.codirector = self.group.roles.filter(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.director,
-                )[:1]
-            except Exception:
-                pass
-            try:
-                self.representing = self.group.roles.filter(
-                    status=self.group.roles.model.STATUS.active,
-                    part=self.group.roles.model.PART.director,
-                )[:1]
-            except Exception:
-                pass
-        self.nomen = " ".join(filter(None, [
-            self.session.nomen,
-            self.group.nomen,
-        ]))
+        # if self._state.adding:
+        #     try:
+        #         self.lead = self.group.roles.get(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.lead,
+        #         )
+        #     except Exception:
+        #         pass
+        #     try:
+        #         self.tenor = self.group.roles.get(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.tenor,
+        #         )
+        #     except Exception:
+        #         pass
+        #     try:
+        #         self.baritone = self.group.roles.get(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.baritone,
+        #         )
+        #     except Exception:
+        #         pass
+        #     try:
+        #         self.bass = self.group.roles.get(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.bass,
+        #         )
+        #     except Exception:
+        #         pass
+        #     try:
+        #         self.director = self.group.roles.filter(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.director,
+        #         )[:0]
+        #     except Exception:
+        #         pass
+        #     try:
+        #         self.codirector = self.group.roles.filter(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.director,
+        #         )[:1]
+        #     except Exception:
+        #         pass
+        #     try:
+        #         self.representing = self.group.roles.filter(
+        #             status=self.group.roles.model.STATUS.active,
+        #             part=self.group.roles.model.PART.director,
+        #         )[:1]
+        #     except Exception:
+        #         pass
+        # self.nomen = " ".join(filter(None, [
+        #     self.session.nomen,
+        #     self.group.nomen,
+        # ]))
+        self.nomen = self.id.hex
         super(Performer, self).save(*args, **kwargs)
 
     # Permissions
@@ -3982,132 +3985,132 @@ class Person(TimeStampedModel):
         return False
 
 
-class Role(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+# class Role(TimeStampedModel):
+#     id = models.UUIDField(
+#         primary_key=True,
+#         default=uuid.uuid4,
+#         editable=False,
+#     )
 
-    nomen = models.CharField(
-        max_length=255,
-        null=True,
-        # unique=True,
-        # editable=False,
-    )
+#     nomen = models.CharField(
+#         max_length=255,
+#         null=True,
+#         # unique=True,
+#         # editable=False,
+#     )
 
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-        (20, 'inactive', 'Inactive',),
-    )
+#     STATUS = Choices(
+#         (0, 'new', 'New',),
+#         (10, 'active', 'Active',),
+#         (20, 'inactive', 'Inactive',),
+#     )
 
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
+#     status = FSMIntegerField(
+#         choices=STATUS,
+#         default=STATUS.new,
+#     )
 
-    PART = Choices(
-        (1, 'tenor', 'Tenor'),
-        (2, 'lead', 'Lead'),
-        (3, 'baritone', 'Baritone'),
-        (4, 'bass', 'Bass'),
-        (5, 'director', 'Director'),
-    )
+#     PART = Choices(
+#         (1, 'tenor', 'Tenor'),
+#         (2, 'lead', 'Lead'),
+#         (3, 'baritone', 'Baritone'),
+#         (4, 'bass', 'Bass'),
+#         (5, 'director', 'Director'),
+#     )
 
-    part = models.IntegerField(
-        choices=PART,
-    )
+#     part = models.IntegerField(
+#         choices=PART,
+#     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     start_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
+#     end_date = models.DateField(
+#         null=True,
+#         blank=True,
+#     )
 
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
+#     bhs_id = models.IntegerField(
+#         null=True,
+#         blank=True,
+#     )
 
-    # FKs
-    group = models.ForeignKey(
-        'Group',
-        related_name='roles',
-        on_delete=models.CASCADE,
-    )
+#     # FKs
+#     group = models.ForeignKey(
+#         'Group',
+#         related_name='roles',
+#         on_delete=models.CASCADE,
+#     )
 
-    person = models.ForeignKey(
-        'Person',
-        related_name='roles',
-        on_delete=models.CASCADE,
-    )
+#     person = models.ForeignKey(
+#         'Person',
+#         related_name='roles',
+#         on_delete=models.CASCADE,
+#     )
 
-    # Internals
-    class Meta:
-        unique_together = (
-            ('group', 'person', 'start_date', 'end_date'),
-        )
+#     # Internals
+#     class Meta:
+#         unique_together = (
+#             ('group', 'person', 'start_date', 'end_date'),
+#         )
 
-    class JSONAPIMeta:
-        resource_name = "role"
+#     class JSONAPIMeta:
+#         resource_name = "role"
 
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+#     def __unicode__(self):
+#         if self.nomen:
+#             return self.nomen
+#         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.group.name,
-            self.person.name,
-            self.get_part_display(),
-        ]))
-        super(Role, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.nomen = " ".join(filter(None, [
+#             self.group.name,
+#             self.person.name,
+#             self.get_part_display(),
+#         ]))
+#         super(Role, self).save(*args, **kwargs)
 
-    # def clean(self):
-    #     if all([
-    #         self.performer.group.kind == Group.KIND.chorus,
-    #         self.part != self.PART.director,
-    #     ]):
-    #         raise ValidationError('Choruses do not have quartet singers.')
-    #     if all([
-    #         self.performer.group.kind == Group.KIND.quartet,
-    #         self.part == self.PART.director,
-    #     ]):
-    #         raise ValidationError('Quartets do not have directors.')
-        # if self.part:
-        #     if [s['part'] for s in self.performer.singers.values(
-        #         'part'
-        #     )].count(self.part) > 1:
-        #         raise ValidationError('There can not be more than one of the same part in a quartet.')
+#     # def clean(self):
+#     #     if all([
+#     #         self.performer.group.kind == Group.KIND.chorus,
+#     #         self.part != self.PART.director,
+#     #     ]):
+#     #         raise ValidationError('Choruses do not have quartet singers.')
+#     #     if all([
+#     #         self.performer.group.kind == Group.KIND.quartet,
+#     #         self.part == self.PART.director,
+#     #     ]):
+#     #         raise ValidationError('Quartets do not have directors.')
+#         # if self.part:
+#         #     if [s['part'] for s in self.performer.singers.values(
+#         #         'part'
+#         #     )].count(self.part) > 1:
+#         #         raise ValidationError('There can not be more than one of the same part in a quartet.')
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
+#     # Permissions
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_read_permission(request):
+#         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
+#     @staticmethod
+#     @allow_staff_or_superuser
+#     def has_write_permission(request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
+#     @allow_staff_or_superuser
+#     def has_object_read_permission(self, request):
+#         return True
 
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.person.user == request.user,
-            ])
-        return False
+#     @allow_staff_or_superuser
+#     def has_object_write_permission(self, request):
+#         if request.user.is_authenticated():
+#             return any([
+#                 self.person.user == request.user,
+#             ])
+#         return False
 
 
 class Round(TimeStampedModel):
@@ -4183,13 +4186,13 @@ class Round(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    mt = models.ForeignKey(
-        'Group',
-        related_name='mic_tester',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # mt = models.ForeignKey(
+    #     'Group',
+    #     related_name='mic_tester',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     # Legacy
     stix_name = models.CharField(

@@ -15,13 +15,13 @@ from .inlines import (
     ContestantInline,
     ContestInline,
     # ConventionInline,
-    GroupInline,
+    # GroupInline,
     HostInline,
-    JudgeInline,
-    MemberInline,
+    # JudgeInline,
+    # MemberInline,
     PerformanceInline,
     PerformerInline,
-    RoleInline,
+    # RoleInline,
     RoundInline,
     ScoreInline,
     SessionInline,
@@ -64,6 +64,7 @@ from .models import (
     Venue,
 )
 
+
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
     list_display = [
@@ -79,6 +80,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'status',
         'kind',
     ]
+
 
 @admin.register(Officer)
 class OfficerAdmin(admin.ModelAdmin):
@@ -106,6 +108,7 @@ class MembershipAdmin(admin.ModelAdmin):
         'entity__kind',
     ]
 
+
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -117,7 +120,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'bhs_id',
         'session',
         'person',
-        'organization',
+        # 'organization',
     ]
 
     list_display = [
@@ -126,7 +129,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'person',
-        'organization',
+        # 'organization',
     ]
 
     list_filter = (
@@ -136,7 +139,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     )
 
     list_select_related = [
-        'organization',
+        # 'organization',
         'session',
         'person',
     ]
@@ -163,7 +166,7 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'status',
         'is_manual',
-        'organization',
+        # 'organization',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -200,7 +203,7 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'is_primary',
-        'organization__level',
+        # 'organization__level',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -209,7 +212,7 @@ class AwardAdmin(admin.ModelAdmin):
         'is_manual',
         'is_novice',
         'is_improved',
-        'organization',
+        # 'organization',
     ]
 
     readonly_fields = [
@@ -221,8 +224,8 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'organization__level',
-        'organization__name',
+        # 'organization__level',
+        # 'organization__name',
         'kind',
         '-is_primary',
         'is_improved',
@@ -316,10 +319,10 @@ class ChapterAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    inlines = [
-        GroupInline,
-        MemberInline,
-    ]
+    # inlines = [
+    #     GroupInline,
+    #     MemberInline,
+    # ]
 
     save_on_top = True
 
@@ -346,11 +349,11 @@ class ContestAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'award__organization__level',
+        # 'award__organization__level',
         'award__kind',
         'award__is_primary',
         'is_qualifier',
-        'award__organization',
+        # 'award__organization',
     ]
 
     save_on_top = True
@@ -431,7 +434,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'end_date',
         'year',
         'season',
-        'drcj',
+        # 'drcj',
     )
 
     list_display = (
@@ -447,7 +450,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'level',
         'kind',
         'season',
-        'hosts__organization',
+        # 'hosts__organization',
         'year',
     )
 
@@ -469,7 +472,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = [
-        'drcj',
+        # 'drcj',
         'venue',
     ]
 
@@ -561,9 +564,9 @@ class GroupAdmin(admin.ModelAdmin):
         'bhs_id',
         'start_date',
         'end_date',
-        'chapter',
-        'district',
-        'division',
+        # 'chapter',
+        # 'district',
+        # 'division',
         'location',
         'website',
         'facebook',
@@ -580,8 +583,8 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         'bhs_id',
         'status',
-        'district',
-        'division',
+        # 'district',
+        # 'division',
         'location',
         'website',
         'facebook',
@@ -621,14 +624,14 @@ class HostAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'convention',
-        'organization',
+        # 'organization',
     ]
 
     list_display = [
         'nomen',
         'status',
         'convention',
-        'organization',
+        # 'organization',
     ]
 
     list_filter = [
@@ -663,7 +666,7 @@ class JudgeAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
         'person',
-        'organization',
+        # 'organization',
     ]
 
     list_display = [
@@ -685,7 +688,7 @@ class JudgeAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'person',
-        'organization',
+        # 'organization',
     ]
 
     search_fields = [
@@ -701,7 +704,7 @@ class JudgeAdmin(admin.ModelAdmin):
 class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
-        'chapter',
+        # 'chapter',
         'person',
         'start_date',
         'end_date',
@@ -719,7 +722,7 @@ class MemberAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = [
-        'chapter',
+        # 'chapter',
         'person',
     ]
 
@@ -750,7 +753,7 @@ class OrganizationAdmin(MPTTModelAdmin):
         'short_name',
         'long_name',
         'location',
-        'representative',
+        # 'representative',
         'spots',
         'website',
         'facebook',
@@ -787,9 +790,9 @@ class OrganizationAdmin(MPTTModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = [
-        'representative',
-    ]
+    # raw_id_fields = [
+    #     'representative',
+    # ]
 
     readonly_fields = [
         'level',
@@ -819,7 +822,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'round__session__kind',
         'round__session__convention__season',
         'round__session__convention__year',
-        'round__session__convention__organization',
+        # 'round__session__convention__organization',
     ]
 
     fsm_field = [
@@ -859,9 +862,9 @@ class PerformerAdmin(admin.ModelAdmin):
         'picture',
         # 'csa_pdf',
         'session',
-        'group',
+        # 'group',
         # 'district',
-        'division',
+        # 'division',
         'risers',
         ('is_evaluation', 'is_private',),
         ('tenor', 'lead', 'baritone', 'bass',),
@@ -880,7 +883,7 @@ class PerformerAdmin(admin.ModelAdmin):
         'session__convention__level',
         'session__kind',
         'session__convention__season',
-        'session__convention__organization',
+        # 'session__convention__organization',
         'session__convention__year',
         'risers',
     ]
@@ -901,7 +904,7 @@ class PerformerAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'session',
-        'group',
+        # 'group',
         'tenor',
         'lead',
         'baritone',
@@ -982,11 +985,11 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    inlines = [
-        RoleInline,
-        # MemberInline,
-        JudgeInline,
-    ]
+    # inlines = [
+    #     RoleInline,
+    #     MemberInline,
+    #     JudgeInline,
+    # ]
 
     search_fields = (
         'nomen',
@@ -1032,7 +1035,7 @@ class RoleAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = (
-        'group',
+        # 'group',
         'person',
     )
 
@@ -1044,7 +1047,7 @@ class RoundAdmin(admin.ModelAdmin):
         'status',
         ('session', 'kind',),
         'num_songs',
-        'mt',
+        # 'mt',
         'start_date',
         'end_date',
         'ann_pdf',
@@ -1061,7 +1064,7 @@ class RoundAdmin(admin.ModelAdmin):
         'session__convention__level',
         'session__convention__season',
         'session__convention__year',
-        'session__convention__organization',
+        # 'session__convention__organization',
     ]
 
     fsm_field = [
@@ -1078,7 +1081,7 @@ class RoundAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'session',
-        'mt',
+        # 'mt',
     )
 
     inlines = [
@@ -1168,7 +1171,7 @@ class SessionAdmin(admin.ModelAdmin):
         'convention__level',
         'convention__season',
         'convention__year',
-        'convention__organization',
+        # 'convention__organization',
     )
 
     raw_id_fields = (
@@ -1195,7 +1198,7 @@ class SessionAdmin(admin.ModelAdmin):
     ordering = (
         '-convention__year',
         'convention__level',
-        'convention__organization__name',
+        # 'convention__organization__name',
         '-convention__season',
         'kind',
     )
