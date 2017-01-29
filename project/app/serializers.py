@@ -54,7 +54,33 @@ class EntitySerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'name',
+            'status',
+            'level',
+            'kind',
+            'age',
+            'is_novice',
+            'start_date',
+            'end_date',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'short_name',
+            'code',
+            'long_name',
+            'parent',
+            'children',
+            'awards',
+            'lft',
             'permissions',
+        ]
+        read_only_fields = [
+            'picture',
         ]
 
 
@@ -67,6 +93,12 @@ class MembershipSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'status',
+            'part',
+            'start_date',
+            'end_date',
+            'entity',
+            'person',
             'permissions',
         ]
 
@@ -80,6 +112,11 @@ class OfficeSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'name',
+            'status',
+            'kind',
+            'short_name',
+            'long_name',
             'permissions',
         ]
 
@@ -93,6 +130,11 @@ class OfficerSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'status',
+            'start_date',
+            'end_date',
+            'office',
+            'membership',
             'permissions',
         ]
 
