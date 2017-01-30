@@ -450,7 +450,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            'entities',
             'common_name',
             'full_name',
             'formal_name',
