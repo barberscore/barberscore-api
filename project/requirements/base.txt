@@ -1,9 +1,9 @@
 arrow==0.10.0
 auth0-python==2.0.1
-awscli==1.11.43
-botocore==1.5.6
+awscli==1.11.44
+botocore==1.5.7
 dj-database-url==0.4.2
-django-cors-headers==2.0.0
+django-cors-headers==2.0.1
 django-filter==1.0.1
 django-fsm==2.4.0
 django-model-utils==2.6.1
