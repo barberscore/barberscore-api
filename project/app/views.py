@@ -176,10 +176,10 @@ class OfficeViewSet(viewsets.ModelViewSet):
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
-        'session',
+        'convention',
         'person',
     ).order_by(
-        'session',
+        'convention',
         'category',
         'kind',
         'slot',

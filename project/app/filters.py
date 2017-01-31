@@ -87,6 +87,9 @@ class PersonFilter(filters.FilterSet):
             'user': [
                 'exact',
             ],
+            'memberships__officers__office__kind': [
+                'exact',
+            ],
         }
 
 

@@ -155,11 +155,11 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'category',
-            'designation',
+            # 'designation',
             'kind',
             'slot',
             'person',
-            'session',
+            'convention',
             'permissions',
         )
 
@@ -310,6 +310,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'venue',
             'hosts',
             # 'drcj',
+            'assignments',
             'sessions',
             'permissions',
         )

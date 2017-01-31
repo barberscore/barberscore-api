@@ -73,6 +73,7 @@ class Assignment(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
+        blank=True,
         # unique=True,
         # editable=False,
     )
@@ -100,13 +101,17 @@ class Assignment(TimeStampedModel):
 
     category = models.IntegerField(
         choices=CATEGORY,
+        null=True,
+        blank=True,
     )
 
     KIND = Choices(
         (5, 'drcj', 'DRCJ'),
-        (10, 'official', 'Official'),
-        (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
+        (10, 'ca', 'CA'),
+        (20, 'aca', 'ACA'),
+        (30, 'music', 'Music'),
+        (40, 'presentation', 'Presentation'),
+        (50, 'singing', 'Singing'),
     )
 
     kind = models.IntegerField(
@@ -163,13 +168,13 @@ class Assignment(TimeStampedModel):
     # )
 
     # Denormalizations
-    @property
-    def designation(self):
-        designation = u"{0[0]}{1:1d}".format(
-            self.get_category_display(),
-            self.slot,
-        )
-        return designation
+    # @property
+    # def designation(self):
+    #     designation = u"{0[0]}{1:1d}".format(
+    #         self.get_category_display(),
+    #         self.slot,
+    #     )
+    #     return designation
 
     # Internals
     # class Meta:
@@ -225,9 +230,10 @@ class Assignment(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return any([
-                self.session.convention.drcj == request.user.person,
-            ])
+            # return any([
+            #     self.convention.drcj == request.user.person,
+            # ])
+            return True
         return False
 
 
@@ -1286,6 +1292,21 @@ class Convention(TimeStampedModel):
         choices=PANEL,
         default=PANEL.unknown,
     )
+
+    RISERS = [
+        (0, 0),
+        (3, 3),
+        (4, 4),
+        (5, 5),
+        (6, 6),
+        (7, 7),
+        (8, 8),
+        (9, 9),
+        (10, 10),
+        (11, 11),
+        (12, 12),
+        (13, 13),
+    ]
 
     risers = ArrayField(
         base_field=models.IntegerField(null=True, blank=True),
