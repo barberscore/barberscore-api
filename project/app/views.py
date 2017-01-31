@@ -546,7 +546,6 @@ class SessionViewSet(
     ).prefetch_related(
         'performers',
         'rounds',
-        'assignments',
         'contests',
     ).order_by(
         '-start_date',
