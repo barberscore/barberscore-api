@@ -103,6 +103,7 @@ class Assignment(TimeStampedModel):
     )
 
     KIND = Choices(
+        (5, 'drcj', 'DRCJ'),
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),
         (30, 'composite', 'Composite'),
@@ -123,10 +124,18 @@ class Assignment(TimeStampedModel):
     )
 
     # FKs
-    session = models.ForeignKey(
-        'Session',
+    # session = models.ForeignKey(
+    #     'Session',
+    #     related_name='assignments',
+    #     on_delete=models.CASCADE,
+    # )
+
+    convention = models.ForeignKey(
+        'Convention',
         related_name='assignments',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     person = models.ForeignKey(
@@ -145,13 +154,13 @@ class Assignment(TimeStampedModel):
     #     on_delete=models.SET_NULL,
     # )
 
-    entity = TreeForeignKey(
-        'Entity',
-        related_name='assignments',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # entity = TreeForeignKey(
+    #     'Entity',
+    #     related_name='assignments',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     # Denormalizations
     @property
@@ -163,40 +172,39 @@ class Assignment(TimeStampedModel):
         return designation
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('session', 'category', 'kind', 'slot'),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('session', 'category', 'kind', 'slot'),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "assignment"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
         # Very hacky slot designator
-        if self._state.adding:
-            try:
-                self.slot = self.__class__.objects.filter(
-                    session=self.session,
-                    category=self.category,
-                    kind=self.kind,
-                ).aggregate(
-                    max=models.Max('slot')
-                )['max'] + 1
-            except TypeError:
-                if self.kind == self.KIND.practice:
-                    self.slot = 6
-                else:
-                    self.slot = 1
-        self.nomen = " ".join(filter(None, [
-            self.get_kind_display(),
-            self.get_category_display(),
-            str(self.slot),
-        ]))
+        # if self._state.adding:
+        #     try:
+        #         self.slot = self.__class__.objects.filter(
+        #             session=self.session,
+        #             category=self.category,
+        #             kind=self.kind,
+        #         ).aggregate(
+        #             max=models.Max('slot')
+        #         )['max'] + 1
+        #     except TypeError:
+        #         if self.kind == self.KIND.practice:
+        #             self.slot = 6
+        #         else:
+        #             self.slot = 1
+        # self.nomen = " ".join(filter(None, [
+        #     self.get_kind_display(),
+        #     self.get_category_display(),
+        #     str(self.slot),
+        # ]))
+        self.nomen = self.id.hex
         super(Assignment, self).save(*args, **kwargs)
 
     # Permissions
@@ -1181,6 +1189,7 @@ class Convention(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
+        blank=True,
         # unique=True,
         # editable=False,
     )
@@ -1264,6 +1273,20 @@ class Convention(TimeStampedModel):
         choices=SEASON,
     )
 
+    PANEL = Choices(
+        (0, 'unknown', "Unknown"),
+        (1, 'single', "Single"),
+        (2, 'double', "Double"),
+        (3, 'triple', "Triple"),
+        (4, 'quadruple', "Quadruple"),
+        (5, 'quintiple', "Quintiple"),
+    )
+
+    panel = models.IntegerField(
+        choices=PANEL,
+        default=PANEL.unknown,
+    )
+
     risers = ArrayField(
         base_field=models.IntegerField(null=True, blank=True),
         null=True,
@@ -1284,6 +1307,12 @@ class Convention(TimeStampedModel):
     )
 
     end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    location = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
     )
@@ -1368,17 +1397,18 @@ class Convention(TimeStampedModel):
         return self.nomen
 
     def save(self, *args, **kwargs):
-        if self.season == self.SEASON.summer:
-            season = None
-        else:
-            season = self.get_season_display()
-        # hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
-        self.nomen = " ".join(filter(None, [
-            # hosts,
-            season,
-            u"Convention",
-            str(self.year),
-        ]))
+        # if self.season == self.SEASON.summer:
+        #     season = None
+        # else:
+        #     season = self.get_season_display()
+        # # hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
+        # self.nomen = " ".join(filter(None, [
+        #     # hosts,
+        #     season,
+        #     u"Convention",
+        #     str(self.year),
+        # ]))
+        self.nomen = self.name
         super(Convention, self).save(*args, **kwargs)
 
     # Permissions
@@ -1399,12 +1429,12 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return True
-            # return any([
-            #     # self.hosts.filter(
-            #         organization__representative__user=request.user,
-            #     ),
-            # ])
+            return any([
+                self.assignments.filter(
+                    person__user=request.user,
+                    kind=self.assignments.model.KIND.drcj,
+                ),
+            ])
         return False
 
     # Transitions

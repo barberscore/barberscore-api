@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group as AuthGroup
 
 # Local
 from .inlines import (
-    AssignmentInline,
+    # AssignmentInline,
     # AwardInline,
     ContestantInline,
     ContestInline,
@@ -108,7 +108,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'kind',
         'slot',
         'bhs_id',
-        'session',
+        'convention',
         'person',
     ]
 
@@ -118,6 +118,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'person',
+        'convention',
     ]
 
     list_filter = (
@@ -127,17 +128,16 @@ class AssignmentAdmin(admin.ModelAdmin):
     )
 
     list_select_related = [
-        'session',
+        'convention',
         'person',
     ]
 
     search_fields = [
         'nomen',
-        'person__nomen',
     ]
 
     raw_id_fields = (
-        'session',
+        'convention',
         'person',
     )
 
@@ -377,6 +377,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'status',
         'start_date',
         'end_date',
+        'level',
         'venue',
     )
 
@@ -868,7 +869,6 @@ class SessionAdmin(admin.ModelAdmin):
     inlines = [
         RoundInline,
         PerformerInline,
-        AssignmentInline,
         ContestInline,
     ]
 

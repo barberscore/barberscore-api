@@ -112,14 +112,12 @@ class AssignmentInline(admin.TabularInline):
         'person',
         'category',
         'kind',
-        'session',
         'slot',
     ]
     raw_id_fields = [
         'person',
     ]
     ordering = (
-        'session',
         'kind',
         'category',
     )

@@ -55,6 +55,12 @@ class ConventionFilter(filters.FilterSet):
             'year': [
                 'exact',
             ],
+            'kind': [
+                'exact',
+            ],
+            'assignments__person__user': [
+                'exact',
+            ],
         }
 
 
@@ -97,9 +103,9 @@ class SessionFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'assignments__person__user': [
-                'exact',
-            ],
+            # 'assignments__person__user': [
+            #     'exact',
+            # ],
         }
 
 

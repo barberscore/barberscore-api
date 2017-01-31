@@ -306,7 +306,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'venue',
-            'hosts'
+            'hosts',
             # 'drcj',
             'sessions',
             'permissions',
@@ -537,7 +537,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'primary',
             'performers',
             'contests',
-            'assignments',
             'rounds',
             'permissions',
         )
