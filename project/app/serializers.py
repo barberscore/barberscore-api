@@ -300,6 +300,8 @@ class ConventionSerializer(serializers.ModelSerializer):
             'kind',
             'season',
             'risers',
+            'panel',
+            'location',
             'level',
             'is_prelims',
             'year',

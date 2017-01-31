@@ -103,9 +103,9 @@ class SessionFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
-            # 'assignments__person__user': [
-            #     'exact',
-            # ],
+            'convention__assignments__person__user': [
+                'exact',
+            ],
         }
 
 
