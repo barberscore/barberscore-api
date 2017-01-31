@@ -983,8 +983,11 @@ class SubmissionAdmin(admin.ModelAdmin):
         'status',
         'performer',
         'title',
-        'arranger',
-        'source',
+        'bhs_catalog',
+        'arrangers',
+        'composers',
+        'holders',
+        # 'source',
         'is_medley',
         'is_parody',
     ]
@@ -993,7 +996,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'title',
-        'arranger',
+        'arrangers',
     ]
 
     list_filter = (

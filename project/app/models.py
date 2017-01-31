@@ -4450,12 +4450,18 @@ class Submission(TimeStampedModel):
     )
 
     title = models.CharField(
+        help_text="""
+            Title of the composition.
+        """,
         max_length=200,
     )
 
-    arranger = models.CharField(
+    bhs_catalog = models.IntegerField(
+        help_text="""
+            The BHS Catalog Number.
+        """,
+        null=True,
         blank=True,
-        max_length=200,
     )
 
     source = models.CharField(
@@ -4469,6 +4475,30 @@ class Submission(TimeStampedModel):
 
     is_parody = models.BooleanField(
         default=False,
+    )
+
+    arrangers = models.TextField(
+        help_text="""
+            Names of the Arranger(s).
+        """,
+        null=True,
+        blank=True,
+    )
+
+    composers = models.TextField(
+        help_text="""
+            Names of the Composer(s) and/or Lyricist(s).
+        """,
+        null=True,
+        blank=True,
+    )
+
+    holders = models.TextField(
+        help_text="""
+            Names of the Copyright Holder(s).
+        """,
+        null=True,
+        blank=True,
     )
 
     # FKs
