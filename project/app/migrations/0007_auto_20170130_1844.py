@@ -220,6 +220,16 @@ def import_conventions(apps, schema_editor):
         convention.save()
 
 
+def reverse_conventions(apps, schema_editor):
+    Convention = apps.get_model("app", "Convention")
+    items = Convention.objects.filter(
+        year=2017,
+        season=4,
+    )
+    for item in items:
+        item.delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -227,5 +237,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(import_conventions),
+        migrations.RunPython(import_conventions, reverse_conventions),
     ]
