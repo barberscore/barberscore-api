@@ -29,7 +29,7 @@ class CatalogFilter(filters.FilterSet):
     class Meta:
         model = Catalog
         fields = {
-            'title': [
+            'nomen': [
                 'icontains',
             ],
         }
