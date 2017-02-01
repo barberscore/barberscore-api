@@ -73,9 +73,7 @@ class Assignment(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        blank=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -254,8 +252,7 @@ class Award(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     name = models.CharField(
@@ -538,8 +535,7 @@ class Catalog(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -681,8 +677,7 @@ class Contest(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -894,8 +889,7 @@ class Contestant(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -1202,9 +1196,7 @@ class Convention(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        blank=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     name = models.CharField(
@@ -1486,9 +1478,7 @@ class Entity(MPTTModel, TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        blank=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     name = models.CharField(
@@ -1744,8 +1734,7 @@ class Host(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -1837,8 +1826,7 @@ class Membership(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -1933,9 +1921,7 @@ class Office(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        blank=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     name = models.CharField(
@@ -2020,9 +2006,7 @@ class Officer(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        blank=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -2107,8 +2091,7 @@ class Performance(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -2424,8 +2407,7 @@ class Performer(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -2933,7 +2915,7 @@ class Person(TimeStampedModel):
 
     nomen = models.CharField(
         max_length=255,
-        unique=True,
+        null=True,
         editable=False,
     )
 
@@ -3257,8 +3239,7 @@ class Round(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -3557,8 +3538,7 @@ class Score(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -3796,8 +3776,7 @@ class Session(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -4081,8 +4060,7 @@ class Slot(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -4185,8 +4163,7 @@ class Song(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -4451,8 +4428,7 @@ class Submission(TimeStampedModel):
     nomen = models.CharField(
         max_length=255,
         null=True,
-        # unique=True,
-        # editable=False,
+        editable=False,
     )
 
     STATUS = Choices(
@@ -4611,7 +4587,7 @@ class Venue(TimeStampedModel):
 
     nomen = models.CharField(
         max_length=255,
-        unique=True,
+        null=True,
         editable=False,
     )
 
