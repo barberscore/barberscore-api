@@ -71,6 +71,9 @@ class PerformerFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
+            'entity__memberships__person__user': [
+                'exact',
+            ],
         }
 
 
