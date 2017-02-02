@@ -3897,36 +3897,36 @@ class Session(TimeStampedModel):
         #         kind = None
         # else:
         #     kind = None
-        if self._state.adding:
-            with transaction.atomic():
-                # Add Rounds
-                i = 1
-                while i <= self.num_rounds:
-                    self.rounds.create(
-                        num=i,
-                        kind=(self.num_rounds - i) + 1,
-                    )
-                    i += 1
-                # Add Assignments
-                self.assignments.create(
-                    category=self.assignments.model.CATEGORY.admin,
-                    kind=self.assignments.model.KIND.official,
-                )
-                j = 1
-                while j <= self.panel_size:
-                    self.assignments.create(
-                        category=self.assignments.model.CATEGORY.music,
-                        kind=self.assignments.model.KIND.official,
-                    )
-                    self.assignments.create(
-                        category=self.assignments.model.CATEGORY.presentation,
-                        kind=self.assignments.model.KIND.official,
-                    )
-                    self.assignments.create(
-                        category=self.assignments.model.CATEGORY.singing,
-                        kind=self.assignments.model.KIND.official,
-                    )
-                    j += 1
+        # if self._state.adding:
+        #     with transaction.atomic():
+        #         # Add Rounds
+        #         i = 1
+        #         while i <= self.num_rounds:
+        #             self.rounds.create(
+        #                 num=i,
+        #                 kind=(self.num_rounds - i) + 1,
+        #             )
+        #             i += 1
+        #         # Add Assignments
+        #         self.assignments.create(
+        #             category=self.assignments.model.CATEGORY.admin,
+        #             kind=self.assignments.model.KIND.official,
+        #         )
+        #         j = 1
+        #         while j <= self.panel_size:
+        #             self.assignments.create(
+        #                 category=self.assignments.model.CATEGORY.music,
+        #                 kind=self.assignments.model.KIND.official,
+        #             )
+        #             self.assignments.create(
+        #                 category=self.assignments.model.CATEGORY.presentation,
+        #                 kind=self.assignments.model.KIND.official,
+        #             )
+        #             self.assignments.create(
+        #                 category=self.assignments.model.CATEGORY.singing,
+        #                 kind=self.assignments.model.KIND.official,
+        #             )
+        #             j += 1
         self.nomen = " ".join(filter(None, [
             self.get_kind_display(),
             str(self.convention.year),
