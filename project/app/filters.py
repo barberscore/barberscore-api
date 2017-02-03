@@ -7,6 +7,7 @@ from .models import (
     Catalog,
     Contestant,
     Convention,
+    Entity,
     Performer,
     Person,
     Session,
@@ -60,6 +61,21 @@ class ConventionFilter(filters.FilterSet):
             ],
             'assignments__person__user': [
                 'exact',
+            ],
+        }
+
+
+class EntityFilter(filters.FilterSet):
+    class Meta:
+        model = Entity
+        fields = {
+            'kind': [
+                'exact',
+                'in',
+            ],
+            'status': [
+                'exact',
+                'gt',
             ],
         }
 

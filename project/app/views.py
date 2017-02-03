@@ -40,6 +40,7 @@ from .filters import (
     CatalogFilter,
     ContestantFilter,
     ConventionFilter,
+    EntityFilter,
     PerformerFilter,
     PersonFilter,
     SessionFilter,
@@ -117,7 +118,7 @@ log = logging.getLogger(__name__)
 class EntityViewSet(viewsets.ModelViewSet):
     queryset = Entity.objects.all()
     serializer_class = EntitySerializer
-    filter_class = None
+    filter_class = EntityFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
