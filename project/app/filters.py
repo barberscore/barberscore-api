@@ -23,6 +23,9 @@ class AwardFilter(filters.FilterSet):
             'nomen': [
                 'icontains',
             ],
+            'entity__hosts__convention': [
+                'exact',
+            ],
         }
 
 
