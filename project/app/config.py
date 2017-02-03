@@ -8,4 +8,4 @@ class ApiConfig(AppConfig):
     name = 'app'
 
     def ready(self):
-        pass
+        from .signals import session_post_save

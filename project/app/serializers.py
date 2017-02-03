@@ -535,6 +535,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'num_rounds',
+            'is_prelims',
             'cursor',
             'current',
             'primary',

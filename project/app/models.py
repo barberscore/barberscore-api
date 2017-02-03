@@ -1341,6 +1341,14 @@ class Convention(TimeStampedModel):
         default=False,
     )
 
+    quartet_prelims = models.BooleanField(
+        default=False,
+    )
+
+    chorus_prelims = models.BooleanField(
+        default=False,
+    )
+
     bhs_id = models.IntegerField(
         null=True,
         blank=True,
@@ -1417,6 +1425,27 @@ class Convention(TimeStampedModel):
         return self.nomen
 
     def save(self, *args, **kwargs):
+            # Add Assignments
+            # self.assignments.create(
+            #     category=self.assignments.model.CATEGORY.admin,
+            #     kind=self.assignments.model.KIND.official,
+            # )
+            # j = 1
+            # while j <= self.panel_size:
+            #     self.assignments.create(
+            #         category=self.assignments.model.CATEGORY.music,
+            #         kind=self.assignments.model.KIND.official,
+            #     )
+            #     self.assignments.create(
+            #         category=self.assignments.model.CATEGORY.presentation,
+            #         kind=self.assignments.model.KIND.official,
+            #     )
+            #     self.assignments.create(
+            #         category=self.assignments.model.CATEGORY.singing,
+            #         kind=self.assignments.model.KIND.official,
+            #     )
+            #     j += 1
+
         # if self.season == self.SEASON.summer:
         #     season = None
         # else:
@@ -3317,10 +3346,10 @@ class Round(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('session', 'kind', 'num',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('session', 'kind', 'num',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "round"
@@ -3832,6 +3861,10 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    is_prelims = models.BooleanField(
+        default=False,
+    )
+
     cursor = models.OneToOneField(
         'Performance',
         null=True,
@@ -3889,14 +3922,7 @@ class Session(TimeStampedModel):
             return self.nomen
         return self.id.hex
 
-    def save(self, *args, **kwargs):
-        # self.organization = self.convention.organization
-        # if self.convention.kind:
-        #     kind = str(self.convention.get_kind_display())
-        #     if self.convention.kind == self.convention.KIND.international:
-        #         kind = None
-        # else:
-        #     kind = None
+    # def save(self, *args, **kwargs):
         # if self._state.adding:
         #     with transaction.atomic():
         #         # Add Rounds
@@ -3907,31 +3933,45 @@ class Session(TimeStampedModel):
         #                 kind=(self.num_rounds - i) + 1,
         #             )
         #             i += 1
-        #         # Add Assignments
-        #         self.assignments.create(
-        #             category=self.assignments.model.CATEGORY.admin,
-        #             kind=self.assignments.model.KIND.official,
+        #         # Add Contests
+        #         config = api_apps.get_app_config('app')
+        #         Award = config.get_model('Award')
+        #         awards = Award.objects.filter(
+        #             entity__hosts__convention=self.convention,
+        #             status=Award.STATUS.active,
+        #             kind=self.kind,
         #         )
-        #         j = 1
-        #         while j <= self.panel_size:
-        #             self.assignments.create(
-        #                 category=self.assignments.model.CATEGORY.music,
-        #                 kind=self.assignments.model.KIND.official,
+        #         # Add all direct championship awards
+        #         for award in awards:
+        #             self.contests.create(
+        #                 award=award,
+        #                 num_rounds=award.championship_rounds
         #             )
-        #             self.assignments.create(
-        #                 category=self.assignments.model.CATEGORY.presentation,
-        #                 kind=self.assignments.model.KIND.official,
+        #         # Add Prelims (if necessary)
+        #         # Check if it's a prelim session
+        #         if self.is_prelims:
+        #             # Get the "highest" host, excluding the Divisions
+        #             host = self.convention.hosts.filter(
+        #                 entity__kind__lt=20,
+        #                 entity__status=10,
+        #             ).order_by(
+        #                 'entity__kind',
+        #             ).first()
+        #             # Find the primary award of that host entity
+        #             prelim = host.entity.parent.awards.get(
+        #                 is_primary=True,
+        #                 kind=self.kind,
         #             )
-        #             self.assignments.create(
-        #                 category=self.assignments.model.CATEGORY.singing,
-        #                 kind=self.assignments.model.KIND.official,
+        #             self.contests.create(
+        #                 award=prelim,
+        #                 num_rounds=prelim.qualifier_rounds,
+        #                 is_qualifier=True,
         #             )
-        #             j += 1
-        self.nomen = " ".join(filter(None, [
-            self.get_kind_display(),
-            str(self.convention.year),
-        ]))
-        super(Session, self).save(*args, **kwargs)
+        # self.nomen = " ".join(filter(None, [
+        #     self.get_kind_display(),
+        #     str(self.convention.year),
+        # ]))
+        # super(Session, self).save(*args, **kwargs)
 
     # Methods
     # def print_oss(self):

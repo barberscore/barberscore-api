@@ -97,10 +97,12 @@ class HostInline(admin.TabularInline):
     model = Host
     fields = [
         'convention',
+        'entity',
         'status',
     ]
     raw_id_fields = [
         'convention',
+        'entity',
     ]
     show_change_link = True
     extra = 0
@@ -206,6 +208,7 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
+        'is_prelims',
         'num_rounds',
     ]
     raw_id_fields = [

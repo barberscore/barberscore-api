@@ -173,6 +173,8 @@ class AwardAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'status',
+        'is_primary',
+        'is_qualification_required',
         'is_manual',
         'kind',
         'size',
@@ -189,6 +191,7 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'is_primary',
+        'is_qualification_required',
         'kind',
         'championship_season',
         'qualifier_season',
