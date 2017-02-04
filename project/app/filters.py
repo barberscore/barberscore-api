@@ -80,6 +80,9 @@ class EntityFilter(filters.FilterSet):
                 'exact',
                 'gt',
             ],
+            'memberships__person__user': [
+                'exact',
+            ],
         }
 
 
