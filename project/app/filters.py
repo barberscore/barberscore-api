@@ -74,6 +74,7 @@ class EntityFilter(filters.FilterSet):
         fields = {
             'kind': [
                 'exact',
+                'lt',
                 'in',
             ],
             'status': [

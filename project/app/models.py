@@ -499,7 +499,7 @@ class Award(TimeStampedModel):
         #     self.idiom,
         #     self.get_kind_display(),
         # ]))
-        self.nomen = self.id.hex
+        self.nomen = self.name
         super(Award, self).save(*args, **kwargs)
 
     # Permissions
