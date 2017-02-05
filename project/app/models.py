@@ -520,8 +520,11 @@ class Award(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            return True
-            # return self.organization.representative.user == request.user
+            return any([
+                self.entity.memberships.filter(
+                    officers__office__short_name='DRCJ'
+                )
+            ])
         return False
 
 
@@ -1750,6 +1753,12 @@ class Entity(MPTTModel, TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                self.memberships.filter(
+                    officers__office__short_name='DRCJ'
+                )
+            ])
         return False
 
 

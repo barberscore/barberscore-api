@@ -16,6 +16,7 @@ from .inlines import (
     ContestInline,
     # ConventionInline,
     HostInline,
+    OfficerInline,
     PerformanceInline,
     PerformerInline,
     RoundInline,
@@ -64,6 +65,7 @@ class OfficeAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'nomen',
+        'short_name',
     ]
 
     list_filter = [
@@ -85,6 +87,13 @@ class OfficerAdmin(admin.ModelAdmin):
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        'start_date',
+        'end_date',
+        'entity',
+        'person',
+    ]
     raw_id_fields = [
         'person',
         'entity',
@@ -96,6 +105,9 @@ class MembershipAdmin(admin.ModelAdmin):
         'status',
         'part',
         'entity__kind',
+    ]
+    inlines = [
+        OfficerInline,
     ]
 
 

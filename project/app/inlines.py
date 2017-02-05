@@ -9,6 +9,7 @@ from .models import (
     Contestant,
     Convention,
     Host,
+    Officer,
     Performance,
     Performer,
     Round,
@@ -123,6 +124,20 @@ class AssignmentInline(admin.TabularInline):
         'kind',
         'category',
     )
+    show_change_link = True
+    extra = 0
+
+
+class OfficerInline(admin.TabularInline):
+    model = Officer
+    fields = [
+        'office',
+        'membership',
+    ]
+    raw_id_fields = [
+        'office',
+        'membership',
+    ]
     show_change_link = True
     extra = 0
 

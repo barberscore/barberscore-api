@@ -88,7 +88,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'part',
             'start_date',
             'end_date',
             'entity',
