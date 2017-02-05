@@ -44,7 +44,6 @@ from django.core.validators import (
 )
 from django.db import (
     models,
-    transaction,
 )
 
 # Local
@@ -127,58 +126,23 @@ class Assignment(TimeStampedModel):
     )
 
     # FKs
-    # session = models.ForeignKey(
-    #     'Session',
-    #     related_name='assignments',
-    #     on_delete=models.CASCADE,
-    # )
-
     convention = models.ForeignKey(
         'Convention',
         related_name='assignments',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'Person',
         related_name='assignments',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
-    # organization = TreeForeignKey(
-    #     'Organization',
-    #     related_name='assignments',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
-    # entity = TreeForeignKey(
-    #     'Entity',
-    #     related_name='assignments',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
-    # Denormalizations
-    # @property
-    # def designation(self):
-    #     designation = u"{0[0]}{1:1d}".format(
-    #         self.get_category_display(),
-    #         self.slot,
-    #     )
-    #     return designation
-
     # Internals
-    # class Meta:
-    #     unique_together = (
-    #         ('session', 'category', 'kind', 'slot'),
-    #     )
+    class Meta:
+        unique_together = (
+            ('convention', 'person',)
+        )
 
     class JSONAPIMeta:
         resource_name = "assignment"
@@ -187,27 +151,11 @@ class Assignment(TimeStampedModel):
         return self.nomen
 
     def save(self, *args, **kwargs):
-        # Very hacky slot designator
-        # if self._state.adding:
-        #     try:
-        #         self.slot = self.__class__.objects.filter(
-        #             session=self.session,
-        #             category=self.category,
-        #             kind=self.kind,
-        #         ).aggregate(
-        #             max=models.Max('slot')
-        #         )['max'] + 1
-        #     except TypeError:
-        #         if self.kind == self.KIND.practice:
-        #             self.slot = 6
-        #         else:
-        #             self.slot = 1
-        # self.nomen = " ".join(filter(None, [
-        #     self.get_kind_display(),
-        #     self.get_category_display(),
-        #     str(self.slot),
-        # ]))
-        self.nomen = self.id.hex
+        self.nomen = " ".join(filter(None, [
+            self.person,
+            self.convention,
+            self.get_kind_display(),
+        ]))
         super(Assignment, self).save(*args, **kwargs)
 
     # Permissions
@@ -1481,13 +1429,11 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.assignments.filter(
-            #         person__user=request.user,
-            #         kind=self.assignments.model.KIND.drcj,
-            #     ),
-            # ])
-            return True
+            return any([
+                self.hosts.filter(
+                    entity__memberships__officers__office__short_name='DRCJ',
+                ),
+            ])
         return False
 
     # Transitions
