@@ -152,8 +152,8 @@ class Assignment(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
-            self.person,
-            self.convention,
+            "{0}".format(self.person),
+            "{0}".format(self.convention),
             self.get_kind_display(),
         ]))
         super(Assignment, self).save(*args, **kwargs)
