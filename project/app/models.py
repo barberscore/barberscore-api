@@ -1405,7 +1405,7 @@ class Convention(TimeStampedModel):
         # self.nomen = " ".join(filter(None, [
         #     # hosts,
         #     season,
-        #     u"Convention",
+        #     "Convention",
         #     str(self.year),
         # ]))
         self.nomen = self.name
@@ -3171,16 +3171,16 @@ class Person(TimeStampedModel):
         name = HumanName(self.name)
         if name.nickname:
             self.common_name = " ".join(filter(None, [
-                u"{0}".format(name.nickname),
-                u"{0}".format(name.last),
-                u"{0}".format(name.suffix),
+                "{0}".format(name.nickname),
+                "{0}".format(name.last),
+                "{0}".format(name.suffix),
             ]))
         else:
-            self.common_name = u'{0}'.format(self.name)
+            self.common_name = '{0}'.format(self.name)
         self.formal_name = " ".join(filter(None, [
-            u'{0}'.format(name.first),
-            u'{0}'.format(name.last),
-            u'{0}'.format(name.suffix),
+            '{0}'.format(name.first),
+            '{0}'.format(name.last),
+            '{0}'.format(name.suffix),
         ]))
 
     # Permissions
