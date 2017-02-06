@@ -59,9 +59,6 @@ class ConventionFilter(filters.FilterSet):
             'year': [
                 'exact',
             ],
-            'kind': [
-                'exact',
-            ],
             'assignments__person__user': [
                 'exact',
             ],

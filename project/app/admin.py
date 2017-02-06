@@ -116,7 +116,6 @@ class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'status',
-        'category',
         'kind',
         'slot',
         'bhs_id',
@@ -128,14 +127,12 @@ class AssignmentAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'kind',
-        'category',
         'person',
         'convention',
     ]
 
     list_filter = (
         'status',
-        'category',
         'kind',
     )
 
@@ -174,7 +171,7 @@ class AwardAdmin(admin.ModelAdmin):
         'scope_range',
         'idiom',
         ('is_primary', 'is_improved', 'is_novice'),
-        ('is_multi', 'is_qualification_required',),
+        ('is_multi',),
         'championship_rounds',
         'qualifier_rounds',
         'threshold',
@@ -186,7 +183,6 @@ class AwardAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'is_primary',
-        'is_qualification_required',
         'is_manual',
         'kind',
         'size',
@@ -195,7 +191,6 @@ class AwardAdmin(admin.ModelAdmin):
         'scope_range',
         'is_improved',
         'is_novice',
-        'idiom',
         'championship_season',
         'qualifier_season',
     ]
@@ -203,7 +198,6 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'is_primary',
-        'is_qualification_required',
         'kind',
         'championship_season',
         'qualifier_season',
@@ -229,7 +223,6 @@ class AwardAdmin(admin.ModelAdmin):
         'size',
         'scope',
         'is_novice',
-        'idiom',
     )
 
 
@@ -374,7 +367,6 @@ class ConventionAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'status',
-        'kind',
         'level',
         'venue',
         'bhs_id',
@@ -403,7 +395,6 @@ class ConventionAdmin(admin.ModelAdmin):
     list_filter = (
         'status',
         'level',
-        'kind',
         'season',
         'year',
     )

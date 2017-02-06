@@ -45,6 +45,9 @@ from django.core.validators import (
 from django.db import (
     models,
 )
+from django.utils import (
+    encoding,
+)
 
 # Local
 from .managers import (
@@ -89,19 +92,6 @@ class Assignment(TimeStampedModel):
         default=STATUS.new,
     )
 
-    CATEGORY = Choices(
-        (0, 'admin', 'Admin'),
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
-        (3, 'singing', 'Singing'),
-    )
-
-    category = models.IntegerField(
-        choices=CATEGORY,
-        null=True,
-        blank=True,
-    )
-
     KIND = Choices(
         (5, 'drcj', 'DRCJ'),
         (10, 'ca', 'CA'),
@@ -113,16 +103,6 @@ class Assignment(TimeStampedModel):
 
     kind = models.IntegerField(
         choices=KIND,
-    )
-
-    slot = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     # FKs
@@ -176,10 +156,9 @@ class Assignment(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.convention.drcj == request.user.person,
-            # ])
-            return True
+            return any([
+                True,
+            ])
         return False
 
 
@@ -289,12 +268,6 @@ class Award(TimeStampedModel):
         (160, 'paaa', 'Plateau AAA',),
         (170, 'paaaa', 'Plateau AAAA',),
         (175, 'paaaaa', 'Plateau AAAAA',),
-        # (180, 'pb', 'Plateau B',),
-        # (190, 'pi', 'Plateau I',),
-        # (200, 'pii', 'Plateau II',),
-        # (210, 'piii', 'Plateau III',),
-        # (220, 'piv', 'Plateau IV',),
-        # (230, 'small', 'Small',),
     )
 
     scope = models.IntegerField(
@@ -309,7 +282,7 @@ class Award(TimeStampedModel):
     )
 
     is_primary = models.BooleanField(
-        help_text="""No secondary award critera.""",
+        help_text="""The primary award; requires qualification.""",
         default=False,
     )
 
@@ -319,6 +292,7 @@ class Award(TimeStampedModel):
     )
 
     is_novice = models.BooleanField(
+        help_text="""Award for Novice groups.""",
         default=False,
     )
 
@@ -327,29 +301,18 @@ class Award(TimeStampedModel):
         default=False,
     )
 
-    idiom = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-
     is_multi = models.BooleanField(
         help_text="""Award spans conventions; must be determined manually.""",
-        default=False,
-    )
-
-    championship_rounds = models.IntegerField(
-        help_text="""Number of rounds to determine the championship""",
-    )
-
-    is_qualification_required = models.BooleanField(
-        help_text="""Boolean; true means qualification is required.""",
         default=False,
     )
 
     is_district_representative = models.BooleanField(
         help_text="""Boolean; true means the district rep qualifies.""",
         default=False,
+    )
+
+    championship_rounds = models.IntegerField(
+        help_text="""Number of rounds to determine the championship""",
     )
 
     qualifier_rounds = models.IntegerField(
@@ -367,7 +330,9 @@ class Award(TimeStampedModel):
     )
 
     minimum = models.FloatField(
-        help_text="""The minimum score required for qualification (if any.)""",
+        help_text="""
+            The minimum score required for qualification (if any.)
+        """,
         null=True,
         blank=True,
     )
@@ -381,72 +346,21 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    stix_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    stix_name = models.CharField(
-        max_length=200,
-        blank=True,
-        default="",
-    )
-
     # FKs
-    # organization = TreeForeignKey(
-    #     'Organization',
-    #     related_name='awards',
-    #     on_delete=models.CASCADE,
-    # )
-
     entity = TreeForeignKey(
         'Entity',
         related_name='awards',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     # Internals
-    # class Meta:
-    #     unique_together = (
-    #         (
-    #             'organization',
-    #             'is_improved',
-    #             'is_novice',
-    #             'size',
-    #             'scope',
-    #             'idiom',
-    #             'kind',
-    #         ),
-    #     )
-
     class JSONAPIMeta:
         resource_name = "award"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        # if self.is_improved:
-        #     most_improved = 'Most-Improved'
-        # else:
-        #     most_improved = None
-        # if self.is_novice:
-        #     novice = 'Novice'
-        # else:
-        #     novice = None
-        # self.nomen = " ".join(filter(None, [
-        #     self.organization.name,
-        #     most_improved,
-        #     novice,
-        #     self.get_size_display(),
-        #     self.get_scope_display(),
-        #     self.idiom,
-        #     self.get_kind_display(),
-        # ]))
         self.nomen = self.name
         super(Award, self).save(*args, **kwargs)
 
@@ -587,9 +501,7 @@ class Catalog(TimeStampedModel):
         resource_name = "catalog"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -633,16 +545,11 @@ class Contest(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        # (20, 'started', 'Started',),
-        # # (25, 'ranked', 'Ranked',),
-        # (30, 'finished', 'Finished',),
-        # (40, 'drafted', 'Drafted',),
         (10, 'opened', 'Opened',),
         (15, 'closed', 'Closed',),
         (35, 'validated', 'Validated',),
         (42, 'finished', 'Finished',),
         (45, 'published', 'Published',),
-        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -650,22 +557,8 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    # CYCLE_CHOICES = []
-    # for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
-    #     CYCLE_CHOICES.append((r, r))
-
-    # cycle = models.IntegerField(
-    #     choices=CYCLE_CHOICES,
-    #     editable=False,
-    # )
-
     is_qualifier = models.BooleanField(
         default=False,
-    )
-
-    num_rounds = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     # FKs
@@ -681,18 +574,6 @@ class Contest(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # Legacy
-    stix_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    stix_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     # Internals
     class Meta:
         unique_together = (
@@ -703,23 +584,12 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        # if self.session.convention.season == self.session.convention.SEASON.spring:
-        #     self.cycle = self.session.convention.year
-        # else:
-        #     self.cycle = self.session.convention.year + 1
-        if self.is_qualifier:
-            suffix = "Qualifier"
-        else:
-            suffix = "Championship"
         self.nomen = " ".join(filter(None, [
             self.award.name,
-            suffix,
-            str(self.session.convention.year),
+            self.session.nomen,
         ]))
         super(Contest, self).save(*args, **kwargs)
 
@@ -741,8 +611,9 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return self.session.convention.drcj == request.user.person
-            return True
+            return any([
+                True,
+            ])
         return False
 
     # Methods
@@ -805,28 +676,28 @@ class ContestScore(Contest):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.award.organization.representative.user == request.user,
-            #     self.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.session.assignments.model.category.ADMIN,
-            #     ),
-            #     self.status == self.STATUS.published,
-            # ])
-            return True
+            return any([
+                True,
+                # self.award.organization.representative.user == request.user,
+                # self.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.session.assignments.model.category.ADMIN,
+                # ),
+                # self.status == self.STATUS.published,
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.award.organization.representative.user == request.user,
-            #     self.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.session.assignments.model.category.ADMIN,
-            #     ),
-            # ])
-            return True
+            return any([
+                True,
+                # self.award.organization.representative.user == request.user,
+                # self.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.session.assignments.model.category.ADMIN,
+                # ),
+            ])
         return False
 
 
@@ -838,7 +709,7 @@ class Contestant(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
+        max_length=500,
         null=True,
         editable=False,
     )
@@ -847,7 +718,6 @@ class Contestant(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'eligible', 'Eligible',),
         (20, 'ineligible', 'Ineligible',),
-        # (30, 'dnq', 'Did Not Qualify',),
         (40, 'rep', 'District Representative',),
         (50, 'qualified', 'Qualified',),
         (55, 'validated', 'Validated',),
@@ -885,17 +755,17 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        # self.nomen = " ".join(filter(None, [
-        #     self.contest.award.name,
-        #     str(self.performer.session.convention.year),
-        #     self.performer.group.name,
-        # ]))
-        self.nomen = self.id.hex
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.performer,
+                    self.contest,
+                ]
+            )
+        )
         super(Contestant, self).save(*args, **kwargs)
 
     # Permissions
@@ -916,13 +786,13 @@ class Contestant(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.contest.session.convention.drcj == request.user.person,
-            #     self.contest.session.assignments.filter(
-            #         person__user=request.user,
-            #     ),
-            # ])
-            return True
+            return any([
+                True,
+                # self.contest.session.convention.drcj == request.user.person,
+                # self.contest.session.assignments.filter(
+                #     person__user=request.user,
+                # ),
+            ])
         return False
 
     # Methods
@@ -1041,7 +911,7 @@ class ContestantScore(Contestant):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contest.session.assignments.model.CATEGORY.music,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
@@ -1050,7 +920,7 @@ class ContestantScore(Contestant):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contest.session.assignments.model.CATEGORY.presentation,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
@@ -1059,7 +929,7 @@ class ContestantScore(Contestant):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contest.session.assignments.model.CATEGORY.singing,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
@@ -1067,7 +937,7 @@ class ContestantScore(Contestant):
     def calculate_total_points(self):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
@@ -1076,7 +946,7 @@ class ContestantScore(Contestant):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contest.session.assignments.model.CATEGORY.music,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -1085,7 +955,7 @@ class ContestantScore(Contestant):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contest.session.assignments.model.CATEGORY.presentation,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -1094,7 +964,7 @@ class ContestantScore(Contestant):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contest.session.assignments.model.CATEGORY.singing,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -1102,7 +972,7 @@ class ContestantScore(Contestant):
     def calculate_total_score(self):
         return self.performer.performances.filter(
             songs__scores__kind=self.contest.session.assignments.model.KIND.official,
-            round__num__lte=self.contest.num_rounds,
+            round__num__lte=self.contest.award.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -1161,49 +1031,13 @@ class Convention(TimeStampedModel):
         (8, 'closed', 'Closed',),
         (10, 'validated', 'Validated',),
         (20, 'started', 'Started',),
-        # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
-        # (40, 'drafted', 'Drafted',),
         (45, 'published', 'Published',),
-        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    KIND = Choices(
-        (10, 'international', 'International'),
-        (20, 'district', 'District'),
-        (30, 'division', 'Division'),
-        (40, 'disdiv', 'District and Division'),
-        (200, 'evgd1', "EVG Division I"),
-        (210, 'evgd2', "EVG Division II"),
-        (220, 'evgd3', "EVG Division III"),
-        (230, 'evgd4', "EVG Division IV"),
-        (240, 'evgd5', "EVG Division V"),
-        (250, 'fwdaz', "FWD Arizona Division"),
-        (260, 'fwdnenw', "FWD NE/NW Divisions"),
-        (270, 'fwdsesw', "FWD SE/SW Divisions"),
-        (280, 'lolp1', "LOL Division One/Packerland Divisions"),
-        (290, 'lolnp', "LOL Northern Plains Division"),
-        (300, 'lol10sw', "LOL 10,000 Lakes and Southwest Divisions"),
-        # (310, 'madatl', "Atlantic Division"),  <- LEGACY
-        # (320, 'madnw', "Northern and Western Divisions"), <- LEGACY
-        (322, 'madnth', "MAD Northern Division"),
-        (324, 'madcen', "MAD Central Division"),
-        (330, 'madsth', "MAD Southern Division"),
-        (340, 'nedsun', "NED Sunrise Division"),
-        (342, 'nedwst', "NED Western Regional"),
-        (344, 'nedest', "NED Eastern Regional"),
-        (350, 'swdnenwsesw', "SWD NE/NW/SE/SW Divisions"),
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-        null=True,
-        blank=True,
     )
 
     LEVEL = Choices(
@@ -1308,21 +1142,13 @@ class Convention(TimeStampedModel):
     # FKs
     venue = models.ForeignKey(
         'Venue',
-        null=True,
-        blank=True,
         related_name='conventions',
         help_text="""
             The venue for the convention.""",
         on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
-
-    # organization = TreeForeignKey(
-    #     'Organization',
-    #     related_name='conventions',
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True
-    # )
 
     entity = TreeForeignKey(
         'Entity',
@@ -1332,43 +1158,7 @@ class Convention(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # drcj = models.ForeignKey(
-    #     'Person',
-    #     null=True,
-    #     blank=True,
-    #     related_name='conventions',
-    #     help_text="""
-    #         The person managing the convention.""",
-    #     on_delete=models.SET_NULL,
-    # )
-
-    # Legacy
-    stix_name = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-
-    stix_div = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-
-    stix_file = models.FileField(
-        help_text="""
-            The bbstix file.""",
-        upload_to=generate_image_filename,
-        blank=True,
-        null=True,
-    )
-
     # Internals
-    # class Meta:
-    #     unique_together = (
-    #         ('organization', 'season', 'year', 'kind',),
-    #     )
-
     class JSONAPIMeta:
         resource_name = "convention"
 
@@ -1376,38 +1166,6 @@ class Convention(TimeStampedModel):
         return self.nomen
 
     def save(self, *args, **kwargs):
-            # Add Assignments
-            # self.assignments.create(
-            #     category=self.assignments.model.CATEGORY.admin,
-            #     kind=self.assignments.model.KIND.official,
-            # )
-            # j = 1
-            # while j <= self.panel_size:
-            #     self.assignments.create(
-            #         category=self.assignments.model.CATEGORY.music,
-            #         kind=self.assignments.model.KIND.official,
-            #     )
-            #     self.assignments.create(
-            #         category=self.assignments.model.CATEGORY.presentation,
-            #         kind=self.assignments.model.KIND.official,
-            #     )
-            #     self.assignments.create(
-            #         category=self.assignments.model.CATEGORY.singing,
-            #         kind=self.assignments.model.KIND.official,
-            #     )
-            #     j += 1
-
-        # if self.season == self.SEASON.summer:
-        #     season = None
-        # else:
-        #     season = self.get_season_display()
-        # # hosts = "/".join([host.organization.short_name for host in self.hosts.all()])
-        # self.nomen = " ".join(filter(None, [
-        #     # hosts,
-        #     season,
-        #     "Convention",
-        #     str(self.year),
-        # ]))
         self.nomen = self.name
         super(Convention, self).save(*args, **kwargs)
 
@@ -1651,18 +1409,6 @@ class Entity(MPTTModel, TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    legacy_id = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_parent = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     # Internals
     class Meta:
         verbose_name_plural = 'entities'
@@ -1671,6 +1417,7 @@ class Entity(MPTTModel, TimeStampedModel):
         order_insertion_by = [
             'level',
             'kind',
+            'name',
         ]
 
     class JSONAPIMeta:
@@ -1755,16 +1502,17 @@ class Host(TimeStampedModel):
         resource_name = "host"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        # self.name = " ".join(filter(None, [
-        #     self.convention.name,
-        #     self.organization.name,
-        # ]))
-        self.nomen = self.id.hex
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.convention,
+                    self.entity,
+                ]
+            )
+        )
         super(Host, self).save(*args, **kwargs)
 
     # Permissions
@@ -1785,10 +1533,9 @@ class Host(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.organization.representative.user == request.user,
-            # ])
-            return True
+            return any([
+                True,
+            ])
         return False
 
 
@@ -1854,6 +1601,11 @@ class Membership(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('entity', 'person',),
+        )
+
     class JSONAPIMeta:
         resource_name = "membership"
 
@@ -1861,10 +1613,14 @@ class Membership(TimeStampedModel):
         return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.entity.name,
-            self.person.name,
-        ]))
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.entity,
+                    self.person,
+                ]
+            )
+        )
         super(Membership, self).save(*args, **kwargs)
 
     # Permissions
@@ -2010,17 +1766,13 @@ class Officer(TimeStampedModel):
     office = models.ForeignKey(
         'Office',
         related_name='officers',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
     )
 
     membership = models.ForeignKey(
         'Membership',
         related_name='officers',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
     )
 
     # Internals
@@ -2031,10 +1783,14 @@ class Officer(TimeStampedModel):
         return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.office.name,
-            self.membership.nomen,
-        ]))
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.office,
+                    self.membership,
+                ]
+            )
+        )
         super(Officer, self).save(*args, **kwargs)
 
     # Permissions
@@ -2078,7 +1834,6 @@ class Performance(TimeStampedModel):
         (30, 'entered', 'Entered',),
         (40, 'flagged', 'Flagged',),
         (60, 'cleared', 'Cleared',),
-        # (50, 'confirmed', 'Confirmed',),
         (90, 'published', 'Published',),
     )
 
@@ -2131,30 +1886,17 @@ class Performance(TimeStampedModel):
         resource_name = "performance"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        # if self.performer.session.convention.kind:
-        #     kind = str(self.performer.session.convention.get_kind_display())
-        #     if self.performer.session.convention.kind == self.performer.session.convention.KIND.international:
-        #         kind = None
-        # self.nomen = " ".join(filter(None, [
-        #     self.round.session.convention.organization.name,
-        #     str(self.round.session.convention.get_kind_display()),
-        #     self.round.session.convention.get_season_display(),
-        #     self.round.session.get_kind_display(),
-        #     self.round.get_kind_display(),
-        #     str(self.round.session.convention.year),
-        #     self.performer.session.convention.organization.name,
-        #     kind,
-        #     self.performer.session.convention.get_season_display(),
-        #     str(self.performer.session.convention.year),
-        #     self.performer.session.get_kind_display(),
-        #     self.performer.group.name,
-        # ]))
-        self.nomen = self.id.hex
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.round,
+                    self.performer,
+                ]
+            )
+        )
         super(Performance, self).save(*args, **kwargs)
 
     # Permissions
@@ -2175,14 +1917,14 @@ class Performance(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     # self.round.session.assignments.filter(
-            #     #     judge__user=request.user,
-            #     #     category=self.round.session.assignments.model.category.ADMIN,
-            #     # ),
-            #     self.performer.session.convention.drcj == request.user.person,
-            # ])
-            return True
+            return any([
+                True,
+                # self.round.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.performer.session.convention.drcj == request.user.person,
+            ])
         return False
 
     # Transitions
@@ -2392,7 +2134,6 @@ class Performer(TimeStampedModel):
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
-        # (45, 'evaluation', 'Evaluation',),
         (50, 'validated', 'Validated',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
@@ -2466,18 +2207,10 @@ class Performer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # group = models.ForeignKey(
-    #     'Group',
-    #     related_name='performers',
-    #     on_delete=models.CASCADE,
-    # )
-
     entity = TreeForeignKey(
         'Entity',
         related_name='performers',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
     )
 
     tenor = models.ForeignKey(
@@ -2528,92 +2261,27 @@ class Performer(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # representing = TreeForeignKey(
-    #     'Organization',
-    #     related_name='performers',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
-    # division = TreeForeignKey(
-    #     'Organization',
-    #     related_name='division_performers',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
     # # Internals
-    # class Meta:
-    #     unique_together = (
-    #         ('group', 'session',),
-    #     )
+    class Meta:
+        unique_together = (
+            ('entity', 'session',),
+        )
 
     class JSONAPIMeta:
         resource_name = "performer"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        # if self._state.adding:
-        #     try:
-        #         self.lead = self.group.roles.get(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.lead,
-        #         )
-        #     except Exception:
-        #         pass
-        #     try:
-        #         self.tenor = self.group.roles.get(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.tenor,
-        #         )
-        #     except Exception:
-        #         pass
-        #     try:
-        #         self.baritone = self.group.roles.get(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.baritone,
-        #         )
-        #     except Exception:
-        #         pass
-        #     try:
-        #         self.bass = self.group.roles.get(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.bass,
-        #         )
-        #     except Exception:
-        #         pass
-        #     try:
-        #         self.director = self.group.roles.filter(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.director,
-        #         )[:0]
-        #     except Exception:
-        #         pass
-        #     try:
-        #         self.codirector = self.group.roles.filter(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.director,
-        #         )[:1]
-        #     except Exception:
-        #         pass
-        #     try:
-        #         self.representing = self.group.roles.filter(
-        #             status=self.group.roles.model.STATUS.active,
-        #             part=self.group.roles.model.PART.director,
-        #         )[:1]
-        #     except Exception:
-        #         pass
-        # self.nomen = " ".join(filter(None, [
-        #     self.session.nomen,
-        #     self.group.nomen,
-        # ]))
-        self.nomen = self.id.hex
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.entity,
+                    self.session,
+                ]
+            )
+        )
         super(Performer, self).save(*args, **kwargs)
 
     # Permissions
@@ -2634,18 +2302,18 @@ class Performer(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.group.roles.filter(
-            #         status=self.group.roles.model.STATUS.active,
-            #         person__user=request.user,
-            #     ),
-            #     self.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.session.assignments.model.CATEGORY.admin,
-            #     ),
-            #     self.session.convention.drcj == request.user.person,
-            # ])
-            return True
+            return any([
+                True,
+                # self.group.roles.filter(
+                #     status=self.group.roles.model.STATUS.active,
+                #     person__user=request.user,
+                # ),
+                # self.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.session.assignments.model.CATEGORY.admin,
+                # ),
+                # self.session.convention.drcj == request.user.person,
+            ])
         return False
 
     # Methods
@@ -2902,13 +2570,6 @@ class Person(TimeStampedModel):
     )
 
     STATUS = Choices(
-        # (0, 'new', 'New',),
-        # (10, 'active', 'Active',),
-        # (20, 'inactive', 'Inactive',),
-        # (30, 'retired', 'Retired',),
-        # (40, 'deceased', 'Deceased',),
-        # (50, 'stix', 'Stix Issue',),
-        # (60, 'dup', 'Possible Duplicate',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (1, 'active', 'Active',),
@@ -3149,14 +2810,12 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                (lambda x: unicode(x).encode('utf-8')),
+                lambda x: encoding.smart_text(x),
                 filter(
                     None, [
                         self.name,
@@ -3277,47 +2936,28 @@ class Round(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # mt = models.ForeignKey(
-    #     'Group',
-    #     related_name='mic_tester',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
-    # Legacy
-    stix_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     # Internals
-    # class Meta:
-    #     unique_together = (
-    #         ('session', 'kind', 'num',),
-    #     )
+    class Meta:
+        unique_together = (
+            ('session', 'kind',),
+        )
 
     class JSONAPIMeta:
         resource_name = "round"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.get_kind_display(),
-        ]))
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.session,
+                    self.get_kind_display(),
+                ]
+            )
+        )
         super(Round, self).save(*args, **kwargs)
-
-    # # Methods
-    # def print_ann(self):
-    #     payload = {
-    #         'id': str(self.id),
-    #     }
-    #     Channel('print-ann').send(payload)
 
     # Permissions
     @staticmethod
@@ -3637,14 +3277,10 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.id.hex,
-        ]))
+        self.nomen = self.id.hex
         super(Score, self).save(*args, **kwargs)
 
     # Methods
@@ -3712,33 +3348,33 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.song.performance.performer.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
-            #     ),
-            #     self.song.performance.performer.group.roles.filter(
-            #         person__user=request.user,
-            #         status=self.song.performance.performer.group.roles.model.STATUS.active,
-            #     ),
-            # ])
-            return True
+            return any([
+                True,
+                # self.song.performance.performer.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
+                # ),
+                # self.song.performance.performer.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.song.performance.performer.group.roles.model.STATUS.active,
+                # ),
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.song.performance.performer.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
-            #     ),
-            #     self.song.performance.performer.group.roles.filter(
-            #         person__user=request.user,
-            #         status=self.song.performance.performer.group.roles.model.STATUS.active,
-            #     ),
-            # ])
-            return True
+            return any([
+                True,
+                # self.song.performance.performer.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
+                # ),
+                # self.song.performance.performer.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.song.performance.performer.group.roles.model.STATUS.active,
+                # ),
+            ])
         return False
 
 
@@ -3865,60 +3501,18 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
-    # def save(self, *args, **kwargs):
-        # if self._state.adding:
-        #     with transaction.atomic():
-        #         # Add Rounds
-        #         i = 1
-        #         while i <= self.num_rounds:
-        #             self.rounds.create(
-        #                 num=i,
-        #                 kind=(self.num_rounds - i) + 1,
-        #             )
-        #             i += 1
-        #         # Add Contests
-        #         config = api_apps.get_app_config('app')
-        #         Award = config.get_model('Award')
-        #         awards = Award.objects.filter(
-        #             entity__hosts__convention=self.convention,
-        #             status=Award.STATUS.active,
-        #             kind=self.kind,
-        #         )
-        #         # Add all direct championship awards
-        #         for award in awards:
-        #             self.contests.create(
-        #                 award=award,
-        #                 num_rounds=award.championship_rounds
-        #             )
-        #         # Add Prelims (if necessary)
-        #         # Check if it's a prelim session
-        #         if self.is_prelims:
-        #             # Get the "highest" host, excluding the Divisions
-        #             host = self.convention.hosts.filter(
-        #                 entity__kind__lt=20,
-        #                 entity__status=10,
-        #             ).order_by(
-        #                 'entity__kind',
-        #             ).first()
-        #             # Find the primary award of that host entity
-        #             prelim = host.entity.parent.awards.get(
-        #                 is_primary=True,
-        #                 kind=self.kind,
-        #             )
-        #             self.contests.create(
-        #                 award=prelim,
-        #                 num_rounds=prelim.qualifier_rounds,
-        #                 is_qualifier=True,
-        #             )
-        # self.nomen = " ".join(filter(None, [
-        #     self.get_kind_display(),
-        #     str(self.convention.year),
-        # ]))
-        # super(Session, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.convention,
+                    self.get_kind_display(),
+                ]
+            )
+        )
+        super(Session, self).save(*args, **kwargs)
 
     # Methods
     # def print_oss(self):
@@ -3987,18 +3581,13 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # if self.convention.drcj:
-            #     drcj = bool(self.convention.drcj == request.user.person)
-            # else:
-            #     drcj = False
-            # return any([
-            #     drcj,
-            #     self.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.assignments.model.CATEGORY.admin,
-            #     ),
-            # ])
-            return True
+            return any([
+                True,
+                # self.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.assignments.model.CATEGORY.admin,
+                # ),
+            ])
         return False
 
     # Transitions
@@ -4109,15 +3698,17 @@ class Slot(TimeStampedModel):
         resource_name = "slot"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.id.hex,
-            str(self.num),
-        ]))
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.round,
+                    self.num,
+                ]
+            )
+        )
         super(Slot, self).save(*args, **kwargs)
 
     # Permissions
@@ -4198,14 +3789,17 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.id.hex,
-        ]))
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.performance,
+                    self.num,
+                ]
+            )
+        )
         super(Song, self).save(*args, **kwargs)
 
     def calculate(self, *args, **kwargs):
@@ -4498,19 +4092,26 @@ class Submission(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('performer', 'title',),
+        )
+
     class JSONAPIMeta:
         resource_name = "submission"
 
     def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
+        return self.nomen
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.title,
-            self.id.hex[:8],
-        ]))
+        self.nomen = " ".join(
+            map(
+                lambda x: encoding.smart_text(x), [
+                    self.performer,
+                    self.title,
+                ]
+            )
+        )
         super(Submission, self).save(*args, **kwargs)
 
     # Permissions
@@ -4527,27 +4128,28 @@ class Submission(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     # self.performer.session.assignments.filter(
-            #     #     judge__user=request.user,
-            #     #     category=self.round.session.assignments.model.category.ADMIN,
-            #     # ),
-            #     # self.performer.group.roles.filter(
-            #     #     person__user=request.user,
-            #     #     status=self.performer.roles.model.STATUS.active,
-            #     # ),
-            #     # self.performer.session.assignments.filter(
-            #     #     judge__user=request.user,
-            #     # ),
-            #     self.performer.session.convention.drcj == request.user.person,
-            # ])
-            return True
+            return any([
+                True,
+                # self.performer.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.performer.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.performer.roles.model.STATUS.active,
+                # ),
+                # self.performer.session.assignments.filter(
+                #     judge__user=request.user,
+                # ),
+                # self.performer.session.convention.drcj == request.user.person,
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
+            return any([
+                True,
                 # self.performer.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.round.session.assignments.model.category.ADMIN,
@@ -4560,8 +4162,7 @@ class Submission(TimeStampedModel):
                 #     judge__user=request.user,
                 # ),
                 # self.performer.session.convention.drcj == request.user.person,
-            # ])
-            return True
+            ])
         return False
 
 
@@ -4619,29 +4220,16 @@ class Venue(TimeStampedModel):
     )
 
     # Methods
+    def __unicode__(self):
+        return self.nomen
+
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                (lambda x: unicode(x).encode('utf-8')),
-                filter(
-                    None, [
-                        "{0} -".format(self.name),
-                        "{0},".format(self.city),
-                        self.state,
-                    ]
-                )
-            )
-        )
+        self.nomen = self.name
         super(Venue, self).save(*args, **kwargs)
 
     # Internals
     class JSONAPIMeta:
         resource_name = "venue"
-
-    def __unicode__(self):
-        if self.nomen:
-            return self.nomen
-        return self.id.hex
 
     # Permissions
     @staticmethod

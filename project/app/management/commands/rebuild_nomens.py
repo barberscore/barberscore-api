@@ -10,35 +10,35 @@ class Command(BaseCommand):
         config = api_apps.get_app_config('app')
 
         models = [
+            # Primitives
             'Award',
             'Catalog',
-            'Chapter',
             'Convention',
-            'Group',
-            'Organization',
+            'Entity',
+            'Office',
             'Person',
             'Venue',
-            # Branches,
-            'Host',
-            'Session',
-            'Judge',
+            # Joins,
             'Assignment',
-            'Member',
-            'Role',
-            'Round',
             'Contest',
-            'Performer',
-            'Slot',
-            'Submission',
             'Contestant',
+            'Host',
+            'Membership',
+            'Officer',
             'Performance',
-            'Song',
+            'Performer',
+            'Round',
             'Score',
+            'Session',
+            'Slot',
+            'Song',
+            'Submission',
         ]
 
         for model in models:
             Model = config.get_model(model)
             for instance in Model.objects.all():
                 instance.save()
+            self.stdout.write("Rebuilt {0}".format(Model.__name__))
 
-        return "Rebuilt nomens."
+        return
