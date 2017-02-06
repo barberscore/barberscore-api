@@ -1739,25 +1739,17 @@ class Host(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # organization = TreeForeignKey(
-    #     'Organization',
-    #     related_name='hosts',
-    #     on_delete=models.CASCADE,
-    # )
-
     entity = TreeForeignKey(
         'Entity',
         related_name='hosts',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     # Internals
-    # class Meta:
-    #     unique_together = (
-    #         ('convention', 'organization',),
-    #     )
+    class Meta:
+        unique_together = (
+            ('convention', 'entity',),
+        )
 
     class JSONAPIMeta:
         resource_name = "host"
