@@ -1,17 +1,18 @@
 # Standard Libary
 import csv
 import logging
-from datetime import datetime
 
 # Third-Party
-# import arrow
 from nameparser import HumanName
 from psycopg2.extras import DateRange
-from unidecode import unidecode
 
 # Django
 from django.db import IntegrityError
 from django.db.models import Q
+from django.utils import (
+    dateparse,
+    encoding,
+)
 
 # Local
 from .models import (
@@ -31,8 +32,6 @@ from .models import (
     Round,
     Score,
     Session,
-    Song,
-    Submission,
 )
 
 log = logging.getLogger(__name__)
@@ -61,8 +60,8 @@ def import_db_members(path):
             except Chapter.DoesNotExist:
                 print 'No Chapter {0}'.format(chapter_id)
                 continue
-            start = arrow.get(row[3]).date()
-            end = arrow.get(row[4]).date()
+            start = dateparse.parse_date(row[3])
+            end = dateparse.parse_date(row[4])
             try:
                 mem, create = Member.objects.get_or_create(
                     person=p,
@@ -97,7 +96,7 @@ def import_db_persons(path):
             prefix_name = row[2].strip()
             name = " ".join(
                 map(
-                    (lambda x: unidecode(x)),
+                    (lambda x: encoding.smart_text(x)),
                     filter(
                         None, [
                             prefix_name,
@@ -131,18 +130,9 @@ def import_db_persons(path):
                 )
             else:
                 phone = None
-            try:
-                start_date = arrow.get(row[58]).date()
-            except arrow.parser.ParserError:
-                start_date = None
-            try:
-                birth_date = arrow.get(row[31]).date()
-            except arrow.parser.ParserError:
-                birth_date = None
-            try:
-                dues_thru = arrow.get(row[36]).date()
-            except arrow.parser.ParserError:
-                dues_thru = None
+            start_date = dateparse.parse_date(row[58])
+            birth_date = dateparse.parse_date(row[31])
+            dues_thru = dateparse.parse_date(row[36])
             defaults = {
                 'name': name,
                 'email': email,
@@ -188,7 +178,7 @@ def import_db_quartets(path):
                     try:
                         g, created = Group.objects.get_or_create(
                             bhs_id=bhs_id,
-                            name=unidecode(name),
+                            name=encoding.smart_text(name),
                         )
                     except UnicodeDecodeError:
                         continue
@@ -217,7 +207,7 @@ def import_db_chapters(path):
                         c, created = Chapter.objects.get_or_create(
                             bhs_id=bhs_id,
                             code=code,
-                            name=unidecode(name),
+                            name=encoding.smart_text(name),
                         )
                     except UnicodeDecodeError:
                         continue
@@ -257,7 +247,7 @@ def import_db_roles(path):
                 )
             except Person.DoesNotExist:
                 person = Person.objects.create(
-                    name=unidecode(row[4]),
+                    name=encoding.smart_text(row[4]),
                     bhs_id=int(row[3]),
                 )
             if int(row[12]) == 1:
@@ -271,19 +261,11 @@ def import_db_roles(path):
             else:
                 log.error("No Part: {0}".format(row[12]))
                 continue
-            try:
-                lower = arrow.get(row[7]).date()
-            except arrow.parser.ParserError:
-                log.error("No lower date: {0}".format(row[7]))
-                lower = None
+            lower = dateparse.parse_date(row[7])
             if not row[8]:
                 upper = None
             else:
-                try:
-                    upper = arrow.get(row[8]).date()
-                except arrow.parser.ParserError:
-                    log.error("No upper date: {0}".format(row[8]))
-                    upper = None
+                upper = dateparse.parse_date(row[8])
             date = DateRange(
                 lower=lower,
                 upper=upper,
@@ -360,19 +342,11 @@ def import_db_directors(path):
                     row[2],
                 ))
                 continue
-            try:
-                lower = arrow.get(row[7]).date()
-            except arrow.parser.ParserError:
-                log.error("No lower date: {0}".format(row[7]))
-                lower = None
+            lower = dateparse.parse_date(row[7])
             if not row[8]:
                 upper = None
             else:
-                try:
-                    upper = arrow.get(row[8]).date()
-                except arrow.parser.ParserError:
-                    log.error("No upper date: {0}".format(row[8]))
-                    upper = None
+                upper = dateparse.parse_date(row[8])
             if lower < upper:
                 date = DateRange(
                     lower=lower,
@@ -1225,7 +1199,7 @@ def import_members(path):
                                 p.save()
                             except Person.DoesNotExist:
                                 Person.objects.create(
-                                    name=unidecode(row[1]),
+                                    name=encoding.smart_text(row[1]),
                                     bhs_id=row[0],
                                     bhs_name=row[1],
                                     bhs_city=row[2],
@@ -1387,7 +1361,6 @@ def import_convention(path, season, division=False):
                 district = row_two[0].partition("District")[0].strip()
                 division = row_two[1].strip()
                 location = ", ".join([row_two[2], row_two[3]])
-                dates = ", ".join([row_two[4], row_two[5]])
                 year = int(row_two[5])
             except IndexError:
                 print "Could not build: {0}".format(row_two)
@@ -1395,7 +1368,6 @@ def import_convention(path, season, division=False):
             try:
                 district = row_two[0].partition("District")[0].strip()
                 location = ", ".join([row_two[1], row_two[2]])
-                dates = ", ".join([row_two[3], row_two[4]])
                 year = int(row_two[4])
             except IndexError:
                 log.error("Could not build: {0}".format(row_two))
@@ -1405,15 +1377,9 @@ def import_convention(path, season, division=False):
             )
         except Organization.DoesNotExist:
             raise RuntimeError("No Match for: {0}".format(district))
-        date = DateRange(
-            arrow.get(dates, "MMMM D, YYYY").date(),
-            arrow.get(dates, "MMMM D, YYYY").replace(days=+1).date(),
-            "[)",
-        )
         convention = Convention(
             stix_name=stix_name,
             location=location,
-            date=date,
             year=year,
             organization=organization,
             season=getattr(Convention.SEASON, season),
@@ -1526,7 +1492,7 @@ def extract_panel(convention):
                     category = Assignment.CATEGORY.singing
                 else:
                     raise RuntimeError("Can't determine category")
-                nm = unidecode(parts[2])
+                nm = encoding.smart_text(parts[2])
                 name = str(HumanName(nm))
                 if bhs_panel_id < 50:
                     kind = Assignment.KIND.official
@@ -1587,7 +1553,7 @@ def extract_performers(convention):
             session = convention.sessions.get(
                 kind=kind,
             )
-            contestant_text = unidecode(row[1].partition(":")[2].strip())
+            contestant_text = encoding.smart_text(row[1].partition(":")[2].strip())
             if contestant_text == '(Not Found)':
                 continue
             if session.kind == Session.KIND.chorus:
@@ -1749,7 +1715,7 @@ def extract_contestants(convention):
             session = convention.sessions.get(
                 kind=kind,
             )
-            performer_text = unidecode(row[1].partition(":")[2].strip())
+            performer_text = encoding.smart_text(row[1].partition(":")[2].strip())
 
             if performer_text == '(Not Found)':
                 continue
@@ -1814,7 +1780,7 @@ def extract_performances(convention):
             session = convention.sessions.get(
                 kind=kind,
             )
-            performer_text = unidecode(row[1].partition(":")[2].strip())
+            performer_text = encoding.smart_text(row[1].partition(":")[2].strip())
 
             if performer_text == '(Not Found)':
                 continue
@@ -1869,7 +1835,7 @@ def extract_performances(convention):
 #             session = convention.sessions.get(
 #                 kind=kind,
 #             )
-#             performer_text = unidecode(row[1].partition(":")[2].strip())
+#             performer_text = encoding.smart_text(row[1].partition(":")[2].strip())
 
 #             if performer_text == '(Not Found)':
 #                 continue
@@ -1905,7 +1871,7 @@ def extract_performances(convention):
 #             number = int(row[4].partition(":")[2].strip())
 
 #             # Next, get the song title
-#             title = unidecode(row[5].partition(":")[2].strip())
+#             title = encoding.smart_text(row[5].partition(":")[2].strip())
 
 #             chart, created = Chart.objects.get_or_create(
 #                 title=title,
@@ -1937,7 +1903,7 @@ def extract_scores(convention):
             session = convention.sessions.get(
                 kind=kind,
             )
-            performer_text = unidecode(row[1].partition(":")[2].strip())
+            performer_text = encoding.smart_text(row[1].partition(":")[2].strip())
 
             if performer_text == '(Not Found)':
                 continue
@@ -2260,18 +2226,18 @@ def generate_cycle(year):
 #         try:
 #             chart, c = Chart.objects.get_or_create(
 #                 title=row[6],
-#                 arranger=unidecode(row[8]),
+#                 arranger=encoding.smart_text(row[8]),
 #                 is_medley=is_medley,
 #                 bhs_copyright_date=row[12],
 #                 bhs_copyright_owner=row[13],
 #                 bhs_id=bhs_id,
-#                 composer=unidecode(row[14]),
-#                 lyricist=unidecode(row[15]),
+#                 composer=encoding.smart_text(row[14]),
+#                 lyricist=encoding.smart_text(row[15]),
 #             )
 #         except IntegrityError:
 #             print "Duplicate chart: {0} {1} {2} {3}".format(
 #                 row[6],
-#                 unidecode(row[8]),
+#                 encoding.smart_text(row[8]),
 #                 bhs_id,
 #                 performer,
 #             )
@@ -2284,24 +2250,3 @@ def generate_cycle(year):
 #                 round=round,
 #                 num=oa,
 #             )
-
-
-def import_grid(path, round, date, tz):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        rows = [row for row in reader]
-        for row in rows:
-            try:
-                raw = date + " " + row[6].strip()
-                dt = datetime.strptime(raw, '%Y-%m-%d %H:%M:%S')
-                a = arrow.get(dt, tz)
-            except arrow.parser.ParserError as e:
-                print e
-                continue
-            slot = round.slots.create(num=int(row[0]), onstage=a.datetime)
-            try:
-                performance = round.performances.get(num=slot.num)
-            except Performance.DoesNotExist:
-                continue
-            slot.performance = performance
-            slot.save()
