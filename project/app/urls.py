@@ -7,6 +7,7 @@ from .views import (
     AwardViewSet,
     CatalogViewSet,
     ContestantViewSet,
+    ContestantScoreViewSet,
     ContestViewSet,
     ContestScoreViewSet,
     ConventionViewSet,
@@ -40,7 +41,7 @@ router.register(r'catalog', CatalogViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contestscore', ContestScoreViewSet)
 router.register(r'contestant', ContestantViewSet)
-router.register(r'contestantscore', ContestantViewSet)
+router.register(r'contestantscore', ContestantScoreViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entity', EntityViewSet)
 router.register(r'host', HostViewSet)

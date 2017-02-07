@@ -179,11 +179,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'convention',
         'person',
-    ).order_by(
-        'convention',
-        'category',
-        'kind',
-        'slot',
     )
     serializer_class = AssignmentSerializer
     filter_class = None
@@ -301,9 +296,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
 
 
 class ContestantScoreViewSet(viewsets.ModelViewSet):
-    queryset = ContestantScore.objects.order_by(
-        'name',
-    )
+    queryset = ContestantScore.objects.all()
     serializer_class = ContestantScoreSerializer
     filter_class = None
     filter_backends = [
@@ -520,10 +513,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'person',
         'song__performance__performer__session',
         'song__performance__round',
-    ).prefetch_related(
-        'song__performance__round__session__assignments',
-    ).order_by(
-        'song',
     )
     serializer_class = ScoreSerializer
     filter_class = None

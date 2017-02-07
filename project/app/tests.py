@@ -23,6 +23,7 @@ from django_nose.tools import (
     assert_true,
 )
 
+from rest_framework.test import APIClient
 
 from django.apps import apps as api_apps
 config = api_apps.get_app_config('app')
@@ -200,7 +201,12 @@ def simple_setup():
     song_score.save_base(raw=True)
 
 
-@with_setup(simple_setup)
+def tear_down():
+    management.call_command('flush', verbosity=0, interactive=False)
+    return
+
+
+@with_setup(simple_setup, tear_down)
 def test_admin():
     client = Client()
     admin = User.objects.get(username='admin@barberscore.com')
@@ -244,6 +250,55 @@ def test_admin():
         o = f.objects.first()
         assert_true(o)
         path = reverse('admin:app_{0}_change'.format(m.lower()), args=(o.id.hex,))
+        response = client.get(path)
+        assert_ok(response)
+
+
+@with_setup(simple_setup, tear_down)
+def test_api():
+    client = APIClient()
+    admin = User.objects.get(username='admin@barberscore.com')
+    client.force_authenticate(user=admin)
+    modules = [
+        'Assignment',
+        'Award',
+        'Catalog',
+        'Contest',
+        'ContestScore',
+        'Contestant',
+        'ContestantScore',
+        'Convention',
+        'Entity',
+        'Host',
+        'Membership',
+        'Office',
+        'Officer',
+        'Performance',
+        'PerformanceScore',
+        'Performer',
+        'PerformerScore',
+        'Person',
+        'Round',
+        'Score',
+        'Session',
+        'Slot',
+        'Song',
+        'SongScore',
+        'Submission',
+        'Venue',
+        'User',
+    ]
+
+    for m in modules:
+        path = reverse('{0}-list'.format(m.lower()))
+        response = client.get(path)
+        assert_ok(response)
+
+    for m in modules:
+        f = config.get_model(m)
+        o = f.objects.first()
+        assert_true(o)
+        path = reverse('{0}-detail'.format(m.lower()), args=(o.id.hex,))
         response = client.get(path)
         assert_ok(response)
 
@@ -375,10 +430,7 @@ def test_admin():
 # #     update_data = {'title': 'The Oldest Songs'}
 
 
-# Round Tests
-# def tear_down():
-#     management.call_command('flush', verbosity=0, interactive=False)
-#     return
+
 
 
 # def build_admin():
