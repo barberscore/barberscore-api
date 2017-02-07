@@ -15,71 +15,55 @@ from django.core import management
 from django.db import IntegrityError
 
 # First-Party
-# # First-Party
 from app.factories import (
-    AdminFactory,
     AssignmentFactory,
     AwardFactory,
-    BaritoneFactory,
-    BassFactory,
-    ChapterFactory,
-    ChorusFactory,
-    ContestantFactory,
+    CatalogFactory,
     ContestFactory,
+    ContestScoreFactory,
+    ContestantFactory,
+    ContestantScoreFactory,
     ConventionFactory,
-    DistrictChapterFactory,
-    DistrictChorusAwardFactory,
-    DistrictFactory,
-    DistrictQuartetAwardFactory,
-    DistrictSeniorsAwardFactory,
-    DistrictYouthAwardFactory,
-    GroupFactory,
-    InternationalChorusAwardFactory,
-    InternationalFactory,
-    InternationalQuartetAwardFactory,
-    InternationalSeniorsAwardFactory,
-    InternationalYouthAwardFactory,
-    JudgeFactory,
-    LeadFactory,
-    MemberFactory,
-    OfficialAdminJudgeFactory,
-    OfficialMusicJudgeFactory,
-    OfficialPresentationJudgeFactory,
-    OfficialSingingJudgeFactory,
-    OrganizationFactory,
+    EntityFactory,
+    HostFactory,
+    MembershipFactory,
+    OfficeFactory,
+    OfficerFactory,
     PerformanceFactory,
+    PerformanceScoreFactory,
     PerformerFactory,
+    PerformerScoreFactory,
     PersonFactory,
-    PublicFactory,
-    QuartetFactory,
-    RoleFactory,
     RoundFactory,
     ScoreFactory,
     SessionFactory,
     SlotFactory,
     SongFactory,
-    SpringConventionFactory,
+    SongScoreFactory,
     SubmissionFactory,
-    SummerConventionFactory,
-    TenorFactory,
     VenueFactory,
+    UserFactory,
 )
-from app.models import (
-    Assignment,
-    Award,
-    Contest,
-    Contestant,
-    Convention,
-    Judge,
-    Organization,
-    Performance,
-    Performer,
-    Round,
-    Score,
-    Session,
-    Song,
-    Submission,
-)
+# from app.models import (
+#     Assignment,
+#     Award,
+#     Contest,
+#     Contestant,
+#     Convention,
+#     Judge,
+#     Organization,
+#     Performance,
+#     Performer,
+#     Round,
+#     Score,
+#     Session,
+#     Song,
+#     Submission,
+# )
+
+@with_setup(setup_international)
+def test_stub():
+    assert True
 
 
 # from nose.tools import eq_ as eq
@@ -92,8 +76,6 @@ from app.models import (
 
 # # Django
 # from django.test import SimpleTestCase
-
-
 
 
 # # # Public CRUD Tests
@@ -564,6 +546,6 @@ def complete_convention(convention):
         calculate_session(session)
         session.save()
 
-# @with_setup(setup_international)
-# def test_stub():
-#     assert True
+@with_setup(setup_international)
+def test_stub():
+    assert True

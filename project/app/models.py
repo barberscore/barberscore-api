@@ -4194,8 +4194,6 @@ class User(AbstractBaseUser):
     username = models.CharField(
         max_length=255,
         unique=True,
-        blank=True,
-        null=True,
     )
 
     is_active = models.BooleanField(

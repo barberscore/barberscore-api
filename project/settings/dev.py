@@ -36,6 +36,9 @@ NOSE_ARGS = [
     '--cover-package=app',
 ]
 
+MIGRATION_MODULES = {'app': None}
+
+
 # Email
 DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
