@@ -115,70 +115,11 @@ from .serializers import (
 log = logging.getLogger(__name__)
 
 
-class EntityViewSet(viewsets.ModelViewSet):
-    queryset = Entity.objects.all()
-    serializer_class = EntitySerializer
-    filter_class = EntityFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "entity"
-
-
-class MembershipViewSet(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
-    serializer_class = MembershipSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "membership"
-
-
-class OfficerViewSet(viewsets.ModelViewSet):
-    queryset = Officer.objects.all()
-    serializer_class = OfficerSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "officer"
-
-
-class OfficeViewSet(viewsets.ModelViewSet):
-    queryset = Office.objects.all()
-    serializer_class = OfficeSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "office"
-
-
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'convention',
         'person',
+    ).prefetch_related(
     )
     serializer_class = AssignmentSerializer
     filter_class = None
@@ -197,11 +138,6 @@ class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
     ).prefetch_related(
         'contests',
-    ).order_by(
-        '-is_primary',
-        'kind',
-        'size',
-        'scope',
     )
     serializer_class = AwardSerializer
     filter_class = AwardFilter
@@ -217,7 +153,8 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
-    queryset = Catalog.objects.prefetch_related(
+    queryset = Catalog.objects.select_related(
+    ).prefetch_related(
         'submissions',
     )
     serializer_class = CatalogSerializer
@@ -240,10 +177,6 @@ class ContestViewSet(viewsets.ModelViewSet):
         'contestscore',
     ).prefetch_related(
         'contestants',
-    ).order_by(
-        '-session__convention__year',
-        'award',
-        'session',
     )
     serializer_class = ContestSerializer
     filter_class = None
@@ -261,6 +194,7 @@ class ContestViewSet(viewsets.ModelViewSet):
 class ContestScoreViewSet(viewsets.ModelViewSet):
     queryset = ContestScore.objects.select_related(
         'champion',
+    ).prefetch_related(
     )
     serializer_class = ContestScoreSerializer
     filter_class = None
@@ -279,8 +213,7 @@ class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'performer',
         'contest',
-    ).order_by(
-        'contest',
+    ).prefetch_related(
     )
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
@@ -296,7 +229,9 @@ class ContestantViewSet(viewsets.ModelViewSet):
 
 
 class ContestantScoreViewSet(viewsets.ModelViewSet):
-    queryset = ContestantScore.objects.all()
+    queryset = ContestantScore.objects.select_related(
+    ).prefetch_related(
+    )
     serializer_class = ContestantScoreSerializer
     filter_class = None
     filter_backends = [
@@ -318,8 +253,6 @@ class ConventionViewSet(
         'venue',
     ).prefetch_related(
         'sessions',
-    ).order_by(
-        'start_date',
     )
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
@@ -334,9 +267,27 @@ class ConventionViewSet(
     resource_name = "convention"
 
 
+class EntityViewSet(viewsets.ModelViewSet):
+    queryset = Entity.objects.select_related(
+    ).prefetch_related(
+    )
+    serializer_class = EntitySerializer
+    filter_class = EntityFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "entity"
+
+
 class HostViewSet(viewsets.ModelViewSet):
     queryset = Host.objects.select_related(
         'convention',
+    ).prefetch_related(
     )
     serializer_class = HostSerializer
     filter_class = None
@@ -351,6 +302,57 @@ class HostViewSet(viewsets.ModelViewSet):
     resource_name = "host"
 
 
+class MembershipViewSet(viewsets.ModelViewSet):
+    queryset = Membership.objects.select_related(
+    ).prefetch_related(
+    )
+    serializer_class = MembershipSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "membership"
+
+
+class OfficeViewSet(viewsets.ModelViewSet):
+    queryset = Office.objects.select_related(
+    ).prefetch_related(
+    )
+    serializer_class = OfficeSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "office"
+
+
+class OfficerViewSet(viewsets.ModelViewSet):
+    queryset = Officer.objects.select_related(
+    ).prefetch_related(
+    )
+    serializer_class = OfficerSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "officer"
+
+
 class PerformanceViewSet(
     get_viewset_transition_action_mixin(Performance),
     viewsets.ModelViewSet,
@@ -362,9 +364,6 @@ class PerformanceViewSet(
         'performancescore',
     ).prefetch_related(
         'songs',
-    ).order_by(
-        'round',
-        'num',
     )
     serializer_class = PerformanceSerializer
     filter_class = None
@@ -380,8 +379,8 @@ class PerformanceViewSet(
 
 
 class PerformanceScoreViewSet(viewsets.ModelViewSet):
-    queryset = PerformanceScore.objects.order_by(
-        'nomen',
+    queryset = PerformanceScore.objects.select_related(
+    ).prefetch_related(
     )
     serializer_class = PerformanceScoreSerializer
     filter_class = None
@@ -413,8 +412,6 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'submissions',
         'performances',
         'contestants',
-    ).order_by(
-        'session',
     )
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
@@ -430,8 +427,8 @@ class PerformerViewSet(viewsets.ModelViewSet):
 
 
 class PerformerScoreViewSet(viewsets.ModelViewSet):
-    queryset = PerformerScore.objects.order_by(
-        'nomen',
+    queryset = PerformerScore.objects.select_related(
+    ).prefetch_related(
     )
     serializer_class = PerformerScoreSerializer
     filter_class = None
@@ -450,8 +447,6 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
     ).prefetch_related(
-    ).order_by(
-        'name',
     )
     serializer_class = PersonSerializer
     filter_class = PersonFilter
@@ -490,9 +485,6 @@ class RoundViewSet(
     ).prefetch_related(
         'performances',
         'slots',
-    ).order_by(
-        'session',
-        'kind',
     )
     serializer_class = RoundSerializer
     filter_class = None
@@ -513,6 +505,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'person',
         'song__performance__performer__session',
         'song__performance__round',
+    ).prefetch_related(
     )
     serializer_class = ScoreSerializer
     filter_class = None
@@ -537,8 +530,6 @@ class SessionViewSet(
         'performers',
         'rounds',
         'contests',
-    ).order_by(
-        '-start_date',
     )
     serializer_class = SessionSerializer
     filter_class = SessionFilter
@@ -551,6 +542,63 @@ class SessionViewSet(
         DRYPermissions,
     ]
     resource_name = "session"
+
+
+class SongViewSet(viewsets.ModelViewSet):
+    queryset = Song.objects.select_related(
+        'performance',
+        'submission',
+        'songscore',
+    ).prefetch_related(
+        'scores',
+    )
+    serializer_class = SongSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "song"
+
+
+class SongScoreViewSet(viewsets.ModelViewSet):
+    queryset = SongScore.objects.select_related(
+    ).prefetch_related(
+    )
+    serializer_class = SongScoreSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        SongScoreFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "songscore"
+
+
+class SlotViewSet(viewsets.ModelViewSet):
+    queryset = Slot.objects.select_related(
+        'round',
+    ).prefetch_related(
+        'performance',
+    )
+    serializer_class = SlotSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "slot"
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -572,74 +620,10 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     resource_name = "submission"
 
 
-class SongViewSet(viewsets.ModelViewSet):
-    queryset = Song.objects.select_related(
-        'performance',
-        'submission',
-        'songscore',
-    ).prefetch_related(
-        'scores',
-    ).order_by(
-        'performance',
-        'num',
-    )
-    serializer_class = SongSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "song"
-
-
-class SongScoreViewSet(viewsets.ModelViewSet):
-    queryset = SongScore.objects.order_by(
-        'nomen',
-    )
-    serializer_class = SongScoreSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        SongScoreFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "songscore"
-
-
-class SlotViewSet(viewsets.ModelViewSet):
-    queryset = Slot.objects.select_related(
-        'round',
-    ).prefetch_related(
-        'performance',
-    ).order_by(
-        'round',
-        'num',
-    )
-    serializer_class = SlotSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "slot"
-
-
 class VenueViewSet(viewsets.ModelViewSet):
-    queryset = Venue.objects.prefetch_related(
+    queryset = Venue.objects.select_related(
+    ).prefetch_related(
         'conventions',
-    ).order_by(
-        'name',
     )
     serializer_class = VenueSerializer
     filter_class = VenueFilter
@@ -655,7 +639,9 @@ class VenueViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.select_related(
+    ).prefetch_related(
+    )
     serializer_class = UserSerializer
     filter_class = None
     filter_backends = [
