@@ -28,7 +28,6 @@ class AwardInline(admin.TabularInline):
         'championship_rounds',
         'size',
         'is_improved',
-        'idiom',
     ]
     readonly_fields = [
         'name',
@@ -58,7 +57,6 @@ class ContestInline(admin.TabularInline):
         'award__size',
         'award__scope',
         'award__is_novice',
-        'award__idiom',
     )
     show_change_link = True
     extra = 0
@@ -257,8 +255,6 @@ class SubmissionInline(admin.TabularInline):
     model = Submission
     fields = [
         'title',
-        'arranger',
-        'source',
         'is_medley',
         'is_parody',
         'performer',

@@ -74,7 +74,6 @@ class Assignment(TimeStampedModel):
 
     nomen = models.CharField(
         max_length=255,
-        null=True,
         editable=False,
     )
 
@@ -128,7 +127,7 @@ class Assignment(TimeStampedModel):
         resource_name = "assignment"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -178,7 +177,6 @@ class Award(TimeStampedModel):
 
     nomen = models.CharField(
         max_length=255,
-        null=True,
         editable=False,
     )
 
@@ -358,7 +356,7 @@ class Award(TimeStampedModel):
         resource_name = "award"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -398,8 +396,7 @@ class Catalog(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -501,7 +498,7 @@ class Catalog(TimeStampedModel):
         resource_name = "catalog"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -538,8 +535,7 @@ class Contest(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -584,7 +580,7 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -710,7 +706,6 @@ class Contestant(TimeStampedModel):
 
     nomen = models.CharField(
         max_length=500,
-        null=True,
         editable=False,
     )
 
@@ -755,7 +750,7 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1015,8 +1010,7 @@ class Convention(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1118,7 +1112,6 @@ class Convention(TimeStampedModel):
 
     location = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
     )
 
@@ -1138,7 +1131,7 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -1187,8 +1180,7 @@ class Entity(MPTTModel, TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1284,7 +1276,6 @@ class Entity(MPTTModel, TimeStampedModel):
             The chapter code.""",
         max_length=200,
         blank=True,
-        null=True,
     )
 
     start_date = models.DateField(
@@ -1341,9 +1332,7 @@ class Entity(MPTTModel, TimeStampedModel):
     phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
-        null=True,
         blank=True,
-        default='',
         max_length=25,
     )
 
@@ -1390,16 +1379,14 @@ class Entity(MPTTModel, TimeStampedModel):
 
     class MPTTMeta:
         order_insertion_by = [
-            'level',
             'kind',
-            'name',
         ]
 
     class JSONAPIMeta:
         resource_name = "entity"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -1438,8 +1425,7 @@ class Host(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1477,7 +1463,7 @@ class Host(TimeStampedModel):
         resource_name = "host"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1522,8 +1508,7 @@ class Membership(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1585,7 +1570,7 @@ class Membership(TimeStampedModel):
         resource_name = "membership"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1626,8 +1611,7 @@ class Office(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1661,13 +1645,11 @@ class Office(TimeStampedModel):
 
     short_name = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
     )
 
     long_name = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
     )
 
@@ -1681,7 +1663,7 @@ class Office(TimeStampedModel):
         resource_name = "office"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     # Permissions
     @staticmethod
@@ -1711,8 +1693,7 @@ class Officer(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1755,7 +1736,7 @@ class Officer(TimeStampedModel):
         resource_name = "officer"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1796,8 +1777,7 @@ class Performance(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -1861,7 +1841,7 @@ class Performance(TimeStampedModel):
         resource_name = "performance"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -2098,8 +2078,7 @@ class Performer(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -2246,7 +2225,7 @@ class Performer(TimeStampedModel):
         resource_name = "performer"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -2529,8 +2508,7 @@ class Person(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -2600,7 +2578,6 @@ class Person(TimeStampedModel):
 
     spouse = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
     )
 
@@ -2609,28 +2586,24 @@ class Person(TimeStampedModel):
             The geographical location of the resource.""",
         max_length=200,
         blank=True,
-        default='',
     )
 
     website = models.URLField(
         help_text="""
             The website URL of the resource.""",
         blank=True,
-        default='',
     )
 
     facebook = models.URLField(
         help_text="""
             The facebook URL of the resource.""",
         blank=True,
-        default='',
     )
 
     twitter = models.CharField(
         help_text="""
             The twitter handle (in form @twitter_handle) of the resource.""",
         blank=True,
-        default='',
         max_length=16,
         validators=[
             RegexValidator(
@@ -2647,15 +2620,12 @@ class Person(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
-        default='',
     )
 
     phone = models.CharField(
         help_text="""
             The phone number of the resource.  Include country code.""",
-        null=True,
         blank=True,
-        default='',
         max_length=25,
     )
 
@@ -2715,21 +2685,18 @@ class Person(TimeStampedModel):
         max_length=255,
         blank=True,
         editable=False,
-        default='',
     )
 
     full_name = models.CharField(
         max_length=255,
         blank=True,
         editable=False,
-        default='',
     )
 
     formal_name = models.CharField(
         max_length=255,
         blank=True,
         editable=False,
-        default='',
     )
 
     # FKs
@@ -2745,7 +2712,7 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -2807,8 +2774,7 @@ class Round(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -2881,7 +2847,7 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3087,8 +3053,7 @@ class Score(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -3212,7 +3177,7 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = self.id.hex
@@ -3321,8 +3286,7 @@ class Session(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -3415,9 +3379,9 @@ class Session(TimeStampedModel):
     )
 
     # Denormalizations
-    @property
-    def completed_rounds(self):
-        return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
+    # @property
+    # def completed_rounds(self):
+    #     return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
 
     # FKs
     convention = models.ForeignKey(
@@ -3436,7 +3400,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3569,8 +3533,7 @@ class Slot(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -3588,7 +3551,6 @@ class Slot(TimeStampedModel):
 
     location = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
     )
 
@@ -3633,7 +3595,7 @@ class Slot(TimeStampedModel):
         resource_name = "slot"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3674,8 +3636,7 @@ class Song(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -3724,7 +3685,7 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3942,8 +3903,7 @@ class Submission(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -3986,7 +3946,6 @@ class Submission(TimeStampedModel):
         help_text="""
             Names of the Arranger(s).
         """,
-        null=True,
         blank=True,
     )
 
@@ -3994,7 +3953,6 @@ class Submission(TimeStampedModel):
         help_text="""
             Names of the Composer(s) and/or Lyricist(s).
         """,
-        null=True,
         blank=True,
     )
 
@@ -4002,7 +3960,6 @@ class Submission(TimeStampedModel):
         help_text="""
             Names of the Copyright Holder(s).
         """,
-        null=True,
         blank=True,
     )
 
@@ -4031,7 +3988,7 @@ class Submission(TimeStampedModel):
         resource_name = "submission"
 
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -4104,8 +4061,7 @@ class Venue(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=255,
-        null=True,
+        max_length=500,
         editable=False,
     )
 
@@ -4128,30 +4084,33 @@ class Venue(TimeStampedModel):
 
     location = models.CharField(
         max_length=255,
+        blank=True,
     )
 
     city = models.CharField(
         max_length=255,
+        blank=True,
     )
 
     state = models.CharField(
         max_length=255,
+        blank=True,
     )
 
     airport = models.CharField(
         max_length=3,
-        null=True,
         blank=True,
     )
 
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the venue.""",
+        blank=True,
     )
 
     # Methods
     def __unicode__(self):
-        return self.nomen
+        return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = self.name

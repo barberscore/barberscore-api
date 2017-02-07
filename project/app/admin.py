@@ -56,69 +56,12 @@ from .models import (
 )
 
 
-@admin.register(Office)
-class OfficeAdmin(admin.ModelAdmin):
-    list_display = [
-        'name',
-        'short_name',
-        'kind',
-    ]
-    search_fields = [
-        'nomen',
-        'short_name',
-    ]
-
-    list_filter = [
-        'status',
-        'kind',
-    ]
-
-
-@admin.register(Officer)
-class OfficerAdmin(admin.ModelAdmin):
-    raw_id_fields = [
-        'office',
-        'membership',
-    ]
-    list_filter = [
-        'office__name',
-    ]
-
-
-@admin.register(Membership)
-class MembershipAdmin(admin.ModelAdmin):
-    fields = [
-        'status',
-        'start_date',
-        'end_date',
-        'entity',
-        'person',
-    ]
-    raw_id_fields = [
-        'person',
-        'entity',
-    ]
-    search_fields = [
-        'nomen',
-    ]
-    list_filter = [
-        'status',
-        'part',
-        'entity__kind',
-    ]
-    inlines = [
-        OfficerInline,
-    ]
-
-
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'status',
         'kind',
-        'slot',
-        'bhs_id',
         'convention',
         'person',
     ]
@@ -169,7 +112,6 @@ class AwardAdmin(admin.ModelAdmin):
         'size_range',
         'scope',
         'scope_range',
-        'idiom',
         ('is_primary', 'is_improved', 'is_novice'),
         ('is_multi',),
         'championship_rounds',
@@ -285,7 +227,6 @@ class ContestAdmin(admin.ModelAdmin):
         'award',
         'session',
         'is_qualifier',
-        'num_rounds',
     ]
 
     list_display = (
@@ -369,7 +310,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'status',
         'level',
         'venue',
-        'bhs_id',
         'risers',
         'start_date',
         'end_date',
@@ -526,6 +466,61 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        'start_date',
+        'end_date',
+        'entity',
+        'person',
+    ]
+    raw_id_fields = [
+        'person',
+        'entity',
+    ]
+    search_fields = [
+        'nomen',
+    ]
+    list_filter = [
+        'status',
+        'part',
+        'entity__kind',
+    ]
+    inlines = [
+        OfficerInline,
+    ]
+
+
+@admin.register(Office)
+class OfficeAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'short_name',
+        'kind',
+    ]
+    search_fields = [
+        'nomen',
+        'short_name',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+    ]
+
+
+@admin.register(Officer)
+class OfficerAdmin(admin.ModelAdmin):
+    raw_id_fields = [
+        'office',
+        'membership',
+    ]
+    list_filter = [
+        'office__name',
+    ]
+
+
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
     fields = [
@@ -670,13 +665,6 @@ class PersonAdmin(admin.ModelAdmin):
         'dues_thru',
         'mon',
         'spouse',
-        'address1',
-        'address2',
-        'city',
-        'state',
-        'country',
-        'postal_code',
-        # 'organization',
         'location',
         'website',
         'facebook',

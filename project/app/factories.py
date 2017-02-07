@@ -7,11 +7,16 @@ from factory import (
     Faker,
     PostGenerationMethodCall,
     SubFactory,
+    RelatedFactory,
+    post_generation,
 )
 from factory.django import (
     DjangoModelFactory,
     ImageField,
+    mute_signals,
 )
+
+from django.db.models.signals import post_save
 
 # First-Party
 from app.models import (
@@ -43,6 +48,7 @@ from app.models import (
     Venue,
     User,
 )
+
 
 # Primitives
 class AssignmentFactory(DjangoModelFactory):
@@ -83,6 +89,7 @@ class AwardFactory(DjangoModelFactory):
 class CatalogFactory(DjangoModelFactory):
     status = Catalog.STATUS.new
     title = 'Test Title'
+    bhs_id = 999999
 
     class Meta:
         model = Catalog
@@ -93,16 +100,23 @@ class ContestFactory(DjangoModelFactory):
     is_qualifier = False
     session = SubFactory('app.factories.SessionFactory')
     award = SubFactory('app.factories.AwardFactory')
+    # contestscore = RelatedFactory('app.factories.ContestScoreFactory', 'contest')
+
+    # @post_generation
+    # def score(self, create, extracted, **kwargs):
+    #     if not create:
+    #         return
 
     class Meta:
         model = Contest
 
 
-class ContestScoreFactory(DjangoModelFactory):
-    champion = None
+# class ContestScoreFactory(DjangoModelFactory):
+#     contest_ptr = SubFactory('app.factories.ContestFactory', contestscore=None)
+#     # contest_ptr = SubFactory('app.factories.ContestFactory')
 
-    class Meta:
-        model = ContestScore
+#     class Meta:
+#         model = ContestScore
 
 
 class ContestantFactory(DjangoModelFactory):
@@ -137,30 +151,81 @@ class ConventionFactory(DjangoModelFactory):
 
 
 class EntityFactory(DjangoModelFactory):
-    name = 'Barbershop Harmony Society'
+
+    class Meta:
+        model = Entity
+
+
+class OrganizationFactory(EntityFactory):
+    name = 'Test Organization'
     status = Entity.STATUS.active
     kind = Entity.KIND.bhs
     age = None
     is_novice = False
-    short_name = 'BHS'
-    long_name = 'Barbershop Harmony Society'
-    code = None
+    short_name = 'Test ORG'
+    long_name = 'Test Organization'
+    code = ''
     start_date = None
     end_date = None
-    location = 'Nashville, TN'
-    website = 'http://barbershop.org'
-    facebook = None
-    twitter = None
-    email = 'admin@barbershop.org'
-    phone = '415.555.1212'
+    location = ''
+    website = ''
+    facebook = ''
+    twitter = ''
+    email = ''
+    phone = ''
     picture = ImageField(color='blue')
-    description = 'The society'
-    notes = None
+    description = ''
+    notes = ''
     bhs_id = None
     parent = None
 
-    class Meta:
-        model = Entity
+
+class DistrictFactory(EntityFactory):
+    name = 'Test District'
+    status = Entity.STATUS.active
+    kind = Entity.KIND.district
+    age = None
+    is_novice = False
+    short_name = 'Test DIS'
+    long_name = 'Test District'
+    code = ''
+    start_date = None
+    end_date = None
+    location = ''
+    website = ''
+    facebook = ''
+    twitter = ''
+    email = ''
+    phone = ''
+    picture = ImageField(color='orange')
+    description = ''
+    notes = ''
+    bhs_id = None
+    parent = None
+
+
+class QuartetFactory(EntityFactory):
+    name = 'Test Quartet'
+    status = Entity.STATUS.active
+    kind = Entity.KIND.quartet
+    age = None
+    is_novice = False
+    short_name = 'Test QRT'
+    long_name = 'Test Quartet'
+    code = ''
+    start_date = None
+    end_date = None
+    location = ''
+    website = ''
+    facebook = ''
+    twitter = ''
+    email = ''
+    phone = ''
+    picture = ImageField(color='purple')
+    description = ''
+    notes = ''
+    bhs_id = None
+    parent = None
 
 
 class HostFactory(DjangoModelFactory):
@@ -242,7 +307,7 @@ class PerformerFactory(DjangoModelFactory):
     codirector = None
 
     class Meta:
-        model = Performance
+        model = Performer
 
 
 class PerformerScoreFactory(DjangoModelFactory):
@@ -257,15 +322,15 @@ class PersonFactory(DjangoModelFactory):
     birth_date = None
     start_date = None
     end_date = None
-    location = 'Nashville, TN'
-    website = 'http://barbershop.org'
-    facebook = None
-    twitter = None
-    email = 'admin@barbershop.org'
-    phone = '415.555.1212'
-    picture = ImageField(color='red')
-    description = 'The society'
-    notes = None
+    location = ''
+    website = ''
+    facebook = ''
+    twitter = ''
+    email = ''
+    phone = ''
+    picture = ImageField(color='pink')
+    description = ''
+    notes = ''
     bhs_id = None
     user = None
 
@@ -295,7 +360,7 @@ class ScoreFactory(DjangoModelFactory):
     original = None
     violation = None
     penalty = None
-    is_flagged = None
+    is_flagged = False
     song = SubFactory('app.factories.SongFactory')
     person = None
 
@@ -303,6 +368,7 @@ class ScoreFactory(DjangoModelFactory):
         model = Score
 
 
+@mute_signals(post_save)
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
     kind = Session.KIND.quartet
@@ -310,7 +376,7 @@ class SessionFactory(DjangoModelFactory):
     end_date = None
     num_rounds = 1
     panel_size = None
-    is_prelims = None
+    is_prelims = False
     cursor = None
     current = None
     primary = None
@@ -324,7 +390,7 @@ class SessionFactory(DjangoModelFactory):
 class SlotFactory(DjangoModelFactory):
     status = Slot.STATUS.new
     num = 1
-    location = None
+    location = ''
     round = SubFactory('app.factories.RoundFactory')
 
     class Meta:
@@ -350,11 +416,11 @@ class SubmissionFactory(DjangoModelFactory):
     status = Submission.STATUS.new
     title = 'Test Song Title'
     bhs_catalog = None
-    is_medley = None
-    is_parody = None
-    arrangers = None
-    composers = None
-    holders = None
+    is_medley = False
+    is_parody = False
+    arrangers = ''
+    composers = ''
+    holders = ''
     performer = SubFactory('app.factories.PerformerFactory')
     catalog = None
 
@@ -365,11 +431,11 @@ class SubmissionFactory(DjangoModelFactory):
 class VenueFactory(DjangoModelFactory):
     name = 'Test Convention Center'
     status = Venue.STATUS.active
-    location = 'Nashville, TN'
-    city = 'Nashville',
-    state = 'TN'
-    airport = 'TNA'
-    timezone = 'US/Central'
+    location = ''
+    city = '',
+    state = ''
+    airport = ''
+    timezone = ''
 
     class Meta:
         model = Venue
