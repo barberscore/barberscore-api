@@ -991,19 +991,19 @@ class ContestantScore(Contestant):
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.contest.award.organization.representative.user == request.user,
-            # ])
-            return True
+            return any([
+                True
+                # self.contest.award.organization.representative.user == request.user,
+            ])
         return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return any([
-            #     self.contest.award.organization.representative.user == request.user,
-            # ])
-            return True
+            return any([
+                # self.contest.award.organization.representative.user == request.user,
+                True
+            ])
         return False
 
 
@@ -1122,23 +1122,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    is_prelims = models.BooleanField(
-        default=False,
-    )
-
-    quartet_prelims = models.BooleanField(
-        default=False,
-    )
-
-    chorus_prelims = models.BooleanField(
-        default=False,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     # FKs
     venue = models.ForeignKey(
         'Venue',
@@ -1148,14 +1131,6 @@ class Convention(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-    )
-
-    entity = TreeForeignKey(
-        'Entity',
-        related_name='conventions',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Internals
@@ -2181,11 +2156,6 @@ class Performer(TimeStampedModel):
         default=False,
     )
 
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     seed = models.IntegerField(
         help_text="""
             The incoming rank based on prelim score.""",
@@ -2196,6 +2166,11 @@ class Performer(TimeStampedModel):
     prelim = models.FloatField(
         help_text="""
             The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -2540,13 +2515,9 @@ class PerformerScore(Performer):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
-            # return bool(
-            #     self.performer.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.round.session.assignments.model.category.ADMIN,
-            #     )
-            # )
-            return True
+            return any([
+                True,
+            ])
         return False
 
 
@@ -2631,42 +2602,6 @@ class Person(TimeStampedModel):
         max_length=255,
         null=True,
         blank=True,
-    )
-
-    address1 = models.CharField(
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    address2 = models.CharField(
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    city = models.CharField(
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    state = models.CharField(
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    country = models.CharField(
-        max_length=200,
-        blank=True,
-        default='',
-    )
-
-    postal_code = models.CharField(
-        max_length=20,
-        blank=True,
-        default='',
     )
 
     location = models.CharField(
@@ -4037,11 +3972,6 @@ class Submission(TimeStampedModel):
         """,
         null=True,
         blank=True,
-    )
-
-    source = models.CharField(
-        blank=True,
-        max_length=200,
     )
 
     is_medley = models.BooleanField(

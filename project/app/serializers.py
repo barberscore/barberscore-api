@@ -39,99 +39,6 @@ from .models import (
 )
 
 
-class EntitySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Entity
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'name',
-            'status',
-            'level',
-            'kind',
-            'age',
-            'is_novice',
-            'start_date',
-            'end_date',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'short_name',
-            'code',
-            'long_name',
-            'parent',
-            'children',
-            'awards',
-            'lft',
-            'permissions',
-        ]
-        read_only_fields = [
-            'picture',
-        ]
-
-
-class MembershipSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Membership
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'start_date',
-            'end_date',
-            'entity',
-            'person',
-            'permissions',
-        ]
-
-
-class OfficeSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Office
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'name',
-            'status',
-            'kind',
-            'short_name',
-            'long_name',
-            'permissions',
-        ]
-
-
-class OfficerSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Officer
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'start_date',
-            'end_date',
-            'office',
-            'membership',
-            'permissions',
-        ]
-
-
 class TimezoneField(serializers.Field):
     def to_representation(self, obj):
         return six.text_type(obj)
@@ -153,12 +60,10 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'category',
-            # 'designation',
             'kind',
             'slot',
-            'person',
             'convention',
+            'person',
             'permissions',
         )
 
@@ -179,16 +84,21 @@ class AwardSerializer(serializers.ModelSerializer):
             'championship_season',
             'qualifier_season',
             'size',
+            'size_range',
             'scope',
-            'championship_rounds',
-            'qualifier_rounds',
+            'scope_range',
             'is_primary',
             'is_improved',
             'is_novice',
-            'idiom',
+            'is_manual',
+            'is_multi',
+            'is_district_representative',
+            'championship_rounds',
+            'qualifier_rounds',
             'threshold',
             'minimum',
             'advance',
+            'entity',
             'contests',
             'permissions',
         )
@@ -216,6 +126,7 @@ class CatalogSerializer(serializers.ModelSerializer):
             'is_medley',
             'is_learning',
             'voicing',
+            'submissions',
             'permissions',
         )
 
@@ -231,9 +142,9 @@ class ContestSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'is_qualifier',
-            'contestants',
             'award',
             'session',
+            'contestants',
             'permissions',
         )
 
@@ -301,21 +212,60 @@ class ConventionSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'season',
-            'risers',
             'panel',
-            'location',
-            'level',
-            'is_prelims',
+            'risers',
             'year',
             'start_date',
             'end_date',
+            'location',
             'venue',
             'hosts',
-            # 'drcj',
             'assignments',
             'sessions',
             'permissions',
         )
+
+
+class EntitySerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Entity
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'name',
+            'status',
+            'level',
+            'kind',
+            'age',
+            'is_novice',
+            'short_name',
+            'long_name',
+            'code',
+            'start_date',
+            'end_date',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'picture',
+            'description',
+            'lft',
+            'parent',
+            'children',
+            'hosts',
+            'memberships',
+            'performers',
+            'awards',
+            'permissions',
+        ]
+        read_only_fields = [
+            'picture',
+        ]
 
 
 class HostSerializer(serializers.ModelSerializer):
@@ -332,6 +282,63 @@ class HostSerializer(serializers.ModelSerializer):
             'entity',
             'permissions',
         )
+
+
+class MembershipSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Membership
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'part',
+            'start_date',
+            'end_date',
+            'entity',
+            'person',
+            'officers',
+            'permissions',
+        ]
+
+
+class OfficeSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Office
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'name',
+            'status',
+            'kind',
+            'short_name',
+            'long_name',
+            'officers',
+            'permissions',
+        ]
+
+
+class OfficerSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Officer
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'start_date',
+            'end_date',
+            'office',
+            'membership',
+            'permissions',
+        ]
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -386,22 +393,21 @@ class PerformerSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            # 'representing',
-            'tenor',
-            'lead',
-            'baritone',
-            'bass',
+            'picture',
             'men',
             'risers',
             'is_evaluation',
             'is_private',
-            'director',
-            'codirector',
-            'picture',
             'seed',
             'prelim',
             'session',
             'entity',
+            'tenor',
+            'lead',
+            'baritone',
+            'bass',
+            'director',
+            'codirector',
             'performances',
             'contestants',
             'submissions',
@@ -429,6 +435,7 @@ class PerformerScoreSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
+            'contestants',
             'permissions',
         )
 
@@ -445,8 +452,14 @@ class PersonSerializer(serializers.ModelSerializer):
             'nomen',
             'name',
             'status',
+            'kind',
+            'bhs_status',
+            'birth_date',
             'start_date',
             'end_date',
+            'dues_thru',
+            'mon',
+            'spouse',
             'location',
             'website',
             'facebook',
@@ -461,7 +474,10 @@ class PersonSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'nick_name',
+            'assignments',
+            'memberships',
             'permissions',
+            'scores',
             'user',
         )
         # fields = '__all__'
@@ -488,10 +504,11 @@ class RoundSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'kind',
+            'num',
+            'num_songs',
             'start_date',
             'end_date',
-            'num',
-            # 'mt',
+            'ann_pdf',
             'session',
             'performances',
             'slots',
@@ -533,42 +550,26 @@ class SessionSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'kind',
-            'convention',
             'start_date',
             'end_date',
             'num_rounds',
+            'panel_size',
             'is_prelims',
             'cursor',
             'current',
             'primary',
+            'scoresheet_pdf',
+            'computed_rounds',
+            'convention',
             'performers',
             'contests',
             'rounds',
             'permissions',
         )
 
-
-class SubmissionSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Submission
-        fields = (
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'title',
-            'bhs_catalog',
-            'arrangers',
-            'composers',
-            'holders',
-            # 'source',
-            'is_medley',
-            'is_parody',
-            'performer',
-            'permissions',
-        )
+        read_only_fields = [
+            'computed_rounds',
+        ]
 
 
 class SlotSerializer(serializers.ModelSerializer):
@@ -582,13 +583,14 @@ class SlotSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'num',
-            'round',
-            'performance',
+            'location',
             'photo',
             'arrive',
             'depart',
             'backstage',
             'onstage',
+            'round',
+            'performance',
             'permissions',
         )
 
@@ -634,6 +636,30 @@ class SongScoreSerializer(serializers.ModelSerializer):
         )
 
 
+class SubmissionSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Submission
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'title',
+            'bhs_catalog',
+            'is_medley',
+            'is_parody',
+            'arrangers',
+            'composers',
+            'holders',
+            'performer',
+            'catalog',
+            'songs',
+            'permissions',
+        ]
+
+
 class VenueSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
 
@@ -646,6 +672,7 @@ class VenueSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'name',
+            'status',
             'location',
             'city',
             'state',

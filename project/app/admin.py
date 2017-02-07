@@ -370,13 +370,11 @@ class ConventionAdmin(admin.ModelAdmin):
         'level',
         'venue',
         'bhs_id',
-        'is_prelims',
         'risers',
         'start_date',
         'end_date',
         'year',
         'season',
-        # 'drcj',
     )
 
     list_display = (
@@ -384,7 +382,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'name',
         'panel',
         'season',
-        'is_prelims',
         # 'status',
         'start_date',
         'end_date',
