@@ -1,27 +1,12 @@
-# Third-Party
-from nose import with_setup
 
 # Standard Libary
-import random
-from datetime import datetime
-
-import pytz
-from factory.fuzzy import (
-    FuzzyDateTime,
-    FuzzyInteger,
-)
 
 # Django
 from django.core import management
-from django.db import IntegrityError
 from django.test.client import Client
 from django.urls import reverse
 
-from django_nose.tools import (
-    assert_ok,
-    assert_code,
-    assert_true,
-)
+import pytest
 
 from rest_framework.test import APIClient
 
@@ -30,280 +15,300 @@ config = api_apps.get_app_config('app')
 
 
 # First-Party
-from app.factories import (
-    AssignmentFactory,
-    AwardFactory,
-    CatalogFactory,
-    ContestFactory,
-    # ContestScoreFactory,
-    ContestantFactory,
-    # ContestantScoreFactory,
-    ConventionFactory,
-    # EntityFactory,
-    OrganizationFactory,
-    DistrictFactory,
-    QuartetFactory,
-    HostFactory,
-    MembershipFactory,
-    OfficeFactory,
-    OfficerFactory,
-    PerformanceFactory,
-    # PerformanceScoreFactory,
-    PerformerFactory,
-    # PerformerScoreFactory,
-    PersonFactory,
-    RoundFactory,
-    ScoreFactory,
-    SessionFactory,
-    SlotFactory,
-    SongFactory,
-    # SongScoreFactory,
-    SubmissionFactory,
-    VenueFactory,
-    UserFactory,
-)
+# from app.factories import (
+#     AssignmentFactory,
+#     AwardFactory,
+#     CatalogFactory,
+#     ContestFactory,
+#     # ContestScoreFactory,
+#     ContestantFactory,
+#     # ContestantScoreFactory,
+#     ConventionFactory,
+#     # EntityFactory,
+#     OrganizationFactory,
+#     DistrictFactory,
+#     QuartetFactory,
+#     HostFactory,
+#     MembershipFactory,
+#     OfficeFactory,
+#     OfficerFactory,
+#     PerformanceFactory,
+#     # PerformanceScoreFactory,
+#     PerformerFactory,
+#     # PerformerScoreFactory,
+#     PersonFactory,
+#     RoundFactory,
+#     ScoreFactory,
+#     SessionFactory,
+#     SlotFactory,
+#     SongFactory,
+#     # SongScoreFactory,
+#     SubmissionFactory,
+#     VenueFactory,
+#     UserFactory,
+# )
 
-from app.models import (
-    Assignment,
-    Award,
-    Catalog,
-    Contest,
-    ContestScore,
-    Contestant,
-    ContestantScore,
-    Convention,
-    Entity,
-    Host,
-    Membership,
-    Office,
-    Officer,
-    Performance,
-    PerformanceScore,
-    Performer,
-    PerformerScore,
-    Person,
-    Round,
-    Score,
-    Session,
-    Slot,
-    Song,
-    SongScore,
-    Submission,
-    Venue,
-    User,
-)
+# from app.models import (
+#     Assignment,
+#     Award,
+#     Catalog,
+#     Contest,
+#     ContestScore,
+#     Contestant,
+#     ContestantScore,
+#     Convention,
+#     Entity,
+#     Host,
+#     Membership,
+#     Office,
+#     Officer,
+#     Performance,
+#     PerformanceScore,
+#     Performer,
+#     PerformerScore,
+#     Person,
+#     Round,
+#     Score,
+#     Session,
+#     Slot,
+#     Song,
+#     SongScore,
+#     Submission,
+#     Venue,
+#     User,
+# )
 
-
-def simple_setup():
-    UserFactory(
-        username='admin@barberscore.com',
-        is_staff=True,
-    )
-    user = UserFactory(
-        username='user@barberscore.com',
-    )
-    organization = OrganizationFactory(
-    )
-    district = DistrictFactory(
-        parent=organization,
-    )
-    quartet = QuartetFactory(
-        parent=district,
-    )
-    person = PersonFactory(
-        user=user,
-    )
-    office = OfficeFactory(
-    )
-    award = AwardFactory(
-        entity=organization,
-    )
-    convention = ConventionFactory(
-    )
-    session = SessionFactory(
-        convention=convention,
-    )
-    round = RoundFactory(
-        session=session,
-    )
-    contest = ContestFactory(
-        session=session,
-        award=award,
-    )
-    performer = PerformerFactory(
-        session=session,
-        entity=quartet,
-    )
-    membership = MembershipFactory(
-        person=person,
-        entity=organization,
-    )
-    performance = PerformanceFactory(
-        round=round,
-        performer=performer,
-    )
-    song = SongFactory(
-        performance=performance,
-    )
-    VenueFactory(
-    )
-    contestant = ContestantFactory(
-        performer=performer,
-        contest=contest,
-    )
-    HostFactory(
-        convention=convention,
-        entity=organization,
-    )
-    AssignmentFactory(
-        convention=convention,
-        person=person,
-    )
-    CatalogFactory(
-    )
-    OfficerFactory(
-        membership=membership,
-        office=office,
-    )
-    ScoreFactory(
-        song=song,
-    )
-    SlotFactory(
-        round=round,
-    )
-    SubmissionFactory(
-        performer=performer,
-    )
-    # Not sure about this approach, but it works
-    contest_score = ContestScore(
-        contest_ptr=contest,
-    )
-    contest_score.save_base(raw=True)
-
-    contestant_score = ContestantScore(
-        contestant_ptr=contestant,
-    )
-    contestant_score.save_base(raw=True)
-
-    performance_score = PerformanceScore(
-        performance_ptr=performance,
-    )
-    performance_score.save_base(raw=True)
-
-    performer_score = PerformerScore(
-        performer_ptr=performer,
-    )
-    performer_score.save_base(raw=True)
-
-    song_score = SongScore(
-        song_ptr=song,
-    )
-    song_score.save_base(raw=True)
+# @pytest.fixture
+def test_fixture(venue):
+    assert venue.name == 'Test Convention Center'
 
 
-def tear_down():
-    management.call_command('flush', verbosity=0, interactive=False)
-    return
+def test_tautological():
+    assert True
 
 
-@with_setup(simple_setup, tear_down)
-def test_admin():
-    client = Client()
-    admin = User.objects.get(username='admin@barberscore.com')
-    client.force_login(admin)
-    modules = [
-        'Assignment',
-        'Award',
-        'Catalog',
-        'Contest',
-        'ContestScore',
-        'Contestant',
-        'ContestantScore',
-        'Convention',
-        'Entity',
-        'Host',
-        'Membership',
-        'Office',
-        'Officer',
-        'Performance',
-        'PerformanceScore',
-        'Performer',
-        'PerformerScore',
-        'Person',
-        'Round',
-        'Score',
-        'Session',
-        'Slot',
-        'Song',
-        'SongScore',
-        'Submission',
-        'Venue',
-        'User',
-    ]
-    for m in modules:
-        path = reverse('admin:app_{0}_changelist'.format(m.lower()))
-        response = client.get(path)
-        assert_ok(response)
-
-    for m in modules:
-        f = config.get_model(m)
-        o = f.objects.first()
-        assert_true(o)
-        path = reverse('admin:app_{0}_change'.format(m.lower()), args=(o.id.hex,))
-        response = client.get(path)
-        assert_ok(response)
+def double_it(x):
+    return x * 2
 
 
-@with_setup(simple_setup, tear_down)
-def test_api():
-    client = APIClient()
-    admin = User.objects.get(username='admin@barberscore.com')
-    client.force_authenticate(user=admin)
-    modules = [
-        'Assignment',
-        'Award',
-        'Catalog',
-        'Contest',
-        'ContestScore',
-        'Contestant',
-        'ContestantScore',
-        'Convention',
-        'Entity',
-        'Host',
-        'Membership',
-        'Office',
-        'Officer',
-        'Performance',
-        'PerformanceScore',
-        'Performer',
-        'PerformerScore',
-        'Person',
-        'Round',
-        'Score',
-        'Session',
-        'Slot',
-        'Song',
-        'SongScore',
-        'Submission',
-        'Venue',
-        'User',
-    ]
+def test_square():
+    assert double_it(2) == 4
 
-    for m in modules:
-        path = reverse('{0}-list'.format(m.lower()))
-        response = client.get(path)
-        assert_ok(response)
+# def simple_setup():
+#     UserFactory(
+#         username='admin@barberscore.com',
+#         is_staff=True,
+#     )
+#     user = UserFactory(
+#         username='user@barberscore.com',
+#     )
+#     organization = OrganizationFactory(
+#     )
+#     district = DistrictFactory(
+#         parent=organization,
+#     )
+#     quartet = QuartetFactory(
+#         parent=district,
+#     )
+#     person = PersonFactory(
+#         user=user,
+#     )
+#     office = OfficeFactory(
+#     )
+#     award = AwardFactory(
+#         entity=organization,
+#     )
+#     convention = ConventionFactory(
+#     )
+#     session = SessionFactory(
+#         convention=convention,
+#     )
+#     round = RoundFactory(
+#         session=session,
+#     )
+#     contest = ContestFactory(
+#         session=session,
+#         award=award,
+#     )
+#     performer = PerformerFactory(
+#         session=session,
+#         entity=quartet,
+#     )
+#     membership = MembershipFactory(
+#         person=person,
+#         entity=organization,
+#     )
+#     performance = PerformanceFactory(
+#         round=round,
+#         performer=performer,
+#     )
+#     song = SongFactory(
+#         performance=performance,
+#     )
+#     VenueFactory(
+#     )
+#     contestant = ContestantFactory(
+#         performer=performer,
+#         contest=contest,
+#     )
+#     HostFactory(
+#         convention=convention,
+#         entity=organization,
+#     )
+#     AssignmentFactory(
+#         convention=convention,
+#         person=person,
+#     )
+#     CatalogFactory(
+#     )
+#     OfficerFactory(
+#         membership=membership,
+#         office=office,
+#     )
+#     ScoreFactory(
+#         song=song,
+#     )
+#     SlotFactory(
+#         round=round,
+#     )
+#     SubmissionFactory(
+#         performer=performer,
+#     )
+#     # Not sure about this approach, but it works
+#     contest_score = ContestScore(
+#         contest_ptr=contest,
+#     )
+#     contest_score.save_base(raw=True)
 
-    for m in modules:
-        f = config.get_model(m)
-        o = f.objects.first()
-        assert_true(o)
-        path = reverse('{0}-detail'.format(m.lower()), args=(o.id.hex,))
-        response = client.get(path)
-        assert_ok(response)
+#     contestant_score = ContestantScore(
+#         contestant_ptr=contestant,
+#     )
+#     contestant_score.save_base(raw=True)
 
-# from nose.tools import eq_ as eq
-# from nose.tools import ok_ as ok
+#     performance_score = PerformanceScore(
+#         performance_ptr=performance,
+#     )
+#     performance_score.save_base(raw=True)
+
+#     performer_score = PerformerScore(
+#         performer_ptr=performer,
+#     )
+#     performer_score.save_base(raw=True)
+
+#     song_score = SongScore(
+#         song_ptr=song,
+#     )
+#     song_score.save_base(raw=True)
+
+
+# def tear_down():
+#     management.call_command('flush', verbosity=0, interactive=False)
+#     return
+
+
+# @with_setup(simple_setup, tear_down)
+# def test_admin():
+#     client = Client()
+#     admin = User.objects.get(username='admin@barberscore.com')
+#     client.force_login(admin)
+#     modules = [
+#         'Assignment',
+#         'Award',
+#         'Catalog',
+#         'Contest',
+#         'ContestScore',
+#         'Contestant',
+#         'ContestantScore',
+#         'Convention',
+#         'Entity',
+#         'Host',
+#         'Membership',
+#         'Office',
+#         'Officer',
+#         'Performance',
+#         'PerformanceScore',
+#         'Performer',
+#         'PerformerScore',
+#         'Person',
+#         'Round',
+#         'Score',
+#         'Session',
+#         'Slot',
+#         'Song',
+#         'SongScore',
+#         'Submission',
+#         'Venue',
+#         'User',
+#     ]
+#     for m in modules:
+#         path = reverse('admin:app_{0}_changelist'.format(m.lower()))
+#         response = client.get(path)
+#         assert_ok(response)
+
+#     for m in modules:
+#         f = config.get_model(m)
+#         o = f.objects.first()
+#         assert_true(o)
+#         path = reverse('admin:app_{0}_change'.format(m.lower()), args=(o.id.hex,))
+#         response = client.get(path)
+#         assert_ok(response)
+
+
+# @with_setup(simple_setup, tear_down)
+# def test_api():
+#     client = APIClient()
+#     admin = User.objects.get(username='admin@barberscore.com')
+#     client.force_authenticate(user=admin)
+#     modules = [
+#         'Assignment',
+#         'Award',
+#         'Catalog',
+#         'Contest',
+#         'ContestScore',
+#         'Contestant',
+#         'ContestantScore',
+#         'Convention',
+#         'Entity',
+#         'Host',
+#         'Membership',
+#         'Office',
+#         'Officer',
+#         'Performance',
+#         'PerformanceScore',
+#         'Performer',
+#         'PerformerScore',
+#         'Person',
+#         'Round',
+#         'Score',
+#         'Session',
+#         'Slot',
+#         'Song',
+#         'SongScore',
+#         'Submission',
+#         'Venue',
+#         'User',
+#     ]
+
+#     for m in modules:
+#         path = reverse('{0}-list'.format(m.lower()))
+#         response = client.get(path)
+#         assert_ok(response)
+
+#     for m in modules:
+#         f = config.get_model(m)
+#         o = f.objects.first()
+#         assert_true(o)
+#         path = reverse('{0}-detail'.format(m.lower()), args=(o.id.hex,))
+#         response = client.get(path)
+#         assert_ok(response)
+
+
+
+
+
+
+
+
 # from rest_assured.testcases import (
 #     BaseRESTAPITestCase,
 #     ReadRESTAPITestCaseMixin,

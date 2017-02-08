@@ -3,6 +3,9 @@ from datetime import datetime
 
 # Third-Party
 import pytz
+
+import factory
+
 from factory import (
     Faker,
     PostGenerationMethodCall,
@@ -439,6 +442,7 @@ class VenueFactory(DjangoModelFactory):
 
     class Meta:
         model = Venue
+        strategy = factory.BUILD_STRATEGY
 
 
 class UserFactory(DjangoModelFactory):

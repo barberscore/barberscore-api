@@ -29,14 +29,7 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 # Test Settings
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = [
-    '--nologcapture',
-    '--with-coverage',
-    '--cover-package=app',
-]
 
-MIGRATION_MODULES = {'app': None}
 
 
 # Email
@@ -84,5 +77,4 @@ LOGGING = {
 
 INSTALLED_APPS += (
     'debug_toolbar',
-    'django_nose',
 )
