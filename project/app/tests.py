@@ -5,7 +5,7 @@
 from django.core import management
 from django.test.client import Client
 from django.urls import reverse
-
+import json
 import pytest
 
 from rest_framework.test import APIClient
@@ -15,38 +15,38 @@ config = api_apps.get_app_config('app')
 
 
 # First-Party
-# from app.factories import (
-#     AssignmentFactory,
-#     AwardFactory,
-#     CatalogFactory,
-#     ContestFactory,
-#     # ContestScoreFactory,
-#     ContestantFactory,
-#     # ContestantScoreFactory,
-#     ConventionFactory,
-#     # EntityFactory,
-#     OrganizationFactory,
-#     DistrictFactory,
-#     QuartetFactory,
-#     HostFactory,
-#     MembershipFactory,
-#     OfficeFactory,
-#     OfficerFactory,
-#     PerformanceFactory,
-#     # PerformanceScoreFactory,
-#     PerformerFactory,
-#     # PerformerScoreFactory,
-#     PersonFactory,
-#     RoundFactory,
-#     ScoreFactory,
-#     SessionFactory,
-#     SlotFactory,
-#     SongFactory,
-#     # SongScoreFactory,
-#     SubmissionFactory,
-#     VenueFactory,
-#     UserFactory,
-# )
+from app.factories import (
+    AssignmentFactory,
+    AwardFactory,
+    CatalogFactory,
+    ContestFactory,
+    # ContestScoreFactory,
+    ContestantFactory,
+    # ContestantScoreFactory,
+    ConventionFactory,
+    # EntityFactory,
+    OrganizationFactory,
+    DistrictFactory,
+    QuartetFactory,
+    HostFactory,
+    MembershipFactory,
+    OfficeFactory,
+    OfficerFactory,
+    PerformanceFactory,
+    # PerformanceScoreFactory,
+    PerformerFactory,
+    # PerformerScoreFactory,
+    PersonFactory,
+    RoundFactory,
+    ScoreFactory,
+    SessionFactory,
+    SlotFactory,
+    SongFactory,
+    # SongScoreFactory,
+    SubmissionFactory,
+    VenueFactory,
+    UserFactory,
+)
 
 # from app.models import (
 #     Assignment,
@@ -78,9 +78,93 @@ config = api_apps.get_app_config('app')
 #     User,
 # )
 
-# @pytest.fixture
-def test_fixture(venue):
-    assert venue.name == 'Test Convention Center'
+
+def ok(response):
+    return response.status_code == 200
+
+
+@pytest.fixture
+def venue():
+    """Test Venue Model."""
+    venue = VenueFactory.create()
+    return venue
+
+
+@pytest.fixture
+def organization():
+    """Test Venue Model."""
+    return OrganizationFactory()
+
+
+@pytest.fixture
+def district():
+    """Test Venue Model."""
+    return DistrictFactory()
+
+
+@pytest.fixture
+def quartet():
+    """Test Venue Model."""
+    return QuartetFactory()
+
+
+@pytest.mark.django_db()
+def test_api_endpoint(client):
+    """Test API Root."""
+    response = client.get('/api/')
+    assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_venue_endpoint_list(client, venue):
+    """Test Venue Endpoint."""
+    path = reverse('venue-list')
+    response = client.get(path)
+    jsonapi = json.loads(response.content)
+    assert jsonapi['meta']['count'] == 1
+
+
+@pytest.mark.django_db()
+def test_venue_endpoint_detail(client, venue):
+    """Test Venue Endpoint."""
+    path = reverse('venue-detail', args=(venue.id.hex,))
+    response = client.get(path)
+    jsonapi = json.loads(response.content)
+    assert jsonapi['data']['attributes']['name'] == "Test Convention Center"
+
+#     for m in modules:
+#         path = reverse('{0}-list'.format(m.lower()))
+#         response = client.get(path)
+#         assert_ok(response)
+
+#     for m in modules:
+#         f = config.get_model(m)
+#         o = f.objects.first()
+#         assert_true(o)
+#         path = reverse('{0}-detail'.format(m.lower()), args=(o.id.hex,))
+#         response = client.get(path)
+#         assert_ok(response)
+
+
+
+
+
+
+
+# def test_venue(venue):
+#     assert venue.name == 'Test Convention Center'
+
+
+def test_organization(organization):
+    assert organization.name == 'Test Organization'
+
+
+def test_district(district):
+    assert district.name == 'Test District'
+
+
+def test_quartet(quartet):
+    assert quartet.name == 'Test Quartet'
 
 
 def test_tautological():
