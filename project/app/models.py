@@ -45,8 +45,9 @@ from django.core.validators import (
 from django.db import (
     models,
 )
-from django.utils import (
-    encoding,
+from django.utils.encoding import (
+    python_2_unicode_compatible,
+    smart_text,
 )
 
 # Local
@@ -65,6 +66,7 @@ def generate_image_filename(instance, filename):
     return '{0}{1}'.format(instance.id, ext)
 
 
+@python_2_unicode_compatible
 class Assignment(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -126,7 +128,7 @@ class Assignment(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "assignment"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -161,6 +163,7 @@ class Assignment(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Award(TimeStampedModel):
     """
     Award Model.
@@ -355,7 +358,7 @@ class Award(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "award"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -388,6 +391,7 @@ class Award(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Catalog(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -497,7 +501,7 @@ class Catalog(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "catalog"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -527,6 +531,7 @@ class Catalog(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Contest(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -579,7 +584,7 @@ class Contest(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "contest"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -629,6 +634,7 @@ class Contest(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class ContestScore(Contest):
     champion = models.ForeignKey(
         'Performer',
@@ -642,6 +648,9 @@ class ContestScore(Contest):
         resource_name = "contestscore"
 
     # Methods
+    def __str__(self):
+        return self.id.hex
+
     def calculate(self, *args, **kwargs):
         if self.is_qualifier:
             champion = None
@@ -697,6 +706,7 @@ class ContestScore(Contest):
         return False
 
 
+@python_2_unicode_compatible
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -749,13 +759,13 @@ class Contestant(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "contestant"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.performer,
                     self.contest,
                 ]
@@ -814,6 +824,7 @@ class Contestant(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class ContestantScore(Contestant):
     rank = models.IntegerField(
         null=True,
@@ -888,6 +899,9 @@ class ContestantScore(Contestant):
             return self.official_rank
 
     # Methods
+    def __str__(self):
+        return self.id.hex
+
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -1002,6 +1016,7 @@ class ContestantScore(Contestant):
         return False
 
 
+@python_2_unicode_compatible
 class Convention(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1130,7 +1145,7 @@ class Convention(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "convention"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -1172,6 +1187,7 @@ class Convention(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class Entity(MPTTModel, TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1385,7 +1401,7 @@ class Entity(MPTTModel, TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "entity"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -1417,6 +1433,7 @@ class Entity(MPTTModel, TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Host(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1462,13 +1479,13 @@ class Host(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "host"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.convention,
                     self.entity,
                 ]
@@ -1500,6 +1517,7 @@ class Host(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Membership(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1569,13 +1587,13 @@ class Membership(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "membership"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.entity,
                     self.person,
                 ]
@@ -1603,6 +1621,7 @@ class Membership(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Office(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1662,7 +1681,7 @@ class Office(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "office"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     # Permissions
@@ -1685,6 +1704,7 @@ class Office(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Officer(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1735,13 +1755,13 @@ class Officer(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "officer"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.office,
                     self.membership,
                 ]
@@ -1769,6 +1789,7 @@ class Officer(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Performance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1840,13 +1861,13 @@ class Performance(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "performance"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.round,
                     self.performer,
                 ]
@@ -1915,6 +1936,7 @@ class Performance(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class PerformanceScore(Performance):
     rank = models.IntegerField(
         null=True,
@@ -1966,6 +1988,9 @@ class PerformanceScore(Performance):
         resource_name = "performancescore"
 
     # Methods
+    def __str__(self):
+        return self.id.hex
+
     def calculate(self, *args, **kwargs):
         # self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()
@@ -2070,6 +2095,7 @@ class PerformanceScore(Performance):
         return False
 
 
+@python_2_unicode_compatible
 class Performer(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2224,13 +2250,13 @@ class Performer(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "performer"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.entity,
                     self.session,
                 ]
@@ -2285,6 +2311,7 @@ class Performer(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class PerformerScore(Performer):
     rank = models.IntegerField(
         null=True,
@@ -2344,6 +2371,9 @@ class PerformerScore(Performer):
         resource_name = "performerscore"
 
     # Methods
+    def __str__(self):
+        return self.id.hex
+
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -2500,6 +2530,7 @@ class PerformerScore(Performer):
         return False
 
 
+@python_2_unicode_compatible
 class Person(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2711,13 +2742,13 @@ class Person(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "person"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x),
+                lambda x: smart_text(x),
                 filter(
                     None, [
                         self.name,
@@ -2766,6 +2797,7 @@ class Person(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Round(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2846,13 +2878,13 @@ class Round(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "round"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.session,
                     self.get_kind_display(),
                 ]
@@ -3045,6 +3077,7 @@ class Round(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class Score(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3176,7 +3209,7 @@ class Score(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "score"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -3278,6 +3311,7 @@ class Score(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Session(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3399,13 +3433,13 @@ class Session(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "session"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.convention,
                     self.get_kind_display(),
                 ]
@@ -3525,6 +3559,7 @@ class Session(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class Slot(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3594,13 +3629,13 @@ class Slot(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "slot"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.round,
                     self.num,
                 ]
@@ -3628,6 +3663,7 @@ class Slot(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Song(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3684,13 +3720,13 @@ class Song(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "song"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.performance,
                     self.num,
                 ]
@@ -3728,6 +3764,7 @@ class Song(TimeStampedModel):
         return
 
 
+@python_2_unicode_compatible
 class SongScore(Song):
     rank = models.IntegerField(
         null=True,
@@ -3779,6 +3816,9 @@ class SongScore(Song):
         resource_name = "songscore"
 
     # Methods
+    def __str__(self):
+        return self.id.hex
+
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -3895,6 +3935,7 @@ class SongScore(Song):
         return False
 
 
+@python_2_unicode_compatible
 class Submission(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3987,13 +4028,13 @@ class Submission(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "submission"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
             map(
-                lambda x: encoding.smart_text(x), [
+                lambda x: smart_text(x), [
                     self.performer,
                     self.title,
                 ]
@@ -4053,6 +4094,7 @@ class Submission(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class Venue(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -4109,7 +4151,7 @@ class Venue(TimeStampedModel):
     )
 
     # Methods
-    def __unicode__(self):
+    def __str__(self):
         return self.nomen if self.nomen else self.id.hex
 
     def save(self, *args, **kwargs):
@@ -4140,6 +4182,7 @@ class Venue(TimeStampedModel):
         return False
 
 
+@python_2_unicode_compatible
 class User(AbstractBaseUser):
     USERNAME_FIELD = settings.USERNAME_FIELD
     REQUIRED_FIELDS = settings.REQUIRED_FIELDS
@@ -4173,7 +4216,7 @@ class User(AbstractBaseUser):
         resource_name = "user"
 
     # Methods
-    def __unicode__(self):
+    def __str__(self):
         return self.username
 
     def get_full_name(self):
