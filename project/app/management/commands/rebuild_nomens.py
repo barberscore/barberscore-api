@@ -11,13 +11,13 @@ class Command(BaseCommand):
 
         models = [
             # Primitives
-            'Award',
-            'Catalog',
-            'Convention',
             'Entity',
+            'Catalog',
             'Office',
             'Person',
             'Venue',
+            'Award',
+            'Convention',
             # Joins,
             'Assignment',
             'Contest',
