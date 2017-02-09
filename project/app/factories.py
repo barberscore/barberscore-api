@@ -62,7 +62,6 @@ class AssignmentFactory(DjangoModelFactory):
 
     class Meta:
         model = Assignment
-        strategy = factory.BUILD_STRATEGY
 
 
 class AwardFactory(DjangoModelFactory):
@@ -88,7 +87,6 @@ class AwardFactory(DjangoModelFactory):
 
     class Meta:
         model = Award
-        strategy = factory.BUILD_STRATEGY
 
 
 class CatalogFactory(DjangoModelFactory):
@@ -98,7 +96,6 @@ class CatalogFactory(DjangoModelFactory):
 
     class Meta:
         model = Catalog
-        strategy = factory.BUILD_STRATEGY
 
 
 class ContestFactory(DjangoModelFactory):
@@ -115,7 +112,6 @@ class ContestFactory(DjangoModelFactory):
 
     class Meta:
         model = Contest
-        strategy = factory.BUILD_STRATEGY
 
 
 # class ContestScoreFactory(DjangoModelFactory):
@@ -133,13 +129,11 @@ class ContestantFactory(DjangoModelFactory):
 
     class Meta:
         model = Contestant
-        strategy = factory.BUILD_STRATEGY
 
 
 class ContestantScoreFactory(DjangoModelFactory):
     class Meta:
         model = ContestantScore
-        strategy = factory.BUILD_STRATEGY
 
 
 class ConventionFactory(DjangoModelFactory):
@@ -152,19 +146,17 @@ class ConventionFactory(DjangoModelFactory):
     year = 2017
     start_date = None
     end_date = None
-    location = None
+    location = ''
     venue = None
 
     class Meta:
         model = Convention
-        strategy = factory.BUILD_STRATEGY
 
 
 class EntityFactory(DjangoModelFactory):
 
     class Meta:
         model = Entity
-        strategy = factory.BUILD_STRATEGY
 
 
 class OrganizationFactory(EntityFactory):
@@ -246,7 +238,6 @@ class HostFactory(DjangoModelFactory):
 
     class Meta:
         model = Host
-        strategy = factory.BUILD_STRATEGY
 
 
 class MembershipFactory(DjangoModelFactory):
@@ -260,7 +251,6 @@ class MembershipFactory(DjangoModelFactory):
 
     class Meta:
         model = Membership
-        strategy = factory.BUILD_STRATEGY
 
 
 class OfficeFactory(DjangoModelFactory):
@@ -272,7 +262,6 @@ class OfficeFactory(DjangoModelFactory):
 
     class Meta:
         model = Office
-        strategy = factory.BUILD_STRATEGY
 
 
 class OfficerFactory(DjangoModelFactory):
@@ -284,7 +273,6 @@ class OfficerFactory(DjangoModelFactory):
 
     class Meta:
         model = Officer
-        strategy = factory.BUILD_STRATEGY
 
 
 class PerformanceFactory(DjangoModelFactory):
@@ -298,13 +286,11 @@ class PerformanceFactory(DjangoModelFactory):
 
     class Meta:
         model = Performance
-        strategy = factory.BUILD_STRATEGY
 
 
 class PerformanceScoreFactory(DjangoModelFactory):
     class Meta:
         model = PerformanceScore
-        strategy = factory.BUILD_STRATEGY
 
 
 class PerformerFactory(DjangoModelFactory):
@@ -325,7 +311,6 @@ class PerformerFactory(DjangoModelFactory):
 
     class Meta:
         model = Performer
-        strategy = factory.BUILD_STRATEGY
 
 
 class PerformerScoreFactory(DjangoModelFactory):
@@ -354,7 +339,6 @@ class PersonFactory(DjangoModelFactory):
 
     class Meta:
         model = Person
-        strategy = factory.BUILD_STRATEGY
 
 
 class RoundFactory(DjangoModelFactory):
@@ -369,7 +353,6 @@ class RoundFactory(DjangoModelFactory):
 
     class Meta:
         model = Round
-        strategy = factory.BUILD_STRATEGY
 
 
 class ScoreFactory(DjangoModelFactory):
@@ -386,7 +369,6 @@ class ScoreFactory(DjangoModelFactory):
 
     class Meta:
         model = Score
-        strategy = factory.BUILD_STRATEGY
 
 
 @mute_signals(post_save)
@@ -406,7 +388,6 @@ class SessionFactory(DjangoModelFactory):
 
     class Meta:
         model = Session
-        strategy = factory.BUILD_STRATEGY
 
 
 class SlotFactory(DjangoModelFactory):
@@ -417,7 +398,6 @@ class SlotFactory(DjangoModelFactory):
 
     class Meta:
         model = Slot
-        strategy = factory.BUILD_STRATEGY
 
 
 class SongFactory(DjangoModelFactory):
@@ -428,13 +408,11 @@ class SongFactory(DjangoModelFactory):
 
     class Meta:
         model = Song
-        strategy = factory.BUILD_STRATEGY
 
 
 class SongScoreFactory(DjangoModelFactory):
     class Meta:
         model = SongScore
-        strategy = factory.BUILD_STRATEGY
 
 
 class SubmissionFactory(DjangoModelFactory):
@@ -451,7 +429,6 @@ class SubmissionFactory(DjangoModelFactory):
 
     class Meta:
         model = Submission
-        strategy = factory.BUILD_STRATEGY
 
 
 class VenueFactory(DjangoModelFactory):
@@ -465,7 +442,6 @@ class VenueFactory(DjangoModelFactory):
 
     class Meta:
         model = Venue
-        strategy = factory.BUILD_STRATEGY
 
 
 class UserFactory(DjangoModelFactory):
@@ -476,7 +452,16 @@ class UserFactory(DjangoModelFactory):
 
     class Meta:
         model = User
-        strategy = factory.BUILD_STRATEGY
+
+
+class AdminFactory(DjangoModelFactory):
+    username = 'admin@barberscore.com'
+    password = PostGenerationMethodCall('set_password', 'password')
+    is_active = True
+    is_staff = True
+
+    class Meta:
+        model = User
 
 
 # Pre-Built Factories
