@@ -1060,6 +1060,19 @@ class Convention(TimeStampedModel):
         choices=LEVEL,
     )
 
+    KIND = Choices(
+        (10, 'international', "International"),
+        (20, 'district', "District"),
+        (30, 'division', "Division"),
+        (40, 'disdiv', "District/Division"),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+        null=True,
+        blank=True,
+    )
+
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),

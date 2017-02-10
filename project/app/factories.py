@@ -53,7 +53,6 @@ from app.models import (
 )
 
 
-# Primitives
 class AssignmentFactory(DjangoModelFactory):
     status = Assignment.STATUS.new
     kind = Assignment.KIND.drcj
