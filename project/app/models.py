@@ -1242,9 +1242,8 @@ class Entity(MPTTModel, TimeStampedModel):
     )
 
     KIND = Choices(
-        ('International', [
-            (1, 'bhs', "Barbershop Harmony Society"),
-            (2, 'hi', "Harmony Incorporated"),
+        ('Organization', [
+            (1, 'organization', "Organization"),
         ]),
         ('District', [
             (11, 'district', "District"),
