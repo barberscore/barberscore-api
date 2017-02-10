@@ -2977,7 +2977,7 @@ class Round(TimeStampedModel):
             return
         # Hard-code the International Quartet Contest
         if all([
-            self.session.convention.kind == self.session.convention.KIND.international,
+            self.session.convention.level == self.session.convention.LEVEL.international,
             self.session.kind == self.session.KIND.quartet,
         ]):
             if self.kind == self.KIND.quarters:
