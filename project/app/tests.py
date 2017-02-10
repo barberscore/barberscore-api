@@ -1,53 +1,49 @@
 
 # Standard Libary
+import json
+
+# Third-Party
+import pytest
+from rest_framework.test import APIClient
 
 # Django
+from django.apps import apps as api_apps
 from django.core import management
 from django.test.client import Client
 from django.urls import reverse
-import json
-import pytest
-
-from rest_framework.test import APIClient
-
-from django.apps import apps as api_apps
-config = api_apps.get_app_config('app')
-
 
 # First-Party
-from app.factories import (
+from app.factories import (  # ContestScoreFactory,; ContestantScoreFactory,; EntityFactory,; PerformanceScoreFactory,; PerformerScoreFactory,; SongScoreFactory,
     AdminFactory,
     AssignmentFactory,
     AwardFactory,
     CatalogFactory,
-    ContestFactory,
-    # ContestScoreFactory,
     ContestantFactory,
-    # ContestantScoreFactory,
+    ContestFactory,
     ConventionFactory,
-    # EntityFactory,
-    OrganizationFactory,
     DistrictFactory,
-    QuartetFactory,
     HostFactory,
     MembershipFactory,
     OfficeFactory,
     OfficerFactory,
+    OrganizationFactory,
     PerformanceFactory,
-    # PerformanceScoreFactory,
     PerformerFactory,
-    # PerformerScoreFactory,
     PersonFactory,
+    QuartetFactory,
     RoundFactory,
     ScoreFactory,
     SessionFactory,
     SlotFactory,
     SongFactory,
-    # SongScoreFactory,
     SubmissionFactory,
-    VenueFactory,
     UserFactory,
+    VenueFactory,
 )
+
+config = api_apps.get_app_config('app')
+
+
 
 # from app.models import (
 #     Assignment,

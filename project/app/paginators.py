@@ -1,11 +1,16 @@
+# Standard Libary
 from collections import OrderedDict
-from rest_framework.views import Response
-from rest_framework.pagination import (
-    PageNumberPagination as DRFPageNumberPagination,
-    LimitOffsetPagination as DRFLimitOffsetPagination,
-    # CursorPagination,
+
+# Third-Party
+from rest_framework.pagination import \
+    LimitOffsetPagination as DRFLimitOffsetPagination
+from rest_framework.pagination import \
+    PageNumberPagination as DRFPageNumberPagination  # CursorPagination,
+from rest_framework.utils.urls import (
+    remove_query_param,
+    replace_query_param,
 )
-from rest_framework.utils.urls import remove_query_param, replace_query_param
+from rest_framework.views import Response
 
 
 class PageNumberPagination(DRFPageNumberPagination):

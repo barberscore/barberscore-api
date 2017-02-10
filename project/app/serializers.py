@@ -13,9 +13,9 @@ from .models import (
     Award,
     Catalog,
     Contest,
-    ContestScore,
     Contestant,
     ContestantScore,
+    ContestScore,
     Convention,
     Entity,
     Host,
@@ -34,8 +34,8 @@ from .models import (
     Song,
     SongScore,
     Submission,
-    Venue,
     User,
+    Venue,
 )
 
 

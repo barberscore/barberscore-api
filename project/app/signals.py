@@ -1,17 +1,14 @@
 # Django
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 # from auth0.v2.management import Auth0
 # from django.conf import settings
-from django.db import (
-    transaction,
-)
+from django.db import transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Local
-from .models import (
+from .models import (  # User,
     Award,
     Session,
-    # User,
 )
 
 

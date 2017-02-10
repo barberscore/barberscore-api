@@ -2,29 +2,25 @@
 import logging
 
 # Third-Party
-from dry_rest_permissions.generics import DRYPermissions
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_fsm_transitions.viewset_mixins import (
-    get_viewset_transition_action_mixin,
-)
+from drf_fsm_transitions.viewset_mixins import \
+    get_viewset_transition_action_mixin
+from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import (
-    viewsets,
     status,
+    viewsets,
 )
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-
 from rest_framework.decorators import (
     detail_route,
     list_route,
     parser_classes,
 )
-
 from rest_framework.parsers import (
     FormParser,
     MultiPartParser,
 )
-
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
 
 # Local
@@ -33,10 +29,9 @@ from .backends import (
     ContestScoreFilterBackend,
     PerformanceScoreFilterBackend,
     PerformerScoreFilterBackend,
-    SongScoreFilterBackend,
     ScoreFilterBackend,
+    SongScoreFilterBackend,
 )
-
 from .filters import (
     AwardFilter,
     CatalogFilter,
@@ -49,15 +44,14 @@ from .filters import (
     SubmissionFilter,
     VenueFilter,
 )
-
 from .models import (
     Assignment,
     Award,
     Catalog,
     Contest,
-    ContestScore,
     Contestant,
     ContestantScore,
+    ContestScore,
     Convention,
     Entity,
     Host,
@@ -76,43 +70,39 @@ from .models import (
     Song,
     SongScore,
     Submission,
-    Venue,
     User,
+    Venue,
 )
-
-from .paginators import (
-    PageNumberPagination,
-)
-
+from .paginators import PageNumberPagination
 from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
     CatalogSerializer,
-    ContestantSerializer,
     ContestantScoreSerializer,
-    ContestSerializer,
+    ContestantSerializer,
     ContestScoreSerializer,
+    ContestSerializer,
     ConventionSerializer,
     EntitySerializer,
-    MembershipSerializer,
-    OfficeSerializer,
-    OfficerSerializer,
     HostSerializer,
-    PerformanceSerializer,
+    MembershipSerializer,
+    OfficeCSVSerializer,
+    OfficerSerializer,
+    OfficeSerializer,
     PerformanceScoreSerializer,
-    PerformerSerializer,
+    PerformanceSerializer,
     PerformerScoreSerializer,
+    PerformerSerializer,
     PersonSerializer,
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
     SlotSerializer,
-    SongSerializer,
     SongScoreSerializer,
+    SongSerializer,
     SubmissionSerializer,
-    VenueSerializer,
     UserSerializer,
-    OfficeCSVSerializer,
+    VenueSerializer,
 )
 
 log = logging.getLogger(__name__)

@@ -10,11 +10,8 @@ from django.contrib.auth.models import Group as AuthGroup
 
 # Local
 from .inlines import (
-    # AssignmentInline,
-    # AwardInline,
     ContestantInline,
     ContestInline,
-    # ConventionInline,
     HostInline,
     OfficerInline,
     PerformanceInline,
@@ -22,7 +19,6 @@ from .inlines import (
     RoundInline,
     ScoreInline,
     SessionInline,
-    # SongInline,
     SubmissionInline,
 )
 from .models import (

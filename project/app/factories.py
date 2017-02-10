@@ -2,15 +2,13 @@
 from datetime import datetime
 
 # Third-Party
-import pytz
-
 import factory
-
+import pytz
 from factory import (
     Faker,
     PostGenerationMethodCall,
-    SubFactory,
     RelatedFactory,
+    SubFactory,
     post_generation,
 )
 from factory.django import (
@@ -19,6 +17,7 @@ from factory.django import (
     mute_signals,
 )
 
+# Django
 from django.db.models.signals import post_save
 
 # First-Party
@@ -27,9 +26,9 @@ from app.models import (
     Award,
     Catalog,
     Contest,
-    ContestScore,
     Contestant,
     ContestantScore,
+    ContestScore,
     Convention,
     Entity,
     Host,
@@ -48,8 +47,8 @@ from app.models import (
     Song,
     SongScore,
     Submission,
-    Venue,
     User,
+    Venue,
 )
 
 
@@ -161,7 +160,7 @@ class EntityFactory(DjangoModelFactory):
 class OrganizationFactory(EntityFactory):
     name = 'Test Organization'
     status = Entity.STATUS.active
-    kind = Entity.KIND.bhs
+    kind = Entity.KIND.organization
     age = None
     is_novice = False
     short_name = 'Test ORG'

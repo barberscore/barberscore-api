@@ -29,9 +29,7 @@ from timezone_field import TimeZoneField
 # Django
 from django.apps import apps as api_apps
 from django.conf import settings
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-)
+from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.postgres.fields import (
     ArrayField,
     FloatRangeField,
@@ -42,18 +40,14 @@ from django.core.validators import (
     MinValueValidator,
     RegexValidator,
 )
-from django.db import (
-    models,
-)
+from django.db import models
 from django.utils.encoding import (
     python_2_unicode_compatible,
     smart_text,
 )
 
 # Local
-from .managers import (
-    UserManager,
-)
+from .managers import UserManager
 
 docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 doc_api = docraptor.DocApi()

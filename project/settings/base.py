@@ -1,10 +1,11 @@
 # Standard Libary
+import base64
 import datetime
 import os
-import jwt
-import base64
+
 # Third-Party
 import dj_database_url
+import jwt
 
 # Django
 from django.core.exceptions import ImproperlyConfigured
