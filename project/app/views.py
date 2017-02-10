@@ -25,6 +25,8 @@ from rest_framework.parsers import (
     MultiPartParser,
 )
 
+from rest_framework_csv.renderers import CSVRenderer
+
 # Local
 from .backends import (
     CoalesceFilterBackend,
@@ -110,6 +112,7 @@ from .serializers import (
     SubmissionSerializer,
     VenueSerializer,
     UserSerializer,
+    OfficeCSVSerializer,
 )
 
 log = logging.getLogger(__name__)
@@ -660,3 +663,31 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(request.user)
             return Response(serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+# CSV View
+class OfficeRendererCSV(CSVRenderer):
+    header = [
+        'id',
+        'name',
+        'nomen',
+        'status',
+        'kind',
+        'short_name',
+        'long_name',
+    ]
+
+
+class OfficeViewCSV(viewsets.ReadOnlyModelViewSet):
+    queryset = Office.objects.select_related(
+    ).prefetch_related(
+    )
+    serializer_class = OfficeCSVSerializer
+    filter_class = None
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    pagination_class = None
+    renderer_classes = [
+        OfficeRendererCSV,
+    ]

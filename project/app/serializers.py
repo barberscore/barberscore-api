@@ -693,3 +693,21 @@ class UserSerializer(serializers.ModelSerializer):
             'is_staff',
             'person',
         ]
+
+
+class OfficeCSVSerializer(serializers.ModelSerializer):
+
+    status = serializers.CharField(source='get_status_display')
+    kind = serializers.CharField(source='get_kind_display')
+
+    class Meta:
+        model = Office
+        fields = [
+            'id',
+            'nomen',
+            'name',
+            'status',
+            'kind',
+            'short_name',
+            'long_name',
+        ]
