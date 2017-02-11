@@ -3,5 +3,3 @@
 django-s3-storage==0.11.0
 waitress==1.0.2
 bugsnag==3.0.0
-docraptor==1.2.0
-auth0-python==2.0.1

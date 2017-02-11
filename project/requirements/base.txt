@@ -1,3 +1,4 @@
+auth0-python==2.0.1
 awscli==1.11.47
 botocore==1.5.10
 dj-database-url==0.4.2
@@ -12,6 +13,7 @@ djangorestframework-csv==2.0.0
 djangorestframework-jsonapi==2.1.1
 djangorestframework-jwt==1.9.0
 djangorestframework==3.5.4
+docraptor==1.2.0
 drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.8
 nameparser==0.5.1
