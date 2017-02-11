@@ -1,10 +1,6 @@
 # Local
 from .base import *
 
-ALLOWED_HOSTS = [
-    'localhost',
-]
-
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -13,27 +9,20 @@ INTERNAL_IPS = [
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = STATIC_STORAGE
 
 # Media (aka File Upload) Server Config
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 MEDIA_STORAGE = 'django.core.files.storage.FileSystemStorage'
 MEDIA_URL = '/media/'
-
-# Aliasing Django Defaults
 DEFAULT_FILE_STORAGE = MEDIA_STORAGE
-STATICFILES_STORAGE = STATIC_STORAGE
 
 # CORS Settings
-CORS_ORIGIN_WHITELIST = (
-    'localhost:4200',
-)
-
-# Test Settings
-
-
+CORS_ORIGIN_WHITELIST = [
+    'localhost:4200'
+]
 
 # Email
-DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Debug Toolbar
@@ -75,6 +64,6 @@ LOGGING = {
     },
 }
 
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'debug_toolbar',
-)
+]

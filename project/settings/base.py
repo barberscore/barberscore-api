@@ -28,6 +28,10 @@ def get_env_variable(var_name):
 
 DEBUG = get_env_variable("DEBUG")
 
+ALLOWED_HOSTS = [
+    get_env_variable("HOST"),
+]
+
 # Globals
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 PROJECT_NAME = get_env_variable('PROJECT_NAME')
@@ -39,10 +43,7 @@ USE_L10N = True
 SECRET_KEY = get_env_variable("SECRET_KEY")
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
-DOMAIN = get_env_variable("DOMAIN")
-STATICFILES_DIRS = ()
-STATIC_URL = '/static/'
-SERVER_EMAIL = get_env_variable('SERVER_EMAIL')
+DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 
 
 # Database
@@ -53,12 +54,11 @@ DATABASES = {
 
 # Auth
 AUTH_USER_MODEL = "app.User"
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-)
-USERNAME_FIELD = 'username'
-REQUIRED_FIELDS = [
 ]
+USERNAME_FIELD = 'username'
+REQUIRED_FIELDS = []
 
 
 # Middleware
@@ -96,10 +96,6 @@ TEMPLATES = [
     },
 ]
 
-# Phonenumber support
-PHONENUMBER_DEFAULT_REGION = 'US'
-PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
-
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
@@ -124,18 +120,17 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Plus supplementary settings:
+# JSONAPI Settings:
 JSON_API_FORMAT_KEYS = 'dasherize'
-# JSON_API_FORMAT_RELATION_KEYS = 'dasherize'
-# JSON_API_PLURALIZE_RELATION_TYPE = False
 APPEND_TRAILING_SLASH = False
 
-# JWT Settings
+# Auth0 Settings:
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 
 
+# JWT Settings
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('email')
 
@@ -157,14 +152,11 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
 
-#  CORS Headers
-CORS_ORIGIN_ALLOW_ALL = False
-
 #  Docraptor
 DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
 
 # Applications
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -180,4 +172,4 @@ INSTALLED_APPS = (
     'rest_framework',
     'dry_rest_permissions',
     'app',
-)
+]

@@ -3,3 +3,5 @@
 django-s3-storage
 waitress
 bugsnag
+docraptor==1.2.0
+auth0-python==2.0.1
