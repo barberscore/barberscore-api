@@ -1,5 +1,7 @@
 # Barberscore
 
+[![Build Status](https://semaphoreci.com/api/v1/dbinetti/barberscore-django/branches/master/badge.svg)](https://semaphoreci.com/dbinetti/barberscore-django)
+
 Program and score tracker for the Barbershop Harmony Society.
 
 ## Preface
