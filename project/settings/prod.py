@@ -5,7 +5,7 @@ from .base import *
 AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
 AWS_PRELOAD_METADATA = True
-AWS_REGION = "us-west-1"
+AWS_REGION = get_env_variable("AWS_DEFAULT_REGION")
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # AWS S3 Static Settings (public-read, static resources like CSS, Images, etc.)

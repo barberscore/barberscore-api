@@ -26,8 +26,6 @@ def get_env_variable(var_name):
     return var
 
 
-DEBUG = get_env_variable("DEBUG")
-
 ALLOWED_HOSTS = [
     get_env_variable("HOST"),
 ]
@@ -81,7 +79,6 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug': DEBUG,
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
