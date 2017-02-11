@@ -33,16 +33,19 @@ ALLOWED_HOSTS = [
 # Globals
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 PROJECT_NAME = get_env_variable('PROJECT_NAME')
-TIME_ZONE = get_env_variable("TZ")
-USE_TZ = True
-LANGUAGE_CODE = 'en-us'
+DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 USE_I18N = False
-USE_L10N = True
+USE_L10N = False
 SECRET_KEY = get_env_variable("SECRET_KEY")
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
-DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
 
+# Datetime
+TIME_ZONE = get_env_variable("TZ")
+USE_TZ = True
+DATE_FORMAT = 'c'
+TIME_FORMAT = 'c'
+DATETIME_FORMAT = 'c'
 
 # Database
 DATABASE_URL = get_env_variable("DATABASE_URL")
@@ -57,7 +60,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 USERNAME_FIELD = 'username'
 REQUIRED_FIELDS = []
-
+LOGIN_URL = 'admin:login'
+LOGIN_REDIRECT_URL = 'admin:app_list'
+LOGOUT_REDIRECT_URL = 'admin:login'
 
 # Middleware
 MIDDLEWARE = [
@@ -160,7 +165,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'django.contrib.admindocs',
     'django.contrib.humanize',
     'corsheaders',
     'django_fsm',
