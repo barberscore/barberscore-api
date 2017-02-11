@@ -1,6 +1,6 @@
 # Barberscore
 
-Program and score tracker for the Barbershop Harmony Society International Convention.
+Program and score tracker for the Barbershop Harmony Society.
 
 ## Preface
 The purpose of this project is to provide a simple, mobile-friendly app to track the performances at the International Convention of the BHS.
