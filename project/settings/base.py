@@ -39,6 +39,7 @@ USE_L10N = False
 SECRET_KEY = get_env_variable("SECRET_KEY")
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
+APPEND_SLASH = False
 
 # Datetime
 TIME_ZONE = get_env_variable("TZ")
