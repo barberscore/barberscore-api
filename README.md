@@ -2,6 +2,8 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/dbinetti/barberscore-django/branches/master/badge.svg)](https://semaphoreci.com/dbinetti/barberscore-django)
 
+[![Test Coverage](https://codeclimate.com/github/dbinetti/barberscore-django/badges/coverage.svg)](https://codeclimate.com/github/dbinetti/barberscore-django/coverage)
+
 Score tracker for the Barbershop Harmony Society.
 
 ## Preface
