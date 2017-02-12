@@ -88,34 +88,34 @@ def admin_client():
     return client
 
 
-@pytest.fixture
-def assignment():
-    return AssignmentFactory()
+# @pytest.fixture
+# def assignment():
+#     return AssignmentFactory()
 
 
-@pytest.fixture
-def award():
-    return AwardFactory()
+# @pytest.fixture
+# def award():
+#     return AwardFactory()
 
 
-@pytest.fixture
-def catalog():
-    return CatalogFactory()
+# @pytest.fixture
+# def catalog():
+#     return CatalogFactory()
 
 
-@pytest.fixture
-def contest():
-    return ContestFactory()
+# @pytest.fixture
+# def contest():
+#     return ContestFactory()
 
 
-@pytest.fixture
-def contestant():
-    return ContestantFactory()
+# @pytest.fixture
+# def contestant():
+#     return ContestantFactory()
 
 
-@pytest.fixture
-def convention():
-    return ConventionFactory()
+# @pytest.fixture
+# def convention():
+#     return ConventionFactory()
 
 
 @pytest.fixture
