@@ -129,6 +129,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
+        'entity',
     ).prefetch_related(
         'contests',
     )
@@ -279,6 +280,7 @@ class EntityViewSet(viewsets.ModelViewSet):
 class HostViewSet(viewsets.ModelViewSet):
     queryset = Host.objects.select_related(
         'convention',
+        'entity',
     ).prefetch_related(
     )
     serializer_class = HostSerializer
@@ -296,6 +298,8 @@ class HostViewSet(viewsets.ModelViewSet):
 
 class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.select_related(
+        'entity',
+        'person',
     ).prefetch_related(
     )
     serializer_class = MembershipSerializer
@@ -330,6 +334,8 @@ class OfficeViewSet(viewsets.ModelViewSet):
 
 class OfficerViewSet(viewsets.ModelViewSet):
     queryset = Officer.objects.select_related(
+        'office',
+        'membership',
     ).prefetch_related(
     )
     serializer_class = OfficerSerializer
@@ -353,7 +359,6 @@ class PerformanceViewSet(
         'round',
         'performer',
         'slot',
-        'performancescore',
     ).prefetch_related(
         'songs',
     )
@@ -390,7 +395,6 @@ class PerformanceScoreViewSet(viewsets.ModelViewSet):
 class PerformerViewSet(viewsets.ModelViewSet):
     queryset = Performer.objects.select_related(
         'session',
-        # 'group',
         'entity',
         'tenor',
         'lead',
@@ -398,8 +402,6 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
-        # 'representing',
-        'performerscore',
     ).prefetch_related(
         'submissions',
         'performances',
@@ -495,8 +497,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
         'person',
-        'song__performance__performer__session',
-        'song__performance__round',
     ).prefetch_related(
     )
     serializer_class = ScoreSerializer
@@ -540,7 +540,6 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'performance',
         'submission',
-        'songscore',
     ).prefetch_related(
         'scores',
     )
@@ -596,6 +595,7 @@ class SlotViewSet(viewsets.ModelViewSet):
 class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.select_related(
         'performer',
+        'catalog',
     ).prefetch_related(
         'songs',
     )
