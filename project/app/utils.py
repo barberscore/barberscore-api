@@ -3,9 +3,11 @@ import csv
 import logging
 
 # Third-Party
+from auth0.v2.management import Auth0
 from psycopg2.extras import DateRange
 
 # Django
+from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Q
 from django.utils import (
@@ -25,9 +27,43 @@ from .models import (
     Person,
     Session,
     Submission,
+    User,
 )
 
 log = logging.getLogger(__name__)
+
+
+def create_account(person):
+    if not person.email:
+        raise RuntimeError("No email")
+    user = User.objects.create_user(
+        person.email,
+    )
+    password = User.objects.make_random_password()
+    payload = {
+        "connection": "Default",
+        "email": person.email,
+        "password": password,
+        "user_metadata": {
+            "name": person.name
+        },
+        "app_metadata": {
+            "bhs_id": person.bhs_id,
+            "person_id": person.id.hex,
+        }
+    }
+    auth0 = Auth0(
+        settings.AUTH0_DOMAIN,
+        settings.AUTH0_TOKEN,
+    )
+    response = auth0.users.create(payload)
+    sub_id = response['user_id']
+    payload2 = {
+        "result_url": "http://localhost:4200",
+        "user_id": sub_id,
+    }
+    response2 = auth0.tickets.create_pswd_change(payload2)
+    return response2['ticket']
 
 
 def export_db_chapters():
