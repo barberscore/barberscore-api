@@ -367,7 +367,7 @@ class PerformanceViewSet(
         'round',
         'performer',
         'slot',
-        'cursor',
+        'session',
     ).prefetch_related(
     )
     serializer_class = PerformanceSerializer
