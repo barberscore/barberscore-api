@@ -1,4 +1,4 @@
-Copyright (c) 2015, David E. Binetti
+Copyright (c) 2017, David E. Binetti
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
