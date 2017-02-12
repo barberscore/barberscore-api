@@ -15,5 +15,5 @@ ratings:
   paths:
   - "**.py"
 exclude_paths:
-- "**migrations/"
+- "project/app/migrations/"
 - "**__init__.py"
