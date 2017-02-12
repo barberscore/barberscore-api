@@ -169,7 +169,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         'session',
         'award',
     ).prefetch_related(
-        'contestants',
+        'primary_session',
     )
     serializer_class = ContestSerializer
     filter_class = None
@@ -188,6 +188,7 @@ class ContestScoreViewSet(viewsets.ModelViewSet):
     queryset = ContestScore.objects.select_related(
         'champion',
     ).prefetch_related(
+        'contestants',
     )
     serializer_class = ContestScoreSerializer
     filter_class = None
@@ -245,7 +246,8 @@ class ConventionViewSet(
     queryset = Convention.objects.select_related(
         'venue',
     ).prefetch_related(
-        'sessions',
+        'assignments',
+        'hosts',
     )
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
@@ -263,6 +265,10 @@ class ConventionViewSet(
 class EntityViewSet(viewsets.ModelViewSet):
     queryset = Entity.objects.select_related(
     ).prefetch_related(
+        'awards',
+        'hosts',
+        'memberships',
+        'performers',
     )
     serializer_class = EntitySerializer
     filter_class = EntityFilter
@@ -301,6 +307,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
         'entity',
         'person',
     ).prefetch_related(
+        'officers',
     )
     serializer_class = MembershipSerializer
     filter_class = None
@@ -318,6 +325,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 class OfficeViewSet(viewsets.ModelViewSet):
     queryset = Office.objects.select_related(
     ).prefetch_related(
+        'officers',
     )
     serializer_class = OfficeSerializer
     filter_class = None
@@ -359,8 +367,8 @@ class PerformanceViewSet(
         'round',
         'performer',
         'slot',
+        'cursor',
     ).prefetch_related(
-        'songs',
     )
     serializer_class = PerformanceSerializer
     filter_class = None
@@ -378,6 +386,7 @@ class PerformanceViewSet(
 class PerformanceScoreViewSet(viewsets.ModelViewSet):
     queryset = PerformanceScore.objects.select_related(
     ).prefetch_related(
+        'songs',
     )
     serializer_class = PerformanceScoreSerializer
     filter_class = None
@@ -403,9 +412,9 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'director',
         'codirector',
     ).prefetch_related(
-        'submissions',
-        'performances',
         'contestants',
+        'performances',
+        'submissions',
     )
     serializer_class = PerformerSerializer
     filter_class = PerformerFilter
@@ -441,6 +450,15 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
     ).prefetch_related(
+        'assignments',
+        'memberships',
+        'performers_tenor',
+        'performers_lead',
+        'performers_baritone',
+        'performers_bass',
+        'performers_director',
+        'performers_codirector',
+        'scores',
     )
     serializer_class = PersonSerializer
     filter_class = PersonFilter
@@ -478,6 +496,7 @@ class RoundViewSet(
         'session',
     ).prefetch_related(
         'performances',
+        'current_session',
         'slots',
     )
     serializer_class = RoundSerializer
@@ -519,9 +538,9 @@ class SessionViewSet(
     queryset = Session.objects.select_related(
         'convention',
     ).prefetch_related(
+        'contests',
         'performers',
         'rounds',
-        'contests',
     )
     serializer_class = SessionSerializer
     filter_class = SessionFilter
@@ -576,8 +595,8 @@ class SongScoreViewSet(viewsets.ModelViewSet):
 class SlotViewSet(viewsets.ModelViewSet):
     queryset = Slot.objects.select_related(
         'round',
-    ).prefetch_related(
         'performance',
+    ).prefetch_related(
     )
     serializer_class = SlotSerializer
     filter_class = None
