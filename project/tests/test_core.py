@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 from django.apps import apps as api_apps
 from django.core import management
 from django.test.client import Client
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 # First-Party
 from app.factories import (  # ContestScoreFactory,; ContestantScoreFactory,; EntityFactory,; PerformanceScoreFactory,; PerformerScoreFactory,; SongScoreFactory,
@@ -210,161 +210,161 @@ def user():
 
 @pytest.mark.django_db()
 def test_api_endpoint(admin_client):
-    path = reverse_lazy('api-root')
+    path = reverse('api-root')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_assignment_endpoint_list(admin_client, assignment):
-    path = reverse_lazy('assignment-list')
+    path = reverse('assignment-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_endpoint_list(admin_client, award):
-    path = reverse_lazy('award-list')
+    path = reverse('award-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_catalog_endpoint_list(admin_client, catalog):
-    path = reverse_lazy('catalog-list')
+    path = reverse('catalog-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_endpoint_list(admin_client, contest):
-    path = reverse_lazy('contest-list')
+    path = reverse('contest-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestant_endpoint_list(admin_client, contestant):
-    path = reverse_lazy('contestant-list')
+    path = reverse('contestant-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_convention_endpoint_list(admin_client, convention):
-    path = reverse_lazy('convention-list')
+    path = reverse('convention-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_endpoint_list(admin_client, organization):
-    path = reverse_lazy('entity-list')
+    path = reverse('entity-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_host_endpoint_list(admin_client, host):
-    path = reverse_lazy('host-list')
+    path = reverse('host-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_membership_endpoint_list(admin_client, membership):
-    path = reverse_lazy('membership-list')
+    path = reverse('membership-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_endpoint_list(admin_client, office):
-    path = reverse_lazy('office-list')
+    path = reverse('office-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_endpoint_list(admin_client, officer):
-    path = reverse_lazy('officer-list')
+    path = reverse('officer-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performance_endpoint_list(admin_client, performance):
-    path = reverse_lazy('performance-list')
+    path = reverse('performance-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performer_endpoint_list(admin_client, performer):
-    path = reverse_lazy('performer-list')
+    path = reverse('performer-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_person_endpoint_list(admin_client, person):
-    path = reverse_lazy('person-list')
+    path = reverse('person-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_endpoint_list(admin_client, round):
-    path = reverse_lazy('round-list')
+    path = reverse('round-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_endpoint_list(admin_client, score):
-    path = reverse_lazy('score-list')
+    path = reverse('score-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_endpoint_list(admin_client, session):
-    path = reverse_lazy('session-list')
+    path = reverse('session-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_endpoint_list(admin_client, slot):
-    path = reverse_lazy('slot-list')
+    path = reverse('slot-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_endpoint_list(admin_client, song):
-    path = reverse_lazy('song-list')
+    path = reverse('song-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_submission_endpoint_list(admin_client, submission):
-    path = reverse_lazy('submission-list')
+    path = reverse('submission-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_endpoint_list(admin_client, venue):
-    path = reverse_lazy('venue-list')
+    path = reverse('venue-list')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_endpoint_list(admin_client, user):
-    path = reverse_lazy('user-list')
+    path = reverse('user-list')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -373,154 +373,154 @@ def test_user_endpoint_list(admin_client, user):
 
 @pytest.mark.django_db()
 def test_assignment_endpoint_detail(admin_client, assignment):
-    path = reverse_lazy('assignment-detail', args=(assignment.id.hex,))
+    path = reverse('assignment-detail', args=(assignment.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_endpoint_detail(admin_client, award):
-    path = reverse_lazy('award-detail', args=(award.id.hex,))
+    path = reverse('award-detail', args=(award.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_catalog_endpoint_detail(admin_client, catalog):
-    path = reverse_lazy('catalog-detail', args=(catalog.id.hex,))
+    path = reverse('catalog-detail', args=(catalog.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_endpoint_detail(admin_client, contest):
-    path = reverse_lazy('contest-detail', args=(contest.id.hex,))
+    path = reverse('contest-detail', args=(contest.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestant_endpoint_detail(admin_client, contestant):
-    path = reverse_lazy('contestant-detail', args=(contestant.id.hex,))
+    path = reverse('contestant-detail', args=(contestant.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_convention_endpoint_detail(admin_client, convention):
-    path = reverse_lazy('convention-detail', args=(convention.id.hex,))
+    path = reverse('convention-detail', args=(convention.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_endpoint_detail(admin_client, organization):
-    path = reverse_lazy('entity-detail', args=(organization.id.hex,))
+    path = reverse('entity-detail', args=(organization.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_host_endpoint_detail(admin_client, host):
-    path = reverse_lazy('host-detail', args=(host.id.hex,))
+    path = reverse('host-detail', args=(host.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_membership_endpoint_detail(admin_client, membership):
-    path = reverse_lazy('membership-detail', args=(membership.id.hex,))
+    path = reverse('membership-detail', args=(membership.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_endpoint_detail(admin_client, office):
-    path = reverse_lazy('office-detail', args=(office.id.hex,))
+    path = reverse('office-detail', args=(office.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_endpoint_detail(admin_client, officer):
-    path = reverse_lazy('officer-detail', args=(officer.id.hex,))
+    path = reverse('officer-detail', args=(officer.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performance_endpoint_detail(admin_client, performance):
-    path = reverse_lazy('performance-detail', args=(performance.id.hex,))
+    path = reverse('performance-detail', args=(performance.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performer_endpoint_detail(admin_client, performer):
-    path = reverse_lazy('performer-detail', args=(performer.id.hex,))
+    path = reverse('performer-detail', args=(performer.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_person_endpoint_detail(admin_client, person):
-    path = reverse_lazy('person-detail', args=(person.id.hex,))
+    path = reverse('person-detail', args=(person.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_endpoint_detail(admin_client, round):
-    path = reverse_lazy('round-detail', args=(round.id.hex,))
+    path = reverse('round-detail', args=(round.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_endpoint_detail(admin_client, score):
-    path = reverse_lazy('score-detail', args=(score.id.hex,))
+    path = reverse('score-detail', args=(score.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_endpoint_detail(admin_client, session):
-    path = reverse_lazy('session-detail', args=(session.id.hex,))
+    path = reverse('session-detail', args=(session.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_endpoint_detail(admin_client, slot):
-    path = reverse_lazy('slot-detail', args=(slot.id.hex,))
+    path = reverse('slot-detail', args=(slot.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_endpoint_detail(admin_client, song):
-    path = reverse_lazy('song-detail', args=(song.id.hex,))
+    path = reverse('song-detail', args=(song.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_submission_endpoint_detail(admin_client, submission):
-    path = reverse_lazy('submission-detail', args=(submission.id.hex,))
+    path = reverse('submission-detail', args=(submission.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_endpoint_detail(admin_client, venue):
-    path = reverse_lazy('venue-detail', args=(venue.id.hex,))
+    path = reverse('venue-detail', args=(venue.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_endpoint_detail(admin_client, user):
-    path = reverse_lazy('user-detail', args=(user.id.hex,))
+    path = reverse('user-detail', args=(user.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
@@ -529,161 +529,161 @@ def test_user_endpoint_detail(admin_client, user):
 
 @pytest.mark.django_db()
 def test_api_admin(admin_client):
-    path = reverse_lazy('admin:index')
+    path = reverse('admin:index')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_assignment_admin_list(admin_client, assignment):
-    path = reverse_lazy('admin:app_assignment_changelist')
+    path = reverse('admin:app_assignment_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_admin_list(admin_client, award):
-    path = reverse_lazy('admin:app_award_changelist')
+    path = reverse('admin:app_award_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_catalog_admin_list(admin_client, catalog):
-    path = reverse_lazy('admin:app_catalog_changelist')
+    path = reverse('admin:app_catalog_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_admin_list(admin_client, contest):
-    path = reverse_lazy('admin:app_contest_changelist')
+    path = reverse('admin:app_contest_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestant_admin_list(admin_client, contestant):
-    path = reverse_lazy('admin:app_contestant_changelist')
+    path = reverse('admin:app_contestant_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_convention_admin_list(admin_client, convention):
-    path = reverse_lazy('admin:app_convention_changelist')
+    path = reverse('admin:app_convention_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_admin_list(admin_client, organization):
-    path = reverse_lazy('admin:app_entity_changelist')
+    path = reverse('admin:app_entity_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_host_admin_list(admin_client, host):
-    path = reverse_lazy('admin:app_host_changelist')
+    path = reverse('admin:app_host_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_membership_admin_list(admin_client, membership):
-    path = reverse_lazy('admin:app_membership_changelist')
+    path = reverse('admin:app_membership_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_admin_list(admin_client, office):
-    path = reverse_lazy('admin:app_office_changelist')
+    path = reverse('admin:app_office_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_admin_list(admin_client, officer):
-    path = reverse_lazy('admin:app_officer_changelist')
+    path = reverse('admin:app_officer_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performance_admin_list(admin_client, performance):
-    path = reverse_lazy('admin:app_performance_changelist')
+    path = reverse('admin:app_performance_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performer_admin_list(admin_client, performer):
-    path = reverse_lazy('admin:app_performer_changelist')
+    path = reverse('admin:app_performer_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_person_admin_list(admin_client, person):
-    path = reverse_lazy('admin:app_person_changelist')
+    path = reverse('admin:app_person_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_admin_list(admin_client, round):
-    path = reverse_lazy('admin:app_round_changelist')
+    path = reverse('admin:app_round_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_admin_list(admin_client, score):
-    path = reverse_lazy('admin:app_score_changelist')
+    path = reverse('admin:app_score_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_admin_list(admin_client, session):
-    path = reverse_lazy('admin:app_session_changelist')
+    path = reverse('admin:app_session_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_admin_list(admin_client, slot):
-    path = reverse_lazy('admin:app_slot_changelist')
+    path = reverse('admin:app_slot_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_admin_list(admin_client, song):
-    path = reverse_lazy('admin:app_song_changelist')
+    path = reverse('admin:app_song_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_submission_admin_list(admin_client, submission):
-    path = reverse_lazy('admin:app_submission_changelist')
+    path = reverse('admin:app_submission_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_admin_list(admin_client, venue):
-    path = reverse_lazy('admin:app_venue_changelist')
+    path = reverse('admin:app_venue_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_admin_list(admin_client, user):
-    path = reverse_lazy('admin:app_user_changelist')
+    path = reverse('admin:app_user_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -692,154 +692,154 @@ def test_user_admin_list(admin_client, user):
 
 @pytest.mark.django_db()
 def test_assignment_admin_detail(admin_client, assignment):
-    path = reverse_lazy('admin:app_assignment_change', args=(assignment.id.hex,))
+    path = reverse('admin:app_assignment_change', args=(assignment.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_admin_detail(admin_client, award):
-    path = reverse_lazy('admin:app_award_change', args=(award.id.hex,))
+    path = reverse('admin:app_award_change', args=(award.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_catalog_admin_detail(admin_client, catalog):
-    path = reverse_lazy('admin:app_catalog_change', args=(catalog.id.hex,))
+    path = reverse('admin:app_catalog_change', args=(catalog.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_admin_detail(admin_client, contest):
-    path = reverse_lazy('admin:app_contest_change', args=(contest.id.hex,))
+    path = reverse('admin:app_contest_change', args=(contest.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestant_admin_detail(admin_client, contestant):
-    path = reverse_lazy('admin:app_contestant_change', args=(contestant.id.hex,))
+    path = reverse('admin:app_contestant_change', args=(contestant.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_convention_admin_detail(admin_client, convention):
-    path = reverse_lazy('admin:app_convention_change', args=(convention.id.hex,))
+    path = reverse('admin:app_convention_change', args=(convention.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_admin_detail(admin_client, organization):
-    path = reverse_lazy('admin:app_entity_change', args=(organization.id.hex,))
+    path = reverse('admin:app_entity_change', args=(organization.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_host_admin_detail(admin_client, host):
-    path = reverse_lazy('admin:app_host_change', args=(host.id.hex,))
+    path = reverse('admin:app_host_change', args=(host.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_membership_admin_detail(admin_client, membership):
-    path = reverse_lazy('admin:app_membership_change', args=(membership.id.hex,))
+    path = reverse('admin:app_membership_change', args=(membership.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_admin_detail(admin_client, office):
-    path = reverse_lazy('admin:app_office_change', args=(office.id.hex,))
+    path = reverse('admin:app_office_change', args=(office.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_admin_detail(admin_client, officer):
-    path = reverse_lazy('admin:app_officer_change', args=(officer.id.hex,))
+    path = reverse('admin:app_officer_change', args=(officer.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performance_admin_detail(admin_client, performance):
-    path = reverse_lazy('admin:app_performance_change', args=(performance.id.hex,))
+    path = reverse('admin:app_performance_change', args=(performance.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performer_admin_detail(admin_client, performer):
-    path = reverse_lazy('admin:app_performer_change', args=(performer.id.hex,))
+    path = reverse('admin:app_performer_change', args=(performer.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_person_admin_detail(admin_client, person):
-    path = reverse_lazy('admin:app_person_change', args=(person.id.hex,))
+    path = reverse('admin:app_person_change', args=(person.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_admin_detail(admin_client, round):
-    path = reverse_lazy('admin:app_round_change', args=(round.id.hex,))
+    path = reverse('admin:app_round_change', args=(round.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_admin_detail(admin_client, score):
-    path = reverse_lazy('admin:app_score_change', args=(score.id.hex,))
+    path = reverse('admin:app_score_change', args=(score.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_admin_detail(admin_client, session):
-    path = reverse_lazy('admin:app_session_change', args=(session.id.hex,))
+    path = reverse('admin:app_session_change', args=(session.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_admin_detail(admin_client, slot):
-    path = reverse_lazy('admin:app_slot_change', args=(slot.id.hex,))
+    path = reverse('admin:app_slot_change', args=(slot.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_admin_detail(admin_client, song):
-    path = reverse_lazy('admin:app_song_change', args=(song.id.hex,))
+    path = reverse('admin:app_song_change', args=(song.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_submission_admin_detail(admin_client, submission):
-    path = reverse_lazy('admin:app_submission_change', args=(submission.id.hex,))
+    path = reverse('admin:app_submission_change', args=(submission.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_admin_detail(admin_client, venue):
-    path = reverse_lazy('admin:app_venue_change', args=(venue.id.hex,))
+    path = reverse('admin:app_venue_change', args=(venue.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_admin_detail(admin_client, user):
-    path = reverse_lazy('admin:app_user_change', args=(user.id.hex,))
+    path = reverse('admin:app_user_change', args=(user.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
 
@@ -877,7 +877,7 @@ def test_user_admin_detail(admin_client, user):
 #     out = """
 # @pytest.mark.django_db()
 # def test_{0}_endpoint_detail(client, {0}):
-#     path = reverse_lazy('{0}-detail', args=({0}.id.hex,))
+#     path = reverse('{0}-detail', args=({0}.id.hex,))
 #     response = client.get(path)
 #     assert ok(response)
 # """.format(m)
@@ -900,12 +900,12 @@ def test_user_admin_detail(admin_client, user):
 # @pytest.mark.django_db()
 # def test_venue_endpoint_detail(client, venue):
 #     """Test Venue Endpoint."""
-#     path = reverse_lazy('venue-detail', args=(venue.id.hex,))
+#     path = reverse('venue-detail', args=(venue.id.hex,))
 #     response = client.get(path)
 # #     assert jsonapi['data']['attributes']['name'] == "Test Convention Center"
 
 #     for m in modules:
-#         path = reverse_lazy('{0}-list'.format(m.lower()))
+#         path = reverse('{0}-list'.format(m.lower()))
 #         response = client.get(path)
 #         assert_ok(response)
 
@@ -913,7 +913,7 @@ def test_user_admin_detail(admin_client, user):
 #         f = config.get_model(m)
 #         o = f.objects.first()
 #         assert_true(o)
-#         path = reverse_lazy('{0}-detail'.format(m.lower()), args=(o.id.hex,))
+#         path = reverse('{0}-detail'.format(m.lower()), args=(o.id.hex,))
 #         response = client.get(path)
 #         assert_ok(response)
 
@@ -984,7 +984,7 @@ def test_user_admin_detail(admin_client, user):
 #         ]
 
 #         for m in modules:
-#             path = reverse_lazy('{0}-list'.format(m.lower()))
+#             path = reverse('{0}-list'.format(m.lower()))
 #             response = client.get(path)
 #             assert ok()
 
@@ -992,7 +992,7 @@ def test_user_admin_detail(admin_client, user):
 #             f = config.get_model(m)
 #             o = f.objects.first()
 #             assert_true(o)
-#             path = reverse_lazy('{0}-detail'.format(m.lower()), args=(o.id.hex,))
+#             path = reverse('{0}-detail'.format(m.lower()), args=(o.id.hex,))
 #             response = client.get(path)
 #             assert_ok(response)
 
@@ -1144,7 +1144,7 @@ def test_user_admin_detail(admin_client, user):
 #         'User',
 #     ]
 #     for m in modules:
-#         path = reverse_lazy('admin:app_{0}_changelist'.format(m.lower()))
+#         path = reverse('admin:app_{0}_changelist'.format(m.lower()))
 #         response = client.get(path)
 #         assert_ok(response)
 
@@ -1152,7 +1152,7 @@ def test_user_admin_detail(admin_client, user):
 #         f = config.get_model(m)
 #         o = f.objects.first()
 #         assert_true(o)
-#         path = reverse_lazy('admin:app_{0}_change'.format(m.lower()), args=(o.id.hex,))
+#         path = reverse('admin:app_{0}_change'.format(m.lower()), args=(o.id.hex,))
 #         response = client.get(path)
 #         assert_ok(response)
 
