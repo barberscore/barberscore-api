@@ -2736,14 +2736,6 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-    # FKs
-    user = models.OneToOneField(
-        'User',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "person"
@@ -4213,6 +4205,15 @@ class User(AbstractBaseUser):
     )
 
     objects = UserManager()
+
+    # FKs
+    person = models.OneToOneField(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='user',
+        # parent_link=True,
+    )
 
     @property
     def is_superuser(self):

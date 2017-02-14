@@ -651,6 +651,7 @@ class VenueViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.select_related(
+        'person',
     ).prefetch_related(
     )
     serializer_class = UserSerializer

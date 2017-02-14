@@ -5,7 +5,11 @@ from mptt.admin import MPTTModelAdmin
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import (
+    ReadOnlyPasswordHashField,
+    UserChangeForm,
+    UserCreationForm,
+)
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
@@ -651,7 +655,6 @@ class PerformerScoreAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     fields = (
         'name',
-        'user',
         'common_name',
         'status',
         'kind',
@@ -686,10 +689,6 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
-    ]
-
-    raw_id_fields = [
-        'user',
     ]
 
     readonly_fields = [
@@ -1036,65 +1035,33 @@ class VenueAdmin(admin.ModelAdmin):
     ]
 
 
-class UserCreationForm(forms.ModelForm):
-    # password = forms.CharField(
-    #     label='Password',
-    #     widget=forms.PasswordInput,
-    # )
-    # password2 = forms.CharField(
-    #     label='Password confirmation',
-    #     widget=forms.PasswordInput,
-    # )
+class MyUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = []
-    # def clean_password2(self):
-    #     # Check that the two password entries match
-    #     password1 = self.cleaned_data.get("password1")
-    #     password2 = self.cleaned_data.get("password2")
-    #     if password1 and password2 and password1 != password2:
-    #         raise forms.ValidationError("Passwords don't match")
-    #     return password2
+        fields = '__all__'
 
     def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = super(UserCreationForm, self).save(commit=False)
-        # user.set_password(self.cleaned_data["password"])
+        user = super(MyUserCreationForm, self).save(commit=False)
+        user.username = self.cleaned_data['person'].email
         user.set_password(None)
         if commit:
             user.save()
         return user
 
 
-class UserChangeForm(forms.ModelForm):
-
-    password = ReadOnlyPasswordHashField()
+class MyUserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = [
-            'username',
-            'is_active',
-            'is_staff',
-        ]
-
-    # def clean_password(self):
-        # Regardless of what the user provides, return the initial value.
-        # This is done here, rather than on the field, because the
-        # field does not have access to the initial value
-        # return self.initial["password"]
+        fields = '__all__'
 
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    # The forms to add and change user instances
-    form = UserChangeForm
-    add_form = UserCreationForm
+    form = MyUserChangeForm
+    add_form = MyUserCreationForm
 
-    # The fields to be used in displaying the User model.
-    # These override the definitions on the base UserAdmin
-    # that reference specific fields on auth.User.
     list_display = [
         'username',
         'is_active',
@@ -1107,14 +1074,13 @@ class UserAdmin(BaseUserAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('username', 'is_active', 'is_staff')}),
+        (None, {'fields': ('username', 'is_active', 'is_staff', 'person', )}),
     )
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
+
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username',)}),
+            'fields': ('person', )}),
     )
 
     search_fields = [
@@ -1122,6 +1088,8 @@ class UserAdmin(BaseUserAdmin):
     ]
     ordering = ('username',)
     filter_horizontal = ()
-
+    raw_id_fields = [
+        'person',
+    ]
 
 admin.site.unregister(AuthGroup)
