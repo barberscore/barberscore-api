@@ -35,12 +35,14 @@ from django.contrib.postgres.fields import (
     FloatRangeField,
     IntegerRangeField,
 )
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
 )
 from django.db import models
+from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
 from django.utils.encoding import (
     python_2_unicode_compatible,
     smart_text,
@@ -58,6 +60,18 @@ log = logging.getLogger(__name__)
 def generate_image_filename(instance, filename):
     f, ext = os.path.splitext(filename)
     return '{0}{1}'.format(instance.id, ext)
+
+
+class SingleRelatedObjectDescriptorReturnsNone(ReverseOneToOneDescriptor):
+    def __get__(self, instance, cls=None):
+        try:
+            return super(SingleRelatedObjectDescriptorReturnsNone, self).__get__(instance=instance)
+        except ObjectDoesNotExist:
+            return None
+
+
+class OneToOneOrNoneField(models.OneToOneField):
+    related_accessor_class = SingleRelatedObjectDescriptorReturnsNone
 
 
 @python_2_unicode_compatible
@@ -4207,7 +4221,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     # FKs
-    person = models.OneToOneField(
+    person = OneToOneOrNoneField(
         'Person',
         null=True,
         blank=True,
