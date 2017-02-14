@@ -2,17 +2,16 @@
 from mptt.admin import MPTTModelAdmin
 
 # Django
-from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import (
-    ReadOnlyPasswordHashField,
-    UserChangeForm,
-    UserCreationForm,
-)
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
+from .forms import (
+    UserChangeForm,
+    UserCreationForm,
+)
+
 from .inlines import (
     ContestantInline,
     ContestInline,
@@ -25,6 +24,7 @@ from .inlines import (
     SessionInline,
     SubmissionInline,
 )
+
 from .models import (
     Assignment,
     Award,
@@ -1035,32 +1035,10 @@ class VenueAdmin(admin.ModelAdmin):
     ]
 
 
-class MyUserCreationForm(forms.ModelForm):
-
-    class Meta:
-        model = User
-        fields = '__all__'
-
-    def save(self, commit=True):
-        user = super(MyUserCreationForm, self).save(commit=False)
-        user.username = self.cleaned_data['person'].email
-        user.set_password(None)
-        if commit:
-            user.save()
-        return user
-
-
-class MyUserChangeForm(forms.ModelForm):
-
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    form = MyUserChangeForm
-    add_form = MyUserCreationForm
+    form = UserChangeForm
+    add_form = UserCreationForm
 
     list_display = [
         'username',
