@@ -371,6 +371,7 @@ class EntityAdmin(MPTTModelAdmin):
     exclude = [
         'level',
     ]
+    # fields = '__all__'
     # fields = [
     #     'name',
     #     'status',

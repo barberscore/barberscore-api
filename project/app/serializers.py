@@ -263,6 +263,8 @@ class EntitySerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'picture',
+            'parent',
+            'children',
         ]
 
 
