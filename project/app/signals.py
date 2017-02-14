@@ -1,14 +1,16 @@
 # Django
-# from auth0.v2.management import Auth0
-# from django.conf import settings
+from auth0.v2.management import Auth0
+from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.mail import send_mail
 
 # Local
-from .models import (  # User,
+from .models import (
     Award,
     Session,
+    User,
 )
 
 
@@ -88,26 +90,35 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
 #                     )
 
 
-# @receiver(post_save, sender=User)
-# def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-#     """Create Auth0 from user."""
-#     if not raw:
-#         if created:
-#             auth0 = Auth0(
-#                 settings.AUTH0_DOMAIN,
-#                 settings.AUTH0_TOKEN,
-#             )
-#             payload = {
-#                 "connection": "Default",
-#                 "email": instance.email,
-#                 "password": 'changeme',
-#                 "user_metadata": {
-#                     "name": instance.name
-#                 },
-#                 "app_metadata": {
-#                     "bhs_id": instance.bhs_id
-#                 }
-#             }
-#             response = auth0.users.create(payload)
-#             instance.sub = response['user_id']
-#             instance.save()
+@receiver(post_save, sender=User)
+def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create Auth0 from user and send verification email."""
+    if not raw:
+        if created:
+            if instance.person:
+                password = User.objects.make_random_password()
+                auth0 = Auth0(
+                    settings.AUTH0_DOMAIN,
+                    settings.AUTH0_TOKEN,
+                )
+                payload = {
+                    "connection": "Default",
+                    "email": instance.username,
+                    "password": password,
+                    "user_metadata": {
+                        "name": instance.person.name
+                    },
+                    "app_metadata": {
+                        "bhs_id": instance.person.bhs_id
+                    }
+                }
+                response = auth0.users.create(payload)
+                ticket = auth0.tickets.create_pswd_change({"user_id": response['user_id']})
+                send_mail(
+                    "Welcome",
+                    "Click: {0}".format(ticket['ticket']),
+                    "Barberscore Admin <admin@barberscore.com>",
+                    [instance.username],
+                    fail_silently=False
+                )
+                instance.save()
