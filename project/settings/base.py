@@ -172,7 +172,7 @@ INSTALLED_APPS = [
     'django_fsm',
     'timezone_field',
     'mptt',
-    'rest_framework',
+    # 'rest_framework',
     'dry_rest_permissions',
     'app',
 ]
