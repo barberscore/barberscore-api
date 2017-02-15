@@ -12,14 +12,14 @@ AWS_PRELOAD_METADATA = True
 AWS_REGION = get_env_variable("AWS_DEFAULT_REGION")
 
 # AWS S3 Static Settings (public-read, static resources like CSS, Images, etc.)
-AWS_S3_KEY_PREFIX_STATIC = "static/"
+AWS_S3_KEY_PREFIX_STATIC = "static"
 AWS_S3_BUCKET_NAME_STATIC = "{0}".format(PROJECT_NAME)
 AWS_S3_MAX_AGE_SECONDS_STATIC = 60 * 60 * 24 * 365  # 1 year
 STATIC_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
 STATICFILES_STORAGE = STATIC_STORAGE
 
 # AWS S3 Media Settings (user or admin-uploaded content)
-AWS_S3_KEY_PREFIX = "files/"
+AWS_S3_KEY_PREFIX = "files"
 AWS_S3_BUCKET_NAME = "{0}".format(PROJECT_NAME)
 AWS_S3_MAX_AGE_SECONDS = 60 * 60  # 1 hour
 MEDIA_STORAGE = 'django_s3_storage.storage.S3Storage'
