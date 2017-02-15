@@ -1,8 +1,9 @@
 # Barberscore
 
-[![Build Status](https://semaphoreci.com/api/v1/dbinetti/barberscore-django/branches/master/badge.svg)](https://semaphoreci.com/dbinetti/barberscore-django)
+[![Build Status](https://semaphoreci.com/api/v1/dbinetti/barberscore-django/branches/master/shields_badge.svg?style=flat-square)](https://semaphoreci.com/dbinetti/barberscore-django)
+[![Test Coverage](https://codeclimate.com/github/dbinetti/barberscore-django/badges/coverage.svg?style=flat-square)](https://codeclimate.com/github/dbinetti/barberscore-django/coverage)
+[![Dependency Status](https://www.versioneye.com/user/projects/589ea5d10f3d4f003ce97d91/badge.svg?style=flat)](https://www.versioneye.com/user/projects/589ea5d10f3d4f003ce97d91)
 
-[![Test Coverage](https://codeclimate.com/github/dbinetti/barberscore-django/badges/coverage.svg)](https://codeclimate.com/github/dbinetti/barberscore-django/coverage)
 
 Score tracker for the Barbershop Harmony Society.
 
@@ -11,3 +12,4 @@ The purpose of this project is to provide a simple, mobile-friendly app to track
 
 ## Contributors
 Big thank you to Alexander Boltenko with the Heralds of Harmony in Tampa, FL, who has hand-entered all the data and is keeping things up to date.  Thanks to @russkibass!
+a
