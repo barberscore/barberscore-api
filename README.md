@@ -4,7 +4,7 @@
 
 [![Test Coverage](https://codeclimate.com/github/dbinetti/barberscore-django/badges/coverage.svg)](https://codeclimate.com/github/dbinetti/barberscore-django/coverage)
 
-Score tracker for the Barbershop Harmony Society.
+Score tracker for the Barbershop Harmony Society. 
 
 ## Preface
 The purpose of this project is to provide a simple, mobile-friendly app to track the performances at the International Convention of the BHS.
