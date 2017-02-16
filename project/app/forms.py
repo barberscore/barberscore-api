@@ -10,7 +10,7 @@ class UserCreationForm(forms.ModelForm):
         fields = '__all__'
 
     def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
+        user = super().save(commit=False)
         user.username = self.cleaned_data['person'].email
         user.set_password(None)
         if commit:

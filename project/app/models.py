@@ -1,6 +1,3 @@
-# Future
-from __future__ import division
-
 # Standard Libary
 import datetime
 import logging
@@ -44,7 +41,6 @@ from django.core.validators import (
 from django.db import models
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
 from django.utils.encoding import (
-    python_2_unicode_compatible,
     smart_text,
 )
 
@@ -65,7 +61,7 @@ def generate_image_filename(instance, filename):
 class SingleRelatedObjectDescriptorReturnsNone(ReverseOneToOneDescriptor):
     def __get__(self, instance, cls=None):
         try:
-            return super(SingleRelatedObjectDescriptorReturnsNone, self).__get__(instance=instance)
+            return super().__get__(instance=instance)
         except ObjectDoesNotExist:
             return None
 
@@ -74,7 +70,6 @@ class OneToOneOrNoneField(models.OneToOneField):
     related_accessor_class = SingleRelatedObjectDescriptorReturnsNone
 
 
-@python_2_unicode_compatible
 class Assignment(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -145,7 +140,7 @@ class Assignment(TimeStampedModel):
             "{0}".format(self.convention),
             self.get_kind_display(),
         ]))
-        super(Assignment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -171,7 +166,6 @@ class Assignment(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Award(TimeStampedModel):
     """
     Award Model.
@@ -371,7 +365,7 @@ class Award(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
-        super(Award, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -399,7 +393,6 @@ class Award(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Catalog(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -517,7 +510,7 @@ class Catalog(TimeStampedModel):
             self.title,
             str(self.bhs_id),
         ]))
-        super(Catalog, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -539,7 +532,6 @@ class Catalog(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Contest(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -600,7 +592,7 @@ class Contest(TimeStampedModel):
             self.award.name,
             self.session.nomen,
         ]))
-        super(Contest, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -642,7 +634,6 @@ class Contest(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class ContestScore(Contest):
     champion = models.ForeignKey(
         'Performer',
@@ -714,7 +705,6 @@ class ContestScore(Contest):
         return False
 
 
-@python_2_unicode_compatible
 class Contestant(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -779,7 +769,7 @@ class Contestant(TimeStampedModel):
                 ]
             )
         )
-        super(Contestant, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -832,7 +822,6 @@ class Contestant(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class ContestantScore(Contestant):
     rank = models.IntegerField(
         null=True,
@@ -1024,7 +1013,6 @@ class ContestantScore(Contestant):
         return False
 
 
-@python_2_unicode_compatible
 class Convention(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1171,7 +1159,7 @@ class Convention(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
-        super(Convention, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1208,7 +1196,6 @@ class Convention(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class Entity(MPTTModel, TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1426,7 +1413,7 @@ class Entity(MPTTModel, TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
-        super(Entity, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1453,7 +1440,6 @@ class Entity(MPTTModel, TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Host(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1511,7 +1497,7 @@ class Host(TimeStampedModel):
                 ]
             )
         )
-        super(Host, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1537,7 +1523,6 @@ class Host(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Membership(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1619,7 +1604,7 @@ class Membership(TimeStampedModel):
                 ]
             )
         )
-        super(Membership, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1641,7 +1626,6 @@ class Membership(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Office(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1695,7 +1679,7 @@ class Office(TimeStampedModel):
     # Methods
     def save(self, *args, **kwargs):
         self.nomen = self.name
-        super(Office, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Internals
     class JSONAPIMeta:
@@ -1724,7 +1708,6 @@ class Office(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Officer(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1787,7 +1770,7 @@ class Officer(TimeStampedModel):
                 ]
             )
         )
-        super(Officer, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1809,7 +1792,6 @@ class Officer(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Performance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1893,7 +1875,7 @@ class Performance(TimeStampedModel):
                 ]
             )
         )
-        super(Performance, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -1956,7 +1938,6 @@ class Performance(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class PerformanceScore(Performance):
     rank = models.IntegerField(
         null=True,
@@ -2115,7 +2096,6 @@ class PerformanceScore(Performance):
         return False
 
 
-@python_2_unicode_compatible
 class Performer(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2282,7 +2262,7 @@ class Performer(TimeStampedModel):
                 ]
             )
         )
-        super(Performer, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -2331,7 +2311,6 @@ class Performer(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class PerformerScore(Performer):
     rank = models.IntegerField(
         null=True,
@@ -2550,7 +2529,6 @@ class PerformerScore(Performer):
         return False
 
 
-@python_2_unicode_compatible
 class Person(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2769,7 +2747,7 @@ class Person(TimeStampedModel):
                 )
             )
         )
-        super(Person, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def calculate_name(self):
         name = HumanName(self.name)
@@ -2809,7 +2787,6 @@ class Person(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Round(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2902,7 +2879,7 @@ class Round(TimeStampedModel):
                 ]
             )
         )
-        super(Round, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -3089,7 +3066,6 @@ class Round(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class Score(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3226,7 +3202,7 @@ class Score(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = self.id.hex
-        super(Score, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Methods
     def verify(self):
@@ -3323,7 +3299,6 @@ class Score(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Session(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3457,7 +3432,7 @@ class Session(TimeStampedModel):
                 ]
             )
         )
-        super(Session, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Methods
     # def print_oss(self):
@@ -3571,7 +3546,6 @@ class Session(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class Slot(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3653,7 +3627,7 @@ class Slot(TimeStampedModel):
                 ]
             )
         )
-        super(Slot, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -3675,7 +3649,6 @@ class Slot(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Song(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3744,7 +3717,7 @@ class Song(TimeStampedModel):
                 ]
             )
         )
-        super(Song, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def calculate(self, *args, **kwargs):
         self.songscore.calculate()
@@ -3776,7 +3749,6 @@ class Song(TimeStampedModel):
         return
 
 
-@python_2_unicode_compatible
 class SongScore(Song):
     rank = models.IntegerField(
         null=True,
@@ -3947,7 +3919,6 @@ class SongScore(Song):
         return False
 
 
-@python_2_unicode_compatible
 class Submission(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -4052,7 +4023,7 @@ class Submission(TimeStampedModel):
                 ]
             )
         )
-        super(Submission, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -4106,7 +4077,6 @@ class Submission(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class Venue(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -4168,7 +4138,7 @@ class Venue(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
-        super(Venue, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     # Internals
     class JSONAPIMeta:
@@ -4194,7 +4164,6 @@ class Venue(TimeStampedModel):
         return False
 
 
-@python_2_unicode_compatible
 class User(AbstractBaseUser):
     USERNAME_FIELD = settings.USERNAME_FIELD
     REQUIRED_FIELDS = settings.REQUIRED_FIELDS
