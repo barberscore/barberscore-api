@@ -15,13 +15,6 @@ ratings:
   paths:
   - "**.py"
 exclude_paths: [
-  "*/migrations/*",
-  "*/__init__.py",
-  "*/config.py",
-  "*/management/*",
-  "*/tests.py",
-  "*/utils.py",
-  "*.txt",
-  "*.md",
-  "Procfile"
+  "project/app/migrations/*",
+  "project/app/settings/*",
 ]
