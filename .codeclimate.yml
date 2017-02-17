@@ -14,13 +14,14 @@ engines:
 ratings:
   paths:
   - "**.py"
-exclude_paths:
-- "*/migrations/*"
-- "*/__init__.py"
-- "*/config.py"
-- "*/management/*"
-- "*/tests.py"
-- "*/utils.py"
-- "*.txt"
-- "*.md"
-- "Procfile"
+exclude_paths: [
+  "*/migrations/*",
+  "*/__init__.py",
+  "*/config.py",
+  "*/management/*",
+  "*/tests.py",
+  "*/utils.py",
+  "*.txt",
+  "*.md",
+  "Procfile"
+]
