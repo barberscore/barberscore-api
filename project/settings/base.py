@@ -59,7 +59,7 @@ AUTH_USER_MODEL = "app.User"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-USERNAME_FIELD = 'username'
+USERNAME_FIELD = 'email'
 REQUIRED_FIELDS = []
 LOGIN_URL = 'admin:login'
 LOGIN_REDIRECT_URL = 'admin:app_list'

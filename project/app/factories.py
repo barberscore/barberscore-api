@@ -443,7 +443,7 @@ class VenueFactory(DjangoModelFactory):
 
 
 class UserFactory(DjangoModelFactory):
-    username = 'test@barberscore.com'
+    email = 'test@barberscore.com'
     password = PostGenerationMethodCall('set_password', 'password')
     is_active = True
     is_staff = False
@@ -453,7 +453,7 @@ class UserFactory(DjangoModelFactory):
 
 
 class AdminFactory(DjangoModelFactory):
-    username = 'admin@barberscore.com'
+    email = 'admin@barberscore.com'
     password = PostGenerationMethodCall('set_password', 'password')
     is_active = True
     is_staff = True

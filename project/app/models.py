@@ -4174,11 +4174,6 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
-    username = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-
     email = models.EmailField(
         unique=True,
         editable=False,
@@ -4212,13 +4207,13 @@ class User(AbstractBaseUser):
 
     # Methods
     def __str__(self):
-        return self.username
+        return self.email
 
     def get_full_name(self):
-        return self.username
+        return self.email
 
     def get_short_name(self):
-        return self.username
+        return self.email
 
     def has_perm(self, perm, obj=None):
         return self.is_staff

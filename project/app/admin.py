@@ -1042,7 +1042,7 @@ class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
 
     list_display = [
-        'username',
+        'email',
         'is_active',
         'is_staff',
     ]
@@ -1053,7 +1053,7 @@ class UserAdmin(BaseUserAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('username', 'is_active', 'is_staff', 'person', )}),
+        (None, {'fields': ('email', 'is_active', 'is_staff', 'person', )}),
     )
 
     add_fieldsets = (
@@ -1063,12 +1063,16 @@ class UserAdmin(BaseUserAdmin):
     )
 
     search_fields = [
-        'username',
+        'email',
     ]
-    ordering = ('username',)
+    ordering = ('email',)
     filter_horizontal = ()
     raw_id_fields = [
         'person',
+    ]
+
+    readonly_fields = [
+        'email',
     ]
 
 admin.site.unregister(AuthGroup)

@@ -103,7 +103,7 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                 )
                 payload = {
                     "connection": "Default",
-                    "email": instance.username,
+                    "email": instance.email,
                     "password": password,
                     "user_metadata": {
                         "name": instance.person.name
@@ -118,7 +118,6 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                     "Welcome",
                     "Click: {0}".format(ticket['ticket']),
                     "Barberscore Admin <admin@barberscore.com>",
-                    [instance.username],
+                    [instance.email],
                     fail_silently=False
                 )
-                instance.save()
