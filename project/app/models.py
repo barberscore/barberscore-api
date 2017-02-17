@@ -45,17 +45,15 @@ from django.utils.encoding import (
 # Local
 from .managers import UserManager
 
-from .fields import OneToOneOrNoneField
+from .fields import (
+    OneToOneOrNoneField,
+    generate_image_filename,
+)
 
 docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 doc_api = docraptor.DocApi()
 
 log = logging.getLogger(__name__)
-
-
-def generate_image_filename(instance, filename):
-    f, ext = os.path.splitext(filename)
-    return '{0}{1}'.format(instance.id, ext)
 
 
 class Assignment(TimeStampedModel):

@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
 from django.core.exceptions import ObjectDoesNotExist
@@ -54,3 +56,20 @@ class AutoOneToOneField(OneToOneField):
 
     def contribute_to_related_class(self, cls, related):
         setattr(cls, related.get_accessor_name(), AutoReverseOneToOneDescriptor(related))
+
+
+from django.utils.deconstruct import deconstructible
+
+
+@deconstructible
+class PathAndRename(object):
+
+    def __init__(self, sub_path=''):
+        self.path = sub_path
+
+    def __call__(self, instance, filename):
+        f, ext = os.path.splitext(filename)
+        filename = '{0}{1}'.format(instance.id, ext.lower())
+        return os.path.join(self.path, filename)
+
+generate_image_filename = PathAndRename()
