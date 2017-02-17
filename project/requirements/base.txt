@@ -1,4 +1,3 @@
-arrow
 auth0-python==2.0.1
 awscli==1.11.48
 botocore==1.5.11
