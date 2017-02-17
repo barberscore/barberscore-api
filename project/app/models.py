@@ -4179,6 +4179,11 @@ class User(AbstractBaseUser):
         unique=True,
     )
 
+    email = models.EmailField(
+        blank=True,
+        editable=False,
+    )
+
     is_active = models.BooleanField(
         default=True,
     )
