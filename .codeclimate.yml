@@ -1,0 +1,26 @@
+---
+engines:
+  pep8:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python
+  fixme:
+    enabled: true
+  radon:
+    enabled: true
+ratings:
+  paths:
+  - "**.py"
+exclude_paths:
+- "*/migrations/*"
+- "*/__init__.py"
+- "*/config.py"
+- "*/management/*"
+- "*/tests.py"
+- "*/utils.py"
+- "*.txt"
+- "*.md"
+- "Procfile"
