@@ -30,9 +30,9 @@ from .models import (
     Award,
     Catalog,
     Contest,
-    ContestScore,
+    ContestPrivate,
     Contestant,
-    ContestantScore,
+    ContestantPrivate,
     Convention,
     Entity,
     Host,
@@ -261,8 +261,8 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(ContestScore)
-class ContestScoreAdmin(admin.ModelAdmin):
+@admin.register(ContestPrivate)
+class ContestPrivateAdmin(admin.ModelAdmin):
     pass
 
 
@@ -297,8 +297,8 @@ class ContestantAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(ContestantScore)
-class ContestantScoreAdmin(admin.ModelAdmin):
+@admin.register(ContestantPrivate)
+class ContestantPrivateAdmin(admin.ModelAdmin):
     pass
 
 

@@ -19,7 +19,7 @@ class CoalesceFilterBackend(BaseFilterBackend):
         return queryset
 
 
-class ContestScoreFilterBackend(DRYPermissionFiltersBase):
+class ContestPrivateFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
         if request.user.is_authenticated():
@@ -27,7 +27,7 @@ class ContestScoreFilterBackend(DRYPermissionFiltersBase):
                 return queryset.all()
             return queryset.filter(
                 # group__roles__person__user=request.user,
-                Q(session__assignment__person__user=request.user)
+                Q(contest__session__convention__assignment__person__user=request.user)
                 # session__assignment__judge__user=request.user,
             )
         return queryset.none()

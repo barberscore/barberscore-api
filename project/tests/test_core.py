@@ -229,6 +229,13 @@ def test_contestant_endpoint_list(api_client, contestant):
 
 
 @pytest.mark.django_db()
+def test_contestantprivate_endpoint_list(api_client, contestant):
+    path = reverse('contestantprivate-list')
+    response = api_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_convention_endpoint_list(api_client, convention):
     path = reverse('convention-list')
     response = api_client.get(path)
@@ -385,6 +392,16 @@ def test_contestant_endpoint_detail(api_client, contestant):
     path = reverse('contestant-detail', args=(contestant.id.hex,))
     response = api_client.get(path)
     assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_contestantprivate_endpoint_detail(api_client, contestant):
+    public = reverse('contestant-detail', args=(contestant.id.hex,))
+    private = reverse('contestantprivate-detail', args=(contestant.contestantprivate.pk,))
+    public_response = api_client.get(public)
+    private_response = api_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
 
 
 @pytest.mark.django_db()
@@ -558,6 +575,13 @@ def test_contestant_admin_list(admin_client, contestant):
 
 
 @pytest.mark.django_db()
+def test_contestantprivate_admin_list(admin_client, contestant):
+    path = reverse('admin:app_contestantprivate_changelist')
+    response = admin_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_convention_admin_list(admin_client, convention):
     path = reverse('admin:app_convention_changelist')
     response = admin_client.get(path)
@@ -714,6 +738,16 @@ def test_contestant_admin_detail(admin_client, contestant):
     path = reverse('admin:app_contestant_change', args=(contestant.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_contestantprivate_admin_detail(admin_client, contestant):
+    public = reverse('admin:app_contestant_change', args=(contestant.id.hex,))
+    private = reverse('admin:app_contestantprivate_change', args=(contestant.contestantprivate.pk,))
+    public_response = admin_client.get(public)
+    private_response = admin_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
 
 
 @pytest.mark.django_db()

@@ -26,7 +26,7 @@ from rest_framework_csv.renderers import CSVRenderer
 # Local
 from .backends import (
     CoalesceFilterBackend,
-    ContestScoreFilterBackend,
+    ContestPrivateFilterBackend,
     PerformanceScoreFilterBackend,
     PerformerScoreFilterBackend,
     ScoreFilterBackend,
@@ -50,8 +50,8 @@ from .models import (
     Catalog,
     Contest,
     Contestant,
-    ContestantScore,
-    ContestScore,
+    ContestantPrivate,
+    ContestPrivate,
     Convention,
     Entity,
     Host,
@@ -73,14 +73,16 @@ from .models import (
     User,
     Venue,
 )
+
 from .paginators import PageNumberPagination
+
 from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
     CatalogSerializer,
-    ContestantScoreSerializer,
+    ContestantPrivateSerializer,
     ContestantSerializer,
-    ContestScoreSerializer,
+    ContestPrivateSerializer,
     ContestSerializer,
     ConventionSerializer,
     EntitySerializer,
@@ -184,23 +186,21 @@ class ContestViewSet(viewsets.ModelViewSet):
     resource_name = "contest"
 
 
-class ContestScoreViewSet(viewsets.ModelViewSet):
-    queryset = ContestScore.objects.select_related(
-        'champion',
+class ContestPrivateViewSet(viewsets.ModelViewSet):
+    queryset = ContestPrivate.objects.select_related(
     ).prefetch_related(
-        'contestants',
     )
-    serializer_class = ContestScoreSerializer
+    serializer_class = ContestPrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
-        ContestScoreFilterBackend,
+        ContestPrivateFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "contestscore"
+    resource_name = "contestprivate"
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -222,11 +222,11 @@ class ContestantViewSet(viewsets.ModelViewSet):
     resource_name = "contestant"
 
 
-class ContestantScoreViewSet(viewsets.ModelViewSet):
-    queryset = ContestantScore.objects.select_related(
+class ContestantPrivateViewSet(viewsets.ModelViewSet):
+    queryset = ContestantPrivate.objects.select_related(
     ).prefetch_related(
     )
-    serializer_class = ContestantScoreSerializer
+    serializer_class = ContestantPrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
@@ -236,7 +236,7 @@ class ContestantScoreViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "contestantscore"
+    resource_name = "contestantprivate"
 
 
 class ConventionViewSet(

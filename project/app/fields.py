@@ -5,6 +5,7 @@ from django.db.models.fields.related_descriptors import ReverseOneToOneDescripto
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OneToOneField
 from django.db.transaction import atomic
+from django.utils.deconstruct import deconstructible
 
 
 class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):
@@ -23,21 +24,18 @@ class AutoReverseOneToOneDescriptor(ReverseOneToOneDescriptor):
     """The descriptor that handles the object creation for an AutoOneToOneField."""
 
     @atomic
-    def __get__(self, instance, instance_type=None):
+    def __get__(self, instance, cls=None):
         model = getattr(self.related, 'related_model', self.related.model)
 
         try:
-            return (super(AutoReverseOneToOneDescriptor, self)
-                    .__get__(instance, instance_type))
+            return super().__get__(instance)
         except model.DoesNotExist:
-            # Using get_or_create instead() of save() or create() as it better handles race conditions
             model.objects.get_or_create(**{self.related.field.name: instance})
 
             # Don't return obj directly, otherwise it won't be added
             # to Django's cache, and the first 2 calls to obj.relobj
             # will return 2 different in-memory objects
-            return (super(AutoReverseOneToOneDescriptor, self)
-                    .__get__(instance, instance_type))
+            return super().__get__(instance)
 
 
 class AutoOneToOneField(OneToOneField):
@@ -56,9 +54,6 @@ class AutoOneToOneField(OneToOneField):
 
     def contribute_to_related_class(self, cls, related):
         setattr(cls, related.get_accessor_name(), AutoReverseOneToOneDescriptor(related))
-
-
-from django.utils.deconstruct import deconstructible
 
 
 @deconstructible

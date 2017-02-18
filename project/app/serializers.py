@@ -14,8 +14,8 @@ from .models import (
     Catalog,
     Contest,
     Contestant,
-    ContestantScore,
-    ContestScore,
+    ContestantPrivate,
+    ContestPrivate,
     Convention,
     Entity,
     Host,
@@ -148,11 +148,11 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestScoreSerializer(serializers.ModelSerializer):
+class ContestPrivateSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = ContestScore
+        model = ContestPrivate
         fields = (
             'id',
             'url',
@@ -177,11 +177,11 @@ class ContestantSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestantScoreSerializer(serializers.ModelSerializer):
+class ContestantPrivateSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = ContestantScore
+        model = ContestantPrivate
         fields = (
             'id',
             'url',

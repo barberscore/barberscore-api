@@ -27,8 +27,7 @@ from app.models import (
     Catalog,
     Contest,
     Contestant,
-    ContestantScore,
-    ContestScore,
+    ContestantPrivate,
     Convention,
     Entity,
     Host,
@@ -101,23 +100,9 @@ class ContestFactory(DjangoModelFactory):
     is_qualifier = False
     session = SubFactory('app.factories.SessionFactory')
     award = SubFactory('app.factories.AwardFactory')
-    # contestscore = RelatedFactory('app.factories.ContestScoreFactory', 'contest')
-
-    # @post_generation
-    # def score(self, create, extracted, **kwargs):
-    #     if not create:
-    #         return
 
     class Meta:
         model = Contest
-
-
-# class ContestScoreFactory(DjangoModelFactory):
-#     contest_ptr = SubFactory('app.factories.ContestFactory', contestscore=None)
-#     # contest_ptr = SubFactory('app.factories.ContestFactory')
-
-#     class Meta:
-#         model = ContestScore
 
 
 class ContestantFactory(DjangoModelFactory):
@@ -127,11 +112,6 @@ class ContestantFactory(DjangoModelFactory):
 
     class Meta:
         model = Contestant
-
-
-class ContestantScoreFactory(DjangoModelFactory):
-    class Meta:
-        model = ContestantScore
 
 
 class ConventionFactory(DjangoModelFactory):
@@ -442,6 +422,7 @@ class VenueFactory(DjangoModelFactory):
         model = Venue
 
 
+@mute_signals(post_save)
 class UserFactory(DjangoModelFactory):
     email = 'test@barberscore.com'
     password = PostGenerationMethodCall('set_password', 'password')

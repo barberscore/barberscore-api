@@ -6,9 +6,9 @@ from .views import (
     AssignmentViewSet,
     AwardViewSet,
     CatalogViewSet,
-    ContestantScoreViewSet,
+    ContestantPrivateViewSet,
     ContestantViewSet,
-    ContestScoreViewSet,
+    ContestPrivateViewSet,
     ContestViewSet,
     ConventionViewSet,
     EntityViewSet,
@@ -40,9 +40,9 @@ router = routers.DefaultRouter(
 router.register(r'award', AwardViewSet)
 router.register(r'catalog', CatalogViewSet)
 router.register(r'contest', ContestViewSet)
-router.register(r'contestscore', ContestScoreViewSet)
+router.register(r'contestprivate', ContestPrivateViewSet)
 router.register(r'contestant', ContestantViewSet)
-router.register(r'contestantscore', ContestantScoreViewSet)
+router.register(r'contestantprivate', ContestantPrivateViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entity', EntityViewSet)
 router.register(r'host', HostViewSet)

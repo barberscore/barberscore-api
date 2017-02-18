@@ -1,7 +1,6 @@
 # Standard Libary
 import datetime
 import logging
-import os
 import random
 import uuid
 
@@ -46,6 +45,7 @@ from django.utils.encoding import (
 from .managers import UserManager
 
 from .fields import (
+    AutoOneToOneField,
     OneToOneOrNoneField,
     generate_image_filename,
 )
@@ -620,7 +620,14 @@ class Contest(TimeStampedModel):
         return
 
 
-class ContestScore(Contest):
+class ContestPrivate(TimeStampedModel):
+    contest = AutoOneToOneField(
+        'Contest',
+        on_delete=models.CASCADE,
+        primary_key=True,
+        parent_link=True,
+    )
+
     champion = models.ForeignKey(
         'Performer',
         null=True,
@@ -630,22 +637,22 @@ class ContestScore(Contest):
 
     # Internals
     class JSONAPIMeta:
-        resource_name = "contestscore"
+        resource_name = "contestprivate"
 
     # Methods
     def __str__(self):
-        return self.id.hex
+        return str(self.pk)
 
     def calculate(self, *args, **kwargs):
-        if self.is_qualifier:
+        if self.contest.is_qualifier:
             champion = None
         else:
             try:
-                champion = self.contestants.get(contestantscore__rank=1).performer
-            except self.contestants.model.DoesNotExist:
+                champion = self.contest.contestants.get(contestantscore__rank=1).performer
+            except self.contest.contestants.model.DoesNotExist:
                 champion = None
-            except self.contestants.model.MultipleObjectsReturned:
-                champion = self.contestants.filter(contestantscore__rank=1).order_by(
+            except self.contest.contestants.model.MultipleObjectsReturned:
+                champion = self.contest.contestants.filter(contestantscore__rank=1).order_by(
                     '-contestantscore__sng_points',
                     '-contestantscore__mus_points',
                     '-contestantscore__prs_points',
@@ -994,6 +1001,204 @@ class ContestantScore(Contestant):
         if request.user.is_authenticated():
             return any([
                 # self.contest.award.organization.representative.user == request.user,
+                True
+            ])
+        return False
+
+
+class ContestantPrivate(TimeStampedModel):
+    contest = AutoOneToOneField(
+        'Contestant',
+        on_delete=models.CASCADE,
+        primary_key=True,
+        parent_link=True,
+    )
+
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    total_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    total_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    class JSONAPIMeta:
+        resource_name = "contestantprivate"
+
+    # Properties
+    @property
+    def official_result(self):
+        if self.contestant.contest.is_qualifier:
+            if self.contestant.contest.award.is_district_representative:
+                if self.contestant.official_rank == 1:
+                    return self.contestant.STATUS.rep
+                if self.contestant.official_score < self.contestant.contest.award.minimum:
+                    return self.contestant.STATUS.ineligible
+                else:
+                    return self.contestant.STATUS.eligible
+            else:
+                if self.contestant.contest.award.minimum:
+                    if self.contestant.official_score < self.contestant.contest.award.minimum:
+                        return self.contestant.STATUS.ineligible
+                    elif self.contestant.official_score >= self.contestant.contest.award.threshold:
+                        return self.contestant.STATUS.qualified
+                    else:
+                        return self.contestant.STATUS.eligible
+                else:
+                    return self.contestant.STATUS.eligible
+        else:
+            return self.contestant.official_rank
+
+    # Methods
+    def __str__(self):
+        return str(self.pk)
+
+    def calculate(self, *args, **kwargs):
+        self.contestant.mus_points = self.contestant.calculate_mus_points()
+        self.contestant.prs_points = self.contestant.calculate_prs_points()
+        self.contestant.sng_points = self.contestant.calculate_sng_points()
+        self.contestant.total_points = self.contestant.calculate_total_points()
+        self.contestant.mus_score = self.contestant.calculate_mus_score()
+        self.contestant.prs_score = self.contestant.calculate_prs_score()
+        self.contestant.sng_score = self.contestant.calculate_sng_score()
+        self.contestant.total_score = self.contestant.calculate_total_score()
+        self.contestant.rank = self.contestant.calculate_rank()
+
+    def calculate_rank(self):
+        return self.contestant.contest.ranking(self.contestant.calculate_total_points())
+
+    def calculate_mus_points(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_prs_points(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_points(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_total_points(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_mus_score(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_prs_score(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_score(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_total_score(self):
+        return self.contestant.performer.performances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                True
+                # self.contestant.contest.award.organization.representative.user == request.user,
+            ])
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                # self.contestant.contest.award.organization.representative.user == request.user,
                 True
             ])
         return False
