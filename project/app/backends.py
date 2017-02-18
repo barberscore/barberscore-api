@@ -33,7 +33,7 @@ class ContestPrivateFilterBackend(DRYPermissionFiltersBase):
         return queryset.none()
 
 
-class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
+class PerformerPrivateFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
         if request.user.is_authenticated():
@@ -69,7 +69,7 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
         return queryset.none()
 
 
-class SongScoreFilterBackend(DRYPermissionFiltersBase):
+class SongPrivateFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
         if request.user.is_authenticated():

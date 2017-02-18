@@ -42,14 +42,14 @@ from .models import (
     Performance,
     PerformancePrivate,
     Performer,
-    PerformerScore,
+    PerformerPrivate,
     Person,
     Round,
     Score,
     Session,
     Slot,
     Song,
-    SongScore,
+    SongPrivate,
     Submission,
     User,
     Venue,
@@ -647,8 +647,8 @@ class PerformerAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(PerformerScore)
-class PerformerScoreAdmin(admin.ModelAdmin):
+@admin.register(PerformerPrivate)
+class PerformerPrivateAdmin(admin.ModelAdmin):
     pass
 
 
@@ -957,8 +957,8 @@ class SongAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(SongScore)
-class SongScoreAdmin(admin.ModelAdmin):
+@admin.register(SongPrivate)
+class SongPrivateAdmin(admin.ModelAdmin):
     pass
 
 

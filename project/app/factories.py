@@ -37,14 +37,14 @@ from app.models import (
     Performance,
     PerformancePrivate,
     Performer,
-    PerformerScore,
+    PerformerPrivate,
     Person,
     Round,
     Score,
     Session,
     Slot,
     Song,
-    SongScore,
+    SongPrivate,
     Submission,
     User,
     Venue,
@@ -291,9 +291,9 @@ class PerformerFactory(DjangoModelFactory):
         model = Performer
 
 
-class PerformerScoreFactory(DjangoModelFactory):
+class PerformerPrivateFactory(DjangoModelFactory):
     class Meta:
-        model = PerformerScore
+        model = PerformerPrivate
 
 
 class PersonFactory(DjangoModelFactory):
@@ -388,9 +388,9 @@ class SongFactory(DjangoModelFactory):
         model = Song
 
 
-class SongScoreFactory(DjangoModelFactory):
+class SongPrivateFactory(DjangoModelFactory):
     class Meta:
-        model = SongScore
+        model = SongPrivate
 
 
 class SubmissionFactory(DjangoModelFactory):

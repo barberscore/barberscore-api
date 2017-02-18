@@ -28,9 +28,9 @@ from .backends import (
     CoalesceFilterBackend,
     ContestPrivateFilterBackend,
     PerformancePrivateFilterBackend,
-    PerformerScoreFilterBackend,
+    PerformerPrivateFilterBackend,
     ScoreFilterBackend,
-    SongScoreFilterBackend,
+    SongPrivateFilterBackend,
 )
 from .filters import (
     AwardFilter,
@@ -61,14 +61,14 @@ from .models import (
     Performance,
     PerformancePrivate,
     Performer,
-    PerformerScore,
+    PerformerPrivate,
     Person,
     Round,
     Score,
     Session,
     Slot,
     Song,
-    SongScore,
+    SongPrivate,
     Submission,
     User,
     Venue,
@@ -93,14 +93,14 @@ from .serializers import (
     OfficeSerializer,
     PerformancePrivateSerializer,
     PerformanceSerializer,
-    PerformerScoreSerializer,
+    PerformerPrivateSerializer,
     PerformerSerializer,
     PersonSerializer,
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
     SlotSerializer,
-    SongScoreSerializer,
+    SongPrivateSerializer,
     SongSerializer,
     SubmissionSerializer,
     UserSerializer,
@@ -428,21 +428,21 @@ class PerformerViewSet(viewsets.ModelViewSet):
     resource_name = "performer"
 
 
-class PerformerScoreViewSet(viewsets.ModelViewSet):
-    queryset = PerformerScore.objects.select_related(
+class PerformerPrivateViewSet(viewsets.ModelViewSet):
+    queryset = PerformerPrivate.objects.select_related(
     ).prefetch_related(
     )
-    serializer_class = PerformerScoreSerializer
+    serializer_class = PerformerPrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
-        PerformerScoreFilterBackend,
+        PerformerPrivateFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performerscore"
+    resource_name = "performerprivate"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -574,21 +574,21 @@ class SongViewSet(viewsets.ModelViewSet):
     resource_name = "song"
 
 
-class SongScoreViewSet(viewsets.ModelViewSet):
-    queryset = SongScore.objects.select_related(
+class SongPrivateViewSet(viewsets.ModelViewSet):
+    queryset = SongPrivate.objects.select_related(
     ).prefetch_related(
     )
-    serializer_class = SongScoreSerializer
+    serializer_class = SongPrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
-        SongScoreFilterBackend,
+        SongPrivateFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "songscore"
+    resource_name = "songprivate"
 
 
 class SlotViewSet(viewsets.ModelViewSet):

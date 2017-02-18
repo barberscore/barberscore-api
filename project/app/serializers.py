@@ -25,14 +25,14 @@ from .models import (
     Performance,
     PerformancePrivate,
     Performer,
-    PerformerScore,
+    PerformerPrivate,
     Person,
     Round,
     Score,
     Session,
     Slot,
     Song,
-    SongScore,
+    SongPrivate,
     Submission,
     User,
     Venue,
@@ -418,11 +418,11 @@ class PerformerSerializer(serializers.ModelSerializer):
         ]
 
 
-class PerformerScoreSerializer(serializers.ModelSerializer):
+class PerformerPrivateSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = PerformerScore
+        model = PerformerPrivate
         fields = (
             'id',
             'url',
@@ -435,7 +435,6 @@ class PerformerScoreSerializer(serializers.ModelSerializer):
             'prs_score',
             'sng_score',
             'total_score',
-            'contestants',
             'permissions',
         )
 
@@ -610,17 +609,17 @@ class SongSerializer(serializers.ModelSerializer):
             'submission',
             'performance',
             'scores',
-            'songscore',
+            'songprivate',
             'permissions',
         )
 
 
-class SongScoreSerializer(serializers.ModelSerializer):
+class SongPrivateSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = SongScore
+        model = SongPrivate
         fields = (
             'id',
             'url',

@@ -299,6 +299,13 @@ def test_performer_endpoint_list(api_client, performer):
 
 
 @pytest.mark.django_db()
+def test_performerprivate_endpoint_list(api_client, performer):
+    path = reverse('performerprivate-list')
+    response = api_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_person_endpoint_list(api_client, person):
     path = reverse('person-list')
     response = api_client.get(path)
@@ -336,6 +343,13 @@ def test_slot_endpoint_list(api_client, slot):
 @pytest.mark.django_db()
 def test_song_endpoint_list(api_client, song):
     path = reverse('song-list')
+    response = api_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_songprivate_endpoint_list(api_client, song):
+    path = reverse('songprivate-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -478,6 +492,16 @@ def test_performer_endpoint_detail(api_client, performer):
 
 
 @pytest.mark.django_db()
+def test_performerprivate_endpoint_detail(api_client, performer):
+    public = reverse('performer-detail', args=(performer.id.hex,))
+    private = reverse('performerprivate-detail', args=(performer.performerprivate.pk,))
+    public_response = api_client.get(public)
+    private_response = api_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
+
+
+@pytest.mark.django_db()
 def test_person_endpoint_detail(api_client, person):
     path = reverse('person-detail', args=(person.id.hex,))
     response = api_client.get(path)
@@ -517,6 +541,16 @@ def test_song_endpoint_detail(api_client, song):
     path = reverse('song-detail', args=(song.id.hex,))
     response = api_client.get(path)
     assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_songprivate_endpoint_detail(api_client, song):
+    public = reverse('song-detail', args=(song.id.hex,))
+    private = reverse('songprivate-detail', args=(song.songprivate.pk,))
+    public_response = api_client.get(public)
+    private_response = api_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
 
 
 @pytest.mark.django_db()
@@ -662,6 +696,13 @@ def test_performer_admin_list(admin_client, performer):
 
 
 @pytest.mark.django_db()
+def test_performerprivate_admin_list(admin_client, performer):
+    path = reverse('admin:app_performerprivate_changelist')
+    response = admin_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_person_admin_list(admin_client, person):
     path = reverse('admin:app_person_changelist')
     response = admin_client.get(path)
@@ -699,6 +740,13 @@ def test_slot_admin_list(admin_client, slot):
 @pytest.mark.django_db()
 def test_song_admin_list(admin_client, song):
     path = reverse('admin:app_song_changelist')
+    response = admin_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_songprivate_admin_list(admin_client, song):
+    path = reverse('admin:app_songprivate_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -841,6 +889,16 @@ def test_performer_admin_detail(admin_client, performer):
 
 
 @pytest.mark.django_db()
+def test_performerprivate_admin_detail(admin_client, performance):
+    public = reverse('admin:app_performance_change', args=(performance.id.hex,))
+    private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
+    public_response = admin_client.get(public)
+    private_response = admin_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
+
+
+@pytest.mark.django_db()
 def test_person_admin_detail(admin_client, person):
     path = reverse('admin:app_person_change', args=(person.id.hex,))
     response = admin_client.get(path)
@@ -880,6 +938,16 @@ def test_song_admin_detail(admin_client, song):
     path = reverse('admin:app_song_change', args=(song.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_songprivate_admin_detail(admin_client, song):
+    public = reverse('admin:app_song_change', args=(song.id.hex,))
+    private = reverse('admin:app_songprivate_change', args=(song.songprivate.pk,))
+    public_response = admin_client.get(public)
+    private_response = admin_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
 
 
 @pytest.mark.django_db()

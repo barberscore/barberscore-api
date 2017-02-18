@@ -19,14 +19,14 @@ from .views import (
     OfficeViewSet,
     PerformancePrivateViewSet,
     PerformanceViewSet,
-    PerformerScoreViewSet,
+    PerformerPrivateViewSet,
     PerformerViewSet,
     PersonViewSet,
     RoundViewSet,
     ScoreViewSet,
     SessionViewSet,
     SlotViewSet,
-    SongScoreViewSet,
+    SongPrivateViewSet,
     SongViewSet,
     SubmissionViewSet,
     UserViewSet,
@@ -53,7 +53,7 @@ router.register(r'officer', OfficerViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'performanceprivate', PerformancePrivateViewSet)
 router.register(r'performer', PerformerViewSet)
-router.register(r'performerscore', PerformerScoreViewSet)
+router.register(r'performerprivate', PerformerPrivateViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)
@@ -61,7 +61,7 @@ router.register(r'session', SessionViewSet)
 router.register(r'submission', SubmissionViewSet)
 router.register(r'slot', SlotViewSet)
 router.register(r'song', SongViewSet)
-router.register(r'songscore', SongScoreViewSet)
+router.register(r'songprivate', SongPrivateViewSet)
 router.register(r'venue', VenueViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'officecsv', OfficeViewCSV)
