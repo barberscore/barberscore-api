@@ -379,28 +379,28 @@ def test_user_endpoint_list(api_client, user):
 
 @pytest.mark.django_db()
 def test_assignment_endpoint_detail(api_client, assignment):
-    path = reverse('assignment-detail', args=(assignment.id.hex,))
+    path = reverse('assignment-detail', args=(str(assignment.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_endpoint_detail(api_client, award):
-    path = reverse('award-detail', args=(award.id.hex,))
+    path = reverse('award-detail', args=(str(award.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_catalog_endpoint_detail(api_client, catalog):
-    path = reverse('catalog-detail', args=(catalog.id.hex,))
+    path = reverse('catalog-detail', args=(str(catalog.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_endpoint_detail(api_client, contest):
-    public = reverse('contest-detail', args=(contest.id.hex,))
+    public = reverse('contest-detail', args=(str(contest.id),))
     private = reverse('contestprivate-detail', args=(contest.contestprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
@@ -410,14 +410,14 @@ def test_contest_endpoint_detail(api_client, contest):
 
 @pytest.mark.django_db()
 def test_contestant_endpoint_detail(api_client, contestant):
-    path = reverse('contestant-detail', args=(contestant.id.hex,))
+    path = reverse('contestant-detail', args=(str(contestant.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestantprivate_endpoint_detail(api_client, contestant):
-    public = reverse('contestant-detail', args=(contestant.id.hex,))
+    public = reverse('contestant-detail', args=(str(contestant.id),))
     private = reverse('contestantprivate-detail', args=(contestant.contestantprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
@@ -427,56 +427,56 @@ def test_contestantprivate_endpoint_detail(api_client, contestant):
 
 @pytest.mark.django_db()
 def test_convention_endpoint_detail(api_client, convention):
-    path = reverse('convention-detail', args=(convention.id.hex,))
+    path = reverse('convention-detail', args=(str(convention.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_endpoint_detail(api_client, organization):
-    path = reverse('entity-detail', args=(organization.id.hex,))
+    path = reverse('entity-detail', args=(str(organization.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_host_endpoint_detail(api_client, host):
-    path = reverse('host-detail', args=(host.id.hex,))
+    path = reverse('host-detail', args=(str(host.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_membership_endpoint_detail(api_client, membership):
-    path = reverse('membership-detail', args=(membership.id.hex,))
+    path = reverse('membership-detail', args=(str(membership.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_endpoint_detail(api_client, office):
-    path = reverse('office-detail', args=(office.id.hex,))
+    path = reverse('office-detail', args=(str(office.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_endpoint_detail(api_client, officer):
-    path = reverse('officer-detail', args=(officer.id.hex,))
+    path = reverse('officer-detail', args=(str(officer.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performance_endpoint_detail(api_client, performance):
-    path = reverse('performance-detail', args=(performance.id.hex,))
+    path = reverse('performance-detail', args=(str(performance.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performanceprivate_endpoint_detail(api_client, performance):
-    public = reverse('performance-detail', args=(performance.id.hex,))
+    public = reverse('performance-detail', args=(str(performance.id),))
     private = reverse('performanceprivate-detail', args=(performance.performanceprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
@@ -486,14 +486,14 @@ def test_performanceprivate_endpoint_detail(api_client, performance):
 
 @pytest.mark.django_db()
 def test_performer_endpoint_detail(api_client, performer):
-    path = reverse('performer-detail', args=(performer.id.hex,))
+    path = reverse('performer-detail', args=(str(performer.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performerprivate_endpoint_detail(api_client, performer):
-    public = reverse('performer-detail', args=(performer.id.hex,))
+    public = reverse('performer-detail', args=(str(performer.id),))
     private = reverse('performerprivate-detail', args=(performer.performerprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
@@ -503,49 +503,49 @@ def test_performerprivate_endpoint_detail(api_client, performer):
 
 @pytest.mark.django_db()
 def test_person_endpoint_detail(api_client, person):
-    path = reverse('person-detail', args=(person.id.hex,))
+    path = reverse('person-detail', args=(str(person.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_endpoint_detail(api_client, round):
-    path = reverse('round-detail', args=(round.id.hex,))
+    path = reverse('round-detail', args=(str(round.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_endpoint_detail(api_client, score):
-    path = reverse('score-detail', args=(score.id.hex,))
+    path = reverse('score-detail', args=(str(score.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_endpoint_detail(api_client, session):
-    path = reverse('session-detail', args=(session.id.hex,))
+    path = reverse('session-detail', args=(str(session.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_endpoint_detail(api_client, slot):
-    path = reverse('slot-detail', args=(slot.id.hex,))
+    path = reverse('slot-detail', args=(str(slot.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_endpoint_detail(api_client, song):
-    path = reverse('song-detail', args=(song.id.hex,))
+    path = reverse('song-detail', args=(str(song.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_songprivate_endpoint_detail(api_client, song):
-    public = reverse('song-detail', args=(song.id.hex,))
+    public = reverse('song-detail', args=(str(song.id),))
     private = reverse('songprivate-detail', args=(song.songprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
@@ -555,21 +555,21 @@ def test_songprivate_endpoint_detail(api_client, song):
 
 @pytest.mark.django_db()
 def test_submission_endpoint_detail(api_client, submission):
-    path = reverse('submission-detail', args=(submission.id.hex,))
+    path = reverse('submission-detail', args=(str(submission.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_endpoint_detail(api_client, venue):
-    path = reverse('venue-detail', args=(venue.id.hex,))
+    path = reverse('venue-detail', args=(str(venue.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_endpoint_detail(api_client, user):
-    path = reverse('user-detail', args=(user.id.hex,))
+    path = reverse('user-detail', args=(str(user.id),))
     response = api_client.get(path)
     assert ok(response)
 
@@ -776,28 +776,28 @@ def test_user_admin_list(admin_client, user):
 
 @pytest.mark.django_db()
 def test_assignment_admin_detail(admin_client, assignment):
-    path = reverse('admin:app_assignment_change', args=(assignment.id.hex,))
+    path = reverse('admin:app_assignment_change', args=(str(assignment.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_admin_detail(admin_client, award):
-    path = reverse('admin:app_award_change', args=(award.id.hex,))
+    path = reverse('admin:app_award_change', args=(str(award.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_catalog_admin_detail(admin_client, catalog):
-    path = reverse('admin:app_catalog_change', args=(catalog.id.hex,))
+    path = reverse('admin:app_catalog_change', args=(str(catalog.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_admin_detail(admin_client, contest):
-    public = reverse('admin:app_contest_change', args=(contest.id.hex,))
+    public = reverse('admin:app_contest_change', args=(str(contest.id),))
     private = reverse('admin:app_contestprivate_change', args=(contest.contestprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
@@ -807,14 +807,14 @@ def test_contest_admin_detail(admin_client, contest):
 
 @pytest.mark.django_db()
 def test_contestant_admin_detail(admin_client, contestant):
-    path = reverse('admin:app_contestant_change', args=(contestant.id.hex,))
+    path = reverse('admin:app_contestant_change', args=(str(contestant.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestantprivate_admin_detail(admin_client, contestant):
-    public = reverse('admin:app_contestant_change', args=(contestant.id.hex,))
+    public = reverse('admin:app_contestant_change', args=(str(contestant.id),))
     private = reverse('admin:app_contestantprivate_change', args=(contestant.contestantprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
@@ -824,56 +824,56 @@ def test_contestantprivate_admin_detail(admin_client, contestant):
 
 @pytest.mark.django_db()
 def test_convention_admin_detail(admin_client, convention):
-    path = reverse('admin:app_convention_change', args=(convention.id.hex,))
+    path = reverse('admin:app_convention_change', args=(str(convention.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_admin_detail(admin_client, organization):
-    path = reverse('admin:app_entity_change', args=(organization.id.hex,))
+    path = reverse('admin:app_entity_change', args=(str(organization.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_host_admin_detail(admin_client, host):
-    path = reverse('admin:app_host_change', args=(host.id.hex,))
+    path = reverse('admin:app_host_change', args=(str(host.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_membership_admin_detail(admin_client, membership):
-    path = reverse('admin:app_membership_change', args=(membership.id.hex,))
+    path = reverse('admin:app_membership_change', args=(str(membership.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_admin_detail(admin_client, office):
-    path = reverse('admin:app_office_change', args=(office.id.hex,))
+    path = reverse('admin:app_office_change', args=(str(office.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_admin_detail(admin_client, officer):
-    path = reverse('admin:app_officer_change', args=(officer.id.hex,))
+    path = reverse('admin:app_officer_change', args=(str(officer.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performance_admin_detail(admin_client, performance):
-    path = reverse('admin:app_performance_change', args=(performance.id.hex,))
+    path = reverse('admin:app_performance_change', args=(str(performance.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performanceprivate_admin_detail(admin_client, performance):
-    public = reverse('admin:app_performance_change', args=(performance.id.hex,))
+    public = reverse('admin:app_performance_change', args=(str(performance.id),))
     private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
@@ -883,14 +883,14 @@ def test_performanceprivate_admin_detail(admin_client, performance):
 
 @pytest.mark.django_db()
 def test_performer_admin_detail(admin_client, performer):
-    path = reverse('admin:app_performer_change', args=(performer.id.hex,))
+    path = reverse('admin:app_performer_change', args=(str(performer.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_performerprivate_admin_detail(admin_client, performance):
-    public = reverse('admin:app_performance_change', args=(performance.id.hex,))
+    public = reverse('admin:app_performance_change', args=(str(performance.id),))
     private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
@@ -900,49 +900,49 @@ def test_performerprivate_admin_detail(admin_client, performance):
 
 @pytest.mark.django_db()
 def test_person_admin_detail(admin_client, person):
-    path = reverse('admin:app_person_change', args=(person.id.hex,))
+    path = reverse('admin:app_person_change', args=(str(person.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_admin_detail(admin_client, round):
-    path = reverse('admin:app_round_change', args=(round.id.hex,))
+    path = reverse('admin:app_round_change', args=(str(round.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_admin_detail(admin_client, score):
-    path = reverse('admin:app_score_change', args=(score.id.hex,))
+    path = reverse('admin:app_score_change', args=(str(score.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_admin_detail(admin_client, session):
-    path = reverse('admin:app_session_change', args=(session.id.hex,))
+    path = reverse('admin:app_session_change', args=(str(session.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_admin_detail(admin_client, slot):
-    path = reverse('admin:app_slot_change', args=(slot.id.hex,))
+    path = reverse('admin:app_slot_change', args=(str(slot.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_admin_detail(admin_client, song):
-    path = reverse('admin:app_song_change', args=(song.id.hex,))
+    path = reverse('admin:app_song_change', args=(str(song.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_songprivate_admin_detail(admin_client, song):
-    public = reverse('admin:app_song_change', args=(song.id.hex,))
+    public = reverse('admin:app_song_change', args=(str(song.id),))
     private = reverse('admin:app_songprivate_change', args=(song.songprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
@@ -952,20 +952,20 @@ def test_songprivate_admin_detail(admin_client, song):
 
 @pytest.mark.django_db()
 def test_submission_admin_detail(admin_client, submission):
-    path = reverse('admin:app_submission_change', args=(submission.id.hex,))
+    path = reverse('admin:app_submission_change', args=(str(submission.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_admin_detail(admin_client, venue):
-    path = reverse('admin:app_venue_change', args=(venue.id.hex,))
+    path = reverse('admin:app_venue_change', args=(str(venue.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_admin_detail(admin_client, user):
-    path = reverse('admin:app_user_change', args=(user.id.hex,))
+    path = reverse('admin:app_user_change', args=(str(user.id),))
     response = admin_client.get(path)
     assert ok(response)

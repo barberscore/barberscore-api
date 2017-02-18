@@ -118,7 +118,7 @@ class Assignment(TimeStampedModel):
         resource_name = "assignment"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -347,7 +347,7 @@ class Award(TimeStampedModel):
         resource_name = "award"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -489,7 +489,7 @@ class Catalog(TimeStampedModel):
         resource_name = "catalog"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -571,7 +571,7 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
@@ -751,7 +751,7 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1155,7 +1155,7 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -1409,7 +1409,7 @@ class Entity(MPTTModel, TimeStampedModel):
         resource_name = "entity"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -1486,7 +1486,7 @@ class Host(TimeStampedModel):
         resource_name = "host"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1593,7 +1593,7 @@ class Membership(TimeStampedModel):
         resource_name = "membership"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1686,7 +1686,7 @@ class Office(TimeStampedModel):
         resource_name = "office"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     # Permissions
     @staticmethod
@@ -1759,7 +1759,7 @@ class Officer(TimeStampedModel):
         resource_name = "officer"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -1864,7 +1864,7 @@ class Performance(TimeStampedModel):
         resource_name = "performance"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -2258,7 +2258,7 @@ class Performer(TimeStampedModel):
         resource_name = "performer"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -2747,7 +2747,7 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -2882,7 +2882,7 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3212,10 +3212,10 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
-        self.nomen = self.id.hex
+        self.nomen = str(self.id)
         super().save(*args, **kwargs)
 
     # Methods
@@ -3435,7 +3435,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3630,7 +3630,7 @@ class Slot(TimeStampedModel):
         resource_name = "slot"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3720,7 +3720,7 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -4033,7 +4033,7 @@ class Submission(TimeStampedModel):
         resource_name = "submission"
 
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -4155,7 +4155,7 @@ class Venue(TimeStampedModel):
 
     # Methods
     def __str__(self):
-        return self.nomen if self.nomen else self.id.hex
+        return self.nomen if self.nomen else str(self.id)
 
     def save(self, *args, **kwargs):
         self.nomen = self.name

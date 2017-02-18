@@ -49,7 +49,7 @@ def create_account(person):
         },
         "app_metadata": {
             "bhs_id": person.bhs_id,
-            "person_id": person.id.hex,
+            "person_id": str(person.id),
         }
     }
     auth0 = Auth0(
@@ -103,7 +103,7 @@ def export_db_chapters():
         writer.writeheader()
         for chapter in chapters:
             parent = Entity.objects.get(
-                id=chapter['parent_id'].hex,
+                id=str(chapter['parent_id']),
             )
             chapter['parent'] = parent.name
             try:
