@@ -1938,7 +1938,14 @@ class Performance(TimeStampedModel):
         return
 
 
-class PerformanceScore(Performance):
+class PerformancePrivate(TimeStampedModel):
+    performance = AutoOneToOneField(
+        'Performance',
+        on_delete=models.CASCADE,
+        primary_key=True,
+        parent_link=True,
+    )
+
     rank = models.IntegerField(
         null=True,
         blank=True,
@@ -1986,11 +1993,11 @@ class PerformanceScore(Performance):
 
     # Internals
     class JSONAPIMeta:
-        resource_name = "performancescore"
+        resource_name = "performanceprivate"
 
     # Methods
     def __str__(self):
-        return self.id.hex
+        return str(self.pk)
 
     def calculate(self, *args, **kwargs):
         # self.rank = self.calculate_rank()
@@ -2004,66 +2011,66 @@ class PerformanceScore(Performance):
         self.total_score = self.calculate_total_score()
 
     def calculate_rank(self):
-        return self.round.ranking(self.calculate_total_points())
+        return self.performance.round.ranking(self.calculate_total_points())
 
     def calculate_mus_points(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.music,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+            scores__category=self.performance.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_prs_points(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.presentation,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+            scores__category=self.performance.round.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.singing,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+            scores__category=self.performance.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_total_points(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.music,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+            scores__category=self.performance.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_prs_score(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.presentation,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+            scores__category=self.performance.round.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.singing,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+            scores__category=self.performance.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_total_score(self):
-        return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
+        return self.performance.songs.filter(
+            scores__kind=self.performance.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
@@ -2087,9 +2094,9 @@ class PerformanceScore(Performance):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             # return any([
-            #     self.round.session.assignments.filter(
+            #     self.performance.round.session.assignments.filter(
             #         # judge__user=request.user,
-            #         category=self.round.session.assignments.model.category.ADMIN,
+            #         category=self.performance.round.session.assignments.model.category.ADMIN,
             #     ),
             # ])
             return True

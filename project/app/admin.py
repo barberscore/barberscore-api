@@ -40,7 +40,7 @@ from .models import (
     Officer,
     Membership,
     Performance,
-    PerformanceScore,
+    PerformancePrivate,
     Performer,
     PerformerScore,
     Person,
@@ -571,8 +571,8 @@ class PerformanceAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(PerformanceScore)
-class PerformanceScoreAdmin(admin.ModelAdmin):
+@admin.register(PerformancePrivate)
+class PerformancePrivateAdmin(admin.ModelAdmin):
     pass
 
 

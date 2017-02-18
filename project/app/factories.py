@@ -35,7 +35,7 @@ from app.models import (
     Office,
     Officer,
     Performance,
-    PerformanceScore,
+    PerformancePrivate,
     Performer,
     PerformerScore,
     Person,
@@ -266,9 +266,9 @@ class PerformanceFactory(DjangoModelFactory):
         model = Performance
 
 
-class PerformanceScoreFactory(DjangoModelFactory):
+class PerformancePrivateFactory(DjangoModelFactory):
     class Meta:
-        model = PerformanceScore
+        model = PerformancePrivate
 
 
 class PerformerFactory(DjangoModelFactory):

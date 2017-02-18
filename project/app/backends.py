@@ -47,7 +47,7 @@ class PerformerScoreFilterBackend(DRYPermissionFiltersBase):
         return queryset.none()
 
 
-class PerformanceScoreFilterBackend(DRYPermissionFiltersBase):
+class PerformancePrivateFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
         if request.user.is_authenticated():

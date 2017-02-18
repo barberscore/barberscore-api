@@ -27,7 +27,7 @@ from rest_framework_csv.renderers import CSVRenderer
 from .backends import (
     CoalesceFilterBackend,
     ContestPrivateFilterBackend,
-    PerformanceScoreFilterBackend,
+    PerformancePrivateFilterBackend,
     PerformerScoreFilterBackend,
     ScoreFilterBackend,
     SongScoreFilterBackend,
@@ -59,7 +59,7 @@ from .models import (
     Office,
     Officer,
     Performance,
-    PerformanceScore,
+    PerformancePrivate,
     Performer,
     PerformerScore,
     Person,
@@ -91,7 +91,7 @@ from .serializers import (
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
-    PerformanceScoreSerializer,
+    PerformancePrivateSerializer,
     PerformanceSerializer,
     PerformerScoreSerializer,
     PerformerSerializer,
@@ -383,22 +383,21 @@ class PerformanceViewSet(
     resource_name = "performance"
 
 
-class PerformanceScoreViewSet(viewsets.ModelViewSet):
-    queryset = PerformanceScore.objects.select_related(
+class PerformancePrivateViewSet(viewsets.ModelViewSet):
+    queryset = PerformancePrivate.objects.select_related(
     ).prefetch_related(
-        'songs',
     )
-    serializer_class = PerformanceScoreSerializer
+    serializer_class = PerformancePrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
-        PerformanceScoreFilterBackend,
+        PerformancePrivateFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performancescore"
+    resource_name = "performanceprivate"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):

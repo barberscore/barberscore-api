@@ -285,6 +285,13 @@ def test_performance_endpoint_list(api_client, performance):
 
 
 @pytest.mark.django_db()
+def test_performanceprivate_endpoint_list(api_client, performance):
+    path = reverse('performanceprivate-list')
+    response = api_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_performer_endpoint_list(api_client, performer):
     path = reverse('performer-list')
     response = api_client.get(path)
@@ -451,6 +458,16 @@ def test_performance_endpoint_detail(api_client, performance):
     path = reverse('performance-detail', args=(performance.id.hex,))
     response = api_client.get(path)
     assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_performanceprivate_endpoint_detail(api_client, performance):
+    public = reverse('performance-detail', args=(performance.id.hex,))
+    private = reverse('performanceprivate-detail', args=(performance.performanceprivate.pk,))
+    public_response = api_client.get(public)
+    private_response = api_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
 
 
 @pytest.mark.django_db()
@@ -631,6 +648,13 @@ def test_performance_admin_list(admin_client, performance):
 
 
 @pytest.mark.django_db()
+def test_performanceprivate_admin_list(admin_client, performance):
+    path = reverse('admin:app_performanceprivate_changelist')
+    response = admin_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_performer_admin_list(admin_client, performer):
     path = reverse('admin:app_performer_changelist')
     response = admin_client.get(path)
@@ -797,6 +821,16 @@ def test_performance_admin_detail(admin_client, performance):
     path = reverse('admin:app_performance_change', args=(performance.id.hex,))
     response = admin_client.get(path)
     assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_performanceprivate_admin_detail(admin_client, performance):
+    public = reverse('admin:app_performance_change', args=(performance.id.hex,))
+    private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
+    public_response = admin_client.get(public)
+    private_response = admin_client.get(private)
+    assert ok(public_response)
+    assert ok(private_response)
 
 
 @pytest.mark.django_db()

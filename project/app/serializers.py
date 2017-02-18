@@ -23,7 +23,7 @@ from .models import (
     Office,
     Officer,
     Performance,
-    PerformanceScore,
+    PerformancePrivate,
     Performer,
     PerformerScore,
     Person,
@@ -362,11 +362,11 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformanceScoreSerializer(serializers.ModelSerializer):
+class PerformancePrivateSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = PerformanceScore
+        model = PerformancePrivate
         fields = (
             'id',
             'url',
