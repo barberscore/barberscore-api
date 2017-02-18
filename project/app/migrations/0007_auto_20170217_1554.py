@@ -8,17 +8,14 @@ from django.db import migrations
 def forward(apps, schema_editor):
     ContestPrivate = apps.get_model("app", "ContestPrivate")
     ContestScore = apps.get_model("app", "ContestScore")
-    ps = ContestPrivate.objects.all()
-    for p in ps:
-        try:
-            c = ContestScore.objects.get(
-                contest_ptr_id=p.pk
-            )
-        except ContestScore.DoesNotExist:
-            continue
-        if c.champion:
-            p.champion = c.champion
-            p.save()
+    cs = ContestScore.objects.all()
+    for c in cs:
+        t = c.contest_ptr
+        n = ContestPrivate(
+            contest=t,
+            champion=c.champion,
+        )
+        n.save()
 
 
 def reverse(apps, schema_editor):
