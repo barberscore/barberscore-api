@@ -11,6 +11,16 @@ from .models import (
     Award,
     Session,
     User,
+    Contest,
+    ContestPrivate,
+    Performer,
+    PerformerPrivate,
+    Performance,
+    PerformancePrivate,
+    Song,
+    SongPrivate,
+    Contestant,
+    ContestantPrivate,
 )
 
 
@@ -19,48 +29,89 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
     """Create sentinels."""
     if not raw:
         if created:
-                with transaction.atomic():
+            with transaction.atomic():
 
-                    # Add Rounds
-                    i = 1
-                    while i <= instance.num_rounds:
-                        instance.rounds.create(
-                            num=i,
-                            kind=(instance.num_rounds - i) + 1,
-                        )
-                        i += 1
-                    # Add Contests
-                    awards = Award.objects.filter(
-                        entity__hosts__convention=instance.convention,
-                        status=Award.STATUS.active,
+                # Add Rounds
+                i = 1
+                while i <= instance.num_rounds:
+                    instance.rounds.create(
+                        num=i,
+                        kind=(instance.num_rounds - i) + 1,
+                    )
+                    i += 1
+                # Add Contests
+                awards = Award.objects.filter(
+                    entity__hosts__convention=instance.convention,
+                    status=Award.STATUS.active,
+                    kind=instance.kind,
+                )
+                # Add all direct championship awards
+                for award in awards:
+                    instance.contests.create(
+                        award=award,
+                        num_rounds=award.championship_rounds
+                    )
+                # Add Prelims (if necessary)
+                # Check if it's a prelim session
+                if instance.is_prelims:
+                    # Get the "highest" host, excluding the Divisions
+                    host = instance.convention.hosts.filter(
+                        entity__kind__lt=20,
+                        entity__status=10,
+                    ).order_by(
+                        'entity__kind',
+                    ).first()
+                    # Find the primary award of that host entity
+                    prelim = host.entity.parent.awards.get(
+                        is_primary=True,
                         kind=instance.kind,
                     )
-                    # Add all direct championship awards
-                    for award in awards:
-                        instance.contests.create(
-                            award=award,
-                            num_rounds=award.championship_rounds
-                        )
-                    # Add Prelims (if necessary)
-                    # Check if it's a prelim session
-                    if instance.is_prelims:
-                        # Get the "highest" host, excluding the Divisions
-                        host = instance.convention.hosts.filter(
-                            entity__kind__lt=20,
-                            entity__status=10,
-                        ).order_by(
-                            'entity__kind',
-                        ).first()
-                        # Find the primary award of that host entity
-                        prelim = host.entity.parent.awards.get(
-                            is_primary=True,
-                            kind=instance.kind,
-                        )
-                        instance.contests.create(
-                            award=prelim,
-                            num_rounds=prelim.qualifier_rounds,
-                            is_qualifier=True,
-                        )
+                    instance.contests.create(
+                        award=prelim,
+                        num_rounds=prelim.qualifier_rounds,
+                        is_qualifier=True,
+                    )
+
+
+@receiver(post_save, sender=Contest)
+def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create Private Contest."""
+    if not raw:
+        if created:
+            ContestPrivate.objects.create(contest=instance)
+
+
+@receiver(post_save, sender=Contestant)
+def contestant_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create Private Contest."""
+    if not raw:
+        if created:
+            ContestantPrivate.objects.create(contestant=instance)
+
+
+@receiver(post_save, sender=Performer)
+def performer_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create Private Contest."""
+    if not raw:
+        if created:
+            PerformerPrivate.objects.create(performer=instance)
+
+
+@receiver(post_save, sender=Performance)
+def performance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create Private Contest."""
+    if not raw:
+        if created:
+            PerformancePrivate.objects.create(performance=instance)
+
+
+@receiver(post_save, sender=Song)
+def song_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    """Create Private Contest."""
+    if not raw:
+        if created:
+            SongPrivate.objects.create(song=instance)
+
 
 # @receiver(post_save, sender=Performance)
 # def performance_post_save(sender, instance=None, created=False, raw=False, **kwargs):

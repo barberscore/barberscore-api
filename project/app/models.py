@@ -45,7 +45,6 @@ from django.utils.encoding import (
 from .managers import UserManager
 
 from .fields import (
-    AutoOneToOneField,
     OneToOneOrNoneField,
     generate_image_filename,
 )
@@ -621,7 +620,7 @@ class Contest(TimeStampedModel):
 
 
 class ContestPrivate(TimeStampedModel):
-    contest = AutoOneToOneField(
+    contest = models.OneToOneField(
         'Contest',
         on_delete=models.CASCADE,
         primary_key=True,
@@ -816,7 +815,7 @@ class Contestant(TimeStampedModel):
 
 
 class ContestantPrivate(TimeStampedModel):
-    contestant = AutoOneToOneField(
+    contestant = models.OneToOneField(
         'Contestant',
         on_delete=models.CASCADE,
         primary_key=True,
@@ -1939,7 +1938,7 @@ class Performance(TimeStampedModel):
 
 
 class PerformancePrivate(TimeStampedModel):
-    performance = AutoOneToOneField(
+    performance = models.OneToOneField(
         'Performance',
         on_delete=models.CASCADE,
         primary_key=True,
@@ -2319,7 +2318,7 @@ class Performer(TimeStampedModel):
 
 
 class PerformerPrivate(TimeStampedModel):
-    performer = AutoOneToOneField(
+    performer = models.OneToOneField(
         'Performer',
         on_delete=models.CASCADE,
         primary_key=True,
@@ -3764,7 +3763,7 @@ class Song(TimeStampedModel):
 
 
 class SongPrivate(TimeStampedModel):
-    song = AutoOneToOneField(
+    song = models.OneToOneField(
         'Song',
         on_delete=models.CASCADE,
         primary_key=True,
