@@ -1179,8 +1179,8 @@ class Convention(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.hosts.filter(
-                    entity__memberships__officers__office__short_name='DRCJ',
+                self.assignments.filter(
+                    person__user=request.user,
                 ),
             ])
         return False
