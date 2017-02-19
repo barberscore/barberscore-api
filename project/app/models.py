@@ -1053,6 +1053,8 @@ class Convention(TimeStampedModel):
 
     level = models.IntegerField(
         choices=LEVEL,
+        null=True,
+        blank=True,
     )
 
     KIND = Choices(
