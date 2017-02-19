@@ -1151,6 +1151,16 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    entity = models.ForeignKey(
+        'Entity',
+        related_name='conventions',
+        help_text="""
+            The owning entity for the convention.""",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     # Internals
     class JSONAPIMeta:
         resource_name = "convention"

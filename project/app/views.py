@@ -245,6 +245,7 @@ class ConventionViewSet(
 ):
     queryset = Convention.objects.select_related(
         'venue',
+        'entity',
     ).prefetch_related(
         'assignments',
         'hosts',
@@ -269,6 +270,7 @@ class EntityViewSet(viewsets.ModelViewSet):
         'hosts',
         'memberships',
         'performers',
+        'conventions',
     )
     serializer_class = EntitySerializer
     filter_class = EntityFilter
