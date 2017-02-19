@@ -308,6 +308,7 @@ class ConventionAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'status',
+        'entity',
         'level',
         'venue',
         'risers',
@@ -354,7 +355,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = [
-        # 'drcj',
+        'entity',
         'venue',
     ]
 
@@ -519,6 +520,9 @@ class OfficerAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'office__name',
+    ]
+    search_fields = [
+        'nomen',
     ]
 
 
