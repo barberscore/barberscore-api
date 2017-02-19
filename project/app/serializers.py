@@ -210,6 +210,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'season',
+            'kind',
             'panel',
             'risers',
             'year',
@@ -566,9 +567,9 @@ class SessionSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
-        read_only_fields = [
-            'computed_rounds',
-        ]
+        # read_only_fields = [
+        #     'computed_rounds',
+        # ]
 
 
 class SlotSerializer(serializers.ModelSerializer):
