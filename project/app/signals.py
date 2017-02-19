@@ -39,38 +39,38 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
                         kind=(instance.num_rounds - i) + 1,
                     )
                     i += 1
-                # Add Contests
-                awards = Award.objects.filter(
-                    entity__hosts__convention=instance.convention,
-                    status=Award.STATUS.active,
-                    kind=instance.kind,
-                )
-                # Add all direct championship awards
-                for award in awards:
-                    instance.contests.create(
-                        award=award,
-                        num_rounds=award.championship_rounds
-                    )
-                # Add Prelims (if necessary)
-                # Check if it's a prelim session
-                if instance.is_prelims:
-                    # Get the "highest" host, excluding the Divisions
-                    host = instance.convention.hosts.filter(
-                        entity__kind__lt=20,
-                        entity__status=10,
-                    ).order_by(
-                        'entity__kind',
-                    ).first()
-                    # Find the primary award of that host entity
-                    prelim = host.entity.parent.awards.get(
-                        is_primary=True,
-                        kind=instance.kind,
-                    )
-                    instance.contests.create(
-                        award=prelim,
-                        num_rounds=prelim.qualifier_rounds,
-                        is_qualifier=True,
-                    )
+                # # Add Contests
+                # awards = Award.objects.filter(
+                #     entity__hosts__convention=instance.convention,
+                #     status=Award.STATUS.active,
+                #     kind=instance.kind,
+                # )
+                # # Add all direct championship awards
+                # for award in awards:
+                #     instance.contests.create(
+                #         award=award,
+                #         num_rounds=award.championship_rounds
+                #     )
+                # # Add Prelims (if necessary)
+                # # Check if it's a prelim session
+                # if instance.is_prelims:
+                #     # Get the "highest" host, excluding the Divisions
+                #     host = instance.convention.hosts.filter(
+                #         entity__kind__lt=20,
+                #         entity__status=10,
+                #     ).order_by(
+                #         'entity__kind',
+                #     ).first()
+                #     # Find the primary award of that host entity
+                #     prelim = host.entity.parent.awards.get(
+                #         is_primary=True,
+                #         kind=instance.kind,
+                #     )
+                #     instance.contests.create(
+                #         award=prelim,
+                #         num_rounds=prelim.qualifier_rounds,
+                #         is_qualifier=True,
+                #     )
 
 
 @receiver(post_save, sender=Contest)
