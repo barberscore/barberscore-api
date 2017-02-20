@@ -38,6 +38,7 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
+    OfficerFilter,
     PerformerFilter,
     PersonFilter,
     SessionFilter,
@@ -349,7 +350,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = OfficerSerializer
-    filter_class = None
+    filter_class = OfficerFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

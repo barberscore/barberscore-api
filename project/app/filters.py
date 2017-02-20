@@ -8,6 +8,7 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Officer,
     Performer,
     Person,
     Session,
@@ -62,6 +63,9 @@ class ConventionFilter(filters.FilterSet):
             'assignments__person__user': [
                 'exact',
             ],
+            'entity__memberships__officers': [
+                'exact',
+            ],
         }
 
 
@@ -79,6 +83,19 @@ class EntityFilter(filters.FilterSet):
                 'gt',
             ],
             'memberships__person__user': [
+                'exact',
+            ],
+        }
+
+
+class OfficerFilter(filters.FilterSet):
+    class Meta:
+        model = Officer
+        fields = {
+            'membership__person__user': [
+                'exact',
+            ],
+            'office__short_name': [
                 'exact',
             ],
         }
