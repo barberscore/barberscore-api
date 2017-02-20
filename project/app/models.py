@@ -1414,6 +1414,7 @@ class Entity(MPTTModel, TimeStampedModel):
     class MPTTMeta:
         order_insertion_by = [
             'kind',
+            'name',
         ]
 
     class JSONAPIMeta:

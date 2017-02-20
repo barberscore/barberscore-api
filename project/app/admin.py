@@ -369,6 +369,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
 @admin.register(Entity)
 class EntityAdmin(MPTTModelAdmin):
+    mptt_level_indent = 20
     exclude = [
         'level',
     ]
