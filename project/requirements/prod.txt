@@ -1,5 +1,5 @@
 -r base.txt
 
-git+https://github.com/etianen/django-s3-storage.git@master
+django-s3-storage==0.11.1
 waitress==1.0.2
 bugsnag==3.0.0
