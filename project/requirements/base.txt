@@ -1,6 +1,6 @@
 auth0-python==2.0.1
-awscli==1.11.51
-botocore==1.5.14
+awscli==1.11.56
+botocore==1.5.19
 dj-database-url==0.4.2
 django-cors-headers==2.0.2
 django-filter==1.0.1
@@ -8,7 +8,7 @@ django-fsm==2.4.0
 django-model-utils==2.6.1
 django-mptt==0.8.7
 django-timezone-field==2.0
-django==1.10.5
+django==1.10.6
 djangorestframework-csv==2.0.0
 djangorestframework-jsonapi==2.1.1
 djangorestframework-jwt==1.9.0
@@ -18,7 +18,7 @@ drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.8
 nameparser==0.5.1
 Pillow==4.0.0
-psycopg2==2.6.2
+psycopg2==2.7
 python-dateutil==2.6.0
 pytz==2016.10
 ranking==0.3.1
