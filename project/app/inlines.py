@@ -20,6 +20,26 @@ from .models import (
 )
 
 
+class AssignmentInline(admin.TabularInline):
+    model = Assignment
+    fields = [
+        'nomen',
+        'status',
+        'kind',
+        'person',
+        'convention',
+    ]
+    readonly_fields = [
+        'nomen',
+    ]
+    raw_id_fields = [
+        'person',
+        'convention',
+    ]
+    extra = 0
+    show_change_link = True
+
+
 class AwardInline(admin.TabularInline):
     model = Award
     fields = [
@@ -103,25 +123,6 @@ class HostInline(admin.TabularInline):
         'convention',
         'entity',
     ]
-    show_change_link = True
-    extra = 0
-
-
-class AssignmentInline(admin.TabularInline):
-    model = Assignment
-    fields = [
-        'person',
-        'category',
-        'kind',
-        'slot',
-    ]
-    raw_id_fields = [
-        'person',
-    ]
-    ordering = (
-        'kind',
-        'category',
-    )
     show_change_link = True
     extra = 0
 

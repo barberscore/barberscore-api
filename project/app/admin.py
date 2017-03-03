@@ -13,6 +13,7 @@ from .forms import (
 )
 
 from .inlines import (
+    AssignmentInline,
     ContestantInline,
     ContestInline,
     HostInline,
@@ -346,6 +347,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     inlines = [
+        AssignmentInline,
         HostInline,
         SessionInline,
     ]
