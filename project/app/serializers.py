@@ -609,7 +609,6 @@ class SongSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'num',
-            'submission',
             'performance',
             'scores',
             'songprivate',
@@ -657,7 +656,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'holders',
             'performer',
             'catalog',
-            'songs',
             'permissions',
         ]
 
