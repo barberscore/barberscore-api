@@ -63,6 +63,9 @@ class ConventionFilter(filters.FilterSet):
             'assignments__person__user': [
                 'exact',
             ],
+            'assignments__kind': [
+                'exact',
+            ],
             'entity__memberships__officers': [
                 'exact',
             ],

@@ -480,6 +480,13 @@ class MembershipAdmin(admin.ModelAdmin):
         'entity',
         'person',
     ]
+    list_display = [
+        'status',
+        'start_date',
+        'end_date',
+        'entity',
+        'person',
+    ]
     raw_id_fields = [
         'person',
         'entity',
@@ -520,6 +527,10 @@ class OfficerAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'office',
         'membership',
+    ]
+    list_display = [
+        'membership',
+        'office',
     ]
     list_filter = [
         'office__name',
