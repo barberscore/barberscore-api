@@ -12,4 +12,3 @@ The purpose of this project is to provide a simple, mobile-friendly app to track
 
 ## Contributors
 Big thank you to Alexander Boltenko with the Heralds of Harmony in Tampa, FL, who has hand-entered all the data and is keeping things up to date.  Thanks to @russkibass!
-a
