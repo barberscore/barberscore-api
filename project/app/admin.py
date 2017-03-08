@@ -673,7 +673,7 @@ class PerformerPrivateAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     fields = (
         'name',
-        'common_name',
+        # 'common_name',
         'status',
         'kind',
         'birth_date',
@@ -725,9 +725,9 @@ class PersonAdmin(admin.ModelAdmin):
 
     save_on_top = True
 
-    readonly_fields = [
-        'common_name',
-    ]
+    # readonly_fields = [
+    #     'common_name',
+    # ]
 
 
 @admin.register(Round)

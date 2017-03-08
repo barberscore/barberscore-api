@@ -2726,23 +2726,49 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    common_name = models.CharField(
-        max_length=255,
-        blank=True,
-        editable=False,
-    )
+    @property
+    def common_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            nickname = name.nickname
+            if nickname:
+                first = nickname
+            else:
+                first = name.first
+            last = name.last
+            return "{0} {1}".format(first, last)
+        else:
+            return None
 
-    full_name = models.CharField(
-        max_length=255,
-        blank=True,
-        editable=False,
-    )
+    @property
+    def full_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            full = []
+            full.append(name.first)
+            full.append(name.middle)
+            full.append(name.last)
+            full.append(name.suffix)
+            full.append(name.nickname)
+            " ".join(filter(None, full))
+            return full
+        else:
+            return None
 
-    formal_name = models.CharField(
-        max_length=255,
-        blank=True,
-        editable=False,
-    )
+    @property
+    def formal_name(self):
+        if self.name:
+            name = HumanName(self.name)
+            formal = []
+            formal.append(name.title)
+            formal.append(name.first)
+            formal.append(name.middle)
+            formal.append(name.last)
+            formal.append(name.suffix)
+            " ".join(filter(None, formal))
+            return formal
+        else:
+            return None
 
     # Internals
     class JSONAPIMeta:

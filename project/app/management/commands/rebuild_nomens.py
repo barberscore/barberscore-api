@@ -18,7 +18,7 @@ class Command(BaseCommand):
             'Venue',
             'Award',
             'Convention',
-            # Joins,
+            # Joins
             'Assignment',
             'Contest',
             'Contestant',
