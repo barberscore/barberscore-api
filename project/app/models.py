@@ -2750,8 +2750,7 @@ class Person(TimeStampedModel):
             full.append(name.last)
             full.append(name.suffix)
             full.append(name.nickname)
-            " ".join(filter(None, full))
-            return full
+            return " ".join(filter(None, full))
         else:
             return None
 
@@ -2765,8 +2764,7 @@ class Person(TimeStampedModel):
             formal.append(name.middle)
             formal.append(name.last)
             formal.append(name.suffix)
-            " ".join(filter(None, formal))
-            return formal
+            return " ".join(filter(None, formal))
         else:
             return None
 
