@@ -1,5 +1,4 @@
 # Standard Libary
-import base64
 import os
 
 # Third-Party
