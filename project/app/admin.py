@@ -1,6 +1,3 @@
-# Third-Party
-from mptt.admin import MPTTModelAdmin
-
 # Django
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -13,6 +10,7 @@ from .forms import (
 )
 
 from .inlines import (
+    AwardInline,
     AssignmentInline,
     ContestantInline,
     ContestInline,
@@ -370,12 +368,11 @@ class ConventionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Entity)
-class EntityAdmin(MPTTModelAdmin):
+class EntityAdmin(admin.ModelAdmin):
     mptt_level_indent = 20
     exclude = [
         'level',
     ]
-    # fields = '__all__'
     # fields = [
     #     'name',
     #     'status',
@@ -409,32 +406,34 @@ class EntityAdmin(MPTTModelAdmin):
         'nomen',
     ]
 
-    # list_display = [
-    #     'nomen',
-    #     'status',
-    #     'code',
-    #     'short_name',
-    #     'long_name',
-    #     'level',
-    #     'kind',
-    # ]
+    list_display = [
+        'nomen',
+        'status',
+        'code',
+        'short_name',
+        'long_name',
+        # 'level',
+        'kind',
+    ]
 
-    # inlines = [
-    #     AwardInline,
-    #     # OrganizationInline,
-    # ]
+    inlines = [
+        AwardInline,
+        # OrganizationInline,
+    ]
 
-    # readonly_fields = [
-    #     'nomen',
-    # ]
+    readonly_fields = [
+        'nomen',
+    ]
 
     raw_id_fields = [
         'parent',
     ]
 
-    # readonly_fields = [
-    #     'level',
-    # ]
+    ordering = [
+        'level',
+        'kind',
+        'name',
+    ]
 
 
 @admin.register(Host)

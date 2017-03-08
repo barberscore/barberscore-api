@@ -14,10 +14,6 @@ from django_fsm import (
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from mptt.models import (
-    MPTTModel,
-    TreeForeignKey,
-)
 from nameparser import HumanName
 from ranking import Ranking
 from timezone_field import TimeZoneField
@@ -335,7 +331,7 @@ class Award(TimeStampedModel):
     )
 
     # FKs
-    entity = TreeForeignKey(
+    entity = models.ForeignKey(
         'Entity',
         related_name='awards',
         on_delete=models.CASCADE,
@@ -1207,7 +1203,7 @@ class Convention(TimeStampedModel):
         return
 
 
-class Entity(MPTTModel, TimeStampedModel):
+class Entity(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1398,7 +1394,7 @@ class Entity(MPTTModel, TimeStampedModel):
     )
 
     # FKs
-    parent = TreeForeignKey(
+    parent = models.ForeignKey(
         'self',
         null=True,
         blank=True,
@@ -1410,12 +1406,6 @@ class Entity(MPTTModel, TimeStampedModel):
     # Internals
     class Meta:
         verbose_name_plural = 'entities'
-
-    class MPTTMeta:
-        order_insertion_by = [
-            'kind',
-            'name',
-        ]
 
     class JSONAPIMeta:
         resource_name = "entity"
@@ -1482,7 +1472,7 @@ class Host(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    entity = TreeForeignKey(
+    entity = models.ForeignKey(
         'Entity',
         related_name='hosts',
         on_delete=models.CASCADE,
@@ -1583,7 +1573,7 @@ class Membership(TimeStampedModel):
     )
 
     # FKs
-    entity = TreeForeignKey(
+    entity = models.ForeignKey(
         'Entity',
         related_name='memberships',
         on_delete=models.CASCADE,
@@ -2206,7 +2196,7 @@ class Performer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    entity = TreeForeignKey(
+    entity = models.ForeignKey(
         'Entity',
         related_name='performers',
         on_delete=models.CASCADE,

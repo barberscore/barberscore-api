@@ -266,7 +266,9 @@ class ConventionViewSet(
 
 class EntityViewSet(viewsets.ModelViewSet):
     queryset = Entity.objects.select_related(
+        'parent',
     ).prefetch_related(
+        'children',
         'awards',
         'hosts',
         'memberships',

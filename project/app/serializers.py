@@ -1,13 +1,12 @@
 # Third-Party
-import pytz
-import six
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
 
-# Django
-from django.core.exceptions import ValidationError
-
 # Local
+from .fields import (
+    TimezoneField,
+)
+
 from .models import (
     Assignment,
     Award,
@@ -37,17 +36,6 @@ from .models import (
     User,
     Venue,
 )
-
-
-class TimezoneField(serializers.Field):
-    def to_representation(self, obj):
-        return six.text_type(obj)
-
-    def to_internal_value(self, data):
-        try:
-            return pytz.timezone(str(data))
-        except pytz.exceptions.UnknownTimeZoneError:
-            raise ValidationError('Unknown timezone')
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
@@ -254,7 +242,6 @@ class EntitySerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            'lft',
             'parent',
             'children',
             'hosts',
@@ -266,8 +253,6 @@ class EntitySerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'picture',
-            'parent',
-            'children',
         ]
 
 

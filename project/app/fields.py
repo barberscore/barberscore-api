@@ -1,4 +1,11 @@
 import os
+import pytz
+import six
+
+
+# Django
+from django.core.exceptions import ValidationError
+
 
 from django.db import models
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
@@ -6,6 +13,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OneToOneField
 from django.db.transaction import atomic
 from django.utils.deconstruct import deconstructible
+
+from rest_framework_json_api import serializers
 
 
 class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):
@@ -68,3 +77,14 @@ class PathAndRename(object):
         return os.path.join(self.path, filename)
 
 generate_image_filename = PathAndRename()
+
+
+class TimezoneField(serializers.Field):
+    def to_representation(self, obj):
+        return six.text_type(obj)
+
+    def to_internal_value(self, data):
+        try:
+            return pytz.timezone(str(data))
+        except pytz.exceptions.UnknownTimeZoneError:
+            raise ValidationError('Unknown timezone')

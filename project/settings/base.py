@@ -160,7 +160,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_fsm',
     'timezone_field',
-    'mptt',
     'rest_framework',
     'dry_rest_permissions',
     'app',
