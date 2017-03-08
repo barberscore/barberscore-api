@@ -225,7 +225,6 @@ class EntitySerializer(serializers.ModelSerializer):
             'nomen',
             'name',
             'status',
-            'level',
             'kind',
             'age',
             'is_novice',

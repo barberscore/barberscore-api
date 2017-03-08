@@ -369,33 +369,28 @@ class ConventionAdmin(admin.ModelAdmin):
 
 @admin.register(Entity)
 class EntityAdmin(admin.ModelAdmin):
-    mptt_level_indent = 20
-    exclude = [
-        'level',
+    fields = [
+        'name',
+        'status',
+        'parent',
+        'kind',
+        'code',
+        'start_date',
+        'end_date',
+        'short_name',
+        'long_name',
+        'location',
+        # 'representative',
+        # 'spots',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'picture',
+        'description',
+        'notes',
     ]
-    # fields = [
-    #     'name',
-    #     'status',
-    #     'parent',
-    #     'level',
-    #     'kind',
-    #     'code',
-    #     'start_date',
-    #     'end_date',
-    #     'short_name',
-    #     'long_name',
-    #     'location',
-    #     'representative',
-    #     'spots',
-    #     'website',
-    #     'facebook',
-    #     'twitter',
-    #     'email',
-    #     'phone',
-    #     'picture',
-    #     'description',
-    #     'notes',
-    # ]
 
     list_filter = [
         'status',
@@ -412,7 +407,6 @@ class EntityAdmin(admin.ModelAdmin):
         'code',
         'short_name',
         'long_name',
-        # 'level',
         'kind',
     ]
 
@@ -430,7 +424,6 @@ class EntityAdmin(admin.ModelAdmin):
     ]
 
     ordering = [
-        'level',
         'kind',
         'name',
     ]

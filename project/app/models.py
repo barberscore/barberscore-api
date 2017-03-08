@@ -1232,17 +1232,6 @@ class Entity(TimeStampedModel):
         default=STATUS.new,
     )
 
-    LEVEL = Choices(
-        (0, 'organization', 'Organization'),
-        (1, 'district', 'District'),
-        (2, 'division', 'Division'),
-        (3, 'group', 'Group'),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-    )
-
     KIND = Choices(
         ('Organization', [
             (1, 'organization', "Organization"),
