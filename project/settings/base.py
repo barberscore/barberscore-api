@@ -1,11 +1,9 @@
 # Standard Libary
 import base64
-import datetime
 import os
 
 # Third-Party
 import dj_database_url
-import jwt
 
 # Django
 from django.core.exceptions import ImproperlyConfigured
@@ -135,23 +133,17 @@ AUTH0_TOKEN = get_env_variable("AUTH0_TOKEN")
 
 
 # JWT Settings
+JWT_SECRET_KEY = base64.b64decode(
+    AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
+)
+
+
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('email')
 
-
-def jwt_decode(token):
-    return jwt.decode(
-        token,
-        # AUTH0_CLIENT_SECRET,
-        base64.b64decode(
-            AUTH0_CLIENT_SECRET.replace("_", "/").replace("-", "+")
-        ),
-        audience=AUTH0_CLIENT_ID,
-    )
-
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
-    'JWT_DECODE_HANDLER': jwt_decode,
+    'JWT_SECRET_KEY': JWT_SECRET_KEY,
+    'JWT_AUDIENCE': AUTH0_CLIENT_ID,
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
