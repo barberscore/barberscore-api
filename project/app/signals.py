@@ -23,6 +23,8 @@ from .models import (
     ContestantPrivate,
 )
 
+from .utils import get_auth0_token
+
 
 @receiver(post_save, sender=Session)
 def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
@@ -147,14 +149,16 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     if not raw:
         if created:
             if instance.person:
+                token = get_auth0_token()
                 password = User.objects.make_random_password()
                 auth0 = Auth0(
                     settings.AUTH0_DOMAIN,
-                    settings.AUTH0_TOKEN,
+                    token,
                 )
                 payload = {
                     "connection": "Default",
                     "email": instance.email,
+                    "verify_email": False,
                     "password": password,
                     "user_metadata": {
                         "name": instance.person.name
