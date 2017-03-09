@@ -1,6 +1,7 @@
 auth0-python==2.0.1
 awscli==1.11.56
 botocore==1.5.19
+coreapi==2.3.0
 dj-database-url==0.4.2
 django-cors-headers==2.0.2
 django-filter==1.0.1
@@ -11,10 +12,11 @@ django==1.10.6
 djangorestframework-csv==2.0.0
 djangorestframework-jsonapi==2.1.1
 djangorestframework-jwt==1.9.0
-djangorestframework==3.5.4
+djangorestframework==3.6.1
 docraptor==1.2.0
 drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.8
+markdown==2.6.8
 nameparser==0.5.1
 Pillow==4.0.0
 psycopg2==2.7
