@@ -1,5 +1,6 @@
 # Django
 from auth0.v2.management import Auth0
+from auth0.v2.management.rest import Auth0Error
 from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_save
@@ -8,7 +9,7 @@ from django.core.mail import send_mail
 
 # Local
 from .models import (
-    Award,
+    # Award,
     Session,
     User,
     Contest,
@@ -167,7 +168,13 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                         "bhs_id": instance.person.bhs_id
                     }
                 }
-                response = auth0.users.create(payload)
+                try:
+                    response = auth0.users.create(payload)
+                except Auth0Error as e:
+                    if 'The user already exists' in e.message:
+                        return
+                    else:
+                        raise(e)
                 ticket = auth0.tickets.create_pswd_change({"user_id": response['user_id']})
                 send_mail(
                     "Welcome",
