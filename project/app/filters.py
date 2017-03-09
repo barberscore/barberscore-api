@@ -155,6 +155,9 @@ class SessionFilter(filters.FilterSet):
             'convention__assignments__person__user': [
                 'exact',
             ],
+            'convention__assignments__kind': [
+                'exact',
+            ],
         }
 
 
