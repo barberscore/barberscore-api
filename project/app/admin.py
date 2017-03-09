@@ -1053,6 +1053,7 @@ class UserAdmin(BaseUserAdmin):
 
     list_display = [
         'email',
+        'person',
         'is_active',
         'is_staff',
     ]
