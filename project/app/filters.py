@@ -1,5 +1,5 @@
 # Third-Party
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import FilterSet
 
 # Local
 from .models import (
@@ -17,7 +17,7 @@ from .models import (
 )
 
 
-class AwardFilter(filters.FilterSet):
+class AwardFilter(FilterSet):
     class Meta:
         model = Award
         fields = {
@@ -30,7 +30,7 @@ class AwardFilter(filters.FilterSet):
         }
 
 
-class CatalogFilter(filters.FilterSet):
+class CatalogFilter(FilterSet):
     class Meta:
         model = Catalog
         fields = {
@@ -40,7 +40,7 @@ class CatalogFilter(filters.FilterSet):
         }
 
 
-class ContestantFilter(filters.FilterSet):
+class ContestantFilter(FilterSet):
     class Meta:
         model = Contestant
         fields = {
@@ -50,7 +50,7 @@ class ContestantFilter(filters.FilterSet):
         }
 
 
-class ConventionFilter(filters.FilterSet):
+class ConventionFilter(FilterSet):
     class Meta:
         model = Convention
         fields = {
@@ -72,7 +72,7 @@ class ConventionFilter(filters.FilterSet):
         }
 
 
-class EntityFilter(filters.FilterSet):
+class EntityFilter(FilterSet):
     class Meta:
         model = Entity
         fields = {
@@ -94,7 +94,7 @@ class EntityFilter(filters.FilterSet):
         }
 
 
-class OfficerFilter(filters.FilterSet):
+class OfficerFilter(FilterSet):
     class Meta:
         model = Officer
         fields = {
@@ -107,7 +107,7 @@ class OfficerFilter(filters.FilterSet):
         }
 
 
-class PerformerFilter(filters.FilterSet):
+class PerformerFilter(FilterSet):
     class Meta:
         model = Performer
         fields = {
@@ -120,7 +120,7 @@ class PerformerFilter(filters.FilterSet):
         }
 
 
-class PersonFilter(filters.FilterSet):
+class PersonFilter(FilterSet):
     class Meta:
         model = Person
         fields = {
@@ -139,7 +139,7 @@ class PersonFilter(filters.FilterSet):
         }
 
 
-class SessionFilter(filters.FilterSet):
+class SessionFilter(FilterSet):
     class Meta:
         model = Session
         fields = {
@@ -161,7 +161,7 @@ class SessionFilter(filters.FilterSet):
         }
 
 
-class SubmissionFilter(filters.FilterSet):
+class SubmissionFilter(FilterSet):
     class Meta:
         model = Submission
         fields = {
@@ -171,7 +171,7 @@ class SubmissionFilter(filters.FilterSet):
         }
 
 
-class VenueFilter(filters.FilterSet):
+class VenueFilter(FilterSet):
     class Meta:
         model = Venue
         fields = {
