@@ -5,10 +5,6 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/589ea5d10f3d4f003ce97d91/badge.svg?style=flat)](https://www.versioneye.com/user/projects/589ea5d10f3d4f003ce97d91)
 
 
-Score tracker for the Barbershop Harmony Society.
+This is the back-end API that powers what is intended to be the next scoring system for the Barbershop Harmony Society.
 
-## Preface
-The purpose of this project is to provide a simple, mobile-friendly app to track the performances at the International Convention of the BHS.
-
-## Contributors
-Big thank you to Alexander Boltenko with the Heralds of Harmony in Tampa, FL, who has hand-entered all the data and is keeping things up to date.  Thanks to @russkibass!
+The project is in Alpha status; contributors are more than welcome.  Please reach out to @dbinetti if you would like to help.
