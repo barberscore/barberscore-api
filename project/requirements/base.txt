@@ -1,11 +1,11 @@
 auth0-python==2.0.1
-awscli==1.11.56
-botocore==1.5.19
+awscli==1.11.60
+botocore==1.5.23
 coreapi==2.3.0
 dj-database-url==0.4.2
 django-cors-headers==2.0.2
 django-filter==1.0.1
-django-fsm==2.4.0
+django-fsm==2.5.0
 django-model-utils==2.6.1
 django-timezone-field==2.0
 django==1.10.6
