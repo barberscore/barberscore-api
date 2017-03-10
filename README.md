@@ -5,7 +5,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/589ea5d10f3d4f003ce97d91/badge.svg?style=flat)](https://www.versioneye.com/user/projects/589ea5d10f3d4f003ce97d91)
 
 
-Score tracker for the Barbershop Harmony Society. 
+Score tracker for the Barbershop Harmony Society.
 
 ## Preface
 The purpose of this project is to provide a simple, mobile-friendly app to track the performances at the International Convention of the BHS.
