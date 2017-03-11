@@ -183,11 +183,9 @@ class Award(TimeStampedModel):
     )
 
     KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
+        (31, 'quartet', "Quartet"),
+        (32, 'chorus', "Chorus"),
+        (33, 'vlq', "Very Large Quartet"),
     )
 
     kind = models.IntegerField(
@@ -1164,9 +1162,7 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The owning entity for the convention.""",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
     )
 
     # Internals
@@ -3372,11 +3368,9 @@ class Session(TimeStampedModel):
     )
 
     KIND = Choices(
-        (1, 'quartet', 'Quartet',),
-        (2, 'chorus', 'Chorus',),
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
+        (31, 'quartet', "Quartet"),
+        (32, 'chorus', "Chorus"),
+        (33, 'vlq', "Very Large Quartet"),
     )
 
     kind = models.IntegerField(
@@ -3465,11 +3459,6 @@ class Session(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('convention', 'kind',),
-        )
-
     class JSONAPIMeta:
         resource_name = "session"
 
