@@ -126,7 +126,7 @@ class ConventionFactory(DjangoModelFactory):
     end_date = None
     location = ''
     venue = None
-    entity = None
+    entity = SubFactory('app.factories.OrganizationFactory')
 
     class Meta:
         model = Convention
