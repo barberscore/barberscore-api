@@ -194,6 +194,18 @@ class Award(TimeStampedModel):
         choices=KIND,
     )
 
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
+    )
+
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
@@ -3373,6 +3385,18 @@ class Session(TimeStampedModel):
             with the exception being International and Midwinter which hold exclusive
             Youth and Senior sessions respectively.""",
         choices=KIND,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
     )
 
     start_date = models.DateField(
