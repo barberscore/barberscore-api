@@ -56,6 +56,7 @@ class ConventionFilter(FilterSet):
         fields = {
             'status': [
                 'exact',
+                'lt',
             ],
             'year': [
                 'exact',

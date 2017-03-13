@@ -553,6 +553,17 @@ class Contest(TimeStampedModel):
         default=False,
     )
 
+    KIND = Choices(
+        (-10, 'qualifier', 'Qualifier',),
+        (0, 'new', 'New',),
+        (10, 'championship', 'Championship',),
+    )
+
+    kind = FSMIntegerField(
+        choices=KIND,
+        default=KIND.new,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',

@@ -9,6 +9,7 @@ from .models import (
     Contestant,
     Convention,
     Host,
+    Membership,
     Officer,
     Performance,
     Performer,
@@ -63,6 +64,7 @@ class ContestInline(admin.TabularInline):
         'award',
         'session',
         'is_qualifier',
+        'kind',
     ]
     raw_id_fields = [
         'award',
@@ -123,6 +125,25 @@ class HostInline(admin.TabularInline):
         'convention',
         'entity',
     ]
+    show_change_link = True
+    extra = 0
+
+
+class MembershipInline(admin.TabularInline):
+    model = Membership
+    fields = [
+        'person',
+        'entity',
+        'status',
+    ]
+    raw_id_fields = [
+        'person',
+        'entity',
+    ]
+    ordering = (
+        'entity__kind',
+        'entity__name',
+    )
     show_change_link = True
     extra = 0
 

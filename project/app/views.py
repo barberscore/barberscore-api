@@ -272,6 +272,8 @@ class EntityViewSet(viewsets.ModelViewSet):
         'awards',
         'hosts',
         'memberships',
+        'memberships__person',
+        'memberships__person__user',
         'performers',
         'conventions',
     )

@@ -15,6 +15,7 @@ from .inlines import (
     ContestantInline,
     ContestInline,
     HostInline,
+    MembershipInline,
     OfficerInline,
     PerformanceInline,
     PerformerInline,
@@ -230,6 +231,7 @@ class ContestAdmin(admin.ModelAdmin):
         'award',
         'session',
         'is_qualifier',
+        'kind',
     ]
 
     list_display = (
@@ -239,6 +241,7 @@ class ContestAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'kind',
         'award__kind',
         'award__is_primary',
         'is_qualifier',
@@ -668,7 +671,7 @@ class PerformerPrivateAdmin(admin.ModelAdmin):
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    fields = (
+    fields = [
         'name',
         # 'common_name',
         'status',
@@ -689,9 +692,9 @@ class PersonAdmin(admin.ModelAdmin):
         'picture',
         'description',
         'notes',
-    )
+    ]
 
-    list_display = (
+    list_display = [
         'nomen',
         'status',
         'bhs_id',
@@ -700,7 +703,7 @@ class PersonAdmin(admin.ModelAdmin):
         'facebook',
         'twitter',
         'picture',
-    )
+    ]
 
     list_filter = [
         'status',
@@ -710,11 +713,9 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    # inlines = [
-    #     RoleInline,
-    #     MemberInline,
-    #     JudgeInline,
-    # ]
+    inlines = [
+        MembershipInline,
+    ]
 
     search_fields = (
         'nomen',

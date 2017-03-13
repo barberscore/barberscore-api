@@ -130,6 +130,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'is_qualifier',
+            'kind',
             'award',
             'session',
             'contestants',
