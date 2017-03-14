@@ -193,6 +193,7 @@ class Award(TimeStampedModel):
     )
 
     AGE = Choices(
+        (0, 'all', 'All',),
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),
         (30, 'youth', 'Youth',),
@@ -200,8 +201,7 @@ class Award(TimeStampedModel):
 
     age = models.IntegerField(
         choices=AGE,
-        null=True,
-        blank=True,
+        default=AGE.all,
     )
 
     SEASON = Choices(
@@ -1280,6 +1280,7 @@ class Entity(TimeStampedModel):
     )
 
     AGE = Choices(
+        (0, 'all', 'All',),
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),
         (30, 'youth', 'Youth',),
@@ -3393,6 +3394,7 @@ class Session(TimeStampedModel):
     )
 
     AGE = Choices(
+        (0, 'all', 'All',),
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),
         (30, 'youth', 'Youth',),
