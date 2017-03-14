@@ -1479,6 +1479,16 @@ class Host(TimeStampedModel):
         'Convention',
         related_name='hosts',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    session = models.ForeignKey(
+        'Session',
+        related_name='hosts',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     entity = models.ForeignKey(
@@ -1488,11 +1498,6 @@ class Host(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('convention', 'entity',),
-        )
-
     class JSONAPIMeta:
         resource_name = "host"
 
@@ -1503,7 +1508,7 @@ class Host(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.convention,
+                    self.session,
                     self.entity,
                 ]
             )
@@ -3490,6 +3495,21 @@ class Session(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def build_contests(self):
+        hosts = self.hosts.all()
+        for host in hosts:
+            awards = host.entity.awards.filter(
+                status=host.entity.awards.model.STATUS.active,
+                championship_season=self.convention.season,
+                kind=self.kind,
+                age=self.age,
+            )
+            for award in awards:
+                contest = self.contests.create(
+                    award=award,
+                    session=self,
+                )
+                contest.save()
     # def print_oss(self):
     #     payload = {
     #         'id': str(self.pk),

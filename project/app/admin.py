@@ -353,7 +353,6 @@ class ConventionAdmin(admin.ModelAdmin):
 
     inlines = [
         AssignmentInline,
-        HostInline,
         SessionInline,
     ]
 
@@ -440,13 +439,13 @@ class EntityAdmin(admin.ModelAdmin):
 class HostAdmin(admin.ModelAdmin):
     fields = [
         'status',
-        'convention',
+        'session',
     ]
 
     list_display = [
         'nomen',
         'status',
-        'convention',
+        'session',
     ]
 
     list_filter = [
@@ -454,7 +453,7 @@ class HostAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = [
-        'convention',
+        'session',
     ]
 
     ordering = (
@@ -880,6 +879,7 @@ class SessionAdmin(admin.ModelAdmin):
         RoundInline,
         PerformerInline,
         ContestInline,
+        HostInline,
     ]
 
     list_select_related = [

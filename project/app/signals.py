@@ -42,7 +42,9 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
                         kind=(instance.num_rounds - i) + 1,
                     )
                     i += 1
-                # # Add Contests
+                # Add Contests
+                instance.build_contests()
+
                 # awards = Award.objects.filter(
                 #     entity__hosts__convention=instance.convention,
                 #     status=Award.STATUS.active,

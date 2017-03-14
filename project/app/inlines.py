@@ -117,12 +117,12 @@ class ConventionInline(admin.TabularInline):
 class HostInline(admin.TabularInline):
     model = Host
     fields = [
-        'convention',
+        'session',
         'entity',
         'status',
     ]
     raw_id_fields = [
-        'convention',
+        'session',
         'entity',
     ]
     show_change_link = True

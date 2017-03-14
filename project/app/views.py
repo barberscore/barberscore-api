@@ -249,7 +249,6 @@ class ConventionViewSet(
         'entity',
     ).prefetch_related(
         'assignments',
-        'hosts',
     )
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
@@ -290,7 +289,7 @@ class EntityViewSet(viewsets.ModelViewSet):
 
 class HostViewSet(viewsets.ModelViewSet):
     queryset = Host.objects.select_related(
-        'convention',
+        'session',
         'entity',
     ).prefetch_related(
     )
@@ -545,6 +544,7 @@ class SessionViewSet(
         'contests',
         'performers',
         'rounds',
+        'hosts',
     )
     serializer_class = SessionSerializer
     filter_class = SessionFilter

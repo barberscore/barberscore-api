@@ -212,7 +212,7 @@ class QuartetFactory(EntityFactory):
 
 class HostFactory(DjangoModelFactory):
     status = Host.STATUS.new
-    convention = SubFactory('app.factories.ConventionFactory')
+    session = SubFactory('app.factories.SessionFactory')
     entity = SubFactory('app.factories.OrganizationFactory')
 
     class Meta:
