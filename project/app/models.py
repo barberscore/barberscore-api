@@ -1134,6 +1134,12 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    participants = ArrayField(
+        base_field=models.UUIDField(null=True, blank=True),
+        null=True,
+        blank=True,
+    )
+
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))

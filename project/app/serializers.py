@@ -203,6 +203,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'kind',
             'panel',
             'risers',
+            'participants',
             'year',
             'start_date',
             'end_date',
