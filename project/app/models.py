@@ -3470,6 +3470,12 @@ class Session(TimeStampedModel):
         null=True,
     )
 
+    participants = ArrayField(
+        base_field=models.UUIDField(null=True, blank=True),
+        null=True,
+        blank=True,
+    )
+
     # Denormalizations
     # @property
     # def completed_rounds(self):
