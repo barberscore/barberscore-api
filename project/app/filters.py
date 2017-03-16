@@ -82,6 +82,9 @@ class EntityFilter(FilterSet):
                 'lt',
                 'in',
             ],
+            'parent': [
+                'exact',
+            ],
             'nomen': [
                 'icontains',
             ],
