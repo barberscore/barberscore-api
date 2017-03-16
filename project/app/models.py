@@ -45,6 +45,7 @@ from .fields import (
     generate_image_filename,
 )
 
+config = api_apps.get_app_config('app')
 docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 doc_api = docraptor.DocApi()
 
@@ -1936,7 +1937,6 @@ class Performance(TimeStampedModel):
     def verify(self, *args, **kwargs):
         self.performancescore.calculate()
         self.performancescore.save()
-        config = api_apps.get_app_config('app')
         Song = config.get_model('Song')
         songs = Song.objects.filter(
             performance=self,
@@ -3507,11 +3507,24 @@ class Session(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def build_rounds(self):
+        i = 1
+        while i <= self.num_rounds:
+            self.rounds.create(
+                num=i,
+                kind=(self.num_rounds - i) + 1,
+            )
+            i += 1
+        return
+
     def build_contests(self):
-        hosts = self.hosts.all()
-        for host in hosts:
-            awards = host.entity.awards.filter(
-                status=host.entity.awards.model.STATUS.active,
+        Entity = config.get_model('Entity')
+        entities = Entity.objects.filter(
+            pk__in=self.participants,
+        )
+        for entity in entities:
+            awards = entity.awards.filter(
+                status=entity.awards.model.STATUS.active,
                 championship_season=self.convention.season,
                 kind=self.kind,
                 age=self.age,
@@ -3520,6 +3533,7 @@ class Session(TimeStampedModel):
                 contest = self.contests.create(
                     award=award,
                     session=self,
+                    kind=self.contests.model.KIND.championship,
                 )
                 contest.save()
     # def print_oss(self):
