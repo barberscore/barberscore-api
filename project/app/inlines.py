@@ -46,7 +46,7 @@ class AwardInline(admin.TabularInline):
     fields = [
         'name',
         'kind',
-        'championship_rounds',
+        'rounds',
         'size',
         'is_improved',
     ]

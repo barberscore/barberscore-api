@@ -194,7 +194,6 @@ class Award(TimeStampedModel):
     )
 
     AGE = Choices(
-        (0, 'all', 'All',),
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),
         (30, 'youth', 'Youth',),
@@ -202,7 +201,8 @@ class Award(TimeStampedModel):
 
     age = models.IntegerField(
         choices=AGE,
-        default=AGE.all,
+        null=True,
+        blank=True,
     )
 
     SEASON = Choices(
@@ -213,13 +213,7 @@ class Award(TimeStampedModel):
         (9, 'video', 'Video',),
     )
 
-    championship_season = models.IntegerField(
-        choices=SEASON,
-        null=True,
-        blank=True,
-    )
-
-    qualifier_season = models.IntegerField(
+    season = models.IntegerField(
         choices=SEASON,
         null=True,
         blank=True,
@@ -306,14 +300,8 @@ class Award(TimeStampedModel):
         default=False,
     )
 
-    championship_rounds = models.IntegerField(
+    rounds = models.IntegerField(
         help_text="""Number of rounds to determine the championship""",
-    )
-
-    qualifier_rounds = models.IntegerField(
-        help_text="""Number of rounds to qualify for the award.""",
-        null=True,
-        blank=True,
     )
 
     threshold = models.FloatField(
@@ -346,6 +334,15 @@ class Award(TimeStampedModel):
         'Entity',
         related_name='awards',
         on_delete=models.CASCADE,
+    )
+
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
     )
 
     # Internals
@@ -1287,7 +1284,6 @@ class Entity(TimeStampedModel):
     )
 
     AGE = Choices(
-        (0, 'all', 'All',),
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),
         (30, 'youth', 'Youth',),
@@ -3405,7 +3401,6 @@ class Session(TimeStampedModel):
     )
 
     AGE = Choices(
-        (0, 'all', 'All',),
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),
         (30, 'youth', 'Youth',),
@@ -3525,15 +3520,18 @@ class Session(TimeStampedModel):
         for entity in entities:
             awards = entity.awards.filter(
                 status=entity.awards.model.STATUS.active,
-                championship_season=self.convention.season,
+                season=self.convention.season,
                 kind=self.kind,
-                age=self.age,
             )
             for award in awards:
+                if award.parent:
+                    kind = self.contests.model.KIND.qualifier
+                else:
+                    kind = self.contests.model.KIND.championship
                 contest = self.contests.create(
                     award=award,
                     session=self,
-                    kind=self.contests.model.KIND.championship,
+                    kind=kind,
                 )
                 contest.save()
     # def print_oss(self):

@@ -65,16 +65,14 @@ class AwardFactory(DjangoModelFactory):
     name = 'Test Award'
     status = Award.STATUS.active
     kind = Award.KIND.quartet
-    championship_season = Award.SEASON.summer
-    qualifier_season = Award.SEASON.spring
+    season = Award.SEASON.summer
     is_primary = True
     is_improved = False
     is_novice = False
     is_manual = False
     is_multi = True
     is_district_representative = True
-    championship_rounds = 3
-    qualifier_rounds = 2
+    rounds = 3
     threshold = 76
     minimum = 70
     advance = 73
@@ -468,8 +466,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class InternationalQuartetAwardFactory(AwardFactory):
 #     kind = Award.KIND.quartet
-#     championship_season = Award.SEASON.summer
-#     championship_rounds = 3
+#     season = Award.SEASON.summer
+#     rounds = 3
 #     is_primary = True
 #     is_qualification_required = True
 #     qualifier_season = Award.SEASON.spring
@@ -484,8 +482,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class InternationalChorusAwardFactory(AwardFactory):
 #     kind = Award.KIND.chorus
-#     championship_season = Award.SEASON.summer
-#     championship_rounds = 1
+#     season = Award.SEASON.summer
+#     rounds = 1
 #     is_primary = True
 #     is_qualification_required = True
 #     qualifier_season = Award.SEASON.fall
@@ -497,8 +495,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class InternationalSeniorsAwardFactory(AwardFactory):
 #     kind = Award.KIND.seniors
-#     championship_season = Award.SEASON.midwinter
-#     championship_rounds = 1
+#     season = Award.SEASON.midwinter
+#     rounds = 1
 #     is_primary = True
 #     is_qualification_required = True
 #     qualifier_season = Award.SEASON.spring
@@ -510,8 +508,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class InternationalYouthAwardFactory(AwardFactory):
 #     kind = Award.KIND.youth
-#     championship_season = Award.SEASON.summer
-#     championship_rounds = 1
+#     season = Award.SEASON.summer
+#     rounds = 1
 #     is_primary = True
 #     is_qualification_required = True
 #     qualifier_season = Award.SEASON.spring
@@ -526,8 +524,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DistrictQuartetAwardFactory(AwardFactory):
 #     kind = Award.KIND.quartet
-#     championship_season = Award.SEASON.fall
-#     championship_rounds = 2
+#     season = Award.SEASON.fall
+#     rounds = 2
 #     is_primary = True
 #     # is_qualification_required = True
 #     # qualifier_season = Award.SEASON.spring
@@ -542,8 +540,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DistrictChorusAwardFactory(AwardFactory):
 #     kind = Award.KIND.chorus
-#     championship_season = Award.SEASON.spring
-#     championship_rounds = 1
+#     season = Award.SEASON.spring
+#     rounds = 1
 #     is_primary = True
 #     # is_qualification_required = True
 #     # qualifier_season = Award.SEASON.fall
@@ -555,8 +553,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DistrictSeniorsAwardFactory(AwardFactory):
 #     kind = Award.KIND.seniors
-#     championship_season = Award.SEASON.fall
-#     championship_rounds = 1
+#     season = Award.SEASON.fall
+#     rounds = 1
 #     is_primary = True
 #     # is_qualification_required = True
 #     # qualifier_season = Award.SEASON.spring
@@ -568,8 +566,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DistrictYouthAwardFactory(AwardFactory):
 #     kind = Award.KIND.youth
-#     championship_season = Award.SEASON.fall
-#     championship_rounds = 1
+#     season = Award.SEASON.fall
+#     rounds = 1
 #     is_primary = True
 #     # is_qualification_required = True
 #     # qualifier_season = Award.SEASON.spring
@@ -584,8 +582,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DivisionQuartetAwardFactory(AwardFactory):
 #     kind = Award.KIND.quartet
-#     championship_season = Award.SEASON.spring
-#     championship_rounds = 2
+#     season = Award.SEASON.spring
+#     rounds = 2
 #     is_primary = True
 #     is_qualification_required = False
 #     organization = SubFactory(
@@ -595,8 +593,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DivisionChorusAwardFactory(AwardFactory):
 #     kind = Award.KIND.chorus
-#     championship_season = Award.SEASON.spring
-#     championship_rounds = 1
+#     season = Award.SEASON.spring
+#     rounds = 1
 #     is_primary = True
 #     is_qualification_required = False
 #     organization = SubFactory(
@@ -606,8 +604,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DivisionSeniorsAwardFactory(AwardFactory):
 #     kind = Award.KIND.seniors
-#     championship_season = Award.SEASON.spring
-#     championship_rounds = 1
+#     season = Award.SEASON.spring
+#     rounds = 1
 #     is_primary = True
 #     is_qualification_required = False
 #     organization = SubFactory(
@@ -617,8 +615,8 @@ class AdminFactory(DjangoModelFactory):
 
 # class DivisionYouthAwardFactory(AwardFactory):
 #     kind = Award.KIND.youth
-#     championship_season = Award.SEASON.spring
-#     championship_rounds = 1
+#     season = Award.SEASON.spring
+#     rounds = 1
 #     is_primary = True
 #     is_qualification_required = False
 #     organization = SubFactory(
