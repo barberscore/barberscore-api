@@ -3534,6 +3534,17 @@ class Session(TimeStampedModel):
                     kind=kind,
                 )
                 contest.save()
+        try:
+            self.primary = self.contests.filter(
+                award__is_primary=True,
+            ).order_by(
+                'award__entity__kind',
+                'award__entity__age',
+            ).first()
+            self.save()
+        except self.contests.model.DoesNotExist:
+            log.error("No Primary: {0}".format(self))
+
     # def print_oss(self):
     #     payload = {
     #         'id': str(self.pk),
