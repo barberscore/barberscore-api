@@ -270,6 +270,11 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    is_qualifier = models.BooleanField(
+        help_text="""Qualificationn award.""",
+        default=False,
+    )
+
     is_primary = models.BooleanField(
         help_text="""The primary award; requires qualification.""",
         default=False,
