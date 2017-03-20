@@ -37,6 +37,8 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
                 instance.build_rounds()
                 # Add Contests
                 instance.build_contests()
+                # Add Contests
+                instance.build_primary()
 
 
 @receiver(post_save, sender=Contest)

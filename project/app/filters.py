@@ -24,7 +24,25 @@ class AwardFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'entity__hosts__convention': [
+            'is_qualifier': [
+                'exact',
+            ],
+            'kind': [
+                'exact',
+            ],
+            'season': [
+                'exact',
+            ],
+            'entity': [
+                'exact',
+            ],
+            'entity__parent': [
+                'exact',
+            ],
+            'entity__name': [
+                'exact',
+            ],
+            'entity__kind': [
                 'exact',
             ],
         }
@@ -77,6 +95,9 @@ class EntityFilter(FilterSet):
     class Meta:
         model = Entity
         fields = {
+            'id': [
+                'exact',
+            ],
             'kind': [
                 'exact',
                 'lt',

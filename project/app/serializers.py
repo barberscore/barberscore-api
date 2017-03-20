@@ -74,6 +74,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'size_range',
             'scope',
             'scope_range',
+            'is_qualifier',
             'is_primary',
             'is_improved',
             'is_novice',

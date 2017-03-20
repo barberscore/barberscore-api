@@ -3529,7 +3529,7 @@ class Session(TimeStampedModel):
                 kind=self.kind,
             )
             for award in awards:
-                if award.parent:
+                if award.is_qualifier:
                     kind = self.contests.model.KIND.qualifier
                 else:
                     kind = self.contests.model.KIND.championship
@@ -3539,12 +3539,15 @@ class Session(TimeStampedModel):
                     kind=kind,
                 )
                 contest.save()
+
+    def build_primary(self):
         try:
-            self.primary = self.contests.filter(
-                award__is_primary=True,
+            self.primary = self.contests.all(
             ).order_by(
                 'award__entity__kind',
-                'award__entity__age',
+                '-award__age',
+                'award__size',
+                'award__scope',
             ).first()
             self.save()
         except self.contests.model.DoesNotExist:
