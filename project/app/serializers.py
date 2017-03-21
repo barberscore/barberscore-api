@@ -17,7 +17,6 @@ from .models import (
     ContestPrivate,
     Convention,
     Entity,
-    Host,
     Membership,
     Office,
     Officer,
@@ -243,7 +242,6 @@ class EntitySerializer(serializers.ModelSerializer):
             'description',
             'parent',
             # 'children',
-            # 'hosts',
             # 'conventions',
             # 'memberships',
             # 'performers',
@@ -253,22 +251,6 @@ class EntitySerializer(serializers.ModelSerializer):
         read_only_fields = [
             'picture',
         ]
-
-
-class HostSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Host
-        fields = (
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'session',
-            'entity',
-            'permissions',
-        )
 
 
 class MembershipSerializer(serializers.ModelSerializer):
@@ -541,7 +523,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'end_date',
             'num_rounds',
             'panel_size',
-            'participants',
             'cursor',
             'current',
             'primary',

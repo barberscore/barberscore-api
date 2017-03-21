@@ -8,7 +8,6 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Host,
     Membership,
     Officer,
     Performance,
@@ -109,21 +108,6 @@ class ConventionInline(admin.TabularInline):
     )
     readonly_fields = [
         'nomen',
-    ]
-    show_change_link = True
-    extra = 0
-
-
-class HostInline(admin.TabularInline):
-    model = Host
-    fields = [
-        'session',
-        'entity',
-        'status',
-    ]
-    raw_id_fields = [
-        'session',
-        'entity',
     ]
     show_change_link = True
     extra = 0
@@ -245,7 +229,6 @@ class SessionInline(admin.TabularInline):
         'kind',
         'age',
         'num_rounds',
-        'participants',
     ]
     raw_id_fields = [
         'convention',

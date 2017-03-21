@@ -17,7 +17,6 @@ from app.factories import (
     ContestFactory,
     ConventionFactory,
     DistrictFactory,
-    HostFactory,
     MembershipFactory,
     OfficeFactory,
     OfficerFactory,
@@ -87,11 +86,6 @@ def contestant():
 @pytest.fixture
 def convention():
     return ConventionFactory()
-
-
-@pytest.fixture
-def host():
-    return HostFactory()
 
 
 @pytest.fixture
@@ -245,13 +239,6 @@ def test_convention_endpoint_list(api_client, convention):
 @pytest.mark.django_db()
 def test_entity_endpoint_list(api_client, organization):
     path = reverse('entity-list')
-    response = api_client.get(path)
-    assert ok(response)
-
-
-@pytest.mark.django_db()
-def test_host_endpoint_list(api_client, host):
-    path = reverse('host-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -435,13 +422,6 @@ def test_convention_endpoint_detail(api_client, convention):
 @pytest.mark.django_db()
 def test_entity_endpoint_detail(api_client, organization):
     path = reverse('entity-detail', args=(str(organization.id),))
-    response = api_client.get(path)
-    assert ok(response)
-
-
-@pytest.mark.django_db()
-def test_host_endpoint_detail(api_client, host):
-    path = reverse('host-detail', args=(str(host.id),))
     response = api_client.get(path)
     assert ok(response)
 
@@ -647,13 +627,6 @@ def test_entity_admin_list(admin_client, organization):
 
 
 @pytest.mark.django_db()
-def test_host_admin_list(admin_client, host):
-    path = reverse('admin:app_host_changelist')
-    response = admin_client.get(path)
-    assert ok(response)
-
-
-@pytest.mark.django_db()
 def test_membership_admin_list(admin_client, membership):
     path = reverse('admin:app_membership_changelist')
     response = admin_client.get(path)
@@ -832,13 +805,6 @@ def test_convention_admin_detail(admin_client, convention):
 @pytest.mark.django_db()
 def test_entity_admin_detail(admin_client, organization):
     path = reverse('admin:app_entity_change', args=(str(organization.id),))
-    response = admin_client.get(path)
-    assert ok(response)
-
-
-@pytest.mark.django_db()
-def test_host_admin_detail(admin_client, host):
-    path = reverse('admin:app_host_change', args=(str(host.id),))
     response = admin_client.get(path)
     assert ok(response)
 

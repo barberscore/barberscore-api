@@ -14,7 +14,6 @@ from .inlines import (
     AssignmentInline,
     ContestantInline,
     ContestInline,
-    HostInline,
     MembershipInline,
     OfficerInline,
     PerformanceInline,
@@ -35,7 +34,6 @@ from .models import (
     ContestantPrivate,
     Convention,
     Entity,
-    Host,
     Office,
     Officer,
     Membership,
@@ -428,40 +426,6 @@ class EntityAdmin(admin.ModelAdmin):
     ordering = [
         'kind',
         'name',
-    ]
-
-
-@admin.register(Host)
-class HostAdmin(admin.ModelAdmin):
-    fields = [
-        'status',
-        'session',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-        'session',
-    ]
-
-    list_filter = [
-        'status',
-    ]
-
-    raw_id_fields = [
-        'session',
-    ]
-
-    ordering = (
-        'nomen',
-    )
-
-    search_fields = [
-        'nomen',
-    ]
-
-    readonly_fields = [
-        'nomen',
     ]
 
 
@@ -875,7 +839,6 @@ class SessionAdmin(admin.ModelAdmin):
         RoundInline,
         PerformerInline,
         ContestInline,
-        HostInline,
     ]
 
     list_select_related = [

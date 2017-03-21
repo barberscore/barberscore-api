@@ -55,7 +55,6 @@ from .models import (
     ContestPrivate,
     Convention,
     Entity,
-    Host,
     Membership,
     Office,
     Officer,
@@ -87,7 +86,6 @@ from .serializers import (
     ContestSerializer,
     ConventionSerializer,
     EntitySerializer,
-    HostSerializer,
     MembershipSerializer,
     OfficeCSVSerializer,
     OfficerSerializer,
@@ -269,7 +267,6 @@ class EntityViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         # 'children',
         'awards',
-        # 'hosts',
         # 'memberships',
         # 'performers',
         # 'conventions',
@@ -285,25 +282,6 @@ class EntityViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "entity"
-
-
-class HostViewSet(viewsets.ModelViewSet):
-    queryset = Host.objects.select_related(
-        'session',
-        'entity',
-    ).prefetch_related(
-    )
-    serializer_class = HostSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "host"
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -544,7 +522,6 @@ class SessionViewSet(
         'contests',
         'performers',
         'rounds',
-        'hosts',
     )
     serializer_class = SessionSerializer
     filter_class = SessionFilter

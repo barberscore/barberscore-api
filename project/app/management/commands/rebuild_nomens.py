@@ -22,7 +22,6 @@ class Command(BaseCommand):
             'Assignment',
             'Contest',
             'Contestant',
-            'Host',
             'Membership',
             'Officer',
             'Performance',

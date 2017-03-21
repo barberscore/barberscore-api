@@ -12,7 +12,6 @@ from .views import (
     ContestViewSet,
     ConventionViewSet,
     EntityViewSet,
-    HostViewSet,
     MembershipViewSet,
     OfficerViewSet,
     OfficeViewCSV,
@@ -45,7 +44,6 @@ router.register(r'contestant', ContestantViewSet)
 router.register(r'contestantprivate', ContestantPrivateViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entity', EntityViewSet)
-router.register(r'host', HostViewSet)
 router.register(r'assignment', AssignmentViewSet)
 router.register(r'membership', MembershipViewSet)
 router.register(r'office', OfficeViewSet)

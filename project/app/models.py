@@ -1137,12 +1137,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    participants = ArrayField(
-        base_field=models.UUIDField(null=True, blank=True),
-        null=True,
-        blank=True,
-    )
-
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
@@ -1455,94 +1449,6 @@ class Entity(TimeStampedModel):
                 self.memberships.filter(
                     officers__office__short_name='DRCJ'
                 )
-            ])
-        return False
-
-
-class Host(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    nomen = models.CharField(
-        max_length=500,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = models.IntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    # FKs
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='hosts',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='hosts',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='hosts',
-        on_delete=models.CASCADE,
-    )
-
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "host"
-
-    def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.session,
-                    self.entity,
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
             ])
         return False
 
@@ -3470,12 +3376,6 @@ class Session(TimeStampedModel):
         null=True,
     )
 
-    participants = ArrayField(
-        base_field=models.UUIDField(null=True, blank=True),
-        null=True,
-        blank=True,
-    )
-
     # Denormalizations
     # @property
     # def completed_rounds(self):
@@ -3518,27 +3418,7 @@ class Session(TimeStampedModel):
         return
 
     def build_contests(self):
-        Entity = config.get_model('Entity')
-        entities = Entity.objects.filter(
-            pk__in=self.participants,
-        )
-        for entity in entities:
-            awards = entity.awards.filter(
-                status=entity.awards.model.STATUS.active,
-                season=self.convention.season,
-                kind=self.kind,
-            )
-            for award in awards:
-                if award.is_qualifier:
-                    kind = self.contests.model.KIND.qualifier
-                else:
-                    kind = self.contests.model.KIND.championship
-                contest = self.contests.create(
-                    award=award,
-                    session=self,
-                    kind=kind,
-                )
-                contest.save()
+        pass
 
     def build_primary(self):
         try:
