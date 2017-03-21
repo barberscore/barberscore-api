@@ -125,6 +125,7 @@ JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
 
 # Auth0 Settings:
+# AUTH0_PUBLIC_KEY = get_env_variable("AUTH0_PUBLIC_KEY")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
@@ -142,6 +143,8 @@ JWT_AUTH = {
     'JWT_AUDIENCE': AUTH0_CLIENT_ID,
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    # 'JWT_PUBLIC_KEY': file,
+    # 'JWT_ALGORITHM': 'RS256',
 }
 
 #  Docraptor
