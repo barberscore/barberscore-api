@@ -35,10 +35,10 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
             with transaction.atomic():
                 # Add Rounds
                 instance.build_rounds()
-                # Add Contests
-                instance.build_contests()
-                # Add Contests
-                instance.build_primary()
+                # # Add Contests
+                # instance.build_contests()
+                # # Add Contests
+                # instance.build_primary()
 
 
 @receiver(post_save, sender=Contest)
