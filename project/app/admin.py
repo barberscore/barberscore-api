@@ -314,6 +314,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'risers',
         'start_date',
         'end_date',
+        'panel',
         'year',
         'season',
     )

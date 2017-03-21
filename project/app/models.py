@@ -1103,7 +1103,6 @@ class Convention(TimeStampedModel):
     )
 
     PANEL = Choices(
-        (0, 'unknown', "Unknown"),
         (1, 'single', "Single"),
         (2, 'double', "Double"),
         (3, 'triple', "Triple"),
@@ -1113,7 +1112,8 @@ class Convention(TimeStampedModel):
 
     panel = models.IntegerField(
         choices=PANEL,
-        default=PANEL.unknown,
+        null=True,
+        blank=True,
     )
 
     RISERS = [
@@ -1132,7 +1132,10 @@ class Convention(TimeStampedModel):
     ]
 
     risers = ArrayField(
-        base_field=models.IntegerField(null=True, blank=True),
+        base_field=models.IntegerField(
+            null=True,
+            blank=True
+        ),
         null=True,
         blank=True,
     )
