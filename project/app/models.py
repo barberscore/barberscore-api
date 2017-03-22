@@ -1222,12 +1222,20 @@ class Convention(TimeStampedModel):
         return False
 
     # Transitions
+    @transition(field=status, source='*', target=STATUS.listed)
+    def list_fsm(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.opened)
+    def open_fsm(self, *args, **kwargs):
+        return
+
     @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
+    def start_fsm(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    def finish_fsm(self, *args, **kwargs):
         return
 
 
