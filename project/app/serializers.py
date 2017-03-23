@@ -460,44 +460,6 @@ class PersonSerializer(serializers.ModelSerializer):
         ]
 
 
-class QuartetSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Entity
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'name',
-            'status',
-            'kind',
-            'age',
-            'is_novice',
-            'short_name',
-            'long_name',
-            'code',
-            'start_date',
-            'end_date',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'picture',
-            'description',
-            'parent',
-            'children',
-            'memberships',
-            'performers',
-            'permissions',
-        ]
-        read_only_fields = [
-            'picture',
-        ]
-
-
 class RoundSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()

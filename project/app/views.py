@@ -95,7 +95,6 @@ from .serializers import (
     PerformerPrivateSerializer,
     PerformerSerializer,
     PersonSerializer,
-    QuartetSerializer,
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
@@ -468,31 +467,6 @@ class PersonViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_201_CREATED, headers={'Location': person.picture.url})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class QuartetViewSet(viewsets.ModelViewSet):
-    queryset = Entity.objects.select_related(
-        'parent',
-    ).filter(
-        kind=Entity.KIND.quartet,
-    ).prefetch_related(
-        'children',
-        # 'awards',
-        'memberships',
-        'performers',
-        # 'conventions',
-    )
-    serializer_class = QuartetSerializer
-    filter_class = EntityFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "quartet"
 
 
 class RoundViewSet(
