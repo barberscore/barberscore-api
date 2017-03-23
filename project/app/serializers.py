@@ -1,7 +1,7 @@
 # Third-Party
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
-# from rest_framework_json_api.relations import ResourceRelatedField
+from rest_framework_json_api.relations import ResourceRelatedField
 
 # Local
 from .fields import (
@@ -314,9 +314,15 @@ class OfficerSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
+    parent = ResourceRelatedField(
+        queryset=Entity.objects,
+        # related_link_view_name='organization-detail',
+        # related_link_url_kwarg='organization_pk',
+        # self_link_view_name='organization-detail'
+    )
+
     class Meta:
         model = Entity
-        resource_name = 'organization'
         fields = [
             'id',
             'url',
@@ -339,12 +345,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            # 'parent',
-            # 'children',
-            'awards',
+            'parent',
+            'children',
             'conventions',
             # 'memberships',
             # 'performers',
+            'awards',
             'permissions',
         ]
         read_only_fields = [
@@ -507,7 +513,6 @@ class QuartetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Entity
-        resource_name = 'quartet'
         fields = [
             'id',
             'url',
@@ -530,8 +535,8 @@ class QuartetSerializer(serializers.ModelSerializer):
             'phone',
             'picture',
             'description',
-            # 'parent',
-            # 'children',
+            'parent',
+            'children',
             # 'awards',
             # 'conventions',
             'memberships',
