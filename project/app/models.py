@@ -1432,8 +1432,8 @@ class Entity(TimeStampedModel):
     class Meta:
         verbose_name_plural = 'entities'
 
-    # class JSONAPIMeta:
-    #     resource_name = "entity"
+    class JSONAPIMeta:
+        resource_name = "entity"
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)

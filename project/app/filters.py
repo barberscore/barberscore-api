@@ -132,16 +132,6 @@ class OfficerFilter(FilterSet):
         }
 
 
-class OrganizationFilter(FilterSet):
-    class Meta:
-        model = Entity
-        fields = {
-            'memberships__person__user': [
-                'exact',
-            ],
-        }
-
-
 class PerformerFilter(FilterSet):
     class Meta:
         model = Performer
