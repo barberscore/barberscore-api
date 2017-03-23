@@ -128,7 +128,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "assignment"
 
 
 class AwardViewSet(viewsets.ModelViewSet):
@@ -147,7 +146,6 @@ class AwardViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "award"
 
 
 class CatalogViewSet(viewsets.ModelViewSet):
@@ -165,7 +163,6 @@ class CatalogViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "catalog"
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -185,7 +182,6 @@ class ContestViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "contest"
 
 
 class ContestPrivateViewSet(viewsets.ModelViewSet):
@@ -202,7 +198,6 @@ class ContestPrivateViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "contestprivate"
 
 
 class ContestantViewSet(viewsets.ModelViewSet):
@@ -221,7 +216,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "contestant"
 
 
 class ContestantPrivateViewSet(viewsets.ModelViewSet):
@@ -238,7 +232,6 @@ class ContestantPrivateViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "contestantprivate"
 
 
 class ConventionViewSet(
@@ -261,7 +254,6 @@ class ConventionViewSet(
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "convention"
 
 
 class EntityViewSet(viewsets.ModelViewSet):
@@ -284,7 +276,6 @@ class EntityViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    # resource_name = "entity"
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -304,7 +295,6 @@ class MembershipViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "membership"
 
 
 class OfficeViewSet(viewsets.ModelViewSet):
@@ -322,7 +312,6 @@ class OfficeViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "office"
 
 
 class OfficerViewSet(viewsets.ModelViewSet):
@@ -341,7 +330,6 @@ class OfficerViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "officer"
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -366,7 +354,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "organization"
+    resource_name = 'organization'
 
 
 class PerformanceViewSet(
@@ -390,7 +378,6 @@ class PerformanceViewSet(
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performance"
 
 
 class PerformancePrivateViewSet(viewsets.ModelViewSet):
@@ -407,7 +394,6 @@ class PerformancePrivateViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performanceprivate"
 
 
 class PerformerViewSet(viewsets.ModelViewSet):
@@ -435,7 +421,6 @@ class PerformerViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performer"
 
 
 class PerformerPrivateViewSet(viewsets.ModelViewSet):
@@ -452,7 +437,6 @@ class PerformerPrivateViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performerprivate"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -479,7 +463,6 @@ class PersonViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "person"
 
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
@@ -519,7 +502,6 @@ class QuartetViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "quartet"
 
 
 class RoundViewSet(
@@ -543,7 +525,6 @@ class RoundViewSet(
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "round"
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -562,7 +543,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "score"
 
 
 class SessionViewSet(
@@ -586,7 +566,6 @@ class SessionViewSet(
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "session"
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -606,7 +585,6 @@ class SongViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "song"
 
 
 class SongPrivateViewSet(viewsets.ModelViewSet):
@@ -623,7 +601,6 @@ class SongPrivateViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "songprivate"
 
 
 class SlotViewSet(viewsets.ModelViewSet):
@@ -642,7 +619,6 @@ class SlotViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "slot"
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -662,7 +638,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "submission"
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -680,7 +655,6 @@ class VenueViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "venue"
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -698,7 +672,6 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "user"
 
     @list_route(methods=['get'], permission_classes=[AllowAny])
     def me(self, request):
