@@ -16,6 +16,7 @@ from .views import (
     OfficerViewSet,
     OfficeViewCSV,
     OfficeViewSet,
+    OrganizationViewSet,
     PerformancePrivateViewSet,
     PerformanceViewSet,
     PerformerPrivateViewSet,
@@ -49,12 +50,13 @@ router.register(r'assignment', AssignmentViewSet)
 router.register(r'membership', MembershipViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
+router.register(r'organization', OrganizationViewSet, base_name='organization')
 router.register(r'performance', PerformanceViewSet)
 router.register(r'performanceprivate', PerformancePrivateViewSet)
 router.register(r'performer', PerformerViewSet)
 router.register(r'performerprivate', PerformerPrivateViewSet)
 router.register(r'person', PersonViewSet)
-router.register(r'quartet', QuartetViewSet)
+router.register(r'quartet', QuartetViewSet, base_name='quartet')
 router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)

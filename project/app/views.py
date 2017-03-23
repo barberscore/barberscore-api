@@ -39,6 +39,7 @@ from .filters import (
     ConventionFilter,
     EntityFilter,
     OfficerFilter,
+    OrganizationFilter,
     PerformerFilter,
     PersonFilter,
     SessionFilter,
@@ -90,6 +91,7 @@ from .serializers import (
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
+    OrganizationSerializer,
     PerformancePrivateSerializer,
     PerformanceSerializer,
     PerformerPrivateSerializer,
@@ -282,7 +284,7 @@ class EntityViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "entity"
+    # resource_name = "entity"
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -340,6 +342,31 @@ class OfficerViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "officer"
+
+
+class OrganizationViewSet(viewsets.ModelViewSet):
+    queryset = Entity.objects.select_related(
+        'parent',
+    ).filter(
+        kind__lt=30,
+    ).prefetch_related(
+        'children',
+        'awards',
+        # 'memberships',
+        # 'performers',
+        'conventions',
+    )
+    serializer_class = OrganizationSerializer
+    filter_class = OrganizationFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "organization"
 
 
 class PerformanceViewSet(
