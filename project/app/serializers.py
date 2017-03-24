@@ -243,8 +243,8 @@ class EntitySerializer(serializers.ModelSerializer):
             'parent',
             # 'children',
             # 'conventions',
-            # 'memberships',
-            # 'performers',
+            'memberships',
+            'performers',
             'awards',
             'permissions',
         ]
