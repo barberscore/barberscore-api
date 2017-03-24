@@ -821,10 +821,9 @@ class SessionAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'age',
-        'convention__level',
+        'convention__entity__kind',
         'convention__season',
         'convention__year',
-        # 'convention__organization',
     )
 
     raw_id_fields = (
