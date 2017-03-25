@@ -140,11 +140,11 @@ class OfficerInline(admin.TabularInline):
     model = Officer
     fields = [
         'office',
-        'membership',
+        'person',
     ]
     raw_id_fields = [
         'office',
-        'membership',
+        'person',
     ]
     show_change_link = True
     extra = 0

@@ -85,9 +85,6 @@ class ConventionFilter(FilterSet):
             'assignments__kind': [
                 'exact',
             ],
-            'entity__memberships__officers': [
-                'exact',
-            ],
         }
 
 
@@ -113,9 +110,6 @@ class EntityFilter(FilterSet):
                 'exact',
                 'gt',
             ],
-            'memberships__person__user': [
-                'exact',
-            ],
         }
 
 
@@ -123,9 +117,6 @@ class OfficerFilter(FilterSet):
     class Meta:
         model = Officer
         fields = {
-            'membership__person__user': [
-                'exact',
-            ],
             'office__short_name': [
                 'exact',
             ],
@@ -138,9 +129,6 @@ class PerformerFilter(FilterSet):
         fields = {
             'nomen': [
                 'icontains',
-            ],
-            'entity__memberships__person__user': [
-                'exact',
             ],
         }
 
@@ -156,9 +144,6 @@ class PersonFilter(FilterSet):
                 'exact',
             ],
             'user': [
-                'exact',
-            ],
-            'memberships__officers__office__kind': [
                 'exact',
             ],
         }

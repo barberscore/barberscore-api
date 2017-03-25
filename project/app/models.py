@@ -1692,8 +1692,8 @@ class Officer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    membership = models.ForeignKey(
-        'Membership',
+    person = models.ForeignKey(
+        'Person',
         related_name='officers',
         on_delete=models.CASCADE,
     )
@@ -1710,7 +1710,7 @@ class Officer(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.office,
-                    self.membership,
+                    self.person,
                 ]
             )
         )

@@ -268,7 +268,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             'end_date',
             'entity',
             'person',
-            'officers',
             'permissions',
         ]
 
@@ -305,7 +304,7 @@ class OfficerSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'office',
-            'membership',
+            'person',
             'permissions',
         ]
 
@@ -444,6 +443,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'nick_name',
             'assignments',
             'memberships',
+            'officers',
             'permissions',
             'scores',
             'user',

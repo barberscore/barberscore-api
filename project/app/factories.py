@@ -236,7 +236,7 @@ class OfficerFactory(DjangoModelFactory):
     start_date = None
     end_date = None
     office = SubFactory('app.factories.OfficeFactory')
-    membership = SubFactory('app.factories.MembershipFactory')
+    person = SubFactory('app.factories.PersonFactory')
 
     class Meta:
         model = Officer
