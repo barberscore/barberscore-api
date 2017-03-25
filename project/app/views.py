@@ -38,6 +38,7 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
+    OfficeFilter,
     OfficerFilter,
     PerformerFilter,
     PersonFilter,
@@ -309,7 +310,7 @@ class OfficeViewSet(viewsets.ModelViewSet):
         'officers',
     )
     serializer_class = OfficeSerializer
-    filter_class = None
+    filter_class = OfficeFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

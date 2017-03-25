@@ -8,6 +8,7 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Office,
     Officer,
     Performer,
     Person,
@@ -112,6 +113,16 @@ class EntityFilter(FilterSet):
             'status': [
                 'exact',
                 'gt',
+            ],
+        }
+
+
+class OfficeFilter(FilterSet):
+    class Meta:
+        model = Office
+        fields = {
+            'kind': [
+                'exact',
             ],
         }
 
