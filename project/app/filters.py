@@ -103,6 +103,9 @@ class EntityFilter(FilterSet):
             'parent': [
                 'exact',
             ],
+            'memberships__person__user': [
+                'exact',
+            ],
             'nomen': [
                 'icontains',
             ],
@@ -144,6 +147,9 @@ class PersonFilter(FilterSet):
                 'exact',
             ],
             'user': [
+                'exact',
+            ],
+            'officers__office__kind': [
                 'exact',
             ],
         }

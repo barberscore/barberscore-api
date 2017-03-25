@@ -380,8 +380,8 @@ class Award(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.entity.memberships.filter(
-                    officers__office__short_name='DRCJ'
+                request.user.person.officers.filter(
+                    office__short_name='DRCJ'
                 )
             ])
         return False
@@ -1212,8 +1212,8 @@ class Convention(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                request.user.person.memberships.filter(
-                    officers__office__short_name__in=[
+                request.user.person.officers.filter(
+                    office__short_name__in=[
                         'SCCJ',
                         'DRCJ',
                     ]
@@ -1460,8 +1460,8 @@ class Entity(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.memberships.filter(
-                    officers__office__short_name='DRCJ'
+                request.user.person.officers.filter(
+                    office__short_name='DRCJ'
                 )
             ])
         return False

@@ -265,11 +265,11 @@ class EntityViewSet(viewsets.ModelViewSet):
     queryset = Entity.objects.select_related(
         'parent',
     ).prefetch_related(
-        # 'children',
+        'children',
         'awards',
         # 'memberships',
-        # 'performers',
-        # 'conventions',
+        'performers',
+        'conventions',
     )
     serializer_class = EntitySerializer
     filter_class = EntityFilter
