@@ -123,6 +123,9 @@ class OfficerFilter(FilterSet):
             'office__short_name': [
                 'exact',
             ],
+            'office__kind': [
+                'exact',
+            ],
         }
 
 

@@ -1598,16 +1598,29 @@ class Office(TimeStampedModel):
     )
 
     KIND = Choices(
-        (0, 'new', 'New',),
-        (1, 'one', 'One',),
-        (10, 'ten', 'Ten',),
-        (20, 'twenty', 'Twenty',),
-        (30, 'thirty', 'Thirty',),
+        ('Organization', [
+            (1, 'organization', "Organization"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Division', [
+            (21, 'division', "Division"),
+        ]),
+        ('Group', [
+            (31, 'quartet', "Quartet"),
+            (32, 'chorus', "Chorus"),
+            (33, 'vlq', "Very Large Quartet"),
+        ]),
+        # ('Leadership', [
+        #     (14, 'cj', "Contest and Judging"),
+        # ]),
     )
 
     kind = FSMIntegerField(
         choices=KIND,
-        default=KIND.new,
     )
 
     short_name = models.CharField(
