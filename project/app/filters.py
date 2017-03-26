@@ -131,6 +131,9 @@ class OfficerFilter(FilterSet):
     class Meta:
         model = Officer
         fields = {
+            'nomen': [
+                'icontains',
+            ],
             'office__short_name': [
                 'exact',
             ],
