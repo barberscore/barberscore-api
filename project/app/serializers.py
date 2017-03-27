@@ -202,6 +202,8 @@ class ConventionSerializer(serializers.ModelSerializer):
             'panel',
             'risers',
             'year',
+            'open_date',
+            'close_date',
             'start_date',
             'end_date',
             'location',

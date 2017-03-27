@@ -119,6 +119,8 @@ class ConventionFactory(DjangoModelFactory):
     panel = Convention.PANEL.quintiple
     risers = [0, 13]
     year = 2017
+    open_date = None
+    close_date = None
     start_date = None
     end_date = None
     location = ''

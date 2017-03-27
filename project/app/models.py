@@ -1148,6 +1148,16 @@ class Convention(TimeStampedModel):
         choices=YEAR_CHOICES,
     )
 
+    open_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    close_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     start_date = models.DateField(
         null=True,
         blank=True,
