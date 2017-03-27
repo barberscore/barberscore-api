@@ -223,7 +223,7 @@ class MembershipFactory(DjangoModelFactory):
 class OfficeFactory(DjangoModelFactory):
     name = 'Test Office'
     status = Office.STATUS.active
-    kind = Office.KIND.new
+    kind = Office.KIND.organization
     short_name = 'TEST'
     long_name = 'Test Office'
 
