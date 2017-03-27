@@ -8,6 +8,7 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Office,
     Officer,
     Performer,
     Person,
@@ -85,9 +86,6 @@ class ConventionFilter(FilterSet):
             'assignments__kind': [
                 'exact',
             ],
-            'entity__memberships__officers': [
-                'exact',
-            ],
         }
 
 
@@ -106,6 +104,9 @@ class EntityFilter(FilterSet):
             'parent': [
                 'exact',
             ],
+            'memberships__person__user': [
+                'exact',
+            ],
             'nomen': [
                 'icontains',
             ],
@@ -113,7 +114,14 @@ class EntityFilter(FilterSet):
                 'exact',
                 'gt',
             ],
-            'memberships__person__user': [
+        }
+
+
+class OfficeFilter(FilterSet):
+    class Meta:
+        model = Office
+        fields = {
+            'kind': [
                 'exact',
             ],
         }
@@ -123,10 +131,13 @@ class OfficerFilter(FilterSet):
     class Meta:
         model = Officer
         fields = {
-            'membership__person__user': [
-                'exact',
+            'nomen': [
+                'icontains',
             ],
             'office__short_name': [
+                'exact',
+            ],
+            'office__kind': [
                 'exact',
             ],
         }
@@ -138,9 +149,6 @@ class PerformerFilter(FilterSet):
         fields = {
             'nomen': [
                 'icontains',
-            ],
-            'entity__memberships__person__user': [
-                'exact',
             ],
         }
 
@@ -158,7 +166,7 @@ class PersonFilter(FilterSet):
             'user': [
                 'exact',
             ],
-            'memberships__officers__office__kind': [
+            'officers__office__kind': [
                 'exact',
             ],
         }

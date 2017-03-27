@@ -87,12 +87,16 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     fields = [
         'nomen',
+        'performer',
+        'contest',
         'status',
     ]
     readonly_fields = [
         'nomen',
-        'performer',
         'status',
+    ]
+    raw_id_fields = [
+        'contest',
     ]
     show_change_link = True
     extra = 0
@@ -136,11 +140,11 @@ class OfficerInline(admin.TabularInline):
     model = Officer
     fields = [
         'office',
-        'membership',
+        'person',
     ]
     raw_id_fields = [
         'office',
-        'membership',
+        'person',
     ]
     show_change_link = True
     extra = 0
@@ -174,6 +178,9 @@ class PerformerInline(admin.TabularInline):
     readonly_fields = [
         'nomen',
         'seed',
+    ]
+    raw_id_fields = [
+        'session',
     ]
     show_change_link = True
     extra = 0

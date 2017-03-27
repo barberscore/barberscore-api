@@ -380,8 +380,8 @@ class Award(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.entity.memberships.filter(
-                    officers__office__short_name='DRCJ'
+                request.user.person.officers.filter(
+                    office__short_name='DRCJ'
                 )
             ])
         return False
@@ -1212,8 +1212,8 @@ class Convention(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                request.user.person.memberships.filter(
-                    officers__office__short_name__in=[
+                request.user.person.officers.filter(
+                    office__short_name__in=[
                         'SCCJ',
                         'DRCJ',
                     ]
@@ -1460,8 +1460,8 @@ class Entity(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.memberships.filter(
-                    officers__office__short_name='DRCJ'
+                request.user.person.officers.filter(
+                    office__short_name='DRCJ'
                 )
             ])
         return False
@@ -1598,16 +1598,29 @@ class Office(TimeStampedModel):
     )
 
     KIND = Choices(
-        (0, 'new', 'New',),
-        (1, 'one', 'One',),
-        (10, 'ten', 'Ten',),
-        (20, 'twenty', 'Twenty',),
-        (30, 'thirty', 'Thirty',),
+        ('Organization', [
+            (1, 'organization', "Organization"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Division', [
+            (21, 'division', "Division"),
+        ]),
+        ('Group', [
+            (31, 'quartet', "Quartet"),
+            (32, 'chorus', "Chorus"),
+            (33, 'vlq', "Very Large Quartet"),
+        ]),
+        # ('Leadership', [
+        #     (14, 'cj', "Contest and Judging"),
+        # ]),
     )
 
     kind = FSMIntegerField(
         choices=KIND,
-        default=KIND.new,
     )
 
     short_name = models.CharField(
@@ -1692,8 +1705,8 @@ class Officer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    membership = models.ForeignKey(
-        'Membership',
+    person = models.ForeignKey(
+        'Person',
         related_name='officers',
         on_delete=models.CASCADE,
     )
@@ -1710,7 +1723,7 @@ class Officer(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.office,
-                    self.membership,
+                    self.person,
                 ]
             )
         )

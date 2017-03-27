@@ -413,7 +413,8 @@ class EntityAdmin(admin.ModelAdmin):
 
     inlines = [
         AwardInline,
-        # OrganizationInline,
+        MembershipInline,
+        PerformerInline,
     ]
 
     readonly_fields = [
@@ -458,9 +459,6 @@ class MembershipAdmin(admin.ModelAdmin):
         'part',
         'entity__kind',
     ]
-    inlines = [
-        OfficerInline,
-    ]
 
 
 @admin.register(Office)
@@ -480,15 +478,19 @@ class OfficeAdmin(admin.ModelAdmin):
         'kind',
     ]
 
+    inlines = [
+        OfficerInline,
+    ]
+
 
 @admin.register(Officer)
 class OfficerAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'office',
-        'membership',
+        'person',
     ]
     list_display = [
-        'membership',
+        'person',
         'office',
     ]
     list_filter = [
@@ -683,6 +685,10 @@ class PersonAdmin(admin.ModelAdmin):
 
     save_on_top = True
 
+    inlines = [
+        OfficerInline,
+    ]
+
     # readonly_fields = [
     #     'common_name',
     # ]
@@ -820,10 +826,9 @@ class SessionAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'age',
-        'convention__level',
+        'convention__entity__kind',
         'convention__season',
         'convention__year',
-        # 'convention__organization',
     )
 
     raw_id_fields = (
