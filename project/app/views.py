@@ -271,6 +271,7 @@ class EntityViewSet(viewsets.ModelViewSet):
         # 'memberships',
         'performers',
         'conventions',
+        'officers',
     )
     serializer_class = EntitySerializer
     filter_class = EntityFilter
@@ -326,6 +327,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
     queryset = Officer.objects.select_related(
         'office',
         'person',
+        'entity',
     ).prefetch_related(
     )
     serializer_class = OfficerSerializer

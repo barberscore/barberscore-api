@@ -1721,6 +1721,14 @@ class Officer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    entity = models.ForeignKey(
+        'Entity',
+        related_name='officers',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     # Internals
     class JSONAPIMeta:
         resource_name = "officer"

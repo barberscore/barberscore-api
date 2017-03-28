@@ -248,6 +248,7 @@ class EntitySerializer(serializers.ModelSerializer):
             # 'memberships',
             'performers',
             'awards',
+            'officers',
             'permissions',
         ]
         read_only_fields = [
@@ -307,6 +308,7 @@ class OfficerSerializer(serializers.ModelSerializer):
             'end_date',
             'office',
             'person',
+            'entity',
             'permissions',
         ]
 

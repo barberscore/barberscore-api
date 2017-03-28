@@ -385,7 +385,7 @@ class EntityAdmin(admin.ModelAdmin):
         'short_name',
         'long_name',
         'location',
-        # 'representative',
+        'bhs_id',
         # 'spots',
         'website',
         'facebook',
@@ -413,6 +413,11 @@ class EntityAdmin(admin.ModelAdmin):
         'short_name',
         'long_name',
         'kind',
+        'bhs_id',
+    ]
+
+    list_editable = [
+        'bhs_id',
     ]
 
     inlines = [
@@ -492,10 +497,12 @@ class OfficerAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'office',
         'person',
+        'entity',
     ]
     list_display = [
         'person',
         'office',
+        'entity',
     ]
     list_filter = [
         'office__name',

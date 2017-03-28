@@ -239,6 +239,7 @@ class OfficerFactory(DjangoModelFactory):
     end_date = None
     office = SubFactory('app.factories.OfficeFactory')
     person = SubFactory('app.factories.PersonFactory')
+    entity = None
 
     class Meta:
         model = Officer
