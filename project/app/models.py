@@ -2902,7 +2902,7 @@ class Round(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
@@ -2910,16 +2910,15 @@ class Round(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return True
-        # if request.user.is_authenticated():
-        #     return any([
-        #         True,
-        #         # self.assignments.filter(
-        #         #     judge__user=request.user,
-        #         #     category=self.assignments.model.CATEGORY.admin,
-        #         # ),
-        #     ])
-        # return False
+        if request.user.is_authenticated():
+            return any([
+                True,
+                # self.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.assignments.model.CATEGORY.admin,
+                # ),
+            ])
+        return False
 
     # Methods
     def ranking(self, point_total):

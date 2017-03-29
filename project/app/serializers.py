@@ -482,8 +482,8 @@ class RoundSerializer(serializers.ModelSerializer):
             'end_date',
             'ann_pdf',
             'session',
-            'performances',
-            'slots',
+            # 'performances',
+            # 'slots',
             'permissions',
         )
 
