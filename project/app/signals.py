@@ -33,8 +33,9 @@ def session_post_save(sender, instance=None, created=False, raw=False, **kwargs)
     if not raw:
         if created:
             with transaction.atomic():
+                pass
                 # Add Rounds
-                instance.build_rounds()
+                # instance.build_rounds()
                 # # Add Contests
                 # instance.build_contests()
                 # # Add Contests
