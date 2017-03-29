@@ -187,6 +187,7 @@ class Award(TimeStampedModel):
         (31, 'quartet', "Quartet"),
         (32, 'chorus', "Chorus"),
         (33, 'vlq', "Very Large Quartet"),
+        (34, 'mixed', "Mixed Group"),
     )
 
     kind = models.IntegerField(
@@ -1294,6 +1295,7 @@ class Entity(TimeStampedModel):
             (31, 'quartet', "Quartet"),
             (32, 'chorus', "Chorus"),
             (33, 'vlq', "Very Large Quartet"),
+            (34, 'mixed', "Mixed Group"),
         ]),
         # ('Leadership', [
         #     (14, 'cj', "Contest and Judging"),
@@ -1623,6 +1625,7 @@ class Office(TimeStampedModel):
             (31, 'quartet', "Quartet"),
             (32, 'chorus', "Chorus"),
             (33, 'vlq', "Very Large Quartet"),
+            (34, 'mixed', "Mixed Group"),
         ]),
         # ('Leadership', [
         #     (14, 'cj', "Contest and Judging"),
@@ -3354,6 +3357,7 @@ class Session(TimeStampedModel):
         (31, 'quartet', "Quartet"),
         (32, 'chorus', "Chorus"),
         (33, 'vlq', "Very Large Quartet"),
+        (34, 'mixed', "Mixed Group"),
     )
 
     kind = models.IntegerField(
