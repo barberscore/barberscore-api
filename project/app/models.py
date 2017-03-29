@@ -3459,33 +3459,6 @@ class Session(TimeStampedModel):
         )
         super().save(*args, **kwargs)
 
-    # Methods
-    def build_rounds(self):
-        i = 1
-        while i <= self.num_rounds:
-            self.rounds.create(
-                num=i,
-                kind=(self.num_rounds - i) + 1,
-            )
-            i += 1
-        return
-
-    def build_contests(self):
-        pass
-
-    def build_primary(self):
-        try:
-            self.primary = self.contests.all(
-            ).order_by(
-                'award__entity__kind',
-                '-award__age',
-                'award__size',
-                'award__scope',
-            ).first()
-            self.save()
-        except self.contests.model.DoesNotExist:
-            log.error("No Primary: {0}".format(self))
-
     # def print_oss(self):
     #     payload = {
     #         'id': str(self.pk),

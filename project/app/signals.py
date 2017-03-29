@@ -2,7 +2,6 @@
 from auth0.v2.management import Auth0
 from auth0.v2.management.rest import Auth0Error
 from django.conf import settings
-from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
@@ -10,7 +9,6 @@ from django.core.mail import send_mail
 # Local
 from .models import (
     # Award,
-    Session,
     User,
     Contest,
     ContestPrivate,
@@ -25,21 +23,6 @@ from .models import (
 )
 
 from .utils import get_auth0_token
-
-
-@receiver(post_save, sender=Session)
-def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create sentinels."""
-    if not raw:
-        if created:
-            with transaction.atomic():
-                pass
-                # Add Rounds
-                # instance.build_rounds()
-                # # Add Contests
-                # instance.build_contests()
-                # # Add Contests
-                # instance.build_primary()
 
 
 @receiver(post_save, sender=Contest)
