@@ -341,7 +341,6 @@ class ScoreFactory(DjangoModelFactory):
         model = Score
 
 
-@mute_signals(post_save)
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
     kind = Session.KIND.quartet
