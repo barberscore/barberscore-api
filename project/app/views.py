@@ -38,6 +38,7 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
+    MembershipFilter,
     OfficeFilter,
     OfficerFilter,
     PerformerFilter,
@@ -293,7 +294,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = MembershipSerializer
-    filter_class = None
+    filter_class = MembershipFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
