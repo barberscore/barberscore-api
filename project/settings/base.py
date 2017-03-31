@@ -110,7 +110,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework_json_api.renderers.JSONRenderer',
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        'app.renderers.NoHTMLFormBrowsableAPIRenderer',
         'rest_framework.renderers.AdminRenderer',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -163,6 +163,7 @@ INSTALLED_APPS = [
     'django_fsm',
     'timezone_field',
     'rest_framework',
+    'django_filters',
     'dry_rest_permissions',
     'app',
 ]
