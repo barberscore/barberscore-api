@@ -175,6 +175,9 @@ class CatalogAdmin(admin.ModelAdmin):
         'bhs_id',
         'title',
         'published',
+        'composers',
+        'arrangers',
+        'holders',
         'arranger',
         'arranger_fee',
         'difficulty',
@@ -189,12 +192,16 @@ class CatalogAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'title',
-        'arranger',
+        'composers',
+        'arrangers',
+        'holders',
     ]
 
     list_editable = [
         'title',
-        'arranger',
+        'composers',
+        'arrangers',
+        'holders',
     ]
 
     list_filter = [

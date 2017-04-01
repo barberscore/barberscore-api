@@ -429,6 +429,21 @@ class Catalog(TimeStampedModel):
         max_length=200,
     )
 
+    composers = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    arrangers = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    holders = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
     arranger_fee = models.FloatField(
         null=True,
         blank=True,
