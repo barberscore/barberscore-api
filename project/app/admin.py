@@ -17,7 +17,7 @@ from .inlines import (
     MembershipInline,
     OfficerInline,
     PerformanceInline,
-    PerformerInline,
+    # PerformerInline,
     RoundInline,
     ScoreInline,
     SessionInline,
@@ -430,7 +430,7 @@ class EntityAdmin(admin.ModelAdmin):
     inlines = [
         AwardInline,
         MembershipInline,
-        PerformerInline,
+        # PerformerInline,
     ]
 
     readonly_fields = [
@@ -861,7 +861,7 @@ class SessionAdmin(admin.ModelAdmin):
 
     inlines = [
         RoundInline,
-        PerformerInline,
+        # PerformerInline,
         ContestInline,
     ]
 

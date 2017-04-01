@@ -377,6 +377,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'prelim',
             'session',
             'entity',
+            'representing',
             'tenor',
             'lead',
             'baritone',

@@ -395,6 +395,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
+        'representing',
     ).prefetch_related(
         'contestants',
         'performances',

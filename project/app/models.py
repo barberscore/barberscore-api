@@ -2192,6 +2192,14 @@ class Performer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    representing = models.ForeignKey(
+        'Entity',
+        related_name='performers_representing',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     tenor = models.ForeignKey(
         'Person',
         null=True,
