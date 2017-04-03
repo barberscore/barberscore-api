@@ -656,6 +656,7 @@ class PersonAdmin(admin.ModelAdmin):
         # 'common_name',
         'status',
         'kind',
+        'representing',
         'birth_date',
         'start_date',
         'end_date',
@@ -678,6 +679,7 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'bhs_id',
+        'representing',
         'location',
         'website',
         'facebook',
@@ -707,6 +709,9 @@ class PersonAdmin(admin.ModelAdmin):
         OfficerInline,
     ]
 
+    raw_id_fields = [
+        'representing',
+    ]
     # readonly_fields = [
     #     'common_name',
     # ]

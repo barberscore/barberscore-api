@@ -434,6 +434,7 @@ class PerformerPrivateViewSet(viewsets.ModelViewSet):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
+        'representing',
     ).prefetch_related(
         'assignments',
         'memberships',

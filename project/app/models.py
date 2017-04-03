@@ -2195,7 +2195,7 @@ class Performer(TimeStampedModel):
     representing = models.ForeignKey(
         'Entity',
         related_name='performers_representing',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
@@ -2765,6 +2765,15 @@ class Person(TimeStampedModel):
             return " ".join(filter(None, formal))
         else:
             return None
+
+    # FKs
+    representing = models.ForeignKey(
+        'Entity',
+        related_name='persons',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     # Internals
     class JSONAPIMeta:

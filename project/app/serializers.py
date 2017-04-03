@@ -449,6 +449,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'nick_name',
+            'representing',
             'assignments',
             'memberships',
             'officers',
