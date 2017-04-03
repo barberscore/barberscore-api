@@ -187,6 +187,7 @@ class Award(TimeStampedModel):
         (31, 'quartet', "Quartet"),
         (32, 'chorus', "Chorus"),
         (33, 'vlq', "Very Large Quartet"),
+        (34, 'mixed', "Mixed Group"),
     )
 
     kind = models.IntegerField(
@@ -424,6 +425,21 @@ class Catalog(TimeStampedModel):
     )
 
     arranger = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    composers = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    arrangers = models.CharField(
+        blank=True,
+        max_length=200,
+    )
+
+    holders = models.CharField(
         blank=True,
         max_length=200,
     )
@@ -1148,6 +1164,16 @@ class Convention(TimeStampedModel):
         choices=YEAR_CHOICES,
     )
 
+    open_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    close_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     start_date = models.DateField(
         null=True,
         blank=True,
@@ -1284,6 +1310,7 @@ class Entity(TimeStampedModel):
             (31, 'quartet', "Quartet"),
             (32, 'chorus', "Chorus"),
             (33, 'vlq', "Very Large Quartet"),
+            (34, 'mixed', "Mixed Group"),
         ]),
         # ('Leadership', [
         #     (14, 'cj', "Contest and Judging"),
@@ -1613,6 +1640,7 @@ class Office(TimeStampedModel):
             (31, 'quartet', "Quartet"),
             (32, 'chorus', "Chorus"),
             (33, 'vlq', "Very Large Quartet"),
+            (34, 'mixed', "Mixed Group"),
         ]),
         # ('Leadership', [
         #     (14, 'cj', "Contest and Judging"),
@@ -1709,6 +1737,14 @@ class Officer(TimeStampedModel):
         'Person',
         related_name='officers',
         on_delete=models.CASCADE,
+    )
+
+    entity = models.ForeignKey(
+        'Entity',
+        related_name='officers',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     # Internals
@@ -2154,6 +2190,14 @@ class Performer(TimeStampedModel):
         'Entity',
         related_name='performers',
         on_delete=models.CASCADE,
+    )
+
+    representing = models.ForeignKey(
+        'Entity',
+        related_name='performers_representing',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     tenor = models.ForeignKey(
@@ -2722,6 +2766,15 @@ class Person(TimeStampedModel):
         else:
             return None
 
+    # FKs
+    representing = models.ForeignKey(
+        'Entity',
+        related_name='persons',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     # Internals
     class JSONAPIMeta:
         resource_name = "person"
@@ -2884,7 +2937,7 @@ class Round(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
@@ -2892,6 +2945,14 @@ class Round(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                True,
+                # self.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.assignments.model.CATEGORY.admin,
+                # ),
+            ])
         return False
 
     # Methods
@@ -3328,6 +3389,7 @@ class Session(TimeStampedModel):
         (31, 'quartet', "Quartet"),
         (32, 'chorus', "Chorus"),
         (33, 'vlq', "Very Large Quartet"),
+        (34, 'mixed', "Mixed Group"),
     )
 
     kind = models.IntegerField(
@@ -3432,33 +3494,6 @@ class Session(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
-
-    # Methods
-    def build_rounds(self):
-        i = 1
-        while i <= self.num_rounds:
-            self.rounds.create(
-                num=i,
-                kind=(self.num_rounds - i) + 1,
-            )
-            i += 1
-        return
-
-    def build_contests(self):
-        pass
-
-    def build_primary(self):
-        try:
-            self.primary = self.contests.all(
-            ).order_by(
-                'award__entity__kind',
-                '-award__age',
-                'award__size',
-                'award__scope',
-            ).first()
-            self.save()
-        except self.contests.model.DoesNotExist:
-            log.error("No Primary: {0}".format(self))
 
     # def print_oss(self):
     #     payload = {

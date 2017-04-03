@@ -38,6 +38,7 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
+    MembershipFilter,
     OfficeFilter,
     OfficerFilter,
     PerformerFilter,
@@ -271,6 +272,7 @@ class EntityViewSet(viewsets.ModelViewSet):
         # 'memberships',
         'performers',
         'conventions',
+        'officers',
     )
     serializer_class = EntitySerializer
     filter_class = EntityFilter
@@ -292,7 +294,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = MembershipSerializer
-    filter_class = None
+    filter_class = MembershipFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -326,6 +328,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
     queryset = Officer.objects.select_related(
         'office',
         'person',
+        'entity',
     ).prefetch_related(
     )
     serializer_class = OfficerSerializer
@@ -392,6 +395,7 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'bass',
         'director',
         'codirector',
+        'representing',
     ).prefetch_related(
         'contestants',
         'performances',
@@ -430,6 +434,7 @@ class PerformerPrivateViewSet(viewsets.ModelViewSet):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
+        'representing',
     ).prefetch_related(
         'assignments',
         'memberships',

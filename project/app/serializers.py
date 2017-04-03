@@ -105,6 +105,9 @@ class CatalogSerializer(serializers.ModelSerializer):
             'title',
             'published',
             'arranger',
+            'composers',
+            'arrangers',
+            'holders',
             'arranger_fee',
             'difficulty',
             'gender',
@@ -202,6 +205,8 @@ class ConventionSerializer(serializers.ModelSerializer):
             'panel',
             'risers',
             'year',
+            'open_date',
+            'close_date',
             'start_date',
             'end_date',
             'location',
@@ -243,9 +248,10 @@ class EntitySerializer(serializers.ModelSerializer):
             'parent',
             'children',
             'conventions',
-            # 'memberships',
+            'memberships',
             'performers',
             'awards',
+            'officers',
             'permissions',
         ]
         read_only_fields = [
@@ -305,6 +311,7 @@ class OfficerSerializer(serializers.ModelSerializer):
             'end_date',
             'office',
             'person',
+            'entity',
             'permissions',
         ]
 
@@ -370,6 +377,7 @@ class PerformerSerializer(serializers.ModelSerializer):
             'prelim',
             'session',
             'entity',
+            'representing',
             'tenor',
             'lead',
             'baritone',
@@ -441,6 +449,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'nick_name',
+            'representing',
             'assignments',
             'memberships',
             'officers',
@@ -478,8 +487,8 @@ class RoundSerializer(serializers.ModelSerializer):
             'end_date',
             'ann_pdf',
             'session',
-            'performances',
-            'slots',
+            # 'performances',
+            # 'slots',
             'permissions',
         )
 

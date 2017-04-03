@@ -17,7 +17,7 @@ from .inlines import (
     MembershipInline,
     OfficerInline,
     PerformanceInline,
-    PerformerInline,
+    # PerformerInline,
     RoundInline,
     ScoreInline,
     SessionInline,
@@ -175,6 +175,9 @@ class CatalogAdmin(admin.ModelAdmin):
         'bhs_id',
         'title',
         'published',
+        'composers',
+        'arrangers',
+        'holders',
         'arranger',
         'arranger_fee',
         'difficulty',
@@ -189,12 +192,16 @@ class CatalogAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'title',
-        'arranger',
+        'composers',
+        'arrangers',
+        'holders',
     ]
 
     list_editable = [
         'title',
-        'arranger',
+        'composers',
+        'arrangers',
+        'holders',
     ]
 
     list_filter = [
@@ -312,6 +319,8 @@ class ConventionAdmin(admin.ModelAdmin):
         'level',
         'venue',
         'risers',
+        'open_date',
+        'close_date',
         'start_date',
         'end_date',
         'panel',
@@ -325,6 +334,8 @@ class ConventionAdmin(admin.ModelAdmin):
         'panel',
         'season',
         # 'status',
+        'open_date',
+        'close_date',
         'start_date',
         'end_date',
         'level',
@@ -381,7 +392,7 @@ class EntityAdmin(admin.ModelAdmin):
         'short_name',
         'long_name',
         'location',
-        # 'representative',
+        'bhs_id',
         # 'spots',
         'website',
         'facebook',
@@ -409,12 +420,17 @@ class EntityAdmin(admin.ModelAdmin):
         'short_name',
         'long_name',
         'kind',
+        'bhs_id',
+    ]
+
+    list_editable = [
+        'bhs_id',
     ]
 
     inlines = [
         AwardInline,
         MembershipInline,
-        PerformerInline,
+        # PerformerInline,
     ]
 
     readonly_fields = [
@@ -488,10 +504,12 @@ class OfficerAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'office',
         'person',
+        'entity',
     ]
     list_display = [
         'person',
         'office',
+        'entity',
     ]
     list_filter = [
         'office__name',
@@ -638,6 +656,7 @@ class PersonAdmin(admin.ModelAdmin):
         # 'common_name',
         'status',
         'kind',
+        'representing',
         'birth_date',
         'start_date',
         'end_date',
@@ -660,6 +679,7 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'bhs_id',
+        'representing',
         'location',
         'website',
         'facebook',
@@ -689,6 +709,9 @@ class PersonAdmin(admin.ModelAdmin):
         OfficerInline,
     ]
 
+    raw_id_fields = [
+        'representing',
+    ]
     # readonly_fields = [
     #     'common_name',
     # ]
@@ -843,7 +866,7 @@ class SessionAdmin(admin.ModelAdmin):
 
     inlines = [
         RoundInline,
-        PerformerInline,
+        # PerformerInline,
         ContestInline,
     ]
 

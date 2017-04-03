@@ -1,12 +1,12 @@
 # Third-Party
-from django_filters.rest_framework.backends import BaseFilterBackend
+from django_filters.rest_framework.backends import DjangoFilterBackend
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
 
 # Django
 from django.db.models import Q
 
 
-class CoalesceFilterBackend(BaseFilterBackend):
+class CoalesceFilterBackend(DjangoFilterBackend):
     """Support Ember Data coalesceFindRequests."""
 
     def filter_queryset(self, request, queryset, view):

@@ -119,6 +119,8 @@ class ConventionFactory(DjangoModelFactory):
     panel = Convention.PANEL.quintiple
     risers = [0, 13]
     year = 2017
+    open_date = None
+    close_date = None
     start_date = None
     end_date = None
     location = ''
@@ -237,6 +239,7 @@ class OfficerFactory(DjangoModelFactory):
     end_date = None
     office = SubFactory('app.factories.OfficeFactory')
     person = SubFactory('app.factories.PersonFactory')
+    entity = None
 
     class Meta:
         model = Officer
@@ -338,7 +341,6 @@ class ScoreFactory(DjangoModelFactory):
         model = Score
 
 
-@mute_signals(post_save)
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
     kind = Session.KIND.quartet

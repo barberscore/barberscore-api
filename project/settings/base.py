@@ -30,7 +30,9 @@ ALLOWED_HOSTS = [
 # Globals
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 PROJECT_NAME = get_env_variable('PROJECT_NAME')
+PROJECT_WEBSITE = get_env_variable('PROJECT_WEBSITE')
 DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
+PROJECT_WEBSITE = get_env_variable('PROJECT_WEBSITE')
 USE_I18N = False
 USE_L10N = False
 SECRET_KEY = get_env_variable("SECRET_KEY")
@@ -110,7 +112,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework_json_api.renderers.JSONRenderer',
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        'app.renderers.NoHTMLFormBrowsableAPIRenderer',
         'rest_framework.renderers.AdminRenderer',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -163,6 +165,7 @@ INSTALLED_APPS = [
     'django_fsm',
     'timezone_field',
     'rest_framework',
+    'django_filters',
     'dry_rest_permissions',
     'app',
 ]

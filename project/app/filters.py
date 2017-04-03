@@ -8,6 +8,7 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Membership,
     Office,
     Officer,
     Performer,
@@ -34,6 +35,9 @@ class AwardFilter(FilterSet):
             'season': [
                 'exact',
             ],
+            'status': [
+                'exact',
+            ],
             'entity': [
                 'exact',
             ],
@@ -44,6 +48,12 @@ class AwardFilter(FilterSet):
                 'exact',
             ],
             'entity__kind': [
+                'exact',
+            ],
+            'entity__officers__office__short_name': [
+                'exact',
+            ],
+            'entity__officers__person__user': [
                 'exact',
             ],
         }
@@ -113,6 +123,16 @@ class EntityFilter(FilterSet):
             'status': [
                 'exact',
                 'gt',
+            ],
+        }
+
+
+class MembershipFilter(FilterSet):
+    class Meta:
+        model = Membership
+        fields = {
+            'entity': [
+                'exact',
             ],
         }
 
