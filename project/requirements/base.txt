@@ -2,6 +2,7 @@ auth0-python==2.0.1
 awscli==1.11.70
 botocore==1.5.33
 coreapi==2.3.0
+cryptography==1.8.1
 dj-database-url==0.4.2
 django-cors-headers==2.0.2
 django-filter==1.0.2
