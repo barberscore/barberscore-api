@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 # Local
 from .models import (
@@ -105,7 +106,7 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                     settings.AUTH0_DOMAIN,
                     token,
                 )
-                payload = {
+                create_user_payload = {
                     "connection": "Default",
                     "email": instance.email,
                     "verify_email": False,
@@ -118,16 +119,26 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                     }
                 }
                 try:
-                    response = auth0.users.create(payload)
+                    response = auth0.users.create(create_user_payload)
                 except Auth0Error as e:
                     if 'The user already exists' in e.message:
                         return
                     else:
                         raise(e)
-                ticket = auth0.tickets.create_pswd_change({"user_id": response['user_id']})
+                change_password_payload = {
+                    "user_id": response['user_id'],
+                    "result_url": settings.PROJECT_WEBSITE,
+                }
+                ticket = auth0.tickets.create_pswd_change(change_password_payload)
+                message = render_to_string(
+                    'welcome_email.txt',
+                    context={
+                        'link': ticket['ticket'],
+                    }
+                )
                 send_mail(
-                    "Welcome",
-                    "Click: {0}".format(ticket['ticket']),
+                    "Welcome to Barberscore Alpha Test",
+                    message,
                     "Barberscore Admin <admin@barberscore.com>",
                     [instance.email],
                     fail_silently=False
