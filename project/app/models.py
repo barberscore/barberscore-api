@@ -520,7 +520,7 @@ class Catalog(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.title,
-            str(self.bhs_id),
+            str(self.bhs_id) if self.bhs_id else "(No BHS ID)",
         ]))
         super().save(*args, **kwargs)
 
@@ -541,7 +541,7 @@ class Catalog(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        return True
 
 
 class Contest(TimeStampedModel):

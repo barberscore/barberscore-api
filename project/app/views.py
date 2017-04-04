@@ -156,7 +156,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'repertories',
         'songs',
-    )
+    ).order_by('title')
     serializer_class = CatalogSerializer
     filter_class = CatalogFilter
     filter_backends = [
@@ -168,6 +168,12 @@ class CatalogViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "catalog"
+    ordering_fields = [
+        'title',
+    ]
+    ordering = [
+        'title',
+    ]
 
 
 class ContestViewSet(viewsets.ModelViewSet):
