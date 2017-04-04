@@ -431,6 +431,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
+            'bhs_id',
             'bhs_status',
             'birth_date',
             'start_date',
