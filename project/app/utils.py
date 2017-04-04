@@ -47,6 +47,30 @@ def get_auth0_token():
     return json['access_token']
 
 
+def update_db_catalog(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0]) if row[0] else None
+            if bhs_id and row[2]:
+                try:
+                    bhs_fee = int(row[4])
+                except ValueError:
+                    bhs_fee = None
+                catalog, created = Catalog.objects.get_or_create(
+                    bhs_id=bhs_id
+                )
+                catalog.title = row[2]
+                catalog.arrangers = row[3]
+                catalog.bhs_fee = bhs_fee
+                catalog.bhs_difficulty = int(row[5]) if row[5] else None
+                catalog.bhs_tempo = int(row[6]) if row[6] else None
+                catalog.is_medley = True if row[7] == 'True' else False
+                catalog.save()
+
+
 # def create_account(person):
 #     if not person.email:
 #         raise RuntimeError("No email")
