@@ -65,6 +65,7 @@ from .models import (
     Performer,
     PerformerPrivate,
     Person,
+    Repertory,
     Round,
     Score,
     Session,
@@ -97,6 +98,7 @@ from .serializers import (
     PerformerPrivateSerializer,
     PerformerSerializer,
     PersonSerializer,
+    RepertorySerializer,
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
@@ -152,7 +154,8 @@ class AwardViewSet(viewsets.ModelViewSet):
 class CatalogViewSet(viewsets.ModelViewSet):
     queryset = Catalog.objects.select_related(
     ).prefetch_related(
-        'submissions',
+        'repertories',
+        'songs',
     )
     serializer_class = CatalogSerializer
     filter_class = CatalogFilter
@@ -269,7 +272,7 @@ class EntityViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'children',
         'awards',
-        # 'memberships',
+        'repertories',
         'performers',
         'conventions',
         'officers',
@@ -475,6 +478,26 @@ class PersonViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class RepertoryViewSet(viewsets.ModelViewSet):
+    queryset = Repertory.objects.select_related(
+        'entity',
+        'catalog',
+    ).prefetch_related(
+        'submissions',
+    )
+    serializer_class = RepertorySerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "repertory"
+
+
 class RoundViewSet(
     get_viewset_transition_action_mixin(Round),
     viewsets.ModelViewSet
@@ -546,6 +569,7 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'performance',
         'submission',
+        'catalog',
     ).prefetch_related(
         'scores',
     )
@@ -601,7 +625,6 @@ class SlotViewSet(viewsets.ModelViewSet):
 class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.select_related(
         'performer',
-        'catalog',
     ).prefetch_related(
         'songs',
     )

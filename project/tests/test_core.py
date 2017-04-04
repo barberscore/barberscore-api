@@ -25,6 +25,7 @@ from app.factories import (
     PerformerFactory,
     PersonFactory,
     QuartetFactory,
+    RepertoryFactory,
     RoundFactory,
     ScoreFactory,
     SessionFactory,
@@ -131,6 +132,11 @@ def performer():
 @pytest.fixture
 def person():
     return PersonFactory()
+
+
+@pytest.fixture
+def repertory():
+    return RepertoryFactory()
 
 
 @pytest.fixture
@@ -302,6 +308,13 @@ def test_person_endpoint_list(api_client, person):
 @pytest.mark.django_db()
 def test_round_endpoint_list(api_client, round):
     path = reverse('round-list')
+    response = api_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_repertory_endpoint_list(api_client, repertory):
+    path = reverse('repertory-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -484,6 +497,13 @@ def test_performerprivate_endpoint_detail(api_client, performer):
 @pytest.mark.django_db()
 def test_person_endpoint_detail(api_client, person):
     path = reverse('person-detail', args=(str(person.id),))
+    response = api_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_repertory_endpoint_detail(api_client, repertory):
+    path = reverse('repertory-detail', args=(str(repertory.id),))
     response = api_client.get(path)
     assert ok(response)
 
@@ -683,6 +703,13 @@ def test_person_admin_list(admin_client, person):
 
 
 @pytest.mark.django_db()
+def test_repertory_admin_list(admin_client, repertory):
+    path = reverse('admin:app_repertory_changelist')
+    response = admin_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
 def test_round_admin_list(admin_client, round):
     path = reverse('admin:app_round_changelist')
     response = admin_client.get(path)
@@ -867,6 +894,13 @@ def test_performerprivate_admin_detail(admin_client, performance):
 @pytest.mark.django_db()
 def test_person_admin_detail(admin_client, person):
     path = reverse('admin:app_person_change', args=(str(person.id),))
+    response = admin_client.get(path)
+    assert ok(response)
+
+
+@pytest.mark.django_db()
+def test_repertory_admin_detail(admin_client, repertory):
+    path = reverse('admin:app_repertory_change', args=(str(repertory.id),))
     response = admin_client.get(path)
     assert ok(response)
 

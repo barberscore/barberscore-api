@@ -18,6 +18,7 @@ from .inlines import (
     OfficerInline,
     PerformanceInline,
     # PerformerInline,
+    RepertoryInline,
     RoundInline,
     ScoreInline,
     SessionInline,
@@ -42,6 +43,7 @@ from .models import (
     Performer,
     PerformerPrivate,
     Person,
+    Repertory,
     Round,
     Score,
     Session,
@@ -208,9 +210,9 @@ class CatalogAdmin(admin.ModelAdmin):
         'status',
     ]
 
-    # inlines = [
-    #     SubmissionInline,
-    # ]
+    inlines = [
+        RepertoryInline,
+    ]
 
     readonly_fields = [
         'nomen',
@@ -430,7 +432,7 @@ class EntityAdmin(admin.ModelAdmin):
     inlines = [
         AwardInline,
         MembershipInline,
-        # PerformerInline,
+        RepertoryInline,
     ]
 
     readonly_fields = [
@@ -717,6 +719,47 @@ class PersonAdmin(admin.ModelAdmin):
     # ]
 
 
+@admin.register(Repertory)
+class RepertoryAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        'entity',
+        'catalog',
+    ]
+
+    list_display = [
+        'nomen',
+        'status',
+        'entity',
+        'catalog',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'nomen',
+        # 'session',
+        # 'kind',
+    ]
+
+    raw_id_fields = (
+        'entity',
+        'catalog',
+    )
+
+    # inlines = [
+    #     PerformanceInline,
+    # ]
+
+    search_fields = [
+        'nomen',
+    ]
+
+
 @admin.register(Round)
 class RoundAdmin(admin.ModelAdmin):
     fields = [
@@ -923,6 +966,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'status',
         'performance',
         'submission',
+        'catalog',
         'num',
 
         # 'title',
@@ -979,6 +1023,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         'performer',
         'title',
         'bhs_catalog',
+        'repertory',
         'arrangers',
         'composers',
         'holders',

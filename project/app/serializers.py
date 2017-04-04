@@ -25,6 +25,7 @@ from .models import (
     Performer,
     PerformerPrivate,
     Person,
+    Repertory,
     Round,
     Score,
     Session,
@@ -115,7 +116,8 @@ class CatalogSerializer(serializers.ModelSerializer):
             'is_medley',
             'is_learning',
             'voicing',
-            'submissions',
+            'repertories',
+            'songs',
             'permissions',
         )
 
@@ -251,6 +253,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'memberships',
             'performers',
             'awards',
+            'repertories',
             'officers',
             'permissions',
         ]
@@ -469,6 +472,24 @@ class PersonSerializer(serializers.ModelSerializer):
         ]
 
 
+class RepertorySerializer(serializers.ModelSerializer):
+
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Repertory
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'entity',
+            'catalog',
+            'submissions',
+            'permissions',
+        )
+
+
 class RoundSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
@@ -585,6 +606,7 @@ class SongSerializer(serializers.ModelSerializer):
             'status',
             'num',
             'performance',
+            'catalog',
             'scores',
             'songprivate',
             'permissions',
@@ -630,7 +652,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'composers',
             'holders',
             'performer',
-            'catalog',
+            'repertory',
             'permissions',
         ]
 

@@ -38,6 +38,7 @@ from app.models import (
     Performer,
     PerformerPrivate,
     Person,
+    Repertory,
     Round,
     Score,
     Session,
@@ -271,7 +272,7 @@ class PerformerFactory(DjangoModelFactory):
     is_evaluation = True
     is_private = False
     session = SubFactory('app.factories.SessionFactory')
-    entity = SubFactory('app.factories.OrganizationFactory')
+    entity = SubFactory('app.factories.QuartetFactory')
     tenor = None
     lead = None
     baritone = None
@@ -309,6 +310,15 @@ class PersonFactory(DjangoModelFactory):
 
     class Meta:
         model = Person
+
+
+class RepertoryFactory(DjangoModelFactory):
+    status = Repertory.STATUS.new
+    entity = SubFactory('app.factories.QuartetFactory')
+    catalog = SubFactory('app.factories.CatalogFactory')
+
+    class Meta:
+        model = Repertory
 
 
 class RoundFactory(DjangoModelFactory):
@@ -373,6 +383,7 @@ class SongFactory(DjangoModelFactory):
     status = Song.STATUS.new
     num = 1
     performance = SubFactory('app.factories.PerformanceFactory')
+    catalog = None
     submission = None
 
     class Meta:
@@ -394,7 +405,7 @@ class SubmissionFactory(DjangoModelFactory):
     composers = ''
     holders = ''
     performer = SubFactory('app.factories.PerformerFactory')
-    catalog = None
+    repertory = SubFactory('app.factories.RepertoryFactory')
 
     class Meta:
         model = Submission

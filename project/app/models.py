@@ -413,6 +413,8 @@ class Catalog(TimeStampedModel):
 
     bhs_id = models.IntegerField(
         unique=True,
+        null=True,
+        blank=True,
     )
 
     title = models.CharField(
@@ -2834,6 +2836,85 @@ class Person(TimeStampedModel):
         return False
 
 
+class Repertory(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=500,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    # FKs
+    entity = models.ForeignKey(
+        'Entity',
+        related_name='repertories',
+        on_delete=models.CASCADE,
+    )
+
+    catalog = models.ForeignKey(
+        'Catalog',
+        related_name='repertories',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('entity', 'catalog',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "repertory"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                lambda x: smart_text(x), [
+                    self.entity,
+                    self.catalog,
+                ]
+            )
+        )
+        super().save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return True
+
+
 class Round(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3756,6 +3837,14 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    catalog = models.ForeignKey(
+        'Catalog',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     class Meta:
         unique_together = (
@@ -4061,10 +4150,10 @@ class Submission(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
+    repertory = models.ForeignKey(
+        'Repertory',
         related_name='submissions',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
     )

@@ -12,6 +12,7 @@ from .models import (
     Officer,
     Performance,
     Performer,
+    Repertory,
     Round,
     Score,
     Session,
@@ -183,6 +184,20 @@ class PerformerInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'session',
+    ]
+    show_change_link = True
+    extra = 0
+
+
+class RepertoryInline(admin.TabularInline):
+    model = Repertory
+    fields = [
+        'catalog',
+        'entity',
+    ]
+    raw_id_fields = [
+        'catalog',
+        'entity',
     ]
     show_change_link = True
     extra = 0

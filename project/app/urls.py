@@ -21,6 +21,7 @@ from .views import (
     PerformerPrivateViewSet,
     PerformerViewSet,
     PersonViewSet,
+    RepertoryViewSet,
     RoundViewSet,
     ScoreViewSet,
     SessionViewSet,
@@ -53,6 +54,7 @@ router.register(r'performanceprivate', PerformancePrivateViewSet)
 router.register(r'performer', PerformerViewSet)
 router.register(r'performerprivate', PerformerPrivateViewSet)
 router.register(r'person', PersonViewSet)
+router.register(r'repertory', RepertoryViewSet)
 router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)
