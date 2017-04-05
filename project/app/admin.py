@@ -220,6 +220,7 @@ class CatalogAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
+        'title',
     ]
 
     ordering = (
