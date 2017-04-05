@@ -202,6 +202,9 @@ class SessionFilter(FilterSet):
             'convention': [
                 'exact',
             ],
+            'convention__status': [
+                'exact',
+            ],
             'nomen': [
                 'icontains',
             ],
