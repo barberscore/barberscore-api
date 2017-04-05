@@ -1242,7 +1242,7 @@ class Convention(TimeStampedModel):
             return any([
                 request.user.person.officers.filter(
                     office__short_name__in=[
-                        'SCCJ',
+                        'SCJC',
                         'DRCJ',
                     ]
                 )
