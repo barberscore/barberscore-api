@@ -16,3 +16,11 @@ project/static/*
 *.css
 
 .cache/v/cache/lastfailed
+
+pytest.ini
+
+.editorconfig
+
+barberscore-dev.pem
+
+setup.cfg
