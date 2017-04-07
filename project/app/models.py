@@ -1501,8 +1501,8 @@ class Entity(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                request.user.person.officers.filter(
-                    office__short_name='DRCJ'
+                self.officers.filter(
+                    person__user=request.user,
                 )
             ])
         return False
@@ -2886,6 +2886,7 @@ class Repertory(TimeStampedModel):
 
     # Internals
     class Meta:
+        verbose_name_plural = 'repertories'
         unique_together = (
             ('entity', 'catalog',),
         )
