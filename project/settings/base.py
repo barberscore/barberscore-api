@@ -141,9 +141,9 @@ AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 pem_data = AUTH0_PUBLIC_KEY.encode()
 try:
     cert = x509.load_pem_x509_certificate(pem_data, default_backend())
+    jwt_public_key = cert.public_key()
 except ValueError:
-    pass
-jwt_public_key = cert.public_key()
+    jwt_public_key = 'disabled'
 
 
 def jwt_get_username_from_payload_handler(payload):
