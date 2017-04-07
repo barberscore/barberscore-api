@@ -34,7 +34,7 @@ from .backends import (
 )
 from .filters import (
     AwardFilter,
-    CatalogFilter,
+    ChartFilter,
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
@@ -50,7 +50,7 @@ from .filters import (
 from .models import (
     Assignment,
     Award,
-    Catalog,
+    Chart,
     Contest,
     Contestant,
     ContestantPrivate,
@@ -82,7 +82,7 @@ from .paginators import PageNumberPagination
 from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
-    CatalogSerializer,
+    ChartSerializer,
     ContestantPrivateSerializer,
     ContestantSerializer,
     ContestPrivateSerializer,
@@ -151,14 +151,14 @@ class AwardViewSet(viewsets.ModelViewSet):
     resource_name = "award"
 
 
-class CatalogViewSet(viewsets.ModelViewSet):
-    queryset = Catalog.objects.select_related(
+class ChartViewSet(viewsets.ModelViewSet):
+    queryset = Chart.objects.select_related(
     ).prefetch_related(
         'repertories',
         'songs',
     ).order_by('title')
-    serializer_class = CatalogSerializer
-    filter_class = CatalogFilter
+    serializer_class = ChartSerializer
+    filter_class = ChartFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -167,7 +167,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "catalog"
+    resource_name = "chart"
     ordering_fields = [
         'title',
     ]
@@ -502,7 +502,7 @@ class PersonViewSet(viewsets.ModelViewSet):
 class RepertoryViewSet(viewsets.ModelViewSet):
     queryset = Repertory.objects.select_related(
         'entity',
-        'catalog',
+        'chart',
     ).prefetch_related(
         'submissions',
     )
@@ -590,7 +590,7 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'performance',
         'submission',
-        'catalog',
+        'chart',
     ).prefetch_related(
         'scores',
     )

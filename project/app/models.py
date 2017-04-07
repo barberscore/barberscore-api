@@ -388,7 +388,7 @@ class Award(TimeStampedModel):
         return False
 
 
-class Catalog(TimeStampedModel):
+class Chart(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -512,7 +512,7 @@ class Catalog(TimeStampedModel):
 
     # Internals
     class JSONAPIMeta:
-        resource_name = "catalog"
+        resource_name = "chart"
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
@@ -2878,8 +2878,8 @@ class Repertory(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
+    chart = models.ForeignKey(
+        'Chart',
         related_name='repertories',
         on_delete=models.CASCADE,
     )
@@ -2888,7 +2888,7 @@ class Repertory(TimeStampedModel):
     class Meta:
         verbose_name_plural = 'repertories'
         unique_together = (
-            ('entity', 'catalog',),
+            ('entity', 'chart',),
         )
 
     class JSONAPIMeta:
@@ -2902,7 +2902,7 @@ class Repertory(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.entity,
-                    self.catalog,
+                    self.chart,
                 ]
             )
         )
@@ -3850,8 +3850,8 @@ class Song(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    catalog = models.ForeignKey(
-        'Catalog',
+    chart = models.ForeignKey(
+        'Chart',
         related_name='songs',
         null=True,
         blank=True,
@@ -4119,9 +4119,9 @@ class Submission(TimeStampedModel):
         max_length=200,
     )
 
-    bhs_catalog = models.IntegerField(
+    bhs_id = models.IntegerField(
         help_text="""
-            The BHS Catalog Number.
+            The BHS Chart Number.
         """,
         null=True,
         blank=True,

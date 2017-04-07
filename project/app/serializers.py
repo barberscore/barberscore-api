@@ -10,7 +10,7 @@ from .fields import (
 from .models import (
     Assignment,
     Award,
-    Catalog,
+    Chart,
     Contest,
     Contestant,
     ContestantPrivate,
@@ -91,12 +91,12 @@ class AwardSerializer(serializers.ModelSerializer):
         )
 
 
-class CatalogSerializer(serializers.ModelSerializer):
+class ChartSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = Catalog
+        model = Chart
         fields = (
             'id',
             'url',
@@ -485,7 +485,7 @@ class RepertorySerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'entity',
-            'catalog',
+            'chart',
             'submissions',
             'permissions',
         )
@@ -607,7 +607,7 @@ class SongSerializer(serializers.ModelSerializer):
             'status',
             'num',
             'performance',
-            'catalog',
+            'chart',
             'scores',
             'songprivate',
             'permissions',
@@ -646,7 +646,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'title',
-            'bhs_catalog',
+            'bhs_id',
             'is_medley',
             'is_parody',
             'arrangers',

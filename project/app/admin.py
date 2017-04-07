@@ -28,7 +28,7 @@ from .inlines import (
 from .models import (
     Assignment,
     Award,
-    Catalog,
+    Chart,
     Contest,
     ContestPrivate,
     Contestant,
@@ -168,8 +168,8 @@ class AwardAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Catalog)
-class CatalogAdmin(admin.ModelAdmin):
+@admin.register(Chart)
+class ChartAdmin(admin.ModelAdmin):
 
     fields = [
         'nomen',
@@ -726,14 +726,14 @@ class RepertoryAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'entity',
-        'catalog',
+        'chart',
     ]
 
     list_display = [
         'nomen',
         'status',
         'entity',
-        'catalog',
+        'chart',
     ]
 
     fsm_field = [
@@ -750,7 +750,7 @@ class RepertoryAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'entity',
-        'catalog',
+        'chart',
     )
 
     # inlines = [
@@ -968,7 +968,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'status',
         'performance',
         'submission',
-        'catalog',
+        'chart',
         'num',
 
         # 'title',
@@ -1024,7 +1024,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         'status',
         'performer',
         'title',
-        'bhs_catalog',
+        'bhs_id',
         'repertory',
         'arrangers',
         'composers',

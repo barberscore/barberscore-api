@@ -192,11 +192,11 @@ class PerformerInline(admin.TabularInline):
 class RepertoryInline(admin.TabularInline):
     model = Repertory
     fields = [
-        'catalog',
+        'chart',
         'entity',
     ]
     raw_id_fields = [
-        'catalog',
+        'chart',
         'entity',
     ]
     show_change_link = True

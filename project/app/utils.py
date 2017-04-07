@@ -20,7 +20,7 @@ from django.utils import (
 from .models import (
     Assignment,
     Award,
-    Catalog,
+    Chart,
     Contestant,
     Convention,
     Entity,
@@ -47,7 +47,7 @@ def get_auth0_token():
     return json['access_token']
 
 
-def update_db_catalog(path):
+def update_db_chart(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
@@ -59,16 +59,16 @@ def update_db_catalog(path):
                     bhs_fee = int(row[4])
                 except ValueError:
                     bhs_fee = None
-                catalog, created = Catalog.objects.get_or_create(
+                chart, created = Chart.objects.get_or_create(
                     bhs_id=bhs_id
                 )
-                catalog.title = row[2]
-                catalog.arrangers = row[3]
-                catalog.bhs_fee = bhs_fee
-                catalog.bhs_difficulty = int(row[5]) if row[5] else None
-                catalog.bhs_tempo = int(row[6]) if row[6] else None
-                catalog.is_medley = True if row[7] == 'True' else False
-                catalog.save()
+                chart.title = row[2]
+                chart.arrangers = row[3]
+                chart.bhs_fee = bhs_fee
+                chart.bhs_difficulty = int(row[5]) if row[5] else None
+                chart.bhs_tempo = int(row[6]) if row[6] else None
+                chart.is_medley = True if row[7] == 'True' else False
+                chart.save()
 
 
 # def create_account(person):
@@ -810,40 +810,40 @@ def import_db_chapters(path):
 #                 bhs_marketplace = None
 #             if bhs_marketplace:
 #                 try:
-#                     catalog = Catalog.objects.get(
+#                     chart = Chart.objects.get(
 #                         bhs_marketplace=bhs_marketplace,
 #                     )
-#                     log.info('Found catalog by marketplace')
-#                 except Catalog.DoesNotExist:
+#                     log.info('Found chart by marketplace')
+#                 except Chart.DoesNotExist:
 #                     log.info('No marketplace: {0} {1}'.format(bhs_id, title))
-#                     catalog = None
+#                     chart = None
 #             else:
-#                 catalog = None
-#             if not catalog:
+#                 chart = None
+#             if not chart:
 #                 try:
-#                     catalog = Catalog.objects.get(
+#                     chart = Chart.objects.get(
 #                         title=title,
 #                         bhs_marketplace=None,
 #                     )
-#                     log.info('Found catalog by title')
-#                 except Catalog.DoesNotExist:
+#                     log.info('Found chart by title')
+#                 except Chart.DoesNotExist:
 #                     if bhs_marketplace:
-#                         catalog = Catalog.objects.create(
+#                         chart = Chart.objects.create(
 #                             title=title,
 #                             bhs_marketplace=bhs_marketplace,
 #                         )
-#                         log.info("Create catalog with id: {0} {1}".format(title, bhs_marketplace))
+#                         log.info("Create chart with id: {0} {1}".format(title, bhs_marketplace))
 #                     else:
-#                         catalog = Catalog.objects.create(
+#                         chart = Chart.objects.create(
 #                             title=title,
 #                         )
-#                         log.info("Create catalog with no id: {0}".format(title))
-#                 except Catalog.MultipleObjectsReturned:
-#                     catalog = Catalog.objects.filter(
+#                         log.info("Create chart with no id: {0}".format(title))
+#                 except Chart.MultipleObjectsReturned:
+#                     chart = Chart.objects.filter(
 #                         title=title,
 #                         bhs_marketplace=None,
 #                     ).first()
-#                     log.info("Pick first catalog: {0}".format(title))
+#                     log.info("Pick first chart: {0}".format(title))
 #             performers = Performer.objects.filter(
 #                 group__bhs_id=bhs_id,
 #                 session__convention__year=2016,
@@ -851,7 +851,7 @@ def import_db_chapters(path):
 #             for performer in performers:
 #                 submission, created = Submission.objects.get_or_create(
 #                     performer=performer,
-#                     catalog=catalog,
+#                     chart=chart,
 #                 )
 #                 print submission, created
 

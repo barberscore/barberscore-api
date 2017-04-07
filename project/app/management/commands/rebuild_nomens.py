@@ -12,7 +12,7 @@ class Command(BaseCommand):
         models = [
             # Primitives
             'Entity',
-            'Catalog',
+            'Chart',
             'Office',
             'Person',
             'Venue',

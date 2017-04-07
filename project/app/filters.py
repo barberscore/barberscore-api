@@ -4,7 +4,7 @@ from django_filters.rest_framework import FilterSet
 # Local
 from .models import (
     Award,
-    Catalog,
+    Chart,
     Contestant,
     Convention,
     Entity,
@@ -59,9 +59,9 @@ class AwardFilter(FilterSet):
         }
 
 
-class CatalogFilter(FilterSet):
+class ChartFilter(FilterSet):
     class Meta:
-        model = Catalog
+        model = Chart
         fields = {
             'nomen': [
                 'icontains',

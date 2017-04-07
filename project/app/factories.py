@@ -24,7 +24,7 @@ from django.db.models.signals import post_save
 from app.models import (
     Assignment,
     Award,
-    Catalog,
+    Chart,
     Contest,
     Contestant,
     ContestantPrivate,
@@ -84,13 +84,13 @@ class AwardFactory(DjangoModelFactory):
         model = Award
 
 
-class CatalogFactory(DjangoModelFactory):
-    status = Catalog.STATUS.new
+class ChartFactory(DjangoModelFactory):
+    status = Chart.STATUS.new
     title = 'Test Title'
     bhs_id = 999999
 
     class Meta:
-        model = Catalog
+        model = Chart
 
 
 class ContestFactory(DjangoModelFactory):
@@ -315,7 +315,7 @@ class PersonFactory(DjangoModelFactory):
 class RepertoryFactory(DjangoModelFactory):
     status = Repertory.STATUS.new
     entity = SubFactory('app.factories.QuartetFactory')
-    catalog = SubFactory('app.factories.CatalogFactory')
+    chart = SubFactory('app.factories.ChartFactory')
 
     class Meta:
         model = Repertory
@@ -383,7 +383,7 @@ class SongFactory(DjangoModelFactory):
     status = Song.STATUS.new
     num = 1
     performance = SubFactory('app.factories.PerformanceFactory')
-    catalog = None
+    chart = None
     submission = None
 
     class Meta:
@@ -398,7 +398,7 @@ class SongPrivateFactory(DjangoModelFactory):
 class SubmissionFactory(DjangoModelFactory):
     status = Submission.STATUS.new
     title = 'Test Song Title'
-    bhs_catalog = None
+    bhs_id = None
     is_medley = False
     is_parody = False
     arrangers = ''

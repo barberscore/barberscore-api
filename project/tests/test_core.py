@@ -12,7 +12,7 @@ from app.factories import (
     AdminFactory,
     AssignmentFactory,
     AwardFactory,
-    CatalogFactory,
+    ChartFactory,
     ContestantFactory,
     ContestFactory,
     ConventionFactory,
@@ -70,8 +70,8 @@ def award():
 
 
 @pytest.fixture
-def catalog():
-    return CatalogFactory()
+def chart():
+    return ChartFactory()
 
 
 @pytest.fixture
@@ -201,8 +201,8 @@ def test_award_endpoint_list(api_client, award):
 
 
 @pytest.mark.django_db()
-def test_catalog_endpoint_list(api_client, catalog):
-    path = reverse('catalog-list')
+def test_chart_endpoint_list(api_client, chart):
+    path = reverse('chart-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -392,8 +392,8 @@ def test_award_endpoint_detail(api_client, award):
 
 
 @pytest.mark.django_db()
-def test_catalog_endpoint_detail(api_client, catalog):
-    path = reverse('catalog-detail', args=(str(catalog.id),))
+def test_chart_endpoint_detail(api_client, chart):
+    path = reverse('chart-detail', args=(str(chart.id),))
     response = api_client.get(path)
     assert ok(response)
 
@@ -598,8 +598,8 @@ def test_award_admin_list(admin_client, award):
 
 
 @pytest.mark.django_db()
-def test_catalog_admin_list(admin_client, catalog):
-    path = reverse('admin:app_catalog_changelist')
+def test_chart_admin_list(admin_client, chart):
+    path = reverse('admin:app_chart_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -789,8 +789,8 @@ def test_award_admin_detail(admin_client, award):
 
 
 @pytest.mark.django_db()
-def test_catalog_admin_detail(admin_client, catalog):
-    path = reverse('admin:app_catalog_change', args=(str(catalog.id),))
+def test_chart_admin_detail(admin_client, chart):
+    path = reverse('admin:app_chart_change', args=(str(chart.id),))
     response = admin_client.get(path)
     assert ok(response)
 
