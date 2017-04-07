@@ -21,6 +21,4 @@ pytest.ini
 
 .editorconfig
 
-barberscore-dev.pem
-
 setup.cfg

@@ -2,14 +2,6 @@
 from .base import *
 
 
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-# pem_data = AUTH0_PUBLIC_KEY.encode()
-pem_data = open(os.path.join(PROJECT_ROOT, 'barberscore-dev.pem'), 'rb').read()
-cert = x509.load_pem_x509_certificate(pem_data, default_backend())
-jwt_public_key = cert.public_key()
-
-
 # JWT Settings
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('email')
@@ -38,4 +30,3 @@ DEFAULT_FILE_STORAGE = MEDIA_STORAGE
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
