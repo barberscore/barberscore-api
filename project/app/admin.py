@@ -14,7 +14,7 @@ from .inlines import (
     AssignmentInline,
     ContestantInline,
     ContestInline,
-    MembershipInline,
+    MemberInline,
     OfficerInline,
     PerformanceInline,
     # PerformerInline,
@@ -37,7 +37,7 @@ from .models import (
     Entity,
     Office,
     Officer,
-    Membership,
+    Member,
     Performance,
     PerformancePrivate,
     Performer,
@@ -432,7 +432,7 @@ class EntityAdmin(admin.ModelAdmin):
 
     inlines = [
         AwardInline,
-        MembershipInline,
+        MemberInline,
         RepertoryInline,
         OfficerInline,
     ]
@@ -451,8 +451,8 @@ class EntityAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Membership)
-class MembershipAdmin(admin.ModelAdmin):
+@admin.register(Member)
+class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'start_date',
@@ -700,7 +700,7 @@ class PersonAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        MembershipInline,
+        MemberInline,
     ]
 
     search_fields = (

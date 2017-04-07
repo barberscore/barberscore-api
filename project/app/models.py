@@ -1508,7 +1508,7 @@ class Entity(TimeStampedModel):
         return False
 
 
-class Membership(TimeStampedModel):
+class Member(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1558,13 +1558,13 @@ class Membership(TimeStampedModel):
     # FKs
     entity = models.ForeignKey(
         'Entity',
-        related_name='memberships',
+        related_name='members',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'Person',
-        related_name='memberships',
+        related_name='members',
         on_delete=models.CASCADE,
     )
 
@@ -1575,7 +1575,7 @@ class Membership(TimeStampedModel):
         )
 
     class JSONAPIMeta:
-        resource_name = "membership"
+        resource_name = "member"
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)

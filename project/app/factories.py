@@ -30,7 +30,7 @@ from app.models import (
     ContestantPrivate,
     Convention,
     Entity,
-    Membership,
+    Member,
     Office,
     Officer,
     Performance,
@@ -210,17 +210,17 @@ class QuartetFactory(EntityFactory):
     parent = SubFactory('app.factories.DistrictFactory')
 
 
-class MembershipFactory(DjangoModelFactory):
-    status = Membership.STATUS.active
+class MemberFactory(DjangoModelFactory):
+    status = Member.STATUS.active
     part = None
     start_date = None
     end_date = None
-    status = Membership.STATUS.new
+    status = Member.STATUS.new
     entity = SubFactory('app.factories.OrganizationFactory')
     person = SubFactory('app.factories.PersonFactory')
 
     class Meta:
-        model = Membership
+        model = Member
 
 
 class OfficeFactory(DjangoModelFactory):

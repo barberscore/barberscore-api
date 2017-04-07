@@ -8,7 +8,7 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Membership,
+    Member,
     Officer,
     Performance,
     Performer,
@@ -118,8 +118,8 @@ class ConventionInline(admin.TabularInline):
     extra = 0
 
 
-class MembershipInline(admin.TabularInline):
-    model = Membership
+class MemberInline(admin.TabularInline):
+    model = Member
     fields = [
         'person',
         'entity',

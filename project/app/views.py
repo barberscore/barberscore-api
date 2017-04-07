@@ -38,7 +38,7 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
-    MembershipFilter,
+    MemberFilter,
     OfficeFilter,
     OfficerFilter,
     PerformerFilter,
@@ -57,7 +57,7 @@ from .models import (
     ContestPrivate,
     Convention,
     Entity,
-    Membership,
+    Member,
     Office,
     Officer,
     Performance,
@@ -89,7 +89,7 @@ from .serializers import (
     ContestSerializer,
     ConventionSerializer,
     EntitySerializer,
-    MembershipSerializer,
+    MemberSerializer,
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
@@ -311,14 +311,14 @@ class EntityViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class MembershipViewSet(viewsets.ModelViewSet):
-    queryset = Membership.objects.select_related(
+class MemberViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.select_related(
         'entity',
         'person',
     ).prefetch_related(
     )
-    serializer_class = MembershipSerializer
-    filter_class = MembershipFilter
+    serializer_class = MemberSerializer
+    filter_class = MemberFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -327,7 +327,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "membership"
+    resource_name = "member"
 
 
 class OfficeViewSet(viewsets.ModelViewSet):
@@ -461,7 +461,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'representing',
     ).prefetch_related(
         'assignments',
-        'memberships',
+        'members',
         'officers',
         'performers_tenor',
         'performers_lead',

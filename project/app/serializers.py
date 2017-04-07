@@ -17,7 +17,7 @@ from .models import (
     ContestPrivate,
     Convention,
     Entity,
-    Membership,
+    Member,
     Office,
     Officer,
     Performance,
@@ -250,7 +250,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'parent',
             'children',
             'conventions',
-            'memberships',
+            'members',
             'performers',
             'awards',
             'repertories',
@@ -262,11 +262,11 @@ class EntitySerializer(serializers.ModelSerializer):
         ]
 
 
-class MembershipSerializer(serializers.ModelSerializer):
+class MemberSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = Membership
+        model = Member
         fields = [
             'id',
             'url',
@@ -455,7 +455,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'nick_name',
             'representing',
             'assignments',
-            'memberships',
+            'members',
             'officers',
             'permissions',
             'scores',

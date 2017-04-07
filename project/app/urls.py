@@ -12,7 +12,7 @@ from .views import (
     ContestViewSet,
     ConventionViewSet,
     EntityViewSet,
-    MembershipViewSet,
+    MemberViewSet,
     OfficerViewSet,
     OfficeViewCSV,
     OfficeViewSet,
@@ -46,7 +46,7 @@ router.register(r'contestantprivate', ContestantPrivateViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entity', EntityViewSet)
 router.register(r'assignment', AssignmentViewSet)
-router.register(r'membership', MembershipViewSet)
+router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
 router.register(r'performance', PerformanceViewSet)

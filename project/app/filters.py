@@ -8,7 +8,7 @@ from .models import (
     Contestant,
     Convention,
     Entity,
-    Membership,
+    Member,
     Office,
     Officer,
     Performer,
@@ -114,7 +114,7 @@ class EntityFilter(FilterSet):
             'parent': [
                 'exact',
             ],
-            'memberships__person__user': [
+            'members__person__user': [
                 'exact',
             ],
             'nomen': [
@@ -127,9 +127,9 @@ class EntityFilter(FilterSet):
         }
 
 
-class MembershipFilter(FilterSet):
+class MemberFilter(FilterSet):
     class Meta:
-        model = Membership
+        model = Member
         fields = {
             'entity': [
                 'exact',

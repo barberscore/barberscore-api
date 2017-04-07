@@ -17,7 +17,7 @@ from app.factories import (
     ContestFactory,
     ConventionFactory,
     DistrictFactory,
-    MembershipFactory,
+    MemberFactory,
     OfficeFactory,
     OfficerFactory,
     OrganizationFactory,
@@ -105,8 +105,8 @@ def quartet():
 
 
 @pytest.fixture
-def membership():
-    return MembershipFactory()
+def member():
+    return MemberFactory()
 
 
 @pytest.fixture
@@ -250,8 +250,8 @@ def test_entity_endpoint_list(api_client, organization):
 
 
 @pytest.mark.django_db()
-def test_membership_endpoint_list(api_client, membership):
-    path = reverse('membership-list')
+def test_member_endpoint_list(api_client, member):
+    path = reverse('member-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -440,8 +440,8 @@ def test_entity_endpoint_detail(api_client, organization):
 
 
 @pytest.mark.django_db()
-def test_membership_endpoint_detail(api_client, membership):
-    path = reverse('membership-detail', args=(str(membership.id),))
+def test_member_endpoint_detail(api_client, member):
+    path = reverse('member-detail', args=(str(member.id),))
     response = api_client.get(path)
     assert ok(response)
 
@@ -647,8 +647,8 @@ def test_entity_admin_list(admin_client, organization):
 
 
 @pytest.mark.django_db()
-def test_membership_admin_list(admin_client, membership):
-    path = reverse('admin:app_membership_changelist')
+def test_member_admin_list(admin_client, member):
+    path = reverse('admin:app_member_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -837,8 +837,8 @@ def test_entity_admin_detail(admin_client, organization):
 
 
 @pytest.mark.django_db()
-def test_membership_admin_detail(admin_client, membership):
-    path = reverse('admin:app_membership_change', args=(str(membership.id),))
+def test_member_admin_detail(admin_client, member):
+    path = reverse('admin:app_member_change', args=(str(member.id),))
     response = admin_client.get(path)
     assert ok(response)
 

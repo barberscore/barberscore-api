@@ -22,7 +22,7 @@ class Command(BaseCommand):
             'Assignment',
             'Contest',
             'Contestant',
-            'Membership',
+            'Member',
             'Officer',
             'Performance',
             'Performer',
