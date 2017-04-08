@@ -16,7 +16,7 @@ from .inlines import (
     ContestInline,
     MemberInline,
     OfficerInline,
-    PerformanceInline,
+    AppearanceInline,
     # EntryInline,
     RepertoryInline,
     RoundInline,
@@ -38,8 +38,8 @@ from .models import (
     Office,
     Officer,
     Member,
-    Performance,
-    PerformancePrivate,
+    Appearance,
+    AppearancePrivate,
     Entry,
     EntryPrivate,
     Person,
@@ -523,8 +523,8 @@ class OfficerAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Performance)
-class PerformanceAdmin(admin.ModelAdmin):
+@admin.register(Appearance)
+class AppearanceAdmin(admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
@@ -572,8 +572,8 @@ class PerformanceAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(PerformancePrivate)
-class PerformancePrivateAdmin(admin.ModelAdmin):
+@admin.register(AppearancePrivate)
+class AppearancePrivateAdmin(admin.ModelAdmin):
     pass
 
 
@@ -617,7 +617,7 @@ class EntryAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        PerformanceInline,
+        AppearanceInline,
         ContestantInline,
         SubmissionInline,
     ]
@@ -754,7 +754,7 @@ class RepertoryAdmin(admin.ModelAdmin):
     )
 
     # inlines = [
-    #     PerformanceInline,
+    #     AppearanceInline,
     # ]
 
     search_fields = [
@@ -807,7 +807,7 @@ class RoundAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        PerformanceInline,
+        AppearanceInline,
     ]
 
     search_fields = [
@@ -966,7 +966,7 @@ class SongAdmin(admin.ModelAdmin):
     fields = [
         # 'name',
         # 'status',
-        'performance',
+        'appearance',
         'submission',
         'chart',
         'num',
@@ -978,7 +978,7 @@ class SongAdmin(admin.ModelAdmin):
         'nomen',
         # 'status',
         # 'title',
-        'performance',
+        'appearance',
         'submission',
         'num',
     )
@@ -1001,7 +1001,7 @@ class SongAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = (
-        'performance',
+        'appearance',
         'submission',
     )
 

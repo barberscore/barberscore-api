@@ -24,7 +24,7 @@ class Command(BaseCommand):
             'Contestant',
             'Member',
             'Officer',
-            'Performance',
+            'Appearance',
             'Entry',
             'Repertory',
             'Round',

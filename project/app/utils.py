@@ -1252,12 +1252,12 @@ def import_db_chapters(path):
 # def denormalize(convention):
 #     for session in convention.sessions.all():
 #         for entry in session.entries.all():
-#             for performance in entry.performances.all():
-#                 for song in performance.songs.all():
+#             for appearance in entry.appearances.all():
+#                 for song in appearance.songs.all():
 #                     song.calculate()
 #                     song.save()
-#                 performance.calculate()
-#                 performance.save()
+#                 appearance.calculate()
+#                 appearance.save()
 #             entry.calculate()
 #             entry.save()
 #         for contest in session.contests.all():
@@ -1282,12 +1282,12 @@ def import_db_chapters(path):
 # def calculate(convention):
 #     for session in convention.sessions.all():
 #         for entry in session.entries.all():
-#             for performance in entry.performances.all():
-#                 for song in performance.songs.all():
+#             for appearance in entry.appearances.all():
+#                 for song in appearance.songs.all():
 #                     song.calculate()
 #                     song.save()
-#                 performance.calculate()
-#                 performance.save()
+#                 appearance.calculate()
+#                 appearance.save()
 #             entry.calculate()
 #             entry.save()
 #             for contestant in entry.contestants.all():

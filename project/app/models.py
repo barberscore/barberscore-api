@@ -645,7 +645,7 @@ class Contest(TimeStampedModel):
         if not point_total:
             return None
         contestants = self.contestants.all()
-        points = [contestant.contestantscore.calculate_total_points() for contestant in contestants]
+        points = [contestant.contestantprivate.calculate_total_points() for contestant in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -685,14 +685,14 @@ class ContestPrivate(TimeStampedModel):
             champion = None
         else:
             try:
-                champion = self.contest.contestants.get(contestantscore__rank=1).entry
+                champion = self.contest.contestants.get(contestantprivate__rank=1).entry
             except self.contest.contestants.model.DoesNotExist:
                 champion = None
             except self.contest.contestants.model.MultipleObjectsReturned:
-                champion = self.contest.contestants.filter(contestantscore__rank=1).order_by(
-                    '-contestantscore__sng_points',
-                    '-contestantscore__mus_points',
-                    '-contestantscore__prs_points',
+                champion = self.contest.contestants.filter(contestantprivate__rank=1).order_by(
+                    '-contestantprivate__sng_points',
+                    '-contestantprivate__mus_points',
+                    '-contestantprivate__prs_points',
                 ).first().entry
         self.champion = champion
 
@@ -951,7 +951,7 @@ class ContestantPrivate(TimeStampedModel):
         return self.contestant.contest.ranking(self.contestant.calculate_total_points())
 
     def calculate_mus_points(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -960,7 +960,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_prs_points(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -969,7 +969,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_sng_points(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -978,7 +978,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_total_points(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             round__num__lte=self.contestant.contest.award.num_rounds,
         ).aggregate(
@@ -986,7 +986,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_mus_score(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -995,7 +995,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_prs_score(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -1004,7 +1004,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_sng_score(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -1013,7 +1013,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_total_score(self):
-        return self.contestant.entry.performances.filter(
+        return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             round__num__lte=self.contestant.contest.award.num_rounds,
         ).aggregate(
@@ -1799,7 +1799,7 @@ class Officer(TimeStampedModel):
         return False
 
 
-class Performance(TimeStampedModel):
+class Appearance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -1834,14 +1834,14 @@ class Performance(TimeStampedModel):
 
     actual_start = models.DateTimeField(
         help_text="""
-            The actual performance window.""",
+            The actual appearance window.""",
         null=True,
         blank=True,
     )
 
     actual_finish = models.DateTimeField(
         help_text="""
-            The actual performance window.""",
+            The actual appearance window.""",
         null=True,
         blank=True,
     )
@@ -1849,13 +1849,13 @@ class Performance(TimeStampedModel):
     # FKs
     round = models.ForeignKey(
         'Round',
-        related_name='performances',
+        related_name='appearances',
         on_delete=models.CASCADE,
     )
 
     entry = models.ForeignKey(
         'Entry',
-        related_name='performances',
+        related_name='appearances',
         on_delete=models.CASCADE,
     )
 
@@ -1868,7 +1868,7 @@ class Performance(TimeStampedModel):
 
     # Internals
     class JSONAPIMeta:
-        resource_name = "performance"
+        resource_name = "appearance"
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
@@ -1919,18 +1919,18 @@ class Performance(TimeStampedModel):
 
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
     def verify(self, *args, **kwargs):
-        self.performancescore.calculate()
-        self.performancescore.save()
+        self.appearanceprivate.calculate()
+        self.appearanceprivate.save()
         Song = config.get_model('Song')
         songs = Song.objects.filter(
-            performance=self,
+            appearance=self,
         )
         for song in songs:
             song.calculate()
             song.save()
         Score = config.get_model('Score')
         scores = Score.objects.filter(
-            song__performance=self,
+            song__appearance=self,
         )
         flags = []
         for score in scores:
@@ -1944,9 +1944,9 @@ class Performance(TimeStampedModel):
         return
 
 
-class PerformancePrivate(TimeStampedModel):
-    performance = models.OneToOneField(
-        'Performance',
+class AppearancePrivate(TimeStampedModel):
+    appearance = models.OneToOneField(
+        'Appearance',
         on_delete=models.CASCADE,
         primary_key=True,
         parent_link=True,
@@ -1999,7 +1999,7 @@ class PerformancePrivate(TimeStampedModel):
 
     # Internals
     class JSONAPIMeta:
-        resource_name = "performanceprivate"
+        resource_name = "appearanceprivate"
 
     # Methods
     def __str__(self):
@@ -2017,66 +2017,66 @@ class PerformancePrivate(TimeStampedModel):
         self.total_score = self.calculate_total_score()
 
     def calculate_rank(self):
-        return self.performance.round.ranking(self.calculate_total_points())
+        return self.appearance.round.ranking(self.calculate_total_points())
 
     def calculate_mus_points(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
-            scores__category=self.performance.round.session.assignments.model.CATEGORY.music,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_prs_points(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
-            scores__category=self.performance.round.session.assignments.model.CATEGORY.presentation,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
-            scores__category=self.performance.round.session.assignments.model.CATEGORY.singing,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_total_points(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
-            scores__category=self.performance.round.session.assignments.model.CATEGORY.music,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_prs_score(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
-            scores__category=self.performance.round.session.assignments.model.CATEGORY.presentation,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
-            scores__category=self.performance.round.session.assignments.model.CATEGORY.singing,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_total_score(self):
-        return self.performance.songs.filter(
-            scores__kind=self.performance.round.session.assignments.model.KIND.official,
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
@@ -2100,9 +2100,9 @@ class PerformancePrivate(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             # return any([
-            #     self.performance.round.session.assignments.filter(
+            #     self.appearance.round.session.assignments.filter(
             #         # judge__user=request.user,
-            #         category=self.performance.round.session.assignments.model.category.ADMIN,
+            #         category=self.appearance.round.session.assignments.model.category.ADMIN,
             #     ),
             # ])
             return True
@@ -2414,12 +2414,12 @@ class EntryPrivate(TimeStampedModel):
         self.rank = self.calculate_rank()
 
     def calculate_pdf(self):
-        for performance in self.entry.performances.all():
-            for song in performance.songs.all():
+        for appearance in self.entry.appearances.all():
+            for song in appearance.songs.all():
                 song.calculate()
                 song.save()
-            performance.calculate()
-            performance.save()
+            appearance.calculate()
+            appearance.save()
         self.calculate()
         self.save()
         return
@@ -2427,7 +2427,7 @@ class EntryPrivate(TimeStampedModel):
     # def print_csa(self):
     #     entry = self
     #     contestants = entry.contestants.all()
-    #     performances = entry.performances.order_by(
+    #     appearances = entry.appearances.order_by(
     #         'round__kind',
     #     )
     #     assignments = entry.session.assignments.exclude(
@@ -2440,7 +2440,7 @@ class EntryPrivate(TimeStampedModel):
     #     foo = get_template('csa.html')
     #     template = foo.render(context={
     #         'entry': entry,
-    #         'performances': performances,
+    #         'appearances': appearances,
     #         'assignments': assignments,
     #         'contestants': contestants,
     #     })
@@ -2466,12 +2466,12 @@ class EntryPrivate(TimeStampedModel):
 
     def calculate_rank(self):
         try:
-            return self.entry.contestants.get(contest=self.entry.session.primary).contestantscore.calculate_rank()
+            return self.entry.contestants.get(contest=self.entry.session.primary).contestantprivate.calculate_rank()
         except self.entry.contestants.model.DoesNotExist:
             return None
 
     def calculate_mus_points(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
         ).aggregate(
@@ -2479,7 +2479,7 @@ class EntryPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_prs_points(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
@@ -2487,7 +2487,7 @@ class EntryPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_sng_points(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
         ).aggregate(
@@ -2495,14 +2495,14 @@ class EntryPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_total_points(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
         ).aggregate(
@@ -2510,7 +2510,7 @@ class EntryPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_prs_score(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
@@ -2518,7 +2518,7 @@ class EntryPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_sng_score(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
         ).aggregate(
@@ -2526,7 +2526,7 @@ class EntryPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_total_score(self):
-        return self.entry.performances.filter(
+        return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
@@ -3054,8 +3054,8 @@ class Round(TimeStampedModel):
     def ranking(self, point_total):
         if not point_total:
             return None
-        performances = self.performances.all()
-        points = [performance.performancescore.calculate_total_points() for performance in performances]
+        appearances = self.appearances.all()
+        points = [appearance.appearanceprivate.calculate_total_points() for appearance in appearances]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -3065,9 +3065,9 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.drawn)
     def draw(self, *args, **kwargs):
         i = 1
-        for performance in self.performances.order_by('?'):
-            performance.slot = i
-            performance.save()
+        for appearance in self.appearances.order_by('?'):
+            appearance.slot = i
+            appearance.save()
             i += 1
         return
 
@@ -3125,7 +3125,7 @@ class Round(TimeStampedModel):
             for contestant in contestants:
                 # Advance the entry if the rank is GTE spots.
                 if contestant.calculate_rank() <= spots:
-                    next_round.performances.get_or_create(
+                    next_round.appearances.get_or_create(
                         entry=contestant.entry,
                         num=i,
                     )
@@ -3133,7 +3133,7 @@ class Round(TimeStampedModel):
             return
         # Get the number of spots available
         spots = self.session.convention.organization.spots
-        # Create performances accordingly
+        # Create appearances accordingly
         next_round = self.session.rounds.create(
             num=2,
             kind=self.session.rounds.model.KIND.finals,
@@ -3169,7 +3169,7 @@ class Round(TimeStampedModel):
         # Append up to spots available.
         diff = spots - len(advancing)
         if diff > 0:
-            adds = self.performances.filter(
+            adds = self.appearances.filter(
                 entry__contestants__contest__num_rounds__gt=1,
             ).exclude(
                 entry__in=advancing,
@@ -3181,7 +3181,7 @@ class Round(TimeStampedModel):
         random.shuffle(advancing)
         i = 1
         for entry in advancing:
-            next_round.performances.get_or_create(
+            next_round.appearances.get_or_create(
                 entry=entry,
                 slot=i,
             )
@@ -3191,24 +3191,24 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
-            for performance in self.performances.all():
-                performance.publish()
-                performance.save()
+            for appearance in self.appearances.all():
+                appearance.publish()
+                appearance.save()
         else:
             next_round = self.session.rounds.get(num=self.num + 1)
             next_round.validate()
             next_round.save()
             # TODO This makes me REALLY nervous...
             dnp = self.session.entries.exclude(
-                performances__round=next_round,
+                appearances__round=next_round,
             )
             for entry in dnp:
-                for performance in entry.performances.all():
-                    for song in performance.songs.all():
+                for appearance in entry.appearances.all():
+                    for song in appearance.songs.all():
                         song.publish()
                         song.save()
-                    performance.publish()
-                    performance.save()
+                    appearance.publish()
+                    appearance.save()
                 entry.publish()
                 entry.save()
             self.current = next_round
@@ -3421,13 +3421,13 @@ class Score(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 True,
-                # self.song.performance.entry.session.assignments.filter(
+                # self.song.appearance.entry.session.assignments.filter(
                 #     judge__user=request.user,
-                #     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
+                #     category=self.song.appearance.round.session.assignments.model.CATEGORY.admin,
                 # ),
-                # self.song.performance.entry.group.roles.filter(
+                # self.song.appearance.entry.group.roles.filter(
                 #     person__user=request.user,
-                #     status=self.song.performance.entry.group.roles.model.STATUS.active,
+                #     status=self.song.appearance.entry.group.roles.model.STATUS.active,
                 # ),
             ])
         return False
@@ -3437,13 +3437,13 @@ class Score(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 True,
-                # self.song.performance.entry.session.assignments.filter(
+                # self.song.appearance.entry.session.assignments.filter(
                 #     judge__user=request.user,
-                #     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
+                #     category=self.song.appearance.round.session.assignments.model.CATEGORY.admin,
                 # ),
-                # self.song.performance.entry.group.roles.filter(
+                # self.song.appearance.entry.group.roles.filter(
                 #     person__user=request.user,
-                #     status=self.song.performance.entry.group.roles.model.STATUS.active,
+                #     status=self.song.appearance.entry.group.roles.model.STATUS.active,
                 # ),
             ])
         return False
@@ -3530,7 +3530,7 @@ class Session(TimeStampedModel):
     )
 
     cursor = models.OneToOneField(
-        'Performance',
+        'Appearance',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -3686,12 +3686,12 @@ class Session(TimeStampedModel):
     def finish(self, *args, **kwargs):
         session = self
         for entry in session.entries.all():
-            for performance in entry.performances.all():
-                for song in performance.songs.all():
+            for appearance in entry.appearances.all():
+                for song in appearance.songs.all():
                     song.calculate()
                     song.save()
-                performance.calculate()
-                performance.save()
+                appearance.calculate()
+                appearance.save()
             entry.calculate()
             entry.save()
         return
@@ -3837,8 +3837,8 @@ class Song(TimeStampedModel):
     )
 
     # FKs
-    performance = models.ForeignKey(
-        'Performance',
+    appearance = models.ForeignKey(
+        'Appearance',
         related_name='songs',
         on_delete=models.CASCADE,
     )
@@ -3862,7 +3862,7 @@ class Song(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('performance', 'num',),
+            ('appearance', 'num',),
         )
 
     class JSONAPIMeta:
@@ -3875,7 +3875,7 @@ class Song(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.performance,
+                    self.appearance,
                     self.num,
                 ]
             )

@@ -21,7 +21,7 @@ from app.factories import (
     OfficeFactory,
     OfficerFactory,
     OrganizationFactory,
-    PerformanceFactory,
+    AppearanceFactory,
     EntryFactory,
     PersonFactory,
     QuartetFactory,
@@ -120,8 +120,8 @@ def officer():
 
 
 @pytest.fixture
-def performance():
-    return PerformanceFactory()
+def appearance():
+    return AppearanceFactory()
 
 
 @pytest.fixture
@@ -271,15 +271,15 @@ def test_officer_endpoint_list(api_client, officer):
 
 
 @pytest.mark.django_db()
-def test_performance_endpoint_list(api_client, performance):
-    path = reverse('performance-list')
+def test_appearance_endpoint_list(api_client, appearance):
+    path = reverse('appearance-list')
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performanceprivate_endpoint_list(api_client, performance):
-    path = reverse('performanceprivate-list')
+def test_appearanceprivate_endpoint_list(api_client, appearance):
+    path = reverse('appearanceprivate-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -461,16 +461,16 @@ def test_officer_endpoint_detail(api_client, officer):
 
 
 @pytest.mark.django_db()
-def test_performance_endpoint_detail(api_client, performance):
-    path = reverse('performance-detail', args=(str(performance.id),))
+def test_appearance_endpoint_detail(api_client, appearance):
+    path = reverse('appearance-detail', args=(str(appearance.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performanceprivate_endpoint_detail(api_client, performance):
-    public = reverse('performance-detail', args=(str(performance.id),))
-    private = reverse('performanceprivate-detail', args=(performance.performanceprivate.pk,))
+def test_appearanceprivate_endpoint_detail(api_client, appearance):
+    public = reverse('appearance-detail', args=(str(appearance.id),))
+    private = reverse('appearanceprivate-detail', args=(appearance.appearanceprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
     assert ok(public_response)
@@ -668,15 +668,15 @@ def test_officer_admin_list(admin_client, officer):
 
 
 @pytest.mark.django_db()
-def test_performance_admin_list(admin_client, performance):
-    path = reverse('admin:app_performance_changelist')
+def test_appearance_admin_list(admin_client, appearance):
+    path = reverse('admin:app_appearance_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performanceprivate_admin_list(admin_client, performance):
-    path = reverse('admin:app_performanceprivate_changelist')
+def test_appearanceprivate_admin_list(admin_client, appearance):
+    path = reverse('admin:app_appearanceprivate_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -858,16 +858,16 @@ def test_officer_admin_detail(admin_client, officer):
 
 
 @pytest.mark.django_db()
-def test_performance_admin_detail(admin_client, performance):
-    path = reverse('admin:app_performance_change', args=(str(performance.id),))
+def test_appearance_admin_detail(admin_client, appearance):
+    path = reverse('admin:app_appearance_change', args=(str(appearance.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performanceprivate_admin_detail(admin_client, performance):
-    public = reverse('admin:app_performance_change', args=(str(performance.id),))
-    private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
+def test_appearanceprivate_admin_detail(admin_client, appearance):
+    public = reverse('admin:app_appearance_change', args=(str(appearance.id),))
+    private = reverse('admin:app_appearanceprivate_change', args=(appearance.appearanceprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
     assert ok(public_response)
@@ -882,9 +882,9 @@ def test_entry_admin_detail(admin_client, entry):
 
 
 @pytest.mark.django_db()
-def test_entryprivate_admin_detail(admin_client, performance):
-    public = reverse('admin:app_performance_change', args=(str(performance.id),))
-    private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
+def test_entryprivate_admin_detail(admin_client, appearance):
+    public = reverse('admin:app_appearance_change', args=(str(appearance.id),))
+    private = reverse('admin:app_appearanceprivate_change', args=(appearance.appearanceprivate.pk,))
     public_response = admin_client.get(public)
     private_response = admin_client.get(private)
     assert ok(public_response)

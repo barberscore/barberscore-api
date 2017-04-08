@@ -10,7 +10,7 @@ from django.core.management.base import (
 # First-Party
 from app.models import (
     Contestant,
-    Performance,
+    Appearance,
     Entry,
     Session,
     Song,
@@ -41,12 +41,12 @@ class Command(BaseCommand):
             raise CommandError("Session does not exist.")
 
         items = Song.objects.filter(
-            performance__round__session=session,
+            appearance__round__session=session,
         )
         for i in items:
             i.calculate()
             i.save()
-        items = Performance.objects.filter(
+        items = Appearance.objects.filter(
             round__session=session,
         )
         for i in items:

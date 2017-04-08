@@ -16,8 +16,8 @@ from .views import (
     OfficerViewSet,
     OfficeViewCSV,
     OfficeViewSet,
-    PerformancePrivateViewSet,
-    PerformanceViewSet,
+    AppearancePrivateViewSet,
+    AppearanceViewSet,
     EntryPrivateViewSet,
     EntryViewSet,
     PersonViewSet,
@@ -49,8 +49,8 @@ router.register(r'assignment', AssignmentViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
-router.register(r'performance', PerformanceViewSet)
-router.register(r'performanceprivate', PerformancePrivateViewSet)
+router.register(r'appearance', AppearanceViewSet)
+router.register(r'appearanceprivate', AppearancePrivateViewSet)
 router.register(r'entry', EntryViewSet)
 router.register(r'entryprivate', EntryPrivateViewSet)
 router.register(r'person', PersonViewSet)

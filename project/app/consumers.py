@@ -74,7 +74,7 @@ def print_csa(message):
     id = message.content.get('id')
     entry = Entry.objects.get(id=id)
     contestants = entry.contestants.all()
-    performances = entry.performances.order_by(
+    appearances = entry.appearances.order_by(
         'round__kind',
     )
     assignments = entry.session.assignments.exclude(
@@ -87,7 +87,7 @@ def print_csa(message):
     foo = get_template('csa.html')
     template = foo.render(context={
         'entry': entry,
-        'performances': performances,
+        'appearances': appearances,
         'assignments': assignments,
         'contestants': contestants,
     })
@@ -124,7 +124,7 @@ def print_ann(message):
     except Round.DoesNotExist:
         next_round = None
     if next_round:
-        advancing = next_round.performances.order_by('num')
+        advancing = next_round.appearances.order_by('num')
     else:
         advancing = None
     medalists = round.session.entries.filter(

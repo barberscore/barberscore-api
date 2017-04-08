@@ -15,8 +15,8 @@ from .models import (
     ContestPrivate,
     Entry,
     EntryPrivate,
-    Performance,
-    PerformancePrivate,
+    Appearance,
+    AppearancePrivate,
     Song,
     SongPrivate,
     Contestant,
@@ -50,12 +50,12 @@ def entry_post_save(sender, instance=None, created=False, raw=False, **kwargs):
             EntryPrivate.objects.create(entry=instance)
 
 
-@receiver(post_save, sender=Performance)
-def performance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+@receiver(post_save, sender=Appearance)
+def appearance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create Private Contest."""
     if not raw:
         if created:
-            PerformancePrivate.objects.create(performance=instance)
+            AppearancePrivate.objects.create(appearance=instance)
 
 
 @receiver(post_save, sender=Song)
@@ -66,15 +66,15 @@ def song_post_save(sender, instance=None, created=False, raw=False, **kwargs):
             SongPrivate.objects.create(song=instance)
 
 
-# @receiver(post_save, sender=Performance)
-# def performance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+# @receiver(post_save, sender=Appearance)
+# def appearance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
 #     """Create sentinels."""
 #     if not raw:
 #         if created:
 #             s = 1
 #             while s <= instance.round.num_songs:
 #                 song = instance.songs.create(
-#                     performance=instance,
+#                     appearance=instance,
 #                     num=s,
 #                 )
 #                 s += 1

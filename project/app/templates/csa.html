@@ -104,8 +104,8 @@
       {% comment %}
 
         <ul class='list-unstyled'>
-          {% for performance in performances %}
-            <li>{{performance.round.get_kind_display}} Rank: {{performance.rank}}</li>
+          {% for appearance in appearances %}
+            <li>{{appearance.round.get_kind_display}} Rank: {{appearance.rank}}</li>
           {% endfor %}
         </ul>
       {% endcomment %}
@@ -115,7 +115,7 @@
         <p><small>Representing: {{entry.representing.long_name}}</small></p>
         <p><small>Directed By: {{entry.director}}&nbsp;{{entry.codirector|default_if_none:""}}</small></p>
         <p><small>Men on Stage: {{entry.men}}</small></p>
-        <p><small>Order of Appearance: {{performances.first.num}}</small></p>
+        <p><small>Order of Appearance: {{appearances.first.num}}</small></p>
       </div>
       {% endcomment %}
     </section>
@@ -141,47 +141,47 @@
           <tbody>
             <tr>
               <td>
-                {% for performance in performances %}
-                  {% for song in performance.songs.all %}
+                {% for appearance in appearances %}
+                  {% for song in appearance.songs.all %}
                     {{song.submission.title|truncatewords_html:10}}<br>
                   {% endfor %}
-                  <em>{{performance.round.get_kind_display}} (OA: {{performance.num}}, Rank: {{performance.rank}})</em><br>
+                  <em>{{appearance.round.get_kind_display}} (OA: {{appearance.num}}, Rank: {{appearance.rank}})</em><br>
                 {% endfor %}
                 <strong>Total</strong>
               </td>
               <td class='text-right'>
-                {% for performance in performances %}
-                  {% for song in performance.songs.all %}
+                {% for appearance in appearances %}
+                  {% for song in appearance.songs.all %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.mus_points}} ({{performance.mus_score|floatformat:1}})</em><br>
+                  <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
                 {% endfor %}
                 <strong>{{entry.mus_points}} ({{entry.mus_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
-                {% for performance in performances %}
-                  {% for song in performance.songs.all %}
+                {% for appearance in appearances %}
+                  {% for song in appearance.songs.all %}
                     {{song.prs_points}} ({{song.prs_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.prs_points}} ({{performance.prs_score|floatformat:1}})</em><br>
+                  <em>{{appearance.prs_points}} ({{appearance.prs_score|floatformat:1}})</em><br>
                 {% endfor %}
                 <strong>{{entry.prs_points}} ({{entry.prs_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
-                {% for performance in performances %}
-                  {% for song in performance.songs.all %}
+                {% for appearance in appearances %}
+                  {% for song in appearance.songs.all %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.sng_points}} ({{performance.sng_score|floatformat:1}})</em><br>
+                  <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
                 {% endfor %}
                 <strong>{{entry.sng_points}} ({{entry.sng_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
-                {% for performance in performances %}
-                  {% for song in performance.songs.all %}
+                {% for appearance in appearances %}
+                  {% for song in appearance.songs.all %}
                     {{song.total_points}} ({{song.total_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{performance.total_points}} ({{performance.total_score|floatformat:1}})</em><br>
+                  <em>{{appearance.total_points}} ({{appearance.total_score|floatformat:1}})</em><br>
                 {% endfor %}
                 <strong>{{entry.total_points}} ({{entry.total_score|floatformat:1}})</strong><br>
               </td>
@@ -204,16 +204,16 @@
           <tbody>
             <tr>
               <td>
-                {% for performance in performances %}
-                  {% for song in performance.songs.all %}
+                {% for appearance in appearances %}
+                  {% for song in appearance.songs.all %}
                     {{song.submission.title|truncatewords_html:4}}<br>
                   {% endfor %}
                 {% endfor %}
               </td>
               {% for assignment in assignments %}
                 <td class='text-right'>
-                  {% for performance in performances %}
-                    {% for song in performance.songs.all %}
+                  {% for appearance in appearances %}
+                    {% for song in appearance.songs.all %}
                       {% for score in song.scores.all %}
                         {% if score.assignment == assignment %}{{score.points}}<br>{% endif %}
                       {% endfor %}

@@ -10,7 +10,7 @@ from .models import (
     Convention,
     Member,
     Officer,
-    Performance,
+    Appearance,
     Entry,
     Repertory,
     Round,
@@ -153,8 +153,8 @@ class OfficerInline(admin.TabularInline):
     extra = 0
 
 
-class PerformanceInline(admin.TabularInline):
-    model = Performance
+class AppearanceInline(admin.TabularInline):
+    model = Appearance
     fields = [
         'entry',
         'status',

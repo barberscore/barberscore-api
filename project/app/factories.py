@@ -33,8 +33,8 @@ from app.models import (
     Member,
     Office,
     Officer,
-    Performance,
-    PerformancePrivate,
+    Appearance,
+    AppearancePrivate,
     Entry,
     EntryPrivate,
     Person,
@@ -246,8 +246,8 @@ class OfficerFactory(DjangoModelFactory):
         model = Officer
 
 
-class PerformanceFactory(DjangoModelFactory):
-    status = Performance.STATUS.new
+class AppearanceFactory(DjangoModelFactory):
+    status = Appearance.STATUS.new
     num = None
     actual_start = None
     actual_finish = None
@@ -256,12 +256,12 @@ class PerformanceFactory(DjangoModelFactory):
     slot = None
 
     class Meta:
-        model = Performance
+        model = Appearance
 
 
-class PerformancePrivateFactory(DjangoModelFactory):
+class AppearancePrivateFactory(DjangoModelFactory):
     class Meta:
-        model = PerformancePrivate
+        model = AppearancePrivate
 
 
 class EntryFactory(DjangoModelFactory):
@@ -382,7 +382,7 @@ class SlotFactory(DjangoModelFactory):
 class SongFactory(DjangoModelFactory):
     status = Song.STATUS.new
     num = 1
-    performance = SubFactory('app.factories.PerformanceFactory')
+    appearance = SubFactory('app.factories.AppearanceFactory')
     chart = None
     submission = None
 
@@ -1079,12 +1079,12 @@ class AdminFactory(DjangoModelFactory):
 #     )
 
 
-# # Performances
-# class PerformanceFactory(DjangoModelFactory):
+# # Appearances
+# class AppearanceFactory(DjangoModelFactory):
 #     class Meta:
-#         model = Performance
+#         model = Appearance
 
-#     status = Performance.STATUS.new
+#     status = Appearance.STATUS.new
 #     entry = SubFactory(
 #         'app.factories.EntryFactory',
 #     )
@@ -1111,10 +1111,10 @@ class AdminFactory(DjangoModelFactory):
 #     class Meta:
 #         model = Song
 
-#     status = Performance.STATUS.new
+#     status = Appearance.STATUS.new
 #     num = 1
-#     performance = SubFactory(
-#         'app.factories.PerformanceFactory',
+#     appearance = SubFactory(
+#         'app.factories.AppearanceFactory',
 #     )
 
 

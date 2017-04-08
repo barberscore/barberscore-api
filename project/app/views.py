@@ -27,7 +27,7 @@ from rest_framework_csv.renderers import CSVRenderer
 from .backends import (
     CoalesceFilterBackend,
     ContestPrivateFilterBackend,
-    PerformancePrivateFilterBackend,
+    AppearancePrivateFilterBackend,
     EntryPrivateFilterBackend,
     ScoreFilterBackend,
     SongPrivateFilterBackend,
@@ -60,8 +60,8 @@ from .models import (
     Member,
     Office,
     Officer,
-    Performance,
-    PerformancePrivate,
+    Appearance,
+    AppearancePrivate,
     Entry,
     EntryPrivate,
     Person,
@@ -93,8 +93,8 @@ from .serializers import (
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
-    PerformancePrivateSerializer,
-    PerformanceSerializer,
+    AppearancePrivateSerializer,
+    AppearanceSerializer,
     EntryPrivateSerializer,
     EntrySerializer,
     PersonSerializer,
@@ -368,18 +368,18 @@ class OfficerViewSet(viewsets.ModelViewSet):
     resource_name = "officer"
 
 
-class PerformanceViewSet(
-    get_viewset_transition_action_mixin(Performance),
+class AppearanceViewSet(
+    get_viewset_transition_action_mixin(Appearance),
     viewsets.ModelViewSet,
 ):
-    queryset = Performance.objects.select_related(
+    queryset = Appearance.objects.select_related(
         'round',
         'entry',
         'slot',
         'session',
     ).prefetch_related(
     )
-    serializer_class = PerformanceSerializer
+    serializer_class = AppearanceSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
@@ -389,24 +389,24 @@ class PerformanceViewSet(
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performance"
+    resource_name = "appearance"
 
 
-class PerformancePrivateViewSet(viewsets.ModelViewSet):
-    queryset = PerformancePrivate.objects.select_related(
+class AppearancePrivateViewSet(viewsets.ModelViewSet):
+    queryset = AppearancePrivate.objects.select_related(
     ).prefetch_related(
     )
-    serializer_class = PerformancePrivateSerializer
+    serializer_class = AppearancePrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
-        PerformancePrivateFilterBackend,
+        AppearancePrivateFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performanceprivate"
+    resource_name = "appearanceprivate"
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -422,7 +422,7 @@ class EntryViewSet(viewsets.ModelViewSet):
         'representing',
     ).prefetch_related(
         'contestants',
-        'performances',
+        'appearances',
         'submissions',
     )
     serializer_class = EntrySerializer
@@ -526,7 +526,7 @@ class RoundViewSet(
     queryset = Round.objects.select_related(
         'session',
     ).prefetch_related(
-        'performances',
+        'appearances',
         'current_session',
         'slots',
     )
@@ -588,7 +588,7 @@ class SessionViewSet(
 
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
-        'performance',
+        'appearance',
         'submission',
         'chart',
     ).prefetch_related(
@@ -627,7 +627,7 @@ class SongPrivateViewSet(viewsets.ModelViewSet):
 class SlotViewSet(viewsets.ModelViewSet):
     queryset = Slot.objects.select_related(
         'round',
-        'performance',
+        'appearance',
     ).prefetch_related(
     )
     serializer_class = SlotSerializer

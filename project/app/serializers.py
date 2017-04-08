@@ -20,8 +20,8 @@ from .models import (
     Member,
     Office,
     Officer,
-    Performance,
-    PerformancePrivate,
+    Appearance,
+    AppearancePrivate,
     Entry,
     EntryPrivate,
     Person,
@@ -319,11 +319,11 @@ class OfficerSerializer(serializers.ModelSerializer):
         ]
 
 
-class PerformanceSerializer(serializers.ModelSerializer):
+class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = Performance
+        model = Appearance
         fields = (
             'id',
             'url',
@@ -340,11 +340,11 @@ class PerformanceSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformancePrivateSerializer(serializers.ModelSerializer):
+class AppearancePrivateSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = PerformancePrivate
+        model = AppearancePrivate
         fields = (
             'id',
             'url',
@@ -387,7 +387,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'bass',
             'director',
             'codirector',
-            'performances',
+            'appearances',
             'contestants',
             'submissions',
             'permissions',
@@ -509,7 +509,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'end_date',
             'ann_pdf',
             'session',
-            # 'performances',
+            # 'appearances',
             # 'slots',
             'permissions',
         )
@@ -589,7 +589,7 @@ class SlotSerializer(serializers.ModelSerializer):
             'backstage',
             'onstage',
             'round',
-            'performance',
+            'appearance',
             'permissions',
         )
 
@@ -606,7 +606,7 @@ class SongSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'num',
-            'performance',
+            'appearance',
             'chart',
             'scores',
             'songprivate',
