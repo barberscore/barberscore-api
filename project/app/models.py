@@ -673,6 +673,9 @@ class ContestPrivate(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        verbose_name_plural = 'ContestsPrivate'
+
     class JSONAPIMeta:
         resource_name = "contestprivate"
 
@@ -904,6 +907,10 @@ class ContestantPrivate(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    # Internals
+    class Meta:
+        verbose_name_plural = 'ContestantsPrivate'
 
     class JSONAPIMeta:
         resource_name = "contestantprivate"
@@ -1998,6 +2005,9 @@ class AppearancePrivate(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        verbose_name_plural = 'AppearancesPrivate'
+
     class JSONAPIMeta:
         resource_name = "appearanceprivate"
 
@@ -2395,6 +2405,9 @@ class EntryPrivate(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        verbose_name_plural = 'EntriesPrivate'
+
     class JSONAPIMeta:
         resource_name = "entryprivate"
 
@@ -3966,6 +3979,9 @@ class SongPrivate(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        verbose_name_plural = 'SongsPrivate'
+
     class JSONAPIMeta:
         resource_name = "songprivate"
 
