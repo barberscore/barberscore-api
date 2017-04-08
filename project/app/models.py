@@ -666,7 +666,7 @@ class ContestPrivate(TimeStampedModel):
     )
 
     champion = models.ForeignKey(
-        'Performer',
+        'Entry',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -685,7 +685,7 @@ class ContestPrivate(TimeStampedModel):
             champion = None
         else:
             try:
-                champion = self.contest.contestants.get(contestantscore__rank=1).performer
+                champion = self.contest.contestants.get(contestantscore__rank=1).entry
             except self.contest.contestants.model.DoesNotExist:
                 champion = None
             except self.contest.contestants.model.MultipleObjectsReturned:
@@ -693,7 +693,7 @@ class ContestPrivate(TimeStampedModel):
                     '-contestantscore__sng_points',
                     '-contestantscore__mus_points',
                     '-contestantscore__prs_points',
-                ).first().performer
+                ).first().entry
         self.champion = champion
 
     # Permissions
@@ -766,8 +766,8 @@ class Contestant(TimeStampedModel):
     )
 
     # FKs
-    performer = models.ForeignKey(
-        'Performer',
+    entry = models.ForeignKey(
+        'Entry',
         related_name='contestants',
         on_delete=models.CASCADE,
     )
@@ -781,7 +781,7 @@ class Contestant(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('performer', 'contest',),
+            ('entry', 'contest',),
         )
 
     class JSONAPIMeta:
@@ -794,7 +794,7 @@ class Contestant(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.performer,
+                    self.entry,
                     self.contest,
                 ]
             )
@@ -951,7 +951,7 @@ class ContestantPrivate(TimeStampedModel):
         return self.contestant.contest.ranking(self.contestant.calculate_total_points())
 
     def calculate_mus_points(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -960,7 +960,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_prs_points(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -969,7 +969,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_sng_points(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -978,7 +978,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_total_points(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             round__num__lte=self.contestant.contest.award.num_rounds,
         ).aggregate(
@@ -986,7 +986,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_mus_score(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -995,7 +995,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_prs_score(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -1004,7 +1004,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_sng_score(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
             round__num__lte=self.contestant.contest.award.num_rounds,
@@ -1013,7 +1013,7 @@ class ContestantPrivate(TimeStampedModel):
         )['tot']
 
     def calculate_total_score(self):
-        return self.contestant.performer.performances.filter(
+        return self.contestant.entry.performances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             round__num__lte=self.contestant.contest.award.num_rounds,
         ).aggregate(
@@ -1853,8 +1853,8 @@ class Performance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    performer = models.ForeignKey(
-        'Performer',
+    entry = models.ForeignKey(
+        'Entry',
         related_name='performances',
         on_delete=models.CASCADE,
     )
@@ -1878,7 +1878,7 @@ class Performance(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.round,
-                    self.performer,
+                    self.entry,
                 ]
             )
         )
@@ -1908,7 +1908,7 @@ class Performance(TimeStampedModel):
                 #     judge__user=request.user,
                 #     category=self.round.session.assignments.model.category.ADMIN,
                 # ),
-                # self.performer.session.convention.drcj == request.user.person,
+                # self.entry.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -2109,7 +2109,7 @@ class PerformancePrivate(TimeStampedModel):
         return False
 
 
-class Performer(TimeStampedModel):
+class Entry(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2164,7 +2164,7 @@ class Performer(TimeStampedModel):
 
     is_evaluation = models.BooleanField(
         help_text="""
-            Performer requests evaluation.""",
+            Entry requests evaluation.""",
         default=True,
     )
 
@@ -2196,19 +2196,19 @@ class Performer(TimeStampedModel):
     # FKs
     session = models.ForeignKey(
         'Session',
-        related_name='performers',
+        related_name='entries',
         on_delete=models.CASCADE,
     )
 
     entity = models.ForeignKey(
         'Entity',
-        related_name='performers',
+        related_name='entries',
         on_delete=models.CASCADE,
     )
 
     representing = models.ForeignKey(
         'Entity',
-        related_name='performers_representing',
+        related_name='entries_representing',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -2218,7 +2218,7 @@ class Performer(TimeStampedModel):
         'Person',
         null=True,
         blank=True,
-        related_name='performers_tenor',
+        related_name='entries_tenor',
         on_delete=models.SET_NULL,
     )
 
@@ -2226,7 +2226,7 @@ class Performer(TimeStampedModel):
         'Person',
         null=True,
         blank=True,
-        related_name='performers_lead',
+        related_name='entries_lead',
         on_delete=models.SET_NULL,
     )
 
@@ -2234,7 +2234,7 @@ class Performer(TimeStampedModel):
         'Person',
         null=True,
         blank=True,
-        related_name='performers_baritone',
+        related_name='entries_baritone',
         on_delete=models.SET_NULL,
     )
 
@@ -2242,7 +2242,7 @@ class Performer(TimeStampedModel):
         'Person',
         null=True,
         blank=True,
-        related_name='performers_bass',
+        related_name='entries_bass',
         on_delete=models.SET_NULL,
     )
 
@@ -2250,7 +2250,7 @@ class Performer(TimeStampedModel):
         'Person',
         null=True,
         blank=True,
-        related_name='performers_director',
+        related_name='entries_director',
         on_delete=models.SET_NULL,
     )
 
@@ -2258,18 +2258,19 @@ class Performer(TimeStampedModel):
         'Person',
         null=True,
         blank=True,
-        related_name='performers_codirector',
+        related_name='entries_codirector',
         on_delete=models.SET_NULL,
     )
 
     # # Internals
     class Meta:
+        verbose_name_plural = 'entries'
         unique_together = (
             ('entity', 'session',),
         )
 
     class JSONAPIMeta:
-        resource_name = "performer"
+        resource_name = "entry"
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
@@ -2332,9 +2333,9 @@ class Performer(TimeStampedModel):
         return
 
 
-class PerformerPrivate(TimeStampedModel):
-    performer = models.OneToOneField(
-        'Performer',
+class EntryPrivate(TimeStampedModel):
+    entry = models.OneToOneField(
+        'Entry',
         on_delete=models.CASCADE,
         primary_key=True,
         parent_link=True,
@@ -2395,7 +2396,7 @@ class PerformerPrivate(TimeStampedModel):
 
     # Internals
     class JSONAPIMeta:
-        resource_name = "performerprivate"
+        resource_name = "entryprivate"
 
     # Methods
     def __str__(self):
@@ -2413,7 +2414,7 @@ class PerformerPrivate(TimeStampedModel):
         self.rank = self.calculate_rank()
 
     def calculate_pdf(self):
-        for performance in self.performer.performances.all():
+        for performance in self.entry.performances.all():
             for song in performance.songs.all():
                 song.calculate()
                 song.save()
@@ -2424,12 +2425,12 @@ class PerformerPrivate(TimeStampedModel):
         return
 
     # def print_csa(self):
-    #     performer = self
-    #     contestants = performer.contestants.all()
-    #     performances = performer.performances.order_by(
+    #     entry = self
+    #     contestants = entry.contestants.all()
+    #     performances = entry.performances.order_by(
     #         'round__kind',
     #     )
-    #     assignments = performer.session.assignments.exclude(
+    #     assignments = entry.session.assignments.exclude(
     #         category=Assignment.CATEGORY.admin,
     #     ).order_by(
     #         'category',
@@ -2438,7 +2439,7 @@ class PerformerPrivate(TimeStampedModel):
     #     )
     #     foo = get_template('csa.html')
     #     template = foo.render(context={
-    #         'performer': performer,
+    #         'entry': entry,
     #         'performances': performances,
     #         'assignments': assignments,
     #         'contestants': contestants,
@@ -2451,11 +2452,11 @@ class PerformerPrivate(TimeStampedModel):
     #             "document_type": "pdf",
     #         })
     #         f = ContentFile(create_response)
-    #         performer.csa_pdf.save(
+    #         entry.csa_pdf.save(
     #             "{0}.pdf".format(id),
     #             f
     #         )
-    #         performer.save()
+    #         entry.save()
     #         log.info("PDF created and saved to instance")
     #     except docraptor.rest.ApiException as error:
     #         log.error(error)
@@ -2465,68 +2466,68 @@ class PerformerPrivate(TimeStampedModel):
 
     def calculate_rank(self):
         try:
-            return self.performer.contestants.get(contest=self.performer.session.primary).contestantscore.calculate_rank()
-        except self.performer.contestants.model.DoesNotExist:
+            return self.entry.contestants.get(contest=self.entry.session.primary).contestantscore.calculate_rank()
+        except self.entry.contestants.model.DoesNotExist:
             return None
 
     def calculate_mus_points(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
-            songs__scores__category=self.performer.session.assignments.model.CATEGORY.music,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_prs_points(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
-            songs__scores__category=self.performer.session.assignments.model.CATEGORY.presentation,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
-            songs__scores__category=self.performer.session.assignments.model.CATEGORY.singing,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_total_points(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
-            songs__scores__category=self.performer.session.assignments.model.CATEGORY.music,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_prs_score(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
-            songs__scores__category=self.performer.session.assignments.model.CATEGORY.presentation,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
-            songs__scores__category=self.performer.session.assignments.model.CATEGORY.singing,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_total_score(self):
-        return self.performer.performances.filter(
-            songs__scores__kind=self.performer.session.assignments.model.KIND.official,
+        return self.entry.performances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -2544,7 +2545,7 @@ class PerformerPrivate(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if self.performer.status == self.performer.STATUS.published:
+        if self.entry.status == self.entry.STATUS.published:
             return True
         return False
 
@@ -3077,21 +3078,21 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         # if self.num == 1:
-        #     # if the first round, start all performers
-        #     for performer in self.session.performers.all():
-        #         performer.start()
-        #         performer.save()
+        #     # if the first round, start all entries
+        #     for entry in self.session.entries.all():
+        #         entry.start()
+        #         entry.save()
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
-            # If the Finals, finish performers and return
-            for performer in self.session.performers.filter(
-                status=self.session.performers.model.STATUS.started
+            # If the Finals, finish entries and return
+            for entry in self.session.entries.filter(
+                status=self.session.entries.model.STATUS.started
             ):
-                performer.finish()
-                performer.save()
+                entry.finish()
+                entry.save()
             for contest in self.session.contests.all():
                 for contestant in contest.contestants.all():
                     contestant.finish()
@@ -3122,10 +3123,10 @@ class Round(TimeStampedModel):
             contestants = self.session.primary.contestants.order_by('?')
             i = 1
             for contestant in contestants:
-                # Advance the performer if the rank is GTE spots.
+                # Advance the entry if the rank is GTE spots.
                 if contestant.calculate_rank() <= spots:
                     next_round.performances.get_or_create(
-                        performer=contestant.performer,
+                        entry=contestant.entry,
                         num=i,
                     )
                     i += 1
@@ -3149,7 +3150,7 @@ class Round(TimeStampedModel):
                     total_score__gte=contest.award.advance,
                 )
                 for contestant in contestants:
-                    advancing.append(contestant.performer)
+                    advancing.append(contestant.entry)
             # Championships are relative.
             else:
                 # Get the top scorer
@@ -3162,26 +3163,26 @@ class Round(TimeStampedModel):
                     total_score__gte=accept,
                 )
                 for contestant in contestants:
-                    advancing.append(contestant.performer)
+                    advancing.append(contestant.entry)
         # Remove duplicates
         advancing = list(set(advancing))
         # Append up to spots available.
         diff = spots - len(advancing)
         if diff > 0:
             adds = self.performances.filter(
-                performer__contestants__contest__num_rounds__gt=1,
+                entry__contestants__contest__num_rounds__gt=1,
             ).exclude(
-                performer__in=advancing,
+                entry__in=advancing,
             ).order_by(
                 '-total_points',
             )[:diff]
             for a in adds:
-                advancing.append(a.performer)
+                advancing.append(a.entry)
         random.shuffle(advancing)
         i = 1
-        for performer in advancing:
+        for entry in advancing:
             next_round.performances.get_or_create(
-                performer=performer,
+                entry=entry,
                 slot=i,
             )
             i += 1
@@ -3198,18 +3199,18 @@ class Round(TimeStampedModel):
             next_round.validate()
             next_round.save()
             # TODO This makes me REALLY nervous...
-            dnp = self.session.performers.exclude(
+            dnp = self.session.entries.exclude(
                 performances__round=next_round,
             )
-            for performer in dnp:
-                for performance in performer.performances.all():
+            for entry in dnp:
+                for performance in entry.performances.all():
                     for song in performance.songs.all():
                         song.publish()
                         song.save()
                     performance.publish()
                     performance.save()
-                performer.publish()
-                performer.save()
+                entry.publish()
+                entry.save()
             self.current = next_round
             self.save()
         return
@@ -3420,13 +3421,13 @@ class Score(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 True,
-                # self.song.performance.performer.session.assignments.filter(
+                # self.song.performance.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
                 # ),
-                # self.song.performance.performer.group.roles.filter(
+                # self.song.performance.entry.group.roles.filter(
                 #     person__user=request.user,
-                #     status=self.song.performance.performer.group.roles.model.STATUS.active,
+                #     status=self.song.performance.entry.group.roles.model.STATUS.active,
                 # ),
             ])
         return False
@@ -3436,13 +3437,13 @@ class Score(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 True,
-                # self.song.performance.performer.session.assignments.filter(
+                # self.song.performance.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.song.performance.round.session.assignments.model.CATEGORY.admin,
                 # ),
-                # self.song.performance.performer.group.roles.filter(
+                # self.song.performance.entry.group.roles.filter(
                 #     person__user=request.user,
-                #     status=self.song.performance.performer.group.roles.model.STATUS.active,
+                #     status=self.song.performance.entry.group.roles.model.STATUS.active,
                 # ),
             ])
         return False
@@ -3597,7 +3598,7 @@ class Session(TimeStampedModel):
 
     # def print_oss(self):
     #     session = self
-    #     performers = session.performers.exclude(
+    #     entries = session.entries.exclude(
     #         rank=None,
     #     ).order_by(
     #         '-total_points',
@@ -3613,7 +3614,7 @@ class Session(TimeStampedModel):
     #     foo = get_template('oss.html')
     #     template = foo.render(context={
     #         'session': session,
-    #         'performers': performers,
+    #         'entries': entries,
     #         'assignments': assignments,
     #     })
     #     try:
@@ -3684,15 +3685,15 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         session = self
-        for performer in session.performers.all():
-            for performance in performer.performances.all():
+        for entry in session.entries.all():
+            for performance in entry.performances.all():
                 for song in performance.songs.all():
                     song.calculate()
                     song.save()
                 performance.calculate()
                 performance.save()
-            performer.calculate()
-            performer.save()
+            entry.calculate()
+            entry.save()
         return
 
     @transition(field=status, source='*', target=STATUS.published)
@@ -4059,13 +4060,13 @@ class SongPrivate(TimeStampedModel):
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
             # return any([
-            #     self.song.performer.session.assignments.filter(
+            #     self.song.entry.session.assignments.filter(
             #         # judge__user=request.user,
             #         category=self.song.round.session.assignments.model.category.ADMIN,
             #     ),
-            #     self.song.performer.group.roles.filter(
+            #     self.song.entry.group.roles.filter(
             #         person__user=request.user,
-            #         status=self.song.performer.roles.model.STATUS.active,
+            #         status=self.song.entry.roles.model.STATUS.active,
             #     ),
             # ])
             return True
@@ -4075,13 +4076,13 @@ class SongPrivate(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             # return any([
-            #     self.song.performer.session.assignments.filter(
+            #     self.song.entry.session.assignments.filter(
             #         # judge__user=request.user,
             #         category=self.song.round.session.assignments.model.category.ADMIN,
             #     ),
-            #     self.song.performer.group.roles.filter(
+            #     self.song.entry.group.roles.filter(
             #         person__user=request.user,
-            #         status=self.song.performer.roles.model.STATUS.active,
+            #         status=self.song.entry.roles.model.STATUS.active,
             #     ),
             # ])
             return True
@@ -4157,8 +4158,8 @@ class Submission(TimeStampedModel):
     )
 
     # FKs
-    performer = models.ForeignKey(
-        'Performer',
+    entry = models.ForeignKey(
+        'Entry',
         related_name='submissions',
         on_delete=models.CASCADE,
     )
@@ -4174,7 +4175,7 @@ class Submission(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('performer', 'title',),
+            ('entry', 'title',),
         )
 
     class JSONAPIMeta:
@@ -4187,7 +4188,7 @@ class Submission(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.performer,
+                    self.entry,
                     self.title,
                 ]
             )
@@ -4210,18 +4211,18 @@ class Submission(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 True,
-                # self.performer.session.assignments.filter(
+                # self.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.round.session.assignments.model.category.ADMIN,
                 # ),
-                # self.performer.group.roles.filter(
+                # self.entry.group.roles.filter(
                 #     person__user=request.user,
-                #     status=self.performer.roles.model.STATUS.active,
+                #     status=self.entry.roles.model.STATUS.active,
                 # ),
-                # self.performer.session.assignments.filter(
+                # self.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 # ),
-                # self.performer.session.convention.drcj == request.user.person,
+                # self.entry.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -4230,18 +4231,18 @@ class Submission(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 True,
-                # self.performer.session.assignments.filter(
+                # self.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.round.session.assignments.model.category.ADMIN,
                 # ),
-                # self.performer.group.roles.filter(
+                # self.entry.group.roles.filter(
                 #     person__user=request.user,
-                #     status=self.performer.roles.model.STATUS.active,
+                #     status=self.entry.roles.model.STATUS.active,
                 # )
-                # self.performer.session.assignments.filter(
+                # self.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 # ),
-                # self.performer.session.convention.drcj == request.user.person,
+                # self.entry.session.convention.drcj == request.user.person,
             ])
         return False
 

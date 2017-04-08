@@ -13,7 +13,7 @@ from django.template.loader import get_template
 # Local
 from .models import (
     Assignment,
-    Performer,
+    Entry,
     Round,
     Session,
 )
@@ -27,7 +27,7 @@ doc_api = docraptor.DocApi()
 def print_oss(message):
     id = message.content.get('id')
     session = Session.objects.get(id=id)
-    performers = session.performers.filter(
+    entries = session.entries.filter(
         rank__gt=20,
     ).exclude(
         rank=None,
@@ -45,7 +45,7 @@ def print_oss(message):
     foo = get_template('oss.html')
     template = foo.render(context={
         'session': session,
-        'performers': performers,
+        'entries': entries,
         'assignments': assignments,
     })
     try:
@@ -72,12 +72,12 @@ def print_oss(message):
 
 def print_csa(message):
     id = message.content.get('id')
-    performer = Performer.objects.get(id=id)
-    contestants = performer.contestants.all()
-    performances = performer.performances.order_by(
+    entry = Entry.objects.get(id=id)
+    contestants = entry.contestants.all()
+    performances = entry.performances.order_by(
         'round__kind',
     )
-    assignments = performer.session.assignments.exclude(
+    assignments = entry.session.assignments.exclude(
         category=Assignment.CATEGORY.admin,
     ).order_by(
         'category',
@@ -86,7 +86,7 @@ def print_csa(message):
     )
     foo = get_template('csa.html')
     template = foo.render(context={
-        'performer': performer,
+        'entry': entry,
         'performances': performances,
         'assignments': assignments,
         'contestants': contestants,
@@ -99,11 +99,11 @@ def print_csa(message):
             "document_type": "pdf",
         })
         f = ContentFile(create_response)
-        performer.csa_pdf.save(
+        entry.csa_pdf.save(
             "{0}.pdf".format(id),
             f
         )
-        performer.save()
+        entry.save()
         log.info("PDF created and saved to instance")
     except docraptor.rest.ApiException as error:
         log.error(error)
@@ -127,7 +127,7 @@ def print_ann(message):
         advancing = next_round.performances.order_by('num')
     else:
         advancing = None
-    medalists = round.session.performers.filter(
+    medalists = round.session.entries.filter(
         rank__lte=5,
     ).order_by('rank')
     foo = get_template('ann.html')

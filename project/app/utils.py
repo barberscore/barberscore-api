@@ -738,7 +738,7 @@ def import_db_chapters(path):
 #         return
 
 
-# def import_db_performers(path):
+# def import_db_entries(path):
 #     with open(path) as f:
 #         reader = csv.reader(f, skipinitialspace=True)
 #         next(reader)
@@ -787,14 +787,14 @@ def import_db_chapters(path):
 #                 except Session.DoesNotExist:
 #                     log.error("No Session: {0}, {1} - {2}".format(convention, group, group.get_kind_display()))
 #                     continue
-#             performer, created = Performer.objects.get_or_create(
+#             entry, created = Entry.objects.get_or_create(
 #                 session=session,
 #                 group=group,
 #             )
-#             performer.soa = soa
-#             performer.is_evaluation = is_evaluation
-#             performer.bhs_id = int(row[0])
-#             performer.save()
+#             entry.soa = soa
+#             entry.is_evaluation = is_evaluation
+#             entry.bhs_id = int(row[0])
+#             entry.save()
 
 
 # def import_db_submissions(path):
@@ -844,13 +844,13 @@ def import_db_chapters(path):
 #                         bhs_marketplace=None,
 #                     ).first()
 #                     log.info("Pick first chart: {0}".format(title))
-#             performers = Performer.objects.filter(
+#             entries = Entry.objects.filter(
 #                 group__bhs_id=bhs_id,
 #                 session__convention__year=2016,
 #             )
-#             for performer in performers:
+#             for entry in entries:
 #                 submission, created = Submission.objects.get_or_create(
-#                     performer=performer,
+#                     entry=entry,
 #                     chart=chart,
 #                 )
 #                 print submission, created
@@ -895,14 +895,14 @@ def import_db_chapters(path):
 #                     log.error("Bad Div: {0} {1}".format(district_name, name))
 #                     continue
 #                 try:
-#                     performer = Performer.objects.get(
+#                     entry = Entry.objects.get(
 #                         bhs_id=int(row[0]),
 #                     )
-#                 except Performer.DoesNotExist:
-#                     log.error("Can't find performer")
+#                 except Entry.DoesNotExist:
+#                     log.error("Can't find entry")
 #                     continue
-#                 performer.representing = organization
-#                 performer.save()
+#                 entry.representing = organization
+#                 entry.save()
 
 
 # def import_db_contests(path):
@@ -912,7 +912,7 @@ def import_db_chapters(path):
 #         rows = [row for row in reader]
 #         for row in rows:
 #             convention_bhs_id = int(row[3])
-#             performer_bhs_id = int(row[0])
+#             entry_bhs_id = int(row[0])
 #             try:
 #                 convention = Convention.objects.get(
 #                     bhs_id=convention_bhs_id,
@@ -922,15 +922,15 @@ def import_db_chapters(path):
 #                 continue
 #             name = row[8].strip()
 #             try:
-#                 performer = Performer.objects.get(
-#                     bhs_id=performer_bhs_id,
+#                 entry = Entry.objects.get(
+#                     bhs_id=entry_bhs_id,
 #                 )
-#             except Performer.DoesNotExist:
-#                 log.error("Can't find performer")
+#             except Entry.DoesNotExist:
+#                 log.error("Can't find entry")
 #                 continue
 #             try:
 #                 session = convention.sessions.get(
-#                     kind=performer.group.kind,
+#                     kind=entry.group.kind,
 #                 )
 #             except Session.DoesNotExist:
 #                 try:
@@ -945,14 +945,14 @@ def import_db_chapters(path):
 #                     except Session.DoesNotExist:
 #                         log.error("No Session: {0}, {1} - {2}".format(
 #                             convention,
-#                             performer.group,
-#                             performer.group.get_kind_display(),
+#                             entry.group,
+#                             entry.group.get_kind_display(),
 #                         ))
 #                         continue
-#             if not performer.representing:
-#                 log.error("No representation for {0}".format(performer))
+#             if not entry.representing:
+#                 log.error("No representation for {0}".format(entry))
 #                 continue
-#             organization = performer.representing
+#             organization = entry.representing
 #             if organization.level == Organization.LEVEL.district:
 #                 district = organization
 #                 division = None
@@ -961,7 +961,7 @@ def import_db_chapters(path):
 #                 division = organization
 #             else:
 #                 log.error("Bad Rep: {0} {1}".format(
-#                     performer,
+#                     entry,
 #                     organization,
 #                 ))
 #                 continue
@@ -971,13 +971,13 @@ def import_db_chapters(path):
 #             if any([string in name for string in excludes]):
 #                 continue
 #             if name == 'Scores for Evaluation Only':
-#                 performer.status = Performer.STATUS.evaluation
-#                 performer.save()
+#                 entry.status = Entry.STATUS.evaluation
+#                 entry.save()
 #                 continue
 #             name = name.replace("Most Improved", "Most-Improved")
 #             try:
 #                 award = Award.objects.get(
-#                     organization=performer.representing,
+#                     organization=entry.representing,
 #                     stix_name__endswith=name,
 #                 )
 #             except Award.DoesNotExist:
@@ -1209,7 +1209,7 @@ def import_db_chapters(path):
 #                     )
 #                 elif 'Division Quartet' == name:
 #                     if not division:
-#                         log.error("Div with no Div: {0}".format(performer))
+#                         log.error("Div with no Div: {0}".format(entry))
 #                         continue
 #                     award = Award.objects.get(
 #                         is_primary=True,
@@ -1234,7 +1234,7 @@ def import_db_chapters(path):
 #             )
 #             contestant, created = Contestant.objects.get_or_create(
 #                 contest=contest,
-#                 performer=performer,
+#                 entry=entry,
 #             )
 #             print contestant, created
 
@@ -1251,15 +1251,15 @@ def import_db_chapters(path):
 
 # def denormalize(convention):
 #     for session in convention.sessions.all():
-#         for performer in session.performers.all():
-#             for performance in performer.performances.all():
+#         for entry in session.entries.all():
+#             for performance in entry.performances.all():
 #                 for song in performance.songs.all():
 #                     song.calculate()
 #                     song.save()
 #                 performance.calculate()
 #                 performance.save()
-#             performer.calculate()
-#             performer.save()
+#             entry.calculate()
+#             entry.save()
 #         for contest in session.contests.all():
 #             contest.rank()
 #             contest.save()
@@ -1281,16 +1281,16 @@ def import_db_chapters(path):
 
 # def calculate(convention):
 #     for session in convention.sessions.all():
-#         for performer in session.performers.all():
-#             for performance in performer.performances.all():
+#         for entry in session.entries.all():
+#             for performance in entry.performances.all():
 #                 for song in performance.songs.all():
 #                     song.calculate()
 #                     song.save()
 #                 performance.calculate()
 #                 performance.save()
-#             performer.calculate()
-#             performer.save()
-#             for contestant in performer.contestants.all():
+#             entry.calculate()
+#             entry.save()
+#             for contestant in entry.contestants.all():
 #                 contestant.calculate()
 #                 contestant.save()
 #     return

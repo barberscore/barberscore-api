@@ -94,8 +94,8 @@
             Medalists
           </h3>
           <ul class='list-unstyled'>
-            {% for performer in medalists %}
-              <li>{{performer.rank}}: <strong>{{performer.group.name}}</strong>&nbsp;{{performer.total_points|intcomma}}&nbsp;({{performer.total_score|floatformat:1}})</li>
+            {% for entry in medalists %}
+              <li>{{entry.rank}}: <strong>{{entry.group.name}}</strong>&nbsp;{{entry.total_points|intcomma}}&nbsp;({{entry.total_score|floatformat:1}})</li>
             {% endfor %}
           </ul>
         </section>
@@ -106,7 +106,7 @@
           </h3>
           <ul class='list-unstyled'>
             {% for performance in advancing %}
-              <li>{{performance.num}}: {{performance.performer.group.name}}</li>
+              <li>{{performance.num}}: {{performance.entry.group.name}}</li>
             {% endfor %}
           </ul>
         </section>

@@ -11,7 +11,7 @@ from django.core.management.base import (
 from app.models import (
     Contestant,
     Performance,
-    Performer,
+    Entry,
     Session,
     Song,
 )
@@ -52,7 +52,7 @@ class Command(BaseCommand):
         for i in items:
             i.calculate()
             i.save()
-        items = Performer.objects.filter(
+        items = Entry.objects.filter(
             session=session,
         )
         for i in items:

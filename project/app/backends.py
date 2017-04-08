@@ -33,7 +33,7 @@ class ContestPrivateFilterBackend(DRYPermissionFiltersBase):
         return queryset.none()
 
 
-class PerformerPrivateFilterBackend(DRYPermissionFiltersBase):
+class EntryPrivateFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
         """Limit all list requests to at least validated if not superuser."""
         if request.user.is_authenticated():
@@ -58,13 +58,13 @@ class PerformancePrivateFilterBackend(DRYPermissionFiltersBase):
 
 class ScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to performer if not superuser."""
+        """Limit all list requests to entry if not superuser."""
         if request.user.is_authenticated():
             if request.user.is_staff:
                 return queryset.all()
             else:
                 return queryset.filter(
-                    song__performance__performer__group__roles__person__user=request.user,
+                    song__performance__entry__group__roles__person__user=request.user,
                 )
         return queryset.none()
 

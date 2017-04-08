@@ -69,37 +69,37 @@
       </h4>
       {% comment %}
       <ul class='list-unstyled'>
-        <li>{{performer.session.convention.name}}</li>
-        <li>International {{performer.session.get_kind_display}} Contest</li>
+        <li>{{entry.session.convention.name}}</li>
+        <li>International {{entry.session.get_kind_display}} Contest</li>
         <li>July 6 - 9, 2016</li>
       </ul>
       {% endcomment %}
       {# <ul class='list-unstyled'> #}
       <div class='shortp'>
-        <p><small>{{performer.session.convention.name}}</small></p>
-        <p><small>International {{performer.session.get_kind_display}} Contest</small></p>
+        <p><small>{{entry.session.convention.name}}</small></p>
+        <p><small>International {{entry.session.get_kind_display}} Contest</small></p>
         <p><small>July 6 - 9, 2016</small></p>
       </div>
       {# </ul> #}
-      {# {% if performer.picture %} #}
-        {# <img src="{{performer.picture.url}}" height="100"> #}
+      {# {% if entry.picture %} #}
+        {# <img src="{{entry.picture.url}}" height="100"> #}
       {# {% endif %} #}
       </section>
       <section>
-    <img class='pull-right' src="{{performer.picture.url}}">
+    <img class='pull-right' src="{{entry.picture.url}}">
     {# <img class='img-thumbnail pull-right' src="https://s3-us-west-1.amazonaws.com/barberscore/static/images/foo.jpg" > #}
       <h3>
-        {{performer.group.name}}
+        {{entry.group.name}}
       </h3>
       {# <h4> #}
-        {# {{performer.session.convention.date.upper|date:'%B %d, %Y'}} #}
+        {# {{entry.session.convention.date.upper|date:'%B %d, %Y'}} #}
       {# </h4> #}
       <h4>
-        Overall Rank: {{performer.rank|default_if_none:""}}
+        Overall Rank: {{entry.rank|default_if_none:""}}
       </h4>
       <div class='shortp'>
-        <p><small>Representing: {{performer.representing.long_name}}&nbsp;District</small></p>
-        <p><small>Members: {{performer.tenor.person.name}}, {{performer.lead.person.name}}, {{performer.baritone.person.name}} & {{performer.bass.person.name}}</small></p>
+        <p><small>Representing: {{entry.representing.long_name}}&nbsp;District</small></p>
+        <p><small>Members: {{entry.tenor.person.name}}, {{entry.lead.person.name}}, {{entry.baritone.person.name}} & {{entry.bass.person.name}}</small></p>
       </div>
       {% comment %}
 
@@ -112,9 +112,9 @@
 
       {% comment %}
       <div class='shortp'>
-        <p><small>Representing: {{performer.representing.long_name}}</small></p>
-        <p><small>Directed By: {{performer.director}}&nbsp;{{performer.codirector|default_if_none:""}}</small></p>
-        <p><small>Men on Stage: {{performer.men}}</small></p>
+        <p><small>Representing: {{entry.representing.long_name}}</small></p>
+        <p><small>Directed By: {{entry.director}}&nbsp;{{entry.codirector|default_if_none:""}}</small></p>
+        <p><small>Men on Stage: {{entry.men}}</small></p>
         <p><small>Order of Appearance: {{performances.first.num}}</small></p>
       </div>
       {% endcomment %}
@@ -156,7 +156,7 @@
                   {% endfor %}
                   <em>{{performance.mus_points}} ({{performance.mus_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{performer.mus_points}} ({{performer.mus_score|floatformat:1}})</strong><br>
+                <strong>{{entry.mus_points}} ({{entry.mus_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for performance in performances %}
@@ -165,7 +165,7 @@
                   {% endfor %}
                   <em>{{performance.prs_points}} ({{performance.prs_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{performer.prs_points}} ({{performer.prs_score|floatformat:1}})</strong><br>
+                <strong>{{entry.prs_points}} ({{entry.prs_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for performance in performances %}
@@ -174,7 +174,7 @@
                   {% endfor %}
                   <em>{{performance.sng_points}} ({{performance.sng_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{performer.sng_points}} ({{performer.sng_score|floatformat:1}})</strong><br>
+                <strong>{{entry.sng_points}} ({{entry.sng_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for performance in performances %}
@@ -183,7 +183,7 @@
                   {% endfor %}
                   <em>{{performance.total_points}} ({{performance.total_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{performer.total_points}} ({{performer.total_score|floatformat:1}})</strong><br>
+                <strong>{{entry.total_points}} ({{entry.total_score|floatformat:1}})</strong><br>
               </td>
             </tr>
           </tbody>

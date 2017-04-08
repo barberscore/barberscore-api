@@ -22,8 +22,8 @@ from .models import (
     Officer,
     Performance,
     PerformancePrivate,
-    Performer,
-    PerformerPrivate,
+    Entry,
+    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -164,7 +164,7 @@ class ContestantSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'performer',
+            'entry',
             'contest',
             'permissions',
         )
@@ -251,7 +251,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'children',
             'conventions',
             'members',
-            'performers',
+            'entries',
             'awards',
             'repertories',
             'officers',
@@ -333,7 +333,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
             'actual_start',
             'actual_finish',
             'round',
-            'performer',
+            'entry',
             'slot',
             'songs',
             'permissions',
@@ -361,11 +361,11 @@ class PerformancePrivateSerializer(serializers.ModelSerializer):
         )
 
 
-class PerformerSerializer(serializers.ModelSerializer):
+class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = Performer
+        model = Entry
         fields = (
             'id',
             'url',
@@ -397,11 +397,11 @@ class PerformerSerializer(serializers.ModelSerializer):
         ]
 
 
-class PerformerPrivateSerializer(serializers.ModelSerializer):
+class EntryPrivateSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
-        model = PerformerPrivate
+        model = EntryPrivate
         fields = (
             'id',
             'url',
@@ -560,7 +560,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'scoresheet_pdf',
             # 'computed_rounds',
             'convention',
-            'performers',
+            'entries',
             'contests',
             'rounds',
             'permissions',
@@ -652,7 +652,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'arrangers',
             'composers',
             'holders',
-            'performer',
+            'entry',
             'repertory',
             'permissions',
         ]

@@ -9,7 +9,7 @@ from app.utils import (
     extract_contests,
     extract_panel,
     extract_performances,
-    extract_performers,
+    extract_entries,
     extract_rounds,
     extract_scores,
     extract_sessions,
@@ -120,8 +120,8 @@ class Command(BaseCommand):
         self.stdout.write("Panel Extracted")
 
         for v in vs:
-            extract_performers(v)
-        self.stdout.write("Performers Extracted")
+            extract_entries(v)
+        self.stdout.write("Entries Extracted")
 
         for v in vs:
             extract_contests(v)

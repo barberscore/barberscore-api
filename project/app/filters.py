@@ -11,7 +11,7 @@ from .models import (
     Member,
     Office,
     Officer,
-    Performer,
+    Entry,
     Person,
     Session,
     Submission,
@@ -163,9 +163,9 @@ class OfficerFilter(FilterSet):
         }
 
 
-class PerformerFilter(FilterSet):
+class EntryFilter(FilterSet):
     class Meta:
-        model = Performer
+        model = Entry
         fields = {
             'nomen': [
                 'icontains',

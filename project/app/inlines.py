@@ -11,7 +11,7 @@ from .models import (
     Member,
     Officer,
     Performance,
-    Performer,
+    Entry,
     Repertory,
     Round,
     Score,
@@ -88,7 +88,7 @@ class ContestantInline(admin.TabularInline):
     model = Contestant
     fields = [
         'nomen',
-        'performer',
+        'entry',
         'contest',
         'status',
     ]
@@ -156,12 +156,12 @@ class OfficerInline(admin.TabularInline):
 class PerformanceInline(admin.TabularInline):
     model = Performance
     fields = [
-        'performer',
+        'entry',
         'status',
         'num',
     ]
     readonly_fields = [
-        'performer',
+        'entry',
     ]
     ordering = (
         'num',
@@ -170,8 +170,8 @@ class PerformanceInline(admin.TabularInline):
     extra = 0
 
 
-class PerformerInline(admin.TabularInline):
-    model = Performer
+class EntryInline(admin.TabularInline):
+    model = Entry
     fields = [
         'nomen',
         'session',
@@ -287,7 +287,7 @@ class SubmissionInline(admin.TabularInline):
         'title',
         'is_medley',
         'is_parody',
-        'performer',
+        'entry',
     ]
 
     show_change_link = True

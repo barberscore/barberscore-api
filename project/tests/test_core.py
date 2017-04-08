@@ -22,7 +22,7 @@ from app.factories import (
     OfficerFactory,
     OrganizationFactory,
     PerformanceFactory,
-    PerformerFactory,
+    EntryFactory,
     PersonFactory,
     QuartetFactory,
     RepertoryFactory,
@@ -125,8 +125,8 @@ def performance():
 
 
 @pytest.fixture
-def performer():
-    return PerformerFactory()
+def entry():
+    return EntryFactory()
 
 
 @pytest.fixture
@@ -285,15 +285,15 @@ def test_performanceprivate_endpoint_list(api_client, performance):
 
 
 @pytest.mark.django_db()
-def test_performer_endpoint_list(api_client, performer):
-    path = reverse('performer-list')
+def test_entry_endpoint_list(api_client, entry):
+    path = reverse('entry-list')
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performerprivate_endpoint_list(api_client, performer):
-    path = reverse('performerprivate-list')
+def test_entryprivate_endpoint_list(api_client, entry):
+    path = reverse('entryprivate-list')
     response = api_client.get(path)
     assert ok(response)
 
@@ -478,16 +478,16 @@ def test_performanceprivate_endpoint_detail(api_client, performance):
 
 
 @pytest.mark.django_db()
-def test_performer_endpoint_detail(api_client, performer):
-    path = reverse('performer-detail', args=(str(performer.id),))
+def test_entry_endpoint_detail(api_client, entry):
+    path = reverse('entry-detail', args=(str(entry.id),))
     response = api_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performerprivate_endpoint_detail(api_client, performer):
-    public = reverse('performer-detail', args=(str(performer.id),))
-    private = reverse('performerprivate-detail', args=(performer.performerprivate.pk,))
+def test_entryprivate_endpoint_detail(api_client, entry):
+    public = reverse('entry-detail', args=(str(entry.id),))
+    private = reverse('entryprivate-detail', args=(entry.entryprivate.pk,))
     public_response = api_client.get(public)
     private_response = api_client.get(private)
     assert ok(public_response)
@@ -682,15 +682,15 @@ def test_performanceprivate_admin_list(admin_client, performance):
 
 
 @pytest.mark.django_db()
-def test_performer_admin_list(admin_client, performer):
-    path = reverse('admin:app_performer_changelist')
+def test_entry_admin_list(admin_client, entry):
+    path = reverse('admin:app_entry_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performerprivate_admin_list(admin_client, performer):
-    path = reverse('admin:app_performerprivate_changelist')
+def test_entryprivate_admin_list(admin_client, entry):
+    path = reverse('admin:app_entryprivate_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -875,14 +875,14 @@ def test_performanceprivate_admin_detail(admin_client, performance):
 
 
 @pytest.mark.django_db()
-def test_performer_admin_detail(admin_client, performer):
-    path = reverse('admin:app_performer_change', args=(str(performer.id),))
+def test_entry_admin_detail(admin_client, entry):
+    path = reverse('admin:app_entry_change', args=(str(entry.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
-def test_performerprivate_admin_detail(admin_client, performance):
+def test_entryprivate_admin_detail(admin_client, performance):
     public = reverse('admin:app_performance_change', args=(str(performance.id),))
     private = reverse('admin:app_performanceprivate_change', args=(performance.performanceprivate.pk,))
     public_response = admin_client.get(public)

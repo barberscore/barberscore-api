@@ -28,7 +28,7 @@ from .backends import (
     CoalesceFilterBackend,
     ContestPrivateFilterBackend,
     PerformancePrivateFilterBackend,
-    PerformerPrivateFilterBackend,
+    EntryPrivateFilterBackend,
     ScoreFilterBackend,
     SongPrivateFilterBackend,
 )
@@ -41,7 +41,7 @@ from .filters import (
     MemberFilter,
     OfficeFilter,
     OfficerFilter,
-    PerformerFilter,
+    EntryFilter,
     PersonFilter,
     SessionFilter,
     SubmissionFilter,
@@ -62,8 +62,8 @@ from .models import (
     Officer,
     Performance,
     PerformancePrivate,
-    Performer,
-    PerformerPrivate,
+    Entry,
+    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -95,8 +95,8 @@ from .serializers import (
     OfficeSerializer,
     PerformancePrivateSerializer,
     PerformanceSerializer,
-    PerformerPrivateSerializer,
-    PerformerSerializer,
+    EntryPrivateSerializer,
+    EntrySerializer,
     PersonSerializer,
     RepertorySerializer,
     RoundSerializer,
@@ -215,7 +215,7 @@ class ContestPrivateViewSet(viewsets.ModelViewSet):
 
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
-        'performer',
+        'entry',
         'contest',
     ).prefetch_related(
     )
@@ -279,7 +279,7 @@ class EntityViewSet(viewsets.ModelViewSet):
         'children',
         'awards',
         'repertories',
-        'performers',
+        'entries',
         'conventions',
         'officers',
     )
@@ -374,7 +374,7 @@ class PerformanceViewSet(
 ):
     queryset = Performance.objects.select_related(
         'round',
-        'performer',
+        'entry',
         'slot',
         'session',
     ).prefetch_related(
@@ -409,8 +409,8 @@ class PerformancePrivateViewSet(viewsets.ModelViewSet):
     resource_name = "performanceprivate"
 
 
-class PerformerViewSet(viewsets.ModelViewSet):
-    queryset = Performer.objects.select_related(
+class EntryViewSet(viewsets.ModelViewSet):
+    queryset = Entry.objects.select_related(
         'session',
         'entity',
         'tenor',
@@ -425,8 +425,8 @@ class PerformerViewSet(viewsets.ModelViewSet):
         'performances',
         'submissions',
     )
-    serializer_class = PerformerSerializer
-    filter_class = PerformerFilter
+    serializer_class = EntrySerializer
+    filter_class = EntryFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -435,24 +435,24 @@ class PerformerViewSet(viewsets.ModelViewSet):
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performer"
+    resource_name = "entry"
 
 
-class PerformerPrivateViewSet(viewsets.ModelViewSet):
-    queryset = PerformerPrivate.objects.select_related(
+class EntryPrivateViewSet(viewsets.ModelViewSet):
+    queryset = EntryPrivate.objects.select_related(
     ).prefetch_related(
     )
-    serializer_class = PerformerPrivateSerializer
+    serializer_class = EntryPrivateSerializer
     filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
-        PerformerPrivateFilterBackend,
+        EntryPrivateFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
-    resource_name = "performerprivate"
+    resource_name = "entryprivate"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -463,12 +463,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         'assignments',
         'members',
         'officers',
-        'performers_tenor',
-        'performers_lead',
-        'performers_baritone',
-        'performers_bass',
-        'performers_director',
-        'performers_codirector',
+        'entries_tenor',
+        'entries_lead',
+        'entries_baritone',
+        'entries_bass',
+        'entries_director',
+        'entries_codirector',
         'scores',
     )
     serializer_class = PersonSerializer
@@ -570,7 +570,7 @@ class SessionViewSet(
         'convention',
     ).prefetch_related(
         'contests',
-        'performers',
+        'entries',
         'rounds',
     )
     serializer_class = SessionSerializer
@@ -645,7 +645,7 @@ class SlotViewSet(viewsets.ModelViewSet):
 
 class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.select_related(
-        'performer',
+        'entry',
     ).prefetch_related(
         'songs',
     )

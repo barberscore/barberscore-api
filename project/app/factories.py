@@ -35,8 +35,8 @@ from app.models import (
     Officer,
     Performance,
     PerformancePrivate,
-    Performer,
-    PerformerPrivate,
+    Entry,
+    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -105,7 +105,7 @@ class ContestFactory(DjangoModelFactory):
 
 class ContestantFactory(DjangoModelFactory):
     status = Contestant.STATUS.new
-    performer = SubFactory('app.factories.PerformerFactory')
+    entry = SubFactory('app.factories.EntryFactory')
     contest = SubFactory('app.factories.ContestFactory')
 
     class Meta:
@@ -252,7 +252,7 @@ class PerformanceFactory(DjangoModelFactory):
     actual_start = None
     actual_finish = None
     round = SubFactory('app.factories.RoundFactory')
-    performer = SubFactory('app.factories.PerformerFactory')
+    entry = SubFactory('app.factories.EntryFactory')
     slot = None
 
     class Meta:
@@ -264,8 +264,8 @@ class PerformancePrivateFactory(DjangoModelFactory):
         model = PerformancePrivate
 
 
-class PerformerFactory(DjangoModelFactory):
-    status = Performer.STATUS.new
+class EntryFactory(DjangoModelFactory):
+    status = Entry.STATUS.new
     picture = ImageField(color='green')
     men = None
     risers = None
@@ -281,12 +281,12 @@ class PerformerFactory(DjangoModelFactory):
     codirector = None
 
     class Meta:
-        model = Performer
+        model = Entry
 
 
-class PerformerPrivateFactory(DjangoModelFactory):
+class EntryPrivateFactory(DjangoModelFactory):
     class Meta:
-        model = PerformerPrivate
+        model = EntryPrivate
 
 
 class PersonFactory(DjangoModelFactory):
@@ -404,7 +404,7 @@ class SubmissionFactory(DjangoModelFactory):
     arrangers = ''
     composers = ''
     holders = ''
-    performer = SubFactory('app.factories.PerformerFactory')
+    entry = SubFactory('app.factories.EntryFactory')
     repertory = SubFactory('app.factories.RepertoryFactory')
 
     class Meta:
@@ -850,8 +850,8 @@ class AdminFactory(DjangoModelFactory):
 #     class Meta:
 #         model = Submission
 #     status = Submission.STATUS.new
-#     performer = SubFactory(
-#         'app.factories.PerformerFactory'
+#     entry = SubFactory(
+#         'app.factories.EntryFactory'
 #     )
 
 
@@ -1049,11 +1049,11 @@ class AdminFactory(DjangoModelFactory):
 #     status = Round.STATUS.new
 
 
-# # Performers
-# class PerformerFactory(DjangoModelFactory):
+# # Entries
+# class EntryFactory(DjangoModelFactory):
 #     class Meta:
-#         model = Performer
-#     status = Performer.STATUS.new
+#         model = Entry
+#     status = Entry.STATUS.new
 #     # representing = SubFactory(
 #     #     'app.factories.DistrictFactory'
 #     # )
@@ -1071,8 +1071,8 @@ class AdminFactory(DjangoModelFactory):
 #         model = Contestant
 
 #     status = Contestant.STATUS.new
-#     performer = SubFactory(
-#         'app.factories.PerformerFactory'
+#     entry = SubFactory(
+#         'app.factories.EntryFactory'
 #     )
 #     contest = SubFactory(
 #         'app.factories.ContestFactory',
@@ -1085,8 +1085,8 @@ class AdminFactory(DjangoModelFactory):
 #         model = Performance
 
 #     status = Performance.STATUS.new
-#     performer = SubFactory(
-#         'app.factories.PerformerFactory',
+#     entry = SubFactory(
+#         'app.factories.EntryFactory',
 #     )
 #     round = SubFactory(
 #         'app.factories.RoundFactory',
@@ -1129,7 +1129,7 @@ class AdminFactory(DjangoModelFactory):
 #     )
 #     song = SubFactory(
 #         'app.factories.SongFactory',
-#         # performer=Performer.objects.all().first()
+#         # entry=Entry.objects.all().first()
 #     )
 #     category = 1
 #     kind = 10

@@ -17,7 +17,7 @@ from .inlines import (
     MemberInline,
     OfficerInline,
     PerformanceInline,
-    # PerformerInline,
+    # EntryInline,
     RepertoryInline,
     RoundInline,
     ScoreInline,
@@ -40,8 +40,8 @@ from .models import (
     Member,
     Performance,
     PerformancePrivate,
-    Performer,
-    PerformerPrivate,
+    Entry,
+    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -281,7 +281,7 @@ class ContestantAdmin(admin.ModelAdmin):
 
     fields = [
         'status',
-        'performer',
+        'entry',
         'contest',
     ]
 
@@ -294,7 +294,7 @@ class ContestantAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = [
-        'performer',
+        'entry',
         'contest',
     ]
 
@@ -530,7 +530,7 @@ class PerformanceAdmin(admin.ModelAdmin):
         'status',
         'actual_start',
         'actual_finish',
-        'performer',
+        'entry',
         'round',
         'num',
         'slot',
@@ -560,7 +560,7 @@ class PerformanceAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = (
-        'performer',
+        'entry',
     )
 
     search_fields = (
@@ -577,8 +577,8 @@ class PerformancePrivateAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Performer)
-class PerformerAdmin(admin.ModelAdmin):
+@admin.register(Entry)
+class EntryAdmin(admin.ModelAdmin):
     fields = (
         # 'name',
         'status',
@@ -648,8 +648,8 @@ class PerformerAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(PerformerPrivate)
-class PerformerPrivateAdmin(admin.ModelAdmin):
+@admin.register(EntryPrivate)
+class EntryPrivateAdmin(admin.ModelAdmin):
     pass
 
 
@@ -911,7 +911,7 @@ class SessionAdmin(admin.ModelAdmin):
 
     inlines = [
         RoundInline,
-        # PerformerInline,
+        # EntryInline,
         ContestInline,
     ]
 
@@ -1022,7 +1022,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
-        'performer',
+        'entry',
         'title',
         'bhs_id',
         'repertory',
@@ -1046,7 +1046,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = (
-        'performer',
+        'entry',
     )
 
     readonly_fields = [

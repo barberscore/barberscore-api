@@ -13,8 +13,8 @@ from .models import (
     User,
     Contest,
     ContestPrivate,
-    Performer,
-    PerformerPrivate,
+    Entry,
+    EntryPrivate,
     Performance,
     PerformancePrivate,
     Song,
@@ -42,12 +42,12 @@ def contestant_post_save(sender, instance=None, created=False, raw=False, **kwar
             ContestantPrivate.objects.create(contestant=instance)
 
 
-@receiver(post_save, sender=Performer)
-def performer_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+@receiver(post_save, sender=Entry)
+def entry_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create Private Contest."""
     if not raw:
         if created:
-            PerformerPrivate.objects.create(performer=instance)
+            EntryPrivate.objects.create(entry=instance)
 
 
 @receiver(post_save, sender=Performance)
