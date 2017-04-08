@@ -773,7 +773,7 @@ class AdminFactory(DjangoModelFactory):
 #     kind = Judge.KIND.certified
 
 
-# class OfficialPresentationJudgeFactory(JudgeFactory):
+# class OfficialPerformanceJudgeFactory(JudgeFactory):
 #     category = Judge.CATEGORY.presentation
 #     kind = Judge.KIND.certified
 
@@ -793,7 +793,7 @@ class AdminFactory(DjangoModelFactory):
 #     kind = Judge.KIND.candidate
 
 
-# class CandidatePresentationJudgeFactory(JudgeFactory):
+# class CandidatePerformanceJudgeFactory(JudgeFactory):
 #     category = Judge.CATEGORY.presentation
 #     kind = Judge.KIND.candidate
 
@@ -827,12 +827,12 @@ class AdminFactory(DjangoModelFactory):
 #     )
 
 
-# class InternationalQuartetOfficialPresentationAssignmentFactory(AssignmentFactory):
+# class InternationalQuartetOfficialPerformanceAssignmentFactory(AssignmentFactory):
 #     session = SubFactory(
 #         'app.factories.InternationalQuartetSessionFactory'
 #     )
 #     judge = SubFactory(
-#         'app.factories.OfficialPresentationJudgeFactory'
+#         'app.factories.OfficialPerformanceJudgeFactory'
 #     )
 
 

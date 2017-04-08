@@ -83,7 +83,7 @@ class Assignment(TimeStampedModel):
         (10, 'ca', 'CA'),
         (20, 'aca', 'ACA'),
         (30, 'music', 'Music'),
-        (40, 'presentation', 'Presentation'),
+        (40, 'presentation', 'Performance'),
         (50, 'singing', 'Singing'),
     )
 
@@ -3259,7 +3259,7 @@ class Score(TimeStampedModel):
 
     CATEGORY = Choices(
         (1, 'music', 'Music'),
-        (2, 'presentation', 'Presentation'),
+        (2, 'presentation', 'Performance'),
         (3, 'singing', 'Singing'),
     )
 
@@ -3388,7 +3388,7 @@ class Score(TimeStampedModel):
         )['avg']
         if self.category == self.CATEGORY.presentation:
             if abs(self.points - prs_avg) > 5:
-                log.info("Variance Presentation {0}".format(self))
+                log.info("Variance Performance {0}".format(self))
                 variance = True
         sng_avg = self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
