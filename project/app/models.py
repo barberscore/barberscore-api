@@ -79,6 +79,16 @@ class Assignment(TimeStampedModel):
     )
 
     KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
         (10, 'ca', 'CA'),
         (20, 'aca', 'ACA'),
@@ -87,8 +97,10 @@ class Assignment(TimeStampedModel):
         (50, 'singing', 'Singing'),
     )
 
-    kind = models.IntegerField(
-        choices=KIND,
+    category = models.IntegerField(
+        choices=CATEGORY,
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -3258,9 +3270,9 @@ class Score(TimeStampedModel):
     )
 
     CATEGORY = Choices(
-        (1, 'music', 'Music'),
-        (2, 'presentation', 'Performance'),
-        (3, 'singing', 'Singing'),
+        (30, 'music', 'Music'),
+        (40, 'presentation', 'Performance'),
+        (50, 'singing', 'Singing'),
     )
 
     category = models.IntegerField(
@@ -3686,18 +3698,41 @@ class Session(TimeStampedModel):
     # Transitions
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
+        """Make session available for entry."""
         return
 
     @transition(field=status, source='*', target=STATUS.closed)
     def close(self, *args, **kwargs):
+        """Make session unavilable for entry."""
         return
 
     @transition(field=status, source='*', target=STATUS.validated)
     def validate(self, *args, **kwargs):
+        """Create rounds, seat panel, set draw."""
+        max = self.contests.all().aggregate(
+            max=models.Max('award__rounds')
+        )['max']
+        round = self.rounds.create(
+            num=1,
+            kind=max,
+        )
+        entries = self.entries.order_by('?')
+        i = 1
+        for entry in entries:
+            round.appearances.create(
+                entry=entry,
+                num=i,
+            )
+            i += 1
         return
 
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
+        """Empanel judges, create scores."""
+        # judges = self.convention.assignments.order_by(
+        #     'category',
+        #     '
+        # )
         return
 
     @transition(field=status, source='*', target=STATUS.finished)

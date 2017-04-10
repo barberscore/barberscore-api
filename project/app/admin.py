@@ -70,6 +70,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'kind',
+        'category',
         'person',
         'convention',
     ]
@@ -77,6 +78,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     list_filter = (
         'status',
         'kind',
+        'category',
     )
 
     list_select_related = [
