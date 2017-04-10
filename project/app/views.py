@@ -43,6 +43,8 @@ from .filters import (
     OfficerFilter,
     EntryFilter,
     PersonFilter,
+    RoundFilter,
+    ScoreFilter,
     SessionFilter,
     SubmissionFilter,
     VenueFilter,
@@ -531,7 +533,7 @@ class RoundViewSet(
         'slots',
     )
     serializer_class = RoundSerializer
-    filter_class = None
+    filter_class = RoundFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -550,10 +552,10 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = ScoreSerializer
-    filter_class = None
+    filter_class = ScoreFilter
     filter_backends = [
         CoalesceFilterBackend,
-        ScoreFilterBackend,
+        DjangoFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [

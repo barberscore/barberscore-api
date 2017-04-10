@@ -13,6 +13,8 @@ from .models import (
     Officer,
     Entry,
     Person,
+    Round,
+    Score,
     Session,
     Submission,
     Venue,
@@ -187,6 +189,26 @@ class PersonFilter(FilterSet):
                 'exact',
             ],
             'officers__office__kind': [
+                'exact',
+            ],
+        }
+
+
+class RoundFilter(FilterSet):
+    class Meta:
+        model = Round
+        fields = {
+            'session__convention__assignments__person__user': [
+                'exact',
+            ],
+        }
+
+
+class ScoreFilter(FilterSet):
+    class Meta:
+        model = Score
+        fields = {
+            'song__appearance': [
                 'exact',
             ],
         }

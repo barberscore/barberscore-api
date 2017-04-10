@@ -3277,6 +3277,11 @@ class Score(TimeStampedModel):
         choices=KIND,
     )
 
+    num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     points = models.IntegerField(
         help_text="""
             The number of points (0-100)""",

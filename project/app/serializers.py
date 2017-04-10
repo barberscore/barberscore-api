@@ -509,7 +509,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'end_date',
             'ann_pdf',
             'session',
-            # 'appearances',
+            'appearances',
             # 'slots',
             'permissions',
         )
@@ -527,6 +527,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'status',
             'category',
             'kind',
+            'num',
             'points',
             'original',
             'violation',
