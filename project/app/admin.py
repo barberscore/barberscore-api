@@ -15,6 +15,7 @@ from .inlines import (
     AwardInline,
     ContestantInline,
     ContestInline,
+    EntryInline,
     MemberInline,
     OfficerInline,
     RepertoryInline,
@@ -888,7 +889,7 @@ class SessionAdmin(admin.ModelAdmin):
 
     inlines = [
         RoundInline,
-        # EntryInline,
+        EntryInline,
         ContestInline,
     ]
 
@@ -980,6 +981,7 @@ class SongAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'appearance',
         'submission',
+        'chart',
     )
 
     ordering = (

@@ -3548,13 +3548,13 @@ class Session(TimeStampedModel):
             'person__name',
         )
         round = self.rounds.get(num=1)
-        j = 1
-        s = 1
         for appearance in round.appearances.all():
+            s = 1
             while s <= self.num_songs:
                 song = appearance.songs.create(
                     num=s,
                 )
+                j = 1
                 for assignment in assignments:
                     song.scores.create(
                         category=assignment.category,

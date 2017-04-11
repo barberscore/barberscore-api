@@ -176,8 +176,7 @@ class EntryInline(admin.TabularInline):
     fields = [
         'nomen',
         'session',
-        'prelim',
-        'men',
+        'entity',
     ]
     readonly_fields = [
         'nomen',
@@ -185,6 +184,7 @@ class EntryInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'session',
+        'entity',
     ]
     show_change_link = True
     extra = 0
@@ -208,8 +208,10 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
+        'num',
         'person',
         'category',
+        'kind',
         'points',
     ]
     raw_id_fields = [
@@ -221,6 +223,7 @@ class ScoreInline(admin.TabularInline):
         'person',
     ]
     ordering = (
+        'num',
         'person',
     )
     show_change_link = True
