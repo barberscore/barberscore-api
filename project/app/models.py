@@ -3733,10 +3733,30 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         """Empanel judges, create scores."""
-        # judges = self.convention.assignments.order_by(
-        #     'category',
-        #     '
-        # )
+        assignments = self.convention.assignments.filter(
+            category__gte=30,
+        ).order_by(
+            'category',
+            'kind',
+            'person__name',
+        )
+        round = self.rounds.get(num=1)
+        j = 1
+        s = 1
+        for appearance in round.appearances.all():
+            while s <= self.num_songs:
+                song = appearance.songs.create(
+                    num=s,
+                )
+                for assignment in assignments:
+                    song.scores.create(
+                        category=assignment.category,
+                        kind=assignment.kind,
+                        num=j,
+                        person=assignment.person
+                    )
+                    j += 1
+                s += 1
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
