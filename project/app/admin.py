@@ -22,6 +22,7 @@ from .inlines import (
     RoundInline,
     ScoreInline,
     SessionInline,
+    SongInline,
     SubmissionInline,
 )
 
@@ -570,7 +571,7 @@ class AppearanceAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        # SongInline,
+        SongInline,
     ]
 
 
