@@ -11,59 +11,9 @@ from django.template.loader import render_to_string
 from .models import (
     # Award,
     User,
-    Contest,
-    ContestPrivate,
-    Entry,
-    EntryPrivate,
-    Appearance,
-    AppearancePrivate,
-    Song,
-    SongPrivate,
-    Contestant,
-    ContestantPrivate,
 )
 
 from .utils import get_auth0_token
-
-
-@receiver(post_save, sender=Contest)
-def contest_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Private Contest."""
-    if not raw:
-        if created:
-            ContestPrivate.objects.create(contest=instance)
-
-
-@receiver(post_save, sender=Contestant)
-def contestant_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Private Contest."""
-    if not raw:
-        if created:
-            ContestantPrivate.objects.create(contestant=instance)
-
-
-@receiver(post_save, sender=Entry)
-def entry_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Private Contest."""
-    if not raw:
-        if created:
-            EntryPrivate.objects.create(entry=instance)
-
-
-@receiver(post_save, sender=Appearance)
-def appearance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Private Contest."""
-    if not raw:
-        if created:
-            AppearancePrivate.objects.create(appearance=instance)
-
-
-@receiver(post_save, sender=Song)
-def song_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Private Contest."""
-    if not raw:
-        if created:
-            SongPrivate.objects.create(song=instance)
 
 
 # @receiver(post_save, sender=Appearance)

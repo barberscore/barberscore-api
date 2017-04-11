@@ -26,11 +26,7 @@ from rest_framework_csv.renderers import CSVRenderer
 # Local
 from .backends import (
     CoalesceFilterBackend,
-    ContestPrivateFilterBackend,
-    AppearancePrivateFilterBackend,
-    EntryPrivateFilterBackend,
     ScoreFilterBackend,
-    SongPrivateFilterBackend,
 )
 from .filters import (
     AwardFilter,
@@ -55,17 +51,13 @@ from .models import (
     Chart,
     Contest,
     Contestant,
-    ContestantPrivate,
-    ContestPrivate,
     Convention,
     Entity,
     Member,
     Office,
     Officer,
     Appearance,
-    AppearancePrivate,
     Entry,
-    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -73,7 +65,6 @@ from .models import (
     Session,
     Slot,
     Song,
-    SongPrivate,
     Submission,
     User,
     Venue,
@@ -85,9 +76,7 @@ from .serializers import (
     AssignmentSerializer,
     AwardSerializer,
     ChartSerializer,
-    ContestantPrivateSerializer,
     ContestantSerializer,
-    ContestPrivateSerializer,
     ContestSerializer,
     ConventionSerializer,
     EntitySerializer,
@@ -95,9 +84,7 @@ from .serializers import (
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
-    AppearancePrivateSerializer,
     AppearanceSerializer,
-    EntryPrivateSerializer,
     EntrySerializer,
     PersonSerializer,
     RepertorySerializer,
@@ -105,7 +92,6 @@ from .serializers import (
     ScoreSerializer,
     SessionSerializer,
     SlotSerializer,
-    SongPrivateSerializer,
     SongSerializer,
     SubmissionSerializer,
     UserSerializer,
@@ -198,23 +184,6 @@ class ContestViewSet(viewsets.ModelViewSet):
     resource_name = "contest"
 
 
-class ContestPrivateViewSet(viewsets.ModelViewSet):
-    queryset = ContestPrivate.objects.select_related(
-    ).prefetch_related(
-    )
-    serializer_class = ContestPrivateSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        ContestPrivateFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "contestprivate"
-
-
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'entry',
@@ -232,23 +201,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "contestant"
-
-
-class ContestantPrivateViewSet(viewsets.ModelViewSet):
-    queryset = ContestantPrivate.objects.select_related(
-    ).prefetch_related(
-    )
-    serializer_class = ContestantPrivateSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "contestantprivate"
 
 
 class ConventionViewSet(
@@ -394,23 +346,6 @@ class AppearanceViewSet(
     resource_name = "appearance"
 
 
-class AppearancePrivateViewSet(viewsets.ModelViewSet):
-    queryset = AppearancePrivate.objects.select_related(
-    ).prefetch_related(
-    )
-    serializer_class = AppearancePrivateSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        AppearancePrivateFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "appearanceprivate"
-
-
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
@@ -438,23 +373,6 @@ class EntryViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "entry"
-
-
-class EntryPrivateViewSet(viewsets.ModelViewSet):
-    queryset = EntryPrivate.objects.select_related(
-    ).prefetch_related(
-    )
-    serializer_class = EntryPrivateSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        EntryPrivateFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "entryprivate"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -556,6 +474,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
+        ScoreFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
@@ -607,23 +526,6 @@ class SongViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "song"
-
-
-class SongPrivateViewSet(viewsets.ModelViewSet):
-    queryset = SongPrivate.objects.select_related(
-    ).prefetch_related(
-    )
-    serializer_class = SongPrivateSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        SongPrivateFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "songprivate"
 
 
 class SlotViewSet(viewsets.ModelViewSet):

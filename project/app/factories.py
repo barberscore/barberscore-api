@@ -22,21 +22,18 @@ from django.db.models.signals import post_save
 
 # First-Party
 from app.models import (
+    Appearance,
     Assignment,
     Award,
     Chart,
     Contest,
     Contestant,
-    ContestantPrivate,
     Convention,
     Entity,
+    Entry,
     Member,
     Office,
     Officer,
-    Appearance,
-    AppearancePrivate,
-    Entry,
-    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -44,7 +41,6 @@ from app.models import (
     Session,
     Slot,
     Song,
-    SongPrivate,
     Submission,
     User,
     Venue,
@@ -260,11 +256,6 @@ class AppearanceFactory(DjangoModelFactory):
         model = Appearance
 
 
-class AppearancePrivateFactory(DjangoModelFactory):
-    class Meta:
-        model = AppearancePrivate
-
-
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     picture = ImageField(color='green')
@@ -283,11 +274,6 @@ class EntryFactory(DjangoModelFactory):
 
     class Meta:
         model = Entry
-
-
-class EntryPrivateFactory(DjangoModelFactory):
-    class Meta:
-        model = EntryPrivate
 
 
 class PersonFactory(DjangoModelFactory):
@@ -389,11 +375,6 @@ class SongFactory(DjangoModelFactory):
 
     class Meta:
         model = Song
-
-
-class SongPrivateFactory(DjangoModelFactory):
-    class Meta:
-        model = SongPrivate
 
 
 class SubmissionFactory(DjangoModelFactory):

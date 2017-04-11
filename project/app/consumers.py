@@ -32,7 +32,7 @@ def print_oss(message):
     ).exclude(
         rank=None,
     ).order_by(
-        '-total_points',
+        '-tot_points',
         '-sng_points',
         '-mus_points',
         '-prs_points',

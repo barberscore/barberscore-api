@@ -8,22 +8,18 @@ from .fields import (
 )
 
 from .models import (
+    Appearance,
     Assignment,
     Award,
     Chart,
     Contest,
     Contestant,
-    ContestantPrivate,
-    ContestPrivate,
     Convention,
     Entity,
+    Entry,
     Member,
     Office,
     Officer,
-    Appearance,
-    AppearancePrivate,
-    Entry,
-    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -31,7 +27,6 @@ from .models import (
     Session,
     Slot,
     Song,
-    SongPrivate,
     Submission,
     User,
     Venue,
@@ -141,19 +136,6 @@ class ContestSerializer(serializers.ModelSerializer):
         )
 
 
-class ContestPrivateSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = ContestPrivate
-        fields = (
-            'id',
-            'url',
-            'champion',
-            'permissions',
-        )
-
-
 class ContestantSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -166,27 +148,6 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'entry',
             'contest',
-            'permissions',
-        )
-
-
-class ContestantPrivateSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = ContestantPrivate
-        fields = (
-            'id',
-            'url',
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
             'permissions',
         )
 
@@ -340,27 +301,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
         )
 
 
-class AppearancePrivateSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = AppearancePrivate
-        fields = (
-            'id',
-            'url',
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'permissions',
-        )
-
-
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -395,27 +335,6 @@ class EntrySerializer(serializers.ModelSerializer):
         read_only_fields = [
             'picture',
         ]
-
-
-class EntryPrivateSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = EntryPrivate
-        fields = (
-            'id',
-            'url',
-            'rank',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
-            'permissions',
-        )
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -610,28 +529,6 @@ class SongSerializer(serializers.ModelSerializer):
             'appearance',
             'chart',
             'scores',
-            'songprivate',
-            'permissions',
-        )
-
-
-class SongPrivateSerializer(serializers.ModelSerializer):
-
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = SongPrivate
-        fields = (
-            'id',
-            'url',
-            'mus_points',
-            'prs_points',
-            'sng_points',
-            'total_points',
-            'mus_score',
-            'prs_score',
-            'sng_score',
-            'total_score',
             'permissions',
         )
 

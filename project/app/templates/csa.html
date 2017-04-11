@@ -179,11 +179,11 @@
               <td class='text-right'>
                 {% for appearance in appearances %}
                   {% for song in appearance.songs.all %}
-                    {{song.total_points}} ({{song.total_score|floatformat:1}})<br>
+                    {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{appearance.total_points}} ({{appearance.total_score|floatformat:1}})</em><br>
+                  <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{entry.total_points}} ({{entry.total_score|floatformat:1}})</strong><br>
+                <strong>{{entry.tot_points}} ({{entry.tot_score|floatformat:1}})</strong><br>
               </td>
             </tr>
           </tbody>

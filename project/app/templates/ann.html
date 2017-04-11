@@ -95,7 +95,7 @@
           </h3>
           <ul class='list-unstyled'>
             {% for entry in medalists %}
-              <li>{{entry.rank}}: <strong>{{entry.group.name}}</strong>&nbsp;{{entry.total_points|intcomma}}&nbsp;({{entry.total_score|floatformat:1}})</li>
+              <li>{{entry.rank}}: <strong>{{entry.group.name}}</strong>&nbsp;{{entry.tot_points|intcomma}}&nbsp;({{entry.tot_score|floatformat:1}})</li>
             {% endfor %}
           </ul>
         </section>

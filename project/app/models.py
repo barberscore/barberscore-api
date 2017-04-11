@@ -52,6 +52,274 @@ doc_api = docraptor.DocApi()
 log = logging.getLogger(__name__)
 
 
+class Appearance(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=500,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (5, 'validated', 'Validated',),
+        (10, 'started', 'Started',),
+        (20, 'finished', 'Finished',),
+        (30, 'entered', 'Entered',),
+        (40, 'flagged', 'Flagged',),
+        (60, 'cleared', 'Cleared',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    actual_start = models.DateTimeField(
+        help_text="""
+            The actual appearance window.""",
+        null=True,
+        blank=True,
+    )
+
+    actual_finish = models.DateTimeField(
+        help_text="""
+            The actual appearance window.""",
+        null=True,
+        blank=True,
+    )
+
+    # Privates
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    tot_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='appearances',
+        on_delete=models.CASCADE,
+    )
+
+    entry = models.ForeignKey(
+        'Entry',
+        related_name='appearances',
+        on_delete=models.CASCADE,
+    )
+
+    slot = models.OneToOneField(
+        'Slot',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    # Internals
+    class JSONAPIMeta:
+        resource_name = "appearance"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                lambda x: smart_text(x), [
+                    self.round,
+                    self.entry,
+                ]
+            )
+        )
+        super().save(*args, **kwargs)
+
+    # Methods
+    def calculate(self, *args, **kwargs):
+        # self.rank = self.calculate_rank()
+        self.mus_points = self.calculate_mus_points()
+        self.prs_points = self.calculate_prs_points()
+        self.sng_points = self.calculate_sng_points()
+        self.tot_points = self.calculate_tot_points()
+        self.mus_score = self.calculate_mus_score()
+        self.prs_score = self.calculate_prs_score()
+        self.sng_score = self.calculate_sng_score()
+        self.tot_score = self.calculate_tot_score()
+
+    def calculate_rank(self):
+        return self.appearance.round.ranking(self.calculate_tot_points())
+
+    def calculate_mus_points(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
+        ).aggregate(
+            tot=models.Sum('scores__points')
+        )['tot']
+
+    def calculate_prs_points(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
+        ).aggregate(
+            tot=models.Sum('scores__points')
+        )['tot']
+
+    def calculate_sng_points(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
+        ).aggregate(
+            tot=models.Sum('scores__points')
+        )['tot']
+
+    def calculate_tot_points(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+        ).aggregate(
+            tot=models.Sum('scores__points')
+        )['tot']
+
+    def calculate_mus_score(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
+        ).aggregate(
+            tot=models.Avg('scores__points')
+        )['tot']
+
+    def calculate_prs_score(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
+        ).aggregate(
+            tot=models.Avg('scores__points')
+        )['tot']
+
+    def calculate_sng_score(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
+        ).aggregate(
+            tot=models.Avg('scores__points')
+        )['tot']
+
+    def calculate_tot_score(self):
+        return self.appearance.songs.filter(
+            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+        ).aggregate(
+            tot=models.Avg('scores__points')
+        )['tot']
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                True,
+                # self.round.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.entry.session.convention.drcj == request.user.person,
+            ])
+        return False
+
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
+    def verify(self, *args, **kwargs):
+        self.calculate()
+        self.save()
+        Song = config.get_model('Song')
+        songs = Song.objects.filter(
+            appearance=self,
+        )
+        for song in songs:
+            song.calculate()
+            song.save()
+        Score = config.get_model('Score')
+        scores = Score.objects.filter(
+            song__appearance=self,
+        )
+        flags = []
+        for score in scores:
+            flags.append(score.verify())
+        if any(flags):
+            return self.STATUS.flagged
+        return self.STATUS.cleared
+
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
+        return
+
+
 class Assignment(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -597,6 +865,14 @@ class Contest(TimeStampedModel):
         default=KIND.new,
     )
 
+    # Private
+    champion = models.ForeignKey(
+        'Entry',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -657,97 +933,32 @@ class Contest(TimeStampedModel):
         if not point_total:
             return None
         contestants = self.contestants.all()
-        points = [contestant.contestantprivate.calculate_total_points() for contestant in contestants]
+        points = [contestant.calculate_tot_points() for contestant in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
         return rank
-
-    # Transitions
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        return
-
-
-class ContestPrivate(TimeStampedModel):
-    contest = models.OneToOneField(
-        'Contest',
-        on_delete=models.CASCADE,
-        primary_key=True,
-        parent_link=True,
-    )
-
-    champion = models.ForeignKey(
-        'Entry',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'ContestsPrivate'
-
-    class JSONAPIMeta:
-        resource_name = "contestprivate"
-
-    # Methods
-    def __str__(self):
-        return str(self.pk)
 
     def calculate(self, *args, **kwargs):
         if self.contest.is_qualifier:
             champion = None
         else:
             try:
-                champion = self.contest.contestants.get(contestantprivate__rank=1).entry
+                champion = self.contest.contestants.get(rank=1).entry
             except self.contest.contestants.model.DoesNotExist:
                 champion = None
             except self.contest.contestants.model.MultipleObjectsReturned:
-                champion = self.contest.contestants.filter(contestantprivate__rank=1).order_by(
-                    '-contestantprivate__sng_points',
-                    '-contestantprivate__mus_points',
-                    '-contestantprivate__prs_points',
+                champion = self.contest.contestants.filter(rank=1).order_by(
+                    '-sng_points',
+                    '-mus_points',
+                    '-prs_points',
                 ).first().entry
         self.champion = champion
 
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.award.organization.representative.user == request.user,
-                # self.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.session.assignments.model.category.ADMIN,
-                # ),
-                # self.status == self.STATUS.published,
-            ])
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.award.organization.representative.user == request.user,
-                # self.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.session.assignments.model.category.ADMIN,
-                # ),
-            ])
-        return False
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
 
 
 class Contestant(TimeStampedModel):
@@ -778,6 +989,52 @@ class Contestant(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    # Privates
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    tot_score = models.FloatField(
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -815,6 +1072,114 @@ class Contestant(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
+
+    @property
+    def official_result(self):
+        if self.contestant.contest.is_qualifier:
+            if self.contestant.contest.award.is_district_representative:
+                if self.contestant.official_rank == 1:
+                    return self.contestant.STATUS.rep
+                if self.contestant.official_score < self.contestant.contest.award.minimum:
+                    return self.contestant.STATUS.ineligible
+                else:
+                    return self.contestant.STATUS.eligible
+            else:
+                if self.contestant.contest.award.minimum:
+                    if self.contestant.official_score < self.contestant.contest.award.minimum:
+                        return self.contestant.STATUS.ineligible
+                    elif self.contestant.official_score >= self.contestant.contest.award.threshold:
+                        return self.contestant.STATUS.qualified
+                    else:
+                        return self.contestant.STATUS.eligible
+                else:
+                    return self.contestant.STATUS.eligible
+        else:
+            return self.contestant.official_rank
+
+    # Methods
+    def calculate(self, *args, **kwargs):
+        self.contestant.mus_points = self.contestant.calculate_mus_points()
+        self.contestant.prs_points = self.contestant.calculate_prs_points()
+        self.contestant.sng_points = self.contestant.calculate_sng_points()
+        self.contestant.tot_points = self.contestant.calculate_tot_points()
+        self.contestant.mus_score = self.contestant.calculate_mus_score()
+        self.contestant.prs_score = self.contestant.calculate_prs_score()
+        self.contestant.sng_score = self.contestant.calculate_sng_score()
+        self.contestant.tot_score = self.contestant.calculate_tot_score()
+        self.contestant.rank = self.contestant.calculate_rank()
+
+    def calculate_rank(self):
+        return self.contestant.contest.ranking(self.contestant.calculate_tot_points())
+
+    def calculate_mus_points(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_prs_points(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_points(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_tot_points(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_mus_score(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_prs_score(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_score(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_tot_score(self):
+        return self.contestant.entry.appearances.filter(
+            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
+            round__num__lte=self.contestant.contest.award.num_rounds,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
 
     # Permissions
     @staticmethod
@@ -865,208 +1230,6 @@ class Contestant(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
-
-
-class ContestantPrivate(TimeStampedModel):
-    contestant = models.OneToOneField(
-        'Contestant',
-        on_delete=models.CASCADE,
-        primary_key=True,
-        parent_link=True,
-    )
-
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'ContestantsPrivate'
-
-    class JSONAPIMeta:
-        resource_name = "contestantprivate"
-
-    # Properties
-    @property
-    def official_result(self):
-        if self.contestant.contest.is_qualifier:
-            if self.contestant.contest.award.is_district_representative:
-                if self.contestant.official_rank == 1:
-                    return self.contestant.STATUS.rep
-                if self.contestant.official_score < self.contestant.contest.award.minimum:
-                    return self.contestant.STATUS.ineligible
-                else:
-                    return self.contestant.STATUS.eligible
-            else:
-                if self.contestant.contest.award.minimum:
-                    if self.contestant.official_score < self.contestant.contest.award.minimum:
-                        return self.contestant.STATUS.ineligible
-                    elif self.contestant.official_score >= self.contestant.contest.award.threshold:
-                        return self.contestant.STATUS.qualified
-                    else:
-                        return self.contestant.STATUS.eligible
-                else:
-                    return self.contestant.STATUS.eligible
-        else:
-            return self.contestant.official_rank
-
-    # Methods
-    def __str__(self):
-        return str(self.pk)
-
-    def calculate(self, *args, **kwargs):
-        self.contestant.mus_points = self.contestant.calculate_mus_points()
-        self.contestant.prs_points = self.contestant.calculate_prs_points()
-        self.contestant.sng_points = self.contestant.calculate_sng_points()
-        self.contestant.total_points = self.contestant.calculate_total_points()
-        self.contestant.mus_score = self.contestant.calculate_mus_score()
-        self.contestant.prs_score = self.contestant.calculate_prs_score()
-        self.contestant.sng_score = self.contestant.calculate_sng_score()
-        self.contestant.total_score = self.contestant.calculate_total_score()
-        self.contestant.rank = self.contestant.calculate_rank()
-
-    def calculate_rank(self):
-        return self.contestant.contest.ranking(self.contestant.calculate_total_points())
-
-    def calculate_mus_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_prs_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_total_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_prs_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_total_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            round__num__lte=self.contestant.contest.award.num_rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True
-                # self.contestant.contest.award.organization.representative.user == request.user,
-            ])
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                # self.contestant.contest.award.organization.representative.user == request.user,
-                True
-            ])
-        return False
 
 
 class Convention(TimeStampedModel):
@@ -1527,6 +1690,415 @@ class Entity(TimeStampedModel):
         return False
 
 
+class Entry(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=500,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'registered', 'Registered',),
+        (20, 'accepted', 'Accepted',),
+        (30, 'declined', 'Declined',),
+        (40, 'dropped', 'Dropped',),
+        (50, 'validated', 'Validated',),
+        (52, 'scratched', 'Scratched',),
+        (55, 'disqualified', 'Disqualified',),
+        (57, 'started', 'Started',),
+        (60, 'finished', 'Finished',),
+        (90, 'published', 'Published',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    picture = models.ImageField(
+        help_text="""
+            The on-stage session picture (as opposed to the "official" photo).""",
+        upload_to=PathAndRename(),
+        blank=True,
+        null=True,
+    )
+
+    men = models.IntegerField(
+        help_text="""
+            The number of men on stage.""",
+        null=True,
+        blank=True,
+    )
+
+    risers = models.IntegerField(
+        help_text="""
+            The number of risers select.""",
+        null=True,
+        blank=True,
+    )
+
+    is_evaluation = models.BooleanField(
+        help_text="""
+            Entry requests evaluation.""",
+        default=True,
+    )
+
+    is_private = models.BooleanField(
+        help_text="""
+            Keep scores private.""",
+        default=False,
+    )
+
+    seed = models.IntegerField(
+        help_text="""
+            The incoming rank based on prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    prelim = models.FloatField(
+        help_text="""
+            The incoming prelim score.""",
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    # Privates
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    tot_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    csa_pdf = models.FileField(
+        help_text="""
+            The historical PDF CSA.""",
+        upload_to=PathAndRename(),
+        blank=True,
+        null=True,
+    )
+
+    # FKs
+    session = models.ForeignKey(
+        'Session',
+        related_name='entries',
+        on_delete=models.CASCADE,
+    )
+
+    entity = models.ForeignKey(
+        'Entity',
+        related_name='entries',
+        on_delete=models.CASCADE,
+    )
+
+    representing = models.ForeignKey(
+        'Entity',
+        related_name='entries_representing',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    tenor = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='entries_tenor',
+        on_delete=models.SET_NULL,
+    )
+
+    lead = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='entries_lead',
+        on_delete=models.SET_NULL,
+    )
+
+    baritone = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='entries_baritone',
+        on_delete=models.SET_NULL,
+    )
+
+    bass = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='entries_bass',
+        on_delete=models.SET_NULL,
+    )
+
+    director = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='entries_director',
+        on_delete=models.SET_NULL,
+    )
+
+    codirector = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='entries_codirector',
+        on_delete=models.SET_NULL,
+    )
+
+    # # Internals
+    class Meta:
+        verbose_name_plural = 'entries'
+        unique_together = (
+            ('entity', 'session',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "entry"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                lambda x: smart_text(x), [
+                    self.entity,
+                    self.session,
+                ]
+            )
+        )
+        super().save(*args, **kwargs)
+
+    # Methods
+    def calculate(self, *args, **kwargs):
+        self.mus_points = self.calculate_mus_points()
+        self.prs_points = self.calculate_prs_points()
+        self.sng_points = self.calculate_sng_points()
+        self.tot_points = self.calculate_tot_points()
+        self.mus_score = self.calculate_mus_score()
+        self.prs_score = self.calculate_prs_score()
+        self.sng_score = self.calculate_sng_score()
+        self.tot_score = self.calculate_tot_score()
+        self.rank = self.calculate_rank()
+
+    def calculate_pdf(self):
+        for appearance in self.entry.appearances.all():
+            for song in appearance.songs.all():
+                song.calculate()
+                song.save()
+            appearance.calculate()
+            appearance.save()
+        self.calculate()
+        self.save()
+        return
+
+    # def print_csa(self):
+    #     entry = self
+    #     contestants = entry.contestants.all()
+    #     appearances = entry.appearances.order_by(
+    #         'round__kind',
+    #     )
+    #     assignments = entry.session.assignments.exclude(
+    #         category=Assignment.CATEGORY.admin,
+    #     ).order_by(
+    #         'category',
+    #         'kind',
+    #         'slot',
+    #     )
+    #     foo = get_template('csa.html')
+    #     template = foo.render(context={
+    #         'entry': entry,
+    #         'appearances': appearances,
+    #         'assignments': assignments,
+    #         'contestants': contestants,
+    #     })
+    #     try:
+    #         create_response = doc_api.create_doc({
+    #             "test": True,
+    #             "document_content": template,
+    #             "name": "csa-{0}.pdf".format(id),
+    #             "document_type": "pdf",
+    #         })
+    #         f = ContentFile(create_response)
+    #         entry.csa_pdf.save(
+    #             "{0}.pdf".format(id),
+    #             f
+    #         )
+    #         entry.save()
+    #         log.info("PDF created and saved to instance")
+    #     except docraptor.rest.ApiException as error:
+    #         log.error(error)
+    #         log.error(error.message)
+    #         log.error(error.response_body)
+    #     return "Complete"
+
+    def calculate_rank(self):
+        try:
+            return self.entry.contestants.get(contest=self.entry.session.primary).calculate_rank()
+        except self.entry.contestants.model.DoesNotExist:
+            return None
+
+    def calculate_mus_points(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_prs_points(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_points(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_tot_points(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_mus_score(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_prs_score(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_score(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_tot_score(self):
+        return self.entry.appearances.filter(
+            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                True,
+                # self.group.roles.filter(
+                #     status=self.group.roles.model.STATUS.active,
+                #     person__user=request.user,
+                # ),
+                # self.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.session.assignments.model.CATEGORY.admin,
+                # ),
+                # self.session.convention.drcj == request.user.person,
+            ])
+        return False
+
+    # Methods
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.validated)
+    def validate(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
+
+
 class Member(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1815,771 +2387,6 @@ class Officer(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
-
-
-class Appearance(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    nomen = models.CharField(
-        max_length=500,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (5, 'validated', 'Validated',),
-        (10, 'started', 'Started',),
-        (20, 'finished', 'Finished',),
-        (30, 'entered', 'Entered',),
-        (40, 'flagged', 'Flagged',),
-        (60, 'cleared', 'Cleared',),
-        (90, 'published', 'Published',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    actual_start = models.DateTimeField(
-        help_text="""
-            The actual appearance window.""",
-        null=True,
-        blank=True,
-    )
-
-    actual_finish = models.DateTimeField(
-        help_text="""
-            The actual appearance window.""",
-        null=True,
-        blank=True,
-    )
-
-    # FKs
-    round = models.ForeignKey(
-        'Round',
-        related_name='appearances',
-        on_delete=models.CASCADE,
-    )
-
-    entry = models.ForeignKey(
-        'Entry',
-        related_name='appearances',
-        on_delete=models.CASCADE,
-    )
-
-    slot = models.OneToOneField(
-        'Slot',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # Internals
-    class JSONAPIMeta:
-        resource_name = "appearance"
-
-    def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.round,
-                    self.entry,
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.round.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.round.session.assignments.model.category.ADMIN,
-                # ),
-                # self.entry.session.convention.drcj == request.user.person,
-            ])
-        return False
-
-    # Transitions
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
-    def verify(self, *args, **kwargs):
-        self.appearanceprivate.calculate()
-        self.appearanceprivate.save()
-        Song = config.get_model('Song')
-        songs = Song.objects.filter(
-            appearance=self,
-        )
-        for song in songs:
-            song.calculate()
-            song.save()
-        Score = config.get_model('Score')
-        scores = Score.objects.filter(
-            song__appearance=self,
-        )
-        flags = []
-        for score in scores:
-            flags.append(score.verify())
-        if any(flags):
-            return self.STATUS.flagged
-        return self.STATUS.cleared
-
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
-        return
-
-
-class AppearancePrivate(TimeStampedModel):
-    appearance = models.OneToOneField(
-        'Appearance',
-        on_delete=models.CASCADE,
-        primary_key=True,
-        parent_link=True,
-    )
-
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'AppearancesPrivate'
-
-    class JSONAPIMeta:
-        resource_name = "appearanceprivate"
-
-    # Methods
-    def __str__(self):
-        return str(self.pk)
-
-    def calculate(self, *args, **kwargs):
-        # self.rank = self.calculate_rank()
-        self.mus_points = self.calculate_mus_points()
-        self.prs_points = self.calculate_prs_points()
-        self.sng_points = self.calculate_sng_points()
-        self.total_points = self.calculate_total_points()
-        self.mus_score = self.calculate_mus_score()
-        self.prs_score = self.calculate_prs_score()
-        self.sng_score = self.calculate_sng_score()
-        self.total_score = self.calculate_total_score()
-
-    def calculate_rank(self):
-        return self.appearance.round.ranking(self.calculate_total_points())
-
-    def calculate_mus_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
-        ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-
-    def calculate_prs_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
-        ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
-        ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-
-    def calculate_total_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-        ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-
-    def calculate_prs_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-
-    def calculate_total_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            # return any([
-            #     self.appearance.round.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.appearance.round.session.assignments.model.category.ADMIN,
-            #     ),
-            # ])
-            return True
-        return False
-
-
-class Entry(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    nomen = models.CharField(
-        max_length=500,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-        (10, 'registered', 'Registered',),
-        (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
-        (50, 'validated', 'Validated',),
-        (52, 'scratched', 'Scratched',),
-        (55, 'disqualified', 'Disqualified',),
-        (57, 'started', 'Started',),
-        (60, 'finished', 'Finished',),
-        (90, 'published', 'Published',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    picture = models.ImageField(
-        help_text="""
-            The on-stage session picture (as opposed to the "official" photo).""",
-        upload_to=PathAndRename(),
-        blank=True,
-        null=True,
-    )
-
-    men = models.IntegerField(
-        help_text="""
-            The number of men on stage.""",
-        null=True,
-        blank=True,
-    )
-
-    risers = models.IntegerField(
-        help_text="""
-            The number of risers select.""",
-        null=True,
-        blank=True,
-    )
-
-    is_evaluation = models.BooleanField(
-        help_text="""
-            Entry requests evaluation.""",
-        default=True,
-    )
-
-    is_private = models.BooleanField(
-        help_text="""
-            Keep scores private.""",
-        default=False,
-    )
-
-    seed = models.IntegerField(
-        help_text="""
-            The incoming rank based on prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    prelim = models.FloatField(
-        help_text="""
-            The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    # FKs
-    session = models.ForeignKey(
-        'Session',
-        related_name='entries',
-        on_delete=models.CASCADE,
-    )
-
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='entries',
-        on_delete=models.CASCADE,
-    )
-
-    representing = models.ForeignKey(
-        'Entity',
-        related_name='entries_representing',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-
-    tenor = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_tenor',
-        on_delete=models.SET_NULL,
-    )
-
-    lead = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_lead',
-        on_delete=models.SET_NULL,
-    )
-
-    baritone = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_baritone',
-        on_delete=models.SET_NULL,
-    )
-
-    bass = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_bass',
-        on_delete=models.SET_NULL,
-    )
-
-    director = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_director',
-        on_delete=models.SET_NULL,
-    )
-
-    codirector = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_codirector',
-        on_delete=models.SET_NULL,
-    )
-
-    # # Internals
-    class Meta:
-        verbose_name_plural = 'entries'
-        unique_together = (
-            ('entity', 'session',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "entry"
-
-    def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.entity,
-                    self.session,
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.group.roles.filter(
-                #     status=self.group.roles.model.STATUS.active,
-                #     person__user=request.user,
-                # ),
-                # self.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.session.assignments.model.CATEGORY.admin,
-                # ),
-                # self.session.convention.drcj == request.user.person,
-            ])
-        return False
-
-    # Methods
-    # Transitions
-    @transition(field=status, source='*', target=STATUS.validated)
-    def validate(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        return
-
-
-class EntryPrivate(TimeStampedModel):
-    entry = models.OneToOneField(
-        'Entry',
-        on_delete=models.CASCADE,
-        primary_key=True,
-        parent_link=True,
-    )
-
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    csa_pdf = models.FileField(
-        help_text="""
-            The historical PDF CSA.""",
-        upload_to=PathAndRename(),
-        blank=True,
-        null=True,
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'EntriesPrivate'
-
-    class JSONAPIMeta:
-        resource_name = "entryprivate"
-
-    # Methods
-    def __str__(self):
-        return str(self.pk)
-
-    def calculate(self, *args, **kwargs):
-        self.mus_points = self.calculate_mus_points()
-        self.prs_points = self.calculate_prs_points()
-        self.sng_points = self.calculate_sng_points()
-        self.total_points = self.calculate_total_points()
-        self.mus_score = self.calculate_mus_score()
-        self.prs_score = self.calculate_prs_score()
-        self.sng_score = self.calculate_sng_score()
-        self.total_score = self.calculate_total_score()
-        self.rank = self.calculate_rank()
-
-    def calculate_pdf(self):
-        for appearance in self.entry.appearances.all():
-            for song in appearance.songs.all():
-                song.calculate()
-                song.save()
-            appearance.calculate()
-            appearance.save()
-        self.calculate()
-        self.save()
-        return
-
-    # def print_csa(self):
-    #     entry = self
-    #     contestants = entry.contestants.all()
-    #     appearances = entry.appearances.order_by(
-    #         'round__kind',
-    #     )
-    #     assignments = entry.session.assignments.exclude(
-    #         category=Assignment.CATEGORY.admin,
-    #     ).order_by(
-    #         'category',
-    #         'kind',
-    #         'slot',
-    #     )
-    #     foo = get_template('csa.html')
-    #     template = foo.render(context={
-    #         'entry': entry,
-    #         'appearances': appearances,
-    #         'assignments': assignments,
-    #         'contestants': contestants,
-    #     })
-    #     try:
-    #         create_response = doc_api.create_doc({
-    #             "test": True,
-    #             "document_content": template,
-    #             "name": "csa-{0}.pdf".format(id),
-    #             "document_type": "pdf",
-    #         })
-    #         f = ContentFile(create_response)
-    #         entry.csa_pdf.save(
-    #             "{0}.pdf".format(id),
-    #             f
-    #         )
-    #         entry.save()
-    #         log.info("PDF created and saved to instance")
-    #     except docraptor.rest.ApiException as error:
-    #         log.error(error)
-    #         log.error(error.message)
-    #         log.error(error.response_body)
-    #     return "Complete"
-
-    def calculate_rank(self):
-        try:
-            return self.entry.contestants.get(contest=self.entry.session.primary).contestantprivate.calculate_rank()
-        except self.entry.contestants.model.DoesNotExist:
-            return None
-
-    def calculate_mus_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_prs_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_total_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_prs_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_total_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if self.entry.status == self.entry.STATUS.published:
-            return True
-        return False
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-            ])
         return False
 
 
@@ -3080,7 +2887,7 @@ class Round(TimeStampedModel):
         if not point_total:
             return None
         appearances = self.appearances.all()
-        points = [appearance.appearanceprivate.calculate_total_points() for appearance in appearances]
+        points = [appearance.calculate_tot_points() for appearance in appearances]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
@@ -3172,7 +2979,7 @@ class Round(TimeStampedModel):
             if contest.is_qualifier:
                 # Uses absolute cutoff.
                 contestants = contest.contestants.filter(
-                    total_score__gte=contest.award.advance,
+                    tot_score__gte=contest.award.advance,
                 )
                 for contestant in contestants:
                     advancing.append(contestant.entry)
@@ -3183,9 +2990,9 @@ class Round(TimeStampedModel):
                     rank=1,
                 ).first()
                 # Derive the accept threshold from that top score.
-                accept = top.calculate_total_score() - 4.0
+                accept = top.calculate_tot_score() - 4.0
                 contestants = contest.contestants.filter(
-                    total_score__gte=accept,
+                    tot_score__gte=accept,
                 )
                 for contestant in contestants:
                     advancing.append(contestant.entry)
@@ -3199,7 +3006,7 @@ class Round(TimeStampedModel):
             ).exclude(
                 entry__in=advancing,
             ).order_by(
-                '-total_points',
+                '-tot_points',
             )[:diff]
             for a in adds:
                 advancing.append(a.entry)
@@ -3635,7 +3442,7 @@ class Session(TimeStampedModel):
     #     entries = session.entries.exclude(
     #         rank=None,
     #     ).order_by(
-    #         '-total_points',
+    #         '-tot_points',
     #         '-sng_points',
     #         '-mus_points',
     #         '-prs_points',
@@ -3913,6 +3720,52 @@ class Song(TimeStampedModel):
     num = models.IntegerField(
     )
 
+    # Privates
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    prs_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    prs_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    tot_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
@@ -3959,109 +3812,16 @@ class Song(TimeStampedModel):
         )
         super().save(*args, **kwargs)
 
-    def calculate(self, *args, **kwargs):
-        self.songscore.calculate()
-        self.songscore.save()
-        return
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        return False
-
-    # Transitions
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
-        return
-
-
-class SongPrivate(TimeStampedModel):
-    song = models.OneToOneField(
-        'Song',
-        on_delete=models.CASCADE,
-        primary_key=True,
-        parent_link=True,
-    )
-
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    prs_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    total_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    prs_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    total_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'SongsPrivate'
-
-    class JSONAPIMeta:
-        resource_name = "songprivate"
-
     # Methods
-    def __str__(self):
-        return str(self.pk)
-
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
         self.sng_points = self.calculate_sng_points()
-        self.total_points = self.calculate_total_points()
+        self.tot_points = self.calculate_tot_points()
         self.mus_score = self.calculate_mus_score()
         self.prs_score = self.calculate_prs_score()
         self.sng_score = self.calculate_sng_score()
-        self.total_score = self.calculate_total_score()
+        self.tot_score = self.calculate_tot_score()
 
     def calculate_mus_points(self):
         return self.song.scores.filter(
@@ -4087,7 +3847,7 @@ class SongPrivate(TimeStampedModel):
             tot=models.Sum('points')
         )['tot']
 
-    def calculate_total_points(self):
+    def calculate_tot_points(self):
         return self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
         ).aggregate(
@@ -4118,7 +3878,7 @@ class SongPrivate(TimeStampedModel):
             tot=models.Avg('points')
         )['tot']
 
-    def calculate_total_score(self):
+    def calculate_tot_score(self):
         return self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
         ).aggregate(
@@ -4138,35 +3898,16 @@ class SongPrivate(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            # return any([
-            #     self.song.entry.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.song.round.session.assignments.model.category.ADMIN,
-            #     ),
-            #     self.song.entry.group.roles.filter(
-            #         person__user=request.user,
-            #         status=self.song.entry.roles.model.STATUS.active,
-            #     ),
-            # ])
-            return True
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            # return any([
-            #     self.song.entry.session.assignments.filter(
-            #         # judge__user=request.user,
-            #         category=self.song.round.session.assignments.model.category.ADMIN,
-            #     ),
-            #     self.song.entry.group.roles.filter(
-            #         person__user=request.user,
-            #         status=self.song.entry.roles.model.STATUS.active,
-            #     ),
-            # ])
-            return True
         return False
+
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
+        return
 
 
 class Submission(TimeStampedModel):

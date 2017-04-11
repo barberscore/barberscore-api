@@ -10,14 +10,13 @@ from .forms import (
 )
 
 from .inlines import (
-    AwardInline,
+    AppearanceInline,
     AssignmentInline,
+    AwardInline,
     ContestantInline,
     ContestInline,
     MemberInline,
     OfficerInline,
-    AppearanceInline,
-    # EntryInline,
     RepertoryInline,
     RoundInline,
     ScoreInline,
@@ -27,22 +26,18 @@ from .inlines import (
 )
 
 from .models import (
+    Appearance,
     Assignment,
     Award,
     Chart,
     Contest,
-    ContestPrivate,
     Contestant,
-    ContestantPrivate,
     Convention,
     Entity,
+    Entry,
+    Member,
     Office,
     Officer,
-    Member,
-    Appearance,
-    AppearancePrivate,
-    Entry,
-    EntryPrivate,
     Person,
     Repertory,
     Round,
@@ -50,11 +45,59 @@ from .models import (
     Session,
     Slot,
     Song,
-    SongPrivate,
     Submission,
     User,
     Venue,
 )
+
+
+@admin.register(Appearance)
+class AppearanceAdmin(admin.ModelAdmin):
+    fields = [
+        # 'name',
+        'status',
+        'actual_start',
+        'actual_finish',
+        'entry',
+        'round',
+        'num',
+        'slot',
+    ]
+
+    list_display = [
+        'nomen',
+        'status',
+    ]
+
+    list_filter = [
+        'status',
+        'round__session__kind',
+        'round__session__convention__season',
+        'round__session__convention__year',
+        # 'round__session__convention__organization',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'nomen',
+    ]
+
+    raw_id_fields = (
+        'entry',
+    )
+
+    search_fields = (
+        'nomen',
+    )
+
+    inlines = [
+        SongInline,
+    ]
 
 
 @admin.register(Assignment)
@@ -274,11 +317,6 @@ class ContestAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(ContestPrivate)
-class ContestPrivateAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(Contestant)
 class ContestantAdmin(admin.ModelAdmin):
 
@@ -308,11 +346,6 @@ class ContestantAdmin(admin.ModelAdmin):
     ordering = (
         'nomen',
     )
-
-
-@admin.register(ContestantPrivate)
-class ContestantPrivateAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(Convention)
@@ -454,132 +487,6 @@ class EntityAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Member)
-class MemberAdmin(admin.ModelAdmin):
-    fields = [
-        'status',
-        'start_date',
-        'end_date',
-        'entity',
-        'person',
-    ]
-    list_display = [
-        'status',
-        'start_date',
-        'end_date',
-        'entity',
-        'person',
-    ]
-    raw_id_fields = [
-        'person',
-        'entity',
-    ]
-    search_fields = [
-        'nomen',
-    ]
-    list_filter = [
-        'status',
-        'part',
-        'entity__kind',
-    ]
-
-
-@admin.register(Office)
-class OfficeAdmin(admin.ModelAdmin):
-    list_display = [
-        'name',
-        'short_name',
-        'kind',
-    ]
-    search_fields = [
-        'nomen',
-        'short_name',
-    ]
-
-    list_filter = [
-        'status',
-        'kind',
-    ]
-
-    inlines = [
-        OfficerInline,
-    ]
-
-
-@admin.register(Officer)
-class OfficerAdmin(admin.ModelAdmin):
-    raw_id_fields = [
-        'office',
-        'person',
-        'entity',
-    ]
-    list_display = [
-        'person',
-        'office',
-        'entity',
-    ]
-    list_filter = [
-        'office__name',
-    ]
-    search_fields = [
-        'nomen',
-    ]
-
-
-@admin.register(Appearance)
-class AppearanceAdmin(admin.ModelAdmin):
-    fields = [
-        # 'name',
-        'status',
-        'actual_start',
-        'actual_finish',
-        'entry',
-        'round',
-        'num',
-        'slot',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-    ]
-
-    list_filter = [
-        'status',
-        'round__session__kind',
-        'round__session__convention__season',
-        'round__session__convention__year',
-        # 'round__session__convention__organization',
-    ]
-
-    fsm_field = [
-        'status',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    raw_id_fields = (
-        'entry',
-    )
-
-    search_fields = (
-        'nomen',
-    )
-
-    inlines = [
-        SongInline,
-    ]
-
-
-@admin.register(AppearancePrivate)
-class AppearancePrivateAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
     fields = (
@@ -651,9 +558,76 @@ class EntryAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(EntryPrivate)
-class EntryPrivateAdmin(admin.ModelAdmin):
-    pass
+@admin.register(Member)
+class MemberAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        'start_date',
+        'end_date',
+        'entity',
+        'person',
+    ]
+    list_display = [
+        'status',
+        'start_date',
+        'end_date',
+        'entity',
+        'person',
+    ]
+    raw_id_fields = [
+        'person',
+        'entity',
+    ]
+    search_fields = [
+        'nomen',
+    ]
+    list_filter = [
+        'status',
+        'part',
+        'entity__kind',
+    ]
+
+
+@admin.register(Office)
+class OfficeAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'short_name',
+        'kind',
+    ]
+    search_fields = [
+        'nomen',
+        'short_name',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+    ]
+
+    inlines = [
+        OfficerInline,
+    ]
+
+
+@admin.register(Officer)
+class OfficerAdmin(admin.ModelAdmin):
+    raw_id_fields = [
+        'office',
+        'person',
+        'entity',
+    ]
+    list_display = [
+        'person',
+        'office',
+        'entity',
+    ]
+    list_filter = [
+        'office__name',
+    ]
+    search_fields = [
+        'nomen',
+    ]
 
 
 @admin.register(Person)
@@ -1012,11 +986,6 @@ class SongAdmin(admin.ModelAdmin):
         'nomen',
         'num',
     )
-
-
-@admin.register(SongPrivate)
-class SongPrivateAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(Submission)
