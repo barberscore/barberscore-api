@@ -53,7 +53,8 @@ from app.models import (
 
 class AssignmentFactory(DjangoModelFactory):
     status = Assignment.STATUS.new
-    kind = Assignment.KIND.drcj
+    kind = Assignment.KIND.official
+    category = Assignment.CATEGORY.drcj
     convention = SubFactory('app.factories.ConventionFactory')
     person = SubFactory('app.factories.PersonFactory')
 
