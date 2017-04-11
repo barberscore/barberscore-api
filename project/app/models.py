@@ -42,7 +42,7 @@ from .managers import UserManager
 
 from .fields import (
     OneToOneOrNoneField,
-    generate_image_filename,
+    PathAndRename,
 )
 
 config = api_apps.get_app_config('app')
@@ -1440,7 +1440,7 @@ class Entity(TimeStampedModel):
     )
 
     picture = models.ImageField(
-        upload_to=generate_image_filename,
+        upload_to=PathAndRename(),
         help_text="""
             The picture/logo of the resource.""",
         blank=True,
@@ -2165,7 +2165,7 @@ class Entry(TimeStampedModel):
     picture = models.ImageField(
         help_text="""
             The on-stage session picture (as opposed to the "official" photo).""",
-        upload_to=generate_image_filename,
+        upload_to=PathAndRename(),
         blank=True,
         null=True,
     )
@@ -2411,7 +2411,7 @@ class EntryPrivate(TimeStampedModel):
     csa_pdf = models.FileField(
         help_text="""
             The historical PDF CSA.""",
-        upload_to=generate_image_filename,
+        upload_to=PathAndRename(),
         blank=True,
         null=True,
     )
@@ -2713,7 +2713,7 @@ class Person(TimeStampedModel):
     )
 
     picture = models.ImageField(
-        upload_to=generate_image_filename,
+        upload_to=PathAndRename(),
         help_text="""
             The picture/logo of the resource.""",
         blank=True,
@@ -3013,7 +3013,7 @@ class Round(TimeStampedModel):
     ann_pdf = models.FileField(
         help_text="""
             The announcement PDF.""",
-        upload_to=generate_image_filename,
+        upload_to=PathAndRename(),
         blank=True,
         null=True,
     )
@@ -3550,6 +3550,10 @@ class Session(TimeStampedModel):
     num_rounds = models.IntegerField(
     )
 
+    num_songs = models.IntegerField(
+        default=2,
+    )
+
     panel_size = models.IntegerField(
         null=True,
         blank=True,
@@ -3585,7 +3589,7 @@ class Session(TimeStampedModel):
     scoresheet_pdf = models.FileField(
         help_text="""
             The historical PDF OSS.""",
-        upload_to=generate_image_filename,
+        upload_to=PathAndRename(),
         blank=True,
         null=True,
     )
