@@ -26,6 +26,7 @@ class AssignmentInline(admin.TabularInline):
     fields = [
         'nomen',
         'status',
+        'category',
         'kind',
         'person',
         'convention',
@@ -230,17 +231,10 @@ class SongInline(admin.TabularInline):
     model = Song
     fields = [
         'num',
-        'submission',
-        'mus_points',
-        'prs_points',
-        'sng_points',
     ]
     ordering = (
         'num',
     )
-    raw_id_fields = [
-        'submission',
-    ]
     show_change_link = True
     extra = 0
     can_delete = False
