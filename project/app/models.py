@@ -3902,7 +3902,7 @@ class Song(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        return True
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.published)
