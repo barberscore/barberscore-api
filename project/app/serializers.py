@@ -43,6 +43,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
+            'category',
             'kind',
             'convention',
             'person',
