@@ -2316,6 +2316,7 @@ class Officer(TimeStampedModel):
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
         (10, 'active', 'Active',),
     )
 
