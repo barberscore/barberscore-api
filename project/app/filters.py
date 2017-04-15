@@ -162,6 +162,9 @@ class OfficerFilter(FilterSet):
             'office__kind': [
                 'exact',
             ],
+            'office__is_cj': [
+                'exact',
+            ],
         }
 
 

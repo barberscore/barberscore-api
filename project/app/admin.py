@@ -456,6 +456,8 @@ class EntityAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'status',
+        'start_date',
+        'end_date',
         'code',
         'short_name',
         'long_name',
@@ -595,6 +597,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'name',
         'short_name',
         'kind',
+        'is_cj',
     ]
     search_fields = [
         'nomen',
@@ -604,6 +607,7 @@ class OfficeAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'is_cj',
     ]
 
     inlines = [
@@ -622,6 +626,9 @@ class OfficerAdmin(admin.ModelAdmin):
         'person',
         'office',
         'entity',
+        'start_date',
+        'end_date',
+        'status',
     ]
     list_filter = [
         'office__name',

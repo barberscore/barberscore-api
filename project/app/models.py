@@ -2256,6 +2256,10 @@ class Office(TimeStampedModel):
         choices=KIND,
     )
 
+    is_cj = models.BooleanField(
+        default=False,
+    )
+
     short_name = models.CharField(
         max_length=255,
         blank=True,
@@ -2312,13 +2316,12 @@ class Officer(TimeStampedModel):
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
         (10, 'active', 'Active',),
     )
 
     status = models.IntegerField(
         choices=STATUS,
-        default=STATUS.new,
+        default=STATUS.active,
     )
 
     start_date = models.DateField(
@@ -2387,7 +2390,7 @@ class Officer(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return False
+        return True
 
 
 class Person(TimeStampedModel):
