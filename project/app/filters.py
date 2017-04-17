@@ -146,6 +146,9 @@ class OfficeFilter(FilterSet):
             'kind': [
                 'exact',
             ],
+            'is_cj': [
+                'exact',
+            ],
         }
 
 
