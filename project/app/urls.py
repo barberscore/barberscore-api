@@ -34,7 +34,7 @@ router = routers.DefaultRouter(
 
 router.register(r'appearance', AppearanceViewSet)
 router.register(r'assignment', AssignmentViewSet)
-router.register(r'award', AwardViewSet)
+router.register(r'award', AwardViewSet, base_name='award')
 router.register(r'chart', ChartViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contestant', ContestantViewSet)

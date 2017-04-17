@@ -23,6 +23,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
 
+from django.db.models import Q
 # Local
 from .backends import (
     CoalesceFilterBackend,
@@ -121,11 +122,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 
 class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
-        'entity',
-    ).prefetch_related(
-        'contests',
-    )
     serializer_class = AwardSerializer
     filter_class = AwardFilter
     filter_backends = [
@@ -137,6 +133,29 @@ class AwardViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "award"
+
+    def get_queryset(self):
+        queryset = Award.objects.select_related(
+            'entity',
+        ).prefetch_related(
+            'contests',
+        )
+        drcj = self.request.query_params.get('drcj', None)
+        if drcj:
+            try:
+                user = User.objects.get(id=drcj)
+            except User.DoesNotExist:
+                queryset = Award.objects.none()
+                return queryset
+            queryset = Award.objects.filter(
+                Q(entity__officers__person__user=user) |
+                Q(entity__parent__officers__person__user=user)
+            ).select_related(
+                'entity',
+            ).prefetch_related(
+                'contests',
+            )
+        return queryset
 
 
 class ChartViewSet(viewsets.ModelViewSet):
