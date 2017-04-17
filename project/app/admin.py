@@ -684,10 +684,6 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    inlines = [
-        MemberInline,
-    ]
-
     search_fields = (
         'nomen',
     )
@@ -696,6 +692,8 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = [
         OfficerInline,
+        MemberInline,
+        AssignmentInline,
     ]
 
     raw_id_fields = [
