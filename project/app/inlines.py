@@ -3,15 +3,15 @@ from django.contrib import admin
 
 # Local
 from .models import (
+    Appearance,
     Assignment,
     Award,
     Contest,
     Contestant,
     Convention,
+    Entry,
     Member,
     Officer,
-    Appearance,
-    Entry,
     Repertory,
     Round,
     Score,
@@ -19,6 +19,23 @@ from .models import (
     Song,
     Submission,
 )
+
+
+class AppearanceInline(admin.TabularInline):
+    model = Appearance
+    fields = [
+        'entry',
+        'status',
+        'num',
+    ]
+    readonly_fields = [
+        'entry',
+    ]
+    ordering = (
+        'num',
+    )
+    show_change_link = True
+    extra = 0
 
 
 class AssignmentInline(admin.TabularInline):
@@ -119,6 +136,25 @@ class ConventionInline(admin.TabularInline):
     extra = 0
 
 
+class EntryInline(admin.TabularInline):
+    model = Entry
+    fields = [
+        'nomen',
+        'session',
+        'entity',
+    ]
+    readonly_fields = [
+        'nomen',
+        'seed',
+    ]
+    raw_id_fields = [
+        'session',
+        'entity',
+    ]
+    show_change_link = True
+    extra = 0
+
+
 class MemberInline(admin.TabularInline):
     model = Member
     fields = [
@@ -148,42 +184,6 @@ class OfficerInline(admin.TabularInline):
     raw_id_fields = [
         'office',
         'person',
-        'entity',
-    ]
-    show_change_link = True
-    extra = 0
-
-
-class AppearanceInline(admin.TabularInline):
-    model = Appearance
-    fields = [
-        'entry',
-        'status',
-        'num',
-    ]
-    readonly_fields = [
-        'entry',
-    ]
-    ordering = (
-        'num',
-    )
-    show_change_link = True
-    extra = 0
-
-
-class EntryInline(admin.TabularInline):
-    model = Entry
-    fields = [
-        'nomen',
-        'session',
-        'entity',
-    ]
-    readonly_fields = [
-        'nomen',
-        'seed',
-    ]
-    raw_id_fields = [
-        'session',
         'entity',
     ]
     show_change_link = True

@@ -33,6 +33,27 @@ from .models import (
 )
 
 
+class AppearanceSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Appearance
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'num',
+            'actual_start',
+            'actual_finish',
+            'round',
+            'entry',
+            'slot',
+            'songs',
+            'permissions',
+        )
+
+
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -224,6 +245,42 @@ class EntitySerializer(serializers.ModelSerializer):
         ]
 
 
+class EntrySerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Entry
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'picture',
+            'men',
+            'risers',
+            'is_evaluation',
+            'is_private',
+            'seed',
+            'prelim',
+            'session',
+            'entity',
+            'representing',
+            'tenor',
+            'lead',
+            'baritone',
+            'bass',
+            'director',
+            'codirector',
+            'appearances',
+            'contestants',
+            'submissions',
+            'permissions',
+        )
+        read_only_fields = [
+            'picture',
+        ]
+
+
 class MemberSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -278,63 +335,6 @@ class OfficerSerializer(serializers.ModelSerializer):
             'person',
             'entity',
             'permissions',
-        ]
-
-
-class AppearanceSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Appearance
-        fields = (
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'num',
-            'actual_start',
-            'actual_finish',
-            'round',
-            'entry',
-            'slot',
-            'songs',
-            'permissions',
-        )
-
-
-class EntrySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Entry
-        fields = (
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'picture',
-            'men',
-            'risers',
-            'is_evaluation',
-            'is_private',
-            'seed',
-            'prelim',
-            'session',
-            'entity',
-            'representing',
-            'tenor',
-            'lead',
-            'baritone',
-            'bass',
-            'director',
-            'codirector',
-            'appearances',
-            'contestants',
-            'submissions',
-            'permissions',
-        )
-        read_only_fields = [
-            'picture',
         ]
 
 

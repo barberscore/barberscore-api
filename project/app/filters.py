@@ -8,10 +8,10 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Entry,
     Member,
     Office,
     Officer,
-    Entry,
     Person,
     Round,
     Score,
@@ -129,6 +129,16 @@ class EntityFilter(FilterSet):
         }
 
 
+class EntryFilter(FilterSet):
+    class Meta:
+        model = Entry
+        fields = {
+            'nomen': [
+                'icontains',
+            ],
+        }
+
+
 class MemberFilter(FilterSet):
     class Meta:
         model = Member
@@ -167,16 +177,6 @@ class OfficerFilter(FilterSet):
             ],
             'office__is_cj': [
                 'exact',
-            ],
-        }
-
-
-class EntryFilter(FilterSet):
-    class Meta:
-        model = Entry
-        fields = {
-            'nomen': [
-                'icontains',
             ],
         }
 

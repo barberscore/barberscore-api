@@ -102,6 +102,30 @@ from .serializers import (
 log = logging.getLogger(__name__)
 
 
+class AppearanceViewSet(
+    get_viewset_transition_action_mixin(Appearance),
+    viewsets.ModelViewSet,
+):
+    queryset = Appearance.objects.select_related(
+        'round',
+        'entry',
+        'slot',
+        'session',
+    ).prefetch_related(
+    )
+    serializer_class = AppearanceSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "appearance"
+
+
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'convention',
@@ -284,6 +308,35 @@ class EntityViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class EntryViewSet(viewsets.ModelViewSet):
+    queryset = Entry.objects.select_related(
+        'session',
+        'entity',
+        'tenor',
+        'lead',
+        'baritone',
+        'bass',
+        'director',
+        'codirector',
+        'representing',
+    ).prefetch_related(
+        'contestants',
+        'appearances',
+        'submissions',
+    )
+    serializer_class = EntrySerializer
+    filter_class = EntryFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "entry"
+
+
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.select_related(
         'entity',
@@ -339,59 +392,6 @@ class OfficerViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "officer"
-
-
-class AppearanceViewSet(
-    get_viewset_transition_action_mixin(Appearance),
-    viewsets.ModelViewSet,
-):
-    queryset = Appearance.objects.select_related(
-        'round',
-        'entry',
-        'slot',
-        'session',
-    ).prefetch_related(
-    )
-    serializer_class = AppearanceSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "appearance"
-
-
-class EntryViewSet(viewsets.ModelViewSet):
-    queryset = Entry.objects.select_related(
-        'session',
-        'entity',
-        'tenor',
-        'lead',
-        'baritone',
-        'bass',
-        'director',
-        'codirector',
-        'representing',
-    ).prefetch_related(
-        'contestants',
-        'appearances',
-        'submissions',
-    )
-    serializer_class = EntrySerializer
-    filter_class = EntryFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "entry"
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -526,6 +526,25 @@ class SessionViewSet(
     resource_name = "session"
 
 
+class SlotViewSet(viewsets.ModelViewSet):
+    queryset = Slot.objects.select_related(
+        'round',
+        'appearance',
+    ).prefetch_related(
+    )
+    serializer_class = SlotSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "slot"
+
+
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
@@ -545,25 +564,6 @@ class SongViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "song"
-
-
-class SlotViewSet(viewsets.ModelViewSet):
-    queryset = Slot.objects.select_related(
-        'round',
-        'appearance',
-    ).prefetch_related(
-    )
-    serializer_class = SlotSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "slot"
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):

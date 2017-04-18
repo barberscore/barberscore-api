@@ -9,39 +9,10 @@ from django.template.loader import render_to_string
 
 # Local
 from .models import (
-    # Award,
     User,
 )
 
 from .utils import get_auth0_token
-
-
-# @receiver(post_save, sender=Appearance)
-# def appearance_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-#     """Create sentinels."""
-#     if not raw:
-#         if created:
-#             s = 1
-#             while s <= instance.round.num_songs:
-#                 song = instance.songs.create(
-#                     appearance=instance,
-#                     num=s,
-#                 )
-#                 s += 1
-#                 assignments = instance.round.session.assignments.filter(
-#                     category__in=[
-#                         instance.round.session.assignments.model.CATEGORY.music,
-#                         instance.round.session.assignments.model.CATEGORY.presentation,
-#                         instance.round.session.assignments.model.CATEGORY.singing,
-#                     ]
-#                 )
-#                 for assignment in assignments:
-#                     assignment.scores.create(
-#                         assignment=assignment,
-#                         song=song,
-#                         category=assignment.category,
-#                         kind=assignment.kind,
-#                     )
 
 
 @receiver(post_save, sender=User)
