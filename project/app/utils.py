@@ -244,16 +244,15 @@ def import_judge_roster(path):
             home_phone = row[7].partition("h")[2]
             work_phone = row[8].partition("w")[2]
             cell_phone = row[9].partition("c")[2]
-            airport_list = []
+            airports = []
             if row[11]:
-                airport_list.append(row[11])
+                airports.append(row[11])
             if row[12]:
-                airport_list.append(row[12])
+                airports.append(row[12])
             if row[13]:
-                airport_list.append(row[13])
+                airports.append(row[13])
             if row[14]:
-                airport_list.append(row[14])
-            airports = ",".join(airport_list)
+                airports.append(row[14])
             person.spouse = spouse
             person.address = address
             person.email = email
@@ -261,7 +260,7 @@ def import_judge_roster(path):
             person.work_phone = work_phone
             person.cell_phone = cell_phone
             person.airports = airports
-            # person.save()
+            person.save()
             try:
                 district = Entity.objects.get(
                     short_name=row[10],
@@ -300,11 +299,11 @@ def import_judge_roster(path):
             officer = {
                 'person': person,
                 'office': office,
-                'district': district,
+                'entity': district,
                 'start_date': start_date,
                 'status': status,
             }
-            print(officer)
+            Officer.objects.create(**officer)
 
 
 def import_db_offices(path):
