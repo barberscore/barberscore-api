@@ -1,6 +1,7 @@
 # Third-Party
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 # Local
 from .fields import (
@@ -177,6 +178,14 @@ class ContestantSerializer(serializers.ModelSerializer):
 class ConventionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
+    def validate(self, data):
+        """Check that the start is before the stop."""
+        if data['start_date'] > data['end_date']:
+            raise serializers.ValidationError(
+                "The start date of the convention can not be after the finish date."
+            )
+        return data
+
     class Meta:
         model = Convention
         fields = (
@@ -337,6 +346,14 @@ class OfficerSerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Officer.objects.all(),
+                fields=('person', 'office'),
+                message='This person already holds this office.',
+            )
+        ]
+
 
 class PersonSerializer(serializers.ModelSerializer):
 
@@ -409,6 +426,13 @@ class RepertorySerializer(serializers.ModelSerializer):
             'submissions',
             'permissions',
         )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Repertory.objects.all(),
+                fields=('entity', 'chart'),
+                message='This chart already exists in your repertory.',
+            )
+        ]
 
 
 class RoundSerializer(serializers.ModelSerializer):
