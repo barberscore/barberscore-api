@@ -6,6 +6,7 @@ import logging
 from auth0.v2.management import Auth0
 from psycopg2.extras import DateRange
 import requests
+from datetime import datetime
 
 # Django
 from django.conf import settings
@@ -25,6 +26,7 @@ from .models import (
     Convention,
     Entity,
     Office,
+    Officer,
     Person,
     Session,
     Submission,
@@ -222,6 +224,87 @@ def export_db_awards():
                     except AttributeError:
                         clean[k] = v
                 writer.writerow(clean)
+
+
+def import_judge_roster(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                person = Person.objects.get(
+                    bhs_id=int(row[1]),
+                )
+            except Person.DoesNotExist:
+                log.error('Can not find person for {0} {1}'.format(row[2], row[1]))
+                continue
+            spouse = row[2].partition("(")[2].partition(")")[0]
+            address = "{0}; {1}".format(row[3], row[4])
+            email = row[5]
+            home_phone = row[7].partition("h")[2]
+            work_phone = row[8].partition("w")[2]
+            cell_phone = row[9].partition("c")[2]
+            airport_list = []
+            if row[11]:
+                airport_list.append(row[11])
+            if row[12]:
+                airport_list.append(row[12])
+            if row[13]:
+                airport_list.append(row[13])
+            if row[14]:
+                airport_list.append(row[14])
+            airports = ",".join(airport_list)
+            person.spouse = spouse
+            person.address = address
+            person.email = email
+            person.home_phone = home_phone
+            person.work_phone = work_phone
+            person.cell_phone = cell_phone
+            person.airports = airports
+            # person.save()
+            try:
+                district = Entity.objects.get(
+                    short_name=row[10],
+                    kind__in=[
+                        Entity.KIND.district,
+                        Entity.KIND.affiliate,
+                    ]
+                )
+            except Entity.DoesNotExist:
+                log.error('Can not find district for {0} {1}'.format(row[2], row[1]))
+                continue
+            status = row[15]
+            if status == 'Certified':
+                status = 10
+            else:
+                status = 0
+            category = row[0]
+            if category == 'MUS':
+                office = Office.objects.get(name='Society C&J Music Judge')
+            elif category == 'PER':
+                office = Office.objects.get(name='Society C&J Performance Judge')
+            elif category == 'SNG':
+                office = Office.objects.get(name='Society C&J Singing Judge')
+            elif category == 'ADM':
+                office = Office.objects.get(name='Society C&J Administrator')
+            elif category == 'DRCJ':
+                continue
+            else:
+                log.error("Can't find category for {0}".format(row[0]))
+            try:
+                yos = int(row[6])
+            except ValueError:
+                yos = 0
+            year = 2017 - yos
+            start_date = datetime(year, 7, 1)
+            officer = {
+                'person': person,
+                'office': office,
+                'district': district,
+                'start_date': start_date,
+                'status': status,
+            }
+            print(officer)
 
 
 def import_db_offices(path):

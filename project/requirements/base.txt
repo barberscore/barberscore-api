@@ -1,6 +1,6 @@
 auth0-python==2.0.1
-awscli==1.11.76
-botocore==1.5.39
+awscli==1.11.79
+botocore==1.5.42
 coreapi==2.3.0
 cryptography==1.8.1
 dj-database-url==0.4.2

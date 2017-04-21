@@ -2523,6 +2523,43 @@ class Person(TimeStampedModel):
         max_length=25,
     )
 
+    address = models.TextField(
+        help_text="""
+            The complete address of the resource.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    home_phone = models.CharField(
+        help_text="""
+            The home phone number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    work_phone = models.CharField(
+        help_text="""
+            The work phone number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    cell_phone = models.CharField(
+        help_text="""
+            The cell phone number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    airports = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=3,
+        ),
+        null=True,
+        blank=True,
+    )
+
     picture = models.ImageField(
         upload_to=PathAndRename(),
         help_text="""
