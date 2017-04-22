@@ -398,7 +398,10 @@ class OfficeViewSet(viewsets.ModelViewSet):
     resource_name = "office"
 
 
-class OfficerViewSet(viewsets.ModelViewSet):
+class OfficerViewSet(
+    get_viewset_transition_action_mixin(Officer),
+    viewsets.ModelViewSet
+):
     queryset = Officer.objects.select_related(
         'office',
         'person',

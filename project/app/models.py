@@ -2320,7 +2320,7 @@ class Officer(TimeStampedModel):
         (10, 'active', 'Active',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.active,
     )
@@ -2391,7 +2391,23 @@ class Officer(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return True
+        if request.user.is_authenticated():
+            return any([
+                request.user.person.officers.filter(
+                    office__short_name__startswith='SCJC',
+                    status=Officer.STATUS.active,
+                )
+            ])
+        return False
+
+    # Transitions
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        return
 
 
 class Person(TimeStampedModel):
