@@ -391,6 +391,10 @@ class PersonSerializer(serializers.ModelSerializer):
             'last_name',
             'nick_name',
             'representing',
+            'international',
+            'district',
+            'division',
+            'chapter',
             'assignments',
             'members',
             'officers',
@@ -407,6 +411,10 @@ class PersonSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'nick_name',
+            'international',
+            'district',
+            'division',
+            'chapter',
         ]
 
 

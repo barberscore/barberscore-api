@@ -2670,6 +2670,58 @@ class Person(TimeStampedModel):
         else:
             return None
 
+    @property
+    def international(self):
+        if self.representing:
+            parent = self.representing
+            while True:
+                if parent.kind == 1:
+                    return parent.name
+                else:
+                    parent = parent.parent
+            return ""
+        else:
+            return ""
+
+    @property
+    def district(self):
+        if self.representing:
+            parent = self.representing
+            while True:
+                if parent.kind in [11, 12, 13]:
+                    return parent.name
+                else:
+                    parent = parent.parent
+            return ""
+        else:
+            return ""
+
+    @property
+    def division(self):
+        if self.representing:
+            parent = self.representing
+            while parent:
+                if parent.kind == 21:
+                    return parent.name
+                else:
+                    parent = parent.parent
+            return ""
+        else:
+            return ""
+
+    @property
+    def chapter(self):
+        if self.representing:
+            parent = self.representing
+            while True:
+                if parent.kind == 32:
+                    return "{0} - {1}".format(parent.long_name, parent.code)
+                else:
+                    parent = parent.parent
+            return ""
+        else:
+            return ""
+
     # FKs
     representing = models.ForeignKey(
         'Entity',
