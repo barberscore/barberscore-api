@@ -20,7 +20,7 @@ from app.factories import (
     MemberFactory,
     OfficeFactory,
     OfficerFactory,
-    OrganizationFactory,
+    InternationalFactory,
     AppearanceFactory,
     EntryFactory,
     PersonFactory,
@@ -90,8 +90,8 @@ def convention():
 
 
 @pytest.fixture
-def organization():
-    return OrganizationFactory()
+def international():
+    return InternationalFactory()
 
 
 @pytest.fixture
@@ -229,7 +229,7 @@ def test_convention_endpoint_list(api_client, convention):
 
 
 @pytest.mark.django_db()
-def test_entity_endpoint_list(api_client, organization):
+def test_entity_endpoint_list(api_client, international):
     path = reverse('entity-list')
     response = api_client.get(path)
     assert ok(response)
@@ -385,8 +385,8 @@ def test_convention_endpoint_detail(api_client, convention):
 
 
 @pytest.mark.django_db()
-def test_entity_endpoint_detail(api_client, organization):
-    path = reverse('entity-detail', args=(str(organization.id),))
+def test_entity_endpoint_detail(api_client, international):
+    path = reverse('entity-detail', args=(str(international.id),))
     response = api_client.get(path)
     assert ok(response)
 
@@ -548,7 +548,7 @@ def test_convention_admin_list(admin_client, convention):
 
 
 @pytest.mark.django_db()
-def test_entity_admin_list(admin_client, organization):
+def test_entity_admin_list(admin_client, international):
     path = reverse('admin:app_entity_changelist')
     response = admin_client.get(path)
     assert ok(response)
@@ -704,8 +704,8 @@ def test_convention_admin_detail(admin_client, convention):
 
 
 @pytest.mark.django_db()
-def test_entity_admin_detail(admin_client, organization):
-    path = reverse('admin:app_entity_change', args=(str(organization.id),))
+def test_entity_admin_detail(admin_client, international):
+    path = reverse('admin:app_entity_change', args=(str(international.id),))
     response = admin_client.get(path)
     assert ok(response)
 

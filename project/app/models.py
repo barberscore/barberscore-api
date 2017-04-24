@@ -432,7 +432,7 @@ class Award(TimeStampedModel):
     """
     Award Model.
 
-    The specific award conferred by an organization.
+    The specific award conferred by an international.
     Typically given once a year.
     """
 
@@ -1479,8 +1479,8 @@ class Entity(TimeStampedModel):
     )
 
     KIND = Choices(
-        ('Organization', [
-            (1, 'organization', "Organization"),
+        ('International', [
+            (1, 'international', "International"),
         ]),
         ('District', [
             (11, 'district', "District"),
@@ -1503,7 +1503,7 @@ class Entity(TimeStampedModel):
 
     kind = models.IntegerField(
         help_text="""
-            The kind of organization.""",
+            The kind of international.""",
         choices=KIND,
     )
 
@@ -2230,8 +2230,8 @@ class Office(TimeStampedModel):
     )
 
     KIND = Choices(
-        ('Organization', [
-            (1, 'organization', "Organization"),
+        ('International', [
+            (1, 'international', "International"),
         ]),
         ('District', [
             (11, 'district', "District"),
@@ -3021,7 +3021,7 @@ class Round(TimeStampedModel):
                     i += 1
             return
         # Get the number of spots available
-        spots = self.session.convention.organization.spots
+        spots = self.session.convention.international.spots
         # Create appearances accordingly
         next_round = self.session.rounds.create(
             num=2,

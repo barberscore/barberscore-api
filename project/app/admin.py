@@ -75,7 +75,6 @@ class AppearanceAdmin(admin.ModelAdmin):
         'round__session__kind',
         'round__session__convention__season',
         'round__session__convention__year',
-        # 'round__session__convention__organization',
     ]
 
     fsm_field = [
@@ -520,7 +519,6 @@ class EntryAdmin(admin.ModelAdmin):
         'session__convention__level',
         'session__kind',
         'session__convention__season',
-        # 'session__convention__organization',
         'session__convention__year',
         'risers',
     ]
@@ -769,7 +767,6 @@ class RoundAdmin(admin.ModelAdmin):
         'session__convention__level',
         'session__convention__season',
         'session__convention__year',
-        # 'session__convention__organization',
     ]
 
     fsm_field = [
@@ -905,7 +902,6 @@ class SessionAdmin(admin.ModelAdmin):
     ordering = (
         '-convention__year',
         'convention__level',
-        # 'convention__organization__name',
         '-convention__season',
         'kind',
         'age',

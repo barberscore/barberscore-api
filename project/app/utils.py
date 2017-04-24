@@ -321,30 +321,30 @@ def import_db_offices(path):
             Office.objects.create(**office)
 
 
-def import_db_organizations(path):
+def import_db_internationals(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            organization = {}
-            organization['name'] = row[4]
-            organization['status'] = int(row[5])
-            organization['kind'] = int(row[7])
-            organization['short_name'] = row[10]
-            organization['long_name'] = row[11]
-            organization['start_date'] = dateparse.parse_date(row[13])
-            organization['location'] = row[15]
-            organization['website'] = row[16]
-            organization['facebook'] = row[17]
-            organization['twitter'] = row[18]
-            organization['email'] = row[19]
-            organization['phone'] = row[20]
-            organization['picture'] = row[21]
-            organization['description'] = row[22]
-            organization['bhs_id'] = int(row[24])
-            organization['parent'] = None
-            Entity.objects.create(**organization)
+            international = {}
+            international['name'] = row[4]
+            international['status'] = int(row[5])
+            international['kind'] = int(row[7])
+            international['short_name'] = row[10]
+            international['long_name'] = row[11]
+            international['start_date'] = dateparse.parse_date(row[13])
+            international['location'] = row[15]
+            international['website'] = row[16]
+            international['facebook'] = row[17]
+            international['twitter'] = row[18]
+            international['email'] = row[19]
+            international['phone'] = row[20]
+            international['picture'] = row[21]
+            international['description'] = row[22]
+            international['bhs_id'] = int(row[24])
+            international['parent'] = None
+            Entity.objects.create(**international)
 
 
 def import_db_districts(path):
@@ -965,15 +965,15 @@ def import_db_chapters(path):
 #                 convention = Convention.objects.get(
 #                     bhs_id=int(row[3]),
 #                 )
-#                 district_name = convention.organization.short_name
+#                 district_name = convention.international.short_name
 #                 try:
-#                     organization = Organization.objects.get(
+#                     international = International.objects.get(
 #                         name="{0} {1}".format(
 #                             district_name,
 #                             name,
 #                         )
 #                     )
-#                 except Organization.DoesNotExist:
+#                 except International.DoesNotExist:
 #                     log.error("Bad Div: {0} {1}".format(district_name, name))
 #                     continue
 #                 try:
@@ -983,7 +983,7 @@ def import_db_chapters(path):
 #                 except Entry.DoesNotExist:
 #                     log.error("Can't find entry")
 #                     continue
-#                 entry.representing = organization
+#                 entry.representing = international
 #                 entry.save()
 
 
@@ -1034,17 +1034,17 @@ def import_db_chapters(path):
 #             if not entry.representing:
 #                 log.error("No representation for {0}".format(entry))
 #                 continue
-#             organization = entry.representing
-#             if organization.level == Organization.LEVEL.district:
-#                 district = organization
+#             international = entry.representing
+#             if international.level == International.LEVEL.district:
+#                 district = international
 #                 division = None
-#             elif organization.level == Organization.LEVEL.division:
-#                 district = organization.parent
-#                 division = organization
+#             elif international.level == International.LEVEL.division:
+#                 district = international.parent
+#                 division = international
 #             else:
 #                 log.error("Bad Rep: {0} {1}".format(
 #                     entry,
-#                     organization,
+#                     international,
 #                 ))
 #                 continue
 #             excludes = [
@@ -1059,7 +1059,7 @@ def import_db_chapters(path):
 #             name = name.replace("Most Improved", "Most-Improved")
 #             try:
 #                 award = Award.objects.get(
-#                     organization=entry.representing,
+#                     international=entry.representing,
 #                     stix_name__endswith=name,
 #                 )
 #             except Award.DoesNotExist:
@@ -1084,7 +1084,7 @@ def import_db_chapters(path):
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.quartet,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'International Seniors Quartet' in name:
 #                     award = Award.objects.get(
@@ -1101,7 +1101,7 @@ def import_db_chapters(path):
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.seniors,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'District Super Seniors Quartet' in name:
 #                     award = Award.objects.get(
@@ -1116,21 +1116,21 @@ def import_db_chapters(path):
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.quartet,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'Out Of Division Seniors Quartet' in name:
 #                     award = Award.objects.get(
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.seniors,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'Out Of Division Quartet (Overall)' in name:
 #                     award = Award.objects.get(
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.quartet,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'International Chorus' == name:
 #                     award = Award.objects.get(
@@ -1145,13 +1145,13 @@ def import_db_chapters(path):
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.chorus,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'Most-Improved Chorus' in name:
 #                     award = Award.objects.get(
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.chorus,
-#                         organization=district,
+#                         international=district,
 #                         is_improved=True,
 #                     )
 #                 elif 'Out Of Division Chorus' in name:
@@ -1159,14 +1159,14 @@ def import_db_chapters(path):
 #                         is_primary=True,
 #                         level=Award.LEVEL.district,
 #                         kind=Award.KIND.chorus,
-#                         organization=district,
+#                         international=district,
 #                     )
 #                 elif 'Plateau A (or 1) Chorus' == name:
 #                     if row[4] == 'Division Only':
-#                         organization = division
+#                         international = division
 #                         level = Award.LEVEL.division
 #                     else:
-#                         organization = district
+#                         international = district
 #                         level = Award.LEVEL.district
 #                     if "Improved" in name:
 #                         is_improved = True
@@ -1177,28 +1177,28 @@ def import_db_chapters(path):
 #                             stix_name__contains='Plateau A ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau 1 ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau I ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ),
 #                     )
 #                 elif 'Plateau AA (or 2) Chorus' == name:
 #                     if row[4] == 'Division Only':
-#                         organization = division
+#                         international = division
 #                         level = Award.LEVEL.division
 #                     else:
-#                         organization = district
+#                         international = district
 #                         level = Award.LEVEL.district
 #                     if "Improved" in name:
 #                         is_improved = True
@@ -1209,28 +1209,28 @@ def import_db_chapters(path):
 #                             stix_name__contains='Plateau AA ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau 2 ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau II ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ),
 #                     )
 #                 elif 'Plateau AAA (or 3) Chorus' == name:
 #                     if row[4] == 'Division Only':
-#                         organization = division
+#                         international = division
 #                         level = Award.LEVEL.division
 #                     else:
-#                         organization = district
+#                         international = district
 #                         level = Award.LEVEL.district
 #                     if "Improved" in name:
 #                         is_improved = True
@@ -1241,28 +1241,28 @@ def import_db_chapters(path):
 #                             stix_name__contains='Plateau AAA ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau 3 ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau III ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ),
 #                     )
 #                 elif 'Plateau AAAA (or 4) Chorus' == name:
 #                     if row[4] == 'Division Only':
-#                         organization = division
+#                         international = division
 #                         level = Award.LEVEL.division
 #                     else:
-#                         organization = district
+#                         international = district
 #                         level = Award.LEVEL.district
 #                     if "Improved" in name:
 #                         is_improved = True
@@ -1273,19 +1273,19 @@ def import_db_chapters(path):
 #                             stix_name__contains='Plateau AAAA ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau 4 ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ) | Q(
 #                             stix_name__contains='Plateau IV ',
 #                             level=level,
 #                             kind=Award.KIND.chorus,
-#                             organization=organization,
+#                             international=international,
 #                             is_improved=is_improved,
 #                         ),
 #                     )
@@ -1297,7 +1297,7 @@ def import_db_chapters(path):
 #                         is_primary=True,
 #                         level=Award.LEVEL.division,
 #                         kind=Award.KIND.quartet,
-#                         organization=division,
+#                         international=division,
 #                     )
 #                 else:
 #                     log.error(
@@ -1384,7 +1384,7 @@ def import_db_chapters(path):
 #         return
 #     else:
 #         letter = chapter.code[:1]
-#         chapter.organization = Organization.objects.get(code=letter)
+#         chapter.international = International.objects.get(code=letter)
 
 
 # def generate_cycle(year):
@@ -1397,7 +1397,7 @@ def import_db_chapters(path):
     #         season=convention.season,
     #         division=convention.division,
     #         year=convention.year + 1,
-    #         organization=convention.organization
+    #         international=convention.international
     #     )
     #     log.info("{0}, {1}".format(new_v, f))
     #     sessions = convention.sessions.all()
