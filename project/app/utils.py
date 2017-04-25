@@ -1,6 +1,8 @@
 # Standard Libary
 import csv
 import logging
+import os
+import cloudinary
 
 # Third-Party
 from auth0.v2.management import Auth0
@@ -34,6 +36,22 @@ from .models import (
 )
 
 log = logging.getLogger(__name__)
+
+
+def upload_pics(path):
+    pics = [f for f in os.listdir(path)]
+    for pic in pics:
+        bhs_id = pic.partition('.jpg')[0]
+        person = Person.objects.get(
+            bhs_id=bhs_id,
+        )
+        person.image = cloudinary.uploader.upload_resource(
+            os.path.join(path, pic),
+            public_id=str(person.id),
+        )
+        person.save()
+        log.info(person.image)
+    return
 
 
 def get_auth0_token():

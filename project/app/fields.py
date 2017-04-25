@@ -16,6 +16,8 @@ from django.utils.deconstruct import deconstructible
 
 from rest_framework_json_api import serializers
 
+from cloudinary.models import CloudinaryField
+
 
 class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):
     def __get__(self, instance, cls=None):
@@ -39,6 +41,13 @@ class PathAndRename(object):
         f, ext = os.path.splitext(filename)
         filename = '{0}{1}'.format(instance.id, ext.lower())
         return os.path.join(self.path, filename)
+
+
+# @deconstructible
+class CloudinaryRename(CloudinaryField):
+
+    def upload_options(self, model_instance):
+        return {'public_id': str(model_instance.id)}
 
 
 class TimezoneField(serializers.Field):

@@ -6,6 +6,7 @@ import uuid
 
 # Third-Party
 import docraptor
+from cloudinary.models import CloudinaryField
 from django_fsm import (
     RETURN_VALUE,
     FSMIntegerField,
@@ -2573,6 +2574,11 @@ class Person(TimeStampedModel):
             max_length=3,
         ),
         null=True,
+        blank=True,
+    )
+
+    image = CloudinaryField(
+        'image',
         blank=True,
     )
 

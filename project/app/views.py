@@ -327,7 +327,10 @@ class EntityViewSet(viewsets.ModelViewSet):
 
             entity.picture.save(upload.name, upload)
 
-            return Response(status=status.HTTP_201_CREATED, headers={'Location': entity.picture.url})
+            return Response(
+                status=status.HTTP_201_CREATED,
+                headers={'Location': entity.picture.url},
+            )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -454,15 +457,17 @@ class PersonViewSet(viewsets.ModelViewSet):
     def picture(self, request, *args, **kwargs):
         if 'upload' in request.data:
             person = self.get_object()
-            person.picture.delete()
-
             upload = request.data['upload']
+            person.image.save(upload.name, upload)
 
-            person.picture.save(upload.name, upload)
-
-            return Response(status=status.HTTP_201_CREATED, headers={'Location': person.picture.url})
+            return Response(
+                status=status.HTTP_201_CREATED,
+                headers={'Location': person.image.url},
+            )
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class RepertoryViewSet(viewsets.ModelViewSet):

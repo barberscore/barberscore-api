@@ -657,6 +657,7 @@ class PersonAdmin(admin.ModelAdmin):
         'email',
         'phone',
         'bhs_id',
+        'image',
         'picture',
         'description',
         'notes',

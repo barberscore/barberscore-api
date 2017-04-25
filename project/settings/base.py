@@ -157,6 +157,9 @@ JWT_AUTH = {
 #  Docraptor
 DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
 
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',

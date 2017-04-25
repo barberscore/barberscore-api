@@ -358,6 +358,7 @@ class OfficerSerializer(serializers.ModelSerializer):
 class PersonSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
+    image_thumbnail = serializers.SerializerMethodField()
 
     class Meta:
         model = Person
@@ -383,6 +384,8 @@ class PersonSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'picture',
+            'image',
+            'image_thumbnail',
             'description',
             'common_name',
             'full_name',
@@ -405,6 +408,7 @@ class PersonSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         read_only_fields = [
             'picture',
+            'image',
             'common_name',
             'full_name',
             'formal_name',
@@ -416,6 +420,14 @@ class PersonSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
         ]
+
+    def get_image_thumbnail(self, obj):
+        return obj.image.build_url(
+            width=100,
+            height=100,
+            gravity="auto:face",
+            crop="thumb",
+        )
 
 
 class RepertorySerializer(serializers.ModelSerializer):
