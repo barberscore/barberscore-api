@@ -45,6 +45,8 @@ from .fields import (
     PathAndRename,
 )
 
+from .utils import create_thumbnails
+
 config = api_apps.get_app_config('app')
 docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 doc_api = docraptor.DocApi()
@@ -2738,7 +2740,14 @@ class Person(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
-    def save(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_picture = self.picture
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if not settings.DEBUG:
+            if self.picture != self.__original_picture:
+                create_thumbnails(self)
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x),
@@ -2751,6 +2760,7 @@ class Person(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
+        self.__original_picture = self.picture
 
     def calculate_name(self):
         name = HumanName(self.name)
