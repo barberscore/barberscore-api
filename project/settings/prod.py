@@ -56,10 +56,6 @@ MIDDLEWARE = [
     'bugsnag.django.middleware.BugsnagMiddleware',
 ] + MIDDLEWARE
 
-# Blitline
-BLITLINE_URL = get_env_variable("BLITLINE_URL")
-BLITLINE_APPLICATION_ID = get_env_variable("BLITLINE_APPLICATION_ID")
-
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sendgrid.net'

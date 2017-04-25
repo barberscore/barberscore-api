@@ -37,7 +37,7 @@ class PathAndRename(object):
 
     def __call__(self, instance, filename):
         f, ext = os.path.splitext(filename)
-        filename = str(instance.id)
+        filename = '{0}{1}'.format(instance.id, ext.lower())
         return os.path.join(self.path, filename)
 
 

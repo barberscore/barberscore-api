@@ -36,42 +36,6 @@ from .models import (
 log = logging.getLogger(__name__)
 
 
-def create_thumbnails(item):
-    url = settings.BLITLINE_URL
-    payload = {
-        "application_id": settings.BLITLINE_APPLICATION_ID,
-        "src": {
-            "name": "s3",
-            "bucket": "barberscore",
-            "key": "files/{0}".format(item.id),
-        },
-        "v": 1.21,
-        "functions": [
-            {
-                "name": "crop_to_square",
-                "params": {
-                },
-            },
-            {
-                "name": "resize_to_fit",
-                "params": {
-                    "width": 100,
-                },
-                "save": {
-                    "image_identifier": str(item.id),
-                    "s3_destination": {
-                        "bucket": "barberscore",
-                        "key": "files/{0}_tn.png".format(item.id),
-                        "force_type": "png",
-                    },
-                }
-            },
-        ],
-    }
-    response = requests.post(url, json=payload)
-    return response.json()
-
-
 def get_auth0_token():
     url = 'https://barberscore.auth0.com/oauth/token'
     payload = {
