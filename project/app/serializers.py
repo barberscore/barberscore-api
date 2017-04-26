@@ -422,12 +422,14 @@ class PersonSerializer(serializers.ModelSerializer):
         ]
 
     def get_image_thumbnail(self, obj):
-        return obj.image.build_url(
-            width=100,
-            height=100,
-            gravity="auto:face",
-            crop="thumb",
-        )
+        if obj.image:
+            return obj.image.build_url(
+                width=100,
+                height=100,
+                gravity="auto:face",
+                crop="thumb",
+            )
+        return None
 
 
 class RepertorySerializer(serializers.ModelSerializer):
