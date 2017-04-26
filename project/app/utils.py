@@ -5,7 +5,7 @@ import os
 import cloudinary
 
 # Third-Party
-from auth0.v2.management import Auth0
+from auth0.v3.management import Auth0
 from psycopg2.extras import DateRange
 import requests
 from datetime import datetime

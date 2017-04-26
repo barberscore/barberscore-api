@@ -1,6 +1,6 @@
 # Django
-from auth0.v2.management import Auth0
-from auth0.v2.management.rest import Auth0Error
+from auth0.v3.management import Auth0
+from auth0.v3.management.rest import Auth0Error
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
