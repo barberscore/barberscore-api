@@ -2231,30 +2231,25 @@ class Office(TimeStampedModel):
     )
 
     KIND = Choices(
-        ('International', [
-            (1, 'international', "International"),
+        ('Contest and Judging', [
+            (11, 'scjc', "SCJC"),
+            (12, 'drcj', "DRCJ"),
+            (13, 'ca', "CA"),
+            (14, 'judge', "Judge"),
         ]),
-        ('District', [
-            (11, 'district', "District"),
-            (12, 'noncomp', "Noncompetitive"),
-            (13, 'affiliate', "Affiliate"),
+        ('Representative', [
+            (21, 'representative', "Representative"),
         ]),
-        ('Division', [
-            (21, 'division', "Division"),
+        ('Administrative', [
+            (31, 'staff', "Staff"),
+            (32, 'admin', "Admin"),
         ]),
-        ('Group', [
-            (31, 'quartet', "Quartet"),
-            (32, 'chorus', "Chorus"),
-            (33, 'vlq', "Very Large Quartet"),
-            (34, 'mixed', "Mixed Group"),
-        ]),
-        # ('Leadership', [
-        #     (14, 'cj', "Contest and Judging"),
-        # ]),
     )
 
     kind = FSMIntegerField(
         choices=KIND,
+        null=True,
+        blank=True,
     )
 
     is_cj = models.BooleanField(
@@ -2580,6 +2575,7 @@ class Person(TimeStampedModel):
     image = CloudinaryField(
         'image',
         blank=True,
+        null=True,
     )
 
     picture = models.ImageField(
