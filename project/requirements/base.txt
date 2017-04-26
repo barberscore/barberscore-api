@@ -12,7 +12,7 @@ django-model-utils==3.0.0
 django-timezone-field==2.0
 django==1.11.0
 djangorestframework-csv==2.0.0
-djangorestframework-jsonapi==2.1.1
+djangorestframework-jsonapi==2.2.0
 djangorestframework-jwt==1.10.0
 djangorestframework==3.6.2
 docraptor==1.2.0
