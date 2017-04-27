@@ -1,7 +1,7 @@
 # Django
 from auth0.v3.management import Auth0
 from auth0.v3.management.rest import Auth0Error
-from auth0.v3.authentication import Passwordless
+# from auth0.v3.authentication import Passwordless
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -46,8 +46,8 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                     else:
                         raise(e)
                 # And send Link
-                ps = Passwordless('barberscore-dev.auth0.com')
-                ps.email(
-                    client_id=settings.AUTH0_CLIENT_ID,
-                    email=instance.email,
-                )
+                # ps = Passwordless('barberscore-dev.auth0.com')
+                # ps.email(
+                #     client_id=settings.AUTH0_CLIENT_ID,
+                #     email=instance.email,
+                # )

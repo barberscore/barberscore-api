@@ -7,6 +7,7 @@ import uuid
 # Third-Party
 import docraptor
 from cloudinary.models import CloudinaryField
+from auth0.v3.authentication import Passwordless
 from django_fsm import (
     RETURN_VALUE,
     FSMIntegerField,
@@ -4322,6 +4323,14 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_staff
+
+    def send_login(self):
+        ps = Passwordless('barberscore-dev.auth0.com')
+        result = ps.email(
+            client_id=settings.AUTH0_CLIENT_ID,
+            email=self.email,
+        )
+        return result
 
     # Permissions
     @staticmethod
