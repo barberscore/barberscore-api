@@ -1,4 +1,3 @@
-import os
 import pytz
 import six
 
@@ -10,9 +9,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import OneToOneField
-from django.db.transaction import atomic
-from django.utils.deconstruct import deconstructible
 
 from rest_framework_json_api import serializers
 
@@ -29,18 +25,6 @@ class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):
 
 class OneToOneOrNoneField(models.OneToOneField):
     related_accessor_class = ReverseOneToOneDescriptorReturnsNone
-
-
-@deconstructible
-class PathAndRename(object):
-
-    def __init__(self, sub_path=''):
-        self.path = sub_path
-
-    def __call__(self, instance, filename):
-        f, ext = os.path.splitext(filename)
-        filename = '{0}{1}'.format(instance.id, ext.lower())
-        return os.path.join(self.path, filename)
 
 
 class CloudinaryRenameField(CloudinaryField):
