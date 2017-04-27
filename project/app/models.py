@@ -7,7 +7,6 @@ import uuid
 # Third-Party
 import docraptor
 from cloudinary.models import CloudinaryField
-from auth0.v3.management import Auth0
 from auth0.v3.authentication import Passwordless
 from django_fsm import (
     RETURN_VALUE,
@@ -1605,6 +1604,12 @@ class Entity(TimeStampedModel):
         max_length=25,
     )
 
+    image = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
+    )
+
     picture = models.ImageField(
         upload_to=PathAndRename(),
         help_text="""
@@ -1722,6 +1727,12 @@ class Entry(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    image = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
     )
 
     picture = models.ImageField(
