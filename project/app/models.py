@@ -3525,6 +3525,12 @@ class Session(TimeStampedModel):
         null=True,
     )
 
+    scoresheet = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
+    )
+
     # Denormalizations
     # @property
     # def completed_rounds(self):
