@@ -67,6 +67,24 @@ def get_auth0_token():
     return json['access_token']
 
 
+def update_auth0_id(user):
+    token = get_auth0_token()
+    auth0 = Auth0(
+        settings.AUTH0_DOMAIN,
+        token,
+    )
+    result = auth0.users.list(
+        search_engine='v2',
+        q='email:"{0}"'.format(user.email),
+    )
+    if result['length'] != 1:
+        return log.error("Error {0}".format(user))
+    auth0_id = result['users'][0]['user_id']
+    user.auth0_id = auth0_id
+    user.save()
+    return log.info("Updated {0}".format(user))
+
+
 def update_db_chart(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)

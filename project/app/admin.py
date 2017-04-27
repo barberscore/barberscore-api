@@ -1085,7 +1085,7 @@ class UserAdmin(BaseUserAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('email', 'is_active', 'is_staff', 'person', )}),
+        (None, {'fields': ('email', 'auth0_id', 'is_active', 'is_staff', 'person', )}),
     )
 
     add_fieldsets = (
@@ -1105,6 +1105,7 @@ class UserAdmin(BaseUserAdmin):
 
     readonly_fields = [
         'email',
+        'auth0_id',
     ]
 
 admin.site.unregister(AuthGroup)

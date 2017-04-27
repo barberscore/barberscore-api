@@ -7,6 +7,7 @@ import uuid
 # Third-Party
 import docraptor
 from cloudinary.models import CloudinaryField
+from auth0.v3.management import Auth0
 from auth0.v3.authentication import Passwordless
 from django_fsm import (
     RETURN_VALUE,
@@ -4280,6 +4281,14 @@ class User(AbstractBaseUser):
     email = models.EmailField(
         unique=True,
         editable=False,
+    )
+
+    auth0_id = models.CharField(
+        max_length=100,
+        unique=True,
+        editable=False,
+        null=True,
+        blank=True,
     )
 
     is_active = models.BooleanField(
