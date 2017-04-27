@@ -4325,7 +4325,7 @@ class User(AbstractBaseUser):
         return self.is_staff
 
     def send_login(self):
-        ps = Passwordless('barberscore-dev.auth0.com')
+        ps = Passwordless(settings.AUTH0_DOMAIN)
         result = ps.email(
             client_id=settings.AUTH0_CLIENT_ID,
             email=self.email,
