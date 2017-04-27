@@ -438,7 +438,7 @@ class EntityAdmin(admin.ModelAdmin):
         'twitter',
         'email',
         'phone',
-        'picture',
+        'image',
         'description',
         'notes',
     ]
@@ -495,7 +495,7 @@ class EntryAdmin(admin.ModelAdmin):
         # 'name',
         'status',
         'bhs_id',
-        'picture',
+        'image',
         # 'csa_pdf',
         'session',
         # 'group',
@@ -658,7 +658,6 @@ class PersonAdmin(admin.ModelAdmin):
         'phone',
         'bhs_id',
         'image',
-        'picture',
         'description',
         'notes',
     ]
@@ -672,7 +671,6 @@ class PersonAdmin(admin.ModelAdmin):
         'website',
         'facebook',
         'twitter',
-        'picture',
     ]
 
     list_filter = [

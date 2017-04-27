@@ -44,7 +44,6 @@ from .managers import UserManager
 
 from .fields import (
     OneToOneOrNoneField,
-    PathAndRename,
 )
 
 config = api_apps.get_app_config('app')
@@ -1610,14 +1609,6 @@ class Entity(TimeStampedModel):
         null=True,
     )
 
-    picture = models.ImageField(
-        upload_to=PathAndRename(),
-        help_text="""
-            The picture/logo of the resource.""",
-        blank=True,
-        null=True,
-    )
-
     description = models.TextField(
         help_text="""
             A description/bio of the resource.  Max 1000 characters.""",
@@ -1735,14 +1726,6 @@ class Entry(TimeStampedModel):
         null=True,
     )
 
-    picture = models.ImageField(
-        help_text="""
-            The on-stage session picture (as opposed to the "official" photo).""",
-        upload_to=PathAndRename(),
-        blank=True,
-        null=True,
-    )
-
     men = models.IntegerField(
         help_text="""
             The number of men on stage.""",
@@ -1832,14 +1815,6 @@ class Entry(TimeStampedModel):
     tot_score = models.FloatField(
         null=True,
         blank=True,
-    )
-
-    csa_pdf = models.FileField(
-        help_text="""
-            The historical PDF CSA.""",
-        upload_to=PathAndRename(),
-        blank=True,
-        null=True,
     )
 
     # FKs
@@ -2591,14 +2566,6 @@ class Person(TimeStampedModel):
         null=True,
     )
 
-    picture = models.ImageField(
-        upload_to=PathAndRename(),
-        help_text="""
-            The picture/logo of the resource.""",
-        blank=True,
-        null=True,
-    )
-
     description = models.TextField(
         help_text="""
             A description/bio of the resource.  Max 1000 characters.""",
@@ -2939,14 +2906,6 @@ class Round(TimeStampedModel):
     end_date = models.DateField(
         null=True,
         blank=True,
-    )
-
-    ann_pdf = models.FileField(
-        help_text="""
-            The announcement PDF.""",
-        upload_to=PathAndRename(),
-        blank=True,
-        null=True,
     )
 
     # FKs
@@ -3515,14 +3474,6 @@ class Session(TimeStampedModel):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='primary_session',
-    )
-
-    scoresheet_pdf = models.FileField(
-        help_text="""
-            The historical PDF OSS.""",
-        upload_to=PathAndRename(),
-        blank=True,
-        null=True,
     )
 
     scoresheet = CloudinaryField(
