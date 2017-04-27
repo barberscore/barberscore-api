@@ -3477,7 +3477,7 @@ class Session(TimeStampedModel):
     )
 
     scoresheet = CloudinaryField(
-        'image',
+        'raw',
         blank=True,
         null=True,
     )
