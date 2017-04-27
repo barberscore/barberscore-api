@@ -1,19 +1,10 @@
-# Standard Libary
-from datetime import datetime
-
 # Third-Party
-import factory
-import pytz
 from factory import (
-    Faker,
     PostGenerationMethodCall,
-    RelatedFactory,
     SubFactory,
-    post_generation,
 )
 from factory.django import (
     DjangoModelFactory,
-    ImageField,
     mute_signals,
 )
 
@@ -152,7 +143,7 @@ class InternationalFactory(EntityFactory):
     twitter = ''
     email = ''
     phone = ''
-    picture = ImageField(color='blue')
+    image = None
     description = ''
     notes = ''
     bhs_id = None
@@ -176,7 +167,7 @@ class DistrictFactory(EntityFactory):
     twitter = ''
     email = ''
     phone = ''
-    picture = ImageField(color='orange')
+    image = None
     description = ''
     notes = ''
     bhs_id = None
@@ -200,7 +191,7 @@ class QuartetFactory(EntityFactory):
     twitter = ''
     email = ''
     phone = ''
-    picture = ImageField(color='purple')
+    image = None
     description = ''
     notes = ''
     bhs_id = None
@@ -258,7 +249,7 @@ class AppearanceFactory(DjangoModelFactory):
 
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
-    picture = ImageField(color='green')
+    image = None
     men = None
     risers = None
     is_evaluation = True
@@ -289,7 +280,7 @@ class PersonFactory(DjangoModelFactory):
     twitter = ''
     email = ''
     phone = ''
-    picture = ImageField(color='pink')
+    image = None
     description = ''
     notes = ''
     bhs_id = None
@@ -315,7 +306,6 @@ class RoundFactory(DjangoModelFactory):
     num_songs = 2
     start_date = None
     end_date = None
-    ann_pdf = None
     session = SubFactory('app.factories.SessionFactory')
 
     class Meta:
@@ -349,7 +339,7 @@ class SessionFactory(DjangoModelFactory):
     cursor = None
     current = None
     primary = None
-    scoresheet_pdf = None
+    scoresheet = None
     convention = SubFactory('app.factories.ConventionFactory')
 
     class Meta:

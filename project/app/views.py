@@ -316,23 +316,23 @@ class EntityViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "entity"
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def picture(self, request, *args, **kwargs):
-        if 'upload' in request.data:
-            entity = self.get_object()
-            entity.picture.delete()
+    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    # @parser_classes((FormParser, MultiPartParser,))
+    # def picture(self, request, *args, **kwargs):
+    #     if 'upload' in request.data:
+    #         entity = self.get_object()
+    #         entity.picture.delete()
 
-            upload = request.data['upload']
+    #         upload = request.data['upload']
 
-            entity.picture.save(upload.name, upload)
+    #         entity.picture.save(upload.name, upload)
 
-            return Response(
-                status=status.HTTP_201_CREATED,
-                headers={'Location': entity.picture.url},
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+    #         return Response(
+    #             status=status.HTTP_201_CREATED,
+    #             headers={'Location': entity.picture.url},
+    #         )
+    #     else:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -452,22 +452,22 @@ class PersonViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "person"
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def picture(self, request, *args, **kwargs):
-        if 'upload' in request.data:
-            person = self.get_object()
-            upload = request.data['upload']
-            person.image.save(upload.name, upload)
+    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    # @parser_classes((FormParser, MultiPartParser,))
+    # def picture(self, request, *args, **kwargs):
+    #     if 'upload' in request.data:
+    #         person = self.get_object()
+    #         upload = request.data['upload']
+    #         person.image.save(upload.name, upload)
 
-            return Response(
-                status=status.HTTP_201_CREATED,
-                headers={'Location': person.image.url},
-            )
-        else:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    #         return Response(
+    #             status=status.HTTP_201_CREATED,
+    #             headers={'Location': person.image.url},
+    #         )
+    #     else:
+    #         return Response(
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
 
 
 class RepertoryViewSet(viewsets.ModelViewSet):

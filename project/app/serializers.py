@@ -237,7 +237,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'picture',
+            'image',
             'description',
             'parent',
             'children',
@@ -248,9 +248,6 @@ class EntitySerializer(serializers.ModelSerializer):
             'repertories',
             'officers',
             'permissions',
-        ]
-        read_only_fields = [
-            'picture',
         ]
 
 
@@ -264,7 +261,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'picture',
+            'image',
             'men',
             'risers',
             'is_evaluation',
@@ -285,9 +282,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'submissions',
             'permissions',
         )
-        read_only_fields = [
-            'picture',
-        ]
 
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -383,7 +377,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'picture',
             'image',
             'image_thumbnail',
             'description',
@@ -407,8 +400,6 @@ class PersonSerializer(serializers.ModelSerializer):
         )
         # fields = '__all__'
         read_only_fields = [
-            'picture',
-            'image',
             'common_name',
             'full_name',
             'formal_name',
@@ -473,7 +464,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'num_songs',
             'start_date',
             'end_date',
-            'ann_pdf',
             'session',
             'appearances',
             # 'slots',
@@ -524,7 +514,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'cursor',
             'current',
             'primary',
-            'scoresheet_pdf',
+            'scoresheet',
             # 'computed_rounds',
             'convention',
             'entries',

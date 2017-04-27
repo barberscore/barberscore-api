@@ -496,7 +496,6 @@ class EntryAdmin(admin.ModelAdmin):
         'status',
         'bhs_id',
         'image',
-        # 'csa_pdf',
         'session',
         # 'group',
         # 'district',
@@ -752,7 +751,6 @@ class RoundAdmin(admin.ModelAdmin):
         # 'mt',
         'start_date',
         'end_date',
-        'ann_pdf',
     ]
 
     list_display = [
@@ -859,7 +857,7 @@ class SessionAdmin(admin.ModelAdmin):
         # 'cursor',
         # 'year',
         # # 'size',
-        'scoresheet_pdf',
+        'scoresheet',
     ]
 
     list_display = [
