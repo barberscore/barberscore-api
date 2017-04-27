@@ -6,7 +6,6 @@ import uuid
 
 # Third-Party
 import docraptor
-from cloudinary.models import CloudinaryField
 from auth0.v3.authentication import Passwordless
 from django_fsm import (
     RETURN_VALUE,
@@ -44,6 +43,7 @@ from .managers import UserManager
 
 from .fields import (
     OneToOneOrNoneField,
+    CloudinaryRenameField,
 )
 
 config = api_apps.get_app_config('app')
@@ -1603,7 +1603,7 @@ class Entity(TimeStampedModel):
         max_length=25,
     )
 
-    image = CloudinaryField(
+    image = CloudinaryRenameField(
         'image',
         blank=True,
         null=True,
@@ -1720,7 +1720,7 @@ class Entry(TimeStampedModel):
         default=STATUS.new,
     )
 
-    image = CloudinaryField(
+    image = CloudinaryRenameField(
         'image',
         blank=True,
         null=True,
@@ -2560,7 +2560,7 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
-    image = CloudinaryField(
+    image = CloudinaryRenameField(
         'image',
         blank=True,
         null=True,
@@ -3476,7 +3476,7 @@ class Session(TimeStampedModel):
         related_name='primary_session',
     )
 
-    scoresheet = CloudinaryField(
+    scoresheet = CloudinaryRenameField(
         'raw',
         blank=True,
         null=True,

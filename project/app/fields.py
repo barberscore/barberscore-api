@@ -43,8 +43,7 @@ class PathAndRename(object):
         return os.path.join(self.path, filename)
 
 
-# @deconstructible
-class CloudinaryRename(CloudinaryField):
+class CloudinaryRenameField(CloudinaryField):
 
     def upload_options(self, model_instance):
         return {'public_id': str(model_instance.id)}
