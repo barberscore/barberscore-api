@@ -85,28 +85,29 @@ def update_auth0_id(user):
     return log.info("Updated {0}".format(user))
 
 
-def update_db_chart(path):
+def create_db_chart(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            bhs_id = int(row[0]) if row[0] else None
-            if bhs_id and row[2]:
-                try:
-                    bhs_fee = int(row[4])
-                except ValueError:
-                    bhs_fee = None
-                chart, created = Chart.objects.get_or_create(
-                    bhs_id=bhs_id
-                )
-                chart.title = row[2]
-                chart.arrangers = row[3]
-                chart.bhs_fee = bhs_fee
-                chart.bhs_difficulty = int(row[5]) if row[5] else None
-                chart.bhs_tempo = int(row[6]) if row[6] else None
-                chart.is_medley = True if row[7] == 'True' else False
-                chart.save()
+            chart = {}
+            chart['bhs_id'] = int(row[0])
+            chart['published'] = dateparse.parse_date(row[1])
+            chart['title'] = row[2].strip()
+            chart['arrangers'] = row[3].strip() if row[3].strip() else "(Unknown)"
+            try:
+                chart['bhs_fee'] = int(row[4])
+            except ValueError:
+                chart['bhs_fee'] = None
+            chart['difficulty'] = int(row[5]) if row[5] else None
+            chart['tempo'] = int(row[6]) if row[6] else None
+            chart['is_medley'] = True if row[7] == 'True' else False
+            chart['gender'] = 1
+            chart['voicing'] = 1
+            Chart.objects.create(
+                **chart
+            )
 
 
 # def create_account(person):

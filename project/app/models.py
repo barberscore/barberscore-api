@@ -682,9 +682,11 @@ class Chart(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-20, 'rejected', 'Rejected',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New'),
-        (10, 'active', 'Active'),
+        (10, 'catalog', 'Catalog'),
+        (20, 'cleared', 'Cleared'),
     )
 
     status = FSMIntegerField(
@@ -707,27 +709,22 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
-    arranger = models.CharField(
-        blank=True,
-        max_length=200,
-    )
-
     composers = models.CharField(
-        blank=True,
         max_length=200,
+        default='(Unknown)'
     )
 
     arrangers = models.CharField(
-        blank=True,
         max_length=200,
+        default='(Unknown)'
     )
 
     holders = models.CharField(
-        blank=True,
         max_length=200,
+        default='(Unknown)'
     )
 
-    arranger_fee = models.FloatField(
+    bhs_fee = models.FloatField(
         null=True,
         blank=True,
     )
