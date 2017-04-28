@@ -226,8 +226,6 @@ class ChartAdmin(admin.ModelAdmin):
         'composers',
         'arrangers',
         'holders',
-        'arranger',
-        'arranger_fee',
         'difficulty',
         'gender',
         'tempo',
