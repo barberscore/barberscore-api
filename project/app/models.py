@@ -2219,22 +2219,31 @@ class Office(TimeStampedModel):
     )
 
     KIND = Choices(
-        ('Contest and Judging', [
-            (11, 'scjc', "SCJC"),
-            (12, 'drcj', "DRCJ"),
-            (13, 'ca', "CA"),
-            (14, 'judge', "Judge"),
+        ('International', [
+            (1, 'international', "International"),
         ]),
-        ('Representative', [
-            (21, 'representative', "Representative"),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
         ]),
-        ('Administrative', [
-            (31, 'staff', "Staff"),
-            (32, 'admin', "Admin"),
+        ('Division', [
+            (21, 'division', "Division"),
         ]),
+        ('Group', [
+            (31, 'quartet', "Quartet"),
+            (32, 'chapter', "Chapter"),
+            (33, 'vlq', "Very Large Quartet"),
+            (34, 'mixed', "Mixed Group"),
+        ]),
+        # ('Leadership', [
+        #     (14, 'cj', "Contest and Judging"),
+        # ]),
     )
 
-    kind = FSMIntegerField(
+    kind = models.IntegerField(
+        help_text="""
+            The kind of office.""",
         choices=KIND,
         null=True,
         blank=True,

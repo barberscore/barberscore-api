@@ -470,7 +470,7 @@ class EntityAdmin(admin.ModelAdmin):
 
     inlines = [
         AwardInline,
-        MemberInline,
+        # MemberInline,
         RepertoryInline,
         OfficerInline,
     ]

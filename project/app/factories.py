@@ -214,7 +214,7 @@ class MemberFactory(DjangoModelFactory):
 class OfficeFactory(DjangoModelFactory):
     name = 'Test Office'
     status = Office.STATUS.active
-    kind = Office.KIND.admin
+    kind = Office.KIND.international
     short_name = 'TEST'
     long_name = 'Test Office'
 
