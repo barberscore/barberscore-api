@@ -2856,7 +2856,7 @@ class Repertory(TimeStampedModel):
     def has_object_write_permission(self, request):
         return True
 
-    # Permissions
+    # Transitions
     @transition(field=status, source=[STATUS.new, STATUS.invalid], target=STATUS.valid)
     def validate(self, *args, **kwargs):
         return
