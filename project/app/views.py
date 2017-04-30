@@ -470,7 +470,10 @@ class PersonViewSet(viewsets.ModelViewSet):
     #         )
 
 
-class RepertoryViewSet(viewsets.ModelViewSet):
+class RepertoryViewSet(
+    get_viewset_transition_action_mixin(Repertory),
+    viewsets.ModelViewSet
+):
     queryset = Repertory.objects.select_related(
         'entity',
         'chart',

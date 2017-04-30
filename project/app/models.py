@@ -2791,16 +2791,15 @@ class Repertory(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
+        (-10, 'invalid', 'Invalid',),
         (0, 'new', 'New',),
-        (10, 'active', 'Active',),
+        (10, 'valid', 'Valid',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
-
     # FKs
     entity = models.ForeignKey(
         'Entity',
@@ -2856,6 +2855,15 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         return True
+
+    # Permissions
+    @transition(field=status, source=[STATUS.new, STATUS.invalid], target=STATUS.valid)
+    def validate(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source=[STATUS.new, STATUS.valid], target=STATUS.invalid)
+    def invalidate(self, *args, **kwargs):
+        return
 
 
 class Round(TimeStampedModel):
