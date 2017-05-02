@@ -222,10 +222,11 @@ class ChartAdmin(admin.ModelAdmin):
         'status',
         'bhs_id',
         'title',
-        'published',
         'composers',
         'arrangers',
         'holders',
+        'entity',
+        'published',
         'difficulty',
         'gender',
         'tempo',
@@ -256,6 +257,10 @@ class ChartAdmin(admin.ModelAdmin):
 
     inlines = [
         RepertoryInline,
+    ]
+
+    raw_id_fields = [
+        'entity',
     ]
 
     readonly_fields = [
