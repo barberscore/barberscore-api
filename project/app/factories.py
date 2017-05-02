@@ -76,6 +76,7 @@ class ChartFactory(DjangoModelFactory):
     status = Chart.STATUS.new
     title = 'Test Title'
     bhs_id = 999999
+    entity = SubFactory('app.factories.InternationalFactory')
 
     class Meta:
         model = Chart

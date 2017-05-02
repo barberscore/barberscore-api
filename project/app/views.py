@@ -206,6 +206,7 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
+        'entity',
     ).prefetch_related(
         'repertories',
         'songs',
@@ -291,7 +292,10 @@ class ConventionViewSet(
     resource_name = "convention"
 
 
-class EntityViewSet(viewsets.ModelViewSet):
+class EntityViewSet(
+    get_viewset_transition_action_mixin(Entry),
+    viewsets.ModelViewSet
+):
     queryset = Entity.objects.select_related(
         'parent',
     ).prefetch_related(

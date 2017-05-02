@@ -1713,7 +1713,7 @@ class Entry(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'registered', 'Registered',),
+        (10, 'submitted', 'submitted',),
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
@@ -2085,16 +2085,8 @@ class Entry(TimeStampedModel):
 
     # Methods
     # Transitions
-    @transition(field=status, source='*', target=STATUS.validated)
-    def validate(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.submitted)
+    def submit(self, *args, **kwargs):
         return
 
 
