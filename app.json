@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e3bcd491996e604614a54fa0da68d0c5df0322d346b94f946cc818d0f0ddf918
-size 774
+{
+  "name": "Barberscore Django",
+  "addons": [
+    "cloudinary:starter",
+    "docraptor:starter",
+    "geocody:test",
+    "heroku-postgresql:standard-0",
+    "scheduler:standard",
+    "sendgrid:starter",
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "description": "Scoring software for the Barbershop Harmony Society",
+  "environments": {
+    "test": {
+      "env": {
+        "FOO": "bar"
+      }
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "standard-2x"
+    }
+  },
+  "logo": "https://s3-us-west-1.amazonaws.com/barberscore/static/images/bhs_logo.png",
+  "repository": "https://github.com/dbinetti/barberscore-django",
+  "stack": "cedar-14",
+  "scripts": {
+    "postdeploy": "django-admin migrate --noinput"
+  }
+}
