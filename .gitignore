@@ -9,7 +9,7 @@ htmlcov/*
 
 project/media/*
 project/static/*
-*.json
+api.json
 
 *.rdb
 
