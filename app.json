@@ -37,7 +37,21 @@
   "environments": {
     "test": {
       "env": {
-        "DJANGO_SETTINGS_MODULE": "settings.ci"
+        "AUTH0_API_ID": "UfcuxFynCw5WBggVi2vQFdomU4MrmxXa",
+        "AUTH0_AUDIENCE": "https://barberscore.auth0.com/api/v2/",
+        "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
+        "DJANGO_LOG_LEVEL": "ERROR",
+        "DJANGO_SETTINGS_MODULE": "settings.ci",
+        "HOST": "barberscore-django.herokuapp.com",
+        "PIP_FORMAT": "columns",
+        "PROJECT_NAME": "barberscore",
+        "PROJECT_WEBSITE": "https://barberscore.com",
+        "SECRET_KEY": {
+          "generator": "secret"
+        },
+        "PYTHONPATH": "project",
+        "TZ": "US/Pacific",
+        "USER_EMAIL": "dbinetti@gmail.com"
       },
       "scripts": {
         "test": "pytest"
