@@ -15,7 +15,6 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
-DATABASES['default']['TEST'] = dj_database_url.config(default=DATABASE_URL)
 
 # Static Server Config
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
