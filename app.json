@@ -16,8 +16,8 @@
   "description": "Scoring software for the Barbershop Harmony Society",
   "environments": {
     "test": {
-      "env": {
-        "FOO": "bar"
+      "scripts": {
+        "test": "pytest"
       }
     }
   },
