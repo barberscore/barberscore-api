@@ -6,7 +6,7 @@
     "geocody:test",
     "heroku-postgresql:standard-0",
     "scheduler:standard",
-    "sendgrid:starter",
+    "sendgrid:starter"
   ],
   "buildpacks": [
     {
