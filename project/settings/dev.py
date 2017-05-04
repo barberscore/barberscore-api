@@ -21,12 +21,6 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-# Static Server Config
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
-STATIC_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-STATIC_URL = '/static/'
-STATICFILES_STORAGE = STATIC_STORAGE
-
 # Media (aka File Upload) Server Config
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 MEDIA_STORAGE = 'django.core.files.storage.FileSystemStorage'

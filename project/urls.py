@@ -4,7 +4,6 @@ from django.conf.urls import (
     include,
     url,
 )
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from rest_framework.schemas import get_schema_view
@@ -21,7 +20,7 @@ urlpatterns = [
     url(r'^schema/', schema_view),
     url(r'^docs/', include_docs_urls(title='Foobar', description='foo to the bar')),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
     import debug_toolbar
