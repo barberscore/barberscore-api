@@ -33,7 +33,8 @@
     },
     "PYTHONPATH": "project",
     "TZ": "US/Pacific",
-    "USER_EMAIL": "dbinetti@gmail.com"
+    "USER_EMAIL": "dbinetti@gmail.com",
+    "DISABLE_COLLECTSTATIC": 1
   },
   "environments": {
     "test": {
@@ -53,7 +54,8 @@
         },
         "PYTHONPATH": "project",
         "TZ": "US/Pacific",
-        "USER_EMAIL": "dbinetti@gmail.com"
+        "USER_EMAIL": "dbinetti@gmail.com",
+        "DISABLE_COLLECTSTATIC": 1
       },
       "scripts": {
         "test": "pytest"
