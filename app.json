@@ -34,7 +34,13 @@
     "PYTHONPATH": "project",
     "TZ": "US/Pacific",
     "USER_EMAIL": "dbinetti@gmail.com",
-    "DISABLE_COLLECTSTATIC": 1
+    "DISABLE_COLLECTSTATIC": 1,
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "HEROKU_PARENT_APP_NAME": {
+      "required": true
+    }
   },
   "environments": {
     "test": {
