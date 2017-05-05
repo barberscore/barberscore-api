@@ -37,7 +37,7 @@
     "PYTHONPATH": "project",
     "TZ": "US/Pacific",
     "USER_EMAIL": "dbinetti@gmail.com",
-    "DISABLE_COLLECTSTATIC": "true",
+    "DISABLE_COLLECTSTATIC": "true"
   },
   "environments": {
     "test": {
