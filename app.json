@@ -1,64 +1,41 @@
 {
   "name": "Barberscore Django",
+  "description": "Scoring software for the Barbershop Harmony Society",
   "addons": [
+    "algoliasearch:free",
+    "auth0:free",
     "cloudinary:starter",
     "docraptor:starter",
     "geocody:test",
-    "heroku-postgresql:standard-0",
-    "scheduler:standard",
-    "sendgrid:starter",
     "heroku-exec:test",
-    "bugsnag:sagittaron",
+    "heroku-postgresql:hobby-dev",
     "heroku-redis:hobby-dev",
     "papertrail:choklad",
-    "algoliasearch:free",
     "pointdns:developer"
+    "rollbar:free",
+    "scheduler:standard",
+    "sendgrid:starter",
   ],
   "buildpacks": [
     {
       "url": "heroku/python"
     }
   ],
-  "description": "Scoring software for the Barbershop Harmony Society",
   "env": {
-    "AUTH0_API_ID": "UfcuxFynCw5WBggVi2vQFdomU4MrmxXa",
-    "AUTH0_AUDIENCE": "https://barberscore.auth0.com/api/v2/",
-    "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
-    "AUTH0_DOMAIN": "barberscore.auth0.com",
-    "DJANGO_LOG_LEVEL": "ERROR",
     "DJANGO_SETTINGS_MODULE": "settings.prod",
-    "HOST": "barberscore-django.herokuapp.com",
-    "PIP_FORMAT": "columns",
-    "PROJECT_NAME": "barberscore",
-    "PROJECT_WEBSITE": "https://barberscore.com",
+    "PYTHONPATH": "project",
     "SECRET_KEY": {
       "generator": "secret"
     },
-    "PYTHONPATH": "project",
-    "TZ": "US/Pacific",
-    "USER_EMAIL": "dbinetti@gmail.com",
-    "DISABLE_COLLECTSTATIC": "true"
   },
   "environments": {
     "test": {
       "env": {
-        "AUTH0_API_ID": "UfcuxFynCw5WBggVi2vQFdomU4MrmxXa",
-        "AUTH0_AUDIENCE": "https://barberscore.auth0.com/api/v2/",
-        "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
-        "AUTH0_DOMAIN": "barberscore-dev.auth0.com",
-        "DJANGO_LOG_LEVEL": "ERROR",
-        "DJANGO_SETTINGS_MODULE": "settings.ci",
-        "HOST": "barberscore-django.herokuapp.com",
-        "PIP_FORMAT": "columns",
-        "PROJECT_NAME": "barberscore",
-        "PROJECT_WEBSITE": "https://barberscore.com",
+        "DJANGO_SETTINGS_MODULE": "settings.prod",
+        "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "PYTHONPATH": "project",
-        "TZ": "US/Pacific",
-        "USER_EMAIL": "dbinetti@gmail.com",
-        "DISABLE_COLLECTSTATIC": "true"
       },
       "scripts": {
         "test": "pytest"
@@ -68,7 +45,7 @@
   "formation": {
     "web": {
       "quantity": "1",
-      "size": "standard-2x"
+      "size": "free"
     }
   },
   "logo": "https://barberscore-django.herokuapp.com/static/app/bhs_logo.png",
