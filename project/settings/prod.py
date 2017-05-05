@@ -20,23 +20,9 @@ JWT_AUTH = {
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 
-# AWS Global Settings
-AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
-AWS_PRELOAD_METADATA = True
-AWS_REGION = get_env_variable("AWS_DEFAULT_REGION")
-
-# AWS S3 Media Settings (user or admin-uploaded content)
-AWS_S3_KEY_PREFIX = "files"
-AWS_S3_BUCKET_NAME = "{0}".format(PROJECT_NAME)
-AWS_S3_MAX_AGE_SECONDS = 60 * 60  # 1 hour
-MEDIA_STORAGE = 'django_s3_storage.storage.S3Storage'
-DEFAULT_FILE_STORAGE = MEDIA_STORAGE
-
 # CORS Settings
 CORS_ORIGIN_WHITELIST = [
     '{0}.com'.format(PROJECT_NAME),
-    '{0}.s3.amazonaws.com'.format(PROJECT_NAME),
     '{0}.auth0.com'.format(PROJECT_NAME),
 ]
 

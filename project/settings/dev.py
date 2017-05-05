@@ -21,12 +21,6 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-# Media (aka File Upload) Server Config
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
-MEDIA_STORAGE = 'django.core.files.storage.FileSystemStorage'
-MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = MEDIA_STORAGE
-
 # CORS Settings
 CORS_ORIGIN_WHITELIST = [
     'localhost:4200'

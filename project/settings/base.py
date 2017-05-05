@@ -130,6 +130,12 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
 
+# Media (aka File Upload) Server Config
+# MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+# MEDIA_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# MEDIA_URL = '/media/'
+# DEFAULT_FILE_STORAGE = MEDIA_STORAGE
+
 # JSONAPI Settings:
 JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
