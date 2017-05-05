@@ -25,25 +25,18 @@ def get_env_variable(var_name):
     return var
 
 
-ALLOWED_HOSTS = [
-    get_env_variable("HOST"),
-]
-
-# Globals
-PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-PROJECT_NAME = get_env_variable('PROJECT_NAME')
-PROJECT_WEBSITE = get_env_variable('PROJECT_WEBSITE')
-DEFAULT_FROM_EMAIL = 'admin@{0}.com'.format(PROJECT_NAME)
-PROJECT_WEBSITE = get_env_variable('PROJECT_WEBSITE')
-USE_I18N = False
-USE_L10N = False
+# Core
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 SECRET_KEY = get_env_variable("SECRET_KEY")
+DEFAULT_FROM_EMAIL = "admin@barberscore.com"
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
+USE_I18N = False
+USE_L10N = False
 APPEND_SLASH = False
 
 # Datetime
-TIME_ZONE = get_env_variable("TZ")
+TIME_ZONE = 'US/Pacific'
 USE_TZ = True
 DATE_FORMAT = 'c'
 TIME_FORMAT = 'c'
@@ -55,7 +48,7 @@ DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL)
 }
 
-# Auth
+# Authentication
 AUTH_USER_MODEL = "app.User"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -70,6 +63,7 @@ LOGOUT_REDIRECT_URL = 'admin:login'
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -100,6 +94,9 @@ TEMPLATES = [
     },
 ]
 
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
@@ -124,11 +121,16 @@ REST_FRAMEWORK = {
     ],
 }
 
-# JSONAPI Settings:
+# WhiteNoise
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATIC_URL = '/static/'
+
+# JSONAPI
 JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
 
-# Auth0 Settings:
+# Auth0
 AUTH0_PUBLIC_KEY = get_env_variable("AUTH0_PUBLIC_KEY")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
@@ -166,6 +168,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
