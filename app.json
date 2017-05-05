@@ -37,12 +37,12 @@
     "PYTHONPATH": "project",
     "TZ": "US/Pacific",
     "USER_EMAIL": "dbinetti@gmail.com",
-    "DISABLE_COLLECTSTATIC": 1,
+    "DISABLE_COLLECTSTATIC": "true",
     "HEROKU_APP_NAME": {
-      "required": true
+      "required": "true"
     },
     "HEROKU_PARENT_APP_NAME": {
-      "required": true
+      "required": "true"
     }
   },
   "environments": {
@@ -64,7 +64,7 @@
         "PYTHONPATH": "project",
         "TZ": "US/Pacific",
         "USER_EMAIL": "dbinetti@gmail.com",
-        "DISABLE_COLLECTSTATIC": 1
+        "DISABLE_COLLECTSTATIC": "true"
       },
       "scripts": {
         "test": "pytest"
@@ -73,7 +73,7 @@
   },
   "formation": {
     "web": {
-      "quantity": 1,
+      "quantity": "1",
       "size": "standard-2x"
     }
   },
@@ -82,5 +82,6 @@
   "stack": "cedar-14",
   "scripts": {
     "postdeploy": "django-admin migrate --noinput"
-  }
+  },
+  "success_url": "/welcome"
 }
