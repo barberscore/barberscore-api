@@ -78,7 +78,7 @@
     }
   },
   "logo": "https://barberscore-django.herokuapp.com/static/app/bhs_logo.png",
-  "repository": "https://github.com/dbinetti/barberscore-django",
+  "repository": "https://github.com/barberscore/barberscore-django",
   "stack": "cedar-14",
   "scripts": {
     "postdeploy": "django-admin migrate --noinput"
