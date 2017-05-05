@@ -49,7 +49,7 @@
   "formation": {
     "web": {
       "quantity": "1",
-      "size": "free"
+      "size": "hobby"
     }
   },
   "logo": "https://barberscore-django.herokuapp.com/static/app/bhs_logo.png",
