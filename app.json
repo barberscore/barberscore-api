@@ -6,7 +6,13 @@
     "geocody:test",
     "heroku-postgresql:standard-0",
     "scheduler:standard",
-    "sendgrid:starter"
+    "sendgrid:starter",
+    "heroku-exec:test",
+    "bugsnag:sagittaron",
+    "heroku-redis:hobby-dev",
+    "papertrail:choklad",
+    "algoliasearch:free",
+    "pointdns:developer"
   ],
   "buildpacks": [
     {
@@ -19,7 +25,6 @@
     "AUTH0_AUDIENCE": "https://barberscore.auth0.com/api/v2/",
     "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
     "AUTH0_DOMAIN": "barberscore.auth0.com",
-    "BUGSNAG_API_KEY": "a4f3b6f91a9a694b0f81bee5baebf71d",
     "DJANGO_LOG_LEVEL": "ERROR",
     "DJANGO_SETTINGS_MODULE": "settings.prod",
     "HOST": "barberscore-django.herokuapp.com",
