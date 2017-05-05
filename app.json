@@ -11,10 +11,10 @@
     "heroku-postgresql:hobby-dev",
     "heroku-redis:hobby-dev",
     "papertrail:choklad",
-    "pointdns:developer"
+    "pointdns:developer",
     "rollbar:free",
     "scheduler:standard",
-    "sendgrid:starter",
+    "sendgrid:starter"
   ],
   "buildpacks": [
     {
@@ -26,7 +26,7 @@
     "PYTHONPATH": "project",
     "SECRET_KEY": {
       "generator": "secret"
-    },
+    }
   },
   "environments": {
     "test": {
@@ -35,7 +35,7 @@
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
-        },
+        }
       },
       "scripts": {
         "test": "pytest"
