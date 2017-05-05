@@ -23,14 +23,17 @@
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": "settings.prod",
+    "PYTHONPATH": "project",
+    "SECRET_KEY": {
+      "generator": "secret"
+    },
+    "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
+    "AUTH0_CLIENT_SECRET": "secret",
+    "AUTH0_DOMAIN": "barberscore.auth0.com",
     "AUTH0_API_ID": "foobar",
     "AUTH0_API_SECRET": "foobar",
     "AUTH0_AUDIENCE": "foobar",
     "AUTH0_PUBLIC_KEY": "-----BEGIN CERTIFICATE-----\nMIIC+jCCAeKgAwIBAgIJbuZM6FlzJ6TDMA0GCSqGSIb3DQEBBQUAMCQxIjAgBgNV\nBAMTGWJhcmJlcnNjb3JlLWRldi5hdXRoMC5jb20wHhcNMTYxMDI2MjAzNDE0WhcN\nMzAwNzA1MjAzNDE0WjAkMSIwIAYDVQQDExliYXJiZXJzY29yZS1kZXYuYXV0aDAu\nY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArktLSct+7BT6SDLJ\nk6P7esPEk2rWTd6+S97gB8oZ9I4WTiGx7jsPgoYn9pUltnHF2r0N1WuOM8UCUMfk\nb/lwHcpBGsNx2cxsvr0oVsgKEynJNn0ynRCR2EH7b/iYrtOtMyE1CXtMMgT9vMhS\ne/mE8VxsTvgev1nQmR8lq/jXZvLY068/BbicWsrJ11/7toSiJEMH3yEwzlK7ZRDj\nOorp0sp3//ZCZeP4ep9SwK/dNthUgAe1yfQokKQCnW5aMYYZgMG4RDIKND28PGMe\n7QmesTbSzoXTPDZBMLJC0o/CSZlQrPzg5SmfyGO0sl+ZnWt9PBeCYjLgtBbKDOH9\no8gNTQIDAQABoy8wLTAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBS9m0sa23+rX1a1\n3/2+h9f2UTlrzDANBgkqhkiG9w0BAQUFAAOCAQEALsbWOoKVb4hEFl7akai9bqRK\nDMxXf6ZBu7tQMFVDE3xr5Rzc11aeyUCWA9oIrv07JNHQI1OPrXHSKdd+UDAiO2N1\npTIfrOjySNxBoTkr0IJWp+SQjiNr+vvbJGSgThvebHmxNVIQ+WQosVmWHobuZ+tF\nLXyoMAxse01/vNGW3LqsMWG32icIQ4Xra2wKmXag/oQGlu4NASRuEhtP8Lp47v1D\nm+rablf5MmFd3dtErVU9a3cqeGUEIjYhTK18slv55LOEdMPklRgkDUlvCIxd3RA1\nyZw/f9vAojVPQmXNY95Kzg14aqhiRGSeNhG6BRMnDvzm3/rx4UezNmLxT6F1cg==\n-----END CERTIFICATE-----",
-    "PYTHONPATH": "project",
-    "SECRET_KEY": {
-      "generator": "secret"
-    }
   },
   "environments": {
     "test": {
@@ -39,7 +42,14 @@
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
-        }
+        },
+        "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
+        "AUTH0_CLIENT_SECRET": "secret",
+        "AUTH0_DOMAIN": "barberscore.auth0.com",
+        "AUTH0_API_ID": "foobar",
+        "AUTH0_API_SECRET": "foobar",
+        "AUTH0_AUDIENCE": "foobar",
+        "AUTH0_PUBLIC_KEY": "-----BEGIN CERTIFICATE-----\nMIIC+jCCAeKgAwIBAgIJbuZM6FlzJ6TDMA0GCSqGSIb3DQEBBQUAMCQxIjAgBgNV\nBAMTGWJhcmJlcnNjb3JlLWRldi5hdXRoMC5jb20wHhcNMTYxMDI2MjAzNDE0WhcN\nMzAwNzA1MjAzNDE0WjAkMSIwIAYDVQQDExliYXJiZXJzY29yZS1kZXYuYXV0aDAu\nY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArktLSct+7BT6SDLJ\nk6P7esPEk2rWTd6+S97gB8oZ9I4WTiGx7jsPgoYn9pUltnHF2r0N1WuOM8UCUMfk\nb/lwHcpBGsNx2cxsvr0oVsgKEynJNn0ynRCR2EH7b/iYrtOtMyE1CXtMMgT9vMhS\ne/mE8VxsTvgev1nQmR8lq/jXZvLY068/BbicWsrJ11/7toSiJEMH3yEwzlK7ZRDj\nOorp0sp3//ZCZeP4ep9SwK/dNthUgAe1yfQokKQCnW5aMYYZgMG4RDIKND28PGMe\n7QmesTbSzoXTPDZBMLJC0o/CSZlQrPzg5SmfyGO0sl+ZnWt9PBeCYjLgtBbKDOH9\no8gNTQIDAQABoy8wLTAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBS9m0sa23+rX1a1\n3/2+h9f2UTlrzDANBgkqhkiG9w0BAQUFAAOCAQEALsbWOoKVb4hEFl7akai9bqRK\nDMxXf6ZBu7tQMFVDE3xr5Rzc11aeyUCWA9oIrv07JNHQI1OPrXHSKdd+UDAiO2N1\npTIfrOjySNxBoTkr0IJWp+SQjiNr+vvbJGSgThvebHmxNVIQ+WQosVmWHobuZ+tF\nLXyoMAxse01/vNGW3LqsMWG32icIQ4Xra2wKmXag/oQGlu4NASRuEhtP8Lp47v1D\nm+rablf5MmFd3dtErVU9a3cqeGUEIjYhTK18slv55LOEdMPklRgkDUlvCIxd3RA1\nyZw/f9vAojVPQmXNY95Kzg14aqhiRGSeNhG6BRMnDvzm3/rx4UezNmLxT6F1cg==\n-----END CERTIFICATE-----",
       },
       "scripts": {
         "test": "pytest"
