@@ -10,7 +10,7 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',
 ]
 DATABASES['default']['TEST'] = {
-    'NAME': DATABASES['default']['name'],
+    'NAME': DATABASES['default']['NAME'],
 }
 
 
