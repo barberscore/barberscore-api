@@ -9,6 +9,10 @@ ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
+DATABASES['default']['TEST'] = {
+    'NAME': DATABASES['default']['name'],
+}
+
 
 # Email
 EMAIL_HOST = 'smtp.sendgrid.net'
