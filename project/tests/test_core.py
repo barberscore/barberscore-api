@@ -178,6 +178,9 @@ def venue():
 def user():
     return UserFactory()
 
+def test_tautologic():
+    assert True
+
 
 @pytest.mark.django_db()
 def test_api_endpoint(api_client):
