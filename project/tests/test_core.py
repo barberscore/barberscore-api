@@ -1,6 +1,6 @@
 # Third-Party
 import pytest
-from rest_framework.test import RequestsClient
+from rest_framework.test import APIClient
 
 # Django
 from django.apps import apps as api_apps
@@ -54,7 +54,7 @@ def admin_client():
 @pytest.fixture
 def api_client():
     admin = AdminFactory()
-    client = RequestsClient()
+    client = APIClient()
     client.force_authenticate(user=admin)
     return client
 
