@@ -10,6 +10,7 @@ from psycopg2.extras import DateRange
 import requests
 from datetime import datetime
 
+
 # Django
 from django.conf import settings
 from django.db import IntegrityError
@@ -36,6 +37,77 @@ from .models import (
 )
 
 log = logging.getLogger(__name__)
+
+
+def import_music_catalog(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        # Extract
+        items = []
+        for row in rows:
+            extract = {}
+            try:
+                extract['bhs_id'] = int(row[0])
+            except ValueError as e:
+                log.error(e)
+                continue
+            extract['title'] = row[1]
+            if row[7] == 'NULL':
+                extract['composers'] = ''
+            else:
+                extract['composers'] = row[7]
+            if row[8] == 'NULL':
+                extract['lyricists'] = ''
+            else:
+                extract['lyricists'] = row[8]
+            if row[10] == 'NULL':
+                extract['holders'] = ''
+            else:
+                extract['holders'] = row[10]
+            if row[20] == 'NULL':
+                extract['arrangers'] = ''
+            else:
+                extract['arrangers'] = row[20]
+            items.append(extract)
+    bhs = Entity.objects.get(short_name='BHS')
+    for item in items:
+        chart, created = Chart.objects.get_or_create(bhs_id=item['bhs_id'], entity=bhs)
+    for item in items:
+        chart = Chart.objects.get(bhs_id=item['bhs_id'])
+        if item['title'] not in chart.title:
+            chart.title = item['title']
+        if item['composers'] not in chart.composers:
+            chart.composers = item['composers']
+        if item['lyricists'] not in chart.lyricists:
+            chart.lyricists = item['lyricists']
+        if item['holders'] not in chart.holders:
+            chart.holders = item['holders']
+        if item['arrangers'] not in chart.arrangers:
+            chart.arrangers = item['arrangers']
+        chart.save()
+
+
+def extract_arrangers(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        # Extract
+        original = []
+        for row in rows:
+            extract = {}
+            extract['arr_id'] = row[19]
+            extract['arr_name'] = row[20]
+            try:
+                extract['arr_rata'] = float(row[21])
+            except ValueError:
+                extract['arr_rata'] = None
+            extract['code'] = row[22]
+            original.append(extract)
+    result = [dict(tupleized) for tupleized in set(tuple(item.items()) for item in original)]
+    return result
 
 
 def upload_pics(path):

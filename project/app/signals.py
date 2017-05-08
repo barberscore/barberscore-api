@@ -19,6 +19,9 @@ from .models import (
 from .utils import get_auth0_token
 
 
+
+
+
 @receiver(post_save, sender=User)
 def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create Auth0 from user and send verification email."""

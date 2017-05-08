@@ -223,6 +223,7 @@ class ChartAdmin(admin.ModelAdmin):
         'bhs_id',
         'title',
         'composers',
+        'lyricists',
         'arrangers',
         'holders',
         'entity',
@@ -240,16 +241,17 @@ class ChartAdmin(admin.ModelAdmin):
         'status',
         'title',
         'composers',
+        'lyricists',
         'arrangers',
         'holders',
     ]
 
-    list_editable = [
-        'title',
-        'composers',
-        'arrangers',
-        'holders',
-    ]
+    # list_editable = [
+    #     'title',
+    #     'composers',
+    #     'arrangers',
+    #     'holders',
+    # ]
 
     list_filter = [
         'status',

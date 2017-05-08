@@ -2,6 +2,7 @@
 *.pot
 *.pyc
 *.DS_Store
+.cache/
 
 .coverage
 

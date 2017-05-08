@@ -711,17 +711,22 @@ class Chart(TimeStampedModel):
 
     composers = models.CharField(
         max_length=200,
-        default='(Unknown)'
+        default='(Unknown Composers)'
+    )
+
+    lyricists = models.CharField(
+        max_length=200,
+        default='(Unknown Lyricists)'
     )
 
     arrangers = models.CharField(
         max_length=200,
-        default='(Unknown)'
+        default='(Unknown Arrangers)'
     )
 
     holders = models.CharField(
         max_length=200,
-        default='(Unknown)'
+        default='(Unknown Copyright Holders)'
     )
 
     bhs_fee = models.FloatField(
