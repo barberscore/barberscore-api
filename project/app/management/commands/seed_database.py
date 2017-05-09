@@ -13,6 +13,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         User.objects.create_superuser(
-            'admin@barberscore.com',
+            'test@barberscore.com',
             'password',
         )

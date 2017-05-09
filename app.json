@@ -85,7 +85,7 @@
         "AUTH0_CLIENT_SECRET": "null",
         "AUTH0_DOMAIN": "null",
         "AUTH0_PUBLIC_KEY": "null",
-        "CLOUDINARY_URL": {},
+        "CLOUDINARY_URL": "null",
         "DOCRAPTOR_API_KEY": "null",
         "DOCRAPTOR_URL": "null",
         "GEOCODY_API_KEY": "null",
