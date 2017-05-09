@@ -4,16 +4,11 @@ from .base import *
 
 # Heroku Settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 ALLOWED_HOSTS = [
-    'testserver',
     '.barberscore.com',
     '.herokuapp.com',
 ]
-DATABASES['default']['TEST'] = {
-    'NAME': DATABASES['default']['NAME'],
-}
-
 
 # Email
 EMAIL_HOST = 'smtp.sendgrid.net'
