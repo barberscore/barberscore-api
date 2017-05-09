@@ -22,6 +22,12 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
+#  Docraptor
+DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
+
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+
 # Logging
 LOGGING = {
     'version': 1,

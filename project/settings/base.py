@@ -150,6 +150,7 @@ jwt_public_key = cert.public_key()
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('email')
 
+
 JWT_AUTH = {
     'JWT_AUDIENCE': AUTH0_CLIENT_ID,
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
@@ -157,12 +158,6 @@ JWT_AUTH = {
     'JWT_PUBLIC_KEY': jwt_public_key,
     'JWT_ALGORITHM': 'RS256',
 }
-
-#  Docraptor
-DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
-
-# Cloudinary
-CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
 # Applications
 INSTALLED_APPS = [

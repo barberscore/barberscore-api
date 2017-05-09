@@ -2,13 +2,19 @@
 from .base import *
 
 
-# Heroku Settings
+# Heroku
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
+
+#  Docraptor
+DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
+
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
 # Email
 EMAIL_HOST = 'smtp.sendgrid.net'
