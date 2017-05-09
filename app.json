@@ -44,10 +44,10 @@
     "AUTH0_DOMAIN": "null",
     "AUTH0_PUBLIC_KEY": "null",
     "HEROKU_APP_NAME": {
-        "required": true
+        "required": "true"
       },
     "HEROKU_PARENT_APP_NAME": {
-      "required": true
+      "required": "true"
     }
   },
   "scripts": {
