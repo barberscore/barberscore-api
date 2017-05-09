@@ -40,12 +40,11 @@
     "AUTH0_API_SECRET": "null",
     "AUTH0_AUDIENCE": "null",
     "AUTH0_CLIENT_ID": "null",
-    "AUTH0_CLIENT_SECRET": "null",
+    "AUTH0_CLIENT_SECRET": {},
     "AUTH0_DOMAIN": "null",
     "AUTH0_PUBLIC_KEY": "null"
   },
   "scripts": {
-    "postdeploy": "django-admin seed_database"
   },
   "environments": {
     "test": {
