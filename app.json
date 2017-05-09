@@ -42,7 +42,13 @@
     "AUTH0_CLIENT_ID": "null",
     "AUTH0_CLIENT_SECRET": {},
     "AUTH0_DOMAIN": "null",
-    "AUTH0_PUBLIC_KEY": "null"
+    "AUTH0_PUBLIC_KEY": "null",
+    "HEROKU_APP_NAME": {
+        "required": false
+      },
+    "HEROKU_PARENT_APP_NAME": {
+      "required": false
+    }
   },
   "scripts": {
   },
