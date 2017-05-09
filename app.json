@@ -34,24 +34,35 @@
     "DJANGO_SETTINGS_MODULE": "settings.prod",
     "PYTHONPATH": "project",
     "SECRET_KEY": {
-      "generator": "secret"
+      "generator": "secret",
+      "required": true
     },
-    "AUTH0_API_ID": "null",
-    "AUTH0_API_SECRET": "null",
-    "AUTH0_AUDIENCE": "null",
-    "AUTH0_CLIENT_ID": "null",
-    "AUTH0_CLIENT_SECRET": {},
-    "AUTH0_DOMAIN": "null",
-    "AUTH0_PUBLIC_KEY": "null",
-    "HEROKU_APP_NAME": {
-        "required": "true"
-      },
-    "HEROKU_PARENT_APP_NAME": {
-      "required": "true"
-    }
+    "AUTH0_API_ID": {
+      "required": true
+    },
+    "AUTH0_API_SECRET": {
+      "required": true
+    },
+    "AUTH0_AUDIENCE": {
+      "required": true
+    },
+    "AUTH0_CLIENT_ID": {
+      "required": true
+    },
+    "AUTH0_CLIENT_SECRET": {
+      "required": true
+    },
+    "AUTH0_DOMAIN": {
+      "required": true
+    },
+    "AUTH0_PUBLIC_KEY": {
+      "required": true
+    },
+    "HEROKU_APP_NAME": {},
+    "HEROKU_PARENT_APP_NAME": {}
   },
   "scripts": {
-    "postdeploy": "heroku pg:copy HEROKU_PARENT_APP_NAME::DATABASE_URL DATABASE_URL --app HEROKU_APP_NAME --confirm HEROKU_APP_NAME"
+    "postdeploy": "django-admin seed_database"
   },
   "environments": {
     "test": {
@@ -74,7 +85,7 @@
         "AUTH0_CLIENT_SECRET": "null",
         "AUTH0_DOMAIN": "null",
         "AUTH0_PUBLIC_KEY": "null",
-        "CLOUDINARY_URL": "null",
+        "CLOUDINARY_URL": {},
         "DOCRAPTOR_API_KEY": "null",
         "DOCRAPTOR_URL": "null",
         "GEOCODY_API_KEY": "null",
