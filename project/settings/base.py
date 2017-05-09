@@ -130,6 +130,12 @@ STATIC_URL = '/static/'
 JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
 
+#  Docraptor
+DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
+
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+
 # Auth0
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")

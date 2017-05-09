@@ -53,11 +53,25 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
-        "AUTH0_DOMAIN": "barberscore.auth0.com",
-        "AUTH0_API_ID": "UfcuxFynCw5WBggVi2vQFdomU4MrmxXa",
-        "AUTH0_AUDIENCE": "https://barberscore.auth0.com/api/v2/",
-        "AUTH0_PUBLIC_KEY": "barberscore.pem"
+        "ALGOLIASEARCH_API_KEY": null,
+        "ALGOLIASEARCH_API_KEY_SEARCH": null,
+        "ALGOLIASEARCH_APPLICATION_ID": null,
+        "AUTH0_API_ID": null,
+        "AUTH0_API_SECRET": null,
+        "AUTH0_AUDIENCE": null,
+        "AUTH0_CLIENT_ID": null,
+        "AUTH0_CLIENT_SECRET": null,
+        "AUTH0_DOMAIN": null,
+        "AUTH0_PUBLIC_KEY": null,
+        "CLOUDINARY_URL": null,
+        "DOCRAPTOR_API_KEY": null,
+        "DOCRAPTOR_URL": null,
+        "GEOCODY_API_KEY": null,
+        "GEOCODY_CLIENT_ID": null,
+        "PAPERTRAIL_API_TOKEN": null,
+        "REDIS_URL": null,
+        "ROLLBAR_ACCESS_TOKEN": null,
+        "ROLLBAR_ENDPOINT": null
       },
       "scripts": {
         "test": "pytest --no-migrations --reuse-db"
