@@ -376,6 +376,7 @@ class SubmissionFactory(DjangoModelFactory):
     is_parody = False
     arrangers = ''
     composers = ''
+    lyricists = ''
     holders = ''
     entry = SubFactory('app.factories.EntryFactory')
     repertory = SubFactory('app.factories.RepertoryFactory')

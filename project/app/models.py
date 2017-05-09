@@ -4072,7 +4072,14 @@ class Submission(TimeStampedModel):
 
     composers = models.TextField(
         help_text="""
-            Names of the Composer(s) and/or Lyricist(s).
+            Names of the Composer(s).
+        """,
+        blank=True,
+    )
+
+    lyricists = models.TextField(
+        help_text="""
+            Names of the Lyricist(s).
         """,
         blank=True,
     )
