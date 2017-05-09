@@ -44,13 +44,14 @@
     "AUTH0_DOMAIN": "null",
     "AUTH0_PUBLIC_KEY": "null",
     "HEROKU_APP_NAME": {
-        "required": false
+        "required": true
       },
     "HEROKU_PARENT_APP_NAME": {
-      "required": false
+      "required": true
     }
   },
   "scripts": {
+    "postdeploy": "heroku pg:copy HEROKU_PARENT_APP_NAME::DATABASE_URL DATABASE_URL --app HEROKU_APP_NAME --confirm HEROKU_APP_NAME"
   },
   "environments": {
     "test": {
