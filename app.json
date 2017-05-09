@@ -25,7 +25,6 @@
     "heroku-postgresql:hobby-dev",
     "heroku-redis:hobby-dev",
     "papertrail:choklad",
-    "pointdns:developer",
     "rollbar:free",
     "scheduler:standard",
     "sendgrid:starter"
@@ -57,9 +56,7 @@
     },
     "AUTH0_PUBLIC_KEY": {
       "required": true
-    },
-    "HEROKU_APP_NAME": {},
-    "HEROKU_PARENT_APP_NAME": {}
+    }
   },
   "scripts": {
     "postdeploy": "django-admin seed_database"
@@ -74,26 +71,7 @@
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
-        },
-        "ALGOLIASEARCH_API_KEY": "null",
-        "ALGOLIASEARCH_API_KEY_SEARCH": "null",
-        "ALGOLIASEARCH_APPLICATION_ID": "null",
-        "AUTH0_API_ID": "null",
-        "AUTH0_API_SECRET": "null",
-        "AUTH0_AUDIENCE": "null",
-        "AUTH0_CLIENT_ID": "null",
-        "AUTH0_CLIENT_SECRET": "null",
-        "AUTH0_DOMAIN": "null",
-        "AUTH0_PUBLIC_KEY": "null",
-        "CLOUDINARY_URL": "null",
-        "DOCRAPTOR_API_KEY": "null",
-        "DOCRAPTOR_URL": "null",
-        "GEOCODY_API_KEY": "null",
-        "GEOCODY_CLIENT_ID": "null",
-        "PAPERTRAIL_API_TOKEN": "null",
-        "REDIS_URL": "null",
-        "ROLLBAR_ACCESS_TOKEN": "null",
-        "ROLLBAR_ENDPOINT": "null"
+        }
       },
       "scripts": {
         "test": "pytest --no-migrations --reuse-db"
