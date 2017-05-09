@@ -47,8 +47,9 @@ from .fields import (
 )
 
 config = api_apps.get_app_config('app')
-docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-doc_api = docraptor.DocApi()
+
+# docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
+# doc_api = docraptor.DocApi()
 
 log = logging.getLogger(__name__)
 
