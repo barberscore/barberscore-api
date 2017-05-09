@@ -25,7 +25,6 @@ from .views import (
     SubmissionViewSet,
     UserViewSet,
     VenueViewSet,
-    OfficeViewCSV,
 )
 
 router = routers.DefaultRouter(
@@ -54,5 +53,4 @@ router.register(r'song', SongViewSet)
 router.register(r'submission', SubmissionViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'venue', VenueViewSet)
-router.register(r'officecsv', OfficeViewCSV)
 urlpatterns = router.urls
