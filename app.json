@@ -37,7 +37,7 @@
   "environments": {
     "test": {
       "env": {
-        "DJANGO_SETTINGS_MODULE": "settings.prod",
+        "DJANGO_SETTINGS_MODULE": "settings.test",
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
