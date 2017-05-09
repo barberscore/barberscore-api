@@ -3,7 +3,7 @@
   "description": "Scoring software for the Barbershop Harmony Society",
   "logo": "https://barberscore-django.herokuapp.com/static/app/bhs_logo.png",
   "repository": "https://github.com/barberscore/barberscore-django",
-  "stack": "cedar-14",
+  "stack": "heroku-16",
   "success_url": "/admin/",
   "buildpacks": [
     {
