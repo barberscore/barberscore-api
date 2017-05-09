@@ -1005,6 +1005,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         'repertory',
         'arrangers',
         'composers',
+        'lyricists',
         'holders',
         # 'source',
         'is_medley',

@@ -36,11 +36,22 @@
     "SECRET_KEY": {
       "generator": "secret"
     },
-    "AUTH0_CLIENT_ID": "0asRmTDrVcFf1DQfO9s51qyqDW5cneGk",
-    "AUTH0_DOMAIN": "barberscore.auth0.com",
-    "AUTH0_API_ID": "UfcuxFynCw5WBggVi2vQFdomU4MrmxXa",
-    "AUTH0_AUDIENCE": "https://barberscore.auth0.com/api/v2/",
-    "AUTH0_PUBLIC_KEY": "barberscore.pem"
+    "AUTH0_API_ID": "null",
+    "AUTH0_API_SECRET": "null",
+    "AUTH0_AUDIENCE": "null",
+    "AUTH0_CLIENT_ID": "null",
+    "AUTH0_CLIENT_SECRET": {},
+    "AUTH0_DOMAIN": "null",
+    "AUTH0_PUBLIC_KEY": "null",
+    "HEROKU_APP_NAME": {
+        "required": "true"
+      },
+    "HEROKU_PARENT_APP_NAME": {
+      "required": "true"
+    }
+  },
+  "scripts": {
+    "postdeploy": "heroku pg:copy HEROKU_PARENT_APP_NAME::DATABASE_URL DATABASE_URL --app HEROKU_APP_NAME --confirm HEROKU_APP_NAME"
   },
   "environments": {
     "test": {

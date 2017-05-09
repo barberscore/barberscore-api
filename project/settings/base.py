@@ -148,12 +148,12 @@ AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 AUTH0_PUBLIC_KEY = get_env_variable("AUTH0_PUBLIC_KEY")
 
 # JWT Settings
-if AUTH0_PUBLIC_KEY == 'null':
-    jwt_public_key = None
-else:
+try:
     pem_data = open(AUTH0_PUBLIC_KEY, 'rb').read()
     cert = x509.load_pem_x509_certificate(pem_data, default_backend())
     jwt_public_key = cert.public_key()
+except FileNotFoundError:
+    jwt_public_key = None
 
 
 def jwt_get_username_from_payload_handler(payload):
