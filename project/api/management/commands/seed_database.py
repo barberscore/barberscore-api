@@ -2,13 +2,12 @@
 from django.core.management.base import BaseCommand
 
 
-from api.factories import (
-    InternationalFactory,
-)
-
-
 class Command(BaseCommand):
     help = "Command to seed database."
 
+    from api.factories import (
+        InternationalFactory,
+    )
+
     def handle(self, *args, **options):
-        InternationalFactory()
+        self.InternationalFactory()
