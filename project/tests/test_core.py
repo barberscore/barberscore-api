@@ -510,154 +510,154 @@ def test_api_admin(admin_client):
 
 @pytest.mark.django_db()
 def test_assignment_admin_list(admin_client, assignment):
-    path = reverse('admin:app_assignment_changelist')
+    path = reverse('admin:api_assignment_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_admin_list(admin_client, award):
-    path = reverse('admin:app_award_changelist')
+    path = reverse('admin:api_award_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_chart_admin_list(admin_client, chart):
-    path = reverse('admin:app_chart_changelist')
+    path = reverse('admin:api_chart_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_admin_list(admin_client, contest):
-    path = reverse('admin:app_contest_changelist')
+    path = reverse('admin:api_contest_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestant_admin_list(admin_client, contestant):
-    path = reverse('admin:app_contestant_changelist')
+    path = reverse('admin:api_contestant_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_convention_admin_list(admin_client, convention):
-    path = reverse('admin:app_convention_changelist')
+    path = reverse('admin:api_convention_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_admin_list(admin_client, international):
-    path = reverse('admin:app_entity_changelist')
+    path = reverse('admin:api_entity_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_member_admin_list(admin_client, member):
-    path = reverse('admin:app_member_changelist')
+    path = reverse('admin:api_member_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_admin_list(admin_client, office):
-    path = reverse('admin:app_office_changelist')
+    path = reverse('admin:api_office_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_admin_list(admin_client, officer):
-    path = reverse('admin:app_officer_changelist')
+    path = reverse('admin:api_officer_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_appearance_admin_list(admin_client, appearance):
-    path = reverse('admin:app_appearance_changelist')
+    path = reverse('admin:api_appearance_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entry_admin_list(admin_client, entry):
-    path = reverse('admin:app_entry_changelist')
+    path = reverse('admin:api_entry_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_person_admin_list(admin_client, person):
-    path = reverse('admin:app_person_changelist')
+    path = reverse('admin:api_person_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_repertory_admin_list(admin_client, repertory):
-    path = reverse('admin:app_repertory_changelist')
+    path = reverse('admin:api_repertory_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_admin_list(admin_client, round):
-    path = reverse('admin:app_round_changelist')
+    path = reverse('admin:api_round_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_admin_list(admin_client, score):
-    path = reverse('admin:app_score_changelist')
+    path = reverse('admin:api_score_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_admin_list(admin_client, session):
-    path = reverse('admin:app_session_changelist')
+    path = reverse('admin:api_session_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_admin_list(admin_client, slot):
-    path = reverse('admin:app_slot_changelist')
+    path = reverse('admin:api_slot_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_admin_list(admin_client, song):
-    path = reverse('admin:app_song_changelist')
+    path = reverse('admin:api_song_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_submission_admin_list(admin_client, submission):
-    path = reverse('admin:app_submission_changelist')
+    path = reverse('admin:api_submission_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_admin_list(admin_client, venue):
-    path = reverse('admin:app_venue_changelist')
+    path = reverse('admin:api_venue_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_admin_list(admin_client, user):
-    path = reverse('admin:app_user_changelist')
+    path = reverse('admin:api_user_changelist')
     response = admin_client.get(path)
     assert ok(response)
 
@@ -666,153 +666,153 @@ def test_user_admin_list(admin_client, user):
 
 @pytest.mark.django_db()
 def test_assignment_admin_detail(admin_client, assignment):
-    path = reverse('admin:app_assignment_change', args=(str(assignment.id),))
+    path = reverse('admin:api_assignment_change', args=(str(assignment.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_award_admin_detail(admin_client, award):
-    path = reverse('admin:app_award_change', args=(str(award.id),))
+    path = reverse('admin:api_award_change', args=(str(award.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_chart_admin_detail(admin_client, chart):
-    path = reverse('admin:app_chart_change', args=(str(chart.id),))
+    path = reverse('admin:api_chart_change', args=(str(chart.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contest_admin_detail(admin_client, contest):
-    path = reverse('admin:app_contest_change', args=(str(contest.id),))
+    path = reverse('admin:api_contest_change', args=(str(contest.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_contestant_admin_detail(admin_client, contestant):
-    path = reverse('admin:app_contestant_change', args=(str(contestant.id),))
+    path = reverse('admin:api_contestant_change', args=(str(contestant.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_convention_admin_detail(admin_client, convention):
-    path = reverse('admin:app_convention_change', args=(str(convention.id),))
+    path = reverse('admin:api_convention_change', args=(str(convention.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entity_admin_detail(admin_client, international):
-    path = reverse('admin:app_entity_change', args=(str(international.id),))
+    path = reverse('admin:api_entity_change', args=(str(international.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_member_admin_detail(admin_client, member):
-    path = reverse('admin:app_member_change', args=(str(member.id),))
+    path = reverse('admin:api_member_change', args=(str(member.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_office_admin_detail(admin_client, office):
-    path = reverse('admin:app_office_change', args=(str(office.id),))
+    path = reverse('admin:api_office_change', args=(str(office.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_officer_admin_detail(admin_client, officer):
-    path = reverse('admin:app_officer_change', args=(str(officer.id),))
+    path = reverse('admin:api_officer_change', args=(str(officer.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_appearance_admin_detail(admin_client, appearance):
-    path = reverse('admin:app_appearance_change', args=(str(appearance.id),))
+    path = reverse('admin:api_appearance_change', args=(str(appearance.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_entry_admin_detail(admin_client, entry):
-    path = reverse('admin:app_entry_change', args=(str(entry.id),))
+    path = reverse('admin:api_entry_change', args=(str(entry.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_person_admin_detail(admin_client, person):
-    path = reverse('admin:app_person_change', args=(str(person.id),))
+    path = reverse('admin:api_person_change', args=(str(person.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_repertory_admin_detail(admin_client, repertory):
-    path = reverse('admin:app_repertory_change', args=(str(repertory.id),))
+    path = reverse('admin:api_repertory_change', args=(str(repertory.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_round_admin_detail(admin_client, round):
-    path = reverse('admin:app_round_change', args=(str(round.id),))
+    path = reverse('admin:api_round_change', args=(str(round.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_score_admin_detail(admin_client, score):
-    path = reverse('admin:app_score_change', args=(str(score.id),))
+    path = reverse('admin:api_score_change', args=(str(score.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_session_admin_detail(admin_client, session):
-    path = reverse('admin:app_session_change', args=(str(session.id),))
+    path = reverse('admin:api_session_change', args=(str(session.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_slot_admin_detail(admin_client, slot):
-    path = reverse('admin:app_slot_change', args=(str(slot.id),))
+    path = reverse('admin:api_slot_change', args=(str(slot.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_song_admin_detail(admin_client, song):
-    path = reverse('admin:app_song_change', args=(str(song.id),))
+    path = reverse('admin:api_song_change', args=(str(song.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_submission_admin_detail(admin_client, submission):
-    path = reverse('admin:app_submission_change', args=(str(submission.id),))
+    path = reverse('admin:api_submission_change', args=(str(submission.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_venue_admin_detail(admin_client, venue):
-    path = reverse('admin:app_venue_change', args=(str(venue.id),))
+    path = reverse('admin:api_venue_change', args=(str(venue.id),))
     response = admin_client.get(path)
     assert ok(response)
 
 
 @pytest.mark.django_db()
 def test_user_admin_detail(admin_client, user):
-    path = reverse('admin:app_user_change', args=(str(user.id),))
+    path = reverse('admin:api_user_change', args=(str(user.id),))
     response = admin_client.get(path)
     assert ok(response)
