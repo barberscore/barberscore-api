@@ -36,7 +36,7 @@ from api.factories import (
     VenueFactory,
 )
 
-config = api_apps.get_app_config('app')
+config = api_apps.get_app_config('api')
 
 
 def ok(response):
