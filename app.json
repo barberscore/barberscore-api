@@ -1,8 +1,8 @@
 {
-  "name": "Barberscore Django",
-  "description": "Scoring software for the Barbershop Harmony Society",
-  "logo": "https://barberscore-django.herokuapp.com/static/api/bhs_logo.png",
-  "repository": "https://github.com/barberscore/barberscore-django",
+  "name": "Barberscore API",
+  "description": "Scoring API for the Barbershop Harmony Society",
+  "logo": "https://barberscore-api.herokuapp.com/static/api/bhs_logo.png",
+  "repository": "https://github.com/barberscore/barberscore-api",
   "stack": "heroku-16",
   "success_url": "/admin/",
   "buildpacks": [
