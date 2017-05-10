@@ -1,7 +1,7 @@
 # Third-Party
 import pytest
 from rest_framework.test import APIClient
-
+from rest_framework import status
 # Django
 from django.apps import apps as api_apps
 from django.test.client import Client
@@ -37,10 +37,6 @@ from api.factories import (
 )
 
 config = api_apps.get_app_config('api')
-
-
-def ok(response):
-    return response.status_code == 200
 
 
 @pytest.fixture
@@ -178,169 +174,166 @@ def venue():
 def user():
     return UserFactory()
 
-def test_tautologic():
-    assert True
-
 
 @pytest.mark.django_db()
 def test_api_endpoint(api_client):
     path = reverse('api-root')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_assignment_endpoint_list(api_client, assignment):
     path = reverse('assignment-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_award_endpoint_list(api_client, award):
     path = reverse('award-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_chart_endpoint_list(api_client, chart):
     path = reverse('chart-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contest_endpoint_list(api_client, contest):
     path = reverse('contest-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contestant_endpoint_list(api_client, contestant):
     path = reverse('contestant-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_convention_endpoint_list(api_client, convention):
     path = reverse('convention-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entity_endpoint_list(api_client, international):
     path = reverse('entity-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_member_endpoint_list(api_client, member):
     path = reverse('member-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_office_endpoint_list(api_client, office):
     path = reverse('office-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_officer_endpoint_list(api_client, officer):
     path = reverse('officer-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_appearance_endpoint_list(api_client, appearance):
     path = reverse('appearance-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entry_endpoint_list(api_client, entry):
     path = reverse('entry-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_person_endpoint_list(api_client, person):
     path = reverse('person-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_round_endpoint_list(api_client, round):
     path = reverse('round-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_repertory_endpoint_list(api_client, repertory):
     path = reverse('repertory-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_score_endpoint_list(api_client, score):
     path = reverse('score-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_session_endpoint_list(api_client, session):
     path = reverse('session-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_slot_endpoint_list(api_client, slot):
     path = reverse('slot-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_song_endpoint_list(api_client, song):
     path = reverse('song-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_submission_endpoint_list(api_client, submission):
     path = reverse('submission-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_venue_endpoint_list(api_client, venue):
     path = reverse('venue-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_user_endpoint_list(api_client, user):
     path = reverse('user-list')
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 # Detail Views
@@ -349,154 +342,154 @@ def test_user_endpoint_list(api_client, user):
 def test_assignment_endpoint_detail(api_client, assignment):
     path = reverse('assignment-detail', args=(str(assignment.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_award_endpoint_detail(api_client, award):
     path = reverse('award-detail', args=(str(award.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_chart_endpoint_detail(api_client, chart):
     path = reverse('chart-detail', args=(str(chart.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contest_endpoint_detail(api_client, contest):
     path = reverse('contest-detail', args=(str(contest.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contestant_endpoint_detail(api_client, contestant):
     path = reverse('contestant-detail', args=(str(contestant.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_convention_endpoint_detail(api_client, convention):
     path = reverse('convention-detail', args=(str(convention.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entity_endpoint_detail(api_client, international):
     path = reverse('entity-detail', args=(str(international.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_member_endpoint_detail(api_client, member):
     path = reverse('member-detail', args=(str(member.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_office_endpoint_detail(api_client, office):
     path = reverse('office-detail', args=(str(office.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_officer_endpoint_detail(api_client, officer):
     path = reverse('officer-detail', args=(str(officer.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_appearance_endpoint_detail(api_client, appearance):
     path = reverse('appearance-detail', args=(str(appearance.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entry_endpoint_detail(api_client, entry):
     path = reverse('entry-detail', args=(str(entry.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_person_endpoint_detail(api_client, person):
     path = reverse('person-detail', args=(str(person.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_repertory_endpoint_detail(api_client, repertory):
     path = reverse('repertory-detail', args=(str(repertory.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_round_endpoint_detail(api_client, round):
     path = reverse('round-detail', args=(str(round.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_score_endpoint_detail(api_client, score):
     path = reverse('score-detail', args=(str(score.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_session_endpoint_detail(api_client, session):
     path = reverse('session-detail', args=(str(session.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_slot_endpoint_detail(api_client, slot):
     path = reverse('slot-detail', args=(str(slot.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_song_endpoint_detail(api_client, song):
     path = reverse('song-detail', args=(str(song.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_submission_endpoint_detail(api_client, submission):
     path = reverse('submission-detail', args=(str(submission.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_venue_endpoint_detail(api_client, venue):
     path = reverse('venue-detail', args=(str(venue.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_user_endpoint_detail(api_client, user):
     path = reverse('user-detail', args=(str(user.id),))
     response = api_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 # Admin Views
@@ -505,161 +498,161 @@ def test_user_endpoint_detail(api_client, user):
 def test_api_admin(admin_client):
     path = reverse('admin:index')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_assignment_admin_list(admin_client, assignment):
     path = reverse('admin:api_assignment_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_award_admin_list(admin_client, award):
     path = reverse('admin:api_award_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_chart_admin_list(admin_client, chart):
     path = reverse('admin:api_chart_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contest_admin_list(admin_client, contest):
     path = reverse('admin:api_contest_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contestant_admin_list(admin_client, contestant):
     path = reverse('admin:api_contestant_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_convention_admin_list(admin_client, convention):
     path = reverse('admin:api_convention_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entity_admin_list(admin_client, international):
     path = reverse('admin:api_entity_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_member_admin_list(admin_client, member):
     path = reverse('admin:api_member_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_office_admin_list(admin_client, office):
     path = reverse('admin:api_office_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_officer_admin_list(admin_client, officer):
     path = reverse('admin:api_officer_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_appearance_admin_list(admin_client, appearance):
     path = reverse('admin:api_appearance_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entry_admin_list(admin_client, entry):
     path = reverse('admin:api_entry_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_person_admin_list(admin_client, person):
     path = reverse('admin:api_person_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_repertory_admin_list(admin_client, repertory):
     path = reverse('admin:api_repertory_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_round_admin_list(admin_client, round):
     path = reverse('admin:api_round_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_score_admin_list(admin_client, score):
     path = reverse('admin:api_score_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_session_admin_list(admin_client, session):
     path = reverse('admin:api_session_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_slot_admin_list(admin_client, slot):
     path = reverse('admin:api_slot_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_song_admin_list(admin_client, song):
     path = reverse('admin:api_song_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_submission_admin_list(admin_client, submission):
     path = reverse('admin:api_submission_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_venue_admin_list(admin_client, venue):
     path = reverse('admin:api_venue_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_user_admin_list(admin_client, user):
     path = reverse('admin:api_user_changelist')
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 # Detail Views
@@ -668,151 +661,151 @@ def test_user_admin_list(admin_client, user):
 def test_assignment_admin_detail(admin_client, assignment):
     path = reverse('admin:api_assignment_change', args=(str(assignment.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_award_admin_detail(admin_client, award):
     path = reverse('admin:api_award_change', args=(str(award.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_chart_admin_detail(admin_client, chart):
     path = reverse('admin:api_chart_change', args=(str(chart.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contest_admin_detail(admin_client, contest):
     path = reverse('admin:api_contest_change', args=(str(contest.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_contestant_admin_detail(admin_client, contestant):
     path = reverse('admin:api_contestant_change', args=(str(contestant.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_convention_admin_detail(admin_client, convention):
     path = reverse('admin:api_convention_change', args=(str(convention.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entity_admin_detail(admin_client, international):
     path = reverse('admin:api_entity_change', args=(str(international.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_member_admin_detail(admin_client, member):
     path = reverse('admin:api_member_change', args=(str(member.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_office_admin_detail(admin_client, office):
     path = reverse('admin:api_office_change', args=(str(office.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_officer_admin_detail(admin_client, officer):
     path = reverse('admin:api_officer_change', args=(str(officer.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_appearance_admin_detail(admin_client, appearance):
     path = reverse('admin:api_appearance_change', args=(str(appearance.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_entry_admin_detail(admin_client, entry):
     path = reverse('admin:api_entry_change', args=(str(entry.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_person_admin_detail(admin_client, person):
     path = reverse('admin:api_person_change', args=(str(person.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_repertory_admin_detail(admin_client, repertory):
     path = reverse('admin:api_repertory_change', args=(str(repertory.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_round_admin_detail(admin_client, round):
     path = reverse('admin:api_round_change', args=(str(round.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_score_admin_detail(admin_client, score):
     path = reverse('admin:api_score_change', args=(str(score.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_session_admin_detail(admin_client, session):
     path = reverse('admin:api_session_change', args=(str(session.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_slot_admin_detail(admin_client, slot):
     path = reverse('admin:api_slot_change', args=(str(slot.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_song_admin_detail(admin_client, song):
     path = reverse('admin:api_song_change', args=(str(song.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_submission_admin_detail(admin_client, submission):
     path = reverse('admin:api_submission_change', args=(str(submission.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_venue_admin_detail(admin_client, venue):
     path = reverse('admin:api_venue_change', args=(str(venue.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db()
 def test_user_admin_detail(admin_client, user):
     path = reverse('admin:api_user_change', args=(str(user.id),))
     response = admin_client.get(path)
-    assert ok(response)
+    assert response.status_code == status.HTTP_200_OK
