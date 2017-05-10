@@ -3,8 +3,8 @@ from django.core.files import File
 from django.core.management.base import BaseCommand
 
 # First-Party
-from app.models import Convention
-from app.utils import (
+from api.models import Convention
+from api.utils import (
     extract_contestants,
     extract_contests,
     extract_panel,

@@ -47,14 +47,14 @@ DATABASES = {
 }
 
 # Authentication
-AUTH_USER_MODEL = "app.User"
+AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 USERNAME_FIELD = 'email'
 REQUIRED_FIELDS = []
 LOGIN_URL = 'admin:login'
-LOGIN_REDIRECT_URL = 'admin:app_list'
+LOGIN_REDIRECT_URL = 'admin:api_list'
 LOGOUT_REDIRECT_URL = 'admin:login'
 
 # Middleware
@@ -109,7 +109,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework_json_api.renderers.JSONRenderer',
         'rest_framework.renderers.JSONRenderer',
-        'app.renderers.NoHTMLFormBrowsableAPIRenderer',
+        'api.renderers.NoHTMLFormBrowsableAPIRenderer',
         'rest_framework.renderers.AdminRenderer',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -144,5 +144,5 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'dry_rest_permissions',
-    'app',
+    'api',
 ]

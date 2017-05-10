@@ -78,7 +78,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'app': {
+        'api': {
             'level': 'DEBUG',
             'handlers': ['console'],
         },

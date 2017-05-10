@@ -5,7 +5,7 @@ from django.apps import AppConfig
 class ApiConfig(AppConfig):
     """Sets the configuration for the api app."""
 
-    name = 'app'
+    name = 'api'
 
     def ready(self):
         from .signals import (

@@ -12,7 +12,7 @@ from factory.django import (
 from django.db.models.signals import post_save
 
 # First-Party
-from app.models import (
+from api.models import (
     Appearance,
     Assignment,
     Award,
@@ -42,8 +42,8 @@ class AssignmentFactory(DjangoModelFactory):
     status = Assignment.STATUS.new
     kind = Assignment.KIND.official
     category = Assignment.CATEGORY.drcj
-    convention = SubFactory('app.factories.ConventionFactory')
-    person = SubFactory('app.factories.PersonFactory')
+    convention = SubFactory('api.factories.ConventionFactory')
+    person = SubFactory('api.factories.PersonFactory')
 
     class Meta:
         model = Assignment
@@ -65,7 +65,7 @@ class AwardFactory(DjangoModelFactory):
     minimum = 70
     advance = 73
     entity = SubFactory(
-        'app.factories.InternationalFactory'
+        'api.factories.InternationalFactory'
     )
 
     class Meta:
@@ -76,7 +76,7 @@ class ChartFactory(DjangoModelFactory):
     status = Chart.STATUS.new
     title = 'Test Title'
     bhs_id = 999999
-    entity = SubFactory('app.factories.InternationalFactory')
+    entity = SubFactory('api.factories.InternationalFactory')
 
     class Meta:
         model = Chart
@@ -85,8 +85,8 @@ class ChartFactory(DjangoModelFactory):
 class ContestFactory(DjangoModelFactory):
     status = Contest.STATUS.new
     is_qualifier = False
-    session = SubFactory('app.factories.SessionFactory')
-    award = SubFactory('app.factories.AwardFactory')
+    session = SubFactory('api.factories.SessionFactory')
+    award = SubFactory('api.factories.AwardFactory')
 
     class Meta:
         model = Contest
@@ -94,8 +94,8 @@ class ContestFactory(DjangoModelFactory):
 
 class ContestantFactory(DjangoModelFactory):
     status = Contestant.STATUS.new
-    entry = SubFactory('app.factories.EntryFactory')
-    contest = SubFactory('app.factories.ContestFactory')
+    entry = SubFactory('api.factories.EntryFactory')
+    contest = SubFactory('api.factories.ContestFactory')
 
     class Meta:
         model = Contestant
@@ -115,7 +115,7 @@ class ConventionFactory(DjangoModelFactory):
     end_date = None
     location = ''
     venue = None
-    entity = SubFactory('app.factories.InternationalFactory')
+    entity = SubFactory('api.factories.InternationalFactory')
 
     class Meta:
         model = Convention
@@ -172,7 +172,7 @@ class DistrictFactory(EntityFactory):
     description = ''
     notes = ''
     bhs_id = None
-    parent = SubFactory('app.factories.InternationalFactory')
+    parent = SubFactory('api.factories.InternationalFactory')
 
 
 class QuartetFactory(EntityFactory):
@@ -196,7 +196,7 @@ class QuartetFactory(EntityFactory):
     description = ''
     notes = ''
     bhs_id = None
-    parent = SubFactory('app.factories.DistrictFactory')
+    parent = SubFactory('api.factories.DistrictFactory')
 
 
 class MemberFactory(DjangoModelFactory):
@@ -205,8 +205,8 @@ class MemberFactory(DjangoModelFactory):
     start_date = None
     end_date = None
     status = Member.STATUS.new
-    entity = SubFactory('app.factories.InternationalFactory')
-    person = SubFactory('app.factories.PersonFactory')
+    entity = SubFactory('api.factories.InternationalFactory')
+    person = SubFactory('api.factories.PersonFactory')
 
     class Meta:
         model = Member
@@ -227,8 +227,8 @@ class OfficerFactory(DjangoModelFactory):
     status = Officer.STATUS.new
     start_date = None
     end_date = None
-    office = SubFactory('app.factories.OfficeFactory')
-    person = SubFactory('app.factories.PersonFactory')
+    office = SubFactory('api.factories.OfficeFactory')
+    person = SubFactory('api.factories.PersonFactory')
     entity = None
 
     class Meta:
@@ -240,8 +240,8 @@ class AppearanceFactory(DjangoModelFactory):
     num = None
     actual_start = None
     actual_finish = None
-    round = SubFactory('app.factories.RoundFactory')
-    entry = SubFactory('app.factories.EntryFactory')
+    round = SubFactory('api.factories.RoundFactory')
+    entry = SubFactory('api.factories.EntryFactory')
     slot = None
 
     class Meta:
@@ -255,8 +255,8 @@ class EntryFactory(DjangoModelFactory):
     risers = None
     is_evaluation = True
     is_private = False
-    session = SubFactory('app.factories.SessionFactory')
-    entity = SubFactory('app.factories.QuartetFactory')
+    session = SubFactory('api.factories.SessionFactory')
+    entity = SubFactory('api.factories.QuartetFactory')
     tenor = None
     lead = None
     baritone = None
@@ -293,8 +293,8 @@ class PersonFactory(DjangoModelFactory):
 
 class RepertoryFactory(DjangoModelFactory):
     status = Repertory.STATUS.new
-    entity = SubFactory('app.factories.QuartetFactory')
-    chart = SubFactory('app.factories.ChartFactory')
+    entity = SubFactory('api.factories.QuartetFactory')
+    chart = SubFactory('api.factories.ChartFactory')
 
     class Meta:
         model = Repertory
@@ -307,7 +307,7 @@ class RoundFactory(DjangoModelFactory):
     num_songs = 2
     start_date = None
     end_date = None
-    session = SubFactory('app.factories.SessionFactory')
+    session = SubFactory('api.factories.SessionFactory')
 
     class Meta:
         model = Round
@@ -322,7 +322,7 @@ class ScoreFactory(DjangoModelFactory):
     violation = None
     penalty = None
     is_flagged = False
-    song = SubFactory('app.factories.SongFactory')
+    song = SubFactory('api.factories.SongFactory')
     person = None
 
     class Meta:
@@ -341,7 +341,7 @@ class SessionFactory(DjangoModelFactory):
     current = None
     primary = None
     scoresheet = None
-    convention = SubFactory('app.factories.ConventionFactory')
+    convention = SubFactory('api.factories.ConventionFactory')
 
     class Meta:
         model = Session
@@ -351,7 +351,7 @@ class SlotFactory(DjangoModelFactory):
     status = Slot.STATUS.new
     num = 1
     location = ''
-    round = SubFactory('app.factories.RoundFactory')
+    round = SubFactory('api.factories.RoundFactory')
 
     class Meta:
         model = Slot
@@ -360,7 +360,7 @@ class SlotFactory(DjangoModelFactory):
 class SongFactory(DjangoModelFactory):
     status = Song.STATUS.new
     num = 1
-    appearance = SubFactory('app.factories.AppearanceFactory')
+    appearance = SubFactory('api.factories.AppearanceFactory')
     chart = None
     submission = None
 
@@ -378,8 +378,8 @@ class SubmissionFactory(DjangoModelFactory):
     composers = ''
     lyricists = ''
     holders = ''
-    entry = SubFactory('app.factories.EntryFactory')
-    repertory = SubFactory('app.factories.RepertoryFactory')
+    entry = SubFactory('api.factories.EntryFactory')
+    repertory = SubFactory('api.factories.RepertoryFactory')
 
     class Meta:
         model = Submission

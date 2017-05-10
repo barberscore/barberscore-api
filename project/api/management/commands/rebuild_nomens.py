@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = "Command to build nomens."
 
     def handle(self, *args, **options):
-        config = api_apps.get_app_config('app')
+        config = api_apps.get_app_config('api')
 
         models = [
             # Primitives

@@ -8,7 +8,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 # First-Party
-from app.factories import (
+from api.factories import (
     AdminFactory,
     AssignmentFactory,
     AwardFactory,

@@ -46,7 +46,7 @@ from .fields import (
     CloudinaryRenameField,
 )
 
-config = api_apps.get_app_config('app')
+config = api_apps.get_app_config('api')
 
 # docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 # doc_api = docraptor.DocApi()

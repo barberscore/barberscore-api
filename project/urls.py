@@ -15,7 +15,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include('app.urls')),
+    url(r'^api/', include('api.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^schema/', schema_view),
     url(r'^docs/', include_docs_urls(title='Foobar', description='foo to the bar')),
