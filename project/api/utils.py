@@ -18,6 +18,7 @@ from django.db.models import Q
 from django.utils import (
     dateparse,
     encoding,
+    timezone,
 )
 
 # Local
@@ -30,6 +31,7 @@ from .models import (
     Entity,
     Office,
     Officer,
+    Member,
     Person,
     Session,
     Submission,
@@ -46,6 +48,323 @@ def download(url, file_name):
         response = requests.get(url)
         # write to file
         file.write(response.content)
+
+
+def update_officers():
+    now = timezone.now()
+    officers = Officer.objects.filter(end_date__lt=now)
+    for officer in officers:
+        officer.status = Officer.STATUS.inactive
+        officer.save()
+        log.info(officer)
+
+
+def import_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                person = Person.objects.get(bhs_id=int(row[0]))
+            except Person.DoesNotExist as e:
+                log.error(e)
+                continue
+            bhs = Entity.objects.get(short_name='BHS')
+            try:
+                start_date = dateparse.parse_datetime(row[57]).date()
+            except AttributeError:
+                start_date = None
+            try:
+                end_date = dateparse.parse_datetime(row[58]).date()
+            except AttributeError:
+                end_date = None
+            defaults = {
+                'start_date': start_date,
+                'end_date': end_date,
+                'status': Member.STATUS.active,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=bhs,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
+def import_chapter_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                chapter = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[0]))
+            except Person.DoesNotExist as e:
+                continue
+            start_date = dateparse.parse_datetime(row[3]).date()
+            end_date = dateparse.parse_datetime(row[4]).date()
+            defaults = {
+                'start_date': start_date,
+                'end_date': end_date,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=chapter,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
+def import_quartet_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                quartet = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[3]))
+            except Person.DoesNotExist as e:
+                continue
+            try:
+                start_date = dateparse.parse_datetime(row[10]).date()
+            except AttributeError:
+                start_date = None
+            # end_date = dateparse.parse_datetime(row[11]).date()
+            part = int(row[7])
+            defaults = {
+                'start_date': start_date,
+                'end_date': None,
+                'part': part,
+                'status': Member.STATUS.active,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=quartet,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
+def import_chapter_secretaries(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            office = Office.objects.get(short_name='CSEC')
+            try:
+                chapter = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[3]))
+            except Person.DoesNotExist as e:
+                continue
+            start_date = dateparse.parse_datetime(row[7]).date()
+            end_date = dateparse.parse_datetime(row[8]).date()
+            defaults = {
+                'start_date': start_date,
+                'end_date': end_date,
+                'status': Officer.STATUS.active,
+            }
+            officer, created = Officer.objects.update_or_create(
+                person=person,
+                entity=chapter,
+                office=office,
+                defaults=defaults,
+            )
+            log.info((officer, created))
+
+
+def import_quartet_reps(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            office = Office.objects.get(short_name='QREP')
+            try:
+                quartet = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[3]))
+            except Person.DoesNotExist as e:
+                continue
+            if int(row[9]) != 1:
+                continue
+            defaults = {
+                'status': Officer.STATUS.active,
+            }
+            officer, created = Officer.objects.update_or_create(
+                person=person,
+                entity=quartet,
+                office=office,
+                defaults=defaults,
+            )
+            log.info((officer, created))
+
+
+def import_db_quartets(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        parent = Entity.objects.get(short_name='FHT')
+        for row in rows:
+            bhs_id = int(row[1])
+            name = row[2].strip()
+            defaults = {
+                'name': name,
+                'parent': parent,
+                'kind': Entity.KIND.quartet,
+            }
+            quartet, created = Entity.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            log.info((quartet, created))
+
+
+def import_db_chapters(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[1])
+            try:
+                chapter = Entity.objects.get(bhs_id=bhs_id)
+                continue
+            except Entity.DoesNotExist:
+                pass
+            raw = row[2].strip()
+            if raw == 'Z000 Placeholder Chapter':
+                continue
+            code = raw.partition(" ")[0]
+            long_name = raw.partition(" ")[2]
+            try:
+                parent = Entity.objects.get(code=raw[:1])
+            except Entity.DoesNotExist:
+                log.error(raw)
+            name = "{0} Chorus".format(long_name)
+            defaults = {
+                'name': name,
+                'long_name': long_name,
+                'parent': parent,
+                'kind': Entity.KIND.chorus,
+            }
+            chapter, created = Entity.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            log.info((chapter, created))
+
+
+def import_db_member_persons(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0])
+            first_name = row[2].strip()
+            nick_name = row[48].strip()
+            if nick_name:
+                if nick_name != first_name:
+                    nick_name = "({0})".format(nick_name)
+            else:
+                nick_name = None
+            middle_name = row[3].strip()
+            last_name = row[4].strip()
+            suffix_name = row[5].strip()
+            prefix_name = row[1].strip()
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            prefix_name,
+                            first_name,
+                            middle_name,
+                            last_name,
+                            suffix_name,
+                            nick_name,
+                        ]
+                    )
+                )
+            )
+            email = row[16].strip()
+            spouse = row[50].strip()
+            address1 = row[69].strip()
+            address2 = row[70].strip()
+            city = row[72].strip()
+            state = row[73].strip()
+            postal_code = row[74].strip()
+            country = row[75].strip()
+            if country == 'United States' and str(row[39]) != 'NULL':
+                phone = "+1{0}{1}".format(
+                    str(row[39]).strip(),
+                    str(row[40]).replace("-", "").strip(),
+                )
+            else:
+                phone = ""
+            birth_date = dateparse.parse_datetime(row[47]).date()
+            address = "{0}; {2}, {3}  {4}".format(
+                address1,
+                address2,
+                city,
+                state,
+                postal_code,
+            )
+            if "NULL" in address:
+                address = ""
+            defaults = {
+                'name': name,
+                'email': email,
+                'spouse': spouse,
+                'address': address,
+                'phone': phone,
+                'birth_date': birth_date,
+            }
+            person, created = Person.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            log.info((person, created))
+
+
+def import_db_quartet_persons(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if int(row[3]) == 1:
+                continue
+            bhs_id = int(row[3])
+            name = row[4].strip()
+            birth_date = dateparse.parse_datetime(row[5]).date()
+            email = row[14].strip()
+            defaults = {
+                'name': name,
+                'email': email,
+                'birth_date': birth_date,
+            }
+            person, created = Person.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            log.info((person, created))
 
 
 def import_music_catalog(path):
@@ -530,45 +849,6 @@ def import_db_divisions(path):
             Entity.objects.create(**division)
 
 
-def import_db_chapters(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            chapter = {}
-            chapter['name'] = row[2]
-            chapter['status'] = int(row[3])
-            chapter['kind'] = int(row[4])
-            chapter['short_name'] = row[7]
-            chapter['long_name'] = row[8]
-            chapter['code'] = row[9]
-            chapter['start_date'] = dateparse.parse_date(row[10])
-            chapter['end_date'] = dateparse.parse_date(row[11])
-            chapter['location'] = row[12]
-            chapter['website'] = row[13]
-            chapter['facebook'] = row[14]
-            chapter['twitter'] = row[15]
-            chapter['email'] = row[16]
-            chapter['phone'] = row[17]
-            chapter['picture'] = row[18]
-            chapter['description'] = row[19]
-            chapter['notes'] = row[20]
-            try:
-                chapter['bhs_id'] = int(row[21])
-            except ValueError:
-                chapter['bhs_id'] = None
-            try:
-                parent = Entity.objects.get(
-                    kind__lt=30,
-                    name=row[23]
-                )
-            except Entity.DoesNotExist:
-                parent = None
-            chapter['parent'] = parent
-            Entity.objects.create(**chapter)
-
-
 # def import_db_members(path):
 #     with open(path) as f:
 #         reader = csv.reader(f, skipinitialspace=True)
@@ -606,88 +886,6 @@ def import_db_chapters(path):
 #             mem.end_date = end
 #             mem.save()
 #     return "Finished"
-
-
-# def import_db_persons(path):
-#     with open(path) as f:
-#         reader = csv.reader(f, skipinitialspace=True)
-#         next(reader)
-#         rows = [row for row in reader]
-#         for row in rows:
-#             bhs_id = int(row[0])
-#             first_name = row[4].strip()
-#             nick_name = row[5].strip()
-#             if nick_name:
-#                 if nick_name != first_name:
-#                     nick_name = "({0})".format(nick_name)
-#             else:
-#                 nick_name = None
-#             middle_name = row[6].strip()
-#             last_name = row[7].strip()
-#             suffix_name = row[8].strip()
-#             prefix_name = row[2].strip()
-#             name = " ".join(
-#                 map(
-#                     (lambda x: encoding.smart_text(x)),
-#                     filter(
-#                         None, [
-#                             prefix_name,
-#                             first_name,
-#                             middle_name,
-#                             last_name,
-#                             suffix_name,
-#                             nick_name,
-#                         ]
-#                     )
-#                 )
-#             )
-#             email = row[9].strip()
-#             kind = int(row[62])
-#             bhs_status = int(row[34])
-#             spouse = row[38].strip()
-#             try:
-#                 mon = int(row[78])
-#             except ValueError:
-#                 mon = None
-#             address1 = row[13].strip()
-#             address2 = row[14].strip()
-#             city = row[16].strip()
-#             state = row[17].strip()
-#             postal_code = row[18].strip()
-#             country = row[19].strip()
-#             if country == 'United States':
-#                 phone = "+1{0}{1}".format(
-#                     str(row[22]),
-#                     str(row[23]),
-#                 )
-#             else:
-#                 phone = None
-#             start_date = dateparse.parse_date(row[58])
-#             birth_date = dateparse.parse_date(row[31])
-#             dues_thru = dateparse.parse_date(row[36])
-#             defaults = {
-#                 'name': name,
-#                 'email': email,
-#                 'kind': kind,
-#                 'status': bhs_status,
-#                 'spouse': spouse,
-#                 'mon': mon,
-#                 'address1': address1,
-#                 'address2': address2,
-#                 'city': city,
-#                 'state': state,
-#                 'postal_code': postal_code,
-#                 'country': country,
-#                 'phone': phone,
-#                 'start_date': start_date,
-#                 'birth_date': birth_date,
-#                 'dues_thru': dues_thru,
-#             }
-#             person, created = Person.objects.update_or_create(
-#                 bhs_id=bhs_id,
-#                 defaults=defaults,
-#             )
-#             print person, created
 
 
 # def import_db_quartets(path):
