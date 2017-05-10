@@ -5,7 +5,6 @@ import random
 import uuid
 
 # Third-Party
-import docraptor
 from auth0.v3.authentication import Passwordless
 from django_fsm import (
     RETURN_VALUE,
@@ -48,6 +47,7 @@ from .fields import (
 
 config = api_apps.get_app_config('api')
 
+# import docraptor
 # docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 # doc_api = docraptor.DocApi()
 
