@@ -1520,7 +1520,7 @@ class Entity(TimeStampedModel):
 
     kind = models.IntegerField(
         help_text="""
-            The kind of international.""",
+            The kind of entity.""",
         choices=KIND,
     )
 
