@@ -59,16 +59,20 @@ DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
+# Bugsnag
+BUGSNAG_API_KEY = get_env_variable("BUGSNAG_API_KEY")
+MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
+
+
 # Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console':{
-            'level':'INFO',
-            'class':'logging.StreamHandler',
-            'stream': sys.stdout,
-        },
+    'root': {
+        'level': 'ERROR',
+        'handlers': [
+            'bugsnag',
+        ],
     },
     'loggers': {
         'api': {
@@ -76,6 +80,17 @@ LOGGING = {
                 'console',
             ],
             'level': 'DEBUG',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+        'bugsnag': {
+            'level': 'INFO',
+            'class': 'bugsnag.handlers.BugsnagHandler'
         },
     },
 }
