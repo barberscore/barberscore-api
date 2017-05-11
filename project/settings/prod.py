@@ -38,7 +38,7 @@ AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 AUTH0_PUBLIC_KEY = get_env_variable("AUTH0_PUBLIC_KEY")
 
 # JWT Settings
-pem_data = open(AUTH0_PUBLIC_KEY, 'rb').read()
+pem_data = AUTH0_PUBLIC_KEY.encode()
 cert = x509.load_pem_x509_certificate(pem_data, default_backend())
 jwt_public_key = cert.public_key()
 

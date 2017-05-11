@@ -17,44 +17,58 @@
     }
   },
   "addons": [
-    "algoliasearch:free",
     "cloudinary:starter",
     "docraptor:starter",
-    "geocody:test",
-    "heroku-exec:test",
     "heroku-postgresql:hobby-dev",
-    "heroku-redis:hobby-dev",
     "papertrail:choklad",
-    "rollbar:free",
-    "scheduler:standard",
     "sendgrid:starter"
   ],
   "env": {
-    "DJANGO_SETTINGS_MODULE": "settings.prod",
-    "PYTHONPATH": "project",
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "Configures which settings to use.  Do not edit.",
+      "value": "settings.prod",
+      "required": true
+    },
+    "PYTHONPATH": {
+      "description": "Configures the PYTHONPATH.  Do not edit.",
+      "value": "project",
+      "required": true
+    },
     "SECRET_KEY": {
+      "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
       "required": true
     },
     "AUTH0_API_ID": {
+      "description": "Auth0 Management app id.",
       "required": true
     },
     "AUTH0_API_SECRET": {
+      "description": "Auth0 Management secret.",
       "required": true
     },
     "AUTH0_AUDIENCE": {
+      "description": "Auth0 Management endpoint.",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
+      "description": "Auth0 Authentication app id.",
       "required": true
     },
     "AUTH0_CLIENT_SECRET": {
+      "description": "Auth0 Authentication secret.",
       "required": true
     },
     "AUTH0_DOMAIN": {
+      "description": "Auth0 Authentication endpoint.",
       "required": true
     },
     "AUTH0_PUBLIC_KEY": {
+      "description": "Auth0 X509 Certificate for RS256 encryption.",
+      "required": true
+    },
+    "BUGSNAG_API_KEY": {
+      "description": "Bugsnag Exception tracking service API Key.",
       "required": true
     }
   },
