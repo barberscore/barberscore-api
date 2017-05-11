@@ -24,7 +24,6 @@
     "sendgrid:starter"
   ],
   "env": {
-    "PYTHONVERBOSE": 1,
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures which settings to use.  Do not edit.",
       "value": "settings.prod",
@@ -72,9 +71,6 @@
       "description": "Bugsnag Exception tracking service API Key.",
       "required": true
     }
-  },
-  "scripts": {
-    "postdeploy": "django-admin seed_database"
   },
   "environments": {
     "test": {
