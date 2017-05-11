@@ -64,7 +64,7 @@ CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 # Logging
 LOGGING = {
     'version': 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     'handlers': {
         'console': {
             'level': 'DEBUG',
@@ -72,15 +72,17 @@ LOGGING = {
             'formatter': 'simple'
         },
     },
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
     'loggers': {
         'api': {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': [
+                'console',
+            ],
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(message)s',
         },
     },
 }

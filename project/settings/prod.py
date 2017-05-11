@@ -1,3 +1,5 @@
+import sys
+
 # Local
 from .base import *
 
@@ -61,4 +63,19 @@ CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'handlers': {
+        'console':{
+            'level':'INFO',
+            'class':'logging.StreamHandler',
+            'strm': sys.stdout,
+        },
+    },
+    'loggers': {
+        'api': {
+            'handlers': [
+                'console',
+            ],
+            'level': 'DEBUG',
+        },
+    },
 }
