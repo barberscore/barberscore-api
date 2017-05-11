@@ -2076,16 +2076,13 @@ class Entry(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                True,
-                # self.group.roles.filter(
-                #     status=self.group.roles.model.STATUS.active,
-                #     person__user=request.user,
+                self.entity.officers.filter(
+                    person__user=request.user,
+                ),
+                # request.user.person.officers.filter(
+                #     office__short_name__startswith='SCJC',
+                #     status=Officer.STATUS.active,
                 # ),
-                # self.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.session.assignments.model.CATEGORY.admin,
-                # ),
-                # self.session.convention.drcj == request.user.person,
             ])
         return False
 
@@ -2196,7 +2193,15 @@ class Member(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return True
+        if request.user.is_authenticated():
+            return any([
+                request.user.person.officers.filter(
+                    office__short_name__startswith='SCJC',
+                    status=Officer.STATUS.active,
+                ),
+                # self.person.user == request.user,
+            ])
+        return False
 
 
 class Office(TimeStampedModel):
@@ -2397,6 +2402,9 @@ class Officer(TimeStampedModel):
                 request.user.person.officers.filter(
                     office__short_name__startswith='SCJC',
                     status=Officer.STATUS.active,
+                ),
+                self.entity.officers.filter(
+                    person__user=request.user,
                 )
             ])
         return False
@@ -2865,7 +2873,18 @@ class Repertory(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
-        return True
+        if request.user.is_authenticated():
+            return any([
+                request.user.person.officers.filter(
+                    office__short_name__startswith='SCJC',
+                    status=Officer.STATUS.active,
+                ),
+                self.entity.officers.filter(
+                    person__user=request.user,
+                )
+            ])
+        return False
+
 
     # Transitions
     @transition(field=status, source=[STATUS.new, STATUS.invalid], target=STATUS.valid)

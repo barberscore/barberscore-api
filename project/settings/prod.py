@@ -15,6 +15,17 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',
 ]
 
+# Rollbar
+ROLLBAR_ACCESS_TOKEN = get_env_variable("ROLLBAR_ACCESS_TOKEN")
+MIDDLEWARE += 'rollbar.contrib.django.middleware.RollbarNotifierMiddleware'
+
+ROLLBAR = {
+    'access_token': ROLLBAR_ACCESS_TOKEN,
+    'environment': 'production',
+    'branch': 'master',
+    'root': BASE_DIR,
+}
+
 # Auth0
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
