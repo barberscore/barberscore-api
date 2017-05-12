@@ -70,6 +70,16 @@
     "BUGSNAG_API_KEY": {
       "description": "Bugsnag Exception tracking service API Key.",
       "required": true
+    },
+    "BUGSNAG_RELEASE_STAGE": {
+      "description": "Bugsnag Release Stage.",
+      "required": true
+    },
+    "HEROKU_APP_NAME": {
+      "description": "Will be populated by Heroku in Review App."
+    },
+    "HEROKU_PARENT_APP_NAME": {
+      "description": "Will be populated by Heroku in Review App."
     }
   },
   "environments": {
