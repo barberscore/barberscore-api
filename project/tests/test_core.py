@@ -1,179 +1,177 @@
 # Third-Party
 import pytest
-from rest_framework.test import APIClient
 from rest_framework import status
 # Django
-from django.apps import apps as api_apps
-from django.test.client import Client
 from django.urls import reverse
 
-# First-Party
-from api.factories import (
-    AdminFactory,
-    AssignmentFactory,
-    AwardFactory,
-    ChartFactory,
-    ContestantFactory,
-    ContestFactory,
-    ConventionFactory,
-    DistrictFactory,
-    MemberFactory,
-    OfficeFactory,
-    OfficerFactory,
-    InternationalFactory,
-    AppearanceFactory,
-    EntryFactory,
-    PersonFactory,
-    QuartetFactory,
-    RepertoryFactory,
-    RoundFactory,
-    ScoreFactory,
-    SessionFactory,
-    SlotFactory,
-    SongFactory,
-    SubmissionFactory,
-    UserFactory,
-    VenueFactory,
-)
 
-config = api_apps.get_app_config('api')
-
-
-@pytest.fixture
-def admin_client():
-    admin = AdminFactory()
-    client = Client()
-    client.force_login(admin)
-    return client
-
-
-@pytest.fixture
-def api_client():
-    admin = AdminFactory()
-    client = APIClient()
-    client.force_authenticate(user=admin)
-    return client
-
-
-@pytest.fixture
-def assignment():
-    return AssignmentFactory()
-
-
-@pytest.fixture
-def award():
-    return AwardFactory()
-
-
-@pytest.fixture
-def chart():
-    return ChartFactory()
-
-
-@pytest.fixture
-def contest():
-    return ContestFactory()
-
-
-@pytest.fixture
-def contestant():
-    return ContestantFactory()
-
-
-@pytest.fixture
-def convention():
-    return ConventionFactory()
-
-
-@pytest.fixture
-def international():
-    return InternationalFactory()
-
-
-@pytest.fixture
-def district():
-    return DistrictFactory()
-
-
-@pytest.fixture
-def quartet():
-    return QuartetFactory()
-
-
-@pytest.fixture
-def member():
-    return MemberFactory()
-
-
-@pytest.fixture
-def office():
-    return OfficeFactory()
-
-
-@pytest.fixture
-def officer():
-    return OfficerFactory()
-
-
-@pytest.fixture
-def appearance():
-    return AppearanceFactory()
-
-
-@pytest.fixture
-def entry():
-    return EntryFactory()
-
-
-@pytest.fixture
-def person():
-    return PersonFactory()
-
-
-@pytest.fixture
-def repertory():
-    return RepertoryFactory()
-
-
-@pytest.fixture
-def round():
-    return RoundFactory()
-
-
-@pytest.fixture
-def score():
-    return ScoreFactory()
-
-
-@pytest.fixture
-def session():
-    return SessionFactory()
-
-
-@pytest.fixture
-def slot():
-    return SlotFactory()
-
-
-@pytest.fixture
-def song():
-    return SongFactory()
-
-
-@pytest.fixture
-def submission():
-    return SubmissionFactory()
-
-
-@pytest.fixture
-def venue():
-    return VenueFactory()
-
-
-@pytest.fixture
-def user():
-    return UserFactory()
-
+# # First-Party
+# from api.factories import (
+#     AdminFactory,
+#     AssignmentFactory,
+#     AwardFactory,
+#     ChartFactory,
+#     ContestantFactory,
+#     ContestFactory,
+#     ConventionFactory,
+#     DistrictFactory,
+#     MemberFactory,
+#     OfficeFactory,
+#     OfficerFactory,
+#     InternationalFactory,
+#     AppearanceFactory,
+#     EntryFactory,
+#     PersonFactory,
+#     QuartetFactory,
+#     RepertoryFactory,
+#     RoundFactory,
+#     ScoreFactory,
+#     SessionFactory,
+#     SlotFactory,
+#     SongFactory,
+#     SubmissionFactory,
+#     UserFactory,
+#     VenueFactory,
+# )
+#
+# config = api_apps.get_app_config('api')
+#
+#
+# @pytest.fixture
+# def admin_client():
+#     admin = AdminFactory()
+#     client = Client()
+#     client.force_login(admin)
+#     return client
+#
+#
+# @pytest.fixture
+# def api_client():
+#     admin = AdminFactory()
+#     client = APIClient()
+#     client.force_authenticate(user=admin)
+#     return client
+#
+#
+# @pytest.fixture
+# def assignment():
+#     return AssignmentFactory()
+#
+#
+# @pytest.fixture
+# def award():
+#     return AwardFactory()
+#
+#
+# @pytest.fixture
+# def chart():
+#     return ChartFactory()
+#
+#
+# @pytest.fixture
+# def contest():
+#     return ContestFactory()
+#
+#
+# @pytest.fixture
+# def contestant():
+#     return ContestantFactory()
+#
+#
+# @pytest.fixture
+# def convention():
+#     return ConventionFactory()
+#
+#
+# @pytest.fixture
+# def international():
+#     return InternationalFactory()
+#
+#
+# @pytest.fixture
+# def district():
+#     return DistrictFactory()
+#
+#
+# @pytest.fixture
+# def quartet():
+#     return QuartetFactory()
+#
+#
+# @pytest.fixture
+# def member():
+#     return MemberFactory()
+#
+#
+# @pytest.fixture
+# def office():
+#     return OfficeFactory()
+#
+#
+# @pytest.fixture
+# def officer():
+#     return OfficerFactory()
+#
+#
+# @pytest.fixture
+# def appearance():
+#     return AppearanceFactory()
+#
+#
+# @pytest.fixture
+# def entry():
+#     return EntryFactory()
+#
+#
+# @pytest.fixture
+# def person():
+#     return PersonFactory()
+#
+#
+# @pytest.fixture
+# def repertory():
+#     return RepertoryFactory()
+#
+#
+# @pytest.fixture
+# def round():
+#     return RoundFactory()
+#
+#
+# @pytest.fixture
+# def score():
+#     return ScoreFactory()
+#
+#
+# @pytest.fixture
+# def session():
+#     return SessionFactory()
+#
+#
+# @pytest.fixture
+# def slot():
+#     return SlotFactory()
+#
+#
+# @pytest.fixture
+# def song():
+#     return SongFactory()
+#
+#
+# @pytest.fixture
+# def submission():
+#     return SubmissionFactory()
+#
+#
+# @pytest.fixture
+# def venue():
+#     return VenueFactory()
+#
+#
+# @pytest.fixture
+# def user():
+#     return UserFactory()
+#
 
 @pytest.mark.django_db()
 def test_api_endpoint(api_client):
