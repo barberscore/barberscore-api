@@ -90,7 +90,7 @@ LOGGING = {
             'stream': sys.stdout,
         },
         'bugsnag': {
-            'level': 'INFO',
+            'level': 'ERROR',
             'class': 'bugsnag.handlers.BugsnagHandler'
         },
     },
