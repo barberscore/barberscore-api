@@ -2,10 +2,15 @@
 from factory import (
     PostGenerationMethodCall,
     SubFactory,
+    Faker,
 )
 from factory.django import (
     DjangoModelFactory,
     mute_signals,
+)
+
+from factory.fuzzy import (
+    FuzzyInteger,
 )
 
 # Django
@@ -38,6 +43,19 @@ from api.models import (
 )
 
 
+class AppearanceFactory(DjangoModelFactory):
+    status = Appearance.STATUS.new
+    num = None
+    actual_start = None
+    actual_finish = None
+    round = SubFactory('api.factories.RoundFactory')
+    entry = SubFactory('api.factories.EntryFactory')
+    slot = None
+
+    class Meta:
+        model = Appearance
+
+
 class AssignmentFactory(DjangoModelFactory):
     status = Assignment.STATUS.new
     kind = Assignment.KIND.official
@@ -50,7 +68,7 @@ class AssignmentFactory(DjangoModelFactory):
 
 
 class AwardFactory(DjangoModelFactory):
-    name = 'Test Award'
+    name = Faker('word')
     status = Award.STATUS.active
     kind = Award.KIND.quartet
     season = Award.SEASON.summer
@@ -64,9 +82,7 @@ class AwardFactory(DjangoModelFactory):
     threshold = 76
     minimum = 70
     advance = 73
-    entity = SubFactory(
-        'api.factories.InternationalFactory'
-    )
+    entity = SubFactory('api.factories.EntityFactory')
 
     class Meta:
         model = Award
@@ -74,9 +90,9 @@ class AwardFactory(DjangoModelFactory):
 
 class ChartFactory(DjangoModelFactory):
     status = Chart.STATUS.new
-    title = 'Test Title'
-    bhs_id = 999999
-    entity = SubFactory('api.factories.InternationalFactory')
+    title = Faker('word')
+    bhs_id = FuzzyInteger(100001, 999999)
+    entity = SubFactory('api.factories.EntityFactory')
 
     class Meta:
         model = Chart
@@ -102,7 +118,7 @@ class ContestantFactory(DjangoModelFactory):
 
 
 class ConventionFactory(DjangoModelFactory):
-    name = 'Test Convention'
+    name = Faker('city')
     status = Convention.STATUS.new
     level = Convention.LEVEL.international
     season = Convention.SEASON.summer
@@ -113,28 +129,22 @@ class ConventionFactory(DjangoModelFactory):
     close_date = None
     start_date = None
     end_date = None
-    location = ''
+    location = Faker('city')
     venue = None
-    entity = SubFactory('api.factories.InternationalFactory')
+    entity = SubFactory('api.factories.EntityFactory')
 
     class Meta:
         model = Convention
 
 
 class EntityFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Entity
-
-
-class InternationalFactory(EntityFactory):
-    name = 'Test International'
+    name = Faker('word')
     status = Entity.STATUS.active
     kind = Entity.KIND.international
     age = None
     is_novice = False
-    short_name = 'Test ORG'
-    long_name = 'Test International'
+    short_name = Faker('word')
+    long_name = Faker('word')
     code = ''
     start_date = None
     end_date = None
@@ -142,110 +152,16 @@ class InternationalFactory(EntityFactory):
     website = ''
     facebook = ''
     twitter = ''
-    email = ''
-    phone = ''
+    email = Faker('email')
+    phone = Faker('phone_number')
     image = None
     description = ''
     notes = ''
     bhs_id = None
     parent = None
 
-
-class DistrictFactory(EntityFactory):
-    name = 'Test District'
-    status = Entity.STATUS.active
-    kind = Entity.KIND.district
-    age = None
-    is_novice = False
-    short_name = 'Test DIS'
-    long_name = 'Test District'
-    code = ''
-    start_date = None
-    end_date = None
-    location = ''
-    website = ''
-    facebook = ''
-    twitter = ''
-    email = ''
-    phone = ''
-    image = None
-    description = ''
-    notes = ''
-    bhs_id = None
-    parent = SubFactory('api.factories.InternationalFactory')
-
-
-class QuartetFactory(EntityFactory):
-    name = 'Test Quartet'
-    status = Entity.STATUS.active
-    kind = Entity.KIND.quartet
-    age = None
-    is_novice = False
-    short_name = 'Test QRT'
-    long_name = 'Test Quartet'
-    code = ''
-    start_date = None
-    end_date = None
-    location = ''
-    website = ''
-    facebook = ''
-    twitter = ''
-    email = ''
-    phone = ''
-    image = None
-    description = ''
-    notes = ''
-    bhs_id = None
-    parent = SubFactory('api.factories.DistrictFactory')
-
-
-class MemberFactory(DjangoModelFactory):
-    status = Member.STATUS.active
-    part = None
-    start_date = None
-    end_date = None
-    status = Member.STATUS.new
-    entity = SubFactory('api.factories.InternationalFactory')
-    person = SubFactory('api.factories.PersonFactory')
-
     class Meta:
-        model = Member
-
-
-class OfficeFactory(DjangoModelFactory):
-    name = 'Test Office'
-    status = Office.STATUS.active
-    kind = Office.KIND.international
-    short_name = 'TEST'
-    long_name = 'Test Office'
-
-    class Meta:
-        model = Office
-
-
-class OfficerFactory(DjangoModelFactory):
-    status = Officer.STATUS.new
-    start_date = None
-    end_date = None
-    office = SubFactory('api.factories.OfficeFactory')
-    person = SubFactory('api.factories.PersonFactory')
-    entity = None
-
-    class Meta:
-        model = Officer
-
-
-class AppearanceFactory(DjangoModelFactory):
-    status = Appearance.STATUS.new
-    num = None
-    actual_start = None
-    actual_finish = None
-    round = SubFactory('api.factories.RoundFactory')
-    entry = SubFactory('api.factories.EntryFactory')
-    slot = None
-
-    class Meta:
-        model = Appearance
+        model = Entity
 
 
 class EntryFactory(DjangoModelFactory):
@@ -256,7 +172,7 @@ class EntryFactory(DjangoModelFactory):
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
-    entity = SubFactory('api.factories.QuartetFactory')
+    entity = SubFactory('api.factories.EntityFactory')
     tenor = None
     lead = None
     baritone = None
@@ -268,8 +184,43 @@ class EntryFactory(DjangoModelFactory):
         model = Entry
 
 
+class MemberFactory(DjangoModelFactory):
+    status = Member.STATUS.new
+    part = None
+    start_date = None
+    end_date = None
+    entity = SubFactory('api.factories.EntityFactory')
+    person = SubFactory('api.factories.PersonFactory')
+
+    class Meta:
+        model = Member
+
+
+class OfficeFactory(DjangoModelFactory):
+    name = Faker('word')
+    status = Office.STATUS.active
+    kind = Office.KIND.international
+    short_name = Faker('word')
+    long_name = Faker('word')
+
+    class Meta:
+        model = Office
+
+
+class OfficerFactory(DjangoModelFactory):
+    status = Officer.STATUS.new
+    start_date = None
+    end_date = None
+    office = SubFactory('api.factories.OfficeFactory')
+    person = SubFactory('api.factories.PersonFactory')
+    entity = SubFactory('api.factories.EntityFactory')
+
+    class Meta:
+        model = Officer
+
+
 class PersonFactory(DjangoModelFactory):
-    name = 'Test Person'
+    name = Faker('name')
     status = Person.STATUS.active
     kind = Person.KIND.new
     birth_date = None
@@ -285,7 +236,6 @@ class PersonFactory(DjangoModelFactory):
     description = ''
     notes = ''
     bhs_id = None
-    user = None
 
     class Meta:
         model = Person
@@ -293,7 +243,7 @@ class PersonFactory(DjangoModelFactory):
 
 class RepertoryFactory(DjangoModelFactory):
     status = Repertory.STATUS.new
-    entity = SubFactory('api.factories.QuartetFactory')
+    entity = SubFactory('api.factories.EntityFactory')
     chart = SubFactory('api.factories.ChartFactory')
 
     class Meta:
@@ -317,7 +267,7 @@ class ScoreFactory(DjangoModelFactory):
     status = Score.STATUS.new
     category = Score.CATEGORY.music
     kind = Score.KIND.official
-    points = 100
+    points = FuzzyInteger(50, 90)
     original = None
     violation = None
     penalty = None
@@ -400,20 +350,11 @@ class VenueFactory(DjangoModelFactory):
 
 @mute_signals(post_save)
 class UserFactory(DjangoModelFactory):
-    email = 'test@barberscore.com'
+    email = Faker('email')
     password = PostGenerationMethodCall('set_password', 'password')
     is_active = True
     is_staff = False
-
-    class Meta:
-        model = User
-
-
-class AdminFactory(DjangoModelFactory):
-    email = 'admin@barberscore.com'
-    password = PostGenerationMethodCall('set_password', 'password')
-    is_active = True
-    is_staff = True
+    person = SubFactory('api.factories.PersonFactory')
 
     class Meta:
         model = User

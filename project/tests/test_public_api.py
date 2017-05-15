@@ -7,273 +7,273 @@ from django.urls import reverse
 pytestmark = pytest.mark.django_db
 
 
-def test_api_endpoint(api_client):
+def test_api_endpoint(bhs_member):
     path = reverse('api-root')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_assignment_endpoint_list(api_client, assignment):
+def test_assignment_endpoint_list(bhs_member, assignment):
     path = reverse('assignment-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_award_endpoint_list(api_client, award):
+def test_award_endpoint_list(bhs_member, award):
     path = reverse('award-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_chart_endpoint_list(api_client, chart):
+def test_chart_endpoint_list(bhs_member, chart):
     path = reverse('chart-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_contest_endpoint_list(api_client, contest):
+def test_contest_endpoint_list(bhs_member, contest):
     path = reverse('contest-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_contestant_endpoint_list(api_client, contestant):
+def test_contestant_endpoint_list(bhs_member, contestant):
     path = reverse('contestant-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_convention_endpoint_list(api_client, convention):
+def test_convention_endpoint_list(bhs_member, convention):
     path = reverse('convention-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entity_endpoint_list(api_client, entity):
+def test_entity_endpoint_list(bhs_member, entity):
     path = reverse('entity-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_member_endpoint_list(api_client, member):
+def test_member_endpoint_list(bhs_member, member):
     path = reverse('member-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_office_endpoint_list(api_client, office):
+def test_office_endpoint_list(bhs_member, office):
     path = reverse('office-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_officer_endpoint_list(api_client, officer):
+def test_officer_endpoint_list(bhs_member, officer):
     path = reverse('officer-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_appearance_endpoint_list(api_client, appearance):
+def test_appearance_endpoint_list(bhs_member, appearance):
     path = reverse('appearance-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entry_endpoint_list(api_client, entry):
+def test_entry_endpoint_list(bhs_member, entry):
     path = reverse('entry-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_person_endpoint_list(api_client, person):
+def test_person_endpoint_list(bhs_member, person):
     path = reverse('person-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_round_endpoint_list(api_client, round):
+def test_round_endpoint_list(bhs_member, round):
     path = reverse('round-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_repertory_endpoint_list(api_client, repertory):
+def test_repertory_endpoint_list(bhs_member, repertory):
     path = reverse('repertory-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_score_endpoint_list(api_client, score):
+def test_score_endpoint_list(bhs_member, score):
     path = reverse('score-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_session_endpoint_list(api_client, session):
+def test_session_endpoint_list(bhs_member, session):
     path = reverse('session-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_slot_endpoint_list(api_client, slot):
+def test_slot_endpoint_list(bhs_member, slot):
     path = reverse('slot-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_song_endpoint_list(api_client, song):
+def test_song_endpoint_list(bhs_member, song):
     path = reverse('song-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_submission_endpoint_list(api_client, submission):
+def test_submission_endpoint_list(bhs_member, submission):
     path = reverse('submission-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_venue_endpoint_list(api_client, venue):
+def test_venue_endpoint_list(bhs_member, venue):
     path = reverse('venue-list')
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_user_endpoint_list(api_client, user):
+def test_user_endpoint_list(bhs_member, user):
     path = reverse('user-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 # Detail Views
 
-def test_assignment_endpoint_detail(api_client, assignment):
+def test_assignment_endpoint_detail(bhs_member, assignment):
     path = reverse('assignment-detail', args=(str(assignment.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_award_endpoint_detail(api_client, award):
+def test_award_endpoint_detail(bhs_member, award):
     path = reverse('award-detail', args=(str(award.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_chart_endpoint_detail(api_client, chart):
+def test_chart_endpoint_detail(bhs_member, chart):
     path = reverse('chart-detail', args=(str(chart.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_contest_endpoint_detail(api_client, contest):
+def test_contest_endpoint_detail(bhs_member, contest):
     path = reverse('contest-detail', args=(str(contest.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_contestant_endpoint_detail(api_client, contestant):
+def test_contestant_endpoint_detail(bhs_member, contestant):
     path = reverse('contestant-detail', args=(str(contestant.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_convention_endpoint_detail(api_client, convention):
+def test_convention_endpoint_detail(bhs_member, convention):
     path = reverse('convention-detail', args=(str(convention.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entity_endpoint_detail(api_client, entity):
+def test_entity_endpoint_detail(bhs_member, entity):
     path = reverse('entity-detail', args=(str(entity.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_member_endpoint_detail(api_client, member):
+def test_member_endpoint_detail(bhs_member, member):
     path = reverse('member-detail', args=(str(member.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_office_endpoint_detail(api_client, office):
+def test_office_endpoint_detail(bhs_member, office):
     path = reverse('office-detail', args=(str(office.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_officer_endpoint_detail(api_client, officer):
+def test_officer_endpoint_detail(bhs_member, officer):
     path = reverse('officer-detail', args=(str(officer.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_appearance_endpoint_detail(api_client, appearance):
+def test_appearance_endpoint_detail(bhs_member, appearance):
     path = reverse('appearance-detail', args=(str(appearance.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entry_endpoint_detail(api_client, entry):
+def test_entry_endpoint_detail(bhs_member, entry):
     path = reverse('entry-detail', args=(str(entry.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_person_endpoint_detail(api_client, person):
+def test_person_endpoint_detail(bhs_member, person):
     path = reverse('person-detail', args=(str(person.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_repertory_endpoint_detail(api_client, repertory):
+def test_repertory_endpoint_detail(bhs_member, repertory):
     path = reverse('repertory-detail', args=(str(repertory.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_round_endpoint_detail(api_client, round):
+def test_round_endpoint_detail(bhs_member, round):
     path = reverse('round-detail', args=(str(round.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_score_endpoint_detail(api_client, score):
+def test_score_endpoint_detail(bhs_member, score):
     path = reverse('score-detail', args=(str(score.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_session_endpoint_detail(api_client, session):
+def test_session_endpoint_detail(bhs_member, session):
     path = reverse('session-detail', args=(str(session.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_slot_endpoint_detail(api_client, slot):
+def test_slot_endpoint_detail(bhs_member, slot):
     path = reverse('slot-detail', args=(str(slot.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_song_endpoint_detail(api_client, song):
+def test_song_endpoint_detail(bhs_member, song):
     path = reverse('song-detail', args=(str(song.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_submission_endpoint_detail(api_client, submission):
+def test_submission_endpoint_detail(bhs_member, submission):
     path = reverse('submission-detail', args=(str(submission.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_venue_endpoint_detail(api_client, venue):
+def test_venue_endpoint_detail(bhs_member, venue):
     path = reverse('venue-detail', args=(str(venue.id),))
-    response = api_client.get(path)
+    response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_user_endpoint_detail(api_client, user):
+def test_user_endpoint_detail(bhs_member, user):
     path = reverse('user-detail', args=(str(user.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN

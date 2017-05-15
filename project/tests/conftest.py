@@ -7,22 +7,19 @@ from django.test.client import Client
 
 # First-Party
 from api.factories import (
-    AdminFactory,
+    AppearanceFactory,
     AssignmentFactory,
     AwardFactory,
     ChartFactory,
     ContestantFactory,
     ContestFactory,
     ConventionFactory,
-    DistrictFactory,
+    EntityFactory,
+    EntryFactory,
     MemberFactory,
     OfficeFactory,
     OfficerFactory,
-    InternationalFactory,
-    AppearanceFactory,
-    EntryFactory,
     PersonFactory,
-    QuartetFactory,
     RepertoryFactory,
     RoundFactory,
     ScoreFactory,
@@ -37,7 +34,10 @@ from api.factories import (
 
 @pytest.fixture
 def admin_client():
-    admin = AdminFactory()
+    admin = UserFactory(
+        is_staff=True,
+        person=None,
+    )
     client = Client()
     client.force_login(admin)
     return client
@@ -45,10 +45,42 @@ def admin_client():
 
 @pytest.fixture
 def api_client():
-    admin = AdminFactory()
+    admin = UserFactory(
+        is_staff=True,
+        person=None,
+    )
     client = APIClient()
     client.force_authenticate(user=admin)
     return client
+
+
+@pytest.fixture
+def user_client():
+    user = UserFactory()
+    client = Client()
+    client.force_login(user)
+    return client
+
+
+@pytest.fixture
+def api_user_client():
+    user = UserFactory()
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
+
+
+@pytest.fixture
+def bhs_member():
+    user = UserFactory()
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
+
+
+@pytest.fixture
+def appearance():
+    return AppearanceFactory()
 
 
 @pytest.fixture
@@ -82,18 +114,13 @@ def convention():
 
 
 @pytest.fixture
-def international():
-    return InternationalFactory()
+def entity():
+    return EntityFactory()
 
 
 @pytest.fixture
-def district():
-    return DistrictFactory()
-
-
-@pytest.fixture
-def quartet():
-    return QuartetFactory()
+def entry():
+    return EntryFactory()
 
 
 @pytest.fixture
@@ -109,16 +136,6 @@ def office():
 @pytest.fixture
 def officer():
     return OfficerFactory()
-
-
-@pytest.fixture
-def appearance():
-    return AppearanceFactory()
-
-
-@pytest.fixture
-def entry():
-    return EntryFactory()
 
 
 @pytest.fixture

@@ -13,6 +13,14 @@ def test_api_admin(admin_client):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_appearance_admin_list(admin_client, user_client, appearance):
+    path = reverse('admin:api_appearance_changelist')
+    response = admin_client.get(path)
+    u_response = user_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    assert u_response.status_code == status.HTTP_302_FOUND
+
+
 def test_assignment_admin_list(admin_client, assignment):
     path = reverse('admin:api_assignment_changelist')
     response = admin_client.get(path)
@@ -49,8 +57,14 @@ def test_convention_admin_list(admin_client, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entity_admin_list(admin_client, international):
+def test_entity_admin_list(admin_client, entity):
     path = reverse('admin:api_entity_changelist')
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_entry_admin_list(admin_client, entry):
+    path = reverse('admin:api_entry_changelist')
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -69,18 +83,6 @@ def test_office_admin_list(admin_client, office):
 
 def test_officer_admin_list(admin_client, officer):
     path = reverse('admin:api_officer_changelist')
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_appearance_admin_list(admin_client, appearance):
-    path = reverse('admin:api_appearance_changelist')
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entry_admin_list(admin_client, entry):
-    path = reverse('admin:api_entry_changelist')
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -145,6 +147,12 @@ def test_user_admin_list(admin_client, user):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_appearance_admin_detail(admin_client, appearance):
+    path = reverse('admin:api_appearance_change', args=(str(appearance.id),))
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_assignment_admin_detail(admin_client, assignment):
     path = reverse('admin:api_assignment_change', args=(str(assignment.id),))
     response = admin_client.get(path)
@@ -181,8 +189,14 @@ def test_convention_admin_detail(admin_client, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entity_admin_detail(admin_client, international):
-    path = reverse('admin:api_entity_change', args=(str(international.id),))
+def test_entity_admin_detail(admin_client, entity):
+    path = reverse('admin:api_entity_change', args=(str(entity.id),))
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_entry_admin_detail(admin_client, entry):
+    path = reverse('admin:api_entry_change', args=(str(entry.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -201,18 +215,6 @@ def test_office_admin_detail(admin_client, office):
 
 def test_officer_admin_detail(admin_client, officer):
     path = reverse('admin:api_officer_change', args=(str(officer.id),))
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_appearance_admin_detail(admin_client, appearance):
-    path = reverse('admin:api_appearance_change', args=(str(appearance.id),))
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entry_admin_detail(admin_client, entry):
-    path = reverse('admin:api_entry_change', args=(str(entry.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

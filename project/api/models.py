@@ -2196,8 +2196,8 @@ class Member(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 request.user.person.officers.filter(
-                    office__short_name__startswith='SCJC',
-                    status=Officer.STATUS.active,
+                    # office__short_name__startswith='SCJC',
+                    # status=Officer.STATUS.active,
                 ),
                 # self.person.user == request.user,
             ])
@@ -2357,9 +2357,7 @@ class Officer(TimeStampedModel):
     entity = models.ForeignKey(
         'Entity',
         related_name='officers',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
     )
 
     # Internals
@@ -3373,7 +3371,7 @@ class Score(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return False
 
     @staticmethod
     @allow_staff_or_superuser
@@ -3384,7 +3382,7 @@ class Score(TimeStampedModel):
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                True,
+                False,
                 # self.song.appearance.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.song.appearance.round.session.assignments.model.CATEGORY.admin,
@@ -3400,7 +3398,7 @@ class Score(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                True,
+                False,
                 # self.song.appearance.entry.session.assignments.filter(
                 #     judge__user=request.user,
                 #     category=self.song.appearance.round.session.assignments.model.CATEGORY.admin,
@@ -4364,12 +4362,12 @@ class User(AbstractBaseUser):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return False
 
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return True
+        return False
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
