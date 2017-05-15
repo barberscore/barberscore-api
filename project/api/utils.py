@@ -59,6 +59,15 @@ def update_officers():
         log.info(officer)
 
 
+def update_members():
+    now = timezone.now()
+    members = Member.objects.filter(end_date__lt=now)
+    for member in members:
+        member.status = Member.STATUS.inactive
+        member.save()
+        log.info(member)
+
+
 def import_membership(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)

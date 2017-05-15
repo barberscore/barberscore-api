@@ -475,7 +475,7 @@ class EntityAdmin(admin.ModelAdmin):
 
     inlines = [
         AwardInline,
-        # MemberInline,
+        MemberInline,
         RepertoryInline,
         OfficerInline,
     ]
@@ -492,6 +492,14 @@ class EntityAdmin(admin.ModelAdmin):
         'kind',
         'name',
     ]
+
+    # def get_inline_instances(self, request, obj=None):
+    #     inlines = [
+    #         AwardInline,
+    #         MemberInline,
+    #         RepertoryInline,
+    #         OfficerInline,
+    #     ]
 
 
 @admin.register(Entry)
