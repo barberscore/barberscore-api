@@ -52,7 +52,13 @@ def download(url, file_name):
 
 def update_officers():
     now = timezone.now()
-    officers = Officer.objects.filter(end_date__lt=now)
+    officers = Member.objects.filter(end_date__gt=now)
+    for officer in officers:
+        officer.status = Officer.STATUS.active
+        officer.save()
+        log.info(officer)
+    now = timezone.now()
+    officers = Member.objects.filter(end_date__lte=now)
     for officer in officers:
         officer.status = Officer.STATUS.inactive
         officer.save()
@@ -61,9 +67,14 @@ def update_officers():
 
 def update_members():
     now = timezone.now()
-    members = Member.objects.filter(end_date__lt=now)
+    members = Member.objects.filter(end_date__lte=now)
     for member in members:
         member.status = Member.STATUS.inactive
+        member.save()
+        log.info(member)
+    members = Member.objects.filter(end_date__gt=now)
+    for member in members:
+        member.status = Member.STATUS.active
         member.save()
         log.info(member)
 
