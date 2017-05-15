@@ -836,6 +836,7 @@ class Chart(TimeStampedModel):
             return any([
                 self.entity.officers.filter(
                     person__user=request.user,
+                    status__gt=0,
                 )
             ])
         return False
@@ -1700,6 +1701,7 @@ class Entity(TimeStampedModel):
             return any([
                 self.officers.filter(
                     person__user=request.user,
+                    status__gt=0,
                 )
             ])
         return False
@@ -2078,6 +2080,7 @@ class Entry(TimeStampedModel):
             return any([
                 self.entity.officers.filter(
                     person__user=request.user,
+                    status__gt=0,
                 ),
                 # request.user.person.officers.filter(
                 #     office__short_name__startswith='SCJC',
@@ -2403,6 +2406,7 @@ class Officer(TimeStampedModel):
                 ),
                 self.entity.officers.filter(
                     person__user=request.user,
+                    status__gt=0,
                 )
             ])
         return False
@@ -2879,6 +2883,7 @@ class Repertory(TimeStampedModel):
                 ),
                 self.entity.officers.filter(
                     person__user=request.user,
+                    status__gt=0,
                 )
             ])
         return False
