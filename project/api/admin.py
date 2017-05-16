@@ -727,6 +727,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     search_fields = (
         'nomen',
+        'email',
     )
 
     save_on_top = True
