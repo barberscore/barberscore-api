@@ -56,13 +56,13 @@ def update_officers():
     for officer in officers:
         officer.status = Officer.STATUS.active
         officer.save()
-        log.info(officer)
-    now = timezone.now()
-    officers = Member.objects.filter(end_date__lte=now)
-    for officer in officers:
-        officer.status = Officer.STATUS.inactive
-        officer.save()
-        log.info(officer)
+        # log.info(officer)
+    # now = timezone.now()
+    # officers = Member.objects.filter(end_date__lte=now)
+    # for officer in officers:
+        # officer.status = Officer.STATUS.inactive
+        # officer.save()
+        # log.info(officer)
 
 
 def update_members():
@@ -71,12 +71,12 @@ def update_members():
     for member in members:
         member.status = Member.STATUS.inactive
         member.save()
-        log.info(member)
+        # log.info(member)
     members = Member.objects.filter(end_date__gt=now)
     for member in members:
         member.status = Member.STATUS.active
         member.save()
-        log.info(member)
+        # log.info(member)
 
 
 def import_membership(path):

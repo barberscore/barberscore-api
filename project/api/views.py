@@ -39,6 +39,7 @@ from .filters import (
     OfficeFilter,
     OfficerFilter,
     EntryFilter,
+    ParticipantFilter,
     PersonFilter,
     RoundFilter,
     ScoreFilter,
@@ -59,6 +60,7 @@ from .models import (
     Officer,
     Appearance,
     Entry,
+    Participant,
     Person,
     Repertory,
     Round,
@@ -74,6 +76,7 @@ from .models import (
 from .paginators import PageNumberPagination
 
 from .serializers import (
+    AppearanceSerializer,
     AssignmentSerializer,
     AwardSerializer,
     ChartSerializer,
@@ -81,12 +84,12 @@ from .serializers import (
     ContestSerializer,
     ConventionSerializer,
     EntitySerializer,
+    EntrySerializer,
     MemberSerializer,
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
-    AppearanceSerializer,
-    EntrySerializer,
+    ParticipantSerializer,
     PersonSerializer,
     RepertorySerializer,
     RoundSerializer,
@@ -351,6 +354,7 @@ class EntryViewSet(viewsets.ModelViewSet):
         'codirector',
         'representing',
     ).prefetch_related(
+        'participants',
         'contestants',
         'appearances',
         'submissions',
@@ -373,6 +377,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         'entity',
         'person',
     ).prefetch_related(
+        'participants',
     ).order_by('nomen')
     serializer_class = MemberSerializer
     filter_class = MemberFilter
@@ -426,6 +431,25 @@ class OfficerViewSet(
         DRYPermissions,
     ]
     resource_name = "officer"
+
+
+class ParticipantViewSet(viewsets.ModelViewSet):
+    queryset = Participant.objects.select_related(
+        'entry',
+        'member'
+    ).prefetch_related(
+    ).order_by('nomen')
+    serializer_class = ParticipantSerializer
+    filter_class = ParticipantFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "participant"
 
 
 class PersonViewSet(viewsets.ModelViewSet):

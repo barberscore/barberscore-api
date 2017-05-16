@@ -21,6 +21,7 @@ from .models import (
     Member,
     Office,
     Officer,
+    Participant,
     Person,
     Repertory,
     Round,
@@ -277,6 +278,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'bass',
             'director',
             'codirector',
+            'participants',
             'appearances',
             'contestants',
             'submissions',
@@ -299,6 +301,7 @@ class MemberSerializer(serializers.ModelSerializer):
             'end_date',
             'entity',
             'person',
+            'participants',
             'permissions',
         ]
 
@@ -347,6 +350,22 @@ class OfficerSerializer(serializers.ModelSerializer):
                 message='This person already holds this office.',
             )
         ]
+
+
+class ParticipantSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Participant
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'entry',
+            'member',
+            'permissions',
+        )
 
 
 class PersonSerializer(serializers.ModelSerializer):

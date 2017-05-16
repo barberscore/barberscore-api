@@ -2421,6 +2421,115 @@ class Officer(TimeStampedModel):
         return
 
 
+class Participant(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=500,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    # FKs
+    entry = models.ForeignKey(
+        'Entry',
+        related_name='participants',
+        on_delete=models.CASCADE,
+    )
+
+    member = models.ForeignKey(
+        'Member',
+        related_name='participants',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('entry', 'member',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "participant"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                lambda x: smart_text(x), [
+                    self.entry,
+                    self.member,
+                ]
+            )
+        )
+        super().save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                True,
+                # self.entry.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.entry.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.entry.roles.model.STATUS.active,
+                # ),
+                # self.entry.session.assignments.filter(
+                #     judge__user=request.user,
+                # ),
+                # self.entry.session.convention.drcj == request.user.person,
+            ])
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        if request.user.is_authenticated():
+            return any([
+                True,
+                # self.entry.session.assignments.filter(
+                #     judge__user=request.user,
+                #     category=self.round.session.assignments.model.category.ADMIN,
+                # ),
+                # self.entry.group.roles.filter(
+                #     person__user=request.user,
+                #     status=self.entry.roles.model.STATUS.active,
+                # )
+                # self.entry.session.assignments.filter(
+                #     judge__user=request.user,
+                # ),
+                # self.entry.session.convention.drcj == request.user.person,
+            ])
+        return False
+
+
 class Person(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,

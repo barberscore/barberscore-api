@@ -30,6 +30,7 @@ from api.models import (
     Member,
     Office,
     Officer,
+    Participant,
     Person,
     Repertory,
     Round,
@@ -217,6 +218,15 @@ class OfficerFactory(DjangoModelFactory):
 
     class Meta:
         model = Officer
+
+
+class ParticipantFactory(DjangoModelFactory):
+    status = Contestant.STATUS.new
+    entry = SubFactory('api.factories.EntryFactory')
+    member = SubFactory('api.factories.MemberFactory')
+
+    class Meta:
+        model = Participant
 
 
 class PersonFactory(DjangoModelFactory):

@@ -39,6 +39,7 @@ from .models import (
     Member,
     Office,
     Officer,
+    Participant,
     Person,
     Repertory,
     Round,
@@ -646,6 +647,37 @@ class OfficerAdmin(admin.ModelAdmin):
     search_fields = [
         'nomen',
     ]
+
+
+@admin.register(Participant)
+class ParticipantAdmin(admin.ModelAdmin):
+
+    fields = [
+        'status',
+        'entry',
+        'member',
+    ]
+
+    list_filter = (
+        'status',
+    )
+
+    readonly_fields = [
+        'nomen',
+    ]
+
+    raw_id_fields = [
+        'entry',
+        'member',
+    ]
+
+    search_fields = [
+        'nomen',
+    ]
+
+    ordering = (
+        'nomen',
+    )
 
 
 @admin.register(Person)
