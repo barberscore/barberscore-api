@@ -69,9 +69,9 @@ class Command(BaseCommand):
             }
         }
         try:
-            account, result = auth0.users.update(user.auth0_id, payload), 'updated'
-        except Auth0Error as e:
-            account, result = auth0.users.create(payload), 'created'
+            account, result = auth0.users.update(user.auth0_id, payload), 'Updated'
+        except Auth0Error:
+            account, result = auth0.users.create(payload), 'Created'
         return account, result
 
     def handle(self, *args, **options):
@@ -83,10 +83,12 @@ class Command(BaseCommand):
                     auth0_id=account,
                 )
             except User.DoesNotExist:
-                log.info(auth0.users.delete(account))
+                auth0.users.delete(account)
+                log.info("Deleted: {0}".format(account))
 
         users = User.objects.filter(
             is_staff=False,
         )
         for user in users:
-            log.info(self.update_or_create_auth0(user))
+            account, response = self.update_or_create_auth0(user)
+            log.info("{1}: {0}".format(account['user_id'], response))
