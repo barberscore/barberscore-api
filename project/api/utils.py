@@ -174,23 +174,32 @@ def import_quartet_membership(path):
             log.info((member, created))
 
 
-def import_chapter_secretaries(path):
+def import_chapter_officers(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            office = Office.objects.get(short_name='CSEC')
+            office_name = row[11]
+            chapter_id = int(row[9])
+            person_id = int(row[3])
             try:
-                chapter = Entity.objects.get(bhs_id=int(row[1]))
+                office = Office.objects.get(name=office_name)
+            except Office.DoesNotExist as e:
+                log.error((e, office_name))
+                continue
+            try:
+                chapter = Entity.objects.get(bhs_id=chapter_id)
             except Entity.DoesNotExist as e:
+                log.error((e, chapter_id))
                 continue
             try:
-                person = Person.objects.get(bhs_id=int(row[3]))
+                person = Person.objects.get(bhs_id=person_id)
             except Person.DoesNotExist as e:
+                log.error((e, person_id))
                 continue
-            start_date = dateparse.parse_datetime(row[7]).date()
-            end_date = dateparse.parse_datetime(row[8]).date()
+            start_date = dateparse.parse_datetime(row[6]).date()
+            end_date = dateparse.parse_datetime(row[7]).date()
             defaults = {
                 'start_date': start_date,
                 'end_date': end_date,
