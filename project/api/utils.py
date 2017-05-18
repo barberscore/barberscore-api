@@ -29,6 +29,7 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Entry,
     Office,
     Officer,
     Member,
@@ -48,6 +49,137 @@ def download(url, file_name):
         response = requests.get(url)
         # write to file
         file.write(response.content)
+
+
+def import_chorus_competitors(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        session = Session.objects.get(
+            kind=Session.KIND.chorus,
+            convention__entity__short_name='BHS',
+            convention__year=2017,
+        )
+        contest = session.contests.first()
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                chorus_id = int(row[6])
+            except ValueError as e:
+                continue
+            try:
+                chorus = Entity.objects.get(bhs_id=chorus_id)
+            except Entity.DoesNotExist as e:
+                print((e, chorus_id))
+                continue
+            director_email = row[4].strip()
+            codirector_email = row[5].strip()
+            if director_email:
+                try:
+                    director = Person.objects.get(email=director_email)
+                except Person.DoesNotExist:
+                    director = None
+                except Person.MultipleObjectsReturned:
+                    director = None
+            else:
+                director = None
+            if codirector_email:
+                try:
+                    codirector = Person.objects.get(email=codirector_email)
+                except Person.DoesNotExist:
+                    codirector = None
+                except Person.MultipleObjectsReturned:
+                    codirector = None
+            else:
+                codirector = None
+            defaults = {
+                'director': director,
+                'codirector': codirector,
+                'is_evaluation': False,
+                'is_private': False,
+            }
+            entry, meta = Entry.objects.update_or_create(
+                session=session,
+                entity=chorus,
+                defaults=defaults,
+            )
+            contestant, meta = Contestant.objects.update_or_create(
+                contest=contest,
+                entry=entry,
+            )
+    return
+
+
+def import_quartet_competitors(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        session = Session.objects.get(
+            kind=Session.KIND.quartet,
+            convention__entity__short_name='BHS',
+            convention__year=2017,
+            num_rounds=3,
+        )
+        contest = session.contests.get(
+            award__name='International Quartet Championship',
+        )
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                quartet_id = int(row[0])
+            except ValueError as e:
+                continue
+            try:
+                quartet = Entity.objects.get(bhs_id=quartet_id)
+            except Entity.DoesNotExist as e:
+                print((e, quartet_id))
+                continue
+            prelim = float(row[1])
+            rep_id = row[2].strip()
+            rep = Entity.objects.get(
+                kind=Entity.KIND.district,
+                short_name=rep_id,
+            )
+            try:
+                tenor = Person.objects.get(bhs_id=int(row[3]))
+            except Person.DoesNotExist:
+                tenor = None
+                print('missing')
+            try:
+                lead = Person.objects.get(bhs_id=int(row[4]))
+            except Person.DoesNotExist:
+                lead = None
+                print('missing')
+            try:
+                baritone = Person.objects.get(bhs_id=int(row[5]))
+            except Person.DoesNotExist:
+                baritone = None
+                print('missing')
+            try:
+                bass = Person.objects.get(bhs_id=int(row[6]))
+            except Person.DoesNotExist:
+                bass = None
+                print('missing')
+            defaults = {
+                'prelim': prelim,
+                'representing': rep,
+                'tenor': tenor,
+                'lead': lead,
+                'baritone': baritone,
+                'bass': bass,
+                'is_evaluation': False,
+                'is_private': False,
+            }
+            entry, meta = Entry.objects.update_or_create(
+                session=session,
+                entity=quartet,
+                defaults=defaults,
+            )
+            contestant, meta = Contestant.objects.update_or_create(
+                contest=contest,
+                entry=entry,
+            )
+    return
 
 
 def update_officers():
