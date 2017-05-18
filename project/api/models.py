@@ -2651,6 +2651,7 @@ class Person(TimeStampedModel):
             The contact email of the resource.""",
         blank=True,
         null=True,
+        unique=True,
     )
 
     phone = models.CharField(
