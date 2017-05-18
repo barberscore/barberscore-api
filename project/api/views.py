@@ -11,14 +11,14 @@ from rest_framework import (
     viewsets,
 )
 from rest_framework.decorators import (
-    # detail_route,
+    detail_route,
     list_route,
-    # parser_classes,
+    parser_classes,
 )
-# from rest_framework.parsers import (
-#     FormParser,
-#     MultiPartParser,
-# )
+from rest_framework.parsers import (
+    FormParser,
+    MultiPartParser,
+)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
@@ -308,6 +308,7 @@ class EntityViewSet(
         'entries',
         'conventions',
         'officers',
+        'members',
     ).order_by(
         'nomen',
     )
@@ -323,23 +324,22 @@ class EntityViewSet(
     ]
     resource_name = "entity"
 
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def picture(self, request, *args, **kwargs):
-    #     if 'upload' in request.data:
-    #         entity = self.get_object()
-    #         entity.picture.delete()
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def image(self, request, *args, **kwargs):
+        if 'upload' in request.data:
+            entity = self.get_object()
 
-    #         upload = request.data['upload']
+            upload = request.data['upload']
 
-    #         entity.picture.save(upload.name, upload)
+            entity.image = upload.read()
 
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             headers={'Location': entity.picture.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                status=status.HTTP_201_CREATED,
+                headers={'Location': entity.image.url},
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class EntryViewSet(viewsets.ModelViewSet):

@@ -214,7 +214,10 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 
 class EntitySerializer(serializers.ModelSerializer):
+
     permissions = DRYPermissionsField()
+    image_url = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Entity
@@ -239,9 +242,10 @@ class EntitySerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'image_url',
             'description',
             'parent',
-            'children',
+            # 'children',
             'conventions',
             'members',
             'entries',
@@ -250,6 +254,11 @@ class EntitySerializer(serializers.ModelSerializer):
             'officers',
             'permissions',
         ]
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
 
 
 class EntrySerializer(serializers.ModelSerializer):
