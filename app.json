@@ -104,7 +104,7 @@
         }
       },
       "scripts": {
-        "test": "pytest --no-migrations --reuse-db --tap-stream"
+        "test": "pytest --no-migrations --reuse-db"
       }
     }
   }
