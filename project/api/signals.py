@@ -70,6 +70,4 @@ def user_pre_delete(sender, instance, **kwargs):
             token,
         )
         auth0.users.delete(instance.auth0_id)
-        return
-    else:
-        raise RuntimeError("User has no Auth0 ID")
+    return
