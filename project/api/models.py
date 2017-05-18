@@ -1721,7 +1721,7 @@ class Entry(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'submitted', 'submitted',),
+        (10, 'submitted', 'Submitted',),
         (20, 'accepted', 'Accepted',),
         (30, 'declined', 'Declined',),
         (40, 'dropped', 'Dropped',),
@@ -2650,6 +2650,7 @@ class Person(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
+        null=True,
     )
 
     phone = models.CharField(
@@ -2996,7 +2997,6 @@ class Repertory(TimeStampedModel):
                 )
             ])
         return False
-
 
     # Transitions
     @transition(field=status, source=[STATUS.new, STATUS.invalid], target=STATUS.valid)
