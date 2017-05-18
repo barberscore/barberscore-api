@@ -240,7 +240,7 @@ class PersonFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    email = ''
+    email = None
     phone = ''
     image = None
     description = ''
