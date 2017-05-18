@@ -182,6 +182,79 @@ def import_quartet_competitors(path):
     return
 
 
+def import_aff_competitors(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        session = Session.objects.get(
+            kind=Session.KIND.quartet,
+            convention__entity__short_name='BHS',
+            convention__year=2017,
+            num_rounds=3,
+        )
+        contest = session.contests.get(
+            award__name='International Quartet Championship',
+        )
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                quartet_id = int(row[0])
+            except ValueError as e:
+                continue
+            try:
+                quartet = Entity.objects.get(bhs_id=quartet_id)
+            except Entity.DoesNotExist as e:
+                print((e, quartet_id))
+                continue
+            rep_id = row[2].strip()
+            try:
+                rep = Entity.objects.get(
+                    kind=Entity.KIND.affiliate,
+                    short_name=rep_id,
+                )
+            except Entity.DoesNotExist as e:
+                print((e, rep_id))
+            try:
+                tenor = quartet.members.filter(part=1).first().person
+            except Person.DoesNotExist:
+                tenor = None
+                print('missing')
+            try:
+                lead = quartet.members.filter(part=2).first().person
+            except Person.DoesNotExist:
+                lead = None
+                print('missing')
+            try:
+                baritone = quartet.members.filter(part=3).first().person
+            except Person.DoesNotExist:
+                baritone = None
+                print('missing')
+            try:
+                bass = quartet.members.filter(part=4).first().person
+            except Person.DoesNotExist:
+                bass = None
+                print('missing')
+            defaults = {
+                'representing': rep,
+                'tenor': tenor,
+                'lead': lead,
+                'baritone': baritone,
+                'bass': bass,
+                'is_evaluation': False,
+                'is_private': False,
+            }
+            entry, meta = Entry.objects.update_or_create(
+                session=session,
+                entity=quartet,
+                defaults=defaults,
+            )
+            contestant, meta = Contestant.objects.update_or_create(
+                contest=contest,
+                entry=entry,
+            )
+    return
+
+
 def update_officers():
     now = timezone.now()
     officers = Member.objects.filter(end_date__gt=now)
