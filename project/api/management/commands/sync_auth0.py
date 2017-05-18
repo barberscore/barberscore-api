@@ -91,4 +91,7 @@ class Command(BaseCommand):
         )
         for user in users:
             account, response = self.update_or_create_auth0(user)
+            if response == 'Created':
+                user.auth0_id = account['user_id']
+                user.save()
             log.info("{1}: {0}".format(account['user_id'], response))
