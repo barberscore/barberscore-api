@@ -216,8 +216,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 class EntitySerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
-    image_url = serializers.SerializerMethodField()
-
 
     class Meta:
         model = Entity
@@ -241,8 +239,6 @@ class EntitySerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'image',
-            'image_url',
             'description',
             'parent',
             # 'children',
@@ -255,11 +251,6 @@ class EntitySerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
-        return None
-
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -271,7 +262,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'image',
             'men',
             'risers',
             'is_evaluation',
@@ -380,7 +370,6 @@ class ParticipantSerializer(serializers.ModelSerializer):
 class PersonSerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
-    image_thumbnail = serializers.SerializerMethodField()
 
     class Meta:
         model = Person
@@ -405,8 +394,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'image',
-            'image_thumbnail',
             'description',
             'common_name',
             'full_name',
@@ -439,17 +426,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
         ]
-
-    def get_image_thumbnail(self, obj):
-        if obj.image:
-            return obj.image.build_url(
-                width=100,
-                height=100,
-                gravity="auto:face",
-                crop="thumb",
-            )
-        return None
-
 
 class RepertorySerializer(serializers.ModelSerializer):
 
