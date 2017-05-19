@@ -1,0 +1,38 @@
+
+{{name}},
+
+As I believe Dusty had mentioned in another email, we're going to be using
+our new contest manager (currently called "Barberscore") to register quartets
+and choruses for the International Convention.  Here is your formal invitation
+to try the new system!
+
+If you experience problems, get stuck, or otherwise need help, please feel free
+to text/call me on my cell phone at 415.713.2126.  We've done our best to make
+this a simple, stable process but it is still brand new and we're expecting
+there to be a few hiccups.  We're here to help.
+
+Currently, the only persons who are able to access the system are the chapter
+President, Treasurer, Secretary and Chorus Manager.  For your chapter, that
+means the following people can log in using these emails:
+
+{% for contact in contacts %}
+    - {{contact}}
+{% endfor %}
+
+If you need someone other than these to complete the process, or if this
+list is incomplete/incorrect, please let us know.
+
+We've also provided some helper material which you can find at the following
+links. They are worth reviewing before you get started.  The first is a PDF which
+you can read at your own pace (or download/print) and the second is a 20-minute
+screencast showing you everything you need to know.
+
+  - Tutorial Link: https://www.dropbox.com/s/f1nkojevx4mz156/Barberscore%20Tutorial.pdf?dl=0
+  - Screencast Link:  https://youtu.be/hWkkMsWlPoE
+
+That's it for now! Once you're ready to go, have one of your officers get the
+process started by to https://barberscore.com
+
+Thanks!
+
+Dave

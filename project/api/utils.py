@@ -12,6 +12,8 @@ from datetime import datetime
 
 
 # Django
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Q
@@ -49,6 +51,49 @@ def download(url, file_name):
         response = requests.get(url)
         # write to file
         file.write(response.content)
+
+
+def send_chorus_invite(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            if not row[6]:
+                continue
+            name = row[1]
+            chorus = Entity.objects.get(
+                bhs_id=int(row[6]),
+            )
+            contacts = []
+            for officer in chorus.officers.all():
+                contact = "{0}; {1}".format(
+                    officer.person.common_name,
+                    officer.person.user.email,
+                )
+                contacts.append(contact)
+            title = chorus.nomen
+            context = {
+                'name': name,
+                'title': title,
+                'contacts': contacts,
+            }
+            rendered = render_to_string('chorus_invite.txt', context)
+            email = EmailMessage(
+                subject='Contest Entry Invitation for {0}'.format(title),
+                body=rendered,
+                from_email='David Binetti <admin@barberscore.com>',
+                to=[
+                    row[3],
+                ],
+                cc=[
+                    'Dusty Schleier <dschleier@barbershop.org>',
+                    'David Mills <proclamation56@gmail.com>',
+                ],
+            )
+            email.send()
+
+
 
 
 def import_chorus_competitors(path):
