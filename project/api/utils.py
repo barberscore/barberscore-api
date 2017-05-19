@@ -89,9 +89,10 @@ def send_chorus_invite(path):
                 cc=[
                     'Dusty Schleier <dschleier@barbershop.org>',
                     'David Mills <proclamation56@gmail.com>',
+                    'David Binetti <dbinetti@gmail.com.',
                 ],
             )
-            email.send()
+            log.info(email.send())
 
 
 
