@@ -511,7 +511,7 @@ class EntryAdmin(admin.ModelAdmin):
         'bhs_id',
         'image',
         'session',
-        # 'group',
+        'entity',
         # 'district',
         # 'division',
         'risers',
