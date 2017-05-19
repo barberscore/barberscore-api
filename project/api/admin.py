@@ -552,7 +552,7 @@ class EntryAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'session',
-        # 'group',
+        'entity',
         'tenor',
         'lead',
         'baritone',
