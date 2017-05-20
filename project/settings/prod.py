@@ -69,12 +69,6 @@ MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'root': {
-        'level': 'ERROR',
-        'handlers': [
-            'bugsnag',
-        ],
-    },
     'loggers': {
         'api': {
             'handlers': [
@@ -88,10 +82,6 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
-        },
-        'bugsnag': {
-            'level': 'ERROR',
-            'class': 'bugsnag.handlers.BugsnagHandler'
         },
     },
 }
