@@ -53,47 +53,43 @@ def download(url, file_name):
         file.write(response.content)
 
 
-def send_chorus_invite(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            if not row[6]:
-                continue
-            name = row[1]
-            chorus = Entity.objects.get(
-                bhs_id=int(row[6]),
-            )
-            contacts = []
-            for officer in chorus.officers.all():
-                contact = "{0}; {1}".format(
-                    officer.person.common_name,
-                    officer.person.user.email,
-                )
-                contacts.append(contact)
-            title = chorus.nomen
-            context = {
-                'name': name,
-                'title': title,
-                'contacts': contacts,
-            }
-            rendered = render_to_string('chorus_invite.txt', context)
-            email = EmailMessage(
-                subject='Contest Entry Invitation for {0}'.format(title),
-                body=rendered,
-                from_email='David Binetti <admin@barberscore.com>',
-                to=[
-                    row[3],
-                ],
-                cc=[
-                    'Dusty Schleier <dschleier@barbershop.org>',
-                    'David Mills <proclamation56@gmail.com>',
-                    'David Binetti <dbinetti@gmail.com>',
-                ],
-            )
-            result = email.send()
-            log.info(result)
+def send_chorus_invite(chorus):
+    contacts = []
+    for officer in chorus.officers.all():
+        contact = "{0}; {1}".format(
+            officer.person.common_name,
+            officer.person.user.email,
+        )
+        contacts.append(contact)
+    title = chorus.nomen
+    secretary = chorus.officers.filter(
+        office__short_name='CSEC',
+        status=Office.STATUS.active,
+    ).first()
+    if not secretary:
+        log.error("No Secretary {0}".format(chorus))
+        return
+    context = {
+        'name': secretary.person.first_name,
+        'title': title,
+        'contacts': contacts,
+    }
+    rendered = render_to_string('chorus_invite.txt', context)
+    email = EmailMessage(
+        subject='Contest Entry Invitation for {0}'.format(title),
+        body=rendered,
+        from_email='David Binetti <admin@barberscore.com>',
+        to=[
+            secretary.person.email,
+        ],
+        cc=[
+            'Dusty Schleier <dschleier@barbershop.org>',
+            'David Mills <proclamation56@gmail.com>',
+            'David Binetti <dbinetti@gmail.com>',
+        ],
+    )
+    result = email.send()
+    log.info((result, chorus))
 
 
 def send_quartet_invite(quartet):

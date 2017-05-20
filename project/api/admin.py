@@ -476,9 +476,9 @@ class EntityAdmin(admin.ModelAdmin):
 
     inlines = [
         AwardInline,
-        MemberInline,
         RepertoryInline,
         OfficerInline,
+        MemberInline,
     ]
 
     readonly_fields = [
