@@ -11,16 +11,10 @@ to text/call me on my cell phone at 415.713.2126.  We've done our best to make
 this a simple, stable process but it is still brand new and we're expecting
 there to be a few hiccups.  We're here to help.
 
-Currently, the only persons who are able to access the system are the chapter
-President, Treasurer, Secretary and Chorus Manager.  For your chapter, that
-means the following people can log in using these emails:
-
-{% for contact in contacts %}
-    - {{contact}}
-{% endfor %}
-
-If you need someone other than these to complete the process, or if this
-list is incomplete/incorrect, please let us know.
+Currently, you are the only person from your quartet that is able to access
+the system.  If you need someone other than yourself to complete the process,
+please let us know.  For the purposes of logging in, use the email address
+to which this message was sent.
 
 We've also provided some helper material which you can find at the following
 links. They are worth reviewing before you get started.  The first is a PDF which
@@ -30,8 +24,8 @@ screencast showing you everything you need to know.
   - Tutorial Link: https://www.dropbox.com/s/f1nkojevx4mz156/Barberscore%20Tutorial.pdf?dl=0
   - Screencast Link:  https://youtu.be/GgjqriAl6UE
 
-That's it for now! Once you're ready to go, have one of your officers get the
-process started by to https://barberscore.com
+That's it for now! Once you're ready to go, get the process started by
+going to https://barberscore.com.
 
 Thanks!
 

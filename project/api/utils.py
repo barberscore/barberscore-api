@@ -89,12 +89,39 @@ def send_chorus_invite(path):
                 cc=[
                     'Dusty Schleier <dschleier@barbershop.org>',
                     'David Mills <proclamation56@gmail.com>',
-                    'David Binetti <dbinetti@gmail.com.',
+                    'David Binetti <dbinetti@gmail.com>',
                 ],
             )
-            log.info(email.send())
+            result = email.send()
+            log.info(result)
 
 
+def send_quartet_invite(quartet):
+    title = quartet.name
+    rep = quartet.officers.get(
+        office__short_name='QREP',
+    )
+    name = rep.person.first_name
+    email = rep.person.email
+    context = {
+        'name': name,
+    }
+    rendered = render_to_string('quartet_invite.txt', context)
+    email = EmailMessage(
+        subject='Contest Entry Invitation for {0}'.format(title),
+        body=rendered,
+        from_email='David Binetti <admin@barberscore.com>',
+        to=[
+            email,
+        ],
+        cc=[
+            'Dusty Schleier <dschleier@barbershop.org>',
+            'David Mills <proclamation56@gmail.com>',
+            'David Binetti <dbinetti@gmail.com>',
+        ],
+    )
+    result = email.send()
+    log.info(result)
 
 
 def import_chorus_competitors(path):
