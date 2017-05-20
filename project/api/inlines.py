@@ -145,7 +145,7 @@ class EntryInline(admin.TabularInline):
     ]
     readonly_fields = [
         'nomen',
-        'seed',
+        # 'seed',
     ]
     raw_id_fields = [
         'session',

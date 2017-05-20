@@ -475,9 +475,10 @@ class EntityAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        AwardInline,
+        # AwardInline,
         RepertoryInline,
         OfficerInline,
+        # EntryInline,
         MemberInline,
     ]
 
@@ -512,6 +513,7 @@ class EntryAdmin(admin.ModelAdmin):
         'image',
         'session',
         'entity',
+        'representing',
         # 'district',
         # 'division',
         'risers',
@@ -543,7 +545,7 @@ class EntryAdmin(admin.ModelAdmin):
     inlines = [
         AppearanceInline,
         ContestantInline,
-        SubmissionInline,
+        # SubmissionInline,
     ]
 
     search_fields = (
@@ -553,6 +555,7 @@ class EntryAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'session',
         'entity',
+        'representing',
         'tenor',
         'lead',
         'baritone',
