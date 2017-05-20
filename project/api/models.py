@@ -3000,11 +3000,11 @@ class Repertory(TimeStampedModel):
         return False
 
     # Transitions
-    @transition(field=status, source=[STATUS.new, STATUS.invalid], target=STATUS.valid)
+    @transition(field=status, source='*', target=STATUS.valid)
     def validate(self, *args, **kwargs):
         return
 
-    @transition(field=status, source=[STATUS.new, STATUS.valid], target=STATUS.invalid)
+    @transition(field=status, source='*', target=STATUS.invalid)
     def invalidate(self, *args, **kwargs):
         return
 
