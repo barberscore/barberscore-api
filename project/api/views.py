@@ -19,7 +19,10 @@ from rest_framework.parsers import (
     FormParser,
     MultiPartParser,
 )
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+)
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
 
@@ -683,12 +686,11 @@ class UserViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "user"
 
-    @list_route(methods=['get'], permission_classes=[AllowAny])
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
-        if request.user.is_authenticated:
-            serializer = self.get_serializer(request.user)
-            return Response(serializer.data)
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
 
 
 # CSV View
