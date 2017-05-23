@@ -2618,6 +2618,20 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
+        (5, 'director', 'Director'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+        null=True,
+        blank=True,
+    )
+
     website = models.URLField(
         help_text="""
             The website URL of the resource.""",
