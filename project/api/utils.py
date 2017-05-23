@@ -179,6 +179,109 @@ def import_chorus_competitors(path):
     return
 
 
+def import_persons_v2(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0])
+            prefix_name = row[2].strip()
+            first_name = row[3].strip()
+            middle_name = row[4].strip()
+            if len(middle_name) == 1:
+                middle_name = "{0}.".format(middle_name)
+            last_name = row[5].strip()
+            suffix_name = row[6].strip()
+            nick_name = row[102].strip()
+            if nick_name and (nick_name != first_name):
+                nick_name = "({0})".format(nick_name)
+            else:
+                nick_name = None
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            prefix_name,
+                            first_name,
+                            middle_name,
+                            last_name,
+                            suffix_name,
+                            nick_name,
+                        ]
+                    )
+                )
+            )
+
+            spouse = row[104].strip()
+
+            email = row[45].strip()
+            if not email:
+                email = None
+
+            address1 = row[61].strip()
+            city = row[65].strip()
+            state = row[67].strip()
+            postal_code = row[68].strip()
+            country = row[69].strip()
+            address = "{0}; {1}, {2}  {3}".format(
+                address1,
+                city,
+                state,
+                postal_code,
+            )
+            if "NULL" in address:
+                address = ""
+
+            if country == 'United States' and str(row[39]) != 'NULL':
+                cell_phone = "+1{0}{1}".format(
+                    str(row[39]).strip(),
+                    str(row[40]).replace("-", "").strip(),
+                )
+            else:
+                cell_phone = ""
+            if country == 'United States' and str(row[73]) != 'NULL':
+                home_phone = "+1{0}{1}".format(
+                    str(row[73]).strip(),
+                    str(row[74]).replace("-", "").strip(),
+                )
+            else:
+                home_phone = ""
+
+            birth_date = dateparse.parse_datetime(row[94]).date()
+
+            try:
+                part = int(row[130])
+            except ValueError:
+                part = None
+
+            start_date = dateparse.parse_datetime(row[134]).date()
+            dues_thru = dateparse.parse_datetime(row[135]).date()
+
+
+            defaults = {
+                'name': name,
+                'spouse': spouse,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': cell_phone,
+                'home_phone': home_phone,
+                'start_date': start_date,
+                'dues_thru': dues_thru,
+                'part': part,
+            }
+            try:
+                person, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            except IntegrityError as e:
+                log.error(e)
+            print(person, created)
+
+
 def import_quartet_competitors(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
@@ -395,10 +498,12 @@ def import_chapter_membership(path):
             try:
                 chapter = Entity.objects.get(bhs_id=int(row[1]))
             except Entity.DoesNotExist as e:
+                # log.error((e, row))
                 continue
             try:
                 person = Person.objects.get(bhs_id=int(row[0]))
             except Person.DoesNotExist as e:
+                log.error((e, row))
                 continue
             start_date = dateparse.parse_datetime(row[3]).date()
             end_date = dateparse.parse_datetime(row[4]).date()
@@ -411,7 +516,7 @@ def import_chapter_membership(path):
                 entity=chapter,
                 defaults=defaults,
             )
-            log.info((member, created))
+            print(member, created)
 
 
 def import_quartet_membership(path):
