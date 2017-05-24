@@ -135,12 +135,6 @@ def test_song_admin_list(admin_client, song):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_submission_admin_list(admin_client, submission):
-    path = reverse('admin:api_submission_changelist')
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_venue_admin_list(admin_client, venue):
     path = reverse('admin:api_venue_changelist')
     response = admin_client.get(path)
@@ -269,12 +263,6 @@ def test_slot_admin_detail(admin_client, slot):
 
 def test_song_admin_detail(admin_client, song):
     path = reverse('admin:api_song_change', args=(str(song.id),))
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_submission_admin_detail(admin_client, submission):
-    path = reverse('admin:api_submission_change', args=(str(submission.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

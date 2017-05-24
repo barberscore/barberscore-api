@@ -47,7 +47,6 @@ from .filters import (
     RoundFilter,
     ScoreFilter,
     SessionFilter,
-    SubmissionFilter,
     VenueFilter,
 )
 from .models import (
@@ -71,7 +70,6 @@ from .models import (
     Session,
     Slot,
     Song,
-    Submission,
     User,
     Venue,
 )
@@ -100,7 +98,6 @@ from .serializers import (
     SessionSerializer,
     SlotSerializer,
     SongSerializer,
-    SubmissionSerializer,
     UserSerializer,
     VenueSerializer,
 )
@@ -363,7 +360,6 @@ class EntryViewSet(
         'participants',
         'contestants',
         'appearances',
-        'submissions',
     ).order_by('nomen')
     serializer_class = EntrySerializer
     filter_class = EntryFilter
@@ -512,7 +508,6 @@ class RepertoryViewSet(
         'entity',
         'chart',
     ).prefetch_related(
-        'submissions',
     ).order_by('nomen')
     serializer_class = RepertorySerializer
     filter_class = None
@@ -617,7 +612,6 @@ class SlotViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
-        'submission',
         'chart',
     ).prefetch_related(
         'scores',
@@ -633,25 +627,6 @@ class SongViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "song"
-
-
-class SubmissionViewSet(viewsets.ModelViewSet):
-    queryset = Submission.objects.select_related(
-        'entry',
-    ).prefetch_related(
-        'songs',
-    ).order_by('nomen')
-    serializer_class = SubmissionSerializer
-    filter_class = SubmissionFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "submission"
 
 
 class VenueViewSet(viewsets.ModelViewSet):

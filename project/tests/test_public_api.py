@@ -133,12 +133,6 @@ def test_song_endpoint_list(bhs_member, song):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_submission_endpoint_list(bhs_member, submission):
-    path = reverse('submission-list')
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_venue_endpoint_list(bhs_member, venue):
     path = reverse('venue-list')
     response = bhs_member.get(path)
@@ -269,12 +263,6 @@ def test_slot_endpoint_detail(bhs_member, slot):
 
 def test_song_endpoint_detail(bhs_member, song):
     path = reverse('song-detail', args=(str(song.id),))
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_submission_endpoint_detail(bhs_member, submission):
-    path = reverse('submission-detail', args=(str(submission.id),))
     response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 

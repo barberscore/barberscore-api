@@ -23,7 +23,6 @@ from .inlines import (
     ScoreInline,
     SessionInline,
     SongInline,
-    SubmissionInline,
 )
 
 from .models import (
@@ -47,7 +46,6 @@ from .models import (
     Session,
     Slot,
     Song,
-    Submission,
     User,
     Venue,
 )
@@ -545,7 +543,6 @@ class EntryAdmin(admin.ModelAdmin):
     inlines = [
         AppearanceInline,
         ContestantInline,
-        # SubmissionInline,
     ]
 
     search_fields = (
@@ -992,7 +989,6 @@ class SongAdmin(admin.ModelAdmin):
         # 'name',
         # 'status',
         'appearance',
-        'submission',
         'chart',
         'num',
 
@@ -1004,7 +1000,6 @@ class SongAdmin(admin.ModelAdmin):
         # 'status',
         # 'title',
         'appearance',
-        'submission',
         'num',
     )
 
@@ -1027,7 +1022,6 @@ class SongAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'appearance',
-        'submission',
         'chart',
     )
 
@@ -1035,45 +1029,6 @@ class SongAdmin(admin.ModelAdmin):
         'nomen',
         'num',
     )
-
-
-@admin.register(Submission)
-class SubmissionAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        # 'name',
-        'status',
-        'entry',
-        'title',
-        'bhs_id',
-        'repertory',
-        'arrangers',
-        'composers',
-        'lyricists',
-        'holders',
-        # 'source',
-        'is_medley',
-        'is_parody',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-        'title',
-        'arrangers',
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    raw_id_fields = (
-        'entry',
-    )
-
-    readonly_fields = [
-        'nomen',
-    ]
 
 
 @admin.register(Venue)

@@ -38,7 +38,6 @@ from api.models import (
     Session,
     Slot,
     Song,
-    Submission,
     User,
     Venue,
 )
@@ -322,27 +321,9 @@ class SongFactory(DjangoModelFactory):
     num = 1
     appearance = SubFactory('api.factories.AppearanceFactory')
     chart = None
-    submission = None
 
     class Meta:
         model = Song
-
-
-class SubmissionFactory(DjangoModelFactory):
-    status = Submission.STATUS.new
-    title = 'Test Song Title'
-    bhs_id = None
-    is_medley = False
-    is_parody = False
-    arrangers = ''
-    composers = ''
-    lyricists = ''
-    holders = ''
-    entry = SubFactory('api.factories.EntryFactory')
-    repertory = SubFactory('api.factories.RepertoryFactory')
-
-    class Meta:
-        model = Submission
 
 
 class VenueFactory(DjangoModelFactory):

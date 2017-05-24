@@ -30,9 +30,9 @@ class Command(BaseCommand):
             'Round',
             'Score',
             'Session',
+            'Participant',
             'Slot',
             'Song',
-            'Submission',
         ]
 
         for model in models:

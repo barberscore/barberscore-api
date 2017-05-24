@@ -20,7 +20,6 @@ from .models import (
     Round,
     Score,
     Session,
-    Submission,
     Venue,
 )
 
@@ -268,16 +267,6 @@ class SessionFilter(FilterSet):
                 'exact',
             ],
             'convention__assignments__kind': [
-                'exact',
-            ],
-        }
-
-
-class SubmissionFilter(FilterSet):
-    class Meta:
-        model = Submission
-        fields = {
-            'status': [
                 'exact',
             ],
         }

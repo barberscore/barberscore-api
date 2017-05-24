@@ -27,7 +27,6 @@ from api.factories import (
     SessionFactory,
     SlotFactory,
     SongFactory,
-    SubmissionFactory,
     UserFactory,
     VenueFactory,
 )
@@ -177,11 +176,6 @@ def slot():
 @pytest.fixture
 def song():
     return SongFactory()
-
-
-@pytest.fixture
-def submission():
-    return SubmissionFactory()
 
 
 @pytest.fixture

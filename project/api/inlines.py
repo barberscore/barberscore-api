@@ -17,7 +17,6 @@ from .models import (
     Score,
     Session,
     Song,
-    Submission,
 )
 
 
@@ -277,18 +276,5 @@ class RoundInline(admin.TabularInline):
     readonly_fields = [
         'nomen',
     ]
-    show_change_link = True
-    extra = 0
-
-
-class SubmissionInline(admin.TabularInline):
-    model = Submission
-    fields = [
-        'title',
-        'is_medley',
-        'is_parody',
-        'entry',
-    ]
-
     show_change_link = True
     extra = 0

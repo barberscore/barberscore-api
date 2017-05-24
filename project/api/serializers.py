@@ -29,7 +29,6 @@ from .models import (
     Session,
     Slot,
     Song,
-    Submission,
     User,
     Venue,
 )
@@ -280,7 +279,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'participants',
             'appearances',
             'contestants',
-            'submissions',
             'permissions',
         )
 
@@ -440,7 +438,6 @@ class RepertorySerializer(serializers.ModelSerializer):
             'status',
             'entity',
             'chart',
-            'submissions',
             'permissions',
         )
         validators = [
@@ -572,30 +569,6 @@ class SongSerializer(serializers.ModelSerializer):
             'scores',
             'permissions',
         )
-
-
-class SubmissionSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Submission
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'title',
-            'bhs_id',
-            'is_medley',
-            'is_parody',
-            'arrangers',
-            'composers',
-            'lyricists',
-            'holders',
-            'entry',
-            'repertory',
-            'permissions',
-        ]
 
 
 class VenueSerializer(serializers.ModelSerializer):

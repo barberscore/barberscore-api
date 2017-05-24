@@ -37,7 +37,6 @@ from .models import (
     Member,
     Person,
     Session,
-    Submission,
     User,
 )
 
@@ -1601,65 +1600,6 @@ def import_db_divisions(path):
 #             entry.is_evaluation = is_evaluation
 #             entry.bhs_id = int(row[0])
 #             entry.save()
-
-
-# def import_db_submissions(path):
-#     with open(path) as f:
-#         reader = csv.reader(f, skipinitialspace=True)
-#         rows = [row for row in reader]
-#         for row in rows:
-#             bhs_id = int(row[0])
-#             title = row[1].strip()
-#             if row[2]:
-#                 bhs_marketplace = int(row[2])
-#             else:
-#                 bhs_marketplace = None
-#             if bhs_marketplace:
-#                 try:
-#                     chart = Chart.objects.get(
-#                         bhs_marketplace=bhs_marketplace,
-#                     )
-#                     log.info('Found chart by marketplace')
-#                 except Chart.DoesNotExist:
-#                     log.info('No marketplace: {0} {1}'.format(bhs_id, title))
-#                     chart = None
-#             else:
-#                 chart = None
-#             if not chart:
-#                 try:
-#                     chart = Chart.objects.get(
-#                         title=title,
-#                         bhs_marketplace=None,
-#                     )
-#                     log.info('Found chart by title')
-#                 except Chart.DoesNotExist:
-#                     if bhs_marketplace:
-#                         chart = Chart.objects.create(
-#                             title=title,
-#                             bhs_marketplace=bhs_marketplace,
-#                         )
-#                         log.info("Create chart with id: {0} {1}".format(title, bhs_marketplace))
-#                     else:
-#                         chart = Chart.objects.create(
-#                             title=title,
-#                         )
-#                         log.info("Create chart with no id: {0}".format(title))
-#                 except Chart.MultipleObjectsReturned:
-#                     chart = Chart.objects.filter(
-#                         title=title,
-#                         bhs_marketplace=None,
-#                     ).first()
-#                     log.info("Pick first chart: {0}".format(title))
-#             entries = Entry.objects.filter(
-#                 group__bhs_id=bhs_id,
-#                 session__convention__year=2016,
-#             )
-#             for entry in entries:
-#                 submission, created = Submission.objects.get_or_create(
-#                     entry=entry,
-#                     chart=chart,
-#                 )
-#                 print submission, created
 
 
 # def import_db_representing(path):

@@ -133,12 +133,6 @@ def test_song_endpoint_list(api_client, song):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_submission_endpoint_list(api_client, submission):
-    path = reverse('submission-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_venue_endpoint_list(api_client, venue):
     path = reverse('venue-list')
     response = api_client.get(path)
@@ -269,12 +263,6 @@ def test_slot_endpoint_detail(api_client, slot):
 
 def test_song_endpoint_detail(api_client, song):
     path = reverse('song-detail', args=(str(song.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_submission_endpoint_detail(api_client, submission):
-    path = reverse('submission-detail', args=(str(submission.id),))
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
