@@ -1723,8 +1723,8 @@ class Entry(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'submitted', 'Submitted',),
         (20, 'accepted', 'Accepted',),
-        (30, 'declined', 'Declined',),
-        (40, 'dropped', 'Dropped',),
+        (30, 'rejected', 'Rejected',),
+        (40, 'withdrew', 'Withdrew',),
         (50, 'validated', 'Validated',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
@@ -2093,6 +2093,18 @@ class Entry(TimeStampedModel):
     # Transitions
     @transition(field=status, source='*', target=STATUS.submitted)
     def submit(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.accepted)
+    def accept(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.rejected)
+    def reject(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.withdrew)
+    def withdraw(self, *args, **kwargs):
         return
 
 

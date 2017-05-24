@@ -345,7 +345,10 @@ class EntityViewSet(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class EntryViewSet(viewsets.ModelViewSet):
+class EntryViewSet(
+    get_viewset_transition_action_mixin(Entry),
+    viewsets.ModelViewSet
+):
     queryset = Entry.objects.select_related(
         'session',
         'entity',
