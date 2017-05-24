@@ -51,6 +51,11 @@ from .models import (
     Venue,
 )
 
+from django_fsm_log.models import StateLog
+
+@admin.register(StateLog)
+class StateLogAdmin(admin.ModelAdmin):
+    pass
 
 @admin.register(Appearance)
 class AppearanceAdmin(admin.ModelAdmin):

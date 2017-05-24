@@ -141,6 +141,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'corsheaders',
     'django_fsm',
+    'django_fsm_log',
     'timezone_field',
     'rest_framework',
     'django_filters',

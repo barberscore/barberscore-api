@@ -11,6 +11,7 @@ from django_fsm import (
     FSMIntegerField,
     transition,
 )
+from django_fsm_log.decorators import fsm_log_by
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -2091,6 +2092,7 @@ class Entry(TimeStampedModel):
 
     # Methods
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.submitted)
     def submit(self, *args, **kwargs):
         return
