@@ -12,6 +12,7 @@ from .models import (
     Entry,
     Member,
     Officer,
+    Participant,
     Repertory,
     Round,
     Score,
@@ -160,6 +161,7 @@ class MemberInline(admin.TabularInline):
         'person',
         'entity',
         'status',
+        'part',
     ]
     raw_id_fields = [
         'person',
@@ -190,6 +192,25 @@ class OfficerInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+
+
+class ParticipantInline(admin.TabularInline):
+    model = Participant
+    fields = [
+        'member',
+        'entry',
+        'status',
+        'part',
+    ]
+    raw_id_fields = [
+        'member',
+        'entry',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class RepertoryInline(admin.TabularInline):

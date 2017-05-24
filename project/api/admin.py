@@ -18,6 +18,7 @@ from .inlines import (
     EntryInline,
     MemberInline,
     OfficerInline,
+    ParticipantInline,
     RepertoryInline,
     RoundInline,
     ScoreInline,
@@ -543,6 +544,7 @@ class EntryAdmin(admin.ModelAdmin):
     inlines = [
         AppearanceInline,
         ContestantInline,
+        ParticipantInline,
     ]
 
     search_fields = (
@@ -580,6 +582,7 @@ class MemberAdmin(admin.ModelAdmin):
         'end_date',
         'entity',
         'person',
+        'part',
     ]
     list_display = [
         'status',
@@ -587,6 +590,7 @@ class MemberAdmin(admin.ModelAdmin):
         'end_date',
         'entity',
         'person',
+        'part',
     ]
     raw_id_fields = [
         'person',
@@ -656,10 +660,19 @@ class ParticipantAdmin(admin.ModelAdmin):
         'status',
         'entry',
         'member',
+        'part',
+    ]
+
+    list_display = [
+        'status',
+        'entry',
+        'member',
+        'part',
     ]
 
     list_filter = (
         'status',
+        'part',
     )
 
     readonly_fields = [
@@ -692,6 +705,7 @@ class PersonAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
         'dues_thru',
+        'part',
         'mon',
         'spouse',
         'location',
@@ -710,6 +724,7 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'bhs_id',
+        'part',
         'representing',
         'location',
         'website',
@@ -719,6 +734,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'part',
     ]
 
     readonly_fields = [
