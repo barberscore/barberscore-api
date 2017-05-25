@@ -3062,7 +3062,18 @@ class Repertory(TimeStampedModel):
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        if request.user.is_authenticated():
+            return any([
+                request.user.person.officers.filter(
+                    office__short_name__startswith='SCJC',
+                    status=Officer.STATUS.active,
+                ),
+                self.entity.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                )
+            ])
+        return False
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
