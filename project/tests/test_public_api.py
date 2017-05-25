@@ -234,7 +234,7 @@ def test_person_endpoint_detail(bhs_member, person):
 def test_repertory_endpoint_detail(bhs_member, repertory):
     path = reverse('repertory-detail', args=(str(repertory.id),))
     response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_round_endpoint_detail(bhs_member, round):
