@@ -37,6 +37,8 @@ from django.db import models
 from django.utils.encoding import (
     smart_text,
 )
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 # Local
 from .managers import UserManager
@@ -1930,6 +1932,41 @@ class Entry(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def send_submit_confirm(self):
+        contacts = []
+        group = self.entity.nomen
+        for officer in self.entity.officers.all():
+            contacts.append(
+                "{0} <{1}>".format(
+                    officer.person.common_name,
+                    officer.person.email,
+                )
+            )
+        if not contacts:
+            log.error(self)
+            return
+        context = {
+            'group': group,
+        }
+        rendered = render_to_string('submit_confirm.txt', context)
+        email = EmailMessage(
+            subject='Contest Entry Submission Confirmation for {0}'.format(group),
+            body=rendered,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=contacts,
+            cc=[
+                'Dusty Schleier <dschleier@barbershop.org>',
+                'David Mills <proclamation56@gmail.com>',
+                'David Binetti <dbinetti@gmail.com>',
+            ],
+        )
+        result = email.send()
+        if result == 1:
+            log.info(self)
+        else:
+            log.error(self)
+
+
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -2095,6 +2132,7 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.submitted)
     def submit(self, *args, **kwargs):
+        self.send_submit_confirm()
         return
 
     @transition(field=status, source='*', target=STATUS.accepted)
