@@ -23,8 +23,8 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
             if request.user.is_staff:
                 return queryset.all()
             else:
-                # return queryset.filter(
-                #     song__appearance__entry__group__roles__person__user=request.user,
-                # )
-                return queryset.all()
+                return queryset.filter(
+                    song__appearance__entry__entity__officers__person__user=request.user,
+                )
+                # return queryset.all()
         return queryset.none()
