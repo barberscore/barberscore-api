@@ -52,6 +52,41 @@ def download(url, file_name):
         file.write(response.content)
 
 
+def send_invite(entity):
+    contacts = []
+    group = entity.nomen
+    for officer in entity.officers.all():
+        contacts.append(
+            "{0} <{1}>".format(
+                officer.person.common_name,
+                officer.person.email,
+            )
+        )
+    if not contacts:
+        log.error(entity)
+        return
+    context = {
+        'group': group,
+    }
+    rendered = render_to_string('invite.txt', context)
+    email = EmailMessage(
+        subject='Barberscore Contest Manager Update for {0}'.format(group),
+        body=rendered,
+        from_email='David Binetti, Barberscore <admin@barberscore.com>',
+        to=contacts,
+        cc=[
+            'Dusty Schleier <dschleier@barbershop.org>',
+            'David Mills <proclamation56@gmail.com>',
+            'David Binetti <dbinetti@gmail.com>',
+        ],
+    )
+    result = email.send()
+    if result == 1:
+        log.info(entity)
+    else:
+        log.error(entity)
+
+
 def send_chorus_invite(chorus):
     contacts = []
     for officer in chorus.officers.all():
