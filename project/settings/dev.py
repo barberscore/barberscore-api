@@ -65,19 +65,25 @@ CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 LOGGING = {
     'version': 1,
     "disable_existing_loggers": False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-    },
     'loggers': {
         'api': {
             'level': 'DEBUG',
             'handlers': [
                 'console',
             ],
+        },
+        'importer': {
+            'level': 'DEBUG',
+            'handlers': [
+                'console',
+            ],
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
         },
     },
     'formatters': {

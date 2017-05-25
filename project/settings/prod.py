@@ -74,18 +74,18 @@ LOGGING = {
             'handlers': [
                 'console',
             ],
-            'level': 'DEBUG',
+            'level': 'ERROR',
         },
         'importer': {
             'handlers': [
                 'console',
             ],
-            'level': 'DEBUG',
+            'level': 'ERROR',
         },
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': 'ERROR',
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
         },

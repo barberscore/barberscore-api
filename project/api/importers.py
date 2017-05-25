@@ -174,8 +174,6 @@ def import_persons_v2(path):
 
             start_date = dateparse.parse_datetime(row[134]).date()
             dues_thru = dateparse.parse_datetime(row[135]).date()
-
-
             defaults = {
                 'name': name,
                 'spouse': spouse,
@@ -415,12 +413,12 @@ def import_quartet_membership(path):
             try:
                 quartet = Entity.objects.get(bhs_id=int(row[1]))
             except Entity.DoesNotExist as e:
-                log.error(e)
+                log.error((e, row))
                 continue
             try:
                 person = Person.objects.get(bhs_id=int(row[3]))
             except Person.DoesNotExist as e:
-                log.error(e)
+                log.error((e, row))
                 continue
             try:
                 start_date = dateparse.parse_datetime(row[10]).date()
