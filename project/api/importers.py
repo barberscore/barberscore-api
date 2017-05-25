@@ -24,7 +24,7 @@ from .models import (
     Session,
 )
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('importer')
 
 
 def download(url, file_name):
@@ -415,10 +415,12 @@ def import_quartet_membership(path):
             try:
                 quartet = Entity.objects.get(bhs_id=int(row[1]))
             except Entity.DoesNotExist as e:
+                log.error(e)
                 continue
             try:
                 person = Person.objects.get(bhs_id=int(row[3]))
             except Person.DoesNotExist as e:
+                log.error(e)
                 continue
             try:
                 start_date = dateparse.parse_datetime(row[10]).date()

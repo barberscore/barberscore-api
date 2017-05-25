@@ -76,6 +76,12 @@ LOGGING = {
             ],
             'level': 'DEBUG',
         },
+        'importer': {
+            'handlers': [
+                'console',
+            ],
+            'level': 'DEBUG',
+        },
     },
     'handlers': {
         'console': {
