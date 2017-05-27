@@ -2116,14 +2116,10 @@ class Entry(TimeStampedModel):
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                self.entity.officers.filter(
+                self.session.convention.assignments.filter(
                     person__user=request.user,
-                    status__gt=0,
+                    category=Assignment.CATEGORY.drcj,
                 ),
-                # request.user.person.officers.filter(
-                #     office__short_name__startswith='SCJC',
-                #     status=Officer.STATUS.active,
-                # ),
             ])
         return False
 
@@ -3618,6 +3614,7 @@ class Score(TimeStampedModel):
 
 
 class Session(TimeStampedModel):
+    # Assignment = config.get_model('Assignment')
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3823,15 +3820,15 @@ class Session(TimeStampedModel):
     def has_object_read_permission(self, request):
         return True
 
+
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):
         if request.user.is_authenticated():
             return any([
-                True,
-                # self.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.assignments.model.CATEGORY.admin,
-                # ),
+                self.convention.assignments.filter(
+                    person__user=request.user,
+                    category=Assignment.CATEGORY.drcj,
+                ),
             ])
         return False
 

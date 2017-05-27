@@ -380,14 +380,14 @@ class ConventionAdmin(admin.ModelAdmin):
     list_display = (
         'nomen',
         'name',
-        'panel',
-        'season',
+        # 'panel',
+        # 'season',
         # 'status',
-        'open_date',
-        'close_date',
+        # 'open_date',
+        # 'close_date',
         'start_date',
         'end_date',
-        'level',
+        'status',
         # 'venue',
     )
 
