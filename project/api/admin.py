@@ -16,7 +16,7 @@ from .inlines import (
     ContestantInline,
     ContestInline,
     EntryInline,
-    MemberInline,
+    # MemberInline,
     OfficerInline,
     ParticipantInline,
     RepertoryInline,
@@ -483,7 +483,7 @@ class EntityAdmin(admin.ModelAdmin):
         RepertoryInline,
         OfficerInline,
         # EntryInline,
-        MemberInline,
+        # MemberInline,
     ]
 
     readonly_fields = [
@@ -755,7 +755,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = [
         OfficerInline,
-        MemberInline,
+        # MemberInline,
         AssignmentInline,
     ]
 
