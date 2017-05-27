@@ -1967,6 +1967,41 @@ class Entry(TimeStampedModel):
             log.error(self)
 
 
+    def send_accept_confirm(self):
+        contacts = []
+        group = self.entity.nomen
+        for officer in self.entity.officers.all():
+            contacts.append(
+                "{0} <{1}>".format(
+                    officer.person.common_name,
+                    officer.person.email,
+                )
+            )
+        if not contacts:
+            log.error((self, 'No contacts'))
+            return
+        context = {
+            'group': group,
+        }
+        rendered = render_to_string('accept_confirm.txt', context)
+        email = EmailMessage(
+            subject='Contest Entry for {0} Accepted!'.format(group),
+            body=rendered,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=contacts,
+            cc=[
+                'Dusty Schleier <dschleier@barbershop.org>',
+                'David Mills <proclamation56@gmail.com>',
+                'David Binetti <dbinetti@gmail.com>',
+            ],
+        )
+        result = email.send()
+        if result == 1:
+            log.info(self)
+        else:
+            log.error(self)
+
+
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -2133,6 +2168,7 @@ class Entry(TimeStampedModel):
 
     @transition(field=status, source='*', target=STATUS.accepted)
     def accept(self, *args, **kwargs):
+        self.send_accept_confirm()
         return
 
     @transition(field=status, source='*', target=STATUS.rejected)

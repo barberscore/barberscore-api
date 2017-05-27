@@ -113,6 +113,7 @@ class AssignmentAdmin(admin.ModelAdmin):
         'kind',
         'convention',
         'person',
+        'category',
     ]
 
     list_display = [
