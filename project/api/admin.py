@@ -1119,6 +1119,7 @@ class UserAdmin(BaseUserAdmin):
 
     search_fields = [
         'email',
+        'person__name',
     ]
     ordering = ('email',)
     filter_horizontal = ()
