@@ -2151,6 +2151,9 @@ class Entry(TimeStampedModel):
                     person__user=request.user,
                     category=Assignment.CATEGORY.drcj,
                 ),
+                self.entity.officers.filter(
+                    status__gt=0,
+                ),
             ])
         return False
 
