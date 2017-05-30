@@ -713,23 +713,19 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
-    composers = models.CharField(
-        max_length=200,
+    composers = models.TextField(
         default='(Unknown Composers)'
     )
 
-    lyricists = models.CharField(
-        max_length=200,
+    lyricists = models.TextField(
         default='(Unknown Lyricists)'
     )
 
-    arrangers = models.CharField(
-        max_length=200,
+    arrangers = models.TextField(
         default='(Unknown Arrangers)'
     )
 
-    holders = models.CharField(
-        max_length=200,
+    holders = models.TextField(
         default='(Unknown Copyright Holders)'
     )
 
