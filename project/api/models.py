@@ -2356,6 +2356,10 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    is_jc = models.BooleanField(
+        default=False,
+    )
+
     is_drcj = models.BooleanField(
         default=False,
     )
