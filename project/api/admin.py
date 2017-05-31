@@ -94,6 +94,7 @@ class AppearanceAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'entry',
+        'round',
     )
 
     search_fields = (
@@ -487,7 +488,7 @@ class EntityAdmin(admin.ModelAdmin):
         MemberInline,
     ]
     other_inlines = [
-        # AwardInline,
+        AwardInline,
         RepertoryInline,
         OfficerInline,
         # EntryInline,
@@ -523,6 +524,7 @@ class EntityAdmin(admin.ModelAdmin):
     def get_formsets(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
             yield inline.get_formset(request, obj)
+
 
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
@@ -654,9 +656,9 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_rep',
     ]
 
-    inlines = [
-        OfficerInline,
-    ]
+    # inlines = [
+    #     OfficerInline,
+    # ]
 
 
 @admin.register(Officer)
