@@ -12,7 +12,10 @@ from django_fsm import (
     transition,
 )
 from django_fsm_log.decorators import fsm_log_by
-from dry_rest_permissions.generics import allow_staff_or_superuser
+from dry_rest_permissions.generics import (
+    allow_staff_or_superuser,
+    authenticated_users,
+)
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from nameparser import HumanName
@@ -271,27 +274,27 @@ class Appearance(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.round.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.round.session.assignments.model.category.ADMIN,
-                # ),
-                # self.entry.session.convention.drcj == request.user.person,
-            ])
+    @authenticated_users
+    def has_write_permission(request):
         return False
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            True,
+            # self.round.session.assignments.filter(
+            #     judge__user=request.user,
+            #     category=self.round.session.assignments.model.category.ADMIN,
+            # ),
+            # self.entry.session.convention.drcj == request.user.person,
+        ])
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.started)
@@ -2354,6 +2357,10 @@ class Office(TimeStampedModel):
     )
 
     is_drcj = models.BooleanField(
+        default=False,
+    )
+
+    is_ca = models.BooleanField(
         default=False,
     )
 
