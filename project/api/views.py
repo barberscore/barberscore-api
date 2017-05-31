@@ -225,12 +225,6 @@ class ChartViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "chart"
-    ordering_fields = [
-        'title',
-    ]
-    ordering = [
-        'title',
-    ]
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -417,7 +411,7 @@ class OfficerViewSet(
         'person',
         'entity',
     ).prefetch_related(
-    )
+    ).order_by('nomen')
     serializer_class = OfficerSerializer
     filter_class = OfficerFilter
     filter_backends = [
