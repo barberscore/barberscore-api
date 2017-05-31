@@ -667,7 +667,7 @@ class Award(TimeStampedModel):
         if request.user.is_authenticated():
             return any([
                 request.user.person.officers.filter(
-                    office__short_name='DRCJ'
+                    office__is_drcj=True,
                 )
             ])
         return False
@@ -2152,6 +2152,7 @@ class Entry(TimeStampedModel):
                     category=Assignment.CATEGORY.drcj,
                 ),
                 self.entity.officers.filter(
+                    person__user=request.user,
                     status__gt=0,
                 ),
             ])

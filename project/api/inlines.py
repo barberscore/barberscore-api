@@ -173,10 +173,6 @@ class MemberInline(admin.TabularInline):
     )
     show_change_link = True
     extra = 0
-    classes = [
-        'collapse',
-    ]
-
 
 class OfficerInline(admin.TabularInline):
     model = Officer
