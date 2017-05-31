@@ -2352,6 +2352,10 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    is_drcj = models.BooleanField(
+        default=False,
+    )
+
     short_name = models.CharField(
         max_length=255,
         blank=True,

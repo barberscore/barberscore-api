@@ -619,6 +619,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'short_name',
         'kind',
         'is_cj',
+        'is_drcj',
     ]
     search_fields = [
         'nomen',
@@ -629,6 +630,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'is_cj',
+        'is_drcj',
     ]
 
     inlines = [
