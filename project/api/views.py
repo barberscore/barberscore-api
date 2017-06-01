@@ -25,6 +25,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
+from django_fsm_log.models import StateLog
 
 from django.db.models import Q
 # Local
@@ -100,6 +101,7 @@ from .serializers import (
     SongSerializer,
     UserSerializer,
     VenueSerializer,
+    StateLogSerializer,
 )
 
 log = logging.getLogger(__name__)
@@ -654,6 +656,26 @@ class UserViewSet(viewsets.ModelViewSet):
     def me(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+
+class StateLogViewSet(viewsets.ModelViewSet):
+    queryset = StateLog.objects.all()
+    serializer_class = StateLogSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    # permission_classes = [
+    #     DRYPermissions,
+    # ]
+    resource_name = "statelog"
+
+    # @list_route(methods=['get'], permission_classes=[IsAuthenticated])
+    # def me(self, request):
+    #     serializer = self.get_serializer(request.user)
+    #     return Response(serializer.data)
 
 
 

@@ -801,7 +801,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = [
         OfficerInline,
-        # MemberInline,
+        MemberInline,
         AssignmentInline,
     ]
 

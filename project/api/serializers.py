@@ -2,6 +2,7 @@
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from django_fsm_log.models import StateLog
 
 # Local
 from .fields import (
@@ -215,7 +216,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 class EntitySerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
-
     class Meta:
         model = Entity
         fields = [
@@ -253,7 +253,7 @@ class EntitySerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-
+    logs = serializers.SerializerMethodField()
     class Meta:
         model = Entry
         fields = (
@@ -276,7 +276,20 @@ class EntrySerializer(serializers.ModelSerializer):
             'appearances',
             'contestants',
             'permissions',
+            'logs',
         )
+    def get_logs(self, obj):
+        # TODO HACKY!!!
+        qs = StateLog.objects.for_(obj).values(
+            'timestamp',
+            'transition',
+            'by',
+        )
+        for q in qs:
+            if q['by']:
+                email = User.objects.get(id=q['by'].hex).person.nomen
+                q['by'] = email
+        return qs
 
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -603,6 +616,12 @@ class UserSerializer(serializers.ModelSerializer):
             'person',
         ]
 
+
+class StateLogSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StateLog
+        fields = '__all__'
 
 class OfficeCSVSerializer(serializers.ModelSerializer):
 

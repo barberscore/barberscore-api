@@ -36,6 +36,30 @@ def download(url, file_name):
         file.write(response.content)
 
 
+def import_aff_membership(path, entity):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            email = row[1].strip()
+            dob = dateparse.parse_date(row[2])
+            name = row[0].strip().title()
+            person, created = Person.objects.get_or_create(
+                email=email,
+            )
+            person.name = name
+            person.email = email
+            person.location = 'UK'
+            person.save()
+            defaults = {'status': 10}
+            Member.objects.update_or_create(
+                entity=entity,
+                person=person,
+                defaults=defaults,
+            )
+
+
 def import_chorus_competitors(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
