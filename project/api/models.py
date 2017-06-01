@@ -282,19 +282,25 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return any([
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            )
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            True,
-            # self.round.session.assignments.filter(
-            #     judge__user=request.user,
-            #     category=self.round.session.assignments.model.category.ADMIN,
-            # ),
-            # self.entry.session.convention.drcj == request.user.person,
+            self.round.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=30,
+                status__gt=0,
+                kind=10,
+            )
         ])
+
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.started)
@@ -418,22 +424,30 @@ class Assignment(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_jc=True,
+                status__gt=0,
+            )
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-            ])
-        return False
+        return any([
+            request.user.person.officers.filter(
+                office__is_jc=True,
+                status__gt=0,
+            )
+        ])
 
 
 class Award(TimeStampedModel):
@@ -656,24 +670,31 @@ class Award(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            )
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                request.user.person.officers.filter(
-                    office__is_drcj=True,
-                )
-            ])
-        return False
+        return any([
+            self.entity.officers.filter(
+                person=request.user.person,
+                office__is_drcj=True,
+                status__gt=0,
+            )
+        ])
 
 
 class Chart(TimeStampedModel):
@@ -823,25 +844,39 @@ class Chart(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.entity.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                )
-            ])
-        return False
+        return any([
+            self.entity.officers.filter(
+                person=request.user.person,
+                office__is_drcj=True,
+                status__gt=0,
+            )
+        ])
 
 
 class Contest(TimeStampedModel):
@@ -931,22 +966,31 @@ class Contest(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            )
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-            ])
-        return False
+        return any([
+            self.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            )
+        ])
 
     # Methods
     def ranking(self, point_total):
@@ -1207,26 +1251,41 @@ class Contestant(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.contest.session.convention.drcj == request.user.person,
-                # self.contest.session.assignments.filter(
-                #     person__user=request.user,
-                # ),
-            ])
-        return False
+        return any([
+            self.contest.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            ),
+            self.entry.entity.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
 
     # Methods
 
@@ -1429,27 +1488,32 @@ class Convention(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                request.user.person.officers.filter(
-                    office__short_name__in=[
-                        'SCJC',
-                        'DRCJ',
-                    ]
-                )
-            ])
-        return False
+        return any([
+            self.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            ),
+        ])
+
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.listed)
@@ -1685,28 +1749,36 @@ class Entity(TimeStampedModel):
 
     # Permissions
     @staticmethod
-    def has_read_permission(request):
-        return True
-
-    @staticmethod
     @allow_staff_or_superuser
-    def has_write_permission(request):
+    def has_read_permission(request):
         return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                )
-            ])
-        return False
+        return any([
+            self.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
 
 
 class Entry(TimeStampedModel):
@@ -2137,29 +2209,41 @@ class Entry(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    category=Assignment.CATEGORY.drcj,
-                ),
-                self.entity.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-            ])
-        return False
+        return any([
+            self.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            ),
+            self.entity.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
 
     # Methods
     # Transitions
@@ -2272,26 +2356,33 @@ class Member(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                request.user.person.officers.filter(
-                    # office__short_name__startswith='SCJC',
-                    # status=Officer.STATUS.active,
-                ),
-                # self.person.user == request.user,
-            ])
+    @authenticated_users
+    def has_write_permission(request):
         return False
+        # return any([
+        #     request.user.person.officers.filter(
+        #         office__is_rep=True,
+        #         status__gt=0,
+        #     ),
+        # ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return False
+        # return any([
+        #     self.entity.officers.filter(
+        #         person=request.user.person,
+        #         office__is_rep=True,
+        #         status__gt=0,
+        #     ),
+        # ])
 
 
 class Office(TimeStampedModel):
@@ -2400,16 +2491,18 @@ class Office(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
         return False
 
@@ -2490,28 +2583,19 @@ class Officer(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                request.user.person.officers.filter(
-                    office__short_name__startswith='SCJC',
-                    status=Officer.STATUS.active,
-                ),
-                self.entity.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                )
-            ])
         return False
 
     # Transitions
@@ -2601,50 +2685,40 @@ class Participant(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.entry.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.round.session.assignments.model.category.ADMIN,
-                # ),
-                # self.entry.group.roles.filter(
-                #     person__user=request.user,
-                #     status=self.entry.roles.model.STATUS.active,
-                # ),
-                # self.entry.session.assignments.filter(
-                #     judge__user=request.user,
-                # ),
-                # self.entry.session.convention.drcj == request.user.person,
-            ])
-        return False
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.entry.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.round.session.assignments.model.category.ADMIN,
-                # ),
-                # self.entry.group.roles.filter(
-                #     person__user=request.user,
-                #     status=self.entry.roles.model.STATUS.active,
-                # )
-                # self.entry.session.assignments.filter(
-                #     judge__user=request.user,
-                # ),
-                # self.entry.session.convention.drcj == request.user.person,
-            ])
-        return False
+        return any([
+            self.entry.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            ),
+            self.entry.entity.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
 
 
 class Person(TimeStampedModel):
@@ -3025,20 +3099,23 @@ class Person(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
-    def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return self.user == request.user
+    @authenticated_users
+    def has_write_permission(request):
         return False
+
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            self == request.user.person,
+        ])
 
 
 class Repertory(TimeStampedModel):
@@ -3104,42 +3181,71 @@ class Repertory(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                request.user.person.officers.filter(
-                    office__short_name__startswith='SCJC',
-                    status=Officer.STATUS.active,
-                ),
-                self.entity.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                )
-            ])
-        return False
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+            self.entity.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                request.user.person.officers.filter(
-                    office__short_name__startswith='SCJC',
-                    status=Officer.STATUS.active,
-                ),
-                self.entity.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                )
-            ])
-        return False
+        return any([
+            self.entity.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.valid)
@@ -3243,26 +3349,32 @@ class Round(TimeStampedModel):
     def has_read_permission(request):
         return True
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return True
 
+    @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                True,
-                # self.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.assignments.model.CATEGORY.admin,
-                # ),
-            ])
-        return False
+        return any([
+            self.entity.officers.filter(
+                person=request.user.person,
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
+
 
     # Methods
     def ranking(self, point_total):
@@ -3627,45 +3739,53 @@ class Score(TimeStampedModel):
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
-        return False
+        return any([
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return any([
+            self.song.appearance.entry.entity.officers.filter(
+                person=request.user.person,
+                office__is_rep=True,
+                status__gt=0,
+            ),
+        ])
+
 
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_write_permission(request):
-        return True
+        return any([
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                False,
-                # self.song.appearance.entry.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.song.appearance.round.session.assignments.model.CATEGORY.admin,
-                # ),
-                # self.song.appearance.entry.group.roles.filter(
-                #     person__user=request.user,
-                #     status=self.song.appearance.entry.group.roles.model.STATUS.active,
-                # ),
-            ])
-        return False
-
-    @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                False,
-                # self.song.appearance.entry.session.assignments.filter(
-                #     judge__user=request.user,
-                #     category=self.song.appearance.round.session.assignments.model.CATEGORY.admin,
-                # ),
-                # self.song.appearance.entry.group.roles.filter(
-                #     person__user=request.user,
-                #     status=self.song.appearance.entry.group.roles.model.STATUS.active,
-                # ),
-            ])
-        return False
+        return any([
+            self.song.appearance.round.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=30,
+                kind=10,
+            ),
+        ])
 
 
 class Session(TimeStampedModel):
@@ -3864,28 +3984,40 @@ class Session(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return any([
+            True,
+        ])
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        return any([
+            True,
+        ])
 
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return any([
-                self.convention.assignments.filter(
-                    person__user=request.user,
-                    category=Assignment.CATEGORY.drcj,
-                ),
-            ])
-        return False
+        return any([
+            self.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=30,
+                kind=10,
+            ),
+        ])
+
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.opened)
@@ -4053,20 +4185,39 @@ class Slot(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return any([
+            True,
+        ])
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        return any([
+            True,
+        ])
+
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        return any([
+            self.round.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=30,
+                kind=10,
+            ),
+        ])
 
 
 class Song(TimeStampedModel):
@@ -4262,20 +4413,39 @@ class Song(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return any([
+            True,
+        ])
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        return any([
+            True,
+        ])
+
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_ca=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        return True
+        return any([
+            self.appearance.round.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=30,
+                kind=10,
+            ),
+        ])
 
     # Transitions
     @transition(field=status, source='*', target=STATUS.published)
@@ -4354,20 +4524,38 @@ class Venue(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return any([
+            True,
+        ])
 
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_write_permission(request):
-        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        return any([
+            True,
+        ])
+
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        return any([
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
+            ),
+        ])
 
 
 class User(AbstractBaseUser):
