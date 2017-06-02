@@ -2253,6 +2253,7 @@ class Entry(TimeStampedModel):
         self.send_submit_confirm()
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.accepted)
     def accept(self, *args, **kwargs):
         self.send_accept_confirm()
