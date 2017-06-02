@@ -43,14 +43,16 @@ def import_aff_membership(path, entity):
         rows = [row for row in reader]
         for row in rows:
             email = row[1].strip()
-            dob = dateparse.parse_date(row[2])
-            name = row[0].strip().title()
+            # dob = dateparse.parse_date(row[2])
+            cell_phone = row[2]
+            name = row[0].strip()
             person, created = Person.objects.get_or_create(
                 email=email,
             )
             person.name = name
             person.email = email
-            person.location = 'UK'
+            person.cell_phone = cell_phone
+            person.location = 'AUS'
             person.save()
             defaults = {'status': 10}
             Member.objects.update_or_create(
