@@ -173,10 +173,6 @@ class EntryFactory(DjangoModelFactory):
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
     entity = SubFactory('api.factories.EntityFactory')
-    tenor = None
-    lead = None
-    baritone = None
-    bass = None
     director = None
     codirector = None
 

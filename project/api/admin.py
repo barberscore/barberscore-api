@@ -560,7 +560,6 @@ class EntryAdmin(admin.ModelAdmin):
         # 'division',
         'risers',
         ('is_evaluation', 'is_private',),
-        ('tenor', 'lead', 'baritone', 'bass',),
         ('director', 'codirector', 'men'),
         'prelim',
         'seed',
@@ -598,10 +597,6 @@ class EntryAdmin(admin.ModelAdmin):
         'session',
         'entity',
         'representing',
-        'tenor',
-        'lead',
-        'baritone',
-        'bass',
         'director',
         'codirector',
     )

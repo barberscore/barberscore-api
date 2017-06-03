@@ -1930,38 +1930,6 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    tenor = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_tenor',
-        on_delete=models.SET_NULL,
-    )
-
-    lead = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_lead',
-        on_delete=models.SET_NULL,
-    )
-
-    baritone = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_baritone',
-        on_delete=models.SET_NULL,
-    )
-
-    bass = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_bass',
-        on_delete=models.SET_NULL,
-    )
-
     director = models.ForeignKey(
         'Person',
         null=True,
