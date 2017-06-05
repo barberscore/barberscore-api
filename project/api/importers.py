@@ -128,14 +128,14 @@ def import_persons_v2(path):
         rows = [row for row in reader]
         for row in rows:
             bhs_id = int(row[0])
-            prefix_name = row[2].strip()
-            first_name = row[3].strip()
-            middle_name = row[4].strip()
+            prefix_name = row[1].strip()
+            first_name = row[2].strip()
+            middle_name = row[3].strip()
             if len(middle_name) == 1:
                 middle_name = "{0}.".format(middle_name)
-            last_name = row[5].strip()
-            suffix_name = row[6].strip()
-            nick_name = row[102].strip()
+            last_name = row[4].strip()
+            suffix_name = row[5].strip()
+            nick_name = row[23].strip()
             if nick_name and (nick_name != first_name):
                 nick_name = "({0})".format(nick_name)
             else:
@@ -156,17 +156,17 @@ def import_persons_v2(path):
                 )
             )
 
-            spouse = row[104].strip()
+            spouse = row[25].strip()
 
-            email = row[45].strip()
+            email = row[6].strip()
             if not email:
                 email = None
 
-            address1 = row[61].strip()
-            city = row[65].strip()
-            state = row[67].strip()
-            postal_code = row[68].strip()
-            country = row[69].strip()
+            address1 = row[10].strip()
+            city = row[14].strip()
+            state = row[16].strip()
+            postal_code = row[17].strip()
+            country = row[15].strip()
             address = "{0}; {1}, {2}  {3}".format(
                 address1,
                 city,
@@ -176,30 +176,30 @@ def import_persons_v2(path):
             if "NULL" in address:
                 address = ""
 
-            if country == 'United States' and str(row[39]) != 'NULL':
+            if country == 'United States' and str(row[8]) != 'NULL':
                 cell_phone = "+1{0}{1}".format(
-                    str(row[39]).strip(),
-                    str(row[40]).replace("-", "").strip(),
+                    str(row[8]).strip(),
+                    str(row[9]).replace("-", "").strip(),
                 )
             else:
                 cell_phone = ""
-            if country == 'United States' and str(row[73]) != 'NULL':
+            if country == 'United States' and str(row[19]) != 'NULL':
                 home_phone = "+1{0}{1}".format(
-                    str(row[73]).strip(),
-                    str(row[74]).replace("-", "").strip(),
+                    str(row[19]).strip(),
+                    str(row[20]).replace("-", "").strip(),
                 )
             else:
                 home_phone = ""
 
-            birth_date = dateparse.parse_datetime(row[94]).date()
+            birth_date = dateparse.parse_datetime(row[22]).date()
 
             try:
                 part = int(row[130])
             except ValueError:
                 part = None
 
-            start_date = dateparse.parse_datetime(row[134]).date()
-            dues_thru = dateparse.parse_datetime(row[135]).date()
+            start_date = dateparse.parse_datetime(row[30]).date()
+            dues_thru = dateparse.parse_datetime(row[31]).date()
             defaults = {
                 'name': name,
                 'spouse': spouse,
