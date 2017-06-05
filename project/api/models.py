@@ -3341,10 +3341,10 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.entity.officers.filter(
+            self.session.convention.assignments.filter(
                 person=request.user.person,
-                office__is_drcj=True,
-                status__gt=0,
+                category__lt=30,
+                kind=10,
             ),
         ])
 
