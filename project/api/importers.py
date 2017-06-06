@@ -36,6 +36,172 @@ def download(url, file_name):
         file.write(response.content)
 
 
+def import_persons(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0])
+            prefix_name = row[1].strip()
+            first_name = row[2].strip()
+            middle_name = row[3].strip()
+            if len(middle_name) == 1:
+                middle_name = "{0}.".format(middle_name)
+            last_name = row[4].strip()
+            suffix_name = row[5].strip()
+            nick_name = row[23].strip()
+            if nick_name and (nick_name != first_name):
+                nick_name = "({0})".format(nick_name)
+            else:
+                nick_name = None
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            prefix_name,
+                            first_name,
+                            middle_name,
+                            last_name,
+                            suffix_name,
+                            nick_name,
+                        ]
+                    )
+                )
+            )
+
+            spouse = row[25].strip()
+
+            email = row[6].strip()
+            if not email:
+                email = None
+
+            address1 = row[10].strip()
+            city = row[14].strip()
+            state = row[16].strip()
+            postal_code = row[17].strip()
+            country = row[15].strip()
+            address = "{0}; {1}, {2}  {3}".format(
+                address1,
+                city,
+                state,
+                postal_code,
+            )
+            if "NULL" in address:
+                address = ""
+
+            if country == 'United States' and str(row[8]) != 'NULL':
+                cell_phone = "+1{0}{1}".format(
+                    str(row[8]).strip(),
+                    str(row[9]).replace("-", "").strip(),
+                )
+            else:
+                cell_phone = ""
+            if country == 'United States' and str(row[19]) != 'NULL':
+                home_phone = "+1{0}{1}".format(
+                    str(row[19]).strip(),
+                    str(row[20]).replace("-", "").strip(),
+                )
+            else:
+                home_phone = ""
+
+            birth_date = dateparse.parse_datetime(row[22]).date()
+
+            try:
+                part = int(row[26])
+            except ValueError:
+                part = None
+
+            start_date = dateparse.parse_datetime(row[30]).date()
+            dues_thru = dateparse.parse_datetime(row[31]).date()
+            defaults = {
+                'name': name,
+                'spouse': spouse,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': cell_phone,
+                'home_phone': home_phone,
+                'start_date': start_date,
+                'dues_thru': dues_thru,
+                'part': part,
+            }
+            try:
+                person, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            except IntegrityError as e:
+                log.error(e)
+            print(person, created)
+
+def import_chapter_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                chapter = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[0]))
+            except Person.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            start_date = dateparse.parse_datetime(row[3]).date()
+            end_date = dateparse.parse_datetime(row[4]).date()
+            defaults = {
+                'start_date': start_date,
+                'end_date': end_date,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=chapter,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
+def import_quartet_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                quartet = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[3]))
+            except Person.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            try:
+                start_date = dateparse.parse_datetime(row[10]).date()
+            except AttributeError:
+                start_date = None
+            # end_date = dateparse.parse_datetime(row[11]).date()
+            part = int(row[7])
+            defaults = {
+                'start_date': start_date,
+                'end_date': None,
+                'part': part,
+                'status': Member.STATUS.active,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=quartet,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
 def import_aff_membership(path, entity):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
@@ -119,107 +285,6 @@ def import_chorus_competitors(path):
                 entry=entry,
             )
     return
-
-
-def import_persons_v2(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            bhs_id = int(row[0])
-            prefix_name = row[1].strip()
-            first_name = row[2].strip()
-            middle_name = row[3].strip()
-            if len(middle_name) == 1:
-                middle_name = "{0}.".format(middle_name)
-            last_name = row[4].strip()
-            suffix_name = row[5].strip()
-            nick_name = row[23].strip()
-            if nick_name and (nick_name != first_name):
-                nick_name = "({0})".format(nick_name)
-            else:
-                nick_name = None
-            name = " ".join(
-                map(
-                    (lambda x: encoding.smart_text(x)),
-                    filter(
-                        None, [
-                            prefix_name,
-                            first_name,
-                            middle_name,
-                            last_name,
-                            suffix_name,
-                            nick_name,
-                        ]
-                    )
-                )
-            )
-
-            spouse = row[25].strip()
-
-            email = row[6].strip()
-            if not email:
-                email = None
-
-            address1 = row[10].strip()
-            city = row[14].strip()
-            state = row[16].strip()
-            postal_code = row[17].strip()
-            country = row[15].strip()
-            address = "{0}; {1}, {2}  {3}".format(
-                address1,
-                city,
-                state,
-                postal_code,
-            )
-            if "NULL" in address:
-                address = ""
-
-            if country == 'United States' and str(row[8]) != 'NULL':
-                cell_phone = "+1{0}{1}".format(
-                    str(row[8]).strip(),
-                    str(row[9]).replace("-", "").strip(),
-                )
-            else:
-                cell_phone = ""
-            if country == 'United States' and str(row[19]) != 'NULL':
-                home_phone = "+1{0}{1}".format(
-                    str(row[19]).strip(),
-                    str(row[20]).replace("-", "").strip(),
-                )
-            else:
-                home_phone = ""
-
-            birth_date = dateparse.parse_datetime(row[22]).date()
-
-            try:
-                part = int(row[130])
-            except ValueError:
-                part = None
-
-            start_date = dateparse.parse_datetime(row[30]).date()
-            dues_thru = dateparse.parse_datetime(row[31]).date()
-            defaults = {
-                'name': name,
-                'spouse': spouse,
-                'email': email,
-                'birth_date': birth_date,
-                'address': address,
-                'cell_phone': cell_phone,
-                'home_phone': home_phone,
-                'start_date': start_date,
-                'dues_thru': dues_thru,
-                'part': part,
-            }
-            try:
-                person, created = Person.objects.update_or_create(
-                    bhs_id=bhs_id,
-                    defaults=defaults,
-                )
-            except IntegrityError as e:
-                log.error(e)
-            print(person, created)
 
 
 def import_quartet_competitors(path):
@@ -367,104 +432,38 @@ def import_aff_competitors(path):
     return
 
 
-def import_membership(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            try:
-                person = Person.objects.get(bhs_id=int(row[0]))
-            except Person.DoesNotExist as e:
-                log.error(e)
-                continue
-            bhs = Entity.objects.get(short_name='BHS')
-            try:
-                start_date = dateparse.parse_datetime(row[57]).date()
-            except AttributeError:
-                start_date = None
-            try:
-                end_date = dateparse.parse_datetime(row[58]).date()
-            except AttributeError:
-                end_date = None
-            defaults = {
-                'start_date': start_date,
-                'end_date': end_date,
-                'status': Member.STATUS.active,
-            }
-            member, created = Member.objects.update_or_create(
-                person=person,
-                entity=bhs,
-                defaults=defaults,
-            )
-            log.info((member, created))
-
-
-def import_chapter_membership(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            try:
-                chapter = Entity.objects.get(bhs_id=int(row[1]))
-            except Entity.DoesNotExist as e:
-                # log.error((e, row))
-                continue
-            try:
-                person = Person.objects.get(bhs_id=int(row[0]))
-            except Person.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            start_date = dateparse.parse_datetime(row[3]).date()
-            end_date = dateparse.parse_datetime(row[4]).date()
-            defaults = {
-                'start_date': start_date,
-                'end_date': end_date,
-            }
-            member, created = Member.objects.update_or_create(
-                person=person,
-                entity=chapter,
-                defaults=defaults,
-            )
-            print(member, created)
-
-
-def import_quartet_membership(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            try:
-                quartet = Entity.objects.get(bhs_id=int(row[1]))
-            except Entity.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            try:
-                person = Person.objects.get(bhs_id=int(row[3]))
-            except Person.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            try:
-                start_date = dateparse.parse_datetime(row[10]).date()
-            except AttributeError:
-                start_date = None
-            # end_date = dateparse.parse_datetime(row[11]).date()
-            part = int(row[7])
-            defaults = {
-                'start_date': start_date,
-                'end_date': None,
-                'part': part,
-                'status': Member.STATUS.active,
-            }
-            member, created = Member.objects.update_or_create(
-                person=person,
-                entity=quartet,
-                defaults=defaults,
-            )
-            log.info((member, created))
-
+# def import_membership(path):
+#     with open(path) as f:
+#         reader = csv.reader(f, skipinitialspace=True)
+#         next(reader)
+#         rows = [row for row in reader]
+#         for row in rows:
+#             try:
+#                 person = Person.objects.get(bhs_id=int(row[0]))
+#             except Person.DoesNotExist as e:
+#                 log.error(e)
+#                 continue
+#             bhs = Entity.objects.get(short_name='BHS')
+#             try:
+#                 start_date = dateparse.parse_datetime(row[57]).date()
+#             except AttributeError:
+#                 start_date = None
+#             try:
+#                 end_date = dateparse.parse_datetime(row[58]).date()
+#             except AttributeError:
+#                 end_date = None
+#             defaults = {
+#                 'start_date': start_date,
+#                 'end_date': end_date,
+#                 'status': Member.STATUS.active,
+#             }
+#             member, created = Member.objects.update_or_create(
+#                 person=person,
+#                 entity=bhs,
+#                 defaults=defaults,
+#             )
+#             log.info((member, created))
+#
 
 def import_chapter_officers(path):
     with open(path) as f:
