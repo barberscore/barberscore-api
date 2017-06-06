@@ -134,7 +134,8 @@ def import_persons(path):
                 )
             except IntegrityError as e:
                 log.error(e)
-            print(person, created)
+            log.info((member, created))
+
 
 def import_chapter_membership(path):
     with open(path) as f:
@@ -142,21 +143,27 @@ def import_chapter_membership(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
+            entity_id = int(row[1])
+            person_id = int(row[0])
+            start_date = dateparse.parse_datetime(row[3]).date()
+            end_date = dateparse.parse_datetime(row[4]).date()
+            if entity_id == 503858:
+                # Skip Placeholder Chapter
+                continue
             try:
-                chapter = Entity.objects.get(bhs_id=int(row[1]))
+                chapter = Entity.objects.get(bhs_id=entity_id)
             except Entity.DoesNotExist as e:
                 log.error((e, row))
                 continue
             try:
-                person = Person.objects.get(bhs_id=int(row[0]))
+                person = Person.objects.get(bhs_id=person_id)
             except Person.DoesNotExist as e:
                 log.error((e, row))
                 continue
-            start_date = dateparse.parse_datetime(row[3]).date()
-            end_date = dateparse.parse_datetime(row[4]).date()
             defaults = {
                 'start_date': start_date,
                 'end_date': end_date,
+                'status': Member.STATUS.active,
             }
             member, created = Member.objects.update_or_create(
                 person=person,
