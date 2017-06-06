@@ -6,6 +6,7 @@ from datetime import datetime
 import requests
 
 from django.db import IntegrityError
+from django.db import transaction
 from django.utils import (
     dateparse,
     encoding,
@@ -20,8 +21,11 @@ from .models import (
     Office,
     Officer,
     Member,
+    Participant,
     Person,
+    Repertory,
     Session,
+    User,
 )
 
 log = logging.getLogger('importer')
@@ -34,6 +38,519 @@ def download(url, file_name):
         response = requests.get(url)
         # write to file
         file.write(response.content)
+
+
+def print_headers(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        for key, value in enumerate(rows[0]):
+            print(key, value)
+
+
+def import_youth_person(
+    bhs_id=None,
+    first_name=None,
+    last_name=None,
+    birth_date=None,
+    street=None,
+    city=None,
+    state=None,
+    postal_code=None,
+    country=None,
+    phone=None,
+    email=None,
+    part=None,
+):
+    name = " ".join(
+        map(
+            (lambda x: encoding.smart_text(x)),
+            filter(
+                None, [
+                    first_name,
+                    last_name,
+                ]
+            )
+        )
+    )
+    address = "{0}; {1}, {2}  {3}".format(
+        street,
+        city,
+        state,
+        postal_code,
+    )
+
+    defaults = {
+        'name': name,
+        'email': email,
+        'birth_date': birth_date,
+        'address': address,
+        'cell_phone': phone,
+        'part': part,
+    }
+    try:
+        person, created = Person.objects.update_or_create(
+            bhs_id=bhs_id,
+            defaults=defaults,
+        )
+    except IntegrityError as e:
+        log.error(e)
+        return
+    log.info((person, created))
+    return person
+
+
+@transaction.atomic
+def import_youth(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                bhs_id=int(row[13])
+            except ValueError:
+                bhs_id = None
+            first_name=row[9].strip()
+            last_name=row[10].strip()
+            try:
+                birth_date=dateparse.parse_datetime(row[12]).date()
+            except AttributeError:
+                birth_date=None
+            street=row[14].strip()
+            city=row[15].strip()
+            state=row[16].strip()
+            postal_code=row[17].strip()
+            country=row[18].strip()
+            phone=row[19].strip()
+            email=row[20].strip()
+            part=1
+
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            first_name,
+                            last_name,
+                        ]
+                    )
+                )
+            )
+            address = "{0}; {1}, {2}  {3}".format(
+                street,
+                city,
+                state,
+                postal_code,
+            )
+
+            defaults = {
+                'name': name,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': phone,
+                'part': part,
+            }
+
+            if bhs_id:
+                tenor, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            else:
+                try:
+                    tenor = Person.objects.get(email=email)
+                except Person.DoesNotExist:
+                    tenor = Person.objects.create(**defaults)
+
+            try:
+                bhs_id=int(row[25])
+            except ValueError:
+                bhs_id = None
+            first_name=row[21].strip()
+            last_name=row[22].strip()
+            try:
+                birth_date=dateparse.parse_datetime(row[24]).date()
+            except AttributeError:
+                birth_date=None
+            street=row[26].strip()
+            city=row[27].strip()
+            state=row[28].strip()
+            postal_code=row[29].strip()
+            country=row[30].strip()
+            phone=row[31].strip()
+            email=row[32].strip()
+            part=2
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            first_name,
+                            last_name,
+                        ]
+                    )
+                )
+            )
+            address = "{0}; {1}, {2}  {3}".format(
+                street,
+                city,
+                state,
+                postal_code,
+            )
+
+            defaults = {
+                'name': name,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': phone,
+                'part': part,
+            }
+
+            if bhs_id:
+                lead, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            else:
+                try:
+                    lead = Person.objects.get(email=email)
+                except Person.DoesNotExist:
+                    lead = Person.objects.create(**defaults)
+
+            try:
+                bhs_id=int(row[37])
+            except ValueError:
+                bhs_id = None
+            first_name=row[33].strip()
+            last_name=row[34].strip()
+            try:
+                birth_date=dateparse.parse_datetime(row[36]).date()
+            except AttributeError:
+                birth_date=None
+            street=row[38].strip()
+            city=row[39].strip()
+            state=row[40].strip()
+            postal_code=row[41].strip()
+            country=row[42].strip()
+            phone=row[43].strip()
+            email=row[44].strip()
+            part=3
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            first_name,
+                            last_name,
+                        ]
+                    )
+                )
+            )
+            address = "{0}; {1}, {2}  {3}".format(
+                street,
+                city,
+                state,
+                postal_code,
+            )
+
+            defaults = {
+                'name': name,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': phone,
+                'part': part,
+            }
+
+            if bhs_id:
+                baritone, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            else:
+                try:
+                    baritone = Person.objects.get(email=email)
+                except Person.DoesNotExist:
+                    baritone = Person.objects.create(**defaults)
+
+
+            try:
+                bhs_id=int(row[49])
+            except ValueError:
+                bhs_id = None
+            first_name=row[45].strip()
+            last_name=row[46].strip()
+            try:
+                birth_date=dateparse.parse_datetime(row[48]).date()
+            except AttributeError:
+                birth_date=None
+            street=row[50].strip()
+            city=row[51].strip()
+            state=row[52].strip()
+            postal_code=row[53].strip()
+            country=row[54].strip()
+            phone=row[55].strip()
+            email=row[56].strip()
+            part=4
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            first_name,
+                            last_name,
+                        ]
+                    )
+                )
+            )
+            address = "{0}; {1}, {2}  {3}".format(
+                street,
+                city,
+                state,
+                postal_code,
+            )
+
+            defaults = {
+                'name': name,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': phone,
+                'part': part,
+            }
+
+            if bhs_id:
+                bass, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            else:
+                try:
+                    bass = Person.objects.get(email=email)
+                except Person.DoesNotExist:
+                    bass = Person.objects.create(**defaults)
+            try:
+                quartet_id = int(row[5])
+            except ValueError:
+                quartet_id = None
+            quartet_name = row[0].strip()
+            defaults = {
+                'name': quartet_name,
+                'status': 10,
+                'kind': 31,
+                'long_name': quartet_name,
+            }
+            if quartet_id:
+                quartet, created = Entity.objects.update_or_create(
+                    bhs_id=quartet_id,
+                    defaults=defaults,
+                )
+            else:
+                quartet = Entity.objects.create(**defaults)
+            office = Office.objects.get(short_name='QREP')
+            defaults = {
+                'status': 10,
+            }
+            Officer.objects.update_or_create(
+                office=office,
+                person=tenor,
+                entity=quartet,
+                defaults=defaults
+            )
+            Officer.objects.update_or_create(
+                office=office,
+                person=lead,
+                entity=quartet,
+                defaults=defaults
+            )
+            Officer.objects.update_or_create(
+                office=office,
+                person=baritone,
+                entity=quartet,
+                defaults=defaults
+            )
+            Officer.objects.update_or_create(
+                office=office,
+                person=bass,
+                entity=quartet,
+                defaults=defaults
+            )
+            session = Session.objects.get(
+                convention__id='0887d95f-1836-455d-921a-1f3b8e966b02'
+            )
+            try:
+                prelim = float(row[2])
+            except ValueError:
+                prelim = None
+            entry = Entry.objects.create(
+                session=session,
+                entity=quartet,
+                prelim=prelim,
+            )
+
+            defaults = {
+                'status': 10,
+                'part': 1,
+            }
+            tenor_m, created = Member.objects.update_or_create(
+                entity=quartet,
+                person=tenor,
+                defaults = defaults,
+            )
+            defaults = {
+                'status': 10,
+                'part': 2,
+            }
+            lead_m, created = Member.objects.update_or_create(
+                entity=quartet,
+                person=lead,
+                defaults = defaults,
+            )
+            defaults = {
+                'status': 10,
+                'part': 3,
+            }
+            baritone_m, created = Member.objects.update_or_create(
+                entity=quartet,
+                person=baritone,
+                defaults = defaults,
+            )
+            defaults = {
+                'status': 10,
+                'part': 4,
+            }
+            bass_m, created = Member.objects.update_or_create(
+                entity=quartet,
+                person=bass,
+                defaults = defaults,
+            )
+            defaults = {
+                'part': 1,
+            }
+            Participant.objects.update_or_create(
+                entry=entry,
+                member=tenor_m,
+            )
+            defaults = {
+                'part': 2,
+            }
+            Participant.objects.update_or_create(
+                entry=entry,
+                member=lead_m,
+            )
+            defaults = {
+                'part': 3,
+            }
+            Participant.objects.update_or_create(
+                entry=entry,
+                member=baritone_m,
+            )
+            defaults = {
+                'part': 4,
+            }
+            Participant.objects.update_or_create(
+                entry=entry,
+                member=bass_m,
+            )
+
+            try:
+                chart1_id = int(row[60])
+            except ValueError:
+                chart1_id = None
+            if chart1_id:
+                chart1 = Chart.objects.get(
+                    bhs_id=chart1_id,
+                )
+            else:
+                title = row[57].strip()
+                arrangers = row[58].strip()
+                composers = row[59].strip()
+                lyricists = row[59].strip()
+                holders = row[61].strip()
+                chart1 = Chart.objects.create(
+                    title=title,
+                    arrangers=arrangers,
+                    composers=composers,
+                    lyricists=lyricists,
+                    holders=holders,
+                    entity=quartet,
+                )
+            Repertory.objects.create(
+                entity=quartet,
+                chart=chart1,
+            )
+            try:
+                chart2_id = int(row[65])
+            except ValueError:
+                chart2_id = None
+            if chart2_id:
+                chart2 = Chart.objects.get(
+                    bhs_id=chart2_id,
+                )
+            else:
+                title = row[62].strip()
+                arrangers = row[63].strip()
+                composers = row[64].strip()
+                lyricists = row[64].strip()
+                holders = row[66].strip()
+                chart2 = Chart.objects.create(
+                    title=title,
+                    arrangers=arrangers,
+                    composers=composers,
+                    lyricists=lyricists,
+                    holders=holders,
+                    entity=quartet,
+                )
+            Repertory.objects.create(
+                entity=quartet,
+                chart=chart2,
+            )
+            #
+            # try:
+            #     User.objects.get(
+            #         email=tenor.email,
+            #     )
+            # except User.DoesNotExist:
+            #     User.objects.create_user(
+            #         email=tenor.email,
+            #         person=tenor,
+            #     )
+            # try:
+            #     User.objects.get(
+            #         email=lead.email,
+            #     )
+            # except User.DoesNotExist:
+            #     User.objects.create_user(
+            #         email=lead.email,
+            #         person=lead,
+            #     )
+            # try:
+            #     User.objects.get(
+            #         email=baritone.email,
+            #     )
+            # except User.DoesNotExist:
+            #     User.objects.create_user(
+            #         email=baritone.email,
+            #         person=baritone,
+            #     )
+            # try:
+            #     User.objects.create_user(
+            #         email=bass.email,
+            #     )
+            # except User.DoesNotExist:
+            #     User.objects.create_user(
+            #         email=bass.email,
+            #         person=bass,
+            #     )
+
+
+
+
+
+
 
 
 def import_persons(path):
