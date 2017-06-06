@@ -100,7 +100,6 @@ def import_youth_person(
     return person
 
 
-@transaction.atomic
 def import_youth(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
