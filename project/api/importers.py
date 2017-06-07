@@ -48,6 +48,242 @@ def print_headers(path):
             print(key, value)
 
 
+def import_quartets(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0])
+            try:
+                parent_id = int(row[2])
+            except ValueError:
+                parent_id = None
+            if parent_id:
+                try:
+                    parent = Entity.objects.get(
+                        bhs_id=parent_id
+                    )
+                except Entity.DoesNotExist as e:
+                    log.error((e, parent_id))
+                    parent = None
+            else:
+                parent = None
+            name = row[1].strip()
+            kind = Entity.KIND.quartet
+            street = row[9].strip()
+            city = row[13].strip()
+            state = row[15].strip()
+            postal_code = row[16].strip()
+            location = "{1}, {2}".format(
+                street,
+                city,
+                state,
+                postal_code,
+            )
+            if "NULL" in location:
+                location = ""
+
+            phone_code = row[21]
+            if phone_code != 'NULL':
+                phone = "+{0}{1}{2}".format(
+                    str(row[21]).strip(),
+                    str(row[22]).strip(),
+                    str(row[23]).replace("-", "").strip(),
+                )
+            else:
+                phone = ""
+            website = row[31].strip()
+            email = row[28].strip()
+            defaults = {
+                'name': name,
+                'kind': kind,
+                'location': location,
+                'phone': phone,
+                'website': website,
+                'email': email,
+                'parent': parent,
+            }
+            quartet, created = Entity.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            log.info((quartet, created))
+
+
+def import_persons(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0])
+            prefix_name = row[1].strip()
+            first_name = row[2].strip()
+            middle_name = row[3].strip()
+            if len(middle_name) == 1:
+                middle_name = "{0}.".format(middle_name)
+            last_name = row[4].strip()
+            suffix_name = row[5].strip()
+            nick_name = row[23].strip()
+            if nick_name and (nick_name != first_name):
+                nick_name = "({0})".format(nick_name)
+            else:
+                nick_name = None
+            name = " ".join(
+                map(
+                    (lambda x: encoding.smart_text(x)),
+                    filter(
+                        None, [
+                            prefix_name,
+                            first_name,
+                            middle_name,
+                            last_name,
+                            suffix_name,
+                            nick_name,
+                        ]
+                    )
+                )
+            )
+
+            spouse = row[25].strip()
+
+            email = row[6].strip()
+            if not email:
+                email = None
+
+            address1 = row[10].strip()
+            city = row[14].strip()
+            state = row[16].strip()
+            postal_code = row[17].strip()
+            country = row[15].strip()
+            address = "{0}; {1}, {2}  {3}".format(
+                address1,
+                city,
+                state,
+                postal_code,
+            )
+            if "NULL" in address:
+                address = ""
+
+            if country == 'United States' and str(row[8]) != 'NULL':
+                cell_phone = "+1{0}{1}".format(
+                    str(row[8]).strip(),
+                    str(row[9]).replace("-", "").strip(),
+                )
+            else:
+                cell_phone = ""
+            if country == 'United States' and str(row[19]) != 'NULL':
+                home_phone = "+1{0}{1}".format(
+                    str(row[19]).strip(),
+                    str(row[20]).replace("-", "").strip(),
+                )
+            else:
+                home_phone = ""
+
+            birth_date = dateparse.parse_datetime(row[22]).date()
+
+            try:
+                part = int(row[26])
+            except ValueError:
+                part = None
+
+            start_date = dateparse.parse_datetime(row[30]).date()
+            dues_thru = dateparse.parse_datetime(row[31]).date()
+            defaults = {
+                'name': name,
+                'spouse': spouse,
+                'email': email,
+                'birth_date': birth_date,
+                'address': address,
+                'cell_phone': cell_phone,
+                'home_phone': home_phone,
+                'start_date': start_date,
+                'dues_thru': dues_thru,
+                'part': part,
+            }
+            try:
+                person, created = Person.objects.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            except IntegrityError as e:
+                log.error(e)
+            log.info((person, created))
+
+
+def import_chapter_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            entity_id = int(row[1])
+            person_id = int(row[0])
+            start_date = dateparse.parse_datetime(row[3]).date()
+            end_date = dateparse.parse_datetime(row[4]).date()
+            if entity_id == 503858:
+                # Skip Placeholder Chapter
+                continue
+            try:
+                chapter = Entity.objects.get(bhs_id=entity_id)
+            except Entity.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            try:
+                person = Person.objects.get(bhs_id=person_id)
+            except Person.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            defaults = {
+                'start_date': start_date,
+                'end_date': end_date,
+                'status': Member.STATUS.active,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=chapter,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
+def import_quartet_membership(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            try:
+                quartet = Entity.objects.get(bhs_id=int(row[1]))
+            except Entity.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            try:
+                person = Person.objects.get(bhs_id=int(row[3]))
+            except Person.DoesNotExist as e:
+                log.error((e, row))
+                continue
+            try:
+                start_date = dateparse.parse_datetime(row[10]).date()
+            except AttributeError:
+                start_date = None
+            # end_date = dateparse.parse_datetime(row[11]).date()
+            part = int(row[7])
+            defaults = {
+                'start_date': start_date,
+                'end_date': None,
+                'part': part,
+                'status': Member.STATUS.active,
+            }
+            member, created = Member.objects.update_or_create(
+                person=person,
+                entity=quartet,
+                defaults=defaults,
+            )
+            log.info((member, created))
+
+
 def import_youth_person(
     bhs_id=None,
     first_name=None,
@@ -545,242 +781,6 @@ def import_youth(path):
             #         person=bass,
             #     )
 
-
-
-def import_quartets(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            bhs_id = int(row[0])
-            try:
-                parent_id = int(row[2])
-            except ValueError:
-                parent_id = None
-            if parent_id:
-                try:
-                    parent = Entity.objects.get(
-                        bhs_id=parent_id
-                    )
-                except Entity.DoesNotExist as e:
-                    log.error((e, parent_id))
-                    parent = None
-            else:
-                parent = None
-            name = row[1].strip()
-            kind = Entity.KIND.quartet
-            street = row[9].strip()
-            city = row[13].strip()
-            state = row[15].strip()
-            postal_code = row[16].strip()
-            location = "{1}, {2}".format(
-                street,
-                city,
-                state,
-                postal_code,
-            )
-            if "NULL" in location:
-                location = ""
-
-            phone_code = row[21]
-            if phone_code != 'NULL':
-                phone = "+{0}{1}{2}".format(
-                    str(row[21]).strip(),
-                    str(row[22]).strip(),
-                    str(row[23]).replace("-", "").strip(),
-                )
-            else:
-                phone = ""
-            website = row[31].strip()
-            email = row[28].strip()
-            defaults = {
-                'name': name,
-                'kind': kind,
-                'location': location,
-                'phone': phone,
-                'website': website,
-                'email': email,
-                'parent': parent,
-            }
-            quartet, created = Entity.objects.update_or_create(
-                bhs_id=bhs_id,
-                defaults=defaults,
-            )
-            log.info((quartet, created))
-
-
-def import_persons(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            bhs_id = int(row[0])
-            prefix_name = row[1].strip()
-            first_name = row[2].strip()
-            middle_name = row[3].strip()
-            if len(middle_name) == 1:
-                middle_name = "{0}.".format(middle_name)
-            last_name = row[4].strip()
-            suffix_name = row[5].strip()
-            nick_name = row[23].strip()
-            if nick_name and (nick_name != first_name):
-                nick_name = "({0})".format(nick_name)
-            else:
-                nick_name = None
-            name = " ".join(
-                map(
-                    (lambda x: encoding.smart_text(x)),
-                    filter(
-                        None, [
-                            prefix_name,
-                            first_name,
-                            middle_name,
-                            last_name,
-                            suffix_name,
-                            nick_name,
-                        ]
-                    )
-                )
-            )
-
-            spouse = row[25].strip()
-
-            email = row[6].strip()
-            if not email:
-                email = None
-
-            address1 = row[10].strip()
-            city = row[14].strip()
-            state = row[16].strip()
-            postal_code = row[17].strip()
-            country = row[15].strip()
-            address = "{0}; {1}, {2}  {3}".format(
-                address1,
-                city,
-                state,
-                postal_code,
-            )
-            if "NULL" in address:
-                address = ""
-
-            if country == 'United States' and str(row[8]) != 'NULL':
-                cell_phone = "+1{0}{1}".format(
-                    str(row[8]).strip(),
-                    str(row[9]).replace("-", "").strip(),
-                )
-            else:
-                cell_phone = ""
-            if country == 'United States' and str(row[19]) != 'NULL':
-                home_phone = "+1{0}{1}".format(
-                    str(row[19]).strip(),
-                    str(row[20]).replace("-", "").strip(),
-                )
-            else:
-                home_phone = ""
-
-            birth_date = dateparse.parse_datetime(row[22]).date()
-
-            try:
-                part = int(row[26])
-            except ValueError:
-                part = None
-
-            start_date = dateparse.parse_datetime(row[30]).date()
-            dues_thru = dateparse.parse_datetime(row[31]).date()
-            defaults = {
-                'name': name,
-                'spouse': spouse,
-                'email': email,
-                'birth_date': birth_date,
-                'address': address,
-                'cell_phone': cell_phone,
-                'home_phone': home_phone,
-                'start_date': start_date,
-                'dues_thru': dues_thru,
-                'part': part,
-            }
-            try:
-                person, created = Person.objects.update_or_create(
-                    bhs_id=bhs_id,
-                    defaults=defaults,
-                )
-            except IntegrityError as e:
-                log.error(e)
-            log.info((member, created))
-
-
-def import_chapter_membership(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            entity_id = int(row[1])
-            person_id = int(row[0])
-            start_date = dateparse.parse_datetime(row[3]).date()
-            end_date = dateparse.parse_datetime(row[4]).date()
-            if entity_id == 503858:
-                # Skip Placeholder Chapter
-                continue
-            try:
-                chapter = Entity.objects.get(bhs_id=entity_id)
-            except Entity.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            try:
-                person = Person.objects.get(bhs_id=person_id)
-            except Person.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            defaults = {
-                'start_date': start_date,
-                'end_date': end_date,
-                'status': Member.STATUS.active,
-            }
-            member, created = Member.objects.update_or_create(
-                person=person,
-                entity=chapter,
-                defaults=defaults,
-            )
-            log.info((member, created))
-
-
-def import_quartet_membership(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            try:
-                quartet = Entity.objects.get(bhs_id=int(row[1]))
-            except Entity.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            try:
-                person = Person.objects.get(bhs_id=int(row[3]))
-            except Person.DoesNotExist as e:
-                log.error((e, row))
-                continue
-            try:
-                start_date = dateparse.parse_datetime(row[10]).date()
-            except AttributeError:
-                start_date = None
-            # end_date = dateparse.parse_datetime(row[11]).date()
-            part = int(row[7])
-            defaults = {
-                'start_date': start_date,
-                'end_date': None,
-                'part': part,
-                'status': Member.STATUS.active,
-            }
-            member, created = Member.objects.update_or_create(
-                person=person,
-                entity=quartet,
-                defaults=defaults,
-            )
-            log.info((member, created))
 
 
 def import_aff_membership(path, entity):
