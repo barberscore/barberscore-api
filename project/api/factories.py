@@ -138,7 +138,7 @@ class ConventionFactory(DjangoModelFactory):
 
 
 class EntityFactory(DjangoModelFactory):
-    name = Faker('word')
+    name = Faker('company')
     status = Entity.STATUS.active
     kind = Entity.KIND.international
     age = None
@@ -225,7 +225,7 @@ class ParticipantFactory(DjangoModelFactory):
 
 
 class PersonFactory(DjangoModelFactory):
-    name = Faker('name')
+    name = Faker('name_male')
     status = Person.STATUS.active
     kind = Person.KIND.new
     birth_date = None
