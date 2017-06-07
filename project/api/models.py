@@ -217,7 +217,7 @@ class Appearance(TimeStampedModel):
     def calculate_prs_points(self):
         return self.appearance.songs.filter(
             scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
@@ -248,7 +248,7 @@ class Appearance(TimeStampedModel):
     def calculate_prs_score(self):
         return self.appearance.songs.filter(
             scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.presentation,
+            scores__category=self.appearance.round.session.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
@@ -375,7 +375,7 @@ class Assignment(TimeStampedModel):
         (10, 'ca', 'CA'),
         (20, 'aca', 'ACA'),
         (30, 'music', 'Music'),
-        (40, 'presentation', 'Performance'),
+        (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
     )
 
@@ -1187,7 +1187,7 @@ class Contestant(TimeStampedModel):
     def calculate_prs_points(self):
         return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.performance,
             round__num__lte=self.contestant.contest.award.num_rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
@@ -1222,7 +1222,7 @@ class Contestant(TimeStampedModel):
     def calculate_prs_score(self):
         return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.presentation,
+            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.performance,
             round__num__lte=self.contestant.contest.award.num_rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
@@ -2120,7 +2120,7 @@ class Entry(TimeStampedModel):
     def calculate_prs_points(self):
         return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
@@ -2151,7 +2151,7 @@ class Entry(TimeStampedModel):
     def calculate_prs_score(self):
         return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.presentation,
+            songs__scores__category=self.entry.session.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -2186,14 +2186,7 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_drcj=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_rep=True,
-                status__gt=0,
-            ),
+            True,
         ])
 
     @allow_staff_or_superuser
@@ -2202,7 +2195,7 @@ class Entry(TimeStampedModel):
         return any([
             self.session.convention.assignments.filter(
                 person=request.user.person,
-                category__lte=10,
+                category__lt=10,
                 kind=10,
             ),
             self.entity.officers.filter(
@@ -3155,18 +3148,19 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     def has_read_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_drcj=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_ca=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_rep=True,
-                status__gt=0,
-            ),
+            True,
+            # request.user.person.officers.filter(
+            #     office__is_drcj=True,
+            #     status__gt=0,
+            # ),
+            # request.user.person.officers.filter(
+            #     office__is_ca=True,
+            #     status__gt=0,
+            # ),
+            # request.user.person.officers.filter(
+            #     office__is_rep=True,
+            #     status__gt=0,
+            # ),
         ])
 
 
@@ -3545,7 +3539,7 @@ class Score(TimeStampedModel):
 
     CATEGORY = Choices(
         (30, 'music', 'Music'),
-        (40, 'presentation', 'Performance'),
+        (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
     )
 
@@ -3673,11 +3667,11 @@ class Score(TimeStampedModel):
                 variance = True
         prs_avg = self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.presentation,
+            category=self.song.scores.model.CATEGORY.performance,
         ).aggregate(
             avg=models.Avg('points')
         )['avg']
-        if self.category == self.CATEGORY.presentation:
+        if self.category == self.CATEGORY.performance:
             if abs(self.points - prs_avg) > 5:
                 log.info("Variance Performance {0}".format(self))
                 variance = True
@@ -4331,7 +4325,7 @@ class Song(TimeStampedModel):
     def calculate_prs_points(self):
         return self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.presentation,
+            category=self.song.scores.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Sum('points')
         )['tot']
@@ -4362,7 +4356,7 @@ class Song(TimeStampedModel):
     def calculate_prs_score(self):
         return self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.presentation,
+            category=self.song.scores.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Avg('points')
         )['tot']
@@ -4403,10 +4397,11 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_ca=True,
-                status__gt=0,
-            ),
+            True,
+            # request.user.person.officers.filter(
+            #     office__is_ca=True,
+            #     status__gt=0,
+            # ),
         ])
 
     @allow_staff_or_superuser
