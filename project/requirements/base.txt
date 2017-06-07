@@ -8,7 +8,7 @@ django-filter==1.0.4
 git+https://github.com/marsam/django-fsm-log.git
 django-model-utils==3.0.0
 django-timezone-field==2.0
-django==1.11.1
+django==1.11.2
 djangorestframework-csv==2.0.0
 djangorestframework-jsonapi==2.2.0
 djangorestframework-jwt==1.10.0
@@ -17,7 +17,7 @@ docraptor==1.2.0
 drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.9
 factory-boy==2.8.1
-faker==0.7.12
+faker==0.7.15
 markdown==2.6.8
 nameparser==0.5.2
 Pillow==4.1.1
