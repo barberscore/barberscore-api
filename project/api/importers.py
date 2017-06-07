@@ -547,9 +547,67 @@ def import_youth(path):
 
 
 
+def import_quartets(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            bhs_id = int(row[0])
+            try:
+                parent_id = int(row[2])
+            except ValueError:
+                parent_id = None
+            if parent_id:
+                try:
+                    parent = Entity.objects.get(
+                        bhs_id=parent_id
+                    )
+                except Entity.DoesNotExist as e:
+                    log.error((e, parent_id))
+                    parent = None
+            else:
+                parent = None
+            name = row[1].strip()
+            kind = Entity.KIND.quartet
+            street = row[9].strip()
+            city = row[13].strip()
+            state = row[15].strip()
+            postal_code = row[16].strip()
+            location = "{1}, {2}".format(
+                street,
+                city,
+                state,
+                postal_code,
+            )
+            if "NULL" in location:
+                location = ""
 
-
-
+            phone_code = row[21]
+            if phone_code != 'NULL':
+                phone = "+{0}{1}{2}".format(
+                    str(row[21]).strip(),
+                    str(row[22]).strip(),
+                    str(row[23]).replace("-", "").strip(),
+                )
+            else:
+                phone = ""
+            website = row[31].strip()
+            email = row[28].strip()
+            defaults = {
+                'name': name,
+                'kind': kind,
+                'location': location,
+                'phone': phone,
+                'website': website,
+                'email': email,
+                'parent': parent,
+            }
+            quartet, created = Entity.objects.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+            log.info((quartet, created))
 
 
 def import_persons(path):
