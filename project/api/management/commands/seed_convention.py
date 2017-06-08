@@ -18,6 +18,7 @@ from api.factories import (
     MemberFactory,
     OfficeFactory,
     OfficerFactory,
+    PanelistFactory,
     ParticipantFactory,
     PersonFactory,
     RepertoryFactory,
@@ -43,6 +44,7 @@ from api.models import (
     Member,
     Office,
     Officer,
+    Panelist,
     Participant,
     Person,
     Repertory,
@@ -250,6 +252,15 @@ class Command(BaseCommand):
                 )
 
         quartet_quarters = quartet_session.rounds.get(num=1)
+        for assignment in convention.assignments.filter(
+            category__gt=Panelist.CATEGORY.aca,
+        ):
+            PanelistFactory(
+                kind=assignment.kind,
+                category=assignment.category,
+                round=quartet_quarters,
+                person=assignment.person,
+            )
         i = 1
         for entry in quartet_session.entries.all().order_by('?'):
             slot = SlotFactory(
@@ -270,13 +281,10 @@ class Command(BaseCommand):
                     appearance=appearance,
                 )
                 i += 1
-                for assignment in quartet_quarters.session.convention.assignments.filter(
-                    status=Assignment.STATUS.confirmed,
-                    category__gt=Assignment.CATEGORY.aca,
-                ).order_by('kind'):
+                for panelist in quartet_quarters.panelists.all().order_by('kind'):
                     ScoreFactory(
-                        category=assignment.category,
-                        kind=assignment.kind,
+                        category=panelist.category,
+                        kind=panelist.kind,
                         song=song,
-                        person=assignment.person,
+                        panelist=panelist,
                     )

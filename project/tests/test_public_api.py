@@ -85,6 +85,12 @@ def test_entry_endpoint_list(bhs_member, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_panelist_endpoint_list(bhs_member, panelist):
+    path = reverse('panelist-list')
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_participant_endpoint_list(bhs_member, participant):
     path = reverse('participant-list')
     response = bhs_member.get(path)
@@ -215,6 +221,12 @@ def test_appearance_endpoint_detail(bhs_member, appearance):
 
 def test_entry_endpoint_detail(bhs_member, entry):
     path = reverse('entry-detail', args=(str(entry.id),))
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_panelist_endpoint_detail(bhs_member, panelist):
+    path = reverse('panelist-detail', args=(str(panelist.id),))
     response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 

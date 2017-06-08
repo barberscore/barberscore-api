@@ -2574,6 +2574,124 @@ class Officer(TimeStampedModel):
         return
 
 
+class Panelist(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'archived', 'Archived',),
+        (0, 'new', 'New',),
+        (10, 'scheduled', 'Scheduled',),
+        (20, 'confirmed', 'Confirmed',),
+        (25, 'validated', 'Validated',),
+        (30, 'final', 'Final',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'composite', 'Composite'),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    CATEGORY = Choices(
+        (5, 'drcj', 'DRCJ'),
+        (10, 'ca', 'CA'),
+        (20, 'aca', 'ACA'),
+        (30, 'music', 'Music'),
+        (40, 'performance', 'Performance'),
+        (50, 'singing', 'Singing'),
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='panelists',
+        on_delete=models.CASCADE,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        related_name='panelists',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('round', 'person',)
+        )
+
+    class JSONAPIMeta:
+        resource_name = "panelist"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(filter(None, [
+            "{0}".format(self.round),
+            "{0}".format(self.person),
+            self.get_kind_display(),
+        ]))
+        super().save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            True,
+            request.user.person.officers.filter(
+                office__is_jc=True,
+                status__gt=0,
+            )
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            True,
+            request.user.person.officers.filter(
+                office__is_jc=True,
+                status__gt=0,
+            )
+        ])
+
+
 class Participant(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -3642,6 +3760,14 @@ class Score(TimeStampedModel):
         blank=True,
     )
 
+    panelist = models.ForeignKey(
+        'Panelist',
+        related_name='scores',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     class JSONAPIMeta:
         resource_name = "score"
 
@@ -3709,6 +3835,7 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_read_permission(request):
         return any([
+            True,
             request.user.person.officers.filter(
                 office__is_ca=True,
                 status__gt=0,
@@ -3724,6 +3851,7 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
+            True,
             self.song.appearance.entry.entity.officers.filter(
                 person=request.user.person,
                 office__is_rep=True,

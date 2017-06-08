@@ -15,6 +15,7 @@ from .views import (
     MemberViewSet,
     OfficerViewSet,
     OfficeViewSet,
+    PanelistViewSet,
     ParticipantViewSet,
     PersonViewSet,
     RepertoryViewSet,
@@ -44,6 +45,7 @@ router.register(r'entry', EntryViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
+router.register(r'panelist', PanelistViewSet)
 router.register(r'participant', ParticipantViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'repertory', RepertoryViewSet)

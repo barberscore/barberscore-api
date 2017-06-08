@@ -85,6 +85,12 @@ def test_entry_endpoint_list(api_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_panelist_endpoint_list(api_client, panelist):
+    path = reverse('panelist-list')
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_participant_endpoint_list(api_client, participant):
     path = reverse('participant-list')
     response = api_client.get(path)
@@ -215,6 +221,12 @@ def test_appearance_endpoint_detail(api_client, appearance):
 
 def test_entry_endpoint_detail(api_client, entry):
     path = reverse('entry-detail', args=(str(entry.id),))
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_panelist_endpoint_detail(api_client, panelist):
+    path = reverse('panelist-detail', args=(str(panelist.id),))
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

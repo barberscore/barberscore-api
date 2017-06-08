@@ -22,6 +22,7 @@ from .models import (
     Member,
     Office,
     Officer,
+    Panelist,
     Participant,
     Person,
     Repertory,
@@ -358,6 +359,25 @@ class OfficerSerializer(serializers.ModelSerializer):
         ]
 
 
+class PanelistSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Panelist
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'category',
+            'kind',
+            'round',
+            'person',
+            'scores',
+            'permissions',
+        )
+
+
 class ParticipantSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -434,6 +454,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'chapter',
         ]
 
+
 class RepertorySerializer(serializers.ModelSerializer):
 
     permissions = DRYPermissionsField()
@@ -476,7 +497,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'end_date',
             'session',
             'appearances',
-            # 'slots',
+            'panelists',
             'permissions',
         )
 
@@ -501,6 +522,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             'is_flagged',
             'song',
             'person',
+            'panelist',
             'permissions',
         ]
 

@@ -30,6 +30,7 @@ from api.models import (
     Member,
     Office,
     Officer,
+    Panelist,
     Participant,
     Person,
     Repertory,
@@ -215,6 +216,17 @@ class OfficerFactory(DjangoModelFactory):
         model = Officer
 
 
+class PanelistFactory(DjangoModelFactory):
+    status = Panelist.STATUS.new
+    kind = Panelist.KIND.official
+    category = Panelist.CATEGORY.drcj
+    round = SubFactory('api.factories.RoundFactory')
+    person = SubFactory('api.factories.PersonFactory')
+
+    class Meta:
+        model = Panelist
+
+
 class ParticipantFactory(DjangoModelFactory):
     status = Contestant.STATUS.new
     entry = SubFactory('api.factories.EntryFactory')
@@ -279,6 +291,7 @@ class ScoreFactory(DjangoModelFactory):
     is_flagged = False
     song = SubFactory('api.factories.SongFactory')
     person = None
+    panelist = None
 
     class Meta:
         model = Score

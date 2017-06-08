@@ -43,6 +43,7 @@ from .filters import (
     OfficeFilter,
     OfficerFilter,
     EntryFilter,
+    PanelistFilter,
     ParticipantFilter,
     PersonFilter,
     RoundFilter,
@@ -63,6 +64,7 @@ from .models import (
     Officer,
     Appearance,
     Entry,
+    Panelist,
     Participant,
     Person,
     Repertory,
@@ -91,6 +93,7 @@ from .serializers import (
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
+    PanelistSerializer,
     ParticipantSerializer,
     PersonSerializer,
     RepertorySerializer,
@@ -427,6 +430,26 @@ class OfficerViewSet(
     resource_name = "officer"
 
 
+class PanelistViewSet(viewsets.ModelViewSet):
+    queryset = Panelist.objects.select_related(
+        'round',
+        'person',
+    ).prefetch_related(
+        'scores',
+    ).order_by('nomen')
+    serializer_class = PanelistSerializer
+    filter_class = PanelistFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "panelist"
+
+
 class ParticipantViewSet(viewsets.ModelViewSet):
     queryset = Participant.objects.select_related(
         'entry',
@@ -520,6 +543,7 @@ class RoundViewSet(
         'appearances',
         'current_session',
         'slots',
+        'panelists',
     ).order_by('nomen')
     serializer_class = RoundSerializer
     filter_class = RoundFilter
@@ -538,6 +562,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
         'person',
+        'panelist',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = ScoreSerializer
@@ -545,7 +570,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
-        ScoreFilterBackend,
+        # ScoreFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [

@@ -15,6 +15,7 @@ from .models import (
     Member,
     Office,
     Officer,
+    Panelist,
     Participant,
     Person,
     Round,
@@ -135,6 +136,16 @@ class EntityFilter(FilterSet):
 class EntryFilter(FilterSet):
     class Meta:
         model = Entry
+        fields = {
+            'nomen': [
+                'icontains',
+            ],
+        }
+
+
+class PanelistFilter(FilterSet):
+    class Meta:
+        model = Panelist
         fields = {
             'nomen': [
                 'icontains',

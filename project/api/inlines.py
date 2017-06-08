@@ -12,6 +12,7 @@ from .models import (
     Entry,
     Member,
     Officer,
+    Panelist,
     Participant,
     Repertory,
     Round,
@@ -174,6 +175,7 @@ class MemberInline(admin.TabularInline):
     show_change_link = True
     extra = 0
 
+
 class OfficerInline(admin.TabularInline):
     model = Officer
     fields = [
@@ -188,6 +190,27 @@ class OfficerInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+
+
+class PanelistInline(admin.TabularInline):
+    model = Panelist
+    fields = [
+        'nomen',
+        'status',
+        'category',
+        'kind',
+        'person',
+        'round',
+    ]
+    readonly_fields = [
+        'nomen',
+    ]
+    raw_id_fields = [
+        'person',
+        'round',
+    ]
+    extra = 0
+    show_change_link = True
 
 
 class ParticipantInline(admin.TabularInline):
@@ -229,6 +252,7 @@ class ScoreInline(admin.TabularInline):
         'song',
         'num',
         'person',
+        'panelist',
         'category',
         'kind',
         'points',
@@ -240,10 +264,12 @@ class ScoreInline(admin.TabularInline):
         'song',
         'category',
         'person',
+        'panelist',
     ]
     ordering = (
         'num',
         'person',
+        'panelist',
     )
     show_change_link = True
     extra = 0

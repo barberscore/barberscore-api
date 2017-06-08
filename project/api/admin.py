@@ -18,6 +18,7 @@ from .inlines import (
     EntryInline,
     MemberInline,
     OfficerInline,
+    PanelistInline,
     ParticipantInline,
     RepertoryInline,
     RoundInline,
@@ -39,6 +40,7 @@ from .models import (
     Member,
     Office,
     Officer,
+    Panelist,
     Participant,
     Person,
     Repertory,
@@ -701,6 +703,51 @@ class OfficerAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Panelist)
+class PanelistAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        'status',
+        'kind',
+        'round',
+        'person',
+        'category',
+    ]
+
+    list_display = [
+        'nomen',
+        'status',
+        'kind',
+        'category',
+        'person',
+        'round',
+    ]
+
+    list_filter = (
+        'status',
+        'kind',
+        'category',
+    )
+
+    list_select_related = [
+        'round',
+        'person',
+    ]
+
+    search_fields = [
+        'nomen',
+    ]
+
+    raw_id_fields = (
+        'round',
+        'person',
+    )
+
+    readonly_fields = [
+        'nomen',
+    ]
+
+
 @admin.register(Participant)
 class ParticipantAdmin(admin.ModelAdmin):
 
@@ -895,6 +942,7 @@ class RoundAdmin(admin.ModelAdmin):
 
     inlines = [
         AppearanceInline,
+        PanelistInline,
     ]
 
     search_fields = [
@@ -909,6 +957,7 @@ class ScoreAdmin(admin.ModelAdmin):
         # 'status',
         'song',
         'person',
+        'panelist',
         'category',
         'kind',
         'original',
@@ -921,6 +970,7 @@ class ScoreAdmin(admin.ModelAdmin):
         'nomen',
         'song',
         'person',
+        'panelist',
     ]
 
     list_display = [
@@ -936,11 +986,13 @@ class ScoreAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'song',
         'person',
+        'panelist',
     ]
 
     ordering = [
         'song',
         'person',
+        'panelist',
     ]
     save_on_top = True
 
