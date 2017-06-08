@@ -118,7 +118,7 @@ def test_repertory_endpoint_list(bhs_member, repertory):
 def test_score_endpoint_list(bhs_member, score):
     path = reverse('score-list')
     response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_session_endpoint_list(bhs_member, session):
