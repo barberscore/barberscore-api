@@ -3851,7 +3851,6 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            True,
             self.song.appearance.entry.entity.officers.filter(
                 person=request.user.person,
                 office__is_rep=True,

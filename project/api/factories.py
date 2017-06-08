@@ -290,7 +290,6 @@ class ScoreFactory(DjangoModelFactory):
     penalty = None
     is_flagged = False
     song = SubFactory('api.factories.SongFactory')
-    person = None
     panelist = None
 
     class Meta:

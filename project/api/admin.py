@@ -956,7 +956,6 @@ class ScoreAdmin(admin.ModelAdmin):
         # 'name',
         # 'status',
         'song',
-        'person',
         'panelist',
         'category',
         'kind',
@@ -969,7 +968,6 @@ class ScoreAdmin(admin.ModelAdmin):
     readonly_fields = [
         'nomen',
         'song',
-        'person',
         'panelist',
     ]
 
@@ -985,13 +983,11 @@ class ScoreAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'song',
-        'person',
         'panelist',
     ]
 
     ordering = [
         'song',
-        'person',
         'panelist',
     ]
     save_on_top = True

@@ -479,7 +479,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'officers',
         'entries_director',
         'entries_codirector',
-        'scores',
+        'panelists',
     ).order_by('nomen')
     serializer_class = PersonSerializer
     filter_class = PersonFilter
@@ -561,7 +561,6 @@ class RoundViewSet(
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
-        'person',
         'panelist',
     ).prefetch_related(
     ).order_by('nomen')

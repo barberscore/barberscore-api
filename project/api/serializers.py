@@ -437,7 +437,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'members',
             'officers',
             'permissions',
-            'scores',
+            'panelists',
             'user',
         )
         # fields = '__all__'
@@ -521,7 +521,6 @@ class ScoreSerializer(serializers.ModelSerializer):
             'penalty',
             'is_flagged',
             'song',
-            'person',
             'panelist',
             'permissions',
         ]
