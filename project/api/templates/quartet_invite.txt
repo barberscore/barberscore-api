@@ -1,28 +1,23 @@
 
 {{name}},
 
-As I believe Dusty had mentioned in another email, we're going to be using
-our new contest manager (currently called "Barberscore") to register quartets
-and choruses for the International Convention.  Here is your formal invitation
-to try the new system!
+Welcome to our new contest manager (called "Barberscore") used to register quartets and choruses for the International Convention.
 
-If you experience problems, get stuck, or otherwise need help, please feel free
-to text/call me on my cell phone at 415.713.2126.  We've done our best to make
-this a simple, stable process but it is still brand new and we're expecting
-there to be a few hiccups.  We're here to help.
+We understand that you've provided most of this information already; we've
+put that all in the system for you so this process should be as easy as "click
+and go".  Still, if you experience problems, get stuck, or otherwise need
+help, please feel free to text/call me on my cell phone at 415.713.2126 or
+contact support@barberscore.com.  We've  done our best to make this a simple,
+stable process but it is still brand new and we're expecting there to be a few
+hiccups.  We're here to help.
 
-Currently, you are the only person from your quartet that is able to access
-the system.  If you need someone other than yourself to complete the process,
-please let us know.  For the purposes of logging in, use the email address
-to which this message was sent.
+Any member of your quartet can access the system to make changes so please
+coordinate with one another so that you don't collide with each other's work.
 
-We've also provided some helper material which you can find at the following
-links. They are worth reviewing before you get started.  The first is a PDF which
-you can read at your own pace (or download/print) and the second is a 20-minute
-screencast showing you everything you need to know.
+To see the process, check out this tutorial.  It includes important
+information on how to register and is a quick read.
 
-  - Tutorial Link: https://www.dropbox.com/s/f1nkojevx4mz156/Barberscore%20Tutorial.pdf?dl=0
-  - Screencast Link:  https://youtu.be/GgjqriAl6UE
+  - Tutorial Link: https://www.dropbox.com/s/3kp5au3x7egdx2w/Barberscore%20Tutorial%20v3.pdf?dl=0
 
 That's it for now! Once you're ready to go, get the process started by
 going to https://barberscore.com.
