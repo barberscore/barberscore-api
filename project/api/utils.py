@@ -37,69 +37,6 @@ config = api_apps.get_app_config('api')
 log = logging.getLogger(__name__)
 
 
-def send_invite(entity):
-    contacts = []
-    group = entity.nomen
-    for officer in entity.officers.all():
-        contacts.append(
-            "{0} <{1}>".format(
-                officer.person.common_name,
-                officer.person.email,
-            )
-        )
-    if not contacts:
-        log.error(entity)
-        return
-    context = {
-        'group': group,
-    }
-    rendered = render_to_string('invite.txt', context)
-    email = EmailMessage(
-        subject='Barberscore Contest Manager Update for {0}'.format(group),
-        body=rendered,
-        from_email='David Binetti, Barberscore <admin@barberscore.com>',
-        to=contacts,
-        cc=[
-            'Dusty Schleier <dschleier@barbershop.org>',
-            'David Mills <proclamation56@gmail.com>',
-            'David Binetti <dbinetti@gmail.com>',
-        ],
-    )
-    result = email.send()
-    if result == 1:
-        log.info(entity)
-    else:
-        log.error(entity)
-
-
-def send_quartet_invite(quartet):
-    title = quartet.name
-    rep = quartet.officers.get(
-        office__short_name='QREP',
-    )
-    name = rep.person.first_name
-    email = rep.person.email
-    context = {
-        'name': name,
-    }
-    rendered = render_to_string('quartet_invite.txt', context)
-    email = EmailMessage(
-        subject='Contest Entry Invitation for {0}'.format(title),
-        body=rendered,
-        from_email='David Binetti <admin@barberscore.com>',
-        to=[
-            email,
-        ],
-        cc=[
-            'Dusty Schleier <dschleier@barbershop.org>',
-            'David Mills <proclamation56@gmail.com>',
-            'David Binetti <dbinetti@gmail.com>',
-        ],
-    )
-    result = email.send()
-    log.info(result)
-
-
 def update_officers():
     now = timezone.now()
     officers = Member.objects.filter(end_date__gt=now)

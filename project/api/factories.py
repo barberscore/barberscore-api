@@ -247,7 +247,7 @@ class PersonFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    email = None
+    email = Faker('email')
     phone = ''
     image = None
     description = ''

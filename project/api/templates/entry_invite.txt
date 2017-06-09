@@ -1,13 +1,12 @@
-
-{{name}},
-
-Welcome to our new contest manager (called "Barberscore") used to register quartets and choruses for the International Convention.
+Welcome to our new contest manager (called "Barberscore") used to register
+quartets and choruses for the {{entry.session.convention}}.  Please use this system
+to complete your entry into the {{entry.session.get_kind_display}} Session.
 
 We understand that you've provided most of this information already; we've
 put that all in the system for you so this process should be as easy as "click
 and go".  Still, if you experience problems, get stuck, or otherwise need
 help, please feel free to text/call me on my cell phone at 415.713.2126 or
-contact support@barberscore.com.  We've  done our best to make this a simple,
+contact support@barberscore.com.  We've done our best to make this a simple,
 stable process but it is still brand new and we're expecting there to be a few
 hiccups.  We're here to help.
 
@@ -25,3 +24,9 @@ going to https://barberscore.com.
 Thanks!
 
 Dave
+Barberscore Admin
+
+
+P.S.  There is a known bug where some get caught in a loop and aren't able to
+log in.  Please read the first few pages of the tutorial to learn how to work
+around this issue until it is fixed.

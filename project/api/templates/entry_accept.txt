@@ -1,16 +1,14 @@
-Contest Entry for:  {{group}}
-
-Your contest entry has been Accepted!  You're all set for the International
-Convention in Las Vegas.
+Your contest entry has been Accepted!  You're all set for the
+{{entry.session}} Session.
 
 You may make changes to your Repertory (the list of songs you are singing) or
 your Participants (the list of those singing on stage) at any time from now
-until the contest.  Remember: every song you sing and every person on stage
-must be in the registration system before your performance or you risk
+until the convention.  Remember: every song you sing and every person on stage
+must be in the Barberscore system before your performance or you risk
 disqualification.
 
 If you have any significant changes related to your contest entry (such as you
-need to scratch, etc.) please contact Dusty directly.
+need to scratch, etc.) please contact the DRCJ directly.
 
 If you have any further questions or need additional assistance please contact
 support@barberscore.com

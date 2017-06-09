@@ -1795,6 +1795,7 @@ class Entry(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (5, 'invited', 'Invited',),
         (10, 'submitted', 'Submitted',),
         (20, 'accepted', 'Accepted',),
         (30, 'rejected', 'Rejected',),
@@ -1971,68 +1972,30 @@ class Entry(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    def send_submit_confirm(self):
-        contacts = []
-        group = self.entity.nomen
-        for officer in self.entity.officers.all():
-            contacts.append(
-                "{0} <{1}>".format(
-                    officer.person.common_name,
-                    officer.person.email,
-                )
-            )
-        if not contacts:
-            log.error(self)
-            return
-        context = {
-            'group': group,
-        }
-        rendered = render_to_string('submit_confirm.txt', context)
-        email = EmailMessage(
-            subject='Contest Entry Submission Confirmation for {0}'.format(group),
-            body=rendered,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=contacts,
-            cc=[
-                'Dusty Schleier <dschleier@barbershop.org>',
-                'David Mills <proclamation56@gmail.com>',
-                'David Binetti <dbinetti@gmail.com>',
-            ],
+    def send_email(self, template, detail):
+        officers = self.entity.officers.filter(
+            office__is_rep=True,
         )
-        result = email.send()
-        if result == 1:
-            log.info(self)
-        else:
-            log.error(self)
-
-
-    def send_accept_confirm(self):
-        contacts = []
-        group = self.entity.nomen
-        for officer in self.entity.officers.all():
-            contacts.append(
-                "{0} <{1}>".format(
-                    officer.person.common_name,
-                    officer.person.email,
-                )
-            )
-        if not contacts:
-            log.error((self, 'No contacts'))
-            return
+        assignments = self.session.convention.assignments.filter(
+            category__lt=10,
+        )
+        recipients = [officer.person.email for officer in officers]
+        contacts = [assignment.person.email for assignment in assignments]
         context = {
-            'group': group,
+            'entry': self,
         }
-        rendered = render_to_string('accept_confirm.txt', context)
+        rendered = render_to_string(template, context)
+        subject = "{0} {1} for {2}".format(
+            self.session.nomen,
+            detail,
+            self.entity.name,
+        )
         email = EmailMessage(
-            subject='Contest Entry for {0} Accepted!'.format(group),
+            subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=contacts,
-            cc=[
-                'Dusty Schleier <dschleier@barbershop.org>',
-                'David Mills <proclamation56@gmail.com>',
-                'David Binetti <dbinetti@gmail.com>',
-            ],
+            to=recipients,
+            cc=contacts,
         )
         result = email.send()
         if result == 1:
@@ -2209,15 +2172,21 @@ class Entry(TimeStampedModel):
     # Methods
     # Transitions
     @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.invited)
+    def invite(self, *args, **kwargs):
+        self.send_email('entry_invite.txt', 'Invitation')
+        return
+
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.submitted)
     def submit(self, *args, **kwargs):
-        self.send_submit_confirm()
+        self.send_email('entry_submit.txt', 'Submission')
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.accepted)
     def accept(self, *args, **kwargs):
-        self.send_accept_confirm()
+        self.send_email('entry_accept.txt', 'Acceptance')
         return
 
     @transition(field=status, source='*', target=STATUS.rejected)
