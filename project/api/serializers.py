@@ -179,14 +179,6 @@ class ContestantSerializer(serializers.ModelSerializer):
 class ConventionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
-    def validate(self, data):
-        """Check that the start is before the stop."""
-        if data['start_date'] > data['end_date']:
-            raise serializers.ValidationError(
-                "The start date of the convention can not be after the finish date."
-            )
-        return data
-
     class Meta:
         model = Convention
         fields = (
