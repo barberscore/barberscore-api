@@ -74,7 +74,7 @@ class Appearance(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (5, 'validated', 'Validated',),
+        (5, 'verified', 'Verified',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
         (30, 'entered', 'Entered',),
@@ -351,7 +351,7 @@ class Assignment(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
         (20, 'confirmed', 'Confirmed',),
-        (25, 'validated', 'Validated',),
+        (25, 'verified', 'Verified',),
         (30, 'final', 'Final',),
     )
 
@@ -895,7 +895,7 @@ class Contest(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'opened', 'Opened',),
         (15, 'closed', 'Closed',),
-        (35, 'validated', 'Validated',),
+        (35, 'verified', 'Verified',),
         (42, 'finished', 'Finished',),
         (45, 'published', 'Published',),
     )
@@ -1043,7 +1043,7 @@ class Contestant(TimeStampedModel):
         (20, 'ineligible', 'Ineligible',),
         (40, 'rep', 'District Representative',),
         (50, 'qualified', 'Qualified',),
-        (55, 'validated', 'Validated',),
+        (55, 'verified', 'Verified',),
         (60, 'finished', 'Finished',),
         (70, 'scratched', 'Scratched',),
         (80, 'disqualified', 'Disqualified',),
@@ -1332,7 +1332,7 @@ class Convention(TimeStampedModel):
         (2, 'listed', 'Listed',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
-        (10, 'validated', 'Validated',),
+        (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
         (30, 'finished', 'Finished',),
         (45, 'published', 'Published',),
@@ -1800,7 +1800,7 @@ class Entry(TimeStampedModel):
         (20, 'accepted', 'Accepted',),
         (30, 'rejected', 'Rejected',),
         (40, 'withdrew', 'Withdrew',),
-        (50, 'validated', 'Validated',),
+        (50, 'verified', 'Verified',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
         (57, 'started', 'Started',),
@@ -2560,7 +2560,7 @@ class Panelist(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'scheduled', 'Scheduled',),
         (20, 'confirmed', 'Confirmed',),
-        (25, 'validated', 'Validated',),
+        (25, 'verified', 'Verified',),
         (30, 'final', 'Final',),
     )
 
@@ -3184,9 +3184,7 @@ class Repertory(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'invalid', 'Invalid',),
         (0, 'new', 'New',),
-        (10, 'valid', 'Valid',),
     )
 
     status = FSMIntegerField(
@@ -3302,13 +3300,6 @@ class Repertory(TimeStampedModel):
 
 
     # Transitions
-    @transition(field=status, source='*', target=STATUS.valid)
-    def validate(self, *args, **kwargs):
-        return
-
-    @transition(field=status, source='*', target=STATUS.invalid)
-    def invalidate(self, *args, **kwargs):
-        return
 
 
 class Round(TimeStampedModel):
@@ -3327,7 +3318,7 @@ class Round(TimeStampedModel):
         (0, 'new', 'New',),
         # (10, 'built', 'Built',),
         (10, 'drawn', 'Drawn',),
-        (15, 'validated', 'Validated',),
+        (15, 'verified', 'Verified',),
         (20, 'started', 'Started',),
         (25, 'finished', 'Finished',),
         # (28, 'ranked', 'Ranked',),
@@ -3451,8 +3442,8 @@ class Round(TimeStampedModel):
             i += 1
         return
 
-    @transition(field=status, source='*', target=STATUS.validated)
-    def validate(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.verified)
+    def verify(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.started)
@@ -3576,7 +3567,7 @@ class Round(TimeStampedModel):
                 appearance.save()
         else:
             next_round = self.session.rounds.get(num=self.num + 1)
-            next_round.validate()
+            next_round.verify()
             next_round.save()
             # TODO This makes me REALLY nervous...
             dnp = self.session.entries.exclude(
@@ -3610,7 +3601,7 @@ class Score(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'validated', 'Validated',),
+        (10, 'verified', 'Verified',),
         # (20, 'entered', 'Entered',),
         (25, 'cleared', 'Cleared',),
         (30, 'flagged', 'Flagged',),
@@ -3869,7 +3860,7 @@ class Session(TimeStampedModel):
         (2, 'listed', 'Listed',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
-        (10, 'validated', 'Validated',),
+        (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
@@ -4093,8 +4084,8 @@ class Session(TimeStampedModel):
         """Make session unavilable for entry."""
         return
 
-    @transition(field=status, source='*', target=STATUS.validated)
-    def validate(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.verified)
+    def verify(self, *args, **kwargs):
         """Create rounds, seat panel, set draw."""
         max = self.contests.all().aggregate(
             max=models.Max('award__rounds')
@@ -4297,10 +4288,10 @@ class Song(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'validated', 'Validated',),
+        (10, 'verified', 'Verified',),
         # (20, 'entered', 'Entered',),
         # (30, 'flagged', 'Flagged',),
-        # (35, 'validated', 'Validated',),
+        # (35, 'verified', 'Verified',),
         (38, 'finished', 'Finished',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),

@@ -6,14 +6,6 @@ def sessions_entered(convention):
     return convention.sessions.exists()
 
 
-def validate_trimmed(value):
-    if value.endswith(" ") or value.startswith(" "):
-        raise ValidationError(
-            'Value must not start or end with white space.',
-            code='invalid',
-        )
-
-
 def round_scheduled(round):
     for appearance in round.appearances.all():
         if not appearance.start_time:
@@ -29,7 +21,7 @@ def appearances_finished(round):
     return True
 
 
-def scores_validated(round):
+def scores_verified(round):
     for appearance in round.appearances.all():
         for song in appearance.songs.all():
             for score in song.scores.all():
