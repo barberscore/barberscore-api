@@ -4,6 +4,7 @@ import json
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 from itertools import chain
+from optparse import make_option
 
 from api.factories import (
     AppearanceFactory,
@@ -59,6 +60,15 @@ from api.models import (
 
 class Command(BaseCommand):
     help="Command to seed convention."
+    def add_arguments(self, parser):
+        # Named (optional) arguments
+        parser.add_argument(
+            '-b',
+            '--break',
+            dest='breakpoint',
+            default=None,
+            help='Set breakpoint for database seed.',
+        )
 
     def handle(self, *args, **options):
         admin=UserFactory(
@@ -131,26 +141,31 @@ class Command(BaseCommand):
             office=drcj_office,
             person=drcj_person,
             entity=bhs,
+            status=Officer.STATUS.active,
         )
         ca_officer=OfficerFactory(
             office=ca_office,
             person=ca_person,
             entity=bhs,
+            status=Officer.STATUS.active,
         )
         mus_judges=OfficerFactory.create_batch(
             size=5,
             office=mus_office,
             entity=bhs,
+            status=Officer.STATUS.active,
         )
         per_judges=OfficerFactory.create_batch(
             size=5,
             office=per_office,
             entity=bhs,
+            status=Officer.STATUS.active,
         )
         sng_judges=OfficerFactory.create_batch(
             size=5,
             office=sng_office,
             entity=bhs,
+            status=Officer.STATUS.active,
         )
         convention=ConventionFactory(
             name='International Convention',
@@ -209,6 +224,8 @@ class Command(BaseCommand):
             session=quartet_session,
             award=quartet_award,
         )
+        if options['breakpoint'] == 'Convention':
+            return
         quartets = EntityFactory.create_batch(
             size=50,
             kind=Entity.KIND.quartet,
@@ -216,15 +233,18 @@ class Command(BaseCommand):
         for quartet in quartets:
             i = 1
             while i <= 4:
+                person = PersonFactory()
                 MemberFactory(
                     entity=quartet,
+                    person=person,
                     part=i,
                 )
-                i += 1
                 OfficerFactory(
                     office=rep_office,
                     entity=quartet,
+                    person=person,
                 )
+                i += 1
         for quartet in quartets:
             i = 1
             while i <= 6:
@@ -250,7 +270,8 @@ class Command(BaseCommand):
                     entry=entry,
                     member=member,
                 )
-
+        if options['breakpoint'] == 'Session':
+            return
         quartet_quarters = quartet_session.rounds.get(num=1)
         for assignment in convention.assignments.filter(
             category__gt=Panelist.CATEGORY.aca,
