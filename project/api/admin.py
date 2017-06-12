@@ -255,7 +255,6 @@ class ChartAdmin(admin.ModelAdmin):
         'lyricists',
         'arrangers',
         'holders',
-        'entity',
         'published',
         'difficulty',
         'gender',
@@ -288,10 +287,6 @@ class ChartAdmin(admin.ModelAdmin):
 
     inlines = [
         RepertoryInline,
-    ]
-
-    raw_id_fields = [
-        'entity',
     ]
 
     readonly_fields = [

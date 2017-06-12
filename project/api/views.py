@@ -214,7 +214,6 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
-        'entity',
     ).prefetch_related(
         'repertories',
         'songs',

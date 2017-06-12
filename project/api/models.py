@@ -817,13 +817,6 @@ class Chart(TimeStampedModel):
         choices=VOICING,
     )
 
-    # FKs
-    entity = models.ForeignKey(
-        'entity',
-        on_delete=models.CASCADE,
-        related_name='charts',
-    )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "chart"

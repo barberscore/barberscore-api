@@ -129,7 +129,6 @@ class ChartSerializer(serializers.ModelSerializer):
             'lyricists',
             'arrangers',
             'holders',
-            'entity',
             'difficulty',
             'gender',
             'tempo',

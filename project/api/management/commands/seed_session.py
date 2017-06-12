@@ -216,14 +216,17 @@ class Command(BaseCommand):
         for quartet in quartets:
             i = 1
             while i <= 4:
+                person = PersonFactory()
                 MemberFactory(
                     entity=quartet,
+                    person=person,
                     part=i,
                 )
                 i += 1
                 OfficerFactory(
                     office=rep_office,
                     entity=quartet,
+                    person=person,
                 )
         for quartet in quartets:
             i = 1
@@ -251,17 +254,17 @@ class Command(BaseCommand):
                     member=member,
                 )
 
-        quartet_quarters = quartet_session.rounds.get(num=1)
-        for assignment in convention.assignments.filter(
-            category__gt=Panelist.CATEGORY.aca,
-        ):
-            PanelistFactory(
-                kind=assignment.kind,
-                category=assignment.category,
-                round=quartet_quarters,
-                person=assignment.person,
-            )
-        i = 1
+        # quartet_quarters = quartet_session.rounds.get(num=1)
+        # for assignment in convention.assignments.filter(
+        #     category__gt=Panelist.CATEGORY.aca,
+        # ):
+        #     PanelistFactory(
+        #         kind=assignment.kind,
+        #         category=assignment.category,
+        #         round=quartet_quarters,
+        #         person=assignment.person,
+        #     )
+        # i = 1
         # for entry in quartet_session.entries.all().order_by('?'):
         #     slot = SlotFactory(
         #         num=i,

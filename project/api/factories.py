@@ -93,7 +93,6 @@ class ChartFactory(DjangoModelFactory):
     status = Chart.STATUS.new
     title = Faker('word')
     bhs_id = FuzzyInteger(100001, 999999)
-    entity = SubFactory('api.factories.EntityFactory')
 
     class Meta:
         model = Chart
