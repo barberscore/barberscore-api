@@ -710,11 +710,9 @@ class Chart(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-20, 'rejected', 'Rejected',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New'),
-        (10, 'catalog', 'Catalog'),
-        (20, 'cleared', 'Cleared'),
+        (10, 'active', 'Active'),
     )
 
     status = FSMIntegerField(
@@ -732,25 +730,31 @@ class Chart(TimeStampedModel):
         max_length=200,
     )
 
-    published = models.DateField(
-        null=True,
-        blank=True,
+    arrangers = models.CharField(
+        max_length=255,
     )
 
-    composers = models.TextField(
-        default='(Unknown Composers)'
+    composers = models.CharField(
+        max_length=255,
     )
 
-    lyricists = models.TextField(
-        default='(Unknown Lyricists)'
-    )
-
-    arrangers = models.TextField(
-        default='(Unknown Arrangers)'
+    lyricists = models.CharField(
+        max_length=255,
     )
 
     holders = models.TextField(
-        default='(Unknown Copyright Holders)'
+        blank=True,
+    )
+
+    image = CloudinaryRenameField(
+        'raw',
+        blank=True,
+        null=True,
+    )
+
+    published = models.DateField(
+        null=True,
+        blank=True,
     )
 
     bhs_fee = models.FloatField(
@@ -827,7 +831,7 @@ class Chart(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.nomen = " ".join(filter(None, [
             self.title,
-            str(self.bhs_id) if self.bhs_id else "(No BHS ID)",
+            "[{0}]".format(self.arrangers),
         ]))
         super().save(*args, **kwargs)
 

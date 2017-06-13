@@ -249,37 +249,37 @@ class ChartAdmin(admin.ModelAdmin):
     fields = [
         'nomen',
         'status',
-        'bhs_id',
         'title',
         'composers',
         'lyricists',
         'arrangers',
         'holders',
-        'published',
-        'difficulty',
-        'gender',
-        'tempo',
-        'is_medley',
-        'is_learning',
-        'voicing',
+        'image',
+        # 'published',
+        # 'difficulty',
+        # 'gender',
+        # 'tempo',
+        # 'is_medley',
+        # 'is_learning',
+        # 'voicing',
     ]
 
     list_display = [
         'nomen',
-        'status',
         'title',
+        'arrangers',
         'composers',
         'lyricists',
-        'arrangers',
-        'holders',
+        'status',
     ]
 
-    # list_editable = [
-    #     'title',
-    #     'composers',
-    #     'arrangers',
-    #     'holders',
-    # ]
+    list_editable = [
+        'title',
+        'arrangers',
+        'composers',
+        'lyricists',
+        'status',
+    ]
 
     list_filter = [
         'status',
