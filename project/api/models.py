@@ -855,10 +855,6 @@ class Chart(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_ca=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
                 office__is_rep=True,
                 status__gt=0,
             ),
@@ -868,8 +864,7 @@ class Chart(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.entity.officers.filter(
-                person=request.user.person,
+            request.user.person.officers.filter(
                 office__is_ml=True,
                 status__gt=0,
             ),
@@ -3181,7 +3176,9 @@ class Repertory(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (0, 'new', 'New',),
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New'),
+        (10, 'active', 'Active'),
     )
 
     status = FSMIntegerField(

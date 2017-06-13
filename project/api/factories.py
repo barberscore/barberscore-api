@@ -92,7 +92,9 @@ class AwardFactory(DjangoModelFactory):
 class ChartFactory(DjangoModelFactory):
     status = Chart.STATUS.new
     title = Faker('word')
-    bhs_id = FuzzyInteger(100001, 999999)
+    arrangers = Faker('word')
+    composers = Faker('word')
+    lyricists = Faker('word')
 
     class Meta:
         model = Chart

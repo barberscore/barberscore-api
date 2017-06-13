@@ -81,17 +81,25 @@ class Command(BaseCommand):
             name='DRCJ Person',
             email='drcj@barberscore.com',
         )
-        drcj_user=UserFactory(
-            email=drcj_person.email,
-            person=drcj_person,
-        )
         ca_person=PersonFactory(
             name='CA Person',
             email='ca@barberscore.com',
         )
+        quartet_person=PersonFactory(
+            name='Quartet Person',
+            email='quartet@barberscore.com',
+        )
+        drcj_user=UserFactory(
+            email=drcj_person.email,
+            person=drcj_person,
+        )
         ca_user=UserFactory(
             email=ca_person.email,
             person=ca_person,
+        )
+        quartet_user=UserFactory(
+            email=quartet_person.email,
+            person=quartet_person,
         )
         bhs=EntityFactory(
             name='Barbershop Harmony Society',
@@ -131,7 +139,7 @@ class Command(BaseCommand):
             short_name='SNG',
             is_cj=True,
         )
-        rep_office=OfficeFactory(
+        quartet_office=OfficeFactory(
             name='Quartet Representative',
             long_name='Quartet Representative',
             short_name='QREP',
@@ -149,6 +157,32 @@ class Command(BaseCommand):
             entity=bhs,
             status=Officer.STATUS.active,
         )
+        quartets = EntityFactory.create_batch(
+            size=50,
+            kind=Entity.KIND.quartet,
+        )
+        for idx, quartet in enumerate(quartets):
+            i = 1
+            while i <= 4:
+                if i==1 and idx==0:
+                    person = quartet_person
+                else:
+                    person = PersonFactory()
+                MemberFactory(
+                    entity=quartet,
+                    person=person,
+                    part=i,
+                    status=Member.STATUS.active,
+                )
+                OfficerFactory(
+                    office=quartet_office,
+                    entity=quartet,
+                    person=person,
+                    status=Member.STATUS.active,
+                )
+                i += 1
+
+
         mus_judges=OfficerFactory.create_batch(
             size=5,
             office=mus_office,
@@ -226,25 +260,9 @@ class Command(BaseCommand):
         )
         if options['breakpoint'] == 'Convention':
             return
-        quartets = EntityFactory.create_batch(
-            size=50,
+        quartets = Entity.objects.filter(
             kind=Entity.KIND.quartet,
-        )
-        for quartet in quartets:
-            i = 1
-            while i <= 4:
-                person = PersonFactory()
-                MemberFactory(
-                    entity=quartet,
-                    person=person,
-                    part=i,
-                )
-                OfficerFactory(
-                    office=rep_office,
-                    entity=quartet,
-                    person=person,
-                )
-                i += 1
+        ).order_by('?')[:50]
         for quartet in quartets:
             i = 1
             while i <= 6:
