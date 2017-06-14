@@ -189,7 +189,6 @@ class OfficerInline(admin.TabularInline):
         'office',
         'person',
         'entity',
-        'status',
     ]
     show_change_link = True
     extra = 0
