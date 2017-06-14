@@ -3310,14 +3310,16 @@ class Round(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        # (10, 'built', 'Built',),
-        (10, 'drawn', 'Drawn',),
-        (15, 'verified', 'Verified',),
+        (2, 'listed', 'Listed',),
+        (4, 'opened', 'Opened',),
+        (8, 'closed', 'Closed',),
+        (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
-        # (28, 'ranked', 'Ranked',),
-        # (30, 'final', 'Final',),
+        # (25, 'ranked', 'Ranked',),
+        (30, 'finished', 'Finished',),
+        # (40, 'drafted', 'Drafted',),
         (50, 'published', 'Published',),
+        # (50, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
@@ -3427,13 +3429,12 @@ class Round(TimeStampedModel):
         return rank
 
     # Transitions
-    @transition(field=status, source='*', target=STATUS.drawn)
-    def draw(self, *args, **kwargs):
-        i = 1
-        for appearance in self.appearances.order_by('?'):
-            appearance.slot = i
-            appearance.save()
-            i += 1
+    @transition(field=status, source='*', target=STATUS.opened)
+    def open(self, *args, **kwargs):
+        return
+
+    @transition(field=status, source='*', target=STATUS.closed)
+    def close(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.verified)
@@ -4081,18 +4082,40 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Create rounds, seat panel, set draw."""
+        Slot = config.get_model('Slot')
         max = self.contests.all().aggregate(
             max=models.Max('award__rounds')
         )['max']
+        i = 1
         round = self.rounds.create(
-            num=1,
+            num=i,
             kind=max,
         )
+        # while i <= max:
+        #     round = self.rounds.create(
+        #         num=i,
+        #         kind=(max + 1)-i,
+        #     )
+        #     for assignment in self.convention.assignments.filter(
+        #         status=self.convention.assignments.model.STATUS.confirmed,
+        #     ):
+        #         round.panelists.create(
+        #             person=assignment.person,
+        #             kind=assignment.kind,
+        #             category=assignment.category,
+        #         )
+        #     i += 1
+
         entries = self.entries.order_by('?')
         i = 1
         for entry in entries:
+            slot = Slot.objects.create(
+                num=i,
+                round=round,
+            )
             round.appearances.create(
                 entry=entry,
+                slot=slot,
                 num=i,
             )
             i += 1
