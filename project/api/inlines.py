@@ -162,8 +162,8 @@ class MemberInline(admin.TabularInline):
     fields = [
         'person',
         'entity',
-        'status',
         'part',
+        'status',
     ]
     raw_id_fields = [
         'person',
@@ -183,11 +183,13 @@ class OfficerInline(admin.TabularInline):
         'office',
         'person',
         'entity',
+        'status',
     ]
     raw_id_fields = [
         'office',
         'person',
         'entity',
+        'status',
     ]
     show_change_link = True
     extra = 0

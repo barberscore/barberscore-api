@@ -479,6 +479,7 @@ class EntityAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
+        'short_name',
     ]
 
     list_display = [
