@@ -225,6 +225,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'description',
             'parent',
             # 'children',
+            'bhs_id',
             'conventions',
             'members',
             'entries',
