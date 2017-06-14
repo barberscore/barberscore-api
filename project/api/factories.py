@@ -159,7 +159,7 @@ class EntityFactory(DjangoModelFactory):
     image = None
     description = ''
     notes = ''
-    bhs_id = None
+    bhs_id = FuzzyInteger(100000, 999999)
     parent = None
 
     class Meta:

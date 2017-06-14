@@ -242,14 +242,6 @@ class Command(BaseCommand):
             convention=convention,
             kind=Session.KIND.quartet,
         )
-        i = 1
-        while i <= 3:
-            RoundFactory(
-                session=quartet_session,
-                num=i,
-                kind=(4 - i),
-            )
-            i += 1
         quartet_award=AwardFactory(
             name='International Quartet Championship',
             entity=bhs,
@@ -258,6 +250,7 @@ class Command(BaseCommand):
             session=quartet_session,
             award=quartet_award,
         )
+        # Convention Breakpoint
         if options['breakpoint'] == 'Convention':
             return
         quartets = Entity.objects.filter(
@@ -288,6 +281,7 @@ class Command(BaseCommand):
                     entry=entry,
                     member=member,
                 )
+        # Session Breakpoint
         if options['breakpoint'] == 'Session':
             return
         quartet_quarters = quartet_session.rounds.get(num=1)
@@ -310,6 +304,7 @@ class Command(BaseCommand):
                 round=quartet_quarters,
                 entry=entry,
                 slot=slot,
+                num=i,
             )
             i += 1
         for appearance in quartet_quarters.appearances.all():
