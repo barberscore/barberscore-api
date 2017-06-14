@@ -132,6 +132,48 @@ def update_auth0_id(user):
 #     return response2['ticket']
 
 
+def export_bbscores(session):
+    with open('bbscores.csv', 'w') as f:
+        output = []
+        fieldnames = [
+            'oa',
+            'contestant_id',
+            'group_name',
+            'group_type',
+            'song_number',
+            'song_title',
+        ]
+        entries = session.entries.order_by('entity__name')
+        for entry in entries:
+            oa = entry.appearances.get(round__num=1).num
+            group_name = entry.entity.name
+            group_type = entry.entity.get_kind_display()
+            if group_type == 'Quartet':
+                contestant_id = entry.entity.bhs_id
+            elif group_type == 'Chorus':
+                contestant_id = entry.entity.code
+            else:
+                raise RuntimeError("Improper Entity Type")
+            i = 1
+            for repertory in entry.entity.repertories.order_by('chart__title'):
+                song_number = i
+                song_title = repertory.chart.title
+                i += 1
+                row = {
+                    'oa': oa,
+                    'contestant_id': contestant_id,
+                    'group_name': group_name,
+                    'group_type': group_type,
+                    'song_number': song_number,
+                    'song_title': song_title,
+                }
+                output.append(row)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for row in output:
+            writer.writerow(row)
+
+
 def export_db_chapters():
     with open('chapters.csv', 'wb') as f:
         chapters = Entity.objects.filter(
