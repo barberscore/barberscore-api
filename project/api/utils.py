@@ -145,7 +145,10 @@ def export_bbscores(session):
         ]
         entries = session.entries.order_by('entity__name')
         for entry in entries:
-            oa = entry.appearances.get(round__num=1).num
+            try:
+                oa = entry.appearances.get(round__num=1).num
+            except Appearance.DoesNotExist:
+                continue
             group_name = entry.entity.name
             group_type = entry.entity.get_kind_display()
             if group_type == 'Quartet':
