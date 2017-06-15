@@ -3708,13 +3708,13 @@ class Score(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    person = models.ForeignKey(
-        'Person',
-        related_name='scores',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
+    # person = models.ForeignKey(
+    #     'Person',
+    #     related_name='scores',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    # )
 
     panelist = models.ForeignKey(
         'Panelist',
