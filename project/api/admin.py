@@ -384,16 +384,15 @@ class ConventionAdmin(admin.ModelAdmin):
         'name',
         'status',
         'entity',
-        'level',
+        'year',
+        'season',
+        'panel',
         'venue',
         'risers',
         'open_date',
         'close_date',
         'start_date',
         'end_date',
-        'panel',
-        'year',
-        'season',
     )
 
     list_display = (
@@ -412,7 +411,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
-        'level',
+        # 'level',
         'season',
         'year',
     )

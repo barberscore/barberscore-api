@@ -1321,7 +1321,7 @@ class Convention(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'listed', 'Listed',),
+        (2, 'scheduled', 'Scheduled',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
@@ -1507,21 +1507,33 @@ class Convention(TimeStampedModel):
         ])
 
 
+    def can_schedule_convention(self):
+        return all([
+            self.name,
+            self.entity,
+            self.season,
+            self.year,
+            self.open_date,
+            self.close_date,
+            self.start_date,
+            self.end_date,
+        ])
+
     # Transitions
-    @transition(field=status, source='*', target=STATUS.listed)
-    def list_fsm(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.scheduled, conditions=[can_schedule_convention])
+    def schedule(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.opened)
-    def open_fsm(self, *args, **kwargs):
+    def open(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.started)
-    def start_fsm(self, *args, **kwargs):
+    def start(self, *args, **kwargs):
         return
 
     @transition(field=status, source='*', target=STATUS.finished)
-    def finish_fsm(self, *args, **kwargs):
+    def finish(self, *args, **kwargs):
         return
 
 
