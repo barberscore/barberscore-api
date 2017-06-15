@@ -825,6 +825,11 @@ class Chart(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('title', 'arrangers',)
+        )
+
     class JSONAPIMeta:
         resource_name = "chart"
 
