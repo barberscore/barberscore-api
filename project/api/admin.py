@@ -546,13 +546,11 @@ class EntityAdmin(admin.ModelAdmin):
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
     fields = (
-        # 'name',
         'status',
-        'bhs_id',
-        'image',
         'session',
         'entity',
         'representing',
+        'image',
         # 'district',
         # 'division',
         'risers',

@@ -107,6 +107,20 @@ class Command(BaseCommand):
             short_name='BHS',
             kind=Entity.KIND.international,
         )
+        district=EntityFactory(
+            name='BHS District',
+            long_name='BHS District',
+            short_name='DIS',
+            parent=bhs,
+            kind=Entity.KIND.district,
+        )
+        affiliate=EntityFactory(
+            name='INT Affiliate',
+            long_name='INT Affiliate',
+            short_name='INT',
+            parent=bhs,
+            kind=Entity.KIND.affiliate,
+        )
         drcj_office=OfficeFactory(
             name='District Director C&J',
             long_name='District Director C&J',
@@ -156,6 +170,9 @@ class Command(BaseCommand):
             person=ca_person,
             entity=bhs,
             status=Officer.STATUS.active,
+        )
+        charts = ChartFactory.create_batch(
+            size=300,
         )
         quartets = EntityFactory.create_batch(
             size=50,
@@ -258,15 +275,18 @@ class Command(BaseCommand):
         ).order_by('?')[:50]
         for quartet in quartets:
             i = 1
+            charts = list(Chart.objects.order_by('?')[:6])
             while i <= 6:
                 RepertoryFactory(
                     entity=quartet,
+                    chart=charts.pop(),
                 )
                 i += 1
         for quartet in quartets:
             EntryFactory(
                 session=quartet_session,
                 entity=quartet,
+                representing=district,
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )
@@ -284,6 +304,7 @@ class Command(BaseCommand):
         # Session Breakpoint
         if options['breakpoint'] == 'Session':
             return
+        quartet_session.verify()
         quartet_quarters = quartet_session.rounds.get(num=1)
         for assignment in convention.assignments.filter(
             category__gt=Panelist.CATEGORY.aca,
@@ -295,18 +316,18 @@ class Command(BaseCommand):
                 person=assignment.person,
             )
         i = 1
-        for entry in quartet_session.entries.all().order_by('?'):
-            slot = SlotFactory(
-                num=i,
-                round=quartet_quarters,
-            )
-            AppearanceFactory(
-                round=quartet_quarters,
-                entry=entry,
-                slot=slot,
-                num=i,
-            )
-            i += 1
+        # for entry in quartet_session.entries.all().order_by('?'):
+        #     slot = SlotFactory(
+        #         num=i,
+        #         round=quartet_quarters,
+        #     )
+        #     AppearanceFactory(
+        #         round=quartet_quarters,
+        #         entry=entry,
+        #         slot=slot,
+        #         num=i,
+        #     )
+        #     i += 1
         for appearance in quartet_quarters.appearances.all():
             i = 1
             while i <= appearance.round.num_songs:
