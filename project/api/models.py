@@ -303,10 +303,12 @@ class Appearance(TimeStampedModel):
 
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
     def verify(self, *args, **kwargs):
         self.calculate()
@@ -329,6 +331,7 @@ class Appearance(TimeStampedModel):
             return self.STATUS.flagged
         return self.STATUS.cleared
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
@@ -1012,6 +1015,7 @@ class Contest(TimeStampedModel):
         self.champion = champion
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
@@ -1282,22 +1286,27 @@ class Contestant(TimeStampedModel):
     # Methods
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.disqualified)
     def process(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.scratched)
     def scratch(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.disqualified)
     def disqualify(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
@@ -1517,21 +1526,26 @@ class Convention(TimeStampedModel):
             self.close_date,
             self.start_date,
             self.end_date,
+            self.sessions.count() > 0,
         ])
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.scheduled, conditions=[can_schedule_convention])
     def schedule(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         return
@@ -2193,10 +2207,12 @@ class Entry(TimeStampedModel):
         self.send_email('entry_accept.txt', 'Acceptance')
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.rejected)
     def reject(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.withdrew)
     def withdraw(self, *args, **kwargs):
         return
@@ -2538,10 +2554,12 @@ class Officer(TimeStampedModel):
         return False
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
         return
@@ -3442,18 +3460,22 @@ class Round(TimeStampedModel):
         return rank
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.closed)
     def close(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         # if self.num == 1:
@@ -3463,6 +3485,7 @@ class Round(TimeStampedModel):
         #         entry.save()
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
@@ -3567,6 +3590,7 @@ class Round(TimeStampedModel):
             i += 1
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
@@ -4082,16 +4106,19 @@ class Session(TimeStampedModel):
 
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.closed)
     def close(self, *args, **kwargs):
         """Make session unavilable for entry."""
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Create rounds, seat panel, set draw."""
@@ -4134,6 +4161,7 @@ class Session(TimeStampedModel):
             i += 1
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         """Empanel judges, create scores."""
@@ -4163,6 +4191,7 @@ class Session(TimeStampedModel):
                 s += 1
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         session = self
@@ -4177,6 +4206,7 @@ class Session(TimeStampedModel):
             entry.save()
         return
 
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
@@ -4533,6 +4563,7 @@ class Song(TimeStampedModel):
         ])
 
     # Transitions
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
         return
