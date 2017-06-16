@@ -1,0 +1,39 @@
+Entry Review for {{entry.entity.name}}
+
+Below is your entry information for the {{entry.session}}.
+Please review this carefully for any errors or omissions:  remember, every song
+you sing and every person on stage must be in the Barberscore system before your
+performance or you risk disqualification.
+
+You may make changes to this information directly on https://barberscore.com up
+until the final deadline of Monday, June 26, 11:59PM CDT.  After that point
+you'll need to make any requests directly with the DRCJ for the convention.
+
+If you have any further questions or need additional assistance please contact
+support@barberscore.com.
+
+Break a leg!
+
+
+Repertory Songs:
+{% for repertory in repertories %}
+    - {{repertory.chart.nomen}}
+{% endfor %}
+
+Participants on Stage:
+{% for participant in participants %}
+    - {{participant.member.person.nomen}}
+{% endfor %}
+
+{% if is_bhs %}
+  Expiring Members:
+  {% for expiration in expirations %}
+      - {{expiration.member.person.nomen}}, Exp. {{expiration.member.person.dues_thru}}
+  {% empty %}
+      - None.  All Participants are Current.
+  {% endfor %}
+
+  NOTE -- This information may not be fully up-to-date for recent renewals/new
+  members.  Check with eBiz for the most current information.  If an expiring
+  member is current per eBiz then you are good to go!
+{% endif %}
