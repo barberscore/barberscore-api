@@ -72,6 +72,10 @@ class ChartFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
+            'status': [
+                'exact',
+                'lt',
+            ],
         }
 
 
