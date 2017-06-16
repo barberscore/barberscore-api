@@ -40,8 +40,6 @@ from django.db import models
 from django.utils.encoding import (
     smart_text,
 )
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
 
 # Local
 from .managers import UserManager
@@ -51,13 +49,15 @@ from .fields import (
     CloudinaryRenameField,
 )
 
+from .messages import (
+    send_entry,
+)
+
 config = api_apps.get_app_config('api')
 
 # import docraptor
 # docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 # doc_api = docraptor.DocApi()
-
-log = logging.getLogger(__name__)
 
 
 class Appearance(TimeStampedModel):
@@ -1995,38 +1995,6 @@ class Entry(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    def send_email(self, template, detail):
-        officers = self.entity.officers.filter(
-            office__is_rep=True,
-        )
-        assignments = self.session.convention.assignments.filter(
-            category__lt=10,
-        )
-        recipients = [officer.person.email for officer in officers]
-        contacts = [assignment.person.email for assignment in assignments]
-        context = {
-            'entry': self,
-        }
-        rendered = render_to_string(template, context)
-        subject = "{0} {1} for {2}".format(
-            self.session.nomen,
-            detail,
-            self.entity.name,
-        )
-        email = EmailMessage(
-            subject=subject,
-            body=rendered,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=recipients,
-            cc=contacts,
-        )
-        result = email.send()
-        if result == 1:
-            log.info(self)
-        else:
-            log.error(self)
-
-
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.prs_points = self.calculate_prs_points()
@@ -2197,19 +2165,31 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.invited)
     def invite(self, *args, **kwargs):
-        self.send_email('entry_invite.txt', 'Invitation')
+        context = {
+            'entry': self,
+            'details': 'Invitation',
+        }
+        send_entry(self, 'entry_invite.txt', context)
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.submitted)
     def submit(self, *args, **kwargs):
-        self.send_email('entry_submit.txt', 'Submission')
+        context = {
+            'entry': self,
+            'details': 'Submission',
+        }
+        send_entry(self, 'entry_submit.txt', context)
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.accepted)
     def accept(self, *args, **kwargs):
-        self.send_email('entry_accept.txt', 'Acceptance')
+        context = {
+            'entry': self,
+            'details': 'Acceptance',
+        }
+        send_entry(self, 'entry_accept.txt', context)
         return
 
     @fsm_log_by
@@ -3009,19 +2989,18 @@ class Person(TimeStampedModel):
     )
 
     # Denormalizations
+    last_name = models.CharField(
+        help_text="""
+            The name of the resource.""",
+        max_length=200,
+        default='',
+    )
+
     @property
     def first_name(self):
         if self.name:
             name = HumanName(self.name)
             return name.first
-        else:
-            return None
-
-    @property
-    def last_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.last
         else:
             return None
 
@@ -3144,6 +3123,11 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
+        if self.name:
+            name = HumanName(self.name)
+            self.last_name = name.last
+        else:
+            self.last_name = None
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x),
@@ -4018,6 +4002,7 @@ class Session(TimeStampedModel):
                 lambda x: smart_text(x), [
                     self.convention,
                     self.get_kind_display(),
+                    'Session',
                 ]
             )
         )
