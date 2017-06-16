@@ -1,4 +1,5 @@
 # Standard Libary
+import sys
 import csv
 import logging
 
@@ -133,48 +134,78 @@ def update_auth0_id(user):
 
 
 def export_bbscores(session):
-    with open('bbscores.csv', 'w') as f:
-        output = []
-        fieldnames = [
-            'oa',
-            'contestant_id',
-            'group_name',
-            'group_type',
-            'song_number',
-            'song_title',
-        ]
-        entries = session.entries.order_by('entity__name')
-        for entry in entries:
-            try:
-                oa = entry.appearances.get(round__num=1).num
-            except Appearance.DoesNotExist:
-                continue
-            group_name = entry.entity.name
-            group_type = entry.entity.get_kind_display()
-            if group_type == 'Quartet':
-                contestant_id = entry.entity.bhs_id
-            elif group_type == 'Chorus':
-                contestant_id = entry.entity.code
-            else:
-                raise RuntimeError("Improper Entity Type")
-            i = 1
-            for repertory in entry.entity.repertories.order_by('chart__title'):
-                song_number = i
-                song_title = repertory.chart.title
-                i += 1
-                row = {
-                    'oa': oa,
-                    'contestant_id': contestant_id,
-                    'group_name': group_name,
-                    'group_type': group_type,
-                    'song_number': song_number,
-                    'song_title': song_title,
-                }
-                output.append(row)
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
-        writer.writeheader()
-        for row in output:
-            writer.writerow(row)
+    output = []
+    fieldnames = [
+        'oa',
+        'contestant_id',
+        'group_name',
+        'group_type',
+        'song_number',
+        'song_title',
+    ]
+    entries = session.entries.order_by('entity__name')
+    for entry in entries:
+        try:
+            oa = entry.appearances.get(round__num=1).num
+        except Appearance.DoesNotExist:
+            continue
+        group_name = entry.entity.name
+        group_type = entry.entity.get_kind_display()
+        if group_type == 'Quartet':
+            contestant_id = entry.entity.bhs_id
+        elif group_type == 'Chorus':
+            contestant_id = entry.entity.code
+        else:
+            raise RuntimeError("Improper Entity Type")
+        i = 1
+        for repertory in entry.entity.repertories.order_by('chart__title'):
+            song_number = i
+            song_title = repertory.chart.title
+            i += 1
+            row = {
+                'oa': oa,
+                'contestant_id': contestant_id,
+                'group_name': group_name,
+                'group_type': group_type,
+                'song_number': song_number,
+                'song_title': song_title,
+            }
+            output.append(row)
+    writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, extrasaction='ignore')
+    writer.writeheader()
+    for row in output:
+        writer.writerow(row)
+    return
+
+
+def export_charts():
+    output = []
+    fieldnames = [
+        'id',
+        'title',
+        'arrangers',
+        'composers',
+        'lyricists',
+        'holders',
+    ]
+    charts = Chart.objects.filter(status=-10).order_by('title', 'arrangers')
+    i = 1001
+    for chart in charts:
+        row = {
+            'id': i,
+            'title': chart.title,
+            'arrangers': chart.arrangers,
+            'composers': chart.composers,
+            'lyricists': chart.lyricists,
+            'holders': chart.holders,
+        }
+        output.append(row)
+        i += 1
+    writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, extrasaction='ignore')
+    writer.writeheader()
+    for row in output:
+        writer.writerow(row)
+    return
 
 
 def export_db_chapters():
