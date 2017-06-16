@@ -54,7 +54,7 @@ AUTHENTICATION_BACKENDS = [
 USERNAME_FIELD = 'email'
 REQUIRED_FIELDS = []
 LOGIN_URL = 'admin:login'
-LOGIN_REDIRECT_URL = 'admin:api_list'
+LOGIN_REDIRECT_URL = 'admin:index'
 LOGOUT_REDIRECT_URL = 'admin:login'
 
 # Middleware
