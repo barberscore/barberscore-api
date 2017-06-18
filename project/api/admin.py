@@ -1001,6 +1001,7 @@ class SessionAdmin(admin.ModelAdmin):
         'age',
         'num_rounds',
         'panel_size',
+        'is_invitational',
         # 'start_date',
         # 'end_date',
         'primary',
@@ -1016,12 +1017,14 @@ class SessionAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'age',
+        'is_invitational',
     ]
 
     list_filter = (
         'status',
         'kind',
         'age',
+        'is_invitational',
         'convention__entity__kind',
         'convention__season',
         'convention__year',

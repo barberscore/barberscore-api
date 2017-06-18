@@ -522,6 +522,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'age',
+            'is_invitational',
             'start_date',
             'end_date',
             'num_rounds',
@@ -627,6 +628,7 @@ class StateLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = StateLog
         fields = '__all__'
+
 
 class OfficeCSVSerializer(serializers.ModelSerializer):
 

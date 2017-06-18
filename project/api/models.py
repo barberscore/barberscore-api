@@ -3948,6 +3948,10 @@ class Session(TimeStampedModel):
         default=False,
     )
 
+    is_invitational = models.BooleanField(
+        default=False,
+    )
+
     cursor = models.OneToOneField(
         'Appearance',
         null=True,
