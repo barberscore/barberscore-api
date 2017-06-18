@@ -286,6 +286,10 @@ class Appearance(TimeStampedModel):
             request.user.person.officers.filter(
                 office__is_ca=True,
                 status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_drcj=True,
+                status__gt=0,
             )
         ])
 
