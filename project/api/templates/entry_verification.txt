@@ -26,14 +26,14 @@ Participants on Stage:
 {% endfor %}
 
 {% if is_bhs %}
-  Expiring Members:
-  {% for expiration in expirations %}
-      - {{expiration.member.person.nomen|safe}}, Exp. {{expiration.member.person.dues_thru}}
-  {% empty %}
-      - None.  All Participants are Current.
-  {% endfor %}
+Expiring Members:
+{% for expiration in expirations %}
+    - {{expiration.member.person.nomen|safe}}, Exp. {{expiration.member.person.dues_thru}}
+{% empty %}
+    - None.  All Participants are Current.
+{% endfor %}
 
-  NOTE -- This information may not be fully up-to-date for recent renewals/new
-  members.  Check with eBiz for the most current information.  If an expiring
-  member is current per eBiz then you are good to go!
+NOTE -- This information may not be fully up-to-date for recent renewals/new
+members.  Check with eBiz for the most current information.  If an expiring
+member is current per eBiz then you are good to go!
 {% endif %}
