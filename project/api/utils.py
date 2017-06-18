@@ -38,6 +38,25 @@ config = api_apps.get_app_config('api')
 log = logging.getLogger(__name__)
 
 
+def verify(entry, *args, **kwargs):
+    participants = entry.participants.order_by('member__person__last_name')
+    repertories = entry.entity.repertories.order_by('nomen')
+    expirations = entry.participants.filter(member__person__dues_thru__lt=entry.session.convention.end_date).order_by('member__person__last_name')
+    is_bhs = entry.representing.kind == 11
+    if entry.session.id == 'bfda8bfc-0c12-4e83-8b8b-54381bfe7755':
+        is_bhs = False
+    context = {
+        'entry': entry,
+        'details': 'Review',
+        'participants': participants,
+        'repertories': repertories,
+        'expirations': expirations,
+        'is_bhs': is_bhs,
+    }
+    send_entry(entry, 'entry_verification.txt', context)
+    return
+
+
 def update_officers():
     now = timezone.now()
     officers = Member.objects.filter(end_date__gt=now)
