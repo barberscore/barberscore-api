@@ -1,6 +1,6 @@
-Entry Review for {{entry.entity.name}}
+Entry Review for {{entry.entity.name|safe}}
 
-Below is your entry information for the {{entry.session}}.
+Below is your entry information for the {{entry.session|safe}}.
 Please review this carefully for any errors or omissions:  remember, every song
 you sing and every person on stage must be in the Barberscore system before your
 performance or you risk disqualification.
@@ -17,18 +17,18 @@ Break a leg!
 
 Repertory Songs:
 {% for repertory in repertories %}
-    - {{repertory.chart.nomen}}
+    - {{repertory.chart.nomen|safe}}
 {% endfor %}
 
 Participants on Stage:
 {% for participant in participants %}
-    - {{participant.member.person.nomen}}
+    - {{participant.member.person.nomen|safe}}
 {% endfor %}
 
 {% if is_bhs %}
   Expiring Members:
   {% for expiration in expirations %}
-      - {{expiration.member.person.nomen}}, Exp. {{expiration.member.person.dues_thru}}
+      - {{expiration.member.person.nomen|safe}}, Exp. {{expiration.member.person.dues_thru}}
   {% empty %}
       - None.  All Participants are Current.
   {% endfor %}
