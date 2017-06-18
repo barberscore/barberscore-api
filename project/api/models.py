@@ -3878,10 +3878,11 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'listed', 'Listed',),
+        (2, 'scheduled', 'Scheduled',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
+        (15, 'prepared', 'Prepared',),
         (20, 'started', 'Started',),
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
@@ -4156,33 +4157,14 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.prepared)
+    def prepare(self, *args, **kwargs):
+        """Prepare the session."""
+        return
+
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        """Empanel judges, create scores."""
-        assignments = self.convention.assignments.filter(
-            category__gte=30,
-        ).order_by(
-            'category',
-            'kind',
-            'person__name',
-        )
-        round = self.rounds.get(num=1)
-        for appearance in round.appearances.all():
-            s = 1
-            while s <= self.num_songs:
-                song = appearance.songs.create(
-                    num=s,
-                )
-                j = 1
-                for assignment in assignments:
-                    song.scores.create(
-                        category=assignment.category,
-                        kind=assignment.kind,
-                        num=j,
-                        person=assignment.person
-                    )
-                    j += 1
-                s += 1
         return
 
     @fsm_log_by
