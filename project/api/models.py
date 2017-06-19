@@ -1872,6 +1872,12 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
+    is_mt = models.BooleanField(
+        help_text="""
+            Scheduled mic tester.""",
+        default=False,
+    )
+
     seed = models.IntegerField(
         help_text="""
             The incoming rank based on prelim score.""",

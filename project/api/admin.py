@@ -554,7 +554,7 @@ class EntryAdmin(admin.ModelAdmin):
         # 'district',
         # 'division',
         'risers',
-        ('is_evaluation', 'is_private',),
+        ('is_evaluation', 'is_private', 'is_mt',),
         ('director', 'codirector', 'men'),
         'prelim',
         'seed',

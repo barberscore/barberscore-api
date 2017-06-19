@@ -250,6 +250,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'risers',
             'is_evaluation',
             'is_private',
+            'is_mt',
             'seed',
             'prelim',
             'session',
