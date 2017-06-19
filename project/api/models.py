@@ -4151,8 +4151,20 @@ class Session(TimeStampedModel):
         #         )
         #     i += 1
 
-        entries = self.entries.order_by('?')
-        i = 1
+        entries = self.entries.filter(is_mt=False).order_by('?')
+        mts = self.entries.filter(is_mt=True).order_by('?')
+        i = 1 - mts.count()
+        for entry in mts:
+            slot = Slot.objects.create(
+                num=i,
+                round=round,
+            )
+            round.appearances.create(
+                entry=entry,
+                slot=slot,
+                num=i,
+            )
+            i += 1
         for entry in entries:
             slot = Slot.objects.create(
                 num=i,
