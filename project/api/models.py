@@ -3344,6 +3344,7 @@ class Round(TimeStampedModel):
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
+        (15, 'prepared', 'Prepared',),
         (20, 'started', 'Started',),
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
