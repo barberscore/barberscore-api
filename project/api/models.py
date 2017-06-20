@@ -1759,19 +1759,7 @@ class Entity(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        if self.kind == self.KIND.chorus:
-            self.nomen = " ".join(
-                map(
-                    lambda x: smart_text(x), [
-                        self.name,
-                        "-",
-                        self.long_name,
-                        self.code,
-                    ]
-                )
-            )
-        else:
-            self.nomen = self.name
+        self.nomen = self.name
         super().save(*args, **kwargs)
 
     # Permissions
