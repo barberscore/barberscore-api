@@ -1738,6 +1738,12 @@ class Entity(TimeStampedModel):
         null=True,
     )
 
+    org_sort = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
     # FKs
     parent = models.ForeignKey(
         'self',

@@ -38,6 +38,21 @@ config = api_apps.get_app_config('api')
 log = logging.getLogger(__name__)
 
 
+
+def do_org_sort(root):
+    i = 1
+    root.org_sort = i
+    root.save()
+    for child in root.children.order_by('kind', 'name'):
+        i += 1
+        child.org_sort = i
+        child.save()
+        for grandchild in child.children.filter(kind=21).order_by('kind', 'name'):
+            i += 1
+            grandchild.org_sort = i
+            grandchild.save()
+
+
 def verify(entry, *args, **kwargs):
     participants = entry.participants.order_by('member__person__last_name')
     repertories = entry.entity.repertories.order_by('nomen')
