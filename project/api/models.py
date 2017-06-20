@@ -1602,10 +1602,10 @@ class Entity(TimeStampedModel):
             (21, 'division', "Division"),
         ]),
         ('Group', [
-            (31, 'quartet', "Quartet"),
             (32, 'chorus', "Chorus"),
             (33, 'vlq', "Very Large Quartet"),
             (34, 'mixed', "Mixed Group"),
+            (41, 'quartet', "Quartet"),
         ]),
         # ('Leadership', [
         #     (14, 'cj', "Contest and Judging"),
