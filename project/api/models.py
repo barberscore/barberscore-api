@@ -727,7 +727,7 @@ class Chart(TimeStampedModel):
     )
 
     title = models.CharField(
-        max_length=200,
+        max_length=255,
     )
 
     arrangers = models.CharField(
@@ -1568,7 +1568,7 @@ class Entity(TimeStampedModel):
     name = models.CharField(
         help_text="""
             The name of the resource.""",
-        max_length=200,
+        max_length=255,
     )
 
     STATUS = Choices(
@@ -1631,20 +1631,20 @@ class Entity(TimeStampedModel):
         help_text="""
             A short-form name for the resource.""",
         blank=True,
-        max_length=200,
+        max_length=255,
     )
 
     long_name = models.CharField(
         help_text="""
             A long-form name for the resource.""",
         blank=True,
-        max_length=200,
+        max_length=255,
     )
 
     code = models.CharField(
         help_text="""
             The chapter code.""",
-        max_length=200,
+        max_length=255,
         blank=True,
     )
 
@@ -1661,7 +1661,7 @@ class Entity(TimeStampedModel):
     location = models.CharField(
         help_text="""
             The geographical location of the resource.""",
-        max_length=200,
+        max_length=255,
         blank=True,
     )
 
@@ -2334,7 +2334,7 @@ class Office(TimeStampedModel):
     )
 
     name = models.CharField(
-        max_length=200,
+        max_length=255,
     )
 
     STATUS = Choices(
@@ -2796,7 +2796,7 @@ class Person(TimeStampedModel):
     name = models.CharField(
         help_text="""
             The name of the resource.""",
-        max_length=200,
+        max_length=255,
     )
 
     STATUS = Choices(
@@ -2865,7 +2865,7 @@ class Person(TimeStampedModel):
     location = models.CharField(
         help_text="""
             The geographical location of the resource.""",
-        max_length=200,
+        max_length=255,
         blank=True,
     )
 
@@ -2992,7 +2992,7 @@ class Person(TimeStampedModel):
     last_name = models.CharField(
         help_text="""
             The name of the resource.""",
-        max_length=200,
+        max_length=255,
         default='',
     )
 
@@ -4566,7 +4566,7 @@ class Venue(TimeStampedModel):
     name = models.CharField(
         help_text="""
             The name of the resource.""",
-        max_length=200,
+        max_length=255,
     )
 
     STATUS = Choices(
