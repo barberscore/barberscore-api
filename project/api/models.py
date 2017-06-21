@@ -1567,7 +1567,8 @@ class Entity(TimeStampedModel):
 
     name = models.CharField(
         help_text="""
-            The name of the resource.""",
+            The name of the resource.
+        """,
         max_length=255,
     )
 
@@ -1600,43 +1601,18 @@ class Entity(TimeStampedModel):
             (34, 'mixed', "Mixed Group"),
             (41, 'quartet', "Quartet"),
         ]),
-        # ('Leadership', [
-        #     (14, 'cj', "Contest and Judging"),
-        # ]),
     )
 
     kind = models.IntegerField(
         help_text="""
-            The kind of entity.""",
+            The kind of entity.
+        """,
         choices=KIND,
-    )
-
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
-    is_novice = models.BooleanField(
-        default=False,
     )
 
     short_name = models.CharField(
         help_text="""
             A short-form name for the resource.""",
-        blank=True,
-        max_length=255,
-    )
-
-    long_name = models.CharField(
-        help_text="""
-            A long-form name for the resource.""",
         blank=True,
         max_length=255,
     )
@@ -1714,7 +1690,7 @@ class Entity(TimeStampedModel):
 
     description = models.TextField(
         help_text="""
-            A description/bio of the resource.  Max 1000 characters.""",
+            A description of the entity.  Max 1000 characters.""",
         blank=True,
         max_length=1000,
     )
@@ -1735,6 +1711,7 @@ class Entity(TimeStampedModel):
         unique=True,
         blank=True,
         null=True,
+        editable=False,
     )
 
     # FKs

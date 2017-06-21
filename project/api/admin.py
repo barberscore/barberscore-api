@@ -449,7 +449,6 @@ class EntityAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
         'short_name',
-        'long_name',
         'location',
         'bhs_id',
         # 'spots',
@@ -480,7 +479,6 @@ class EntityAdmin(admin.ModelAdmin):
         'end_date',
         'code',
         'short_name',
-        'long_name',
         'kind',
         'bhs_id',
     ]
