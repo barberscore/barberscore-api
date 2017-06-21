@@ -3455,28 +3455,20 @@ class Round(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.opened)
-    def open(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.closed)
-    def close(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
+
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.prepared)
+    def prepare(self, *args, **kwargs):
+
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        # if self.num == 1:
-        #     # if the first round, start all entries
-        #     for entry in self.session.entries.all():
-        #         entry.start()
-        #         entry.save()
         return
 
     @fsm_log_by
