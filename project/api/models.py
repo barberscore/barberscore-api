@@ -461,8 +461,7 @@ class Award(TimeStampedModel):
     """
     Award Model.
 
-    The specific award conferred by an international.
-    Typically given once a year.
+    The specific award conferred by an Entity.
     """
 
     id = models.UUIDField(
