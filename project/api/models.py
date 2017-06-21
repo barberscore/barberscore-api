@@ -4672,7 +4672,6 @@ class User(AbstractBaseUser):
         null=True,
         blank=True,
         related_name='user',
-        # parent_link=True,
     )
 
     @property
@@ -4698,13 +4697,6 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_staff
 
-    def send_login(self):
-        ps = Passwordless(settings.AUTH0_DOMAIN)
-        result = ps.email(
-            client_id=settings.AUTH0_CLIENT_ID,
-            email=self.email,
-        )
-        return result
 
     # Permissions
     @staticmethod
