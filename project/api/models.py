@@ -79,6 +79,7 @@ class Appearance(TimeStampedModel):
         (20, 'finished', 'Finished',),
         (30, 'entered', 'Entered',),
         (40, 'flagged', 'Flagged',),
+        (50, 'scratched', 'Scratched',),
         (60, 'cleared', 'Cleared',),
         (90, 'published', 'Published',),
     )
@@ -308,13 +309,18 @@ class Appearance(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.verified)
+    def verify(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
-    def verify(self, *args, **kwargs):
+    def calc(self, *args, **kwargs):
         self.calculate()
         self.save()
         Song = config.get_model('Song')
@@ -2197,8 +2203,11 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.rejected)
-    def reject(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.scratched)
+    def scratch(self, *args, **kwargs):
+        for appearance in self.appearances.all():
+            appearance.status = appearance.STATUS.scratched
+            appearance.save()
         return
 
     @fsm_log_by
@@ -3457,7 +3466,9 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
-
+        for appearance in self.appearances.all():
+            appearance.verify()
+            appearance.save()
         return
 
     @fsm_log_by

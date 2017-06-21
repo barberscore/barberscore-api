@@ -270,6 +270,8 @@ class Command(BaseCommand):
         # Convention Breakpoint
         if options['breakpoint'] == 'Convention':
             return
+        quartet_session.open()
+        quartet_session.save()
         quartets = Entity.objects.filter(
             kind=Entity.KIND.quartet,
         ).order_by('?')[:50]
@@ -301,6 +303,8 @@ class Command(BaseCommand):
                     entry=entry,
                     member=member,
                 )
+        quartet_session.close()
+        quartet_session.save()
         # Session Breakpoint
         if options['breakpoint'] == 'Session':
             return
