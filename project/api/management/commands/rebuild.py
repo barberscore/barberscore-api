@@ -5,11 +5,11 @@ from django.core.management.base import BaseCommand
 # First-Party
 from api.models import Convention
 from api.utils import (
+    extract_appearances,
     extract_contestants,
     extract_contests,
-    extract_panel,
-    extract_appearances,
     extract_entries,
+    extract_panel,
     extract_rounds,
     extract_scores,
     extract_sessions,

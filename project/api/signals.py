@@ -1,4 +1,5 @@
 # Django
+# Third-Party
 from auth0.v3.management import Auth0
 from auth0.v3.management.rest import Auth0Error
 
@@ -10,10 +11,7 @@ from django.db.models.signals import (
 from django.dispatch import receiver
 
 # Local
-from .models import (
-    User,
-)
-
+from .models import User
 from .utils import get_auth0_token
 
 

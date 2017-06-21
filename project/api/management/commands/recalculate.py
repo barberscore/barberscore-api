@@ -9,8 +9,8 @@ from django.core.management.base import (
 
 # First-Party
 from api.models import (
-    Contestant,
     Appearance,
+    Contestant,
     Entry,
     Session,
     Song,

@@ -1,17 +1,14 @@
 # Third-Party
 from factory import (
+    Faker,
     PostGenerationMethodCall,
     SubFactory,
-    Faker,
 )
 from factory.django import (
     DjangoModelFactory,
     mute_signals,
 )
-
-from factory.fuzzy import (
-    FuzzyInteger,
-)
+from factory.fuzzy import FuzzyInteger
 
 # Django
 from django.db.models.signals import post_save

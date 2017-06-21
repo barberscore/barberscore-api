@@ -1,11 +1,14 @@
 # Django
-from django.core.management.base import BaseCommand
+# Standard Libary
 import json
-from django.core.serializers import serialize
-from django.core.serializers.json import DjangoJSONEncoder
 from itertools import chain
 from optparse import make_option
 
+from django.core.management.base import BaseCommand
+from django.core.serializers import serialize
+from django.core.serializers.json import DjangoJSONEncoder
+
+# First-Party
 from api.factories import (
     AppearanceFactory,
     AssignmentFactory,
@@ -31,7 +34,6 @@ from api.factories import (
     UserFactory,
     VenueFactory,
 )
-
 from api.models import (
     Appearance,
     Assignment,
@@ -57,6 +59,7 @@ from api.models import (
     User,
     Venue,
 )
+
 
 class Command(BaseCommand):
     help="Command to seed convention."

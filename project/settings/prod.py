@@ -1,11 +1,12 @@
+# Standard Libary
 import sys
-
-# Local
-from .base import *
 
 # Third-Party
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+
+# Local
+from .base import *
 
 # Heroku
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

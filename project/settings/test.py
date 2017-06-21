@@ -1,7 +1,6 @@
 # Local
 from .base import *
 
-
 # Heroku
 ALLOWED_HOSTS = [
     'testserver',

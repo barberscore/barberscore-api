@@ -1,17 +1,16 @@
-from django.core.management.base import BaseCommand
+# Standard Libary
 import logging
 
-# Django
+# Third-Party
 from auth0.v3.management import Auth0
 from auth0.v3.management.rest import Auth0Error
 
+# Django
 from django.conf import settings
+from django.core.management.base import BaseCommand
 
-# Local
-from api.models import (
-    User,
-)
-
+# First-Party
+from api.models import User
 from api.utils import get_auth0_token
 
 log = logging.getLogger(__name__)

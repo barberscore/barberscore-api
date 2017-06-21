@@ -1,28 +1,21 @@
 # Standard Libary
-import sys
 import csv
 import logging
+import sys
 
 # Third-Party
-from auth0.v3.management import Auth0
 import requests
+from auth0.v3.management import Auth0
 from cloudinary.uploader import upload
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-
 
 # Django
+from django.apps import apps as api_apps
+from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.conf import settings
-from django.utils import (
-    timezone,
-)
-
-from django.apps import apps as api_apps
+from django.utils import timezone
 
 config = api_apps.get_app_config('api')
-# Local
 # from .models import (
 #     Award,
 #     Chart,

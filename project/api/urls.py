@@ -24,9 +24,9 @@ from .views import (
     SessionViewSet,
     SlotViewSet,
     SongViewSet,
+    StateLogViewSet,
     UserViewSet,
     VenueViewSet,
-    StateLogViewSet,
 )
 
 router = routers.DefaultRouter(

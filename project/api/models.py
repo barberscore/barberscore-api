@@ -37,21 +37,15 @@ from django.core.validators import (
     RegexValidator,
 )
 from django.db import models
-from django.utils.encoding import (
-    smart_text,
-)
+from django.utils.encoding import smart_text
 
 # Local
-from .managers import UserManager
-
 from .fields import (
-    OneToOneOrNoneField,
     CloudinaryRenameField,
+    OneToOneOrNoneField,
 )
-
-from .messages import (
-    send_entry,
-)
+from .managers import UserManager
+from .messages import send_entry
 
 config = api_apps.get_app_config('api')
 

@@ -3,10 +3,14 @@ import csv
 import logging
 from datetime import datetime
 
+# Third-Party
 import requests
 
-from django.db import IntegrityError
-from django.db import transaction
+# Django
+from django.db import (
+    IntegrityError,
+    transaction,
+)
 from django.utils import (
     dateparse,
     encoding,
@@ -18,9 +22,9 @@ from .models import (
     Contestant,
     Entity,
     Entry,
+    Member,
     Office,
     Officer,
-    Member,
     Participant,
     Person,
     Repertory,

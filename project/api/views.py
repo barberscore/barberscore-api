@@ -3,8 +3,10 @@ import logging
 
 # Third-Party
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_fsm_transitions.viewset_mixins import \
-    get_viewset_transition_action_mixin
+from django_fsm_log.models import StateLog
+from drf_fsm_transitions.viewset_mixins import (
+    get_viewset_transition_action_mixin,
+)
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import (
     status,
@@ -25,9 +27,10 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
-from django_fsm_log.models import StateLog
 
+# Django
 from django.db.models import Q
+
 # Local
 from .backends import (
     CoalesceFilterBackend,
@@ -39,10 +42,10 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntityFilter,
+    EntryFilter,
     MemberFilter,
     OfficeFilter,
     OfficerFilter,
-    EntryFilter,
     PanelistFilter,
     ParticipantFilter,
     PersonFilter,
@@ -52,6 +55,7 @@ from .filters import (
     VenueFilter,
 )
 from .models import (
+    Appearance,
     Assignment,
     Award,
     Chart,
@@ -59,11 +63,10 @@ from .models import (
     Contestant,
     Convention,
     Entity,
+    Entry,
     Member,
     Office,
     Officer,
-    Appearance,
-    Entry,
     Panelist,
     Participant,
     Person,
@@ -76,9 +79,7 @@ from .models import (
     User,
     Venue,
 )
-
 from .paginators import PageNumberPagination
-
 from .serializers import (
     AppearanceSerializer,
     AssignmentSerializer,
@@ -102,9 +103,9 @@ from .serializers import (
     SessionSerializer,
     SlotSerializer,
     SongSerializer,
+    StateLogSerializer,
     UserSerializer,
     VenueSerializer,
-    StateLogSerializer,
 )
 
 log = logging.getLogger(__name__)

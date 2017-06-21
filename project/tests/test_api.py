@@ -4,6 +4,7 @@ from rest_framework import status
 
 # Django
 from django.urls import reverse
+
 pytestmark = pytest.mark.django_db
 
 

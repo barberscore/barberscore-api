@@ -1,4 +1,7 @@
 # Django
+# Third-Party
+from django_fsm_log.models import StateLog
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
@@ -8,7 +11,6 @@ from .forms import (
     UserChangeForm,
     UserCreationForm,
 )
-
 from .inlines import (
     AppearanceInline,
     AssignmentInline,
@@ -26,7 +28,6 @@ from .inlines import (
     SessionInline,
     SongInline,
 )
-
 from .models import (
     Appearance,
     Assignment,
@@ -53,7 +54,6 @@ from .models import (
     Venue,
 )
 
-from django_fsm_log.models import StateLog
 
 @admin.register(StateLog)
 class StateLogAdmin(admin.ModelAdmin):
