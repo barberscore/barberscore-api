@@ -62,7 +62,7 @@ class Appearance(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -711,7 +711,7 @@ class Chart(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -724,12 +724,6 @@ class Chart(TimeStampedModel):
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    bhs_id = models.IntegerField(
-        unique=True,
-        null=True,
-        blank=True,
     )
 
     title = models.CharField(
@@ -890,7 +884,7 @@ class Contest(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -1037,7 +1031,7 @@ class Contestant(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -1328,7 +1322,7 @@ class Convention(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -1567,7 +1561,7 @@ class Entity(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -1809,7 +1803,7 @@ class Entry(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -2217,7 +2211,7 @@ class Member(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -2335,7 +2329,7 @@ class Office(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -2461,7 +2455,7 @@ class Officer(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -2682,7 +2676,7 @@ class Participant(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -2795,7 +2789,7 @@ class Person(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -3196,7 +3190,7 @@ class Repertory(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -3330,7 +3324,7 @@ class Round(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -3614,7 +3608,7 @@ class Score(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -3870,7 +3864,7 @@ class Session(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -4208,7 +4202,7 @@ class Slot(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -4330,7 +4324,7 @@ class Song(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
@@ -4565,7 +4559,7 @@ class Venue(TimeStampedModel):
     )
 
     nomen = models.CharField(
-        max_length=500,
+        max_length=255,
         editable=False,
     )
 
