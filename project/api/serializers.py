@@ -180,7 +180,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'season',
-            'kind',
             'panel',
             'risers',
             'year',

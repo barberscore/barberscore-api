@@ -122,17 +122,16 @@ class ContestantFactory(DjangoModelFactory):
 class ConventionFactory(DjangoModelFactory):
     name = Faker('city')
     status = Convention.STATUS.new
-    level = Convention.LEVEL.international
     season = Convention.SEASON.summer
     panel = Convention.PANEL.quintiple
     risers = [0, 13]
     year = 2017
-    open_date = None
-    close_date = None
-    start_date = None
-    end_date = None
+    open_date = '2017-06-01'
+    close_date = '2017-06-30'
+    start_date = '2017-07-01'
+    end_date = '2017-07-08'
     location = Faker('city')
-    venue = None
+    venue = SubFactory('api.factories.VenueFactory')
     entity = SubFactory('api.factories.EntityFactory')
 
     class Meta:

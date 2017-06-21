@@ -122,21 +122,6 @@ class ContestantInline(admin.TabularInline):
     extra = 0
 
 
-class ConventionInline(admin.TabularInline):
-    model = Convention
-    fields = (
-        'nomen',
-    )
-    ordering = (
-        'nomen',
-    )
-    readonly_fields = [
-        'nomen',
-    ]
-    show_change_link = True
-    extra = 0
-
-
 class EntryInline(admin.TabularInline):
     model = Entry
     fields = [

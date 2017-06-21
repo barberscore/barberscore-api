@@ -10,7 +10,6 @@ class CoalesceFilterBackend(DjangoFilterBackend):
         raw = request.query_params.get('filter[id]')
         if raw:
             ids = raw.split(',')
-            # Disable pagination, so all records can load.
             view.pagination_class = None
             queryset = queryset.filter(id__in=ids)
         return queryset
@@ -26,5 +25,4 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
                 return queryset.filter(
                     song__appearance__entry__entity__officers__person__user=request.user,
                 )
-                # return queryset.all()
         return queryset.none()

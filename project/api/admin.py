@@ -398,20 +398,13 @@ class ConventionAdmin(admin.ModelAdmin):
     list_display = (
         'nomen',
         'name',
-        # 'panel',
-        # 'season',
-        # 'status',
-        # 'open_date',
-        # 'close_date',
         'start_date',
         'end_date',
         'status',
-        # 'venue',
     )
 
     list_filter = (
         'status',
-        # 'level',
         'season',
         'year',
     )
@@ -440,7 +433,6 @@ class ConventionAdmin(admin.ModelAdmin):
 
     ordering = (
         '-year',
-        'level',
     )
 
     save_on_top = True
@@ -567,7 +559,6 @@ class EntryAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'session__convention__level',
         'session__kind',
         'session__convention__season',
         'session__convention__year',
@@ -911,7 +902,6 @@ class RoundAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'session__kind',
-        'session__convention__level',
         'session__convention__season',
         'session__convention__year',
     ]
@@ -1025,7 +1015,6 @@ class SessionAdmin(admin.ModelAdmin):
         'kind',
         'age',
         'is_invitational',
-        'convention__entity__kind',
         'convention__season',
         'convention__year',
     )
@@ -1052,7 +1041,6 @@ class SessionAdmin(admin.ModelAdmin):
 
     ordering = (
         '-convention__year',
-        'convention__level',
         '-convention__season',
         'kind',
         'age',
@@ -1169,10 +1157,6 @@ class VenueAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-    ]
-
-    inlines = [
-        # ConventionInline,
     ]
 
 

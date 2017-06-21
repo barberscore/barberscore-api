@@ -1,15 +1,13 @@
 # Django
 from auth0.v3.management import Auth0
 from auth0.v3.management.rest import Auth0Error
-# from auth0.v3.authentication import Passwordless
+
 from django.conf import settings
 from django.db.models.signals import (
     post_save,
     pre_delete,
 )
 from django.dispatch import receiver
-# from django.core.mail import send_mail
-# from django.template.loader import render_to_string
 
 # Local
 from .models import (
@@ -17,9 +15,6 @@ from .models import (
 )
 
 from .utils import get_auth0_token
-
-
-
 
 
 @receiver(post_save, sender=User)
@@ -53,12 +48,6 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                         raise(e)
                 instance.auth0_id = response['user_id']
                 instance.save()
-                # And send Link
-                # ps = Passwordless('barberscore-dev.auth0.com')
-                # ps.email(
-                #     client_id=settings.AUTH0_CLIENT_ID,
-                #     email=instance.email,
-                # )
 
 
 @receiver(pre_delete, sender=User)
