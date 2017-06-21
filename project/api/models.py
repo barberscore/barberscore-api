@@ -3466,9 +3466,6 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
-        for appearance in self.appearances.all():
-            appearance.verify()
-            appearance.save()
         return
 
     @fsm_log_by
@@ -4126,6 +4123,7 @@ class Session(TimeStampedModel):
     def verify(self, *args, **kwargs):
         """Create rounds, seat panel, set draw."""
         Slot = config.get_model('Slot')
+        Appearance = config.get_model('Appearance')
         max = self.contests.all().aggregate(
             max=models.Max('award__rounds')
         )['max']
@@ -4161,6 +4159,7 @@ class Session(TimeStampedModel):
                 entry=entry,
                 slot=slot,
                 num=i,
+                status=Appearance.STATUS.verified,
             )
             i += 1
         for entry in entries:
