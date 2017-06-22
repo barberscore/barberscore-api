@@ -337,7 +337,7 @@ class Command(BaseCommand):
         #     i += 1
         for appearance in quartet_quarters.appearances.all():
             i = 1
-            while i <= appearance.round.num_songs:
+            while i <= 2:  # TODO constant
                 song = SongFactory(
                     num=i,
                     appearance=appearance,

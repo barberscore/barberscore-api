@@ -3138,20 +3138,6 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    num_songs = models.IntegerField(
-        default=2,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',

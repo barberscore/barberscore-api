@@ -262,9 +262,6 @@ class RoundFactory(DjangoModelFactory):
     status = Round.STATUS.new
     kind = Round.KIND.finals
     num = 1
-    num_songs = 2
-    start_date = None
-    end_date = None
     session = SubFactory('api.factories.SessionFactory')
 
     class Meta:

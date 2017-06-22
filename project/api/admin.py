@@ -856,11 +856,7 @@ class RoundAdmin(admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
-        ('session', 'kind',),
-        'num_songs',
-        # 'mt',
-        'start_date',
-        'end_date',
+        ('session', 'kind', 'num'),
     ]
 
     list_display = [
