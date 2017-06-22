@@ -366,6 +366,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
+            'part',
             'entry',
             'member',
             'permissions',
