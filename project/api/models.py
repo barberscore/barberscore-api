@@ -752,75 +752,6 @@ class Chart(TimeStampedModel):
         null=True,
     )
 
-    published = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    bhs_fee = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    DIFFICULTY = Choices(
-        (1, "Very Easy"),
-        (2, "Easy"),
-        (3, "Medium"),
-        (4, "Hard"),
-        (5, "Very Hard"),
-    )
-
-    difficulty = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=DIFFICULTY,
-    )
-
-    GENDER = Choices(
-        (1, "Male"),
-        (2, "Female"),
-        (3, "Mixed"),
-    )
-
-    gender = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=GENDER,
-    )
-
-    TEMPO = Choices(
-        (1, "Ballad"),
-        (2, "Uptune"),
-        (3, "Mixed"),
-    )
-
-    tempo = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=TEMPO,
-    )
-
-    is_medley = models.BooleanField(
-        default=False,
-    )
-
-    is_learning = models.BooleanField(
-        default=False,
-    )
-
-    VOICING = Choices(
-        (1, "Barbershop"),
-        (2, "Chorus + Quartet"),
-        (3, "Double Quartet"),
-        (4, "Ensemble + Soloist"),
-    )
-
-    voicing = models.IntegerField(
-        null=True,
-        blank=True,
-        choices=VOICING,
-    )
-
     # Internals
     class Meta:
         unique_together = (
@@ -3155,6 +3086,7 @@ class Repertory(TimeStampedModel):
         choices=STATUS,
         default=STATUS.new,
     )
+
     # FKs
     entity = models.ForeignKey(
         'Entity',
