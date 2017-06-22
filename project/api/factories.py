@@ -293,8 +293,6 @@ class ScoreFactory(DjangoModelFactory):
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
     kind = Session.KIND.quartet
-    cursor = None
-    current = None
     scoresheet = None
     convention = SubFactory('api.factories.ConventionFactory')
 

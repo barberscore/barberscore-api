@@ -119,7 +119,6 @@ class AppearanceViewSet(
         'round',
         'entry',
         'slot',
-        'session',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = AppearanceSerializer
@@ -540,7 +539,6 @@ class RoundViewSet(
         'session',
     ).prefetch_related(
         'appearances',
-        'current_session',
         'slots',
         'panelists',
     ).order_by('nomen')

@@ -517,20 +517,13 @@ class SessionSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'num_rounds',
-            'cursor',
-            'current',
             'scoresheet',
-            # 'computed_rounds',
             'convention',
             'entries',
             'contests',
             'rounds',
             'permissions',
         )
-
-        # read_only_fields = [
-        #     'computed_rounds',
-        # ]
 
 
 class SlotSerializer(serializers.ModelSerializer):

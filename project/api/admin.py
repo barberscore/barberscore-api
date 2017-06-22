@@ -999,7 +999,6 @@ class SessionAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'convention',
-        'current',
     )
 
     readonly_fields = [

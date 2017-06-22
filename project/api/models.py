@@ -3852,29 +3852,6 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
-    cursor = models.OneToOneField(
-        'Appearance',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    current = models.ForeignKey(
-        'Round',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='current_session',
-    )
-
-    # primary = models.ForeignKey(
-    #     'Contest',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    #     related_name='primary_session',
-    # )
-
     scoresheet = CloudinaryRenameField(
         'raw',
         blank=True,
@@ -3888,10 +3865,6 @@ class Session(TimeStampedModel):
             max=models.Max('award__rounds')
         )['max']
         return max
-
-    # @property
-    # def completed_rounds(self):
-    #     return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
 
     # FKs
     convention = models.ForeignKey(
