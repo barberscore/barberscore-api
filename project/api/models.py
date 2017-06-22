@@ -1346,32 +1346,6 @@ class Convention(TimeStampedModel):
         default=STATUS.new,
     )
 
-    # LEVEL = Choices(
-    #     (0, 'international', "International"),
-    #     (1, 'district', "District"),
-    #     (2, 'division', "Division"),
-    #     (3, 'chapter', "Chapter"),
-    # )
-    #
-    # level = models.IntegerField(
-    #     choices=LEVEL,
-    #     null=True,
-    #     blank=True,
-    # )
-    #
-    # KIND = Choices(
-    #     (10, 'international', "International"),
-    #     (20, 'district', "District"),
-    #     (30, 'division', "Division"),
-    #     (40, 'disdiv', "District/Division"),
-    # )
-    #
-    # kind = models.IntegerField(
-    #     choices=KIND,
-    #     null=True,
-    #     blank=True,
-    # )
-    #
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
@@ -3833,7 +3807,6 @@ class Score(TimeStampedModel):
 
 
 class Session(TimeStampedModel):
-    # Assignment = config.get_model('Assignment')
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -3866,60 +3839,17 @@ class Session(TimeStampedModel):
     )
 
     KIND = Choices(
-        (31, 'quartet', "Quartet"),
         (32, 'chorus', "Chorus"),
         (33, 'vlq', "Very Large Quartet"),
         (34, 'mixed', "Mixed Group"),
+        (41, 'quartet', "Quartet"),
     )
 
     kind = models.IntegerField(
         help_text="""
-            The kind of session.  Generally this will be either quartet or chorus,
-            with the exception being International and Midwinter which hold exclusive
-            Youth and Senior sessions respectively.""",
+            The kind of session.  Generally this will be either quartet or chorus.
+        """,
         choices=KIND,
-    )
-
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    num_rounds = models.IntegerField(
-    )
-
-    num_songs = models.IntegerField(
-        default=2,
-    )
-
-    panel_size = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    is_prelims = models.BooleanField(
-        default=False,
-    )
-
-    is_invitational = models.BooleanField(
-        default=False,
     )
 
     cursor = models.OneToOneField(
@@ -3937,13 +3867,13 @@ class Session(TimeStampedModel):
         related_name='current_session',
     )
 
-    primary = models.ForeignKey(
-        'Contest',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='primary_session',
-    )
+    # primary = models.ForeignKey(
+    #     'Contest',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    #     related_name='primary_session',
+    # )
 
     scoresheet = CloudinaryRenameField(
         'raw',
@@ -3952,6 +3882,13 @@ class Session(TimeStampedModel):
     )
 
     # Denormalizations
+    @property
+    def num_rounds(self):
+        max = self.contests.all().aggregate(
+            max=models.Max('award__rounds')
+        )['max']
+        return max
+
     # @property
     # def completed_rounds(self):
     #     return self.rounds.filter(status=self.rounds.model.STATUS.finished).count()
@@ -3981,54 +3918,6 @@ class Session(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
-
-    # def print_oss(self):
-    #     payload = {
-    #         'id': str(self.pk),
-    #     }
-    #     Channel('print-oss').send(payload)
-
-    # def print_oss(self):
-    #     session = self
-    #     entries = session.entries.exclude(
-    #         rank=None,
-    #     ).order_by(
-    #         '-tot_points',
-    #         '-sng_points',
-    #         '-mus_points',
-    #         '-prs_points',
-    #     )
-    #     assignments = session.assignments.order_by(
-    #         'category',
-    #         'kind',
-    #         'slot',
-    #     )
-    #     foo = get_template('oss.html')
-    #     template = foo.render(context={
-    #         'session': session,
-    #         'entries': entries,
-    #         'assignments': assignments,
-    #     })
-    #     try:
-    #         create_response = doc_api.create_doc({
-    #             "test": True,
-    #             "document_content": template,
-    #             "name": "oss-{0}.pdf".format(id),
-    #             "document_type": "pdf",
-    #         })
-    #         f = ContentFile(create_response)
-    #         session.scoresheet_pdf.save(
-    #             "{0}.pdf".format(id),
-    #             f
-    #         )
-    #         session.save()
-    #         log.info("PDF created and saved to instance")
-    #     except docraptor.rest.ApiException as error:
-    #         log.exception(error)
-    #         log.exception(error.message)
-    #         log.exception(error.code)
-    #         log.exception(error.response_body)
-    #     return "Complete"
 
     # Permissions
     @staticmethod
@@ -4096,21 +3985,6 @@ class Session(TimeStampedModel):
             num=i,
             kind=max,
         )
-        # while i <= max:
-        #     round = self.rounds.create(
-        #         num=i,
-        #         kind=(max + 1)-i,
-        #     )
-        #     for assignment in self.convention.assignments.filter(
-        #         status=self.convention.assignments.model.STATUS.confirmed,
-        #     ):
-        #         round.panelists.create(
-        #             person=assignment.person,
-        #             kind=assignment.kind,
-        #             category=assignment.category,
-        #         )
-        #     i += 1
-
         entries = self.entries.filter(is_mt=False).order_by('?')
         mts = self.entries.filter(is_mt=True).order_by('?')
         i = 1 - mts.count()
@@ -4148,6 +4022,20 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
+        # while i <= max:
+        #     round = self.rounds.create(
+        #         num=i,
+        #         kind=(max + 1)-i,
+        #     )
+        #     for assignment in self.convention.assignments.filter(
+        #         status=self.convention.assignments.model.STATUS.confirmed,
+        #     ):
+        #         round.panelists.create(
+        #             person=assignment.person,
+        #             kind=assignment.kind,
+        #             category=assignment.category,
+        #         )
+        #     i += 1
         return
 
     @fsm_log_by

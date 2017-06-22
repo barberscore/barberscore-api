@@ -278,8 +278,6 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
-        'age',
-        'num_rounds',
     ]
     raw_id_fields = [
         'convention',

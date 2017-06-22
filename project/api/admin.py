@@ -976,27 +976,11 @@ class ScoreAdmin(admin.ModelAdmin):
 
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
     save_on_top = True
     fields = [
-        # 'name',
         'status',
         'convention',
         'kind',
-        'age',
-        'num_rounds',
-        'panel_size',
-        'is_invitational',
-        # 'start_date',
-        # 'end_date',
-        'primary',
-        'current',
-        # 'cursor',
-        # 'year',
-        # # 'size',
         'scoresheet',
     ]
 
@@ -1004,15 +988,11 @@ class SessionAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'kind',
-        'age',
-        'is_invitational',
     ]
 
     list_filter = (
         'status',
         'kind',
-        'age',
-        'is_invitational',
         'convention__season',
         'convention__year',
     )
@@ -1020,7 +1000,6 @@ class SessionAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'convention',
         'current',
-        'primary',
     )
 
     readonly_fields = [
@@ -1041,7 +1020,6 @@ class SessionAdmin(admin.ModelAdmin):
         '-convention__year',
         '-convention__season',
         'kind',
-        'age',
     )
 
     search_fields = [

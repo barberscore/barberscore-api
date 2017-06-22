@@ -237,7 +237,6 @@ class ContestViewSet(viewsets.ModelViewSet):
         'session',
         'award',
     ).prefetch_related(
-        'primary_session',
     ).order_by('nomen')
     serializer_class = ContestSerializer
     filter_class = None
