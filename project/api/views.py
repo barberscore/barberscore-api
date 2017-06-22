@@ -301,11 +301,11 @@ class EntityViewSet(
     ).prefetch_related(
         'children',
         'awards',
-        'repertories',
-        'entries',
         'conventions',
-        'officers',
+        'entries',
         'members',
+        'officers',
+        'repertories',
     ).order_by(
         'nomen',
     )
