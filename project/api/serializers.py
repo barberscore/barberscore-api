@@ -178,7 +178,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'status',
             'season',
             'panel',
-            'risers',
             'year',
             'open_date',
             'close_date',

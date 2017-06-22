@@ -364,7 +364,6 @@ class ConventionAdmin(admin.ModelAdmin):
         'season',
         'panel',
         'venue',
-        'risers',
         'open_date',
         'close_date',
         'start_date',
@@ -517,7 +516,6 @@ class EntryAdmin(admin.ModelAdmin):
         'entity',
         'representing',
         'image',
-        'risers',
         ('is_evaluation', 'is_private', 'is_mt',),
         'prelim',
         'seed',
@@ -533,7 +531,6 @@ class EntryAdmin(admin.ModelAdmin):
         'session__kind',
         'session__convention__season',
         'session__convention__year',
-        'risers',
     ]
 
     fsm_field = [

@@ -1303,30 +1303,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    RISERS = [
-        (0, 0),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-        (6, 6),
-        (7, 7),
-        (8, 8),
-        (9, 9),
-        (10, 10),
-        (11, 11),
-        (12, 12),
-        (13, 13),
-    ]
-
-    risers = ArrayField(
-        base_field=models.IntegerField(
-            null=True,
-            blank=True
-        ),
-        null=True,
-        blank=True,
-    )
-
     YEAR_CHOICES = []
     for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
         YEAR_CHOICES.append((r, r))
@@ -1713,13 +1689,6 @@ class Entry(TimeStampedModel):
         'image',
         blank=True,
         null=True,
-    )
-
-    risers = models.IntegerField(
-        help_text="""
-            The number of risers select.""",
-        null=True,
-        blank=True,
     )
 
     is_evaluation = models.BooleanField(

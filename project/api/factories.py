@@ -121,7 +121,6 @@ class ConventionFactory(DjangoModelFactory):
     status = Convention.STATUS.new
     season = Convention.SEASON.summer
     panel = Convention.PANEL.quintiple
-    risers = [0, 13]
     year = 2017
     open_date = '2017-06-01'
     close_date = '2017-06-30'
@@ -162,7 +161,6 @@ class EntityFactory(DjangoModelFactory):
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     image = None
-    risers = None
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
