@@ -3670,13 +3670,10 @@ class Session(TimeStampedModel):
         null=True,
     )
 
-    # Denormalizations
-    @property
-    def num_rounds(self):
-        max = self.contests.all().aggregate(
-            max=models.Max('award__rounds')
-        )['max']
-        return max
+    num_rounds = models.IntegerField(
+        null=True,
+        blank=True,
+    )
 
     # FKs
     convention = models.ForeignKey(
