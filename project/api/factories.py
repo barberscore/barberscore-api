@@ -162,14 +162,11 @@ class EntityFactory(DjangoModelFactory):
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     image = None
-    men = None
     risers = None
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
     entity = SubFactory('api.factories.EntityFactory')
-    director = None
-    codirector = None
 
     class Meta:
         model = Entry

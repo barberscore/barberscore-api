@@ -346,8 +346,6 @@ class EntryViewSet(
     queryset = Entry.objects.select_related(
         'session',
         'entity',
-        'director',
-        'codirector',
         'representing',
     ).prefetch_related(
         'participants',
@@ -475,8 +473,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'assignments',
         'members',
         'officers',
-        'entries_director',
-        'entries_codirector',
         'panelists',
     ).order_by('nomen')
     serializer_class = PersonSerializer

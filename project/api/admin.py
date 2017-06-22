@@ -517,11 +517,8 @@ class EntryAdmin(admin.ModelAdmin):
         'entity',
         'representing',
         'image',
-        # 'district',
-        # 'division',
         'risers',
         ('is_evaluation', 'is_private', 'is_mt',),
-        ('director', 'codirector', 'men'),
         'prelim',
         'seed',
     )
@@ -557,8 +554,6 @@ class EntryAdmin(admin.ModelAdmin):
         'session',
         'entity',
         'representing',
-        'director',
-        'codirector',
     )
 
     readonly_fields = (

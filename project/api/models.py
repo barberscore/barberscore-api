@@ -1715,13 +1715,6 @@ class Entry(TimeStampedModel):
         null=True,
     )
 
-    men = models.IntegerField(
-        help_text="""
-            The number of men on stage.""",
-        null=True,
-        blank=True,
-    )
-
     risers = models.IntegerField(
         help_text="""
             The number of risers select.""",
@@ -1757,11 +1750,6 @@ class Entry(TimeStampedModel):
     prelim = models.FloatField(
         help_text="""
             The incoming prelim score.""",
-        null=True,
-        blank=True,
-    )
-
-    bhs_id = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1833,23 +1821,7 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    director = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_director',
-        on_delete=models.SET_NULL,
-    )
-
-    codirector = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        related_name='entries_codirector',
-        on_delete=models.SET_NULL,
-    )
-
-    # # Internals
+    # Internals
     class Meta:
         verbose_name_plural = 'entries'
         unique_together = (
@@ -2109,6 +2081,7 @@ class Member(TimeStampedModel):
     )
 
     PART = Choices(
+        (-1, 'director', 'Director'),
         (1, 'tenor', 'Tenor'),
         (2, 'lead', 'Lead'),
         (3, 'baritone', 'Baritone'),

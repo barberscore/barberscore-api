@@ -232,7 +232,7 @@ class EntitySerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    logs = serializers.SerializerMethodField()
+    # logs = serializers.SerializerMethodField()
     class Meta:
         model = Entry
         fields = (
@@ -240,8 +240,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'men',
-            'risers',
             'is_evaluation',
             'is_private',
             'is_mt',
@@ -250,26 +248,24 @@ class EntrySerializer(serializers.ModelSerializer):
             'session',
             'entity',
             'representing',
-            'director',
-            'codirector',
             'participants',
             'appearances',
             'contestants',
             'permissions',
-            'logs',
+            # 'logs',
         )
-    def get_logs(self, obj):
-        # TODO HACKY!!!
-        qs = StateLog.objects.for_(obj).values(
-            'timestamp',
-            'transition',
-            'by',
-        )
-        for q in qs:
-            if q['by']:
-                email = User.objects.get(id=q['by'].hex).person.nomen
-                q['by'] = email
-        return qs
+    # def get_logs(self, obj):
+    #     # TODO HACKY!!!
+    #     qs = StateLog.objects.for_(obj).values(
+    #         'timestamp',
+    #         'transition',
+    #         'by',
+    #     )
+    #     for q in qs:
+    #         if q['by']:
+    #             email = User.objects.get(id=q['by'].hex).person.nomen
+    #             q['by'] = email
+    #     return qs
 
 
 class MemberSerializer(serializers.ModelSerializer):
