@@ -55,30 +55,6 @@ from .models import (
 )
 
 
-@admin.register(StateLog)
-class StateLogAdmin(admin.ModelAdmin):
-    list_display = [
-        '__str__',
-        'by',
-    ]
-    fields = [
-        'timestamp',
-        'content_type',
-        'content_object',
-        'transition',
-        'by',
-        'object_id',
-    ]
-    readonly_fields = [
-        'content_object',
-        'timestamp',
-        'by',
-        'state',
-        'transition',
-        'content_type',
-        'object_id',
-    ]
-
 @admin.register(Appearance)
 class AppearanceAdmin(admin.ModelAdmin):
     fields = [
@@ -1171,5 +1147,31 @@ class UserAdmin(BaseUserAdmin):
         'email',
         'auth0_id',
     ]
+
+
+@admin.register(StateLog)
+class StateLogAdmin(admin.ModelAdmin):
+    list_display = [
+        '__str__',
+        'by',
+    ]
+    fields = [
+        'timestamp',
+        'content_type',
+        'content_object',
+        'transition',
+        'by',
+        'object_id',
+    ]
+    readonly_fields = [
+        'content_object',
+        'timestamp',
+        'by',
+        'state',
+        'transition',
+        'content_type',
+        'object_id',
+    ]
+
 
 admin.site.unregister(AuthGroup)
