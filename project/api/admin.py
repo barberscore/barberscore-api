@@ -774,16 +774,11 @@ class ParticipantAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     fields = [
         'name',
-        # 'common_name',
         'status',
-        'kind',
         'representing',
         'birth_date',
-        'start_date',
-        'end_date',
         'dues_thru',
         'part',
-        'mon',
         'spouse',
         'location',
         'website',

@@ -233,10 +233,7 @@ class ParticipantFactory(DjangoModelFactory):
 class PersonFactory(DjangoModelFactory):
     name = Faker('name_male')
     status = Person.STATUS.active
-    kind = Person.KIND.new
     birth_date = None
-    start_date = None
-    end_date = None
     location = ''
     website = ''
     facebook = ''

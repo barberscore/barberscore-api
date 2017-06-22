@@ -2677,19 +2677,14 @@ class Person(TimeStampedModel):
 
     name = models.CharField(
         help_text="""
-            The name of the resource.""",
+            The name of the person.""",
         max_length=255,
     )
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
-        (1, 'active', 'Active',),
-        # (2, 'inactive', 'Inactive',),
-        (3, 'retired', 'Retired',),
-        (5, 'deceased', 'Deceased',),
-        (6, 'six', '(Six)',),
-        (9, 'nine', '(Nine)',),
+        (10, 'active', 'Active',),
     )
 
     status = models.IntegerField(
@@ -2697,44 +2692,12 @@ class Person(TimeStampedModel):
         default=STATUS.new,
     )
 
-    KIND = Choices(
-        (0, 'new', 'New',),
-        (10, 'member', 'Member',),
-        (20, 'nonmember', 'Non-Member',),
-        (30, 'associate', 'Associate',),
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-        default=KIND.new,
-    )
-
-    bhs_status = models.IntegerField(
-        blank=True,
-        null=True,
-    )
-
     birth_date = models.DateField(
         null=True,
         blank=True,
     )
 
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
     dues_thru = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    mon = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -2853,7 +2816,7 @@ class Person(TimeStampedModel):
 
     description = models.TextField(
         help_text="""
-            A description/bio of the resource.  Max 1000 characters.""",
+            A bio of the person.  Max 1000 characters.""",
         blank=True,
         max_length=1000,
     )
@@ -2936,58 +2899,6 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    @property
-    def international(self):
-        if self.representing:
-            parent = self.representing
-            while True:
-                if parent.kind == 1:
-                    return parent.name
-                else:
-                    parent = parent.parent
-            return ""
-        else:
-            return ""
-
-    @property
-    def district(self):
-        if self.representing:
-            parent = self.representing
-            while True:
-                if parent.kind in [11, 12, 13]:
-                    return parent.name
-                else:
-                    parent = parent.parent
-            return ""
-        else:
-            return ""
-
-    @property
-    def division(self):
-        if self.representing:
-            parent = self.representing
-            while parent:
-                if parent.kind == 21:
-                    return parent.name
-                else:
-                    parent = parent.parent
-            return ""
-        else:
-            return ""
-
-    @property
-    def chapter(self):
-        if self.representing:
-            parent = self.representing
-            while True:
-                if parent.kind == 32:
-                    return "{0} - {1}".format(parent.long_name, parent.code)
-                else:
-                    parent = parent.parent
-            return ""
-        else:
-            return ""
-
     # FKs
     representing = models.ForeignKey(
         'Entity',
@@ -3022,22 +2933,6 @@ class Person(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
-
-    def calculate_name(self):
-        name = HumanName(self.name)
-        if name.nickname:
-            self.common_name = " ".join(filter(None, [
-                "{0}".format(name.nickname),
-                "{0}".format(name.last),
-                "{0}".format(name.suffix),
-            ]))
-        else:
-            self.common_name = '{0}'.format(self.name)
-        self.formal_name = " ".join(filter(None, [
-            '{0}'.format(name.first),
-            '{0}'.format(name.last),
-            '{0}'.format(name.suffix),
-        ]))
 
     # Permissions
     @staticmethod
