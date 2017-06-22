@@ -2247,9 +2247,6 @@ class Office(TimeStampedModel):
             (33, 'vlq', "Very Large Quartet"),
             (34, 'mixed', "Mixed Group"),
         ]),
-        # ('Leadership', [
-        #     (14, 'cj', "Contest and Judging"),
-        # ]),
     )
 
     kind = models.IntegerField(
@@ -2285,11 +2282,6 @@ class Office(TimeStampedModel):
     )
 
     short_name = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    long_name = models.CharField(
         max_length=255,
         blank=True,
     )

@@ -305,7 +305,6 @@ class OfficeSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'short_name',
-            'long_name',
             'officers',
             'permissions',
         ]

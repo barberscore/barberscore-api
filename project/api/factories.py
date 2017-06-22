@@ -192,7 +192,6 @@ class OfficeFactory(DjangoModelFactory):
     status = Office.STATUS.active
     kind = Office.KIND.international
     short_name = Faker('word')
-    long_name = Faker('word')
 
     class Meta:
         model = Office
