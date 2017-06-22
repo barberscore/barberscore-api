@@ -2184,10 +2184,10 @@ class Office(TimeStampedModel):
             (21, 'division', "Division"),
         ]),
         ('Group', [
-            (31, 'quartet', "Quartet"),
             (32, 'chapter', "Chapter"),
             (33, 'vlq', "Very Large Quartet"),
             (34, 'mixed', "Mixed Group"),
+            (41, 'quartet', "Quartet"),
         ]),
     )
 
@@ -2648,11 +2648,11 @@ class Person(TimeStampedModel):
     )
 
     PART = Choices(
+        (-1, 'director', 'Director'),
         (1, 'tenor', 'Tenor'),
         (2, 'lead', 'Lead'),
         (3, 'baritone', 'Baritone'),
         (4, 'bass', 'Bass'),
-        (5, 'director', 'Director'),
     )
 
     part = models.IntegerField(

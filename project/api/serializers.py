@@ -420,7 +420,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'facebook',
             'twitter',
             'email',
-            'phone',
+            # 'phone',
             'address',
             'home_phone',
             'work_phone',
@@ -652,5 +652,4 @@ class OfficeCSVSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'short_name',
-            'long_name',
         ]

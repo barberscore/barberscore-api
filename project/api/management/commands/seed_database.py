@@ -106,59 +106,50 @@ class Command(BaseCommand):
         )
         bhs=EntityFactory(
             name='Barbershop Harmony Society',
-            long_name='Barbershop Harmony Society',
             short_name='BHS',
             kind=Entity.KIND.international,
         )
         district=EntityFactory(
             name='BHS District',
-            long_name='BHS District',
             short_name='DIS',
             parent=bhs,
             kind=Entity.KIND.district,
         )
         affiliate=EntityFactory(
             name='INT Affiliate',
-            long_name='INT Affiliate',
             short_name='INT',
             parent=bhs,
             kind=Entity.KIND.affiliate,
         )
         drcj_office=OfficeFactory(
             name='District Director C&J',
-            long_name='District Director C&J',
             short_name='DRCJ',
             is_cj=True,
             is_drcj=True,
         )
         ca_office=OfficeFactory(
             name='Contest Administrator',
-            long_name='Contest Administrator',
             short_name='CA',
             is_cj=True,
             is_ca=True,
         )
         mus_office=OfficeFactory(
             name='Music Judge',
-            long_name='Music Judge',
             short_name='MUS',
             is_cj=True,
         )
         per_office=OfficeFactory(
             name='Performance Judge',
-            long_name='Performance Judge',
             short_name='PER',
             is_cj=True,
         )
         sng_office=OfficeFactory(
             name='Singing Judge',
-            long_name='Singing Judge',
             short_name='SNG',
             is_cj=True,
         )
         quartet_office=OfficeFactory(
             name='Quartet Representative',
-            long_name='Quartet Representative',
             short_name='QREP',
             is_rep=True,
         )
