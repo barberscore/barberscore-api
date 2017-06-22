@@ -67,7 +67,7 @@
             <th class='col-md-3'>Group</th>
             <th class='col-md-4'>Songs</th>
             <th class='col-md-1 text-right'>MUS</th>
-            <th class='col-md-1 text-right'>PRS</th>
+            <th class='col-md-1 text-right'>per</th>
             <th class='col-md-1 text-right'>SNG</th>
             <th class='col-md-1 text-right'>Total</th>
           </tr>
@@ -105,13 +105,13 @@
               <td class='text-right'>
                 {% for appearance in entry.appearances.all %}
                   {% for song in appearance.songs.all %}
-                    {{song.prs_points}} ({{song.prs_score|floatformat:1}})<br>
+                    {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
                   {% if entry.session.num_rounds > 1 and entry.rank < 21 %}
-                  <em>{{appearance.prs_points}} ({{appearance.prs_score|floatformat:1}})</em><br>
+                  <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                   {% endif %}
                 {% endfor %}
-                <strong>{{entry.prs_points}} ({{entry.prs_score|floatformat:1}})</strong>
+                <strong>{{entry.per_points}} ({{entry.per_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
                 {% for appearance in entry.appearances.all %}

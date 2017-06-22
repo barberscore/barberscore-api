@@ -132,7 +132,7 @@
             <tr>
               <th>Songs</th>
               <th class='text-right'>MUS</th>
-              <th class='text-right'>PRS</th>
+              <th class='text-right'>per</th>
               <th class='text-right'>SNG</th>
               <th class='text-right'>Total</th>
             </tr>
@@ -160,11 +160,11 @@
               <td class='text-right'>
                 {% for appearance in appearances %}
                   {% for song in appearance.songs.all %}
-                    {{song.prs_points}} ({{song.prs_score|floatformat:1}})<br>
+                    {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
-                  <em>{{appearance.prs_points}} ({{appearance.prs_score|floatformat:1}})</em><br>
+                  <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{entry.prs_points}} ({{entry.prs_score|floatformat:1}})</strong><br>
+                <strong>{{entry.per_points}} ({{entry.per_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}

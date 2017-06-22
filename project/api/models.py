@@ -113,7 +113,7 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    prs_points = models.IntegerField(
+    per_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -133,7 +133,7 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    prs_score = models.FloatField(
+    per_score = models.FloatField(
         null=True,
         blank=True,
     )
@@ -190,11 +190,11 @@ class Appearance(TimeStampedModel):
     def calculate(self, *args, **kwargs):
         # self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()
-        self.prs_points = self.calculate_prs_points()
+        self.per_points = self.calculate_per_points()
         self.sng_points = self.calculate_sng_points()
         self.tot_points = self.calculate_tot_points()
         self.mus_score = self.calculate_mus_score()
-        self.prs_score = self.calculate_prs_score()
+        self.per_score = self.calculate_per_score()
         self.sng_score = self.calculate_sng_score()
         self.tot_score = self.calculate_tot_score()
 
@@ -209,7 +209,7 @@ class Appearance(TimeStampedModel):
             tot=models.Sum('scores__points')
         )['tot']
 
-    def calculate_prs_points(self):
+    def calculate_per_points(self):
         return self.appearance.songs.filter(
             scores__kind=self.appearance.round.session.assignments.model.KIND.official,
             scores__category=self.appearance.round.session.assignments.model.CATEGORY.performance,
@@ -240,7 +240,7 @@ class Appearance(TimeStampedModel):
             tot=models.Avg('scores__points')
         )['tot']
 
-    def calculate_prs_score(self):
+    def calculate_per_score(self):
         return self.appearance.songs.filter(
             scores__kind=self.appearance.round.session.assignments.model.KIND.official,
             scores__category=self.appearance.round.session.assignments.model.CATEGORY.performance,
@@ -943,7 +943,7 @@ class Contest(TimeStampedModel):
                 champion = self.contest.contestants.filter(rank=1).order_by(
                     '-sng_points',
                     '-mus_points',
-                    '-prs_points',
+                    '-per_points',
                 ).first().entry
         self.champion = champion
 
@@ -995,7 +995,7 @@ class Contestant(TimeStampedModel):
         blank=True,
     )
 
-    prs_points = models.IntegerField(
+    per_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1015,7 +1015,7 @@ class Contestant(TimeStampedModel):
         blank=True,
     )
 
-    prs_score = models.FloatField(
+    per_score = models.FloatField(
         null=True,
         blank=True,
     )
@@ -1092,11 +1092,11 @@ class Contestant(TimeStampedModel):
     # Methods
     def calculate(self, *args, **kwargs):
         self.contestant.mus_points = self.contestant.calculate_mus_points()
-        self.contestant.prs_points = self.contestant.calculate_prs_points()
+        self.contestant.per_points = self.contestant.calculate_per_points()
         self.contestant.sng_points = self.contestant.calculate_sng_points()
         self.contestant.tot_points = self.contestant.calculate_tot_points()
         self.contestant.mus_score = self.contestant.calculate_mus_score()
-        self.contestant.prs_score = self.contestant.calculate_prs_score()
+        self.contestant.per_score = self.contestant.calculate_per_score()
         self.contestant.sng_score = self.contestant.calculate_sng_score()
         self.contestant.tot_score = self.contestant.calculate_tot_score()
         self.contestant.rank = self.contestant.calculate_rank()
@@ -1113,7 +1113,7 @@ class Contestant(TimeStampedModel):
             tot=models.Sum('songs__scores__points')
         )['tot']
 
-    def calculate_prs_points(self):
+    def calculate_per_points(self):
         return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.performance,
@@ -1148,7 +1148,7 @@ class Contestant(TimeStampedModel):
             tot=models.Avg('songs__scores__points')
         )['tot']
 
-    def calculate_prs_score(self):
+    def calculate_per_score(self):
         return self.contestant.entry.appearances.filter(
             songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
             songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.performance,
@@ -1734,7 +1734,7 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    prs_points = models.IntegerField(
+    per_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -1754,7 +1754,7 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    prs_score = models.FloatField(
+    per_score = models.FloatField(
         null=True,
         blank=True,
     )
@@ -1817,11 +1817,11 @@ class Entry(TimeStampedModel):
     # Methods
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
-        self.prs_points = self.calculate_prs_points()
+        self.per_points = self.calculate_per_points()
         self.sng_points = self.calculate_sng_points()
         self.tot_points = self.calculate_tot_points()
         self.mus_score = self.calculate_mus_score()
-        self.prs_score = self.calculate_prs_score()
+        self.per_score = self.calculate_per_score()
         self.sng_score = self.calculate_sng_score()
         self.tot_score = self.calculate_tot_score()
         self.rank = self.calculate_rank()
@@ -1891,7 +1891,7 @@ class Entry(TimeStampedModel):
             tot=models.Sum('songs__scores__points')
         )['tot']
 
-    def calculate_prs_points(self):
+    def calculate_per_points(self):
         return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.performance,
@@ -1922,7 +1922,7 @@ class Entry(TimeStampedModel):
             tot=models.Avg('songs__scores__points')
         )['tot']
 
-    def calculate_prs_score(self):
+    def calculate_per_score(self):
         return self.entry.appearances.filter(
             songs__scores__kind=self.entry.session.assignments.model.KIND.official,
             songs__scores__category=self.entry.session.assignments.model.CATEGORY.performance,
@@ -3461,14 +3461,14 @@ class Score(TimeStampedModel):
             if abs(self.points - mus_avg) > 5:
                 log.info("Variance Music {0}".format(self))
                 variance = True
-        prs_avg = self.song.scores.filter(
+        per_avg = self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
             category=self.song.scores.model.CATEGORY.performance,
         ).aggregate(
             avg=models.Avg('points')
         )['avg']
         if self.category == self.CATEGORY.performance:
-            if abs(self.points - prs_avg) > 5:
+            if abs(self.points - per_avg) > 5:
                 log.info("Variance Performance {0}".format(self))
                 variance = True
         sng_avg = self.song.scores.filter(
@@ -3940,7 +3940,7 @@ class Song(TimeStampedModel):
         blank=True,
     )
 
-    prs_points = models.IntegerField(
+    per_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -3960,7 +3960,7 @@ class Song(TimeStampedModel):
         blank=True,
     )
 
-    prs_score = models.FloatField(
+    per_score = models.FloatField(
         null=True,
         blank=True,
     )
@@ -4016,11 +4016,11 @@ class Song(TimeStampedModel):
     # Methods
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
-        self.prs_points = self.calculate_prs_points()
+        self.per_points = self.calculate_per_points()
         self.sng_points = self.calculate_sng_points()
         self.tot_points = self.calculate_tot_points()
         self.mus_score = self.calculate_mus_score()
-        self.prs_score = self.calculate_prs_score()
+        self.per_score = self.calculate_per_score()
         self.sng_score = self.calculate_sng_score()
         self.tot_score = self.calculate_tot_score()
 
@@ -4032,7 +4032,7 @@ class Song(TimeStampedModel):
             tot=models.Sum('points')
         )['tot']
 
-    def calculate_prs_points(self):
+    def calculate_per_points(self):
         return self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
             category=self.song.scores.model.CATEGORY.performance,
@@ -4063,7 +4063,7 @@ class Song(TimeStampedModel):
             tot=models.Avg('points')
         )['tot']
 
-    def calculate_prs_score(self):
+    def calculate_per_score(self):
         return self.song.scores.filter(
             kind=self.song.scores.model.KIND.official,
             category=self.song.scores.model.CATEGORY.performance,
