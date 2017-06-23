@@ -820,7 +820,6 @@ class Chart(TimeStampedModel):
         return
 
 
-
 class Contest(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1430,6 +1429,7 @@ class Convention(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.scheduled, conditions=[can_schedule_convention])
     def schedule(self, *args, **kwargs):
+        """Schedule convention and related sessions"""
         return
 
     @fsm_log_by
@@ -3694,8 +3694,13 @@ class Session(TimeStampedModel):
             ),
         ])
 
-
     # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.scheduled)
+    def schedule(self, *args, **kwargs):
+        """Calendar the session."""
+        return
+
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
