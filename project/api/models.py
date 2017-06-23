@@ -806,6 +806,20 @@ class Chart(TimeStampedModel):
             ),
         ])
 
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Chart."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Chart."""
+        return
+
+
 
 class Contest(TimeStampedModel):
     id = models.UUIDField(

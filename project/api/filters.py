@@ -74,7 +74,7 @@ class ChartFilter(FilterSet):
             ],
             'status': [
                 'exact',
-                'lt',
+                'gte',
             ],
         }
 

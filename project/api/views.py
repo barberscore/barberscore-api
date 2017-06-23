@@ -212,12 +212,15 @@ class AwardViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class ChartViewSet(viewsets.ModelViewSet):
+class ChartViewSet(
+    get_viewset_transition_action_mixin(Chart),
+    viewsets.ModelViewSet,
+):
     queryset = Chart.objects.select_related(
     ).prefetch_related(
         'repertories',
         'songs',
-    ).order_by('nomen')
+    ).order_by('status', 'nomen')
     serializer_class = ChartSerializer
     filter_class = ChartFilter
     filter_backends = [
