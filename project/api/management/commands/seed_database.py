@@ -74,12 +74,14 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # Create Admin
         admin=UserFactory(
             email='test@barberscore.com',
             password='password',
             is_staff=True,
             person=None,
         )
+        # Create Core Persons
         drcj_person=PersonFactory(
             name='DRCJ Person',
             email='drcj@barberscore.com',
@@ -92,6 +94,7 @@ class Command(BaseCommand):
             name='Quartet Person',
             email='quartet@barberscore.com',
         )
+        # Create Core Users
         drcj_user=UserFactory(
             email=drcj_person.email,
             person=drcj_person,
@@ -104,6 +107,7 @@ class Command(BaseCommand):
             email=quartet_person.email,
             person=quartet_person,
         )
+        # Create International and Districts
         bhs=EntityFactory(
             name='Barbershop Harmony Society',
             short_name='BHS',
@@ -121,6 +125,7 @@ class Command(BaseCommand):
             parent=bhs,
             kind=Entity.KIND.affiliate,
         )
+        # Create Core Offices
         drcj_office=OfficeFactory(
             name='District Director C&J',
             short_name='DRCJ',
@@ -153,6 +158,7 @@ class Command(BaseCommand):
             short_name='QREP',
             is_rep=True,
         )
+        # Create Core Officers
         drcj_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
@@ -165,9 +171,11 @@ class Command(BaseCommand):
             entity=bhs,
             status=Officer.STATUS.active,
         )
+        # Create Charts
         charts = ChartFactory.create_batch(
             size=300,
         )
+        # Create Quartets
         quartets = EntityFactory.create_batch(
             size=50,
             kind=Entity.KIND.quartet,
@@ -192,8 +200,7 @@ class Command(BaseCommand):
                     status=Member.STATUS.active,
                 )
                 i += 1
-
-
+        # Create Judges
         mus_judges=OfficerFactory.create_batch(
             size=5,
             office=mus_office,
@@ -212,10 +219,12 @@ class Command(BaseCommand):
             entity=bhs,
             status=Officer.STATUS.active,
         )
+        # Create International Convention
         convention=ConventionFactory(
             name='International Convention',
             entity=bhs,
         )
+        # Add Assignments
         drcj_assignment=AssignmentFactory(
             category=Assignment.CATEGORY.drcj,
             person=drcj_person,
@@ -249,6 +258,7 @@ class Command(BaseCommand):
                 convention=convention,
                 status=Assignment.STATUS.confirmed,
             )
+        # Create Quartet Session
         quartet_session=SessionFactory(
             convention=convention,
             kind=Session.KIND.quartet,
@@ -257,18 +267,24 @@ class Command(BaseCommand):
             name='International Quartet Championship',
             entity=bhs,
         )
+        # Add Quartet Contest
         quartet_contest = ContestFactory(
             session=quartet_session,
             award=quartet_award,
         )
-        # Convention Breakpoint
-        if options['breakpoint'] == 'Convention':
+        # Schedule Convention
+        convention.schedule()
+        convention.save()
+        if options['breakpoint'] == 'convention_scheduled':
             return
+        # Open the Session for Entries
         quartet_session.open()
         quartet_session.save()
+        # Enter 50 Quartets at Random
         quartets = Entity.objects.filter(
             kind=Entity.KIND.quartet,
         ).order_by('?')[:50]
+        # Add Repertories to Entered Quartets
         for quartet in quartets:
             i = 1
             charts = list(Chart.objects.order_by('?')[:6])
@@ -278,6 +294,7 @@ class Command(BaseCommand):
                     chart=charts.pop(),
                 )
                 i += 1
+        # Create Quartet Entries
         for quartet in quartets:
             EntryFactory(
                 session=quartet_session,
@@ -286,7 +303,7 @@ class Command(BaseCommand):
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )
-
+        # Add Contest and Participants to Entries
         for entry in quartet_session.entries.all():
             ContestantFactory(
                 entry=entry,
@@ -297,10 +314,11 @@ class Command(BaseCommand):
                     entry=entry,
                     member=member,
                 )
+        # Close Entries
         quartet_session.close()
         quartet_session.save()
         # Session Breakpoint
-        if options['breakpoint'] == 'Session':
+        if options['breakpoint'] == 'session_closed':
             return
         quartet_session.verify()
         quartet_quarters = quartet_session.rounds.get(num=1)
