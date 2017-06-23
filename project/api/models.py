@@ -1709,6 +1709,13 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
+    draw = models.IntegerField(
+        help_text="""
+            The draw for the initial round only.""",
+        null=True,
+        blank=True,
+    )
+
     seed = models.IntegerField(
         help_text="""
             The incoming rank based on prelim score.""",
