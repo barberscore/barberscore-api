@@ -264,6 +264,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'is_evaluation',
             'is_private',
             'is_mt',
+            'draw',
             'seed',
             'prelim',
             'rank',

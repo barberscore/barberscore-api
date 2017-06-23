@@ -517,6 +517,7 @@ class EntryAdmin(admin.ModelAdmin):
         'representing',
         'image',
         ('is_evaluation', 'is_private', 'is_mt',),
+        'draw',
         'prelim',
         'seed',
     )
