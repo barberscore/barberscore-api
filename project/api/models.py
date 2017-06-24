@@ -3591,7 +3591,6 @@ class Session(TimeStampedModel):
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
-        (15, 'prepared', 'Prepared',),
         (20, 'started', 'Started',),
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
@@ -3716,6 +3715,12 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
+        """Draw the session."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.started)
+    def start(self, *args, **kwargs):
         """Create rounds, seat panel, set draw."""
         Slot = config.get_model('Slot')
         Appearance = config.get_model('Appearance')
@@ -3755,30 +3760,6 @@ class Session(TimeStampedModel):
             i += 1
         return
 
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.prepared)
-    def prepare(self, *args, **kwargs):
-        """Prepare the session."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        # while i <= max:
-        #     round = self.rounds.create(
-        #         num=i,
-        #         kind=(max + 1)-i,
-        #     )
-        #     for assignment in self.convention.assignments.filter(
-        #         status=self.convention.assignments.model.STATUS.confirmed,
-        #     ):
-        #         round.panelists.create(
-        #             person=assignment.person,
-        #             kind=assignment.kind,
-        #             category=assignment.category,
-        #         )
-        #     i += 1
-        return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
