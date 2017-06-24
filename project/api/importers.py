@@ -786,6 +786,26 @@ def import_youth(path):
             #     )
 
 
+def import_charts(path):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            defaults = {
+                'title': row[0],
+                'arrangers': row[1],
+                'composers': row[2],
+                'lyricists': row[3],
+                'holders': row[4],
+                'status': 10,
+            }
+            try:
+                Chart.objects.create(**defaults)
+            except Exception as e:
+                print(e, row)
+                continue
+
 
 def import_aff_membership(path, entity):
     with open(path) as f:
