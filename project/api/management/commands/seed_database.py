@@ -314,13 +314,24 @@ class Command(BaseCommand):
                     entry=entry,
                     member=member,
                 )
-        # Close Entries
+        # Close Session
         quartet_session.close()
         quartet_session.save()
-        # Session Breakpoint
         if options['breakpoint'] == 'session_closed':
             return
+
+        # Draw Entries
+        i = 1
+        for entry in quartet_session.entries.all().order_by("?"):
+            entry.draw = i
+            entry.save()
+            i += 1
+        # Verify Session
         quartet_session.verify()
+        quartet_session.save()
+        if options['breakpoint'] == 'session_verified':
+            return
+
         quartet_quarters = quartet_session.rounds.get(num=1)
         for assignment in convention.assignments.filter(
             category__gt=Panelist.CATEGORY.aca,
