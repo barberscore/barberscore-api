@@ -38,6 +38,7 @@ from django.core.validators import (
 )
 from django.db import models
 from django.utils.encoding import smart_text
+from django.utils.timezone import now
 
 # Local
 from .fields import (
@@ -311,6 +312,28 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
+        panelists = self.round.panelists.filter(
+            category__gt=20,
+        )
+        i = 1
+        while i <= 2:  # Number songs constant
+            song = self.songs.create(
+                num=i
+            )
+            for panelist in panelists:
+                song.scores.create(
+                    category=panelist.category,
+                    kind=panelist.kind,
+                    panelist=panelist,
+                )
+            i += 1
+        self.actual_start = now()
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        self.actual_finish = now()
         return
 
     @fsm_log_by
@@ -3176,6 +3199,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
+        """Confirm panel and appearances"""
         return
 
     @fsm_log_by
