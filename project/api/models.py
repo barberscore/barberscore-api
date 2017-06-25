@@ -2036,9 +2036,13 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.scratched)
     def scratch(self, *args, **kwargs):
-        for appearance in self.appearances.all():
-            appearance.status = appearance.STATUS.scratched
-            appearance.save()
+        if self.session.status == self.session.STATUS.verified:
+            remains = self.session.entries.filter(draw__gt=self.draw)
+            self.draw = None
+            self.save()
+            for entry in remains:
+                entry.draw = entry.draw - 1
+                entry.save()
         return
 
     @fsm_log_by

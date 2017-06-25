@@ -301,21 +301,17 @@ def export_charts():
         'arrangers',
         'composers',
         'lyricists',
-        'holders',
     ]
-    charts = Chart.objects.filter(status=-10).order_by('title', 'arrangers')
-    i = 1001
+    charts = Chart.objects.all()
     for chart in charts:
         row = {
-            'id': i,
+            'id': chart.id.hex,
             'title': chart.title,
             'arrangers': chart.arrangers,
             'composers': chart.composers,
             'lyricists': chart.lyricists,
-            'holders': chart.holders,
         }
         output.append(row)
-        i += 1
     writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, extrasaction='ignore')
     writer.writeheader()
     for row in output:
