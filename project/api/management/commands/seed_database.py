@@ -321,8 +321,19 @@ class Command(BaseCommand):
             return
 
         # Draw Entries
-        i = 1
-        for entry in quartet_session.entries.all().order_by("?"):
+        entries = quartet_session.entries.filter(
+            is_mt=False,
+            status=Entry.STATUS.accepted,
+        ).order_by('?')
+        mts = quartet_session.entries.filter(
+            is_mt=True,
+        ).order_by('?')
+        i = 1 - mts.count()
+        for entry in mts:
+            entry.draw = i
+            entry.save()
+            i += 1
+        for entry in entries:
             entry.draw = i
             entry.save()
             i += 1

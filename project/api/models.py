@@ -68,6 +68,7 @@ class Appearance(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (2, 'scheduled', 'Scheduled',),
         (5, 'verified', 'Verified',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
@@ -3725,8 +3726,10 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        """Create rounds, seat panel, set draw."""
+        """Create round, seat panel, copy draw."""
+        Assignment = config.get_model('Assignment')
         Slot = config.get_model('Slot')
+        Entry = config.get_model('Entry')
         Appearance = config.get_model('Appearance')
         max = self.contests.all().aggregate(
             max=models.Max('award__rounds')
@@ -3736,32 +3739,25 @@ class Session(TimeStampedModel):
             num=i,
             kind=max,
         )
-        entries = self.entries.filter(is_mt=False).order_by('?')
-        mts = self.entries.filter(is_mt=True).order_by('?')
-        i = 1 - mts.count()
-        for entry in mts:
+        for entry in self.entries.filter(status=Entry.STATUS.accepted):
             slot = Slot.objects.create(
-                num=i,
+                num=entry.draw,
                 round=round,
             )
             round.appearances.create(
                 entry=entry,
                 slot=slot,
-                num=i,
-                status=Appearance.STATUS.verified,
+                num=entry.draw,
+                status=Appearance.STATUS.scheduled,
             )
-            i += 1
-        for entry in entries:
-            slot = Slot.objects.create(
-                num=i,
-                round=round,
+        for assignment in self.convention.assignments.filter(
+            status=Assignment.STATUS.confirmed,
+        ):
+            round.panelists.create(
+                kind=assignment.kind,
+                category=assignment.category,
+                person=assignment.person,
             )
-            round.appearances.create(
-                entry=entry,
-                slot=slot,
-                num=i,
-            )
-            i += 1
         return
 
 
