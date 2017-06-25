@@ -1,3 +1,5 @@
+import os
+
 # Third-Party
 import pytz
 import six
@@ -13,6 +15,26 @@ from django.db import models
 from django.db.models.fields.related_descriptors import (
     ReverseOneToOneDescriptor,
 )
+from django.utils.deconstruct import deconstructible
+from django.utils.text import slugify
+
+@deconstructible
+class PathAndRename(object):
+    def __init__(self, sub_path='', prefix=''):
+        self.path = sub_path
+        self.prefix = prefix
+
+    def __call__(self, instance, filename):
+        f, ext = os.path.splitext(filename)
+        if self.prefix:
+            name = "-".join([
+                slugify(instance.nomen),
+                self.prefix
+            ])
+        else:
+            name = instance.id
+        filename = '{0}{1}'.format(name, ext.lower())
+        return os.path.join(self.path, filename)
 
 
 class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):

@@ -21,6 +21,7 @@ from model_utils.models import TimeStampedModel
 from nameparser import HumanName
 from ranking import Ranking
 from timezone_field import TimeZoneField
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 # Django
 from django.apps import apps as api_apps
@@ -44,6 +45,7 @@ from django.utils.timezone import now
 from .fields import (
     CloudinaryRenameField,
     OneToOneOrNoneField,
+    PathAndRename,
 )
 from .managers import UserManager
 from .messages import send_entry
@@ -3647,10 +3649,13 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
-    scoresheet = CloudinaryRenameField(
-        'raw',
-        blank=True,
+    scoresheet = models.FileField(
+        upload_to=PathAndRename(
+            prefix='scoresheet',
+        ),
         null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
     )
 
     num_rounds = models.IntegerField(

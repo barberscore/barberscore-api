@@ -125,6 +125,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
 
+# Cloudinary
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
 # JSONAPI
 JSON_API_FORMAT_KEYS = 'dasherize'
 APPEND_TRAILING_SLASH = False
@@ -140,6 +145,8 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.humanize',
     'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
     'django_fsm',
     'django_fsm_log',
     'timezone_field',
