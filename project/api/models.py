@@ -3763,17 +3763,19 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Draw the session."""
-        create_bbscores(self)
-        self.bbscores.save(
-            'bbscores.csv',
-            File(open('bbscores.csv')),
-        )
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         """Create round, seat panel, copy draw."""
+        #  Create the BBScores export file
+        create_bbscores(self)
+        self.bbscores.save(
+            'bbscores.csv',
+            File(open('bbscores.csv')),
+        )
+        # Build the rounds
         Assignment = config.get_model('Assignment')
         Slot = config.get_model('Slot')
         Entry = config.get_model('Entry')
