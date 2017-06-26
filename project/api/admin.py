@@ -942,6 +942,7 @@ class SessionAdmin(admin.ModelAdmin):
         'convention',
         'kind',
         'scoresheet',
+        'bbscores',
     ]
 
     list_display = [

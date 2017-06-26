@@ -208,7 +208,8 @@ def update_auth0_id(user):
 #     return
 
 
-def export_bbscores(session):
+def create_bbscores(session):
+    Entry = config.get_model('Entry')
     with open('bbscores.csv', 'w') as f:
         output = []
         fieldnames = [
@@ -219,12 +220,11 @@ def export_bbscores(session):
             'song_number',
             'song_title',
         ]
-        entries = session.entries.order_by('entity__name')
+        entries = session.entries.filter(
+            status=Entry.STATUS.accepted,
+        ).order_by('draw')
         for entry in entries:
-            try:
-                oa = entry.appearances.get(round__num=1).num
-            except Appearance.DoesNotExist:
-                continue
+            oa = entry.draw
             group_name = entry.entity.name
             group_type = entry.entity.get_kind_display()
             if group_type == 'Quartet':
@@ -251,46 +251,6 @@ def export_bbscores(session):
         writer.writeheader()
         for row in output:
             writer.writerow(row)
-
-    with open('bbscores.csv', 'r') as t:
-        cfile = upload(
-            t,
-            public_id='bbscores_{0}'.format(session.nomen.replace(" ", "_").lower()),
-            format='csv',
-            resource_type='raw',
-        )
-    assignments = session.convention.assignments.filter(
-        category__lt=10,
-    )
-    recipients = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-    context = {
-        'link': cfile['secure_url'],
-    }
-    rendered = render_to_string('bbscores.txt', context)
-    subject = "BBScores Export file for {0}".format(
-        session.nomen,
-    )
-    email = EmailMessage(
-        subject=subject,
-        body=rendered,
-        from_email='Barberscore <admin@barberscore.com>',
-        to=recipients,
-    )
-    result = email.send()
-    if result == 1:
-        log.info(
-            "Sent bbscores for {0}".format(
-                entry,
-            )
-        )
-    else:
-        log.error(
-            "FAILED bbscores for {0}".format(
-                entry,
-            )
-        )
-
-
 
 
 def export_charts():

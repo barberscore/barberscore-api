@@ -17,3 +17,4 @@ api.json
 *.css
 
 .cache/v/cache/lastfailed
+*.csv

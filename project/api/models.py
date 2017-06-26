@@ -32,6 +32,7 @@ from django.contrib.postgres.fields import (
     FloatRangeField,
     IntegerRangeField,
 )
+from django.core.files import File
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -49,6 +50,7 @@ from .fields import (
 )
 from .managers import UserManager
 from .messages import send_entry
+from .utils import create_bbscores
 
 config = api_apps.get_app_config('api')
 
@@ -3658,6 +3660,15 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
+    bbscores = models.FileField(
+        upload_to=PathAndRename(
+            prefix='bbscores',
+        ),
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     num_rounds = models.IntegerField(
         null=True,
         blank=True,
@@ -3750,6 +3761,11 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Draw the session."""
+        create_bbscores(self)
+        self.bbscores.save(
+            'bbscores.csv',
+            File(open('bbscores.csv')),
+        )
         return
 
     @fsm_log_by
