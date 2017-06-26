@@ -3655,6 +3655,7 @@ class Session(TimeStampedModel):
         upload_to=PathAndRename(
             prefix='scoresheet',
         ),
+        max_length=255,
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
@@ -3664,6 +3665,7 @@ class Session(TimeStampedModel):
         upload_to=PathAndRename(
             prefix='bbscores',
         ),
+        max_length=255,
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
