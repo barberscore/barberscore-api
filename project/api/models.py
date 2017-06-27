@@ -44,7 +44,6 @@ from django.utils.timezone import now
 
 # Local
 from .fields import (
-    CloudinaryRenameField,
     OneToOneOrNoneField,
     PathAndRename,
 )
@@ -774,10 +773,14 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
-    image = CloudinaryRenameField(
-        'raw',
-        blank=True,
+    image = models.FileField(
+        upload_to=PathAndRename(
+            prefix='chart',
+        ),
+        max_length=255,
         null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
     )
 
     # Internals
@@ -1605,10 +1608,11 @@ class Entity(TimeStampedModel):
         max_length=25,
     )
 
-    image = CloudinaryRenameField(
-        'image',
-        blank=True,
+    image = models.ImageField(
+        upload_to=PathAndRename(),
+        max_length=255,
         null=True,
+        blank=True,
     )
 
     description = models.TextField(
@@ -1727,10 +1731,11 @@ class Entry(TimeStampedModel):
         default=STATUS.new,
     )
 
-    image = CloudinaryRenameField(
-        'image',
-        blank=True,
+    image = models.ImageField(
+        upload_to=PathAndRename(),
+        max_length=255,
         null=True,
+        blank=True,
     )
 
     is_evaluation = models.BooleanField(
@@ -2794,10 +2799,11 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
-    image = CloudinaryRenameField(
-        'image',
-        blank=True,
+    image = models.ImageField(
+        upload_to=PathAndRename(),
+        max_length=255,
         null=True,
+        blank=True,
     )
 
     description = models.TextField(
