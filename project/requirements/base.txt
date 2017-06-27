@@ -6,6 +6,7 @@ dj-database-url==0.4.2
 django-cloudinary-storage==0.2.1
 django-cors-headers==2.1.0
 django-filter==1.0.4
+django-fsm==2.6.0
 git+https://github.com/barberscore/django-fsm-log.git
 django-model-utils==3.0.0
 django-timezone-field==2.0
