@@ -233,6 +233,26 @@ class ChartViewSet(
     ]
     resource_name = "chart"
 
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def image(self, request, *args, **kwargs):
+        if 'upload' in request.data:
+            chart = self.get_object()
+
+            upload = request.data['upload']
+            chart.image.save(
+                'foo.pdf',
+                upload,
+            )
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data={'image': chart.image.url},
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
@@ -335,7 +355,7 @@ class EntityViewSet(
             entity.image = upload.read()
 
             return Response(
-                status=status.HTTP_201_CREATED,
+                status=status.HTTP_200_OK,
                 headers={'Location': entity.image.url},
             )
         else:

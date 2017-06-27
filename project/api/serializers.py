@@ -134,11 +134,15 @@ class ChartSerializer(serializers.ModelSerializer):
             'arrangers',
             'composers',
             'lyricists',
+            'image',
             'holders',
             'repertories',
             'songs',
             'permissions',
         )
+        read_only_fields = [
+            'image',
+        ]
 
 
 class ContestSerializer(serializers.ModelSerializer):
