@@ -192,7 +192,6 @@ def import_persons(path):
             except ValueError:
                 part = None
 
-            start_date = dateparse.parse_datetime(row[30]).date()
             dues_thru = dateparse.parse_datetime(row[31]).date()
             defaults = {
                 'name': name,
@@ -202,7 +201,6 @@ def import_persons(path):
                 'address': address,
                 'cell_phone': cell_phone,
                 'home_phone': home_phone,
-                'start_date': start_date,
                 'dues_thru': dues_thru,
                 'part': part,
             }
