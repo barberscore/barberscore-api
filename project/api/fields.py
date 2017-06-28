@@ -27,9 +27,10 @@ class PathAndRename(object):
     def __call__(self, instance, filename):
         f, ext = os.path.splitext(filename)
         if self.prefix:
+            deslashed = instance.nomen.replace("/", "-")
             name = "-".join([
-                slugify(instance.nomen),
-                self.prefix
+                self.prefix,
+                slugify(deslashed),
             ])
         else:
             name = instance.id
