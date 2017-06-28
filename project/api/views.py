@@ -349,18 +349,17 @@ class EntityViewSet(
     def image(self, request, *args, **kwargs):
         if 'upload' in request.data:
             entity = self.get_object()
-
             upload = request.data['upload']
-
-            entity.image = upload.read()
-
+            entity.image.save(
+                'foo.pdf',
+                upload,
+            )
             return Response(
-                status=status.HTTP_200_OK,
-                headers={'Location': entity.image.url},
+                status=status.HTTP_201_CREATED,
+                data={'image': entity.image.url},
             )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 class EntryViewSet(
     get_viewset_transition_action_mixin(Entry),

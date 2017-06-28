@@ -239,6 +239,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
+            'image',
             'description',
             'bhs_id',
             'org_sort',
@@ -252,6 +253,10 @@ class EntitySerializer(serializers.ModelSerializer):
             # 'persons',
             'repertories',
             'permissions',
+        ]
+
+        read_only_fields = [
+            'image',
         ]
 
 
