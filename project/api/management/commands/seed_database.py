@@ -174,6 +174,7 @@ class Command(BaseCommand):
         # Create Charts
         charts = ChartFactory.create_batch(
             size=300,
+            status=Chart.STATUS.active,
         )
         # Create Quartets
         quartets = EntityFactory.create_batch(
