@@ -509,22 +509,23 @@ class PersonViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "person"
 
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def picture(self, request, *args, **kwargs):
-    #     if 'upload' in request.data:
-    #         person = self.get_object()
-    #         upload = request.data['upload']
-    #         person.image.save(upload.name, upload)
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def image(self, request, *args, **kwargs):
+        if 'upload' in request.data:
+            person = self.get_object()
 
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             headers={'Location': person.image.url},
-    #         )
-    #     else:
-    #         return Response(
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
+            upload = request.data['upload']
+            person.image.save(
+                'foo.pdf',
+                upload,
+            )
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data={'image': person.image.url},
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RepertoryViewSet(

@@ -437,6 +437,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'work_phone',
             'cell_phone',
             'airports',
+            'image',
             'description',
             'bhs_id',
             'last_name',
@@ -461,6 +462,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'nick_name',
+            'image',
         ]
 
 
