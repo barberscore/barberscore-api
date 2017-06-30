@@ -120,6 +120,7 @@ class EntityFilter(FilterSet):
                 'exact',
                 'lt',
                 'in',
+                'lte',
             ],
             'parent': [
                 'exact',

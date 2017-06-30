@@ -2940,7 +2940,7 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return True
 
 
     @allow_staff_or_superuser
