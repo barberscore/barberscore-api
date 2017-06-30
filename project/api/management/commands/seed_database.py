@@ -268,6 +268,10 @@ class Command(BaseCommand):
             name='International Quartet Championship',
             entity=bhs,
         )
+        dc_award=AwardFactory(
+            name='International Dealers Choice',
+            entity=bhs,
+        )
         # Add Quartet Contest
         quartet_contest = ContestFactory(
             session=quartet_session,
