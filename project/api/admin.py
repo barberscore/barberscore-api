@@ -159,6 +159,7 @@ class AwardAdmin(admin.ModelAdmin):
         'kind',
         'age',
         'season',
+        'entity',
         # 'size',
         # 'size_range',
         # 'scope',
@@ -217,6 +218,11 @@ class AwardAdmin(admin.ModelAdmin):
         'scope',
         'is_novice',
     )
+
+    raw_id_fields = [
+        'entity',
+    ]
+
 
 
 @admin.register(Chart)

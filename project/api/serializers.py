@@ -342,6 +342,7 @@ class OfficeSerializer(serializers.ModelSerializer):
             'kind',
             'short_name',
             'is_ml',
+            'is_drcj',
             'officers',
             'permissions',
         ]
