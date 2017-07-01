@@ -236,21 +236,21 @@ class ChartViewSet(
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
     def image(self, request, *args, **kwargs):
-        if 'upload' in request.data:
-            chart = self.get_object()
+        print(request.data)
+        if 'file' in request.data:
+            obj = self.get_object()
 
-            upload = request.data['upload']
-            chart.image.save(
+            upload = request.data['file']
+            obj.image.save(
                 'foo.pdf',
                 upload,
             )
             return Response(
                 status=status.HTTP_201_CREATED,
-                data={'image': chart.image.url},
+                data={'image': obj.image.url},
             )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
@@ -347,19 +347,22 @@ class EntityViewSet(
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
     def image(self, request, *args, **kwargs):
-        if 'upload' in request.data:
-            entity = self.get_object()
-            upload = request.data['upload']
-            entity.image.save(
-                'foo.pdf',
+        print(request.data)
+        if 'file' in request.data:
+            obj = self.get_object()
+
+            upload = request.data['file']
+            obj.image.save(
+                'foo.jpg',
                 upload,
             )
             return Response(
                 status=status.HTTP_201_CREATED,
-                data={'image': entity.image.url},
+                data={'image': obj.image.url},
             )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class EntryViewSet(
     get_viewset_transition_action_mixin(Entry),
@@ -512,12 +515,13 @@ class PersonViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
     def image(self, request, *args, **kwargs):
-        if 'upload' in request.data:
+        print(request.data)
+        if 'file' in request.data:
             person = self.get_object()
 
-            upload = request.data['upload']
+            upload = request.data['file']
             person.image.save(
-                'foo.pdf',
+                'foo.jpg',
                 upload,
             )
             return Response(

@@ -774,13 +774,10 @@ class Chart(TimeStampedModel):
     )
 
     image = models.FileField(
-        upload_to=PathAndRename(
-            prefix='chart',
-        ),
+        upload_to=PathAndRename(),
         max_length=255,
         null=True,
         blank=True,
-        storage=RawMediaCloudinaryStorage(),
     )
 
     # Internals
