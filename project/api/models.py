@@ -3222,106 +3222,108 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        """Determine advancers"""
+        # If the finals, simply finish round and return
         if self.kind == self.KIND.finals:
-            # If the Finals, finish entries and return
-            for entry in self.session.entries.filter(
-                status=self.session.entries.model.STATUS.started
-            ):
-                entry.finish()
-                entry.save()
-            for contest in self.session.contests.all():
-                for contestant in contest.contestants.all():
-                    contestant.finish()
-                    contestant.save()
-                contest.finish()
-                contest.save()
-            self.session.finish()
-            self.session.save()
             return
-        # Hard-code the International Quartet Contest
-        if all([
-            self.session.convention.level == self.session.convention.LEVEL.international,
-            self.session.kind == self.session.KIND.quartet,
-        ]):
-            if self.kind == self.KIND.quarters:
-                spots = 20
-                next_round, created = self.session.rounds.get_or_create(
-                    num=2,
-                    kind=self.session.rounds.model.KIND.semis,
-                )
-            else:
-                spots = 10
-                next_round, created = self.session.rounds.get_or_create(
-                    num=3,
-                    kind=self.session.rounds.model.KIND.finals,
-                )
-            # Get all the primary contestants by random order
-            contestants = self.session.primary.contestants.order_by('?')
-            i = 1
-            for contestant in contestants:
-                # Advance the entry if the rank is GTE spots.
-                if contestant.calculate_rank() <= spots:
-                    next_round.appearances.get_or_create(
-                        entry=contestant.entry,
-                        num=i,
-                    )
-                    i += 1
-            return
-        # Get the number of spots available
-        spots = self.session.convention.international.spots
-        # Create appearances accordingly
-        next_round = self.session.rounds.create(
-            num=2,
-            kind=self.session.rounds.model.KIND.finals,
+        # Otherwise, get the number of spots and create next round
+        # Only the International quartet contest has quarters; hard code
+        if self.kind == self.KIND.quarters:
+            spots = 20
+            next_round = self.session.rounds.create(
+                num=2,
+                kind=self.session.rounds.model.KIND.semis,
+            )
+        # These are the semis, by deduction.
+        else:
+            spots = 10 # TODO This probably should change from hard code
+            next_round = self.session.rounds.create(
+                num=2,
+                kind=self.session.rounds.model.KIND.finals,
+            )
+
+        # Build list of advancing appearances to number of spots available
+        ordered_appearances = self.appearances.annotate(
+            tot=models.Sum('songs__scores__points')
+        ).order_by('-tot')
+        # Check for tie at cutoff
+        cutoff = ordered_appearances[spots-1:spots][0].tot
+        mt_score = ordered_appearances[spots:spots+1][0].tot
+        while cutoff == mt_score:
+            spots += 1
+            cutoff = ordered_appearances[spots-1:spots][0].tot
+            mt_score = ordered_appearances[spots:spots+1][0].tot
+        # Get MT and populate
+        mt = ordered_appearances[spots-1:spots][0]
+        next_round.appearances.create(
+            entry=mt.entry,
+            num=0,
         )
-        # Non-International Quartet Rounds
-        # Instantiate the advancing list
-        advancing = []
-        # Only address multi-round contests; single-round awards do not proceed.
-        for contest in self.session.contests.filter(num_rounds__gt=1):
-            # Qualifiers have an absolute score cutoff
-            if contest.is_qualifier:
-                # Uses absolute cutoff.
-                contestants = contest.contestants.filter(
-                    tot_score__gte=contest.award.advance,
-                )
-                for contestant in contestants:
-                    advancing.append(contestant.entry)
-            # Championships are relative.
-            else:
-                # Get the top scorer
-                top = contest.contestants.filter(
-                    rank=1,
-                ).first()
-                # Derive the accept threshold from that top score.
-                accept = top.calculate_tot_score() - 4.0
-                contestants = contest.contestants.filter(
-                    tot_score__gte=accept,
-                )
-                for contestant in contestants:
-                    advancing.append(contestant.entry)
-        # Remove duplicates
-        advancing = list(set(advancing))
-        # Append up to spots available.
-        diff = spots - len(advancing)
-        if diff > 0:
-            adds = self.appearances.filter(
-                entry__contestants__contest__num_rounds__gt=1,
-            ).exclude(
-                entry__in=advancing,
-            ).order_by(
-                '-tot_points',
-            )[:diff]
-            for a in adds:
-                advancing.append(a.entry)
+        # Get Advancers and convert to list
+        advancing = list(ordered_appearances[:spots])
+
+        # Randomize
         random.shuffle(advancing)
+
+        # Populate
         i = 1
-        for entry in advancing:
-            next_round.appearances.get_or_create(
-                entry=entry,
-                slot=i,
+        for appearance in advancing:
+            next_round.appearances.create(
+                entry=appearance.entry,
+                num=i,
             )
             i += 1
+
+        # TODO Bypassing all this in favor of International-only
+
+        # # Create appearances accordingly
+        # # Instantiate the advancing list
+        # advancing = []
+        # # Only address multi-round contests; single-round awards do not proceed.
+        # for contest in self.session.contests.filter(award__rounds__gt=1):
+        #     # Qualifiers have an absolute score cutoff
+        #     if not contest.award.parent:
+        #         # Uses absolute cutoff.
+        #         contestants = contest.contestants.filter(
+        #             tot_score__gte=contest.award.advance,
+        #         )
+        #         for contestant in contestants:
+        #             advancing.append(contestant.entry)
+        #     # Championships are relative.
+        #     else:
+        #         # Get the top scorer
+        #         top = contest.contestants.filter(
+        #             rank=1,
+        #         ).first()
+        #         # Derive the accept threshold from that top score.
+        #         accept = top.calculate_tot_score() - 4.0
+        #         contestants = contest.contestants.filter(
+        #             tot_score__gte=accept,
+        #         )
+        #         for contestant in contestants:
+        #             advancing.append(contestant.entry)
+        # # Remove duplicates
+        # advancing = list(set(advancing))
+        # # Append up to spots available.
+        # diff = spots - len(advancing)
+        # if diff > 0:
+        #     adds = self.appearances.filter(
+        #         entry__contestants__contest__award__rounds__gt=1,
+        #     ).exclude(
+        #         entry__in=advancing,
+        #     ).order_by(
+        #         '-tot_points',
+        #     )[:diff]
+        #     for a in adds:
+        #         advancing.append(a.entry)
+        # random.shuffle(advancing)
+        # i = 1
+        # for entry in advancing:
+        #     next_round.appearances.get_or_create(
+        #         entry=entry,
+        #         num=i,
+        #     )
+        #     i += 1
         return
 
     @fsm_log_by
