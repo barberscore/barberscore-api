@@ -1,6 +1,7 @@
 # Django
 # Standard Libary
 import json
+import random
 from itertools import chain
 from optparse import make_option
 
@@ -324,65 +325,34 @@ class Command(BaseCommand):
         quartet_session.save()
         if options['breakpoint'] == 'session_closed':
             return
-
-        # Draw Entries
-        entries = quartet_session.entries.filter(
-            is_mt=False,
-            status=Entry.STATUS.accepted,
-        ).order_by('?')
-        mts = quartet_session.entries.filter(
-            is_mt=True,
-        ).order_by('?')
-        i = 1 - mts.count()
-        for entry in mts:
-            entry.draw = i
-            entry.save()
-            i += 1
-        for entry in entries:
-            entry.draw = i
-            entry.save()
-            i += 1
         # Verify Session
         quartet_session.verify()
         quartet_session.save()
-        if options['breakpoint'] == 'session_verified':
+        # Start Session
+        quartet_session.start()
+        quartet_session.save()
+        if options['breakpoint'] == 'session_started':
             return
-
+        # Get the first round
         quartet_quarters = quartet_session.rounds.get(num=1)
-        for assignment in convention.assignments.filter(
-            category__gt=Panelist.CATEGORY.aca,
+        # Verifyl, Start
+        quartet_quarters.verify()
+        quartet_quarters.start()
+        quartet_quarters.save()
+        # Score the round
+        for appearance in quartet_quarters.appearances.filter(
+            status=Appearance.STATUS.scheduled,
         ):
-            PanelistFactory(
-                kind=assignment.kind,
-                category=assignment.category,
-                round=quartet_quarters,
-                person=assignment.person,
-            )
-        i = 1
-        # for entry in quartet_session.entries.all().order_by('?'):
-        #     slot = SlotFactory(
-        #         num=i,
-        #         round=quartet_quarters,
-        #     )
-        #     AppearanceFactory(
-        #         round=quartet_quarters,
-        #         entry=entry,
-        #         slot=slot,
-        #         num=i,
-        #     )
-        #     i += 1
-        for appearance in quartet_quarters.appearances.all():
-            i = 1
-            while i <= 2:  # TODO constant
-                song = SongFactory(
-                    num=i,
-                    appearance=appearance,
-                )
-                i += 1
-                for panelist in quartet_quarters.panelists.all().order_by('kind'):
-                    ScoreFactory(
-                        category=panelist.category,
-                        kind=panelist.kind,
-                        song=song,
-                        panelist=panelist,
-                    )
+            appearance.start()
+            for song in appearance.songs.all():
+                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.save()
+            appearance.finish()
+            for song in appearance.songs.all():
+                center = random.randint(70,80)
+                for score in song.scores.all():
+                    offset = random.randint(-5,5)
+                    score.points = center + offset
+                    score.save()
+            appearance.confirm()
+            appearance.save()

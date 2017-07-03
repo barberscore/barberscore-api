@@ -76,7 +76,7 @@ class Appearance(TimeStampedModel):
         (5, 'verified', 'Verified',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
-        (30, 'entered', 'Entered',),
+        (30, 'confirmed', 'Confirmed',),
         (40, 'flagged', 'Flagged',),
         (50, 'scratched', 'Scratched',),
         (60, 'cleared', 'Cleared',),
@@ -308,11 +308,6 @@ class Appearance(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
-    def verify(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
         panelists = self.round.panelists.filter(
@@ -337,6 +332,11 @@ class Appearance(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
         self.actual_finish = now()
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.confirmed)
+    def confirm(self, *args, **kwargs):
         return
 
     @fsm_log_by
@@ -3174,7 +3174,7 @@ class Round(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_ca=True,
                 status__gt=0,
             ),
         ])
@@ -3185,7 +3185,7 @@ class Round(TimeStampedModel):
         return any([
             self.session.convention.assignments.filter(
                 person=request.user.person,
-                category__lt=30,
+                category__in=[10,20],
                 kind=10,
             ),
         ])
@@ -3212,7 +3212,6 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.prepared)
     def prepare(self, *args, **kwargs):
-
         return
 
     @fsm_log_by
@@ -3759,13 +3758,30 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.closed)
     def close(self, *args, **kwargs):
-        """Make session unavilable for entry."""
+        """Make session unavailable and set initial draw."""
+        mts = self.entries.filter(
+            is_mt=True,
+            status=self.entries.model.STATUS.accepted,
+        )
+        entries = self.entries.filter(
+            is_mt=False,
+            status=self.entries.model.STATUS.accepted,
+        )
+        i = 1 - mts.count()
+        for m in mts:
+            m.draw = i
+            m.save()
+            i += 1
+        for entry in entries:
+            entry.draw = i
+            entry.save()
+            i += 1
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
-        """Draw the session."""
+        """Make draw public."""
         return
 
     @fsm_log_by
