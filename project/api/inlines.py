@@ -128,7 +128,6 @@ class EntryInline(admin.TabularInline):
         'nomen',
         'session',
         'entity',
-        'is_mt',
         'status',
     ]
     readonly_fields = [

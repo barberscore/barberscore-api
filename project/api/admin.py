@@ -65,11 +65,14 @@ class AppearanceAdmin(admin.ModelAdmin):
         'entry',
         'round',
         'num',
+        'draw',
         'slot',
     ]
 
     list_display = [
         'nomen',
+        'num',
+        'draw',
         'status',
     ]
 
@@ -522,7 +525,7 @@ class EntryAdmin(admin.ModelAdmin):
         'entity',
         'representing',
         'image',
-        ('is_evaluation', 'is_private', 'is_mt',),
+        ('is_evaluation', 'is_private',),
         'draw',
         'prelim',
         'seed',
@@ -884,7 +887,6 @@ class RoundAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'session',
-        # 'mt',
     )
 
     inlines = [

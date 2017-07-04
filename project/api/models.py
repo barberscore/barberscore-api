@@ -93,6 +93,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    draw = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     actual_start = models.DateTimeField(
         help_text="""
             The actual appearance window.""",
@@ -193,7 +198,7 @@ class Appearance(TimeStampedModel):
 
     # Methods
     def calculate(self, *args, **kwargs):
-        # self.rank = self.calculate_rank()
+        self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()
         self.per_points = self.calculate_per_points()
         self.sng_points = self.calculate_sng_points()
@@ -204,66 +209,66 @@ class Appearance(TimeStampedModel):
         self.tot_score = self.calculate_tot_score()
 
     def calculate_rank(self):
-        return self.appearance.round.ranking(self.calculate_tot_points())
+        return self.round.ranking(self.calculate_tot_points())
 
     def calculate_mus_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_per_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.performance,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_tot_points(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.music,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_per_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.performance,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
-            scores__category=self.appearance.round.session.assignments.model.CATEGORY.singing,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__category=self.round.session.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_tot_score(self):
-        return self.appearance.songs.filter(
-            scores__kind=self.appearance.round.session.assignments.model.KIND.official,
+        return self.songs.filter(
+            scores__kind=self.round.session.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
@@ -338,29 +343,6 @@ class Appearance(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
         return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=RETURN_VALUE(STATUS.cleared, STATUS.flagged))
-    def calc(self, *args, **kwargs):
-        self.calculate()
-        self.save()
-        Song = config.get_model('Song')
-        songs = Song.objects.filter(
-            appearance=self,
-        )
-        for song in songs:
-            song.calculate()
-            song.save()
-        Score = config.get_model('Score')
-        scores = Score.objects.filter(
-            song__appearance=self,
-        )
-        flags = []
-        for score in scores:
-            flags.append(score.verify())
-        if any(flags):
-            return self.STATUS.flagged
-        return self.STATUS.cleared
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
@@ -1720,6 +1702,7 @@ class Entry(TimeStampedModel):
         (55, 'disqualified', 'Disqualified',),
         (57, 'started', 'Started',),
         (60, 'finished', 'Finished',),
+        (70, 'completed', 'Completed',),
         (90, 'published', 'Published',),
     )
 
@@ -1744,12 +1727,6 @@ class Entry(TimeStampedModel):
     is_private = models.BooleanField(
         help_text="""
             Keep scores private.""",
-        default=False,
-    )
-
-    is_mt = models.BooleanField(
-        help_text="""
-            Scheduled mic tester.""",
         default=False,
     )
 
@@ -2076,8 +2053,8 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.withdrew)
-    def withdraw(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.completed)
+    def complete(self, *args, **kwargs):
         return
 
 
@@ -3222,57 +3199,48 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        """Determine advancers"""
-        # If the finals, simply finish round and return
-        if self.kind == self.KIND.finals:
-            return
-        # Otherwise, get the number of spots and create next round
-        # Only the International quartet contest has quarters; hard code
+        """Separate advancers and finishers"""
+        # TODO This probably should not be hard-coded.
         if self.kind == self.KIND.quarters:
             spots = 20
-            next_round = self.session.rounds.create(
-                num=2,
-                kind=self.session.rounds.model.KIND.semis,
-            )
-        # These are the semis, by deduction.
+        elif self.kind == self.KIND.semis:
+            spots = 10
+        elif self.kind == self.KIND.finals:
+            spots = 0
         else:
-            spots = 10 # TODO This probably should change from hard code
-            next_round = self.session.rounds.create(
-                num=2,
-                kind=self.session.rounds.model.KIND.finals,
-            )
-
+            raise RuntimeError('No round kind.')
         # Build list of advancing appearances to number of spots available
-        ordered_appearances = self.appearances.annotate(
-            tot=models.Sum('songs__scores__points')
+        ordered_entries = self.session.entries.annotate(
+            tot=models.Sum('appearances__songs__scores__points')
         ).order_by('-tot')
         # Check for tie at cutoff
-        cutoff = ordered_appearances[spots-1:spots][0].tot
-        mt_score = ordered_appearances[spots:spots+1][0].tot
-        while cutoff == mt_score:
+        cutoff = ordered_entries[spots-1:spots][0].tot
+        plus_one = ordered_entries[spots:spots+1][0].tot
+        while cutoff == plus_one:
             spots += 1
-            cutoff = ordered_appearances[spots-1:spots][0].tot
-            mt_score = ordered_appearances[spots:spots+1][0].tot
-        # Get MT and populate
-        mt = ordered_appearances[spots-1:spots][0]
-        next_round.appearances.create(
-            entry=mt.entry,
-            num=0,
-        )
-        # Get Advancers and convert to list
-        advancing = list(ordered_appearances[:spots])
+            cutoff = ordered_entries[spots-1:spots][0].tot
+            plus_one = ordered_entries[spots:spots+1][0].tot
 
-        # Randomize
-        random.shuffle(advancing)
+        # Get Advancers and finishers
+        advancers = list(ordered_entries[:spots])
+        finishers = list(ordered_entries[spots:])
 
-        # Populate
+        # Randomize Advancers
+        random.shuffle(list(advancers))
+
+        # Set Draw
         i = 1
-        for appearance in advancing:
-            next_round.appearances.create(
-                entry=appearance.entry,
-                num=i,
-            )
+        for entry in advancers:
+            appearance = self.appearances.get(entry=entry)
+            appearance.draw = i
+            appearance.save()
             i += 1
+
+        # Set draw on finishers to negative one.
+        for finisher in finishers:
+            appearance = self.appearances.get(entry=entry)
+            appearance.draw = i
+            appearance.save()
 
         # TODO Bypassing all this in favor of International-only
 
@@ -3329,30 +3297,28 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published)
     def publish(self, *args, **kwargs):
-        if self.kind == self.KIND.finals:
-            for appearance in self.appearances.all():
-                appearance.publish()
-                appearance.save()
-        else:
-            next_round = self.session.rounds.get(num=self.num + 1)
-            next_round.verify()
-            next_round.save()
-            # TODO This makes me REALLY nervous...
-            dnp = self.session.entries.exclude(
-                appearances__round=next_round,
+        if self.kind != self.KIND.finals:
+            round = self.session.rounds.create(
+                num=self.num + 1,
+                kind=self.kind - 1,
             )
-            for entry in dnp:
-                for appearance in entry.appearances.all():
-                    for song in appearance.songs.all():
-                        song.publish()
-                        song.save()
-                    appearance.publish()
-                    appearance.save()
-                entry.publish()
-                entry.save()
-            self.current = next_round
-            self.save()
-        return
+            for appearance in self.appearances.exclude(draw=None):
+                round.appearances.create(
+                    entry=appearance.entry,
+                    num=appearance.draw,
+                    status=appearance.STATUS.scheduled,
+                )
+            for assignment in self.session.convention.assignments.filter(
+                status=Assignment.STATUS.confirmed,
+            ):
+                round.panelists.create(
+                    kind=assignment.kind,
+                    category=assignment.category,
+                    person=assignment.person,
+                )
+            round.verify()
+            round.save()
+            return
 
 
 class Score(TimeStampedModel):
@@ -3761,19 +3727,10 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.closed)
     def close(self, *args, **kwargs):
         """Make session unavailable and set initial draw."""
-        mts = self.entries.filter(
-            is_mt=True,
-            status=self.entries.model.STATUS.accepted,
-        )
         entries = self.entries.filter(
-            is_mt=False,
             status=self.entries.model.STATUS.accepted,
         )
-        i = 1 - mts.count()
-        for m in mts:
-            m.draw = i
-            m.save()
-            i += 1
+        i = 1
         for entry in entries:
             entry.draw = i
             entry.save()
@@ -3828,6 +3785,8 @@ class Session(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
+        round.verify()
+        round.save()
         return
 
 
