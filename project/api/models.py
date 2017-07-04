@@ -3214,12 +3214,13 @@ class Round(TimeStampedModel):
             tot=models.Sum('appearances__songs__scores__points')
         ).order_by('-tot')
         # Check for tie at cutoff
-        cutoff = ordered_entries[spots-1:spots][0].tot
-        plus_one = ordered_entries[spots:spots+1][0].tot
-        while cutoff == plus_one:
-            spots += 1
+        if spots:
             cutoff = ordered_entries[spots-1:spots][0].tot
             plus_one = ordered_entries[spots:spots+1][0].tot
+            while cutoff == plus_one:
+                spots += 1
+                cutoff = ordered_entries[spots-1:spots][0].tot
+                plus_one = ordered_entries[spots:spots+1][0].tot
 
         # Get Advancers and finishers
         advancers = list(ordered_entries[:spots])
@@ -3237,9 +3238,9 @@ class Round(TimeStampedModel):
             i += 1
 
         # Set draw on finishers to negative one.
-        for finisher in finishers:
+        for entry in finishers:
             appearance = self.appearances.get(entry=entry)
-            appearance.draw = i
+            appearance.draw = -1
             appearance.save()
 
         # TODO Bypassing all this in favor of International-only

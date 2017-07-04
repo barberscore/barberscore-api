@@ -189,7 +189,10 @@ class Command(BaseCommand):
                 if i==1 and idx==0:
                     person = quartet_person
                 else:
-                    person = PersonFactory()
+                    try:
+                        person = PersonFactory()
+                    except IntegrityError:
+                        continue
                 MemberFactory(
                     entity=quartet,
                     person=person,
@@ -464,7 +467,7 @@ class Command(BaseCommand):
                     score.save()
             appearance.confirm()
             appearance.save()
-        if options['breakpoint'] == 'ybqc_finals_scored':
+        if options['breakpoint'] == 'ybqc_scored':
             return
         ybqc_finals.finish()
         ybqc_finals.publish()
