@@ -153,7 +153,10 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     resource_name = "assignment"
 
 
-class AwardViewSet(viewsets.ModelViewSet):
+class AwardViewSet(
+    get_viewset_transition_action_mixin(Convention),
+    viewsets.ModelViewSet
+):
     serializer_class = AwardSerializer
     filter_class = AwardFilter
     filter_backends = [

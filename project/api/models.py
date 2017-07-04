@@ -711,6 +711,19 @@ class Award(TimeStampedModel):
             )
         ])
 
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Award."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Award."""
+        return
+
 
 class Chart(TimeStampedModel):
     id = models.UUIDField(
