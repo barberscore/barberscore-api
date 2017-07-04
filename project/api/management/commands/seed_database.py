@@ -8,6 +8,7 @@ from optparse import make_option
 from django.core.management.base import BaseCommand
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError
 
 # First-Party
 from api.factories import (
@@ -179,7 +180,7 @@ class Command(BaseCommand):
         )
         # Create Quartets
         quartets = EntityFactory.create_batch(
-            size=50,
+            size=100,
             kind=Entity.KIND.quartet,
         )
         for idx, quartet in enumerate(quartets):
@@ -202,29 +203,65 @@ class Command(BaseCommand):
                     status=Member.STATUS.active,
                 )
                 i += 1
+        for quartet in quartets:
+            i = 1
+            while i <= 6:
+                try:
+                    chart = Chart.objects.order_by('?').first()
+                    RepertoryFactory(
+                        entity=quartet,
+                        chart=chart,
+                    )
+                except IntegrityError:
+                    continue
+                i += 1
         # Create Judges
         mus_judges=OfficerFactory.create_batch(
-            size=5,
+            size=30,
             office=mus_office,
             entity=bhs,
             status=Officer.STATUS.active,
         )
         per_judges=OfficerFactory.create_batch(
-            size=5,
+            size=30,
             office=per_office,
             entity=bhs,
             status=Officer.STATUS.active,
         )
         sng_judges=OfficerFactory.create_batch(
-            size=5,
+            size=30,
             office=sng_office,
             entity=bhs,
             status=Officer.STATUS.active,
         )
-        # Create International Convention
+        # Create Awards
+        quartet_award=AwardFactory(
+            name='International Quartet Championship',
+            entity=bhs,
+        )
+        dc_award=AwardFactory(
+            name='International Dealers Choice',
+            entity=bhs,
+        )
+        ybqc_award=AwardFactory(
+            name='Harmony Foundation Youth Championship',
+            entity=bhs,
+            rounds=1,
+        )
+        oy_award=AwardFactory(
+            name='Other Youth Award',
+            entity=bhs,
+            rounds=1,
+        )
+        # Create Conventions
         convention=ConventionFactory(
             name='International Convention',
             entity=bhs,
+        )
+        convention_ybqc=ConventionFactory(
+            name='Youth Harmony Convention',
+            entity=bhs,
+            panel=3
         )
         # Add Assignments
         drcj_assignment=AssignmentFactory(
@@ -239,25 +276,58 @@ class Command(BaseCommand):
             convention=convention,
             status=Assignment.STATUS.confirmed,
         )
-        for judge in mus_judges:
+        drcj_assignment_ybqc=AssignmentFactory(
+            category=Assignment.CATEGORY.drcj,
+            person=drcj_person,
+            convention=convention_ybqc,
+            status=Assignment.STATUS.confirmed,
+        )
+        ca_assignment_ybqc=AssignmentFactory(
+            category=Assignment.CATEGORY.ca,
+            person=ca_person,
+            convention=convention_ybqc,
+            status=Assignment.STATUS.confirmed,
+        )
+        for judge in mus_judges[:5]:
             AssignmentFactory(
                 category=Assignment.CATEGORY.music,
                 person=judge.person,
                 convention=convention,
                 status=Assignment.STATUS.confirmed,
             )
-        for judge in per_judges:
+        for judge in per_judges[:5]:
             AssignmentFactory(
                 category=Assignment.CATEGORY.performance,
                 person=judge.person,
                 convention=convention,
                 status=Assignment.STATUS.confirmed,
             )
-        for judge in sng_judges:
+        for judge in sng_judges[:5]:
             AssignmentFactory(
                 category=Assignment.CATEGORY.singing,
                 person=judge.person,
                 convention=convention,
+                status=Assignment.STATUS.confirmed,
+            )
+        for judge in mus_judges[:3]:
+            AssignmentFactory(
+                category=Assignment.CATEGORY.music,
+                person=judge.person,
+                convention=convention_ybqc,
+                status=Assignment.STATUS.confirmed,
+            )
+        for judge in per_judges[:3]:
+            AssignmentFactory(
+                category=Assignment.CATEGORY.performance,
+                person=judge.person,
+                convention=convention_ybqc,
+                status=Assignment.STATUS.confirmed,
+            )
+        for judge in sng_judges[:3]:
+            AssignmentFactory(
+                category=Assignment.CATEGORY.singing,
+                person=judge.person,
+                convention=convention_ybqc,
                 status=Assignment.STATUS.confirmed,
             )
         # Create Quartet Session
@@ -265,22 +335,32 @@ class Command(BaseCommand):
             convention=convention,
             kind=Session.KIND.quartet,
         )
-        quartet_award=AwardFactory(
-            name='International Quartet Championship',
-            entity=bhs,
-        )
-        dc_award=AwardFactory(
-            name='International Dealers Choice',
-            entity=bhs,
+        ybqc_session=SessionFactory(
+            convention=convention_ybqc,
+            kind=Session.KIND.quartet,
         )
         # Add Quartet Contest
         quartet_contest = ContestFactory(
             session=quartet_session,
             award=quartet_award,
         )
+        dc_contest = ContestFactory(
+            session=quartet_session,
+            award=dc_award,
+        )
+        ybqc_contest = ContestFactory(
+            session=ybqc_session,
+            award=ybqc_award,
+        )
+        oy_contest = ContestFactory(
+            session=ybqc_session,
+            award=oy_award,
+        )
         # Schedule Convention
         convention.schedule()
         convention.save()
+        convention_ybqc.schedule()
+        convention_ybqc.save()
         if options['breakpoint'] == 'convention_scheduled':
             return
         # Open the Session for Entries
@@ -290,16 +370,9 @@ class Command(BaseCommand):
         quartets = Entity.objects.filter(
             kind=Entity.KIND.quartet,
         ).order_by('?')[:50]
-        # Add Repertories to Entered Quartets
-        for quartet in quartets:
-            i = 1
-            charts = list(Chart.objects.order_by('?')[:6])
-            while i <= 6:
-                RepertoryFactory(
-                    entity=quartet,
-                    chart=charts.pop(),
-                )
-                i += 1
+        ybqc_quartets = Entity.objects.filter(
+            kind=Entity.KIND.quartet,
+        ).order_by('?')[:20]
         # Create Quartet Entries
         for quartet in quartets:
             EntryFactory(
@@ -309,34 +382,103 @@ class Command(BaseCommand):
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )
-        # Add Contest and Participants to Entries
-        for entry in quartet_session.entries.all():
-            ContestantFactory(
-                entry=entry,
-                contest=quartet_contest,
+        for quartet in ybqc_quartets:
+            EntryFactory(
+                session=ybqc_session,
+                entity=quartet,
+                representing=district,
+                is_evaluation=False,
+                status=Entry.STATUS.accepted,
             )
+        # Add Participants to Entries
+        for entry in quartet_session.entries.all():
             for member in entry.entity.members.all():
                 ParticipantFactory(
                     entry=entry,
                     member=member,
                 )
+        for entry in ybqc_session.entries.all():
+            for member in entry.entity.members.all():
+                ParticipantFactory(
+                    entry=entry,
+                    member=member,
+                )
+        # Add Contests to Entries
+        for entry in quartet_session.entries.all():
+            ContestantFactory(
+                entry=entry,
+                contest=quartet_contest,
+            )
+        for entry in ybqc_session.entries.all():
+            ContestantFactory(
+                entry=entry,
+                contest=ybqc_contest,
+            )
+        for entry in quartet_session.entries.all().order_by('?')[:10]:
+            ContestantFactory(
+                entry=entry,
+                contest=dc_contest,
+            )
+        for entry in ybqc_session.entries.all().order_by('?')[:10]:
+            ContestantFactory(
+                entry=entry,
+                contest=oy_contest,
+            )
         # Close Session
         quartet_session.close()
         quartet_session.save()
+        ybqc_session.close()
+        ybqc_session.save()
         if options['breakpoint'] == 'session_closed':
             return
         # Verify Session
         quartet_session.verify()
         quartet_session.save()
+        ybqc_session.verify()
+        ybqc_session.save()
+
+        # YBQC
+        ybqc_session.start()
+        ybqc_session.save()
+        if options['breakpoint'] == 'ybqc_started':
+            return
+        # Get the first round
+        ybqc_finals = ybqc_session.rounds.get(num=1)
+        # Start the round
+        ybqc_finals.start()
+        ybqc_finals.save()
+        # Score the round
+        for appearance in ybqc_finals.appearances.filter(
+            status=Appearance.STATUS.scheduled,
+        ):
+            appearance.start()
+            for song in appearance.songs.all():
+                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.save()
+            appearance.finish()
+            for song in appearance.songs.all():
+                center = random.randint(60,70)
+                for score in song.scores.all():
+                    offset = random.randint(-5,5)
+                    score.points = center + offset
+                    score.save()
+            appearance.confirm()
+            appearance.save()
+        if options['breakpoint'] == 'ybqc_finals_scored':
+            return
+        ybqc_finals.finish()
+        ybqc_finals.publish()
+        ybqc_finals.save()
+
         # Start Session
         quartet_session.start()
         quartet_session.save()
         if options['breakpoint'] == 'session_started':
             return
+
         # Get the first round
         quartet_quarters = quartet_session.rounds.get(num=1)
-        # Verifyl, Start
-        quartet_quarters.verify()
+        # Start the round
         quartet_quarters.start()
         quartet_quarters.save()
         # Score the round
@@ -356,3 +498,55 @@ class Command(BaseCommand):
                     score.save()
             appearance.confirm()
             appearance.save()
+        if options['breakpoint'] == 'quarters_scored':
+            return
+        quartet_quarters.finish()
+        quartet_quarters.publish()
+        quartet_quarters.save()
+        quartet_semis = quartet_session.rounds.get(num=2)
+        quartet_semis.start()
+        quartet_semis.save()
+        # Score the round
+        for appearance in quartet_semis.appearances.filter(
+            status=Appearance.STATUS.scheduled,
+        ):
+            appearance.start()
+            for song in appearance.songs.all():
+                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.save()
+            appearance.finish()
+            for song in appearance.songs.all():
+                center = random.randint(75,85)
+                for score in song.scores.all():
+                    offset = random.randint(-5,5)
+                    score.points = center + offset
+                    score.save()
+            appearance.confirm()
+            appearance.save()
+        if options['breakpoint'] == 'semis_scored':
+            return
+        quartet_semis.finish()
+        quartet_semis.publish()
+        quartet_semis.save()
+        quartet_finals = quartet_session.rounds.get(num=3)
+        quartet_finals.start()
+        quartet_finals.save()
+        # Score the round
+        for appearance in quartet_finals.appearances.filter(
+            status=Appearance.STATUS.scheduled,
+        ):
+            appearance.start()
+            for song in appearance.songs.all():
+                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.save()
+            appearance.finish()
+            for song in appearance.songs.all():
+                center = random.randint(80,90)
+                for score in song.scores.all():
+                    offset = random.randint(-3,3)
+                    score.points = center + offset
+                    score.save()
+            appearance.confirm()
+            appearance.save()
+        if options['breakpoint'] == 'finals_scored':
+            return
