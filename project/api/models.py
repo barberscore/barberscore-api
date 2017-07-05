@@ -3214,12 +3214,15 @@ class Round(TimeStampedModel):
     def finish(self, *args, **kwargs):
         """Separate advancers and finishers"""
         # TODO This probably should not be hard-coded.
+        if self.kind == self.KIND.finals:
+            for appearance in self.appearances.all():
+                appearance.draw = -1
+                appearance.save()
+            return
         if self.kind == self.KIND.quarters:
             spots = 20
         elif self.kind == self.KIND.semis:
             spots = 10
-        elif self.kind == self.KIND.finals:
-            spots = 0
         else:
             raise RuntimeError('No round kind.')
         # Build list of advancing appearances to number of spots available
