@@ -525,6 +525,8 @@ class EntryAdmin(admin.ModelAdmin):
         'entity',
         'representing',
         'image',
+        ('tot_points', 'mus_points','per_points', 'sng_points',),
+        ('tot_score', 'mus_score','per_score', 'sng_score',),
         ('is_evaluation', 'is_private',),
         'draw',
         'prelim',
@@ -1011,6 +1013,10 @@ class SlotAdmin(admin.ModelAdmin):
         'onstage',
     ]
 
+    list_editable = [
+        'onstage',
+    ]
+
     list_filter = (
         'status',
     )
@@ -1020,6 +1026,10 @@ class SlotAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = [
         'round',
+    ]
+
+    ordering = [
+        'num',
     ]
 
 
