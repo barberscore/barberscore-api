@@ -26,6 +26,7 @@ from .inlines import (
     RoundInline,
     ScoreInline,
     SessionInline,
+    SlotInline,
     SongInline,
 )
 from .models import (
@@ -894,6 +895,7 @@ class RoundAdmin(admin.ModelAdmin):
     inlines = [
         AppearanceInline,
         PanelistInline,
+        SlotInline,
     ]
 
     search_fields = [
@@ -1013,9 +1015,9 @@ class SlotAdmin(admin.ModelAdmin):
         'onstage',
     ]
 
-    list_editable = [
-        'onstage',
-    ]
+    # list_editable = [
+    #     'onstage',
+    # ]
 
     list_filter = (
         'status',
