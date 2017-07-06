@@ -1104,108 +1104,108 @@ class Contestant(TimeStampedModel):
 
     @property
     def official_result(self):
-        if self.contestant.contest.is_qualifier:
-            if self.contestant.contest.award.is_district_representative:
-                if self.contestant.official_rank == 1:
-                    return self.contestant.STATUS.rep
-                if self.contestant.official_score < self.contestant.contest.award.minimum:
-                    return self.contestant.STATUS.ineligible
+        if self.contest.is_qualifier:
+            if self.contest.award.is_district_representative:
+                if self.official_rank == 1:
+                    return self.STATUS.rep
+                if self.official_score < self.contest.award.minimum:
+                    return self.STATUS.ineligible
                 else:
-                    return self.contestant.STATUS.eligible
+                    return self.STATUS.eligible
             else:
-                if self.contestant.contest.award.minimum:
-                    if self.contestant.official_score < self.contestant.contest.award.minimum:
-                        return self.contestant.STATUS.ineligible
-                    elif self.contestant.official_score >= self.contestant.contest.award.threshold:
-                        return self.contestant.STATUS.qualified
+                if self.contest.award.minimum:
+                    if self.official_score < self.contest.award.minimum:
+                        return self.STATUS.ineligible
+                    elif self.official_score >= self.contest.award.threshold:
+                        return self.STATUS.qualified
                     else:
-                        return self.contestant.STATUS.eligible
+                        return self.STATUS.eligible
                 else:
-                    return self.contestant.STATUS.eligible
+                    return self.STATUS.eligible
         else:
-            return self.contestant.official_rank
+            return self.official_rank
 
     # Methods
     def calculate(self, *args, **kwargs):
-        self.contestant.mus_points = self.contestant.calculate_mus_points()
-        self.contestant.per_points = self.contestant.calculate_per_points()
-        self.contestant.sng_points = self.contestant.calculate_sng_points()
-        self.contestant.tot_points = self.contestant.calculate_tot_points()
-        self.contestant.mus_score = self.contestant.calculate_mus_score()
-        self.contestant.per_score = self.contestant.calculate_per_score()
-        self.contestant.sng_score = self.contestant.calculate_sng_score()
-        self.contestant.tot_score = self.contestant.calculate_tot_score()
-        self.contestant.rank = self.contestant.calculate_rank()
+        self.mus_points = self.calculate_mus_points()
+        self.per_points = self.calculate_per_points()
+        self.sng_points = self.calculate_sng_points()
+        self.tot_points = self.calculate_tot_points()
+        self.mus_score = self.calculate_mus_score()
+        self.per_score = self.calculate_per_score()
+        self.sng_score = self.calculate_sng_score()
+        self.tot_score = self.calculate_tot_score()
+        self.rank = self.calculate_rank()
 
     def calculate_rank(self):
-        return self.contestant.contest.ranking(self.contestant.calculate_tot_points())
+        return self.contest.ranking(self.calculate_tot_points())
 
     def calculate_mus_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=30,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_per_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.performance,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=40,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=50,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_tot_points(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.music,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=30,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_per_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.performance,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=40,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            songs__scores__category=self.contestant.contest.session.assignments.model.CATEGORY.singing,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=50,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_tot_score(self):
-        return self.contestant.entry.appearances.filter(
-            songs__scores__kind=self.contestant.contest.session.assignments.model.KIND.official,
-            round__num__lte=self.contestant.contest.award.num_rounds,
+        return self.entry.appearances.filter(
+            songs__scores__kind=10,
+            round__num__lte=self.contest.award.rounds,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -1868,7 +1868,7 @@ class Entry(TimeStampedModel):
         self.rank = self.calculate_rank()
 
     def calculate_pdf(self):
-        for appearance in self.entry.appearances.all():
+        for appearance in self.appearances.all():
             for song in appearance.songs.all():
                 song.calculate()
                 song.save()
@@ -1920,68 +1920,69 @@ class Entry(TimeStampedModel):
 
     def calculate_rank(self):
         try:
-            return self.entry.contestants.get(contest=self.entry.session.primary).calculate_rank()
-        except self.entry.contestants.model.DoesNotExist:
+            primary = self.session.contests.first()
+            return self.contestants.get(contest=primary).calculate_rank()
+        except self.contestants.model.DoesNotExist:
             return None
 
     def calculate_mus_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__category=self.session.convention.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_per_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.performance,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__category=self.session.convention.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__category=self.session.convention.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_tot_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.music,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__category=self.session.convention.assignments.model.CATEGORY.music,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_per_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.performance,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__category=self.session.convention.assignments.model.CATEGORY.performance,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
-            songs__scores__category=self.entry.session.assignments.model.CATEGORY.singing,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__category=self.session.convention.assignments.model.CATEGORY.singing,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_tot_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=self.entry.session.assignments.model.KIND.official,
+        return self.appearances.filter(
+            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -2068,6 +2069,8 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.completed)
     def complete(self, *args, **kwargs):
+        self.calculate()
+        self.save()
         return
 
 
@@ -3319,12 +3322,16 @@ class Round(TimeStampedModel):
                 num=self.num + 1,
                 kind=self.kind - 1,
             )
-            for appearance in self.appearances.exclude(draw=None):
+            for appearance in self.appearances.filter(draw__gt=0):
                 round.appearances.create(
                     entry=appearance.entry,
                     num=appearance.draw,
                     status=appearance.STATUS.scheduled,
                 )
+            for appearance in self.appearances.filter(draw__lte=0):
+                e = appearance.entry
+                e.complete()
+                e.save()
             for assignment in self.session.convention.assignments.filter(
                 status=Assignment.STATUS.confirmed,
             ):
