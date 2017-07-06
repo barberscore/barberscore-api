@@ -129,6 +129,8 @@ class EntryInline(admin.TabularInline):
         'nomen',
         'session',
         'entity',
+        'prelim',
+        'seed',
         'status',
     ]
     readonly_fields = [
@@ -138,6 +140,9 @@ class EntryInline(admin.TabularInline):
     raw_id_fields = [
         'session',
         'entity',
+    ]
+    ordering = [
+        'entity__nomen',
     ]
     show_change_link = True
     extra = 0
