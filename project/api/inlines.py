@@ -29,6 +29,7 @@ class AppearanceInline(admin.TabularInline):
         'entry',
         'status',
         'num',
+        'draw',
     ]
     readonly_fields = [
         'entry',
