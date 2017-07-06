@@ -526,6 +526,7 @@ class EntryAdmin(admin.ModelAdmin):
         'entity',
         'representing',
         'image',
+        'csa_pdf',
         ('tot_points', 'mus_points','per_points', 'sng_points',),
         ('tot_score', 'mus_score','per_score', 'sng_score',),
         ('is_evaluation', 'is_private',),
@@ -539,6 +540,7 @@ class EntryAdmin(admin.ModelAdmin):
         'status',
         'tot_points',
         'rank',
+        'csa_pdf',
     )
 
     list_filter = [

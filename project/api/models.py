@@ -41,7 +41,8 @@ from django.core.validators import (
 from django.db import models
 from django.utils.encoding import smart_text
 from django.utils.timezone import now
-
+from django.template.loader import get_template
+from django.core.files.base import ContentFile
 # Local
 from .fields import (
     OneToOneOrNoneField,
@@ -53,9 +54,9 @@ from .utils import create_bbscores
 
 config = api_apps.get_app_config('api')
 
-# import docraptor
-# docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-# doc_api = docraptor.DocApi()
+import docraptor
+docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
+doc_api = docraptor.DocApi()
 
 
 class Appearance(TimeStampedModel):
@@ -213,62 +214,62 @@ class Appearance(TimeStampedModel):
 
     def calculate_mus_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.music,
+            scores__kind=10,
+            scores__category=30,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_per_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.performance,
+            scores__kind=10,
+            scores__category=40,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_sng_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.singing,
+            scores__kind=10,
+            scores__category=50,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_tot_points(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__kind=10,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
     def calculate_mus_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.music,
+            scores__kind=10,
+            scores__category=30,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_per_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.performance,
+            scores__kind=10,
+            scores__category=40,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_sng_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
-            scores__category=self.round.session.assignments.model.CATEGORY.singing,
+            scores__kind=10,
+            scores__category=50,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
 
     def calculate_tot_score(self):
         return self.songs.filter(
-            scores__kind=self.round.session.assignments.model.KIND.official,
+            scores__kind=10,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
@@ -1810,6 +1811,16 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    csa_pdf = models.FileField(
+        upload_to=PathAndRename(
+            prefix='csa',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -1878,45 +1889,42 @@ class Entry(TimeStampedModel):
         self.save()
         return
 
-    # def print_csa(self):
-    #     entry = self
-    #     contestants = entry.contestants.all()
-    #     appearances = entry.appearances.order_by(
-    #         'round__kind',
-    #     )
-    #     assignments = entry.session.assignments.exclude(
-    #         category=Assignment.CATEGORY.admin,
-    #     ).order_by(
-    #         'category',
-    #         'kind',
-    #         'slot',
-    #     )
-    #     foo = get_template('csa.html')
-    #     template = foo.render(context={
-    #         'entry': entry,
-    #         'appearances': appearances,
-    #         'assignments': assignments,
-    #         'contestants': contestants,
-    #     })
-    #     try:
-    #         create_response = doc_api.create_doc({
-    #             "test": True,
-    #             "document_content": template,
-    #             "name": "csa-{0}.pdf".format(id),
-    #             "document_type": "pdf",
-    #         })
-    #         f = ContentFile(create_response)
-    #         entry.csa_pdf.save(
-    #             "{0}.pdf".format(id),
-    #             f
-    #         )
-    #         entry.save()
-    #         log.info("PDF created and saved to instance")
-    #     except docraptor.rest.ApiException as error:
-    #         log.error(error)
-    #         log.error(error.message)
-    #         log.error(error.response_body)
-    #     return "Complete"
+    def print_csa(self):
+        entry = self
+        contestants = entry.contestants.all()
+        appearances = entry.appearances.order_by(
+            'round__kind',
+        )
+        assignments = entry.session.convention.assignments.filter(
+            category__gt=20,
+        ).order_by(
+            'category',
+            'kind',
+            'nomen',
+        )
+        tem = get_template('csa.html')
+        template = tem.render(context={
+            'entry': entry,
+            'appearances': appearances,
+            'assignments': assignments,
+            'contestants': contestants,
+        })
+        try:
+            create_response = doc_api.create_doc({
+                "test": True,
+                "document_content": template,
+                "name": "csa-{0}.pdf".format(id),
+                "document_type": "pdf",
+            })
+            f = ContentFile(create_response)
+            entry.csa_pdf.save(
+                "{0}.pdf".format(id),
+                f
+            )
+            entry.save()
+        except docraptor.rest.ApiException as error:
+            print(error)
+        return "Complete"
 
     def calculate_rank(self):
         try:
@@ -1927,62 +1935,62 @@ class Entry(TimeStampedModel):
 
     def calculate_mus_points(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
-            songs__scores__category=self.session.convention.assignments.model.CATEGORY.music,
+            songs__scores__kind=10,
+            songs__scores__category=30,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_per_points(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
-            songs__scores__category=self.session.convention.assignments.model.CATEGORY.performance,
+            songs__scores__kind=10,
+            songs__scores__category=40,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_sng_points(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
-            songs__scores__category=self.session.convention.assignments.model.CATEGORY.singing,
+            songs__scores__kind=10,
+            songs__scores__category=50,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_tot_points(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__kind=10,
         ).aggregate(
             tot=models.Sum('songs__scores__points')
         )['tot']
 
     def calculate_mus_score(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
-            songs__scores__category=self.session.convention.assignments.model.CATEGORY.music,
+            songs__scores__kind=10,
+            songs__scores__category=30,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_per_score(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
-            songs__scores__category=self.session.convention.assignments.model.CATEGORY.performance,
+            songs__scores__kind=10,
+            songs__scores__category=40,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_sng_score(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
-            songs__scores__category=self.session.convention.assignments.model.CATEGORY.singing,
+            songs__scores__kind=10,
+            songs__scores__category=50,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
 
     def calculate_tot_score(self):
         return self.appearances.filter(
-            songs__scores__kind=self.session.convention.assignments.model.KIND.official,
+            songs__scores__kind=10,
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
@@ -3243,7 +3251,10 @@ class Round(TimeStampedModel):
 
         # Get Advancers and finishers
         advancers = list(ordered_entries[:spots])
-        finishers = list(ordered_entries[spots:])
+        cutdown = ordered_entries.filter(
+            appearances__round=self,
+        )
+        finishers = list(cutdown[spots:])
 
         # Randomize Advancers
         random.shuffle(list(advancers))
@@ -3665,6 +3676,16 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
+    oss_pdf = models.FileField(
+        upload_to=PathAndRename(
+            prefix='oss',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     num_rounds = models.IntegerField(
         null=True,
         blank=True,
@@ -3695,6 +3716,46 @@ class Session(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
+
+    # Methods
+    def print_oss(self):
+        session = self
+        entries = self.entries.filter(
+            status=self.entries.model.STATUS.complete,
+        )
+        appearances = entry.appearances.order_by(
+            'round__kind',
+        )
+        assignments = session.convention.assignments.filter(
+            category__gt=20,
+        ).order_by(
+            'category',
+            'kind',
+            'nomen',
+        )
+        tem = get_template('csa.html')
+        template = tem.render(context={
+            'entry': entry,
+            'appearances': appearances,
+            'assignments': assignments,
+            'contestants': contestants,
+        })
+        try:
+            create_response = doc_api.create_doc({
+                "test": True,
+                "document_content": template,
+                "name": "csa-{0}.pdf".format(id),
+                "document_type": "pdf",
+            })
+            f = ContentFile(create_response)
+            entry.csa_pdf.save(
+                "{0}.pdf".format(id),
+                f
+            )
+            entry.save()
+        except docraptor.rest.ApiException as error:
+            print(error)
+        return "Complete"
 
     # Permissions
     @staticmethod
@@ -4085,63 +4146,63 @@ class Song(TimeStampedModel):
         self.tot_score = self.calculate_tot_score()
 
     def calculate_mus_points(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.music,
+        return self.scores.filter(
+            kind=10,
+            category=30,
         ).aggregate(
             tot=models.Sum('points')
         )['tot']
 
     def calculate_per_points(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.performance,
+        return self.scores.filter(
+            kind=10,
+            category=40,
         ).aggregate(
             tot=models.Sum('points')
         )['tot']
 
     def calculate_sng_points(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.singing,
+        return self.scores.filter(
+            kind=10,
+            category=50,
         ).aggregate(
             tot=models.Sum('points')
         )['tot']
 
     def calculate_tot_points(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
+        return self.scores.filter(
+            kind=10,
         ).aggregate(
             tot=models.Sum('points')
         )['tot']
 
     def calculate_mus_score(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.music,
+        return self.scores.filter(
+            kind=10,
+            category=30,
         ).aggregate(
             tot=models.Avg('points')
         )['tot']
 
     def calculate_per_score(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.performance,
+        return self.scores.filter(
+            kind=10,
+            category=40,
         ).aggregate(
             tot=models.Avg('points')
         )['tot']
 
     def calculate_sng_score(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.singing,
+        return self.scores.filter(
+            kind=10,
+            category=50,
         ).aggregate(
             tot=models.Avg('points')
         )['tot']
 
     def calculate_tot_score(self):
-        return self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
+        return self.scores.filter(
+            kind=10,
         ).aggregate(
             tot=models.Avg('points')
         )['tot']
