@@ -1047,6 +1047,7 @@ class SongAdmin(admin.ModelAdmin):
         'appearance',
         'chart',
         'num',
+        'tot_points',
 
         # 'title',
     ]
