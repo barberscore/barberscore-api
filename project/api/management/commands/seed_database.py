@@ -259,11 +259,15 @@ class Command(BaseCommand):
         # Create Conventions
         convention=ConventionFactory(
             name='International Convention',
+            start_date='2017-07-01',
+            end_date='2017-07-08',
             entity=bhs,
         )
         convention_ybqc=ConventionFactory(
             name='Youth Harmony Convention',
             entity=bhs,
+            start_date='2017-07-02',
+            end_date='2017-07-02',
             panel=3
         )
         # Add Assignments
