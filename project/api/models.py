@@ -2447,6 +2447,11 @@ class Panelist(TimeStampedModel):
         default=STATUS.new,
     )
 
+    num = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     KIND = Choices(
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),

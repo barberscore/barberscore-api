@@ -385,6 +385,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
+            'num',
             'kind',
             'category',
             'round',

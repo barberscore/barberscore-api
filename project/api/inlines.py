@@ -195,6 +195,7 @@ class PanelistInline(admin.TabularInline):
         'kind',
         'person',
         'round',
+        'num',
     ]
     readonly_fields = [
         'nomen',
@@ -203,6 +204,11 @@ class PanelistInline(admin.TabularInline):
         'person',
         'round',
     ]
+    ordering = (
+        'category',
+        'kind',
+        'person__last_name',
+    )
     extra = 0
     show_change_link = True
 

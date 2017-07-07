@@ -675,6 +675,7 @@ class PanelistAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'status',
+        'num',
         'kind',
         'round',
         'person',
@@ -683,6 +684,7 @@ class PanelistAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
+        'num',
         'status',
         'kind',
         'category',
