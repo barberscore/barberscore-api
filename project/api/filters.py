@@ -250,6 +250,9 @@ class RoundFilter(FilterSet):
             'session__convention__assignments__person__user': [
                 'exact',
             ],
+            'session__convention__year': [
+                'exact',
+            ],
             'status': [
                 'exact',
                 'lt',
