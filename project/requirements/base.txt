@@ -21,7 +21,7 @@ factory-boy==2.8.1
 faker==0.7.17
 markdown==2.6.8
 nameparser==0.5.3
-Pillow==4.2.0
+Pillow==4.2.1
 psycopg2==2.7.1
 python-dateutil==2.6.0
 pytz==2017.2
