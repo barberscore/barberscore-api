@@ -133,6 +133,19 @@ class AppearanceViewSet(
     ]
     resource_name = "appearance"
 
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def print_var(self, request, *args, **kwargs):
+        obj = self.get_object()
+
+        obj.print_var()
+        # return Response(
+        #     status=status.HTTP_200_OK,
+        #     data={'var_pdf': obj.var_pdf.url},
+        # )
+        serializer = self.get_serializer(obj)
+        return Response(serializer.data)
+
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(

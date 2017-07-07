@@ -1,0 +1,71 @@
+{% load staticfiles %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Announcements</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Official Scoring Summary">
+    <meta name="author" content="David E. Binetti">
+    <meta name="copyright" content="&copy; 2016, David Binetti">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <style type="text/css">
+      /* setup the page */
+      @page {
+          margin: 30px;
+          background: #ffffff;
+      }
+      /* layout */
+      @font-face {
+        /*font-family: 'Open Sans';*/
+        font-size: 12pt;
+        font-style: normal;
+        /*font-weight: 300;*/
+        /*src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');*/
+      }
+      html td {
+          /*font-family: 'Open Sans', sans-serif;*/
+          font-size: 10pt;
+      }
+      #breakit { page-break-before: always }
+      /*Condensed override*/
+      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
+          padding: 1px;
+      }
+      /* colors */
+      .black { color: black }
+
+      /* stylin */
+
+      #main { margin: 0 30px; }
+
+    </style>
+  </head>
+  <body>
+    <section>
+      <h3>
+        Variance
+      </h3>
+    </section>
+    <section>
+      <h3>
+        Evaluations
+      </h3>
+      <div>
+        <ul class='list-unstyled'>
+          {% for song in songs %}
+            <li>{{song.chart.title}}</li>
+            {% for score in song.scores.all %}
+              <li>{{score.points}}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  </body>
+</html>

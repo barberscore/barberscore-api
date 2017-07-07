@@ -113,6 +113,16 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    var_pdf = models.FileField(
+        upload_to=PathAndRename(
+            prefix='var',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     # Privates
     rank = models.IntegerField(
         null=True,
@@ -198,6 +208,30 @@ class Appearance(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def print_var(self):
+        appearance = self
+        songs = appearance.songs.all().order_by('num')
+        tem = get_template('variance.html')
+        template = tem.render(context={
+            'songs': songs,
+        })
+        try:
+            create_response = doc_api.create_doc({
+                "test": True,
+                "document_content": template,
+                "name": "var-{0}.pdf".format(id),
+                "document_type": "pdf",
+            })
+            f = ContentFile(create_response)
+            appearance.var_pdf.save(
+                "{0}.pdf".format(id),
+                f
+            )
+            appearance.save()
+        except docraptor.rest.ApiException as error:
+            print(error)
+        return "Complete"
+
     def calculate(self, *args, **kwargs):
         self.rank = self.calculate_rank()
         self.mus_points = self.calculate_mus_points()

@@ -56,6 +56,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'per_score',
             'sng_score',
             'tot_score',
+            'var_pdf',
             'round',
             'entry',
             'slot',
