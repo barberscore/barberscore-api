@@ -65,6 +65,7 @@ class AppearanceAdmin(admin.ModelAdmin):
         'actual_finish',
         'entry',
         'round',
+        'var_pdf',
         'num',
         'draw',
         'slot',
