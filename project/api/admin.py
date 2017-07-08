@@ -297,6 +297,7 @@ class ContestAdmin(admin.ModelAdmin):
         'award',
         'session',
         'is_qualifier',
+        'is_primary',
         'kind',
     ]
 
@@ -869,6 +870,8 @@ class RoundAdmin(admin.ModelAdmin):
         # 'name',
         'status',
         ('session', 'kind', 'num'),
+        'ann_pdf',
+
     ]
 
     list_display = [

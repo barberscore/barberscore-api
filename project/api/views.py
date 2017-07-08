@@ -786,3 +786,24 @@ def variance(request):
         'scores_one_avg' : scores_one_avg,
         'scores_two_avg' : scores_two_avg,
     })
+
+
+def ann(request):
+    self = Round.objects.get(id='b3b64b4a-f48f-440a-a6be-5727ef729e4e')
+    primary = self.session.contests.get(is_primary=True)
+    contests = self.session.contests.filter(is_primary=False)
+    winners = []
+    for contest in contests:
+        winner = contest.contestants.get(rank=1)
+        winners.append(winner)
+    medalists = []
+    for contestant in primary.contestants.order_by('-rank'):
+        medalists.append(contestant)
+    medalists = medalists[-5:]
+
+    return render(request, 'ann.html', {
+        'primary': primary,
+        'contests': contests,
+        'winners': winners,
+        'medalists': medalists,
+    })

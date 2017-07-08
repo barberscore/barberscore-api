@@ -919,6 +919,10 @@ class Contest(TimeStampedModel):
         default=False,
     )
 
+    is_primary = models.BooleanField(
+        default=False,
+    )
+
     KIND = Choices(
         (-10, 'qualifier', 'Qualifier',),
         (0, 'new', 'New',),
@@ -1147,29 +1151,6 @@ class Contestant(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
-
-    @property
-    def official_result(self):
-        if self.contest.is_qualifier:
-            if self.contest.award.is_district_representative:
-                if self.official_rank == 1:
-                    return self.STATUS.rep
-                if self.official_score < self.contest.award.minimum:
-                    return self.STATUS.ineligible
-                else:
-                    return self.STATUS.eligible
-            else:
-                if self.contest.award.minimum:
-                    if self.official_score < self.contest.award.minimum:
-                        return self.STATUS.ineligible
-                    elif self.official_score >= self.contest.award.threshold:
-                        return self.STATUS.qualified
-                    else:
-                        return self.STATUS.eligible
-                else:
-                    return self.STATUS.eligible
-        else:
-            return self.official_rank
 
     # Methods
     def calculate(self, *args, **kwargs):
@@ -3179,6 +3160,16 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
+    ann_pdf = models.FileField(
+        upload_to=PathAndRename(
+            prefix='ann',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -3241,7 +3232,6 @@ class Round(TimeStampedModel):
             ),
         ])
 
-
     # Methods
     def ranking(self, point_total):
         if not point_total:
@@ -3252,6 +3242,41 @@ class Round(TimeStampedModel):
         ranking = Ranking(points, start=1)
         rank = ranking.rank(point_total)
         return rank
+
+    def print_ann(self):
+        primary = self.session.contests.get(is_primary=True)
+        contests = self.session.contests.filter(is_primary=False)
+        winners = []
+        for contest in contests:
+            winner = contest.contestants.get(rank=1)
+            winners.append(winner)
+        medalists = []
+        for contestant in primary.contestants.order_by('-rank'):
+            medalists.append(contestant)
+        medalists = medalists[-5:]
+        tem = get_template('ann.html')
+        template = tem.render(context={
+            'primary': primary,
+            'contests': contests,
+            'winners': winners,
+            'medalists': medalists,
+        })
+        try:
+            create_response = doc_api.create_doc({
+                "test": True,
+                "document_content": template,
+                "name": "announcements-{0}.pdf".format(id),
+                "document_type": "pdf",
+            })
+            f = ContentFile(create_response)
+            self.ann_pdf.save(
+                "{0}.pdf".format(id),
+                f
+            )
+            self.save()
+        except docraptor.rest.ApiException as error:
+            print(error)
+        return "Complete"
 
     # Transitions
     @fsm_log_by
@@ -3729,6 +3754,16 @@ class Session(TimeStampedModel):
     oss_pdf = models.FileField(
         upload_to=PathAndRename(
             prefix='oss',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
+    ann_pdf = models.FileField(
+        upload_to=PathAndRename(
+            prefix='announcements',
         ),
         max_length=255,
         null=True,

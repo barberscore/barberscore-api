@@ -80,24 +80,22 @@
           Awards
         </h3>
         <ul class='list-unstyled'>
-          {% for contest in contests %}
-            <li>{{contest.award.name}} Champion: {{contest.champion.group.name}}</li>
+          {% for winner in winners %}
+            <li>{{winner.contest.award.name}} Champion: {{winner.entry.entity.name}}</li>
           {% endfor %}
         </ul>
       </section>
-      {% if round.get_kind_display == 'Finals' %}
         <section>
           <h3>
             Medalists
           </h3>
           <ul class='list-unstyled'>
-            {% for entry in medalists %}
-              <li>{{entry.rank}}: <strong>{{entry.group.name}}</strong>&nbsp;{{entry.tot_points|intcomma}}&nbsp;({{entry.tot_score|floatformat:1}})</li>
+            {% for medalist in medalists %}
+              <li>{{medalist.rank}}: <strong>{{medalist.entry.entity.name}}</strong>&nbsp;{{medalist.entry.tot_points|intcomma}}&nbsp;({{medalist.entry.tot_score|floatformat:1}})</li>
             {% endfor %}
           </ul>
         </section>
-      {% else %}
-        <section>
+        <!-- <section>
           <h3>
             Draw
           </h3>
@@ -106,8 +104,7 @@
               <li>{{appearance.num}}: {{appearance.entry.group.name}}</li>
             {% endfor %}
           </ul>
-        </section>
-      {% endif %}
+        </section> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     {# <script src="{% static 'js/bs.js' %}"></script> #}

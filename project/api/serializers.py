@@ -506,6 +506,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'num',
+            'ann_pdf',
             'session',
             'appearances',
             'panelists',

@@ -241,6 +241,7 @@ class Command(BaseCommand):
         quartet_award=AwardFactory(
             name='International Quartet Championship',
             entity=bhs,
+            is_primary=True,
         )
         dc_award=AwardFactory(
             name='International Dealers Choice',
@@ -250,6 +251,7 @@ class Command(BaseCommand):
             name='Harmony Foundation Youth Championship',
             entity=bhs,
             rounds=1,
+            is_primary=True,
         )
         oy_award=AwardFactory(
             name='Other Youth Award',
