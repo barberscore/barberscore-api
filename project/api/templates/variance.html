@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Announcements</title>
+    <title>Variance</title>
     <meta charset="utf-8">
     <meta name="description" content="Official Scoring Summary">
     <meta name="author" content="David E. Binetti">
@@ -47,22 +47,105 @@
   <body>
     <section>
       <h3>
-        Variance
+        Variance Report
       </h3>
+      <h4>
+        OA: {{appearance.num}}
+      </h4>
+      <h4>
+        Contestant: {{appearance.entry.entity.name}}
+      </h4>
     </section>
     <section>
-      <h3>
-        Evaluations
-      </h3>
-      <div>
-        <ul class='list-unstyled'>
-          {% for song in songs %}
-            <li>{{song.chart.title}}</li>
-            {% for score in song.scores.all %}
-              <li>{{score.points}}</li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
+      <div class='row'>
+        <div class='col-xs-6'>
+          <div class='table-responsive'>
+            <table class='table table-condensed'>
+              <thead>
+                <tr>
+                  <th  class='text-right' colspan=5>
+                  Song1
+                </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class='text-right' colspan=5>
+                    <h3>{{song_one.chart.title}}</h3>
+                  </td>
+                </tr>
+                {% for score in scores_one %}
+                  <tr>
+                    <td class='text-right' >
+                      {{score.panelist.get_category_display}}
+                    </td>
+                    <td class='text-right' >
+                      {{score.panelist.person.common_name}}
+                    </td>
+                    <td class='text-right' >
+                      {{score.panelist.num}}
+                    </td>
+                    <td class='text-right' >
+                      <i class="fa fa-square-o fa-4x"></i>
+                    </td>
+                    <td class='text-right' >
+                      <h3>{{score.points}}</h3>
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr>
+                  <td class='text-right' colspan=5>
+                    <h4>{{scores_one_avg}}</h4>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class='col-xs-6'>
+          <div class='table-responsive'>
+            <table class='table table-condensed'>
+              <thead>
+                <tr>
+                <th colspan=5>
+                  Song2
+                </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan=5>
+                    <h3>{{song_two.chart.title}}</h3>
+                  </td>
+                </tr>
+                {% for score in scores_two %}
+                  <tr>
+                    <td>
+                      <h3>{{score.points}}</h3>
+                    </td>
+                    <td>
+                      <i class="fa fa-square-o fa-4x"></i>
+                    </td>
+                    <td>
+                      {{score.panelist.num}}
+                    </td>
+                    <td>
+                      {{score.panelist.person.common_name}}
+                    </td>
+                    <td>
+                      {{score.panelist.get_category_display}}
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr>
+                  <td>
+                    <h4>{{scores_two_avg}}</h4>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

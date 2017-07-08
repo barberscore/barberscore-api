@@ -765,3 +765,24 @@ class OfficeViewCSV(viewsets.ReadOnlyModelViewSet):
     renderer_classes = [
         OfficeRendererCSV,
     ]
+
+
+from django.shortcuts import render
+from django.db.models import Avg
+def variance(request):
+    appearance = Appearance.objects.get(id='a88b7462-0ede-4427-a35c-41bec4e1ab21')
+    song_one = appearance.songs.all().order_by('num').first()
+    song_two = appearance.songs.all().order_by('num').last()
+    scores_one = song_one.scores.all().order_by('panelist__num')
+    scores_two = song_two.scores.all().order_by('panelist__num')
+    scores_one_avg = scores_one.aggregate(a=Avg('points'))['a']
+    scores_two_avg = scores_two.aggregate(a=Avg('points'))['a']
+    return render(request, 'variance.html', {
+        'appearance': appearance,
+        'song_one': song_one,
+        'song_two': song_two,
+        'scores_one' : scores_one,
+        'scores_two' : scores_two,
+        'scores_one_avg' : scores_one_avg,
+        'scores_two_avg' : scores_two_avg,
+    })

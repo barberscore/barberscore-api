@@ -210,10 +210,21 @@ class Appearance(TimeStampedModel):
     # Methods
     def print_var(self):
         appearance = self
-        songs = appearance.songs.all().order_by('num')
+        song_one = appearance.songs.all().order_by('num').first()
+        song_two = appearance.songs.all().order_by('num').last()
+        scores_one = song_one.scores.all().order_by('panelist__num')
+        scores_two = song_two.scores.all().order_by('panelist__num')
+        scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
+        scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
         tem = get_template('variance.html')
         template = tem.render(context={
-            'songs': songs,
+            'appearance': appearance,
+            'song_one': song_one,
+            'song_two': song_two,
+            'scores_one' : scores_one,
+            'scores_two' : scores_two,
+            'scores_one_avg' : scores_one_avg,
+            'scores_two_avg' : scores_two_avg,
         })
         try:
             create_response = doc_api.create_doc({
