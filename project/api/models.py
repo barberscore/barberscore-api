@@ -3304,6 +3304,18 @@ class Round(TimeStampedModel):
             for appearance in self.appearances.all():
                 appearance.draw = -1
                 appearance.save()
+            entries = self.session.entries.exclude(
+                status=self.session.entries.model.STATUS.scratched,
+            )
+            for entry in entries:
+                entry.calculate_pdf()
+                entry.save()
+            contests = self.session.contests.all()
+            for contest in contests:
+                for contestant in contest.contestants.all():
+                    contestant.calculate()
+                    contestant.save()
+            foo = self.print_ann()
             return
         if self.kind == self.KIND.quarters:
             spots = 20

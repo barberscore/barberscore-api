@@ -593,6 +593,19 @@ class RoundViewSet(
     ]
     resource_name = "round"
 
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def print_ann(self, request, *args, **kwargs):
+        obj = self.get_object()
+
+        obj.print_ann()
+        # return Response(
+        #     status=status.HTTP_200_OK,
+        #     data={'var_pdf': obj.var_pdf.url},
+        # )
+        serializer = self.get_serializer(obj)
+        return Response(serializer.data)
+
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
@@ -767,43 +780,43 @@ class OfficeViewCSV(viewsets.ReadOnlyModelViewSet):
     ]
 
 
-from django.shortcuts import render
-from django.db.models import Avg
-def variance(request):
-    appearance = Appearance.objects.get(id='a88b7462-0ede-4427-a35c-41bec4e1ab21')
-    song_one = appearance.songs.all().order_by('num').first()
-    song_two = appearance.songs.all().order_by('num').last()
-    scores_one = song_one.scores.all().order_by('panelist__num')
-    scores_two = song_two.scores.all().order_by('panelist__num')
-    scores_one_avg = scores_one.aggregate(a=Avg('points'))['a']
-    scores_two_avg = scores_two.aggregate(a=Avg('points'))['a']
-    return render(request, 'variance.html', {
-        'appearance': appearance,
-        'song_one': song_one,
-        'song_two': song_two,
-        'scores_one' : scores_one,
-        'scores_two' : scores_two,
-        'scores_one_avg' : scores_one_avg,
-        'scores_two_avg' : scores_two_avg,
-    })
-
-
-def ann(request):
-    self = Round.objects.get(id='b3b64b4a-f48f-440a-a6be-5727ef729e4e')
-    primary = self.session.contests.get(is_primary=True)
-    contests = self.session.contests.filter(is_primary=False)
-    winners = []
-    for contest in contests:
-        winner = contest.contestants.get(rank=1)
-        winners.append(winner)
-    medalists = []
-    for contestant in primary.contestants.order_by('-rank'):
-        medalists.append(contestant)
-    medalists = medalists[-5:]
-
-    return render(request, 'ann.html', {
-        'primary': primary,
-        'contests': contests,
-        'winners': winners,
-        'medalists': medalists,
-    })
+# from django.shortcuts import render
+# from django.db.models import Avg
+# def variance(request):
+#     appearance = Appearance.objects.get(id='a88b7462-0ede-4427-a35c-41bec4e1ab21')
+#     song_one = appearance.songs.all().order_by('num').first()
+#     song_two = appearance.songs.all().order_by('num').last()
+#     scores_one = song_one.scores.all().order_by('panelist__num')
+#     scores_two = song_two.scores.all().order_by('panelist__num')
+#     scores_one_avg = scores_one.aggregate(a=Avg('points'))['a']
+#     scores_two_avg = scores_two.aggregate(a=Avg('points'))['a']
+#     return render(request, 'variance.html', {
+#         'appearance': appearance,
+#         'song_one': song_one,
+#         'song_two': song_two,
+#         'scores_one' : scores_one,
+#         'scores_two' : scores_two,
+#         'scores_one_avg' : scores_one_avg,
+#         'scores_two_avg' : scores_two_avg,
+#     })
+#
+#
+# def ann(request):
+#     self = Round.objects.get(id='b3b64b4a-f48f-440a-a6be-5727ef729e4e')
+#     primary = self.session.contests.get(is_primary=True)
+#     contests = self.session.contests.filter(is_primary=False)
+#     winners = []
+#     for contest in contests:
+#         winner = contest.contestants.get(rank=1)
+#         winners.append(winner)
+#     medalists = []
+#     for contestant in primary.contestants.order_by('-rank'):
+#         medalists.append(contestant)
+#     medalists = medalists[-5:]
+#
+#     return render(request, 'ann.html', {
+#         'primary': primary,
+#         'contests': contests,
+#         'winners': winners,
+#         'medalists': medalists,
+#     })
