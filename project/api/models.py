@@ -2295,11 +2295,27 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    is_session_manager = models.BooleanField(
+        default=False,
+    )
+
     is_scoring_manager = models.BooleanField(
         default=False,
     )
 
+    is_organization_manager = models.BooleanField(
+        default=False,
+    )
+
     is_group_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_person_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_award_manager = models.BooleanField(
         default=False,
     )
 
