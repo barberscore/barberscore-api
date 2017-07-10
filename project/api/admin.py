@@ -622,11 +622,15 @@ class OfficeAdmin(admin.ModelAdmin):
         'short_name',
         'kind',
         'is_cj',
+        'is_convention_manager',
+        'is_session_manager',
+        'is_scoring_manager',
+        'is_organization_manager',
+        'is_group_manager',
+        'is_person_manager',
+        'is_award_manager',
         'is_judge_manager',
         'is_chart_manager',
-        'is_convention_manager',
-        'is_scoring_manager',
-        'is_group_manager',
     ]
     search_fields = [
         'nomen',
@@ -637,11 +641,15 @@ class OfficeAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'is_cj',
+        'is_convention_manager',
+        'is_session_manager',
+        'is_scoring_manager',
+        'is_organization_manager',
+        'is_group_manager',
+        'is_person_manager',
+        'is_award_manager',
         'is_judge_manager',
         'is_chart_manager',
-        'is_convention_manager',
-        'is_scoring_manager',
-        'is_group_manager',
     ]
 
     # inlines = [
