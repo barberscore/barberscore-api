@@ -133,6 +133,9 @@ class Command(BaseCommand):
             short_name='DRCJ',
             is_cj=True,
             is_convention_manager=True,
+            is_session_manager=True,
+            is_organization_manager=True,
+            is_award_manager=True,
         )
         ca_office=OfficeFactory(
             name='Contest Administrator',
