@@ -856,7 +856,7 @@ class Chart(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_ml=True,
+                office__is_cm=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -870,7 +870,7 @@ class Chart(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             request.user.person.officers.filter(
-                office__is_ml=True,
+                office__is_cm=True,
                 status__gt=0,
             ),
         ])
@@ -2285,11 +2285,12 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    # Module permissions
     is_jm = models.BooleanField(
         default=False,
     )
 
-    is_ml = models.BooleanField(
+    is_cm = models.BooleanField(
         default=False,
     )
 
