@@ -2285,15 +2285,12 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    short_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
     # Module permissions
-    is_judge_manager = models.BooleanField(
-        default=False,
-    )
-
-    is_chart_manager = models.BooleanField(
-        default=False,
-    )
-
     is_convention_manager = models.BooleanField(
         default=False,
     )
@@ -2302,13 +2299,16 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_rep = models.BooleanField(
+    is_judge_manager = models.BooleanField(
         default=False,
     )
 
-    short_name = models.CharField(
-        max_length=255,
-        blank=True,
+    is_chart_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_rep = models.BooleanField(
+        default=False,
     )
 
     # Methods
