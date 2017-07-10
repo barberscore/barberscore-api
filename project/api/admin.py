@@ -625,7 +625,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_judge_manager',
         'is_chart_manager',
         'is_convention_manager',
-        'is_ca',
+        'is_scoring_manager',
         'is_rep',
     ]
     search_fields = [
@@ -640,7 +640,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_judge_manager',
         'is_chart_manager',
         'is_convention_manager',
-        'is_ca',
+        'is_scoring_manager',
         'is_rep',
     ]
 

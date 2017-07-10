@@ -138,7 +138,7 @@ class Command(BaseCommand):
             name='Contest Administrator',
             short_name='CA',
             is_cj=True,
-            is_ca=True,
+            is_scoring_manager=True,
         )
         mus_office=OfficeFactory(
             name='Music Judge',

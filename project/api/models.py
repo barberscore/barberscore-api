@@ -335,7 +335,7 @@ class Appearance(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_ca=True,
+                office__is_scoring_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -2295,7 +2295,7 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_ca = models.BooleanField(
+    is_scoring_manager = models.BooleanField(
         default=False,
     )
 
@@ -3052,7 +3052,7 @@ class Repertory(TimeStampedModel):
             #     status__gt=0,
             # ),
             # request.user.person.officers.filter(
-            #     office__is_ca=True,
+            #     office__is_scoring_manager=True,
             #     status__gt=0,
             # ),
             # request.user.person.officers.filter(
@@ -3071,7 +3071,7 @@ class Repertory(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_ca=True,
+                office__is_scoring_manager=True,
                 status__gt=0,
             ),
             self.entity.officers.filter(
@@ -3092,7 +3092,7 @@ class Repertory(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_ca=True,
+                office__is_scoring_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -3217,7 +3217,7 @@ class Round(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_ca=True,
+                office__is_scoring_manager=True,
                 status__gt=0,
             ),
         ])
@@ -3654,7 +3654,7 @@ class Score(TimeStampedModel):
         return any([
             True,
             request.user.person.officers.filter(
-                office__is_ca=True,
+                office__is_scoring_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -3682,7 +3682,7 @@ class Score(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_ca=True,
+                office__is_scoring_manager=True,
                 status__gt=0,
             ),
         ])
@@ -4328,7 +4328,7 @@ class Song(TimeStampedModel):
         return any([
             True,
             # request.user.person.officers.filter(
-            #     office__is_ca=True,
+            #     office__is_scoring_manager=True,
             #     status__gt=0,
             # ),
         ])
