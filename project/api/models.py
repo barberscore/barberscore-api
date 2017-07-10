@@ -860,7 +860,7 @@ class Chart(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -1257,7 +1257,7 @@ class Contestant(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -1273,7 +1273,7 @@ class Contestant(TimeStampedModel):
             ),
             self.entry.entity.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -1700,7 +1700,7 @@ class Entity(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -1712,7 +1712,7 @@ class Entity(TimeStampedModel):
         return any([
             self.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -2050,7 +2050,7 @@ class Entry(TimeStampedModel):
             ),
             self.entity.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -2208,7 +2208,7 @@ class Member(TimeStampedModel):
         return False
         # return any([
         #     request.user.person.officers.filter(
-        #         office__is_rep=True,
+        #         office__is_group_manager=True,
         #         status__gt=0,
         #     ),
         # ])
@@ -2220,7 +2220,7 @@ class Member(TimeStampedModel):
         # return any([
         #     self.entity.officers.filter(
         #         person=request.user.person,
-        #         office__is_rep=True,
+        #         office__is_group_manager=True,
         #         status__gt=0,
         #     ),
         # ])
@@ -2299,6 +2299,10 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    is_group_manager = models.BooleanField(
+        default=False,
+    )
+
     is_judge_manager = models.BooleanField(
         default=False,
     )
@@ -2307,9 +2311,6 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_rep = models.BooleanField(
-        default=False,
-    )
 
     # Methods
     def save(self, *args, **kwargs):
@@ -2662,7 +2663,7 @@ class Participant(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -2678,7 +2679,7 @@ class Participant(TimeStampedModel):
             ),
             self.entry.entity.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -3056,7 +3057,7 @@ class Repertory(TimeStampedModel):
             #     status__gt=0,
             # ),
             # request.user.person.officers.filter(
-            #     office__is_rep=True,
+            #     office__is_group_manager=True,
             #     status__gt=0,
             # ),
         ])
@@ -3076,7 +3077,7 @@ class Repertory(TimeStampedModel):
             ),
             self.entity.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -3096,7 +3097,7 @@ class Repertory(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -3107,7 +3108,7 @@ class Repertory(TimeStampedModel):
         return any([
             self.entity.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -3658,7 +3659,7 @@ class Score(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])
@@ -3670,7 +3671,7 @@ class Score(TimeStampedModel):
         return any([
             self.song.appearance.entry.entity.officers.filter(
                 person=request.user.person,
-                office__is_rep=True,
+                office__is_group_manager=True,
                 status__gt=0,
             ),
         ])

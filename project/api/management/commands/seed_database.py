@@ -158,7 +158,7 @@ class Command(BaseCommand):
         quartet_office=OfficeFactory(
             name='Quartet Representative',
             short_name='QREP',
-            is_rep=True,
+            is_group_manager=True,
         )
         # Create Core Officers
         drcj_officer=OfficerFactory(

@@ -626,7 +626,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_chart_manager',
         'is_convention_manager',
         'is_scoring_manager',
-        'is_rep',
+        'is_group_manager',
     ]
     search_fields = [
         'nomen',
@@ -641,7 +641,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_chart_manager',
         'is_convention_manager',
         'is_scoring_manager',
-        'is_rep',
+        'is_group_manager',
     ]
 
     # inlines = [

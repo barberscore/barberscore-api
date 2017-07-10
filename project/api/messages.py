@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 def send_entry(entry, template, context):
     officers = entry.entity.officers.filter(
-        office__is_rep=True,
+        office__is_group_manager=True,
     )
     assignments = entry.session.convention.assignments.filter(
         category__lt=10,
