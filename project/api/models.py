@@ -496,7 +496,7 @@ class Assignment(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_jc=True,
+                office__is_jm=True,
                 status__gt=0,
             )
         ])
@@ -506,7 +506,7 @@ class Assignment(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             request.user.person.officers.filter(
-                office__is_jc=True,
+                office__is_jm=True,
                 status__gt=0,
             )
         ])
@@ -2285,7 +2285,7 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_jc = models.BooleanField(
+    is_jm = models.BooleanField(
         default=False,
     )
 
@@ -2553,7 +2553,7 @@ class Panelist(TimeStampedModel):
         return any([
             True,
             request.user.person.officers.filter(
-                office__is_jc=True,
+                office__is_jm=True,
                 status__gt=0,
             )
         ])
@@ -2564,7 +2564,7 @@ class Panelist(TimeStampedModel):
         return any([
             True,
             request.user.person.officers.filter(
-                office__is_jc=True,
+                office__is_jm=True,
                 status__gt=0,
             )
         ])
