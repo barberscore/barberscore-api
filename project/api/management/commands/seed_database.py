@@ -132,7 +132,7 @@ class Command(BaseCommand):
             name='District Director C&J',
             short_name='DRCJ',
             is_cj=True,
-            is_drcj=True,
+            is_convention_manager=True,
         )
         ca_office=OfficeFactory(
             name='Contest Administrator',

@@ -343,7 +343,7 @@ class OfficeSerializer(serializers.ModelSerializer):
             'kind',
             'short_name',
             'is_chart_manager',
-            'is_drcj',
+            'is_convention_manager',
             'officers',
             'permissions',
         ]

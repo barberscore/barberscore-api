@@ -339,7 +339,7 @@ class Appearance(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             )
         ])
@@ -741,7 +741,7 @@ class Award(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             )
         ])
@@ -752,7 +752,7 @@ class Award(TimeStampedModel):
         return any([
             self.entity.officers.filter(
                 person=request.user.person,
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             )
         ])
@@ -990,7 +990,7 @@ class Contest(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             )
         ])
@@ -1253,7 +1253,7 @@ class Contestant(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -1445,7 +1445,7 @@ class Convention(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
         ])
@@ -2294,7 +2294,7 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_drcj = models.BooleanField(
+    is_convention_manager = models.BooleanField(
         default=False,
     )
 
@@ -2658,7 +2658,7 @@ class Participant(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -3048,7 +3048,7 @@ class Repertory(TimeStampedModel):
         return any([
             True,
             # request.user.person.officers.filter(
-            #     office__is_drcj=True,
+            #     office__is_convention_manager=True,
             #     status__gt=0,
             # ),
             # request.user.person.officers.filter(
@@ -3067,7 +3067,7 @@ class Repertory(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -3088,7 +3088,7 @@ class Repertory(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -3877,7 +3877,7 @@ class Session(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
         ])
@@ -4099,7 +4099,7 @@ class Slot(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
         ])
@@ -4440,7 +4440,7 @@ class Venue(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
         ])
@@ -4450,7 +4450,7 @@ class Venue(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             request.user.person.officers.filter(
-                office__is_drcj=True,
+                office__is_convention_manager=True,
                 status__gt=0,
             ),
         ])

@@ -624,7 +624,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_cj',
         'is_judge_manager',
         'is_chart_manager',
-        'is_drcj',
+        'is_convention_manager',
         'is_ca',
         'is_rep',
     ]
@@ -639,7 +639,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_cj',
         'is_judge_manager',
         'is_chart_manager',
-        'is_drcj',
+        'is_convention_manager',
         'is_ca',
         'is_rep',
     ]
