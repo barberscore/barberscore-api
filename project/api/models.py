@@ -496,7 +496,7 @@ class Assignment(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_jm=True,
+                office__is_judge_manager=True,
                 status__gt=0,
             )
         ])
@@ -506,7 +506,7 @@ class Assignment(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             request.user.person.officers.filter(
-                office__is_jm=True,
+                office__is_judge_manager=True,
                 status__gt=0,
             )
         ])
@@ -856,7 +856,7 @@ class Chart(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(
-                office__is_cm=True,
+                office__is_chart_manager=True,
                 status__gt=0,
             ),
             request.user.person.officers.filter(
@@ -870,7 +870,7 @@ class Chart(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             request.user.person.officers.filter(
-                office__is_cm=True,
+                office__is_chart_manager=True,
                 status__gt=0,
             ),
         ])
@@ -2286,11 +2286,11 @@ class Office(TimeStampedModel):
     )
 
     # Module permissions
-    is_jm = models.BooleanField(
+    is_judge_manager = models.BooleanField(
         default=False,
     )
 
-    is_cm = models.BooleanField(
+    is_chart_manager = models.BooleanField(
         default=False,
     )
 
@@ -2554,7 +2554,7 @@ class Panelist(TimeStampedModel):
         return any([
             True,
             request.user.person.officers.filter(
-                office__is_jm=True,
+                office__is_judge_manager=True,
                 status__gt=0,
             )
         ])
@@ -2565,7 +2565,7 @@ class Panelist(TimeStampedModel):
         return any([
             True,
             request.user.person.officers.filter(
-                office__is_jm=True,
+                office__is_judge_manager=True,
                 status__gt=0,
             )
         ])
