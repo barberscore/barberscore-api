@@ -108,7 +108,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'is_novice',
             'is_manual',
             'is_multi',
-            'is_district_representative',
+            'is_rep_qualifies',
             'rounds',
             'threshold',
             'minimum',

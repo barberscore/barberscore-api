@@ -664,7 +664,7 @@ class Award(TimeStampedModel):
         default=False,
     )
 
-    is_district_representative = models.BooleanField(
+    is_rep_qualifies = models.BooleanField(
         help_text="""Boolean; true means the district rep qualifies.""",
         default=False,
     )
