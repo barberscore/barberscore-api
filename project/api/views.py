@@ -35,6 +35,7 @@ from django.db.models import Q
 from .backends import (
     CoalesceFilterBackend,
     ScoreFilterBackend,
+    EntityFilterBackend,
 )
 from .filters import (
     AwardFilter,
@@ -353,6 +354,7 @@ class EntityViewSet(
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
+        EntityFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [

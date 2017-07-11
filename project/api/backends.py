@@ -26,3 +26,11 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
                     song__appearance__entry__entity__officers__person__user=request.user,
                 )
         return queryset.none()
+
+
+class EntityFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """Filter inactive entities."""
+        return queryset.exclude(
+            status__lt=0,
+        )
