@@ -120,6 +120,12 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
+# JSONAPI
+JSON_API_FORMAT_KEYS = 'dasherize'
+JSON_API_FORMAT_TYPES = 'dasherize'
+JSON_API_PLURALIZE_TYPES = False
+APPEND_TRAILING_SLASH = False
+
 # WhiteNoise
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
@@ -129,10 +135,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-
-# JSONAPI
-JSON_API_FORMAT_KEYS = 'dasherize'
-APPEND_TRAILING_SLASH = False
 
 # Applications
 INSTALLED_APPS = [
