@@ -131,21 +131,12 @@ class EntityFilter(FilterSet):
             'officers__person__user': [
                 'exact',
             ],
-            'parent__officers__person__user': [
-                'exact',
-            ],
             'nomen': [
                 'icontains',
             ],
             'status': [
                 'exact',
                 'gt',
-            ],
-            'officers__office__is_award_manager': [
-                'exact',
-            ],
-            'parent__officers__office__is_award_manager': [
-                'exact',
             ],
         }
 
