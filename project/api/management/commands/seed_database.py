@@ -84,6 +84,10 @@ class Command(BaseCommand):
             person=None,
         )
         # Create Core Persons
+        scjc_person=PersonFactory(
+            name='SCJC Person',
+            email='scjc@barberscore.com',
+        )
         drcj_person=PersonFactory(
             name='DRCJ Person',
             email='drcj@barberscore.com',
@@ -97,6 +101,10 @@ class Command(BaseCommand):
             email='quartet@barberscore.com',
         )
         # Create Core Users
+        scjc_user=UserFactory(
+            email=scjc_person.email,
+            person=scjc_person,
+        )
         drcj_user=UserFactory(
             email=drcj_person.email,
             person=drcj_person,
@@ -121,6 +129,12 @@ class Command(BaseCommand):
             parent=bhs,
             kind=Entity.KIND.district,
         )
+        division=EntityFactory(
+            name='BHS Division',
+            short_name='DIV',
+            parent=district,
+            kind=Entity.KIND.division,
+        )
         affiliate=EntityFactory(
             name='INT Affiliate',
             short_name='INT',
@@ -128,6 +142,20 @@ class Command(BaseCommand):
             kind=Entity.KIND.affiliate,
         )
         # Create Core Offices
+        scjc_office=OfficeFactory(
+            name='Society Chairman of C&J',
+            short_name='SCJC',
+            is_cj=True,
+            is_convention_manager=True,
+            is_session_manager=True,
+            is_scoring_manager=True,
+            is_organization_manager=True,
+            is_group_manager=True,
+            is_person_manager=True,
+            is_award_manager=True,
+            is_judge_manager=True,
+            is_chart_manager=True,
+        )
         drcj_office=OfficeFactory(
             name='District Director C&J',
             short_name='DRCJ',
@@ -164,6 +192,24 @@ class Command(BaseCommand):
             is_group_manager=True,
         )
         # Create Core Officers
+        scjc_officer=OfficerFactory(
+            office=scjc_office,
+            person=scjc_person,
+            entity=bhs,
+            status=Officer.STATUS.active,
+        )
+        scjc_dis=OfficerFactory(
+            office=scjc_office,
+            person=scjc_person,
+            entity=district,
+            status=Officer.STATUS.active,
+        )
+        scjc_div=OfficerFactory(
+            office=scjc_office,
+            person=scjc_person,
+            entity=division,
+            status=Officer.STATUS.active,
+        )
         drcj_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
@@ -178,13 +224,19 @@ class Command(BaseCommand):
         )
         # Create Charts
         charts = ChartFactory.create_batch(
-            size=300,
+            size=500,
             status=Chart.STATUS.active,
         )
         # Create Quartets
         quartets = EntityFactory.create_batch(
-            size=100,
+            size=50,
             kind=Entity.KIND.quartet,
+            parent=district,
+        )
+        division_quartets = EntityFactory.create_batch(
+            size=20,
+            kind=Entity.KIND.quartet,
+            parent=division,
         )
         for idx, quartet in enumerate(quartets):
             i = 1
@@ -244,10 +296,34 @@ class Command(BaseCommand):
         quartet_award=AwardFactory(
             name='International Quartet Championship',
             entity=bhs,
+            rounds=3,
         )
         dc_award=AwardFactory(
             name='International Dealers Choice',
             entity=bhs,
+            rounds=3,
+        )
+        international_quartet_district_qualifier=AwardFactory(
+            name='International Quartet District Qualifier',
+            entity=district,
+            rounds=2,
+            parent=quartet_award,
+        )
+        district_quartet_championship=AwardFactory(
+            name='District Quartet Championship',
+            entity=district,
+            rounds=2,
+        )
+        division_quartet_championship=AwardFactory(
+            name='District Quartet Championship',
+            entity=division,
+            rounds=1,
+        )
+        district_quartet_division_qualifier=AwardFactory(
+            name='District Quartet Division Qualifier',
+            entity=division,
+            rounds=1,
+            parent=district_quartet_championship,
         )
         ybqc_award=AwardFactory(
             name='Harmony Foundation Youth Championship',

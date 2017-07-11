@@ -75,7 +75,7 @@ class AwardFactory(DjangoModelFactory):
     is_novice = False
     is_manual = False
     is_multi = True
-    is_rep_qualifies = True
+    is_rep_qualifies = False
     rounds = 3
     threshold = 76
     minimum = 70

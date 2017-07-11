@@ -333,7 +333,7 @@ class ConventionViewSet(
 
 
 class EntityViewSet(
-    get_viewset_transition_action_mixin(Entry),
+    get_viewset_transition_action_mixin(Entity),
     viewsets.ModelViewSet
 ):
     queryset = Entity.objects.select_related(
