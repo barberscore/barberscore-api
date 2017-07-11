@@ -384,7 +384,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
     list_display = (
         'nomen',
-        'name',
+        'entity',
         'start_date',
         'end_date',
         'status',
@@ -621,7 +621,6 @@ class OfficeAdmin(admin.ModelAdmin):
         'name',
         'short_name',
         'kind',
-        'is_cj',
         'is_convention_manager',
         'is_session_manager',
         'is_scoring_manager',
