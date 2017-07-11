@@ -246,7 +246,7 @@ class EntitySerializer(serializers.ModelSerializer):
             'bhs_id',
             'org_sort',
             'parent',
-            # 'children',
+            'children',
             'awards',
             'conventions',
             'entries',

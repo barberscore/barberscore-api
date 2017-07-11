@@ -1703,6 +1703,10 @@ class Entity(TimeStampedModel):
                 office__is_group_manager=True,
                 status__gt=0,
             ),
+            request.user.person.officers.filter(
+                office__is_organization_manager=True,
+                status__gt=0,
+            ),
         ])
 
 
@@ -1713,6 +1717,10 @@ class Entity(TimeStampedModel):
             self.officers.filter(
                 person=request.user.person,
                 office__is_group_manager=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_organization_manager=True,
                 status__gt=0,
             ),
         ])
