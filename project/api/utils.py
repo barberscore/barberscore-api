@@ -377,7 +377,7 @@ def export_db_awards():
             'is_novice',
             'is_manual',
             'is_multi',
-            'is_district_representative',
+            'is_rep_qualifies',
             'rounds',
             'threshold',
             'minimum',

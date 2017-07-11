@@ -504,16 +504,18 @@ class EntityAdmin(admin.ModelAdmin):
 
     def get_inline_instances(self, request, obj=None):
         inline_instances = []
+        try:
+            if obj.kind == obj.KIND.quartet:
+                inlines = self.quartet_inlines
+            else:
+                inlines = self.other_inlines
 
-        if obj.kind == obj.KIND.quartet:
-            inlines = self.quartet_inlines
-        else:
-            inlines = self.other_inlines
-
-        for inline_class in inlines:
-            inline = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline)
-        return inline_instances
+            for inline_class in inlines:
+                inline = inline_class(self.model, self.admin_site)
+                inline_instances.append(inline)
+            return inline_instances
+        except AttributeError:
+            return inline_instances
 
     def get_formsets(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
