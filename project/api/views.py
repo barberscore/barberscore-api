@@ -167,7 +167,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 
 class AwardViewSet(
-    get_viewset_transition_action_mixin(Convention),
+    get_viewset_transition_action_mixin(Award),
     viewsets.ModelViewSet
 ):
     serializer_class = AwardSerializer
