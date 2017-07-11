@@ -814,6 +814,19 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
+    description = models.TextField(
+        help_text="""
+            Fun or interesting facts to share about the chart (ie, 'from Disney's Lion King, first sung by Elton John'.)""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
+    )
+
     image = models.FileField(
         upload_to=PathAndRename(),
         max_length=255,

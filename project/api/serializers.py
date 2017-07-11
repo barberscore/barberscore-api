@@ -136,6 +136,8 @@ class ChartSerializer(serializers.ModelSerializer):
             'arrangers',
             'composers',
             'lyricists',
+            'description',
+            'notes',
             'image',
             'holders',
             'repertories',
