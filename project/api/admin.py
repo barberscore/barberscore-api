@@ -659,12 +659,8 @@ class OfficeAdmin(admin.ModelAdmin):
 
 @admin.register(Officer)
 class OfficerAdmin(admin.ModelAdmin):
-    raw_id_fields = [
-        'office',
-        'person',
-        'entity',
-    ]
     list_display = [
+        'nomen',
         'person',
         'office',
         'entity',
@@ -673,10 +669,16 @@ class OfficerAdmin(admin.ModelAdmin):
         'status',
     ]
     list_filter = [
-        'office__is_cj',
+        'status',
+        'office',
     ]
     search_fields = [
         'nomen',
+    ]
+    raw_id_fields = [
+        'office',
+        'person',
+        'entity',
     ]
 
 
