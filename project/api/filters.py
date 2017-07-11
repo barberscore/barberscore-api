@@ -128,6 +128,9 @@ class EntityFilter(FilterSet):
             'members__person__user': [
                 'exact',
             ],
+            'officers__person__user': [
+                'exact',
+            ],
             'nomen': [
                 'icontains',
             ],
