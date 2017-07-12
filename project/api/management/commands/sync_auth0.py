@@ -66,11 +66,6 @@ class Command(BaseCommand):
             }
         }
         account, result = auth0.users.update(user.auth0_id, payload), 'UPDATED'
-        try:
-            if account['statusCode'] == 404:
-                account, result = auth0.users.create(payload), 'CREATED'
-        except KeyError:
-            pass
         return account, result
 
 
@@ -97,6 +92,8 @@ class Command(BaseCommand):
                 account, response = self.update_or_create_auth0(user, auth0)
             except Auth0Error as e:
                 if e.status_code == 400:
+                    log.error(e)
+                elif e.status_code == 404:
                     log.error(e)
                 else:
                     raise(e)
