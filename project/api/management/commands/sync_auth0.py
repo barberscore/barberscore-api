@@ -112,7 +112,11 @@ class Command(BaseCommand):
         for user in users:
             payload = self.generate_payload(user)
             # Create
-            account = auth0.users.create(payload)
+            try:
+                account = auth0.users.create(payload)
+            except Auth0Error as e:
+                log.error(e)
+                continue
             user.auth0_id = account['user_id']
             user.save()
             log.info("CREATED: {0}".format(account))
