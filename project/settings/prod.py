@@ -74,12 +74,14 @@ LOGGING = {
         'api': {
             'handlers': [
                 'console',
+                'bugsnag',
             ],
             'level': 'ERROR',
         },
         'importer': {
             'handlers': [
                 'console',
+                'bugsnag',
             ],
             'level': 'ERROR',
         },
@@ -89,6 +91,10 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
+        },
+        'bugsnag': {
+            'level': 'ERROR',
+            'class': 'bugsnag.handlers.BugsnagHandler',
         },
     },
 }
