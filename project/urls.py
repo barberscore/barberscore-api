@@ -10,13 +10,14 @@ from django.conf.urls import (
     url,
 )
 from django.contrib import admin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 schema_view = get_schema_view(
     title='Barberscore API',
 )
 
 urlpatterns = [
+    url(r'^$', lambda r: HttpResponseRedirect('admin/')),
     url(r'^admin/', admin.site.urls),
     # url(r'^variance/$', variance),
     # url(r'^ann/$', ann),
