@@ -44,7 +44,7 @@ class Command(BaseCommand):
             i += 1
         return lst
 
-    def update_or_create_auth0(self, user, auth0):
+    def generate_payload(self, user):
         email = user.email
         try:
             name = user.person.name
@@ -65,14 +65,7 @@ class Command(BaseCommand):
                 "bhs_id": bhs_id
             }
         }
-        account, result = auth0.users.update(user.auth0_id, payload), 'UPDATED'
-        try:
-            if account['statusCode'] == 404:
-                account, result = auth0.users.create(payload), 'CREATED'
-        except KeyError:
-            print(account)
-            raise RuntimeError("WTF")
-        return account, result
+        return payload
 
 
     def handle(self, *args, **options):
@@ -87,23 +80,39 @@ class Command(BaseCommand):
                 )
             except User.DoesNotExist:
                 auth0.users.delete(account)
-                log.info("Deleted: {0}".format(account))
-        # Get non-admin Barberscore accounts
+                log.info("DELETED: {0}".format(account))
+        account = None
+        # Get Auth0, non-admin Barberscore accounts
         users = User.objects.filter(
             is_staff=False,
+        ).exclude(
+            auth0_id=None,
         )
-        # Update or create
         for user in users:
+            payload = self.generate_payload(user)
             try:
-                account, response = self.update_or_create_auth0(user, auth0)
+                # Update existing
+                account = auth0.users.update(user.auth0_id, payload)
+                log.info("UPDATED: {0}".format(account))
             except Auth0Error as e:
-                if e.status_code == 400:
-                    log.error(e)
+                if e.status_code == 404:
+                    # Reset orphans
+                    account = auth0.users.create(payload)
+                    user.auth0_id = account['user_id']
+                    user.save()
+                    log.info("RESET: {0}".format(account))
                 else:
-                    raise(e)
-            if response == 'Created':
-                user.auth0_id = account['user_id']
-                user.save()
-                log.info("{0}: {1}".format(response, account))
-            else:
-                log.info("{0}: {1}".format(response, account))
+                    # Other errors
+                    log.error(e)
+        # Get non-Auth0, non-admin
+        users = User.objects.filter(
+            is_staff=False,
+            auth0_id=None,
+        )
+        for user in users:
+            payload = self.generate_payload(user)
+            # Create
+            account = auth0.users.create(payload)
+            user.auth0_id = account['user_id']
+            user.save()
+            log.info("CREATED: {0}".format(account))
