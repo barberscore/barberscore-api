@@ -23,7 +23,7 @@ markdown==2.6.8
 nameparser==0.5.3
 Pillow==4.2.1
 psycopg2==2.7.1
-python-dateutil==2.6.0
+python-dateutil==2.6.1
 pytz==2017.2
 ranking==0.3.1
 requests==2.18.1
