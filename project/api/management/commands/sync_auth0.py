@@ -70,6 +70,7 @@ class Command(BaseCommand):
             if account['statusCode'] == 404:
                 account, result = auth0.users.create(payload), 'CREATED'
         except KeyError:
+            print(account)
             raise RuntimeError("WTF")
         return account, result
 
