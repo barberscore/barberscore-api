@@ -65,6 +65,9 @@ class AwardFilter(FilterSet):
             'entity__officers__office__is_award_manager': [
                 'exact',
             ],
+            'entity__officers__office__is_award_manager': [
+                'exact',
+            ],
         }
 
 
@@ -132,6 +135,9 @@ class EntityFilter(FilterSet):
                 'exact',
             ],
             'officers__person__user': [
+                'exact',
+            ],
+            'officers__office__is_award_manager': [
                 'exact',
             ],
             'nomen': [
