@@ -660,9 +660,9 @@ class OfficeAdmin(admin.ModelAdmin):
 class OfficerAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
-        'person',
-        'office',
-        'entity',
+        'person_name',
+        'office_name',
+        'entity_name',
         'start_date',
         'end_date',
         'status',
@@ -679,7 +679,18 @@ class OfficerAdmin(admin.ModelAdmin):
         'person',
         'entity',
     ]
-
+    def entity_name(self, obj):
+        return obj.entity.name
+    def person_name(self, obj):
+        return obj.person.name
+    def office_name(self, obj):
+        return obj.office.name
+    entity_name.admin_order_field = 'entity__name'
+    person_name.admin_order_field = 'person__name'
+    office_name.admin_order_field = 'office__name'
+    entity_name.short_description = 'Organization'
+    person_name.short_description = 'Person'
+    office_name.short_description = 'Office'
 
 @admin.register(Panelist)
 class PanelistAdmin(admin.ModelAdmin):
