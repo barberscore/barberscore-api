@@ -227,6 +227,7 @@ class AwardAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'entity',
+        'parent',
     ]
 
 
