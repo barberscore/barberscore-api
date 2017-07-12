@@ -65,10 +65,10 @@ class Command(BaseCommand):
                 "bhs_id": bhs_id
             }
         }
-        account, result = auth0.users.update(user.auth0_id, payload), 'Updated'
+        account, result = auth0.users.update(user.auth0_id, payload), 'UPDATED'
         try:
             if account['statusCode'] == 404:
-                account, result = auth0.users.create(payload), 'Created'
+                account, result = auth0.users.create(payload), 'CREATED'
         except KeyError:
             pass
         return account, result
@@ -93,7 +93,13 @@ class Command(BaseCommand):
         )
         # Update or create
         for user in users:
-            account, response = self.update_or_create_auth0(user, auth0)
+            try:
+                account, response = self.update_or_create_auth0(user, auth0)
+            except Auth0Error as e:
+                if e.status_code == 400:
+                    log.error(e)
+                else:
+                    raise(e)
             if response == 'Created':
                 user.auth0_id = account['user_id']
                 user.save()
