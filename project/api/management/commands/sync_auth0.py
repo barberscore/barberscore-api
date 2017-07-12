@@ -26,8 +26,7 @@ class Command(BaseCommand):
             token,
         )
 
-    def get_auth0_users(self):
-        auth0 = self.get_auth0()
+    def get_auth0_users(self, auth0):
         lst = []
         more = True
         i = 0
@@ -45,8 +44,7 @@ class Command(BaseCommand):
             i += 1
         return lst
 
-    def update_or_create_auth0(self, user):
-        auth0 = self.get_auth0()
+    def update_or_create_auth0(self, user, auth0):
         email = user.email
         try:
             name = user.person.name
@@ -67,15 +65,20 @@ class Command(BaseCommand):
                 "bhs_id": bhs_id
             }
         }
+        account, result = auth0.users.update(user.auth0_id, payload), 'Updated'
         try:
-            account, result = auth0.users.update(user.auth0_id, payload), 'Updated'
-        except Auth0Error:
-            account, result = auth0.users.create(payload), 'Created'
+            if account['statusCode'] == 404:
+                account, result = auth0.users.create(payload), 'Created'
+        except KeyError:
+            pass
         return account, result
 
+
     def handle(self, *args, **options):
+        # Get the Auth0 instance
         auth0 = self.get_auth0()
-        accounts = self.get_auth0_users()
+        # Delete orphaned Auth0
+        accounts = self.get_auth0_users(auth0)
         for account in accounts:
             try:
                 user = User.objects.get(
@@ -84,13 +87,16 @@ class Command(BaseCommand):
             except User.DoesNotExist:
                 auth0.users.delete(account)
                 log.info("Deleted: {0}".format(account))
-
+        # Get non-admin Barberscore accounts
         users = User.objects.filter(
             is_staff=False,
         )
+        # Update or create
         for user in users:
-            account, response = self.update_or_create_auth0(user)
+            account, response = self.update_or_create_auth0(user, auth0)
             if response == 'Created':
                 user.auth0_id = account['user_id']
                 user.save()
-            log.info("{1}: {0}".format(account['user_id'], response))
+                log.info("{0}: {1}".format(response, account))
+            else:
+                log.info("{0}: {1}".format(response, account))
