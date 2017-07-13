@@ -557,6 +557,18 @@ class Award(TimeStampedModel):
         choices=KIND,
     )
 
+    LEVEL = Choices(
+        (10, 'championship', "Championship"),
+        (20, 'award', "Award"),
+        (30, 'qualifier', "Qualifier"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+        null=True,
+        blank=True,
+    )
+
     AGE = Choices(
         (10, 'seniors', 'Seniors',),
         (20, 'collegiate', 'Collegiate',),

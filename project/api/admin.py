@@ -160,11 +160,12 @@ class AwardAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
-        'is_manual',
+        'entity',
         'kind',
         'age',
         'season',
-        'entity',
+        'level',
+        'rounds',
         'parent',
         # 'size',
         # 'size_range',
@@ -172,7 +173,7 @@ class AwardAdmin(admin.ModelAdmin):
         # 'scope_range',
         # ('is_primary', 'is_improved', 'is_novice'),
         # ('is_multi',),
-        'rounds',
+        'is_manual',
         'threshold',
         'minimum',
         'advance',
@@ -181,30 +182,30 @@ class AwardAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'status',
-        'is_primary',
-        'is_manual',
+        'entity',
         'kind',
         'age',
+        'season',
+        'level',
+        'rounds',
+        'parent',
         # 'size',
         # 'size_range',
         # 'scope',
         # 'scope_range',
-        'is_improved',
-        'is_novice',
-        'season',
     ]
 
     list_filter = [
         'status',
-        'is_primary',
+        # 'is_primary',
         'kind',
         'age',
         'season',
-        # 'size',
+        'level',
         # 'scope',
         'is_manual',
-        'is_novice',
-        'is_improved',
+        # 'is_novice',
+        # 'is_improved',
     ]
 
     readonly_fields = [
@@ -217,12 +218,8 @@ class AwardAdmin(admin.ModelAdmin):
 
     ordering = (
         'kind',
+        'level',
         'age',
-        '-is_primary',
-        'is_improved',
-        'size',
-        'scope',
-        'is_novice',
     )
 
     raw_id_fields = [

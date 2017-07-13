@@ -321,7 +321,7 @@ class Command(BaseCommand):
             rounds=2,
         )
         division_quartet_championship=AwardFactory(
-            name='District Quartet Championship',
+            name='Division Quartet Championship',
             entity=division,
             rounds=1,
         )
