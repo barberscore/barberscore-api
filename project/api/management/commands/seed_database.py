@@ -213,7 +213,13 @@ class Command(BaseCommand):
         drcj_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            entity=bhs,
+            entity=district,
+            status=Officer.STATUS.active,
+        )
+        drcj_div=OfficerFactory(
+            office=drcj_office,
+            person=drcj_person,
+            entity=division,
             status=Officer.STATUS.active,
         )
         ca_officer=OfficerFactory(

@@ -354,7 +354,7 @@ class EntityViewSet(
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
-        EntityFilterBackend,
+        # EntityFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
