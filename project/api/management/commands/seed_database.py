@@ -244,7 +244,10 @@ class Command(BaseCommand):
             kind=Entity.KIND.quartet,
             parent=division,
         )
-        for idx, quartet in enumerate(quartets):
+        groups = Entity.objects.filter(
+            kind__gte=30,
+        )
+        for idx, quartet in enumerate(groups):
             i = 1
             while i <= 4:
                 if i==1 and idx==0:
@@ -267,13 +270,13 @@ class Command(BaseCommand):
                     status=Member.STATUS.active,
                 )
                 i += 1
-        for quartet in quartets:
+        for group in groups:
             i = 1
             while i <= 6:
                 try:
                     chart = Chart.objects.order_by('?').first()
                     RepertoryFactory(
-                        entity=quartet,
+                        entity=group,
                         chart=chart,
                     )
                 except IntegrityError:
