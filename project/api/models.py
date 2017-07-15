@@ -43,6 +43,7 @@ from django.utils.encoding import smart_text
 from django.utils.timezone import now
 from django.template.loader import get_template
 from django.core.files.base import ContentFile
+from django.utils.functional import cached_property
 # Local
 from .fields import (
     OneToOneOrNoneField,
@@ -2926,7 +2927,71 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    @property
+    @cached_property
+    def is_convention_manager(self):
+        return bool(self.officers.filter(
+            office__is_convention_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_session_manager(self):
+        return bool(self.officers.filter(
+            office__is_session_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_scoring_manager(self):
+        return bool(self.officers.filter(
+            office__is_scoring_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_organization_manager(self):
+        return bool(self.officers.filter(
+            office__is_organization_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_group_manager(self):
+        return bool(self.officers.filter(
+            office__is_group_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_person_manager(self):
+        return bool(self.officers.filter(
+            office__is_person_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_award_manager(self):
+        return bool(self.officers.filter(
+            office__is_award_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_judge_manager(self):
+        return bool(self.officers.filter(
+            office__is_judge_manager=True,
+            status__gt=0,
+        ))
+
+    @cached_property
+    def is_chart_manager(self):
+        return bool(self.officers.filter(
+            office__is_chart_manager=True,
+            status__gt=0,
+        ))
+
+
+    @cached_property
     def first_name(self):
         if self.name:
             name = HumanName(self.name)
@@ -2934,7 +2999,7 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    @property
+    @cached_property
     def nick_name(self):
         if self.name:
             name = HumanName(self.name)
@@ -2942,7 +3007,7 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    @property
+    @cached_property
     def common_name(self):
         if self.name:
             name = HumanName(self.name)
@@ -2956,7 +3021,7 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    @property
+    @cached_property
     def full_name(self):
         if self.name:
             name = HumanName(self.name)
@@ -2970,7 +3035,7 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    @property
+    @cached_property
     def formal_name(self):
         if self.name:
             name = HumanName(self.name)

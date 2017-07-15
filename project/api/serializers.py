@@ -552,6 +552,15 @@ class PersonSerializer(serializers.ModelSerializer):
             'panelists',
             'user',
             'permissions',
+            'is_convention_manager',
+            'is_session_manager',
+            'is_scoring_manager',
+            'is_organization_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_judge_manager',
+            'is_chart_manager',
         )
         # fields = '__all__'
         read_only_fields = [
@@ -562,6 +571,15 @@ class PersonSerializer(serializers.ModelSerializer):
             'last_name',
             'nick_name',
             'image',
+            'is_convention_manager',
+            'is_session_manager',
+            'is_scoring_manager',
+            'is_organization_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_judge_manager',
+            'is_chart_manager',
         ]
     class JSONAPIMeta:
         included_resources = [
