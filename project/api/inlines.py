@@ -70,6 +70,7 @@ class AwardInline(admin.TabularInline):
         'rounds',
         'size',
         'is_improved',
+        'organization',
     ]
     readonly_fields = [
         'name',
@@ -124,12 +125,25 @@ class ContestantInline(admin.TabularInline):
     extra = 0
 
 
+class ConventionInline(admin.TabularInline):
+    model = Convention
+    fields = [
+        'name',
+        'organization',
+    ]
+    raw_id_fields = [
+        'organization',
+    ]
+    show_change_link = True
+    extra = 0
+
+
 class EntryInline(admin.TabularInline):
     model = Entry
     fields = [
         'nomen',
         'session',
-        'entity',
+        'group',
         'prelim',
         'seed',
         'status',
@@ -140,10 +154,10 @@ class EntryInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'session',
-        'entity',
+        'group',
     ]
     ordering = [
-        'entity__nomen',
+        'group__nomen',
     ]
     show_change_link = True
     extra = 0
@@ -153,17 +167,17 @@ class MemberInline(admin.TabularInline):
     model = Member
     fields = [
         'person',
-        'entity',
+        'group',
         'part',
         'status',
     ]
     raw_id_fields = [
         'person',
-        'entity',
+        'group',
     ]
     ordering = (
-        'entity__kind',
-        'entity__name',
+        'group__kind',
+        'group__name',
     )
     show_change_link = True
     extra = 0
@@ -174,13 +188,13 @@ class OfficerInline(admin.TabularInline):
     fields = [
         'office',
         'person',
-        'entity',
+        'organization',
         'status',
     ]
     raw_id_fields = [
         'office',
         'person',
-        'entity',
+        'organization',
     ]
     show_change_link = True
     extra = 0
@@ -236,11 +250,11 @@ class RepertoryInline(admin.TabularInline):
     model = Repertory
     fields = [
         'chart',
-        'entity',
+        'group',
     ]
     raw_id_fields = [
         'chart',
-        'entity',
+        'group',
     ]
     show_change_link = True
     extra = 0

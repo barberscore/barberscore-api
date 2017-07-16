@@ -17,6 +17,7 @@ from .inlines import (
     AwardInline,
     ContestantInline,
     ContestInline,
+    ConventionInline,
     EntryInline,
     MemberInline,
     OfficerInline,
@@ -39,9 +40,11 @@ from .models import (
     Convention,
     Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
+    Organization,
     Panelist,
     Participant,
     Person,
@@ -226,7 +229,6 @@ class AwardAdmin(admin.ModelAdmin):
         'entity',
         'parent',
     ]
-
 
 
 @admin.register(Chart)
@@ -473,20 +475,20 @@ class EntityAdmin(admin.ModelAdmin):
         'bhs_id',
     ]
 
-    quartet_inlines = [
-        # AwardInline,
-        RepertoryInline,
-        OfficerInline,
-        # EntryInline,
-        MemberInline,
-    ]
-    other_inlines = [
-        AwardInline,
-        RepertoryInline,
-        OfficerInline,
-        # EntryInline,
-        # MemberInline,
-    ]
+    # quartet_inlines = [
+    #     # AwardInline,
+    #     RepertoryInline,
+    #     OfficerInline,
+    #     # EntryInline,
+    #     MemberInline,
+    # ]
+    # other_inlines = [
+    #     AwardInline,
+    #     RepertoryInline,
+    #     OfficerInline,
+    #     # EntryInline,
+    #     # MemberInline,
+    # ]
 
     readonly_fields = [
         'nomen',
@@ -501,22 +503,22 @@ class EntityAdmin(admin.ModelAdmin):
         'name',
     ]
 
-    def get_inline_instances(self, request, obj=None):
-        inline_instances = []
-
-        if obj.kind == obj.KIND.quartet:
-            inlines = self.quartet_inlines
-        else:
-            inlines = self.other_inlines
-
-        for inline_class in inlines:
-            inline = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline)
-        return inline_instances
-
-    def get_formsets(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            yield inline.get_formset(request, obj)
+    # def get_inline_instances(self, request, obj=None):
+    #     inline_instances = []
+    #
+    #     if obj.kind == obj.KIND.quartet:
+    #         inlines = self.quartet_inlines
+    #     else:
+    #         inlines = self.other_inlines
+    #
+    #     for inline_class in inlines:
+    #         inline = inline_class(self.model, self.admin_site)
+    #         inline_instances.append(inline)
+    #     return inline_instances
+    #
+    # def get_formsets(self, request, obj=None):
+    #     for inline in self.get_inline_instances(request, obj):
+    #         yield inline.get_formset(request, obj)
 
 
 @admin.register(Entry)
@@ -580,6 +582,106 @@ class EntryAdmin(admin.ModelAdmin):
     ordering = (
         'nomen',
     )
+
+
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'status',
+        'organization',
+        'kind',
+        'code',
+        'start_date',
+        'end_date',
+        'short_name',
+        'location',
+        'bhs_id',
+        # 'spots',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'image',
+        'description',
+        'notes',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+    ]
+
+    search_fields = [
+        'nomen',
+        'short_name',
+    ]
+
+    list_display = [
+        'nomen',
+        'status',
+        'start_date',
+        'end_date',
+        'code',
+        'short_name',
+        'kind',
+        'bhs_id',
+    ]
+
+    list_editable = [
+        'bhs_id',
+    ]
+
+    inlines = [
+        EntryInline,
+        MemberInline,
+        RepertoryInline,
+    ]
+    # quartet_inlines = [
+    #     # AwardInline,
+    #     RepertoryInline,
+    #     OfficerInline,
+    #     # EntryInline,
+    #     MemberInline,
+    # ]
+    # other_inlines = [
+    #     AwardInline,
+    #     RepertoryInline,
+    #     OfficerInline,
+    #     # EntryInline,
+    #     # MemberInline,
+    # ]
+
+    readonly_fields = [
+        'nomen',
+    ]
+
+    raw_id_fields = [
+        'organization',
+    ]
+
+    ordering = [
+        'kind',
+        'name',
+    ]
+
+    # def get_inline_instances(self, request, obj=None):
+    #     inline_instances = []
+    #
+    #     if obj.kind == obj.KIND.quartet:
+    #         inlines = self.quartet_inlines
+    #     else:
+    #         inlines = self.other_inlines
+    #
+    #     for inline_class in inlines:
+    #         inline = inline_class(self.model, self.admin_site)
+    #         inline_instances.append(inline)
+    #     return inline_instances
+    #
+    # def get_formsets(self, request, obj=None):
+    #     for inline in self.get_inline_instances(request, obj):
+    #         yield inline.get_formset(request, obj)
 
 
 @admin.register(Member)
@@ -690,6 +792,107 @@ class OfficerAdmin(admin.ModelAdmin):
     entity_name.short_description = 'Organization'
     person_name.short_description = 'Person'
     office_name.short_description = 'Office'
+
+
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'status',
+        'parent',
+        'kind',
+        'code',
+        'start_date',
+        'end_date',
+        'short_name',
+        'location',
+        'bhs_id',
+        # 'spots',
+        'website',
+        'facebook',
+        'twitter',
+        'email',
+        'phone',
+        'image',
+        'description',
+        'notes',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+    ]
+
+    search_fields = [
+        'nomen',
+        'short_name',
+    ]
+
+    list_display = [
+        'nomen',
+        'status',
+        'start_date',
+        'end_date',
+        'code',
+        'short_name',
+        'kind',
+        'bhs_id',
+    ]
+
+    list_editable = [
+        'bhs_id',
+    ]
+    inlines = [
+        AwardInline,
+        OfficerInline,
+        ConventionInline,
+    ]
+
+    # quartet_inlines = [
+    #     # AwardInline,
+    #     RepertoryInline,
+    #     OfficerInline,
+    #     # EntryInline,
+    #     MemberInline,
+    # ]
+    # other_inlines = [
+    #     AwardInline,
+    #     RepertoryInline,
+    #     OfficerInline,
+    #     # EntryInline,
+    #     # MemberInline,
+    # ]
+
+    readonly_fields = [
+        'nomen',
+    ]
+
+    raw_id_fields = [
+        'parent',
+    ]
+
+    ordering = [
+        'kind',
+        'name',
+    ]
+
+    # def get_inline_instances(self, request, obj=None):
+    #     inline_instances = []
+    #
+    #     if obj.kind == obj.KIND.quartet:
+    #         inlines = self.quartet_inlines
+    #     else:
+    #         inlines = self.other_inlines
+    #
+    #     for inline_class in inlines:
+    #         inline = inline_class(self.model, self.admin_site)
+    #         inline_instances.append(inline)
+    #     return inline_instances
+    #
+    # def get_formsets(self, request, obj=None):
+    #     for inline in self.get_inline_instances(request, obj):
+    #         yield inline.get_formset(request, obj)
+
 
 @admin.register(Panelist)
 class PanelistAdmin(admin.ModelAdmin):
