@@ -80,7 +80,9 @@ from .models import (
     User,
     Venue,
 )
-from .paginators import PageNumberPagination
+
+from rest_framework.pagination import PageNumberPagination
+
 from .serializers import (
     AppearanceSerializer,
     AssignmentSerializer,
