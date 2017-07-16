@@ -526,8 +526,8 @@ class EntryAdmin(admin.ModelAdmin):
     fields = (
         'status',
         'session',
-        'entity',
-        'representing',
+        'group',
+        'organization',
         'image',
         'csa_pdf',
         ('tot_points', 'mus_points','per_points', 'sng_points',),
@@ -569,8 +569,8 @@ class EntryAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         'session',
-        'entity',
-        'representing',
+        'group',
+        'organization',
     )
 
     readonly_fields = (
@@ -986,7 +986,6 @@ class PersonAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
-        'representing',
         'birth_date',
         'dues_thru',
         'part',
@@ -1008,7 +1007,6 @@ class PersonAdmin(admin.ModelAdmin):
         'status',
         'bhs_id',
         'part',
-        'representing',
         'location',
         'website',
         'facebook',
@@ -1037,9 +1035,6 @@ class PersonAdmin(admin.ModelAdmin):
         AssignmentInline,
     ]
 
-    raw_id_fields = [
-        'representing',
-    ]
     # readonly_fields = [
     #     'common_name',
     # ]

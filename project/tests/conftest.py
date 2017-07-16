@@ -16,9 +16,11 @@ from api.factories import (
     ConventionFactory,
     EntityFactory,
     EntryFactory,
+    GroupFactory,
     MemberFactory,
     OfficeFactory,
     OfficerFactory,
+    OrganizationFactory,
     PanelistFactory,
     ParticipantFactory,
     PersonFactory,
@@ -125,6 +127,11 @@ def entry():
 
 
 @pytest.fixture
+def group():
+    return GroupFactory()
+
+
+@pytest.fixture
 def member():
     return MemberFactory()
 
@@ -137,6 +144,11 @@ def office():
 @pytest.fixture
 def officer():
     return OfficerFactory()
+
+
+@pytest.fixture
+def organization():
+    return OrganizationFactory()
 
 
 @pytest.fixture

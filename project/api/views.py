@@ -433,8 +433,8 @@ class EntryViewSet(
 ):
     queryset = Entry.objects.select_related(
         'session',
-        'entity',
-        'representing',
+        'group',
+        'organization',
     ).prefetch_related(
         'appearances',
         'appearances__songs',
@@ -517,7 +517,6 @@ class MemberViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'participants',
         'participants__entry',
-        'person__representing',
     ).order_by('nomen')
     serializer_class = MemberSerializer
     filter_class = MemberFilter
@@ -677,7 +676,6 @@ class ParticipantViewSet(viewsets.ModelViewSet):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
-        'representing',
     ).prefetch_related(
         'assignments',
         'members',
@@ -813,8 +811,8 @@ class SessionViewSet(
         'entries__participants',
         'entries__contestants',
         'entries__appearances',
-        'entries__entity',
-        'entries__representing',
+        'entries__group',
+        'entries__organization',
         'rounds__appearances',
         'rounds__slots',
         'rounds__panelists',

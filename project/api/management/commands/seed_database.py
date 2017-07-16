@@ -21,9 +21,11 @@ from api.factories import (
     ConventionFactory,
     EntityFactory,
     EntryFactory,
+    GroupFactory,
     MemberFactory,
     OfficeFactory,
     OfficerFactory,
+    OrganizationFactory,
     PanelistFactory,
     ParticipantFactory,
     PersonFactory,
@@ -46,9 +48,11 @@ from api.models import (
     Convention,
     Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
+    Organization,
     Panelist,
     Participant,
     Person,
@@ -118,28 +122,28 @@ class Command(BaseCommand):
             person=quartet_person,
         )
         # Create International and Districts
-        bhs=EntityFactory(
+        bhs=OrganizationFactory(
             name='Barbershop Harmony Society',
             short_name='BHS',
-            kind=Entity.KIND.international,
+            kind=Organization.KIND.international,
         )
-        district=EntityFactory(
+        district=OrganizationFactory(
             name='BHS District',
             short_name='DIS',
             parent=bhs,
-            kind=Entity.KIND.district,
+            kind=Organization.KIND.district,
         )
-        division=EntityFactory(
+        division=OrganizationFactory(
             name='BHS Division',
             short_name='DIV',
             parent=district,
-            kind=Entity.KIND.division,
+            kind=Organization.KIND.division,
         )
-        affiliate=EntityFactory(
+        affiliate=OrganizationFactory(
             name='INT Affiliate',
             short_name='INT',
             parent=bhs,
-            kind=Entity.KIND.affiliate,
+            kind=Organization.KIND.affiliate,
         )
         # Create Core Offices
         scjc_office=OfficeFactory(
@@ -195,37 +199,37 @@ class Command(BaseCommand):
         scjc_officer=OfficerFactory(
             office=scjc_office,
             person=scjc_person,
-            entity=bhs,
+            organization=bhs,
             status=Officer.STATUS.active,
         )
         scjc_dis=OfficerFactory(
             office=scjc_office,
             person=scjc_person,
-            entity=district,
+            organization=district,
             status=Officer.STATUS.active,
         )
         scjc_div=OfficerFactory(
             office=scjc_office,
             person=scjc_person,
-            entity=division,
+            organization=division,
             status=Officer.STATUS.active,
         )
         drcj_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            entity=district,
+            organization=district,
             status=Officer.STATUS.active,
         )
         drcj_div=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            entity=division,
+            organization=division,
             status=Officer.STATUS.active,
         )
         ca_officer=OfficerFactory(
             office=ca_office,
             person=ca_person,
-            entity=bhs,
+            organization=bhs,
             status=Officer.STATUS.active,
         )
         # Create Charts
@@ -234,17 +238,17 @@ class Command(BaseCommand):
             status=Chart.STATUS.active,
         )
         # Create Quartets
-        quartets = EntityFactory.create_batch(
+        quartets = GroupFactory.create_batch(
             size=50,
-            kind=Entity.KIND.quartet,
-            parent=district,
+            kind=Group.KIND.quartet,
+            organization=district,
         )
-        division_quartets = EntityFactory.create_batch(
+        division_quartets = GroupFactory.create_batch(
             size=20,
-            kind=Entity.KIND.quartet,
-            parent=division,
+            kind=Group.KIND.quartet,
+            organization=division,
         )
-        groups = Entity.objects.filter(
+        groups = Group.objects.filter(
             kind__gte=30,
         )
         for idx, quartet in enumerate(groups):
@@ -258,14 +262,14 @@ class Command(BaseCommand):
                     except IntegrityError:
                         continue
                 MemberFactory(
-                    entity=quartet,
+                    group=quartet,
                     person=person,
                     part=i,
                     status=Member.STATUS.active,
                 )
                 OfficerFactory(
                     office=quartet_office,
-                    entity=quartet,
+                    group=quartet,
                     person=person,
                     status=Member.STATUS.active,
                 )
@@ -276,7 +280,7 @@ class Command(BaseCommand):
                 try:
                     chart = Chart.objects.order_by('?').first()
                     RepertoryFactory(
-                        entity=group,
+                        group=group,
                         chart=chart,
                     )
                 except IntegrityError:
@@ -286,62 +290,62 @@ class Command(BaseCommand):
         mus_judges=OfficerFactory.create_batch(
             size=30,
             office=mus_office,
-            entity=bhs,
+            organization=bhs,
             status=Officer.STATUS.active,
         )
         per_judges=OfficerFactory.create_batch(
             size=30,
             office=per_office,
-            entity=bhs,
+            organization=bhs,
             status=Officer.STATUS.active,
         )
         sng_judges=OfficerFactory.create_batch(
             size=30,
             office=sng_office,
-            entity=bhs,
+            organization=bhs,
             status=Officer.STATUS.active,
         )
         # Create Awards
         quartet_award=AwardFactory(
             name='International Quartet Championship',
-            entity=bhs,
+            organization=bhs,
             rounds=3,
         )
         dc_award=AwardFactory(
             name='International Dealers Choice',
-            entity=bhs,
+            organization=bhs,
             rounds=3,
         )
         international_quartet_district_qualifier=AwardFactory(
             name='International Quartet District Qualifier',
-            entity=district,
+            organization=district,
             rounds=2,
-            parent=quartet_award,
+            group=quartet_award,
         )
         district_quartet_championship=AwardFactory(
             name='District Quartet Championship',
-            entity=district,
+            organization=district,
             rounds=2,
         )
         division_quartet_championship=AwardFactory(
             name='Division Quartet Championship',
-            entity=division,
+            organization=division,
             rounds=1,
         )
         district_quartet_division_qualifier=AwardFactory(
             name='District Quartet Division Qualifier',
-            entity=division,
+            organization=division,
             rounds=1,
-            parent=district_quartet_championship,
+            group=district_quartet_championship,
         )
         ybqc_award=AwardFactory(
             name='Harmony Foundation Youth Championship',
-            entity=bhs,
+            organization=bhs,
             rounds=1,
         )
         oy_award=AwardFactory(
             name='Other Youth Award',
-            entity=bhs,
+            organization=bhs,
             rounds=1,
         )
         # Create Conventions
@@ -349,11 +353,11 @@ class Command(BaseCommand):
             name='International Convention',
             start_date='2017-07-01',
             end_date='2017-07-08',
-            entity=bhs,
+            organization=bhs,
         )
         convention_ybqc=ConventionFactory(
             name='Youth Harmony Convention',
-            entity=bhs,
+            organization=bhs,
             start_date='2017-07-02',
             end_date='2017-07-02',
             panel=3
@@ -464,38 +468,38 @@ class Command(BaseCommand):
         quartet_session.open()
         quartet_session.save()
         # Enter 50 Quartets at Random
-        quartets = Entity.objects.filter(
-            kind=Entity.KIND.quartet,
+        quartets = Group.objects.filter(
+            kind=Group.KIND.quartet,
         ).order_by('?')[:50]
-        ybqc_quartets = Entity.objects.filter(
-            kind=Entity.KIND.quartet,
+        ybqc_quartets = Group.objects.filter(
+            kind=Group.KIND.quartet,
         ).order_by('?')[:20]
         # Create Quartet Entries
         for quartet in quartets:
             EntryFactory(
                 session=quartet_session,
-                entity=quartet,
-                representing=district,
+                group=quartet,
+                organization=district,
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )
         for quartet in ybqc_quartets:
             EntryFactory(
                 session=ybqc_session,
-                entity=quartet,
-                representing=district,
+                group=quartet,
+                organization=district,
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )
         # Add Participants to Entries
         for entry in quartet_session.entries.all():
-            for member in entry.entity.members.all():
+            for member in entry.group.members.all():
                 ParticipantFactory(
                     entry=entry,
                     member=member,
                 )
         for entry in ybqc_session.entries.all():
-            for member in entry.entity.members.all():
+            for member in entry.group.members.all():
                 ParticipantFactory(
                     entry=entry,
                     member=member,
@@ -550,7 +554,7 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
@@ -584,7 +588,7 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
@@ -609,7 +613,7 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
@@ -634,7 +638,7 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.entity.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():

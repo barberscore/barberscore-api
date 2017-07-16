@@ -70,6 +70,12 @@ def test_entry_admin_list(admin_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_group_admin_list(admin_client, group):
+    path = reverse('admin:api_group_changelist')
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_member_admin_list(admin_client, member):
     path = reverse('admin:api_member_changelist')
     response = admin_client.get(path)
@@ -84,6 +90,12 @@ def test_office_admin_list(admin_client, office):
 
 def test_officer_admin_list(admin_client, officer):
     path = reverse('admin:api_officer_changelist')
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_organization_admin_list(admin_client, organization):
+    path = reverse('admin:api_organization_changelist')
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -208,6 +220,12 @@ def test_entry_admin_detail(admin_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_group_admin_detail(admin_client, group):
+    path = reverse('admin:api_group_change', args=(str(group.id),))
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_member_admin_detail(admin_client, member):
     path = reverse('admin:api_member_change', args=(str(member.id),))
     response = admin_client.get(path)
@@ -222,6 +240,12 @@ def test_office_admin_detail(admin_client, office):
 
 def test_officer_admin_detail(admin_client, officer):
     path = reverse('admin:api_officer_change', args=(str(officer.id),))
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_organization_admin_detail(admin_client, organization):
+    path = reverse('admin:api_organization_change', args=(str(organization.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

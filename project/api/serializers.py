@@ -357,8 +357,8 @@ class EntrySerializer(serializers.ModelSerializer):
             'sng_score',
             'tot_score',
             'session',
-            'entity',
-            'representing',
+            'group',
+            'organization',
             'appearances',
             'contestants',
             'participants',
@@ -382,7 +382,7 @@ class GroupSerializer(serializers.ModelSerializer):
     }
 
     class Meta:
-        model = Entity
+        model = Group
         fields = [
             'id',
             'url',
@@ -520,7 +520,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
     }
 
     class Meta:
-        model = Entity
+        model = Organization
         fields = [
             'id',
             'url',
@@ -648,7 +648,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'formal_name',
             'first_name',
             'nick_name',
-            'representing',
             'assignments',
             'members',
             'officers',
