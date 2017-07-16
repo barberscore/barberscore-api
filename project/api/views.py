@@ -44,9 +44,11 @@ from .filters import (
     ConventionFilter,
     EntityFilter,
     EntryFilter,
+    GroupFilter,
     MemberFilter,
     OfficeFilter,
     OfficerFilter,
+    OrganizationFilter,
     PanelistFilter,
     ParticipantFilter,
     PersonFilter,
@@ -65,9 +67,11 @@ from .models import (
     Convention,
     Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
+    Organization,
     Panelist,
     Participant,
     Person,
@@ -93,10 +97,12 @@ from .serializers import (
     ConventionSerializer,
     EntitySerializer,
     EntrySerializer,
+    GroupSerializer,
     MemberSerializer,
     OfficeCSVSerializer,
     OfficerSerializer,
     OfficeSerializer,
+    OrganizationSerializer,
     PanelistSerializer,
     ParticipantSerializer,
     PersonSerializer,
@@ -282,7 +288,6 @@ class ChartViewSet(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
@@ -453,6 +458,58 @@ class EntryViewSet(
     resource_name = "entry"
 
 
+class GroupViewSet(
+    get_viewset_transition_action_mixin(Group),
+    viewsets.ModelViewSet
+):
+    queryset = Group.objects.select_related(
+        'organization',
+    ).prefetch_related(
+        'entries',
+        'entries__appearances',
+        'entries__contestants',
+        'entries__session',
+        'entries__participants',
+        'members__participants',
+        'members__person',
+        'repertories',
+        'repertories__chart',
+    ).order_by(
+        'nomen',
+    )
+    serializer_class = GroupSerializer
+    filter_class = GroupFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+        # EntityFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "group"
+
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def image(self, request, *args, **kwargs):
+        print(request.data)
+        if 'file' in request.data:
+            obj = self.get_object()
+
+            upload = request.data['file']
+            obj.image.save(
+                'foo.jpg',
+                upload,
+            )
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data={'image': obj.image.url},
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.select_related(
         'entity',
@@ -516,6 +573,65 @@ class OfficerViewSet(
         DRYPermissions,
     ]
     resource_name = "officer"
+
+
+class OrganizationViewSet(
+    get_viewset_transition_action_mixin(Organization),
+    viewsets.ModelViewSet
+):
+    queryset = Organization.objects.select_related(
+        'parent',
+    ).prefetch_related(
+        'awards',
+        'awards__contests',
+        'awards__parent',
+        'awards__children',
+        'conventions',
+        'conventions__sessions',
+        'conventions__assignments',
+        'conventions__venue',
+        'officers',
+        'officers__person',
+        'officers__office',
+        'children',
+        'children__awards',
+        'children__conventions',
+        'children__officers',
+        'children__children',
+    ).order_by(
+        'nomen',
+    )
+    serializer_class = OrganizationSerializer
+    filter_class = OrganizationFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+        # EntityFilterBackend,
+    ]
+    pagination_class = PageNumberPagination
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "organization"
+
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def image(self, request, *args, **kwargs):
+        print(request.data)
+        if 'file' in request.data:
+            obj = self.get_object()
+
+            upload = request.data['file']
+            obj.image.save(
+                'foo.jpg',
+                upload,
+            )
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data={'image': obj.image.url},
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class PanelistViewSet(viewsets.ModelViewSet):

@@ -12,9 +12,11 @@ from .views import (
     ConventionViewSet,
     EntityViewSet,
     EntryViewSet,
+    GroupViewSet,
     MemberViewSet,
     OfficerViewSet,
     OfficeViewSet,
+    OrganizationViewSet,
     PanelistViewSet,
     ParticipantViewSet,
     PersonViewSet,
@@ -42,9 +44,11 @@ router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entity', EntityViewSet)
 router.register(r'entry', EntryViewSet)
+router.register(r'group', GroupViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
+router.register(r'organization', OrganizationViewSet)
 router.register(r'panelist', PanelistViewSet)
 router.register(r'participant', ParticipantViewSet)
 router.register(r'person', PersonViewSet)

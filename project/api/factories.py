@@ -24,9 +24,11 @@ from api.models import (
     Convention,
     Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
+    Organization,
     Panelist,
     Participant,
     Person,
@@ -170,6 +172,30 @@ class EntryFactory(DjangoModelFactory):
         model = Entry
 
 
+class GroupFactory(DjangoModelFactory):
+    name = Faker('company')
+    status = Group.STATUS.active
+    kind = Group.KIND.quartet
+    short_name = Faker('word')
+    code = ''
+    start_date = None
+    end_date = None
+    email = Faker('email')
+    phone = Faker('phone_number')
+    location = ''
+    website = ''
+    facebook = ''
+    twitter = ''
+    image = None
+    description = ''
+    notes = ''
+    bhs_id = FuzzyInteger(100000, 999999)
+    organization = None
+
+    class Meta:
+        model = Group
+
+
 class MemberFactory(DjangoModelFactory):
     status = Member.STATUS.new
     part = None
@@ -202,6 +228,30 @@ class OfficerFactory(DjangoModelFactory):
 
     class Meta:
         model = Officer
+
+
+class OrganizationFactory(DjangoModelFactory):
+    name = Faker('company')
+    status = Organization.STATUS.active
+    kind = Organization.KIND.international
+    short_name = Faker('word')
+    code = ''
+    start_date = None
+    end_date = None
+    email = Faker('email')
+    phone = Faker('phone_number')
+    location = ''
+    website = ''
+    facebook = ''
+    twitter = ''
+    image = None
+    description = ''
+    notes = ''
+    bhs_id = FuzzyInteger(100000, 999999)
+    parent = None
+
+    class Meta:
+        model = Organization
 
 
 class PanelistFactory(DjangoModelFactory):

@@ -16,9 +16,11 @@ from .models import (
     Convention,
     Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
+    Organization,
     Panelist,
     Participant,
     Person,
@@ -371,6 +373,55 @@ class EntrySerializer(serializers.ModelSerializer):
         ]
 
 
+class GroupSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+    included_serializers = {
+        'entries': 'api.serializers.EntrySerializer',
+        'members': 'api.serializers.MemberSerializer',
+        'repertories': 'api.serializers.RepertorySerializer',
+    }
+
+    class Meta:
+        model = Entity
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'name',
+            'status',
+            'kind',
+            'short_name',
+            'code',
+            'start_date',
+            'end_date',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'image',
+            'description',
+            'bhs_id',
+            'org_sort',
+            'organization',
+            'entries',
+            'members',
+            'repertories',
+            'permissions',
+        ]
+
+        read_only_fields = [
+            'image',
+        ]
+    class JSONAPIMeta:
+        included_resources = [
+            'entries',
+            'members',
+            'repertories',
+        ]
+
+
 class MemberSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
@@ -456,6 +507,58 @@ class OfficerSerializer(serializers.ModelSerializer):
                 fields=('person', 'office'),
                 message='This person already holds this office.',
             )
+        ]
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+    included_serializers = {
+        'awards': 'api.serializers.AwardSerializer',
+        'conventions': 'api.serializers.ConventionSerializer',
+        'officers': 'api.serializers.OfficerSerializer',
+        'children': 'api.serializers.OrganizationSerializer',
+    }
+
+    class Meta:
+        model = Entity
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'name',
+            'status',
+            'kind',
+            'short_name',
+            'code',
+            'start_date',
+            'end_date',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'image',
+            'description',
+            'bhs_id',
+            'org_sort',
+            'parent',
+            'children',
+            'awards',
+            'conventions',
+            'officers',
+            'permissions',
+        ]
+
+        read_only_fields = [
+            'image',
+        ]
+    class JSONAPIMeta:
+        included_resources = [
+            'awards',
+            'conventions',
+            'officers',
+            'children',
         ]
 
 

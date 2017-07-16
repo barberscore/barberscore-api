@@ -12,9 +12,11 @@ from .models import (
     Convention,
     Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
+    Organization,
     Panelist,
     Participant,
     Person,
@@ -157,6 +159,35 @@ class EntryFilter(FilterSet):
         }
 
 
+class GroupFilter(FilterSet):
+    class Meta:
+        model = Group
+        fields = {
+            'id': [
+                'exact',
+            ],
+            'kind': [
+                'exact',
+                'lt',
+                'in',
+                'lte',
+            ],
+            'organization': [
+                'exact',
+            ],
+            'members__person__user': [
+                'exact',
+            ],
+            'nomen': [
+                'icontains',
+            ],
+            'status': [
+                'exact',
+                'gt',
+            ],
+        }
+
+
 class PanelistFilter(FilterSet):
     class Meta:
         model = Panelist
@@ -229,6 +260,38 @@ class OfficerFilter(FilterSet):
             ],
             'office__is_cj': [
                 'exact',
+            ],
+        }
+
+
+class OrganizationFilter(FilterSet):
+    class Meta:
+        model = Organization
+        fields = {
+            'id': [
+                'exact',
+            ],
+            'kind': [
+                'exact',
+                'lt',
+                'in',
+                'lte',
+            ],
+            'parent': [
+                'exact',
+            ],
+            'officers__person__user': [
+                'exact',
+            ],
+            'officers__office__is_award_manager': [
+                'exact',
+            ],
+            'nomen': [
+                'icontains',
+            ],
+            'status': [
+                'exact',
+                'gt',
             ],
         }
 
