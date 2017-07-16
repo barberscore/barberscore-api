@@ -14,6 +14,12 @@ def test_api_endpoint(api_client):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_appearance_endpoint_list(api_client, appearance):
+    path = reverse('appearance-list')
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_assignment_endpoint_list(api_client, assignment):
     path = reverse('assignment-list')
     response = api_client.get(path)
@@ -56,6 +62,12 @@ def test_entity_endpoint_list(api_client, entity):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_entry_endpoint_list(api_client, entry):
+    path = reverse('entry-list')
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_member_endpoint_list(api_client, member):
     path = reverse('member-list')
     response = api_client.get(path)
@@ -70,18 +82,6 @@ def test_office_endpoint_list(api_client, office):
 
 def test_officer_endpoint_list(api_client, officer):
     path = reverse('officer-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_appearance_endpoint_list(api_client, appearance):
-    path = reverse('appearance-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entry_endpoint_list(api_client, entry):
-    path = reverse('entry-list')
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -154,6 +154,12 @@ def test_user_endpoint_list(api_client, user):
 
 # Detail Views
 
+def test_appearance_endpoint_detail(api_client, appearance):
+    path = reverse('appearance-detail', args=(str(appearance.id),))
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_assignment_endpoint_detail(api_client, assignment):
     path = reverse('assignment-detail', args=(str(assignment.id),))
     response = api_client.get(path)
@@ -196,6 +202,12 @@ def test_entity_endpoint_detail(api_client, entity):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_entry_endpoint_detail(api_client, entry):
+    path = reverse('entry-detail', args=(str(entry.id),))
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_member_endpoint_detail(api_client, member):
     path = reverse('member-detail', args=(str(member.id),))
     response = api_client.get(path)
@@ -210,18 +222,6 @@ def test_office_endpoint_detail(api_client, office):
 
 def test_officer_endpoint_detail(api_client, officer):
     path = reverse('officer-detail', args=(str(officer.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_appearance_endpoint_detail(api_client, appearance):
-    path = reverse('appearance-detail', args=(str(appearance.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entry_endpoint_detail(api_client, entry):
-    path = reverse('entry-detail', args=(str(entry.id),))
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
