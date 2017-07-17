@@ -56,12 +56,6 @@ def test_convention_endpoint_list(api_client, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entity_endpoint_list(api_client, entity):
-    path = reverse('entity-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_entry_endpoint_list(api_client, entry):
     path = reverse('entry-list')
     response = api_client.get(path)
@@ -204,12 +198,6 @@ def test_contestant_endpoint_detail(api_client, contestant):
 
 def test_convention_endpoint_detail(api_client, convention):
     path = reverse('convention-detail', args=(str(convention.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entity_endpoint_detail(api_client, entity):
-    path = reverse('entity-detail', args=(str(entity.id),))
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

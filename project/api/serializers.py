@@ -14,7 +14,6 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Entity,
     Entry,
     Group,
     Member,
@@ -128,7 +127,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'threshold',
             'minimum',
             'advance',
-            'entity',
+            'organization',
             'parent',
             'children',
             'contests',
@@ -253,7 +252,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'end_date',
             'location',
             'venue',
-            'entity',
+            'organization',
             'assignments',
             'sessions',
             'permissions',
@@ -262,68 +261,6 @@ class ConventionSerializer(serializers.ModelSerializer):
         included_resources = [
             'sessions',
             'assignments',
-        ]
-
-
-class EntitySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-    included_serializers = {
-        'children': 'api.serializers.EntitySerializer',
-        'awards': 'api.serializers.AwardSerializer',
-        'conventions': 'api.serializers.ConventionSerializer',
-        'entries': 'api.serializers.EntrySerializer',
-        'members': 'api.serializers.MemberSerializer',
-        'officers': 'api.serializers.OfficerSerializer',
-        'repertories': 'api.serializers.RepertorySerializer',
-    }
-
-    class Meta:
-        model = Entity
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'name',
-            'status',
-            'kind',
-            'short_name',
-            'code',
-            'start_date',
-            'end_date',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'image',
-            'description',
-            'bhs_id',
-            'org_sort',
-            'parent',
-            'children',
-            'awards',
-            'conventions',
-            'entries',
-            'members',
-            'officers',
-            # 'persons',
-            'repertories',
-            'permissions',
-        ]
-
-        read_only_fields = [
-            'image',
-        ]
-    class JSONAPIMeta:
-        included_resources = [
-            'children',
-            'awards',
-            'conventions',
-            'entries',
-            'members',
-            'officers',
-            'repertories',
         ]
 
 
@@ -438,7 +375,7 @@ class MemberSerializer(serializers.ModelSerializer):
             'part',
             'start_date',
             'end_date',
-            'entity',
+            'group',
             'person',
             'participants',
             'permissions',
@@ -497,7 +434,7 @@ class OfficerSerializer(serializers.ModelSerializer):
             'end_date',
             'office',
             'person',
-            'entity',
+            'organization',
             'permissions',
         ]
 
@@ -694,7 +631,6 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class RepertorySerializer(serializers.ModelSerializer):
-
     permissions = DRYPermissionsField()
 
     class Meta:
@@ -704,14 +640,14 @@ class RepertorySerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'entity',
+            'group',
             'chart',
             'permissions',
         )
         validators = [
             UniqueTogetherValidator(
                 queryset=Repertory.objects.all(),
-                fields=('entity', 'chart'),
+                fields=('group', 'chart'),
                 message='This chart already exists in your repertory.',
             )
         ]

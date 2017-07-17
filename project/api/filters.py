@@ -10,7 +10,6 @@ from .models import (
     Chart,
     Contestant,
     Convention,
-    Entity,
     Entry,
     Group,
     Member,
@@ -46,25 +45,25 @@ class AwardFilter(FilterSet):
             'status': [
                 'exact',
             ],
-            'entity': [
+            'organization': [
                 'exact',
             ],
-            'entity__parent': [
+            'organization__parent': [
                 'exact',
             ],
-            'entity__name': [
+            'organization__name': [
                 'exact',
             ],
-            'entity__kind': [
+            'organization__kind': [
                 'exact',
             ],
-            'entity__officers__office__short_name': [
+            'organization__officers__office__short_name': [
                 'exact',
             ],
-            'entity__officers__person__user': [
+            'organization__officers__person__user': [
                 'exact',
             ],
-            'entity__officers__office__is_award_manager': [
+            'organization__officers__office__is_award_manager': [
                 'exact',
             ],
         }
@@ -110,41 +109,6 @@ class ConventionFilter(FilterSet):
             ],
             'assignments__kind': [
                 'exact',
-            ],
-        }
-
-
-class EntityFilter(FilterSet):
-    class Meta:
-        model = Entity
-        fields = {
-            'id': [
-                'exact',
-            ],
-            'kind': [
-                'exact',
-                'lt',
-                'in',
-                'lte',
-            ],
-            'parent': [
-                'exact',
-            ],
-            'members__person__user': [
-                'exact',
-            ],
-            'officers__person__user': [
-                'exact',
-            ],
-            'officers__office__is_award_manager': [
-                'exact',
-            ],
-            'nomen': [
-                'icontains',
-            ],
-            'status': [
-                'exact',
-                'gt',
             ],
         }
 
@@ -212,7 +176,7 @@ class MemberFilter(FilterSet):
     class Meta:
         model = Member
         fields = {
-            'entity': [
+            'group': [
                 'exact',
             ],
         }

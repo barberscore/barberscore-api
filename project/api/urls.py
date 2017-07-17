@@ -10,7 +10,6 @@ from .views import (
     ContestantViewSet,
     ContestViewSet,
     ConventionViewSet,
-    EntityViewSet,
     EntryViewSet,
     GroupViewSet,
     MemberViewSet,
@@ -42,7 +41,6 @@ router.register(r'chart', ChartViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
-router.register(r'entity', EntityViewSet)
 router.register(r'entry', EntryViewSet)
 router.register(r'group', GroupViewSet)
 router.register(r'member', MemberViewSet)

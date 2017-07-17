@@ -38,7 +38,6 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Entity,
     Entry,
     Group,
     Member,
@@ -163,7 +162,7 @@ class AwardAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
-        'entity',
+        'organization',
         'kind',
         'age',
         'season',
@@ -185,7 +184,7 @@ class AwardAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'status',
-        'entity',
+        'organization',
         'kind',
         'age',
         'season',
@@ -226,7 +225,7 @@ class AwardAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = [
-        'entity',
+        'organization',
         'parent',
     ]
 
@@ -372,7 +371,7 @@ class ConventionAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'status',
-        'entity',
+        'organization',
         'year',
         'season',
         'panel',
@@ -385,7 +384,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
     list_display = (
         'nomen',
-        'entity',
+        'organization',
         'start_date',
         'end_date',
         'status',
@@ -415,7 +414,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     raw_id_fields = [
-        'entity',
+        'organization',
         'venue',
     ]
 
@@ -424,101 +423,6 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     save_on_top = True
-
-
-@admin.register(Entity)
-class EntityAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'status',
-        'parent',
-        'kind',
-        'code',
-        'start_date',
-        'end_date',
-        'short_name',
-        'location',
-        'bhs_id',
-        # 'spots',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'image',
-        'description',
-        'notes',
-    ]
-
-    list_filter = [
-        'status',
-        'kind',
-    ]
-
-    search_fields = [
-        'nomen',
-        'short_name',
-    ]
-
-    list_display = [
-        'nomen',
-        'status',
-        'start_date',
-        'end_date',
-        'code',
-        'short_name',
-        'kind',
-        'bhs_id',
-    ]
-
-    list_editable = [
-        'bhs_id',
-    ]
-
-    # quartet_inlines = [
-    #     # AwardInline,
-    #     RepertoryInline,
-    #     OfficerInline,
-    #     # EntryInline,
-    #     MemberInline,
-    # ]
-    # other_inlines = [
-    #     AwardInline,
-    #     RepertoryInline,
-    #     OfficerInline,
-    #     # EntryInline,
-    #     # MemberInline,
-    # ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    raw_id_fields = [
-        'parent',
-    ]
-
-    ordering = [
-        'kind',
-        'name',
-    ]
-
-    # def get_inline_instances(self, request, obj=None):
-    #     inline_instances = []
-    #
-    #     if obj.kind == obj.KIND.quartet:
-    #         inlines = self.quartet_inlines
-    #     else:
-    #         inlines = self.other_inlines
-    #
-    #     for inline_class in inlines:
-    #         inline = inline_class(self.model, self.admin_site)
-    #         inline_instances.append(inline)
-    #     return inline_instances
-    #
-    # def get_formsets(self, request, obj=None):
-    #     for inline in self.get_inline_instances(request, obj):
-    #         yield inline.get_formset(request, obj)
 
 
 @admin.register(Entry)
@@ -690,7 +594,7 @@ class MemberAdmin(admin.ModelAdmin):
         'status',
         'start_date',
         'end_date',
-        'entity',
+        'group',
         'person',
         'part',
     ]
@@ -698,13 +602,13 @@ class MemberAdmin(admin.ModelAdmin):
         'status',
         'start_date',
         'end_date',
-        'entity',
+        'group',
         'person',
         'part',
     ]
     raw_id_fields = [
         'person',
-        'entity',
+        'group',
     ]
     search_fields = [
         'nomen',
@@ -712,7 +616,7 @@ class MemberAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'part',
-        'entity__kind',
+        'group__kind',
     ]
 
 
@@ -763,7 +667,7 @@ class OfficerAdmin(admin.ModelAdmin):
         'nomen',
         'person_name',
         'office_name',
-        'entity_name',
+        'organization_name',
         'start_date',
         'end_date',
         'status',
@@ -778,18 +682,18 @@ class OfficerAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'office',
         'person',
-        'entity',
+        'organization',
     ]
-    def entity_name(self, obj):
-        return obj.entity.name
+    def organization_name(self, obj):
+        return obj.organization.name
     def person_name(self, obj):
         return obj.person.name
     def office_name(self, obj):
         return obj.office.name
-    entity_name.admin_order_field = 'entity__name'
+    organization_name.admin_order_field = 'organization__name'
     person_name.admin_order_field = 'person__name'
     office_name.admin_order_field = 'office__name'
-    entity_name.short_description = 'Organization'
+    organization_name.short_description = 'Organization'
     person_name.short_description = 'Person'
     office_name.short_description = 'Office'
 
@@ -1044,14 +948,14 @@ class PersonAdmin(admin.ModelAdmin):
 class RepertoryAdmin(admin.ModelAdmin):
     fields = [
         'status',
-        'entity',
+        'group',
         'chart',
     ]
 
     list_display = [
         'nomen',
         'status',
-        'entity',
+        'group',
         'chart',
     ]
 
@@ -1068,7 +972,7 @@ class RepertoryAdmin(admin.ModelAdmin):
     ]
 
     raw_id_fields = (
-        'entity',
+        'group',
         'chart',
     )
 

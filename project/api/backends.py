@@ -21,16 +21,8 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
         if request.user.is_authenticated():
             if request.user.is_staff:
                 return queryset.all()
-            else:
-                return queryset.filter(
-                    song__appearance__entry__entity__officers__person__user=request.user,
-                )
+            # else:
+            #     return queryset.filter(
+            #         song__appearance__entry__entity__officers__person__user=request.user,
+            #     )
         return queryset.none()
-
-
-class EntityFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        """Filter inactive entities."""
-        return queryset.exclude(
-            status__lt=0,
-        )

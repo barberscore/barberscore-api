@@ -517,7 +517,7 @@ class Award(TimeStampedModel):
     """
     Award Model.
 
-    The specific award conferred by an Entity.
+    The specific award conferred by an Organization.
     """
 
     id = models.UUIDField(
@@ -716,6 +716,8 @@ class Award(TimeStampedModel):
         'Entity',
         related_name='awards',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     organization = models.ForeignKey(
@@ -771,7 +773,7 @@ class Award(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.entity.officers.filter(
+            self.organization.officers.filter(
                 person=request.user.person,
                 office__is_convention_manager=True,
                 status__gt=0,
@@ -1300,16 +1302,17 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.contest.session.convention.assignments.filter(
-                person=request.user.person,
-                category__lte=10,
-                kind=10,
-            ),
-            self.entry.entity.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            True,
+            # self.contest.session.convention.assignments.filter(
+            #     person=request.user.person,
+            #     category__lte=10,
+            #     kind=10,
+            # ),
+            # self.entry.organr.officers.filter(
+            #     person=request.user.person,
+            #     office__is_group_manager=True,
+            #     status__gt=0,
+            # ),
         ])
 
 
@@ -1450,13 +1453,15 @@ class Convention(TimeStampedModel):
         help_text="""
             The owning entity for the convention.""",
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     organization = models.ForeignKey(
         'Organization',
         related_name='conventions',
         help_text="""
-            The owning entity for the convention.""",
+            The owning organization for the convention.""",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -1509,7 +1514,7 @@ class Convention(TimeStampedModel):
     def can_schedule_convention(self):
         return all([
             self.name,
-            self.entity,
+            self.organization,
             self.season,
             self.year,
             self.open_date,
@@ -1923,6 +1928,8 @@ class Entry(TimeStampedModel):
         'Entity',
         related_name='entries',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     group = models.ForeignKey(
@@ -1953,7 +1960,7 @@ class Entry(TimeStampedModel):
     class Meta:
         verbose_name_plural = 'entries'
         unique_together = (
-            ('entity', 'session',),
+            ('group', 'session',),
         )
 
     class JSONAPIMeta:
@@ -1966,7 +1973,7 @@ class Entry(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.entity,
+                    self.group,
                     self.session,
                 ]
             )
@@ -2124,16 +2131,16 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.session.convention.assignments.filter(
-                person=request.user.person,
-                category__lt=10,
-                kind=10,
-            ),
-            self.entity.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            # self.session.convention.assignments.filter(
+            #     person=request.user.person,
+            #     category__lt=10,
+            #     kind=10,
+            # ),
+            # self.organization.officers.filter(
+            #     person=request.user.person,
+            #     office__is_group_manager=True,
+            #     status__gt=0,
+            # ),
         ])
 
 
@@ -2471,6 +2478,8 @@ class Member(TimeStampedModel):
         'Entity',
         related_name='members',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     group = models.ForeignKey(
@@ -2490,7 +2499,7 @@ class Member(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('entity', 'person',),
+            ('group', 'person',),
         )
 
     class JSONAPIMeta:
@@ -2503,7 +2512,7 @@ class Member(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.entity,
+                    self.group,
                     self.person,
                 ]
             )
@@ -2731,6 +2740,8 @@ class Officer(TimeStampedModel):
         'Entity',
         related_name='officers',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     organization = models.ForeignKey(
@@ -3255,16 +3266,16 @@ class Participant(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.entry.session.convention.assignments.filter(
-                person=request.user.person,
-                category__lte=10,
-                kind=10,
-            ),
-            self.entry.entity.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            # self.entry.session.convention.assignments.filter(
+            #     person=request.user.person,
+            #     category__lte=10,
+            #     kind=10,
+            # ),
+            # self.entry.entity.officers.filter(
+            #     person=request.user.person,
+            #     office__is_group_manager=True,
+            #     status__gt=0,
+            # ),
         ])
 
 
@@ -3657,6 +3668,8 @@ class Repertory(TimeStampedModel):
         'Entity',
         related_name='repertories',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     group = models.ForeignKey(
@@ -3677,7 +3690,7 @@ class Repertory(TimeStampedModel):
     class Meta:
         verbose_name_plural = 'repertories'
         unique_together = (
-            ('entity', 'chart',),
+            ('group', 'chart',),
         )
 
     class JSONAPIMeta:
@@ -3690,7 +3703,7 @@ class Repertory(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.entity,
+                    self.group,
                     self.chart,
                 ]
             )
@@ -3722,19 +3735,19 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
-            self.entity.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            # request.user.person.officers.filter(
+            #     office__is_convention_manager=True,
+            #     status__gt=0,
+            # ),
+            # request.user.person.officers.filter(
+            #     office__is_scoring_manager=True,
+            #     status__gt=0,
+            # ),
+            # self.entity.officers.filter(
+            #     person=request.user.person,
+            #     office__is_group_manager=True,
+            #     status__gt=0,
+            # ),
         ])
 
 
@@ -3761,11 +3774,11 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.entity.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            # self.entity.officers.filter(
+            #     person=request.user.person,
+            #     office__is_group_manager=True,
+            #     status__gt=0,
+            # ),
         ])
 
 
@@ -4324,11 +4337,11 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            self.song.appearance.entry.entity.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            # self.song.appearance.entry.entity.officers.filter(
+            #     person=request.user.person,
+            #     office__is_group_manager=True,
+            #     status__gt=0,
+            # ),
         ])
 
 

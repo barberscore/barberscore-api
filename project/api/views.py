@@ -35,14 +35,12 @@ from django.db.models import Q
 from .backends import (
     CoalesceFilterBackend,
     ScoreFilterBackend,
-    EntityFilterBackend,
 )
 from .filters import (
     AwardFilter,
     ChartFilter,
     ContestantFilter,
     ConventionFilter,
-    EntityFilter,
     EntryFilter,
     GroupFilter,
     MemberFilter,
@@ -65,7 +63,6 @@ from .models import (
     Contest,
     Contestant,
     Convention,
-    Entity,
     Entry,
     Group,
     Member,
@@ -95,7 +92,6 @@ from .serializers import (
     ContestantSerializer,
     ContestSerializer,
     ConventionSerializer,
-    EntitySerializer,
     EntrySerializer,
     GroupSerializer,
     MemberSerializer,
@@ -183,7 +179,7 @@ class AwardViewSet(
     viewsets.ModelViewSet
 ):
     queryset = Award.objects.select_related(
-        'entity',
+        'organization',
         'parent',
     ).prefetch_related(
         'children',
@@ -200,51 +196,6 @@ class AwardViewSet(
         DRYPermissions,
     ]
     resource_name = "award"
-
-    # def get_queryset(self):
-    #     queryset = Award.objects.select_related(
-    #         'entity',
-    #     ).prefetch_related(
-    #         'contests',
-    #     ).order_by(
-    #         'nomen',
-    #     )
-    #     drcj = self.request.query_params.get('drcj', None)
-    #     if drcj:
-    #         try:
-    #             user = User.objects.get(id=drcj)
-    #         except User.DoesNotExist:
-    #             queryset = Award.objects.none()
-    #             return queryset
-    #         queryset = Award.objects.filter(
-    #             Q(entity__officers__person__user=user) |
-    #             Q(entity__parent__officers__person__user=user)
-    #         ).select_related(
-    #             'entity',
-    #         ).prefetch_related(
-    #             'contests',
-    #         ).order_by(
-    #             'nomen',
-    #         )
-    #     convention = self.request.query_params.get('convention', None)
-    #     if convention:
-    #         try:
-    #             convention = Convention.objects.get(id=convention)
-    #         except Convention.DoesNotExist:
-    #             queryset = Award.objects.none()
-    #             return queryset
-    #         queryset = Award.objects.filter(
-    #             Q(entity=convention.entity.parent, season=convention.season, is_qualifier=True) |
-    #             Q(entity=convention.entity, season=convention.season) |
-    #             Q(entity__in=convention.entity.children.all(), season=convention.season)
-    #         ).select_related(
-    #             'entity',
-    #         ).prefetch_related(
-    #             'contests',
-    #         ).order_by(
-    #             'nomen',
-    #         )
-    #     return queryset
 
 
 class ChartViewSet(
@@ -334,7 +285,7 @@ class ConventionViewSet(
 ):
     queryset = Convention.objects.select_related(
         'venue',
-        'entity',
+        'organization',
     ).prefetch_related(
         'sessions',
         'sessions__rounds',
@@ -354,77 +305,6 @@ class ConventionViewSet(
         DRYPermissions,
     ]
     resource_name = "convention"
-
-
-class EntityViewSet(
-    get_viewset_transition_action_mixin(Entity),
-    viewsets.ModelViewSet
-):
-    queryset = Entity.objects.select_related(
-        'parent',
-    ).prefetch_related(
-        'children',
-        'awards',
-        'awards__contests',
-        'awards__parent',
-        'awards__children',
-        'conventions',
-        'conventions__sessions',
-        'conventions__assignments',
-        'conventions__venue',
-        'entries',
-        'entries__appearances',
-        'entries__contestants',
-        'entries__session',
-        'entries__participants',
-        'members__participants',
-        'members__person',
-        'officers',
-        'officers__person',
-        'officers__office',
-        'repertories',
-        'repertories__chart',
-        'children__members',
-        'children__entries',
-        'children__officers',
-        'children__repertories',
-        'children__awards',
-        'children__conventions',
-        'children__children',
-    ).order_by(
-        'nomen',
-    )
-    serializer_class = EntitySerializer
-    filter_class = EntityFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-        # EntityFilterBackend,
-    ]
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "entity"
-
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def image(self, request, *args, **kwargs):
-        print(request.data)
-        if 'file' in request.data:
-            obj = self.get_object()
-
-            upload = request.data['file']
-            obj.image.save(
-                'foo.jpg',
-                upload,
-            )
-            return Response(
-                status=status.HTTP_201_CREATED,
-                data={'image': obj.image.url},
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class EntryViewSet(
@@ -482,7 +362,6 @@ class GroupViewSet(
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
-        # EntityFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
@@ -512,7 +391,7 @@ class GroupViewSet(
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.select_related(
-        'entity',
+        'group',
         'person',
     ).prefetch_related(
         'participants',
@@ -535,7 +414,7 @@ class OfficeViewSet(viewsets.ModelViewSet):
     queryset = Office.objects.select_related(
     ).prefetch_related(
         'officers',
-        'officers__entity',
+        'officers__organization',
         'officers__person',
     ).order_by('nomen')
     serializer_class = OfficeSerializer
@@ -558,7 +437,7 @@ class OfficerViewSet(
     queryset = Officer.objects.select_related(
         'office',
         'person',
-        'entity',
+        'organization',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = OfficerSerializer
@@ -605,7 +484,6 @@ class OrganizationViewSet(
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
-        # EntityFilterBackend,
     ]
     pagination_class = PageNumberPagination
     permission_classes = [
@@ -720,7 +598,7 @@ class RepertoryViewSet(
     viewsets.ModelViewSet
 ):
     queryset = Repertory.objects.select_related(
-        'entity',
+        'group',
         'chart',
     ).prefetch_related(
     ).order_by('nomen')
@@ -876,7 +754,7 @@ class VenueViewSet(viewsets.ModelViewSet):
         'conventions',
         'conventions__sessions',
         'conventions__assignments',
-        'conventions__entity',
+        'conventions__organization',
     ).order_by('nomen')
     serializer_class = VenueSerializer
     filter_class = VenueFilter

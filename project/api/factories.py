@@ -22,7 +22,6 @@ from api.models import (
     Contest,
     Contestant,
     Convention,
-    Entity,
     Entry,
     Group,
     Member,
@@ -82,7 +81,7 @@ class AwardFactory(DjangoModelFactory):
     threshold = 76
     minimum = 70
     advance = 73
-    entity = SubFactory('api.factories.EntityFactory')
+    organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:
         model = Award
@@ -130,34 +129,10 @@ class ConventionFactory(DjangoModelFactory):
     end_date = '2017-07-08'
     location = Faker('city')
     venue = SubFactory('api.factories.VenueFactory')
-    entity = SubFactory('api.factories.EntityFactory')
+    organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:
         model = Convention
-
-
-class EntityFactory(DjangoModelFactory):
-    name = Faker('company')
-    status = Entity.STATUS.active
-    kind = Entity.KIND.international
-    short_name = Faker('word')
-    code = ''
-    start_date = None
-    end_date = None
-    email = Faker('email')
-    phone = Faker('phone_number')
-    location = ''
-    website = ''
-    facebook = ''
-    twitter = ''
-    image = None
-    description = ''
-    notes = ''
-    bhs_id = FuzzyInteger(100000, 999999)
-    parent = None
-
-    class Meta:
-        model = Entity
 
 
 class EntryFactory(DjangoModelFactory):
@@ -166,7 +141,7 @@ class EntryFactory(DjangoModelFactory):
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
-    entity = SubFactory('api.factories.EntityFactory')
+    group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
         model = Entry
@@ -201,7 +176,7 @@ class MemberFactory(DjangoModelFactory):
     part = None
     start_date = None
     end_date = None
-    entity = SubFactory('api.factories.EntityFactory')
+    group = SubFactory('api.factories.GroupFactory')
     person = SubFactory('api.factories.PersonFactory')
 
     class Meta:
@@ -224,7 +199,7 @@ class OfficerFactory(DjangoModelFactory):
     end_date = None
     office = SubFactory('api.factories.OfficeFactory')
     person = SubFactory('api.factories.PersonFactory')
-    entity = SubFactory('api.factories.EntityFactory')
+    organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:
         model = Officer
@@ -295,7 +270,7 @@ class PersonFactory(DjangoModelFactory):
 
 class RepertoryFactory(DjangoModelFactory):
     status = Repertory.STATUS.new
-    entity = SubFactory('api.factories.EntityFactory')
+    group = SubFactory('api.factories.GroupFactory')
     chart = SubFactory('api.factories.ChartFactory')
 
     class Meta:

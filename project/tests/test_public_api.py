@@ -50,12 +50,6 @@ def test_convention_endpoint_list(bhs_member, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_entity_endpoint_list(bhs_member, entity):
-    path = reverse('entity-list')
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_member_endpoint_list(bhs_member, member):
     path = reverse('member-list')
     response = bhs_member.get(path)
@@ -186,12 +180,6 @@ def test_contestant_endpoint_detail(bhs_member, contestant):
 
 def test_convention_endpoint_detail(bhs_member, convention):
     path = reverse('convention-detail', args=(str(convention.id),))
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entity_endpoint_detail(bhs_member, entity):
-    path = reverse('entity-detail', args=(str(entity.id),))
     response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
