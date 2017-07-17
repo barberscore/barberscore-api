@@ -82,8 +82,6 @@ from .models import (
     Venue,
 )
 
-from rest_framework.pagination import PageNumberPagination
-
 from .serializers import (
     AppearanceSerializer,
     AssignmentSerializer,
@@ -135,7 +133,6 @@ class AppearanceViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -167,7 +164,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -191,7 +187,6 @@ class AwardViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -213,7 +208,6 @@ class ChartViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -253,7 +247,6 @@ class ContestViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -272,7 +265,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -300,7 +292,6 @@ class ConventionViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -331,7 +322,6 @@ class EntryViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -363,7 +353,6 @@ class GroupViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -403,7 +392,6 @@ class MemberViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -423,7 +411,6 @@ class OfficeViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -446,7 +433,6 @@ class OfficerViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -485,7 +471,6 @@ class OrganizationViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -525,7 +510,6 @@ class PanelistViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -544,7 +528,6 @@ class ParticipantViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -567,7 +550,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -608,7 +590,6 @@ class RepertoryViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -639,7 +620,6 @@ class RoundViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -668,7 +648,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         # ScoreFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -701,7 +680,6 @@ class SessionViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -720,7 +698,6 @@ class SlotViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -741,7 +718,6 @@ class SongViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -762,7 +738,6 @@ class VenueViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -784,7 +759,6 @@ class UserViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     permission_classes = [
         DRYPermissions,
     ]
@@ -804,7 +778,6 @@ class StateLogViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = PageNumberPagination
     # permission_classes = [
     #     DRYPermissions,
     # ]

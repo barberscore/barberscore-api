@@ -7,7 +7,6 @@ import dj_database_url
 # Django
 from django.core.exceptions import ImproperlyConfigured
 
-
 def get_env_variable(var_name):
     """Get the environment variable or return exception."""
     try:
@@ -98,6 +97,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework_json_api.pagination.PageNumberPagination',
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
     'DEFAULT_PARSER_CLASSES': [
