@@ -18,3 +18,5 @@ api.json
 
 .cache/v/cache/lastfailed
 *.csv
+
+dump.json
