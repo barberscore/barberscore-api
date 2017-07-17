@@ -712,20 +712,10 @@ class Award(TimeStampedModel):
     )
 
     # FKs
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='awards',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     organization = models.ForeignKey(
         'Organization',
         related_name='awards',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     parent = models.ForeignKey(
@@ -1447,24 +1437,12 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='conventions',
-        help_text="""
-            The owning entity for the convention.""",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     organization = models.ForeignKey(
         'Organization',
         related_name='conventions',
         help_text="""
             The owning organization for the convention.""",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     # Internals
@@ -1544,247 +1522,6 @@ class Convention(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        return
-
-
-class Entity(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the resource.
-        """,
-        max_length=255,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    KIND = Choices(
-        ('International', [
-            (1, 'international', "International"),
-        ]),
-        ('District', [
-            (11, 'district', "District"),
-            (12, 'noncomp', "Noncompetitive"),
-            (13, 'affiliate', "Affiliate"),
-        ]),
-        ('Division', [
-            (21, 'division', "Division"),
-        ]),
-        ('Group', [
-            (32, 'chorus', "Chorus"),
-            (33, 'vlq', "Very Large Quartet"),
-            (34, 'mixed', "Mixed Group"),
-            (41, 'quartet', "Quartet"),
-        ]),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of entity.
-        """,
-        choices=KIND,
-    )
-
-    short_name = models.CharField(
-        help_text="""
-            A short-form name for the resource.""",
-        blank=True,
-        max_length=255,
-    )
-
-    code = models.CharField(
-        help_text="""
-            The chapter code.""",
-        max_length=255,
-        blank=True,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=255,
-        blank=True,
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-    )
-
-    email = models.EmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-    )
-
-    phone = models.CharField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-    )
-
-    image = models.ImageField(
-        upload_to=PathAndRename(),
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            A description of the entity.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
-    )
-
-    bhs_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-    )
-
-    org_sort = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    # FKs
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'entities'
-
-    class JSONAPIMeta:
-        resource_name = "entity"
-
-    def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = self.name
-        super().save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_organization_manager=True,
-                status__gt=0,
-            ),
-        ])
-
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            self.officers.filter(
-                person=request.user.person,
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_organization_manager=True,
-                status__gt=0,
-            ),
-        ])
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        """Activate the Entity."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        """Deactivate the Entity."""
         return
 
 
@@ -1924,36 +1661,16 @@ class Entry(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='entries',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     group = models.ForeignKey(
         'Group',
         related_name='entries',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
-    representing = models.ForeignKey(
-        'Entity',
-        related_name='entries_representing',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
     )
 
     organization = models.ForeignKey(
         'Organization',
         related_name='entries',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     # Internals
@@ -2321,7 +2038,7 @@ class Group(TimeStampedModel):
 
     description = models.TextField(
         help_text="""
-            A description of the entity.  Max 1000 characters.""",
+            A description of the group.  Max 1000 characters.""",
         blank=True,
         max_length=1000,
     )
@@ -2478,20 +2195,10 @@ class Member(TimeStampedModel):
     )
 
     # FKs
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='members',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     group = models.ForeignKey(
         'Group',
         related_name='members',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     person = models.ForeignKey(
@@ -2740,20 +2447,10 @@ class Officer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='officers',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     organization = models.ForeignKey(
         'Organization',
         related_name='officers',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     # Internals
@@ -2767,6 +2464,7 @@ class Officer(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
+                    self.organization,
                     self.office,
                     self.person,
                 ]
@@ -2942,7 +2640,7 @@ class Organization(TimeStampedModel):
 
     description = models.TextField(
         help_text="""
-            A description of the entity.  Max 1000 characters.""",
+            A description of the organization.  Max 1000 characters.""",
         blank=True,
         max_length=1000,
     )
@@ -3584,15 +3282,6 @@ class Person(TimeStampedModel):
         else:
             return None
 
-    # FKs
-    representing = models.ForeignKey(
-        'Entity',
-        related_name='persons',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "person"
@@ -3668,20 +3357,10 @@ class Repertory(TimeStampedModel):
     )
 
     # FKs
-    entity = models.ForeignKey(
-        'Entity',
-        related_name='repertories',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     group = models.ForeignKey(
         'Group',
         related_name='repertories',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     chart = models.ForeignKey(
