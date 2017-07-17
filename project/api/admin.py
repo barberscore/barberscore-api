@@ -663,11 +663,17 @@ class OfficeAdmin(admin.ModelAdmin):
 
 @admin.register(Officer)
 class OfficerAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        'person',
+        'office',
+        'organization',
+        'start_date',
+        'end_date',
+    ]
+
     list_display = [
         'nomen',
-        'person_name',
-        'office_name',
-        'organization_name',
         'start_date',
         'end_date',
         'status',
@@ -684,18 +690,6 @@ class OfficerAdmin(admin.ModelAdmin):
         'person',
         'organization',
     ]
-    def organization_name(self, obj):
-        return obj.organization.name
-    def person_name(self, obj):
-        return obj.person.name
-    def office_name(self, obj):
-        return obj.office.name
-    organization_name.admin_order_field = 'organization__name'
-    person_name.admin_order_field = 'person__name'
-    office_name.admin_order_field = 'office__name'
-    organization_name.short_description = 'Organization'
-    person_name.short_description = 'Person'
-    office_name.short_description = 'Office'
 
 
 @admin.register(Organization)
