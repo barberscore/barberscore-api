@@ -378,6 +378,7 @@ class MemberSerializer(serializers.ModelSerializer):
             'group',
             'person',
             'participants',
+            'is_admin',
             'permissions',
         ]
     class JSONAPIMeta:

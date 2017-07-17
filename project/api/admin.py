@@ -597,6 +597,7 @@ class MemberAdmin(admin.ModelAdmin):
         'group',
         'person',
         'part',
+        'is_admin',
     ]
     list_display = [
         'status',
@@ -605,6 +606,7 @@ class MemberAdmin(admin.ModelAdmin):
         'group',
         'person',
         'part',
+        'is_admin',
     ]
     raw_id_fields = [
         'person',
@@ -617,6 +619,7 @@ class MemberAdmin(admin.ModelAdmin):
         'status',
         'part',
         'group__kind',
+        'is_admin',
     ]
 
 

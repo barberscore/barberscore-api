@@ -2473,6 +2473,10 @@ class Member(TimeStampedModel):
         blank=True,
     )
 
+    is_admin = models.BooleanField(
+        default=False,
+    )
+
     # FKs
     entity = models.ForeignKey(
         'Entity',
