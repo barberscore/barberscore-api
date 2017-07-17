@@ -66,6 +66,10 @@ class AwardFilter(FilterSet):
             'organization__officers__office__is_award_manager': [
                 'exact',
             ],
+            'organization__officers__status': [
+                'exact',
+                'gt',
+            ],
         }
 
 
