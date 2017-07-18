@@ -320,7 +320,7 @@ class Appearance(TimeStampedModel):
             tot=models.Avg('scores__points')
         )['tot']
 
-    # Permissions
+    # Appearance Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -1456,7 +1456,7 @@ class Convention(TimeStampedModel):
         self.nomen = self.name
         super().save(*args, **kwargs)
 
-    # Permissions
+    # Convention Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -1481,10 +1481,9 @@ class Convention(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.assignments.filter(
-                person=request.user.person,
-                category__lte=10,
-                kind=10,
+            self.organization.officers.filter(
+                person__user=request.user,
+                status__gt=0,
             ),
         ])
 

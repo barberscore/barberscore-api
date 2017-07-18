@@ -164,7 +164,7 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'organization',
         'kind',
-        'age',
+        # 'age',
         'season',
         'level',
         'rounds',
@@ -183,29 +183,41 @@ class AwardAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'status',
+        'name',
         'organization',
         'kind',
-        'age',
-        'season',
+        # 'age',
         'level',
+        'season',
         'rounds',
-        'parent',
+        'status',
+        # 'parent',
         # 'size',
         # 'size_range',
         # 'scope',
         # 'scope_range',
     ]
 
+    list_editable = [
+        'name',
+        # 'organization',
+        'level',
+        'kind',
+        'season',
+        'rounds',
+        'status',
+    ]
+
     list_filter = [
         'status',
         # 'is_primary',
         'kind',
-        'age',
+        # 'age',
         'season',
         'level',
         # 'scope',
         'is_manual',
+        'organization',
         # 'is_novice',
         # 'is_improved',
     ]
@@ -526,18 +538,23 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'status',
-        'start_date',
-        'end_date',
-        'code',
-        'short_name',
-        'kind',
-        'bhs_id',
+        # 'start_date',
+        # 'end_date',
+        # 'code',
+        # 'short_name',
         'organization',
+        'kind',
+        'location',
+        'bhs_id',
+        'status',
     ]
 
     list_editable = [
         'bhs_id',
+        # 'organization',
+        'kind',
+        'location',
+        'status',
     ]
 
     inlines = [
