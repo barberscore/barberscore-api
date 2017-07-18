@@ -111,6 +111,9 @@ class ConventionFilter(FilterSet):
             'assignments__person__user': [
                 'exact',
             ],
+            'organization__officers__person__user': [
+                'exact',
+            ],
             'assignments__kind': [
                 'exact',
             ],
