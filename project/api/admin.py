@@ -158,7 +158,7 @@ class AssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(Award)
 class AwardAdmin(admin.ModelAdmin):
-
+    save_on_top = True
     fields = [
         'name',
         'status',

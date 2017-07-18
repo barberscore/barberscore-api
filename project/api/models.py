@@ -599,21 +599,6 @@ class Award(TimeStampedModel):
         default=False,
     )
 
-    is_improved = models.BooleanField(
-        help_text="""Designates 'Most-Improved'.  Implies manual.""",
-        default=False,
-    )
-
-    is_multi = models.BooleanField(
-        help_text="""Award spans conventions; must be determined manually.""",
-        default=False,
-    )
-
-    is_rep_qualifies = models.BooleanField(
-        help_text="""Boolean; true means the district rep qualifies.""",
-        default=False,
-    )
-
     rounds = models.IntegerField(
         help_text="""Number of rounds to determine the championship""",
     )
@@ -641,6 +626,21 @@ class Award(TimeStampedModel):
         """,
         null=True,
         blank=True,
+    )
+
+    is_improved = models.BooleanField(
+        help_text="""Designates 'Most-Improved'.  Implies manual.""",
+        default=False,
+    )
+
+    is_multi = models.BooleanField(
+        help_text="""Award spans conventions; must be determined manually.""",
+        default=False,
+    )
+
+    is_rep_qualifies = models.BooleanField(
+        help_text="""Boolean; true means the district rep qualifies.""",
+        default=False,
     )
 
     AGE = Choices(
