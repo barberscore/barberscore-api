@@ -484,6 +484,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'children',
             'awards',
             'conventions',
+            'groups',
             'officers',
             'permissions',
         ]
