@@ -749,13 +749,13 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'status',
-        'start_date',
-        'end_date',
+        'kind',
+        # 'start_date',
+        # 'end_date',
         'code',
         'short_name',
-        'kind',
         'bhs_id',
+        'status',
     ]
 
     list_editable = [
