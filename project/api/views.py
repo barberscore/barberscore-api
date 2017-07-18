@@ -455,6 +455,7 @@ class OrganizationViewSet(
         'conventions__sessions',
         'conventions__assignments',
         'conventions__venue',
+        'groups',
         'officers',
         'officers__person',
         'officers__office',
