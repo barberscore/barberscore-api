@@ -70,17 +70,15 @@ class AwardFactory(DjangoModelFactory):
     name = Faker('word')
     status = Award.STATUS.active
     kind = Award.KIND.quartet
+    level = Award.LEVEL.championship
     season = Award.SEASON.summer
     is_primary = True
-    is_improved = False
-    is_novice = False
+    is_invitational = True
     is_manual = False
-    is_multi = True
-    is_rep_qualifies = False
     rounds = 3
-    threshold = 76
-    minimum = 70
-    advance = 73
+    threshold = None
+    minimum = None
+    advance = None
     organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:

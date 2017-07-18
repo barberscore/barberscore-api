@@ -100,7 +100,6 @@ class ContestInline(admin.TabularInline):
         'award__is_improved',
         'award__size',
         'award__scope',
-        'award__is_novice',
     )
     show_change_link = True
     extra = 0

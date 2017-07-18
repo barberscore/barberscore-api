@@ -164,21 +164,12 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'organization',
         'kind',
-        # 'age',
-        'season',
         'level',
+        'season',
         'rounds',
+        ('is_primary', 'is_invitational', 'is_manual'),
         'parent',
-        # 'size',
-        # 'size_range',
-        # 'scope',
-        # 'scope_range',
-        # ('is_primary', 'is_improved', 'is_novice'),
-        # ('is_multi',),
-        'is_manual',
-        'threshold',
-        'minimum',
-        'advance',
+        ('threshold','minimum','advance',),
     ]
 
     list_display = [
@@ -186,42 +177,31 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'organization',
         'kind',
-        # 'age',
         'level',
         'season',
         'rounds',
-        'is_manual',
+        'is_primary', 'is_invitational', 'is_manual',
         'status',
-        # 'parent',
-        # 'size',
-        # 'size_range',
-        # 'scope',
-        # 'scope_range',
     ]
 
     list_editable = [
         'name',
         'organization',
-        'level',
         'kind',
+        'level',
         'season',
         'rounds',
-        'is_manual',
+        'is_primary', 'is_invitational', 'is_manual',
         'status',
     ]
 
     list_filter = [
         'status',
-        # 'is_primary',
         'kind',
-        # 'age',
-        'season',
         'level',
-        # 'scope',
-        'is_manual',
+        'season',
+        'is_primary', 'is_invitational', 'is_manual',
         'organization',
-        # 'is_novice',
-        # 'is_improved',
     ]
 
     readonly_fields = [
@@ -233,11 +213,10 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
+        'organization__org_sort',
         'kind',
         'level',
-        'age',
     )
-
 
 
 @admin.register(Chart)

@@ -570,18 +570,6 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'collegiate', 'Collegiate',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
@@ -592,6 +580,77 @@ class Award(TimeStampedModel):
 
     season = models.IntegerField(
         choices=SEASON,
+        null=True,
+        blank=True,
+    )
+
+    is_primary = models.BooleanField(
+        help_text="""Primary (v. Secondary).""",
+        default=False,
+    )
+
+    is_invitational = models.BooleanField(
+        help_text="""Invite-only (v. Open).""",
+        default=False,
+    )
+
+    is_manual = models.BooleanField(
+        help_text="""Manual (v. Automatic).""",
+        default=False,
+    )
+
+    is_improved = models.BooleanField(
+        help_text="""Designates 'Most-Improved'.  Implies manual.""",
+        default=False,
+    )
+
+    is_multi = models.BooleanField(
+        help_text="""Award spans conventions; must be determined manually.""",
+        default=False,
+    )
+
+    is_rep_qualifies = models.BooleanField(
+        help_text="""Boolean; true means the district rep qualifies.""",
+        default=False,
+    )
+
+    rounds = models.IntegerField(
+        help_text="""Number of rounds to determine the championship""",
+    )
+
+    threshold = models.FloatField(
+        help_text="""
+            The score threshold for automatic qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    minimum = models.FloatField(
+        help_text="""
+            The minimum score required for qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    advance = models.FloatField(
+        help_text="""
+            The score threshold to advance to next round (if any) in
+            multi-round qualification.
+        """,
+        null=True,
+        blank=True,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'collegiate', 'Collegiate',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
         null=True,
         blank=True,
     )
@@ -643,70 +702,6 @@ class Award(TimeStampedModel):
     )
 
     scope_range = FloatRangeField(
-        null=True,
-        blank=True,
-    )
-
-    is_qualifier = models.BooleanField(
-        help_text="""Qualificationn award.""",
-        default=False,
-    )
-
-    is_primary = models.BooleanField(
-        help_text="""The primary award; requires qualification.""",
-        default=False,
-    )
-
-    is_improved = models.BooleanField(
-        help_text="""Designates 'Most-Improved'.  Implies manual.""",
-        default=False,
-    )
-
-    is_novice = models.BooleanField(
-        help_text="""Award for Novice groups.""",
-        default=False,
-    )
-
-    is_manual = models.BooleanField(
-        help_text="""Award must be determined manually.""",
-        default=False,
-    )
-
-    is_multi = models.BooleanField(
-        help_text="""Award spans conventions; must be determined manually.""",
-        default=False,
-    )
-
-    is_rep_qualifies = models.BooleanField(
-        help_text="""Boolean; true means the district rep qualifies.""",
-        default=False,
-    )
-
-    rounds = models.IntegerField(
-        help_text="""Number of rounds to determine the championship""",
-    )
-
-    threshold = models.FloatField(
-        help_text="""
-            The score threshold for automatic qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    minimum = models.FloatField(
-        help_text="""
-            The minimum score required for qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    advance = models.FloatField(
-        help_text="""
-            The score threshold to advance to next round (if any) in
-            multi-round qualification.
-        """,
         null=True,
         blank=True,
     )
@@ -1840,23 +1835,29 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            True,
+            request.user.person.members.filter(
+                status__gt=0,
+                is_admin=True,
+            ),
+            request.user.person.officers.filter(
+                status__gt=0,
+                office__is_session_manager=True,
+            ),
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # self.session.convention.assignments.filter(
-            #     person=request.user.person,
-            #     category__lt=10,
-            #     kind=10,
-            # ),
-            # self.organization.officers.filter(
-            #     person=request.user.person,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
+            self.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=10,
+                kind=10,
+            ),
+            self.group.members.filter(
+                status__gt=0,
+                is_admin=True,
+            ),
         ])
 
 

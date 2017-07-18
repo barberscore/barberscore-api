@@ -33,9 +33,6 @@ class AwardFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'is_qualifier': [
-                'exact',
-            ],
             'kind': [
                 'exact',
             ],

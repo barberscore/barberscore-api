@@ -20,8 +20,8 @@ from django.utils import (
 from .models import (
     Chart,
     Contestant,
-    Entity,
     Entry,
+    Group,
     Member,
     Office,
     Officer,
@@ -50,6 +50,24 @@ def print_headers(path):
         rows = [row for row in reader]
         for key, value in enumerate(rows[0]):
             print(key, value)
+
+
+def import_entries(path, session):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            group = Group.objects.get(id=row[0])
+            if row[3]:
+                prelim = float(row[3])
+            else:
+                prelim = None
+            session.entries.create(
+                group=group,
+                prelim=prelim,
+                organization=group.organization,
+            )
 
 
 def import_quartets(path):
