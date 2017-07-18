@@ -36,7 +36,7 @@ class Command(BaseCommand):
         except Round.DoesNotExist:
             raise CommandError("Can not find Round.")
         for appearance in round.appearances.filter(
-            status=Appearance.STATUS.scheduled,
+            status=Appearance.STATUS.published,
         ):
             appearance.start()
             for song in appearance.songs.all():

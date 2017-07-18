@@ -74,7 +74,7 @@ class Appearance(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'scheduled', 'Scheduled',),
+        (2, 'published', 'Published',),
         (5, 'verified', 'Verified',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
@@ -82,7 +82,7 @@ class Appearance(TimeStampedModel):
         (40, 'flagged', 'Flagged',),
         (50, 'scratched', 'Scratched',),
         (60, 'cleared', 'Cleared',),
-        (90, 'published', 'Published',),
+        (90, 'announced', 'Announced',),
     )
 
     status = FSMIntegerField(
@@ -392,8 +392,8 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.announced)
+    def announce(self, *args, **kwargs):
         return
 
 
@@ -412,7 +412,7 @@ class Assignment(TimeStampedModel):
     STATUS = Choices(
         (-10, 'archived', 'Archived',),
         (0, 'new', 'New',),
-        (10, 'scheduled', 'Scheduled',),
+        (10, 'published', 'Published',),
         (20, 'confirmed', 'Confirmed',),
         (25, 'verified', 'Verified',),
         (30, 'final', 'Final',),
@@ -933,7 +933,7 @@ class Contest(TimeStampedModel):
         (15, 'closed', 'Closed',),
         (35, 'verified', 'Verified',),
         (42, 'finished', 'Finished',),
-        (45, 'published', 'Published',),
+        (45, 'announced', 'Announced',),
     )
 
     status = FSMIntegerField(
@@ -1088,7 +1088,7 @@ class Contestant(TimeStampedModel):
         (60, 'finished', 'Finished',),
         (70, 'scratched', 'Scratched',),
         (80, 'disqualified', 'Disqualified',),
-        (90, 'published', 'Published',),
+        (90, 'announced', 'Announced',),
     )
 
     status = FSMIntegerField(
@@ -1330,8 +1330,8 @@ class Contestant(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.announced)
+    def announce(self, *args, **kwargs):
         return
 
 
@@ -1353,13 +1353,13 @@ class Convention(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'scheduled', 'Scheduled',),
+        (2, 'published', 'Published',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
         (30, 'finished', 'Finished',),
-        (45, 'published', 'Published',),
+        (45, 'announced', 'Announced',),
     )
 
     status = FSMIntegerField(
@@ -1489,7 +1489,7 @@ class Convention(TimeStampedModel):
         ])
 
 
-    def can_schedule_convention(self):
+    def can_publish_convention(self):
         return all([
             self.name,
             self.organization,
@@ -1504,9 +1504,9 @@ class Convention(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.scheduled, conditions=[can_schedule_convention])
-    def schedule(self, *args, **kwargs):
-        """Schedule convention and related sessions"""
+    @transition(field=status, source='*', target=STATUS.published, conditions=[can_publish_convention])
+    def publish(self, *args, **kwargs):
+        """Publish convention and related sessions"""
         return
 
     @fsm_log_by
@@ -1550,7 +1550,7 @@ class Entry(TimeStampedModel):
         (57, 'started', 'Started',),
         (60, 'finished', 'Finished',),
         (70, 'completed', 'Completed',),
-        (90, 'published', 'Published',),
+        (90, 'announced', 'Announced',),
     )
 
     status = FSMIntegerField(
@@ -2762,7 +2762,7 @@ class Panelist(TimeStampedModel):
     STATUS = Choices(
         (-10, 'archived', 'Archived',),
         (0, 'new', 'New',),
-        (10, 'scheduled', 'Scheduled',),
+        (10, 'published', 'Published',),
         (20, 'confirmed', 'Confirmed',),
         (25, 'verified', 'Verified',),
         (30, 'final', 'Final',),
@@ -3493,7 +3493,7 @@ class Round(TimeStampedModel):
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
         # (40, 'drafted', 'Drafted',),
-        (50, 'published', 'Published',),
+        (50, 'announced', 'Announced',),
         # (50, 'final', 'Final',),
     )
 
@@ -3768,8 +3768,8 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.announced)
+    def announce(self, *args, **kwargs):
         if self.kind != self.KIND.finals:
             round = self.session.rounds.create(
                 num=self.num + 1,
@@ -3779,7 +3779,7 @@ class Round(TimeStampedModel):
                 round.appearances.create(
                     entry=appearance.entry,
                     num=appearance.draw,
-                    status=appearance.STATUS.scheduled,
+                    status=appearance.STATUS.published,
                 )
             for appearance in self.appearances.filter(draw__lte=0):
                 e = appearance.entry
@@ -4067,7 +4067,7 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'scheduled', 'Scheduled',),
+        (2, 'published', 'Published',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
@@ -4075,7 +4075,7 @@ class Session(TimeStampedModel):
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
         # (40, 'drafted', 'Drafted',),
-        (45, 'published', 'Published',),
+        (45, 'announced', 'Announced',),
         # (50, 'final', 'Final',),
     )
 
@@ -4249,8 +4249,8 @@ class Session(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.scheduled)
-    def schedule(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.published)
+    def publish(self, *args, **kwargs):
         """Calendar the session."""
         return
 
@@ -4312,7 +4312,7 @@ class Session(TimeStampedModel):
                 entry=entry,
                 slot=slot,
                 num=entry.draw,
-                status=Appearance.STATUS.scheduled,
+                status=Appearance.STATUS.published,
             )
         for assignment in self.convention.assignments.filter(
             status=Assignment.STATUS.confirmed,
@@ -4343,8 +4343,8 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.announced)
+    def announce(self, *args, **kwargs):
         return
 
 
@@ -4491,7 +4491,7 @@ class Song(TimeStampedModel):
         (38, 'finished', 'Finished',),
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
-        (90, 'published', 'Published',),
+        (90, 'announced', 'Announced',),
     )
 
     status = FSMIntegerField(
@@ -4700,8 +4700,8 @@ class Song(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.announced)
+    def announce(self, *args, **kwargs):
         return
 
 

@@ -455,12 +455,12 @@ class Command(BaseCommand):
             session=ybqc_session,
             award=oy_award,
         )
-        # Schedule Convention
-        convention.schedule()
+        # Publish Convention
+        convention.publish()
         convention.save()
-        convention_ybqc.schedule()
+        convention_ybqc.publish()
         convention_ybqc.save()
-        if options['breakpoint'] == 'convention_scheduled':
+        if options['breakpoint'] == 'convention_published':
             return
         # Open the Session for Entries
         quartet_session.open()
@@ -548,7 +548,7 @@ class Command(BaseCommand):
         ybqc_finals.save()
         # Score the round
         for appearance in ybqc_finals.appearances.filter(
-            status=Appearance.STATUS.scheduled,
+            status=Appearance.STATUS.published,
         ):
             appearance.start()
             for song in appearance.songs.all():
@@ -566,7 +566,7 @@ class Command(BaseCommand):
         if options['breakpoint'] == 'ybqc_scored':
             return
         ybqc_finals.finish()
-        ybqc_finals.publish()
+        ybqc_finals.announce()
         ybqc_finals.save()
 
         # Start Session
@@ -582,7 +582,7 @@ class Command(BaseCommand):
         quartet_quarters.save()
         # Score the round
         for appearance in quartet_quarters.appearances.filter(
-            status=Appearance.STATUS.scheduled,
+            status=Appearance.STATUS.published,
         ):
             appearance.start()
             for song in appearance.songs.all():
@@ -600,14 +600,14 @@ class Command(BaseCommand):
         if options['breakpoint'] == 'quarters_scored':
             return
         quartet_quarters.finish()
-        quartet_quarters.publish()
+        quartet_quarters.announce()
         quartet_quarters.save()
         quartet_semis = quartet_session.rounds.get(num=2)
         quartet_semis.start()
         quartet_semis.save()
         # Score the round
         for appearance in quartet_semis.appearances.filter(
-            status=Appearance.STATUS.scheduled,
+            status=Appearance.STATUS.published,
         ):
             appearance.start()
             for song in appearance.songs.all():
@@ -625,14 +625,14 @@ class Command(BaseCommand):
         if options['breakpoint'] == 'semis_scored':
             return
         quartet_semis.finish()
-        quartet_semis.publish()
+        quartet_semis.announce()
         quartet_semis.save()
         quartet_finals = quartet_session.rounds.get(num=3)
         quartet_finals.start()
         quartet_finals.save()
         # Score the round
         for appearance in quartet_finals.appearances.filter(
-            status=Appearance.STATUS.scheduled,
+            status=Appearance.STATUS.published,
         ):
             appearance.start()
             for song in appearance.songs.all():

@@ -1370,7 +1370,7 @@ def create_db_chart(path):
         for row in rows:
             chart = {}
             chart['bhs_id'] = int(row[0])
-            chart['published'] = dateparse.parse_date(row[1])
+            chart['announced'] = dateparse.parse_date(row[1])
             chart['title'] = row[2].strip()
             chart['arrangers'] = row[3].strip() if row[3].strip() else "(Unknown)"
             try:
