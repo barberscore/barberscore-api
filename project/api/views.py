@@ -187,6 +187,7 @@ class AwardViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
+    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
