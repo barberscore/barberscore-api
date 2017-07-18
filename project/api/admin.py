@@ -686,6 +686,7 @@ class OfficerAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'office',
+        'organization',
     ]
     search_fields = [
         'nomen',
