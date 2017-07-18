@@ -190,6 +190,7 @@ class AwardAdmin(admin.ModelAdmin):
         'level',
         'season',
         'rounds',
+        'is_manual',
         'status',
         # 'parent',
         # 'size',
@@ -200,11 +201,12 @@ class AwardAdmin(admin.ModelAdmin):
 
     list_editable = [
         'name',
-        # 'organization',
+        'organization',
         'level',
         'kind',
         'season',
         'rounds',
+        'is_manual',
         'status',
     ]
 
@@ -236,10 +238,6 @@ class AwardAdmin(admin.ModelAdmin):
         'age',
     )
 
-    raw_id_fields = [
-        'organization',
-        'parent',
-    ]
 
 
 @admin.register(Chart)
@@ -542,8 +540,8 @@ class GroupAdmin(admin.ModelAdmin):
         # 'end_date',
         # 'code',
         # 'short_name',
-        'organization',
         'kind',
+        'organization',
         'location',
         'bhs_id',
         'status',
@@ -551,7 +549,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_editable = [
         'bhs_id',
-        # 'organization',
+        'organization',
         'kind',
         'location',
         'status',
@@ -581,9 +579,9 @@ class GroupAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = [
-        'organization',
-    ]
+    # raw_id_fields = [
+    #     'organization',
+    # ]
 
     ordering = [
         'name',
