@@ -490,6 +490,7 @@ class EntryAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
+    save_on_top = True
     fields = [
         'name',
         'status',
@@ -515,6 +516,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'organization',
     ]
 
     search_fields = [
@@ -531,6 +533,7 @@ class GroupAdmin(admin.ModelAdmin):
         'short_name',
         'kind',
         'bhs_id',
+        'organization',
     ]
 
     list_editable = [
@@ -566,7 +569,6 @@ class GroupAdmin(admin.ModelAdmin):
     ]
 
     ordering = [
-        'kind',
         'name',
     ]
 
@@ -772,10 +774,10 @@ class OrganizationAdmin(admin.ModelAdmin):
         'parent',
     ]
 
-    ordering = [
-        'kind',
+    ordering = (
+        'org_sort',
         'name',
-    ]
+    )
 
     # def get_inline_instances(self, request, obj=None):
     #     inline_instances = []

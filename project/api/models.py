@@ -2677,7 +2677,9 @@ class Organization(TimeStampedModel):
     # Internals
     class Meta:
         verbose_name_plural = 'organizations'
-
+        ordering = [
+            'org_sort',
+        ]
     class JSONAPIMeta:
         resource_name = "organization"
 
