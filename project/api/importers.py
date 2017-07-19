@@ -52,13 +52,43 @@ def print_headers(path):
             print(key, value)
 
 
-def import_entries(path, session):
+def import_quartet_entries(path, session):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
         for row in rows:
             group = Group.objects.get(id=row[0])
+            if row[3]:
+                prelim = float(row[3])
+            else:
+                prelim = None
+            session.entries.create(
+                group=group,
+                prelim=prelim,
+                organization=group.organization,
+            )
+
+session = Session.objects.get(id='b26bf3db-a815-4472-afb7-e6801bf58388')
+def import_chorus_entries(path, session):
+    with open(path) as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        next(reader)
+        rows = [row for row in reader]
+        for row in rows:
+            district = Organization.objects.get(short_name='MAD')
+            chapter = row[0].partition(".")[2].partition(",")[0].strip()
+            try:
+                group = Group.objects.get(
+                    name__icontains=chapter,
+                    organization__parent=district,
+                    kind=Group.KIND.chorus,
+                    status=Group.STATUS.active,
+                )
+            except Group.DoesNotExist:
+                group = None
+            except Group.MultipleObjectsReturned:
+                group = 'Multi'
             if row[3]:
                 prelim = float(row[3])
             else:
