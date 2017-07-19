@@ -303,6 +303,7 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
+        'status',
     ]
     raw_id_fields = [
         'convention',
