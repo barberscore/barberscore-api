@@ -19,6 +19,7 @@ from .inlines import (
     ContestInline,
     ConventionInline,
     EntryInline,
+    GroupInline,
     MemberInline,
     OfficerInline,
     PanelistInline,
@@ -739,8 +740,9 @@ class OrganizationAdmin(admin.ModelAdmin):
         'bhs_id',
     ]
     inlines = [
-        AwardInline,
         OfficerInline,
+        AwardInline,
+        GroupInline,
         ConventionInline,
     ]
 

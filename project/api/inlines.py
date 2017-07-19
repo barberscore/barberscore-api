@@ -10,6 +10,7 @@ from .models import (
     Contestant,
     Convention,
     Entry,
+    Group,
     Member,
     Officer,
     Panelist,
@@ -77,6 +78,9 @@ class AwardInline(admin.TabularInline):
     ]
     extra = 0
     show_change_link = True
+    classes = [
+        'collapse',
+    ]
 
 
 class ContestInline(admin.TabularInline):
@@ -135,6 +139,9 @@ class ConventionInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class EntryInline(admin.TabularInline):
@@ -160,6 +167,25 @@ class EntryInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+
+
+class GroupInline(admin.TabularInline):
+    model = Group
+    fields = [
+        'name',
+        'organization',
+        'kind',
+        'bhs_id',
+        'status',
+    ]
+    ordering = [
+        'nomen',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class MemberInline(admin.TabularInline):
@@ -197,6 +223,9 @@ class OfficerInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class PanelistInline(admin.TabularInline):
