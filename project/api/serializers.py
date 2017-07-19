@@ -295,7 +295,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'tot_score',
             'session',
             'group',
-            'organization',
             'appearances',
             'contestants',
             'participants',

@@ -140,7 +140,6 @@ class EntryFactory(DjangoModelFactory):
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
     group = SubFactory('api.factories.GroupFactory')
-    organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:
         model = Entry

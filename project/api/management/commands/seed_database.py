@@ -477,7 +477,6 @@ class Command(BaseCommand):
             EntryFactory(
                 session=quartet_session,
                 group=quartet,
-                organization=district,
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )
@@ -485,7 +484,6 @@ class Command(BaseCommand):
             EntryFactory(
                 session=ybqc_session,
                 group=quartet,
-                organization=district,
                 is_evaluation=False,
                 status=Entry.STATUS.accepted,
             )

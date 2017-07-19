@@ -306,7 +306,6 @@ class EntryViewSet(
     queryset = Entry.objects.select_related(
         'session',
         'group',
-        'organization',
     ).prefetch_related(
         'appearances',
         'appearances__songs',
@@ -671,7 +670,6 @@ class SessionViewSet(
         'entries__contestants',
         'entries__appearances',
         'entries__group',
-        'entries__organization',
         'rounds__appearances',
         'rounds__slots',
         'rounds__panelists',

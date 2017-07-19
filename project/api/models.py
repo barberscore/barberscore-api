@@ -1540,6 +1540,7 @@ class Entry(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (5, 'invited', 'Invited',),
+        (7, 'declined', 'Declined',),
         (10, 'submitted', 'Submitted',),
         (20, 'accepted', 'Accepted',),
         (30, 'rejected', 'Rejected',),
@@ -1663,12 +1664,6 @@ class Entry(TimeStampedModel):
 
     group = models.ForeignKey(
         'Group',
-        related_name='entries',
-        on_delete=models.CASCADE,
-    )
-
-    organization = models.ForeignKey(
-        'Organization',
         related_name='entries',
         on_delete=models.CASCADE,
     )
@@ -1872,31 +1867,25 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.invited)
     def invite(self, *args, **kwargs):
-        context = {
-            'entry': self,
-            'details': 'Invitation',
-        }
-        send_entry(self, 'entry_invite.txt', context)
+        send_entry(self, 'entry_invite.txt')
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.declined)
+    def decline(self, *args, **kwargs):
+        send_entry(self, 'entry_decline.txt')
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.submitted)
     def submit(self, *args, **kwargs):
-        context = {
-            'entry': self,
-            'details': 'Submission',
-        }
-        send_entry(self, 'entry_submit.txt', context)
+        send_entry(self, 'entry_submit.txt')
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.accepted)
     def accept(self, *args, **kwargs):
-        context = {
-            'entry': self,
-            'details': 'Acceptance',
-        }
-        send_entry(self, 'entry_accept.txt', context)
+        send_entry(self, 'entry_accept.txt')
         return
 
     @fsm_log_by
@@ -1909,6 +1898,7 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
+        send_entry(self, 'entry_scratch.txt')
         return
 
     @fsm_log_by

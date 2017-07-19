@@ -1,8 +1,1 @@
-Submission Complete for:  {{entry.entity.name}}
-
-Thank you for submitting your contest entry for the
-{{entry.session}} Session!
-
-We'll review your entry for completeness and will follow up soon.
-
-Thanks again for using the new system!
+Thank you!  Your submission is complete.  We'll review and follow up soon with next steps.

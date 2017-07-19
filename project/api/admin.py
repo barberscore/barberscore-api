@@ -420,7 +420,6 @@ class EntryAdmin(admin.ModelAdmin):
         'status',
         'session',
         'group',
-        'organization',
         'image',
         'csa_pdf',
         ('tot_points', 'mus_points','per_points', 'sng_points',),
@@ -463,7 +462,6 @@ class EntryAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'session',
         'group',
-        'organization',
     )
 
     readonly_fields = (

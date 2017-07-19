@@ -1,29 +1,11 @@
-Welcome to our new contest manager (called "Barberscore") used to register
-quartets and choruses for the {{entry.session.convention}}.
-Please use this system to complete your entry into the {{entry.session.get_kind_display}} Session.
+Congratulations on qualifying for the {{entry.session}}!
 
-We understand that you've provided most of this information already; we've
-inputted that for you so this process should be as easy as "click
-and go".  Still, if you experience problems, get stuck, or otherwise need
-help please feel free to text/call me on my cell phone at 415.713.2126 or
-contact support@barberscore.com.  We've done our best to make this a simple,
-stable process but it is still brand new and we're expecting there to be a few
-hiccups.  We're here to help.
+This is your formal invitation to enter the contest using Barberscore, the
+new contest manager for the Barbershop Harmony Society.
 
-Any member of your quartet can access the system to make changes so please
-coordinate with one another so that you don't collide with each other's work.
-
-To see the process, check out this tutorial.  It includes important
-information on how to register and is a quick read.
-
-  - Tutorial Link: https://www.dropbox.com/s/p5lvifmhfmpww83/Barberscore%20Tutorial%20v4.pdf?dl=0
-
-That's it for now! Once you're ready to go, get the process started by
-going to https://barberscore.com.
+To get started, go to https://www.barberscore.com.  There you'll find detailed
+instructions, tutorials, and videos to help guide you through the new process.
+If you experience any problems or need help then please don't hesitate to reach
+out to support@barbershop.org.
 
 Thanks!
-
-
-Dave
-
-Barberscore Admin
