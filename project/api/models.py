@@ -1482,8 +1482,11 @@ class Convention(TimeStampedModel):
             ),
         ])
 
-
+    # Convention Transition Conditions
     def can_publish_convention(self):
+        self.sessions.count() == self.sessions.filter(
+            status=self.sessions.model.STATUS.published
+        )
         return all([
             self.name,
             self.organization,
@@ -1493,8 +1496,11 @@ class Convention(TimeStampedModel):
             self.close_date,
             self.start_date,
             self.end_date,
-            self.sessions.count() > 0,
+            self.sessions.count() == self.sessions.filter(
+                status=self.sessions.model.STATUS.published
+            ).count(),
         ])
+
 
     # Transitions
     @fsm_log_by
