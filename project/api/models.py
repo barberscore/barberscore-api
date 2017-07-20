@@ -3396,19 +3396,18 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     def has_read_permission(request):
         return any([
-            True,
-            # request.user.person.officers.filter(
-            #     office__is_convention_manager=True,
-            #     status__gt=0,
-            # ),
-            # request.user.person.officers.filter(
-            #     office__is_scoring_manager=True,
-            #     status__gt=0,
-            # ),
-            # request.user.person.officers.filter(
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
+            request.user.person.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_scoring_manager=True,
+                status__gt=0,
+            ),
+            request.user.person.members.filter(
+                is_admin=True,
+                status__gt=0,
+            ),
         ])
 
 
@@ -3416,19 +3415,19 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            # request.user.person.officers.filter(
-            #     office__is_convention_manager=True,
-            #     status__gt=0,
-            # ),
-            # request.user.person.officers.filter(
-            #     office__is_scoring_manager=True,
-            #     status__gt=0,
-            # ),
-            # self.entity.officers.filter(
-            #     person=request.user.person,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
+            self.group.members.filter(
+                person=request.user.person,
+                is_admin=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_scoring_manager=True,
+                status__gt=0,
+            ),
         ])
 
 
@@ -3445,8 +3444,8 @@ class Repertory(TimeStampedModel):
                 office__is_scoring_manager=True,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
+            request.user.person.members.filter(
+                is_admin=True,
                 status__gt=0,
             ),
         ])
@@ -3455,11 +3454,19 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # self.entity.officers.filter(
-            #     person=request.user.person,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
+            self.group.members.filter(
+                person=request.user.person,
+                is_admin=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_scoring_manager=True,
+                status__gt=0,
+            ),
         ])
 
 
