@@ -3188,8 +3188,8 @@ class Person(TimeStampedModel):
 
     @cached_property
     def is_group_manager(self):
-        return bool(self.officers.filter(
-            office__is_group_manager=True,
+        return bool(self.members.filter(
+            is_admin=True,
             status__gt=0,
         ))
 
