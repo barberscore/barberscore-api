@@ -378,7 +378,10 @@ class GroupViewSet(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class MemberViewSet(viewsets.ModelViewSet):
+class MemberViewSet(
+    get_viewset_transition_action_mixin(Member),
+    viewsets.ModelViewSet
+):
     queryset = Member.objects.select_related(
         'group',
         'person',

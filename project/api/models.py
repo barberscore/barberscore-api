@@ -2157,7 +2157,7 @@ class Member(TimeStampedModel):
         (10, 'active', 'Active',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -2240,25 +2240,37 @@ class Member(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
-        # return any([
-        #     request.user.person.officers.filter(
-        #         office__is_group_manager=True,
-        #         status__gt=0,
-        #     ),
-        # ])
+        return any([
+            request.user.person.members.filter(
+                is_admin=True,
+                status__gt=0,
+            ),
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
-        # return any([
-        #     self.entity.officers.filter(
-        #         person=request.user.person,
-        #         office__is_group_manager=True,
-        #         status__gt=0,
-        #     ),
-        # ])
+        return any([
+            self.group.members.filter(
+                person=request.user.person,
+                is_admin=True,
+                status__gt=0,
+            ),
+        ])
+
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Member."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Member."""
+        return
+
 
 
 class Office(TimeStampedModel):
