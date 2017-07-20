@@ -2154,6 +2154,7 @@ class Member(TimeStampedModel):
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
+        (5, 'provisional', 'Provisional',),
         (10, 'active', 'Active',),
     )
 
