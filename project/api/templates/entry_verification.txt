@@ -1,4 +1,4 @@
-Entry Review for {{entry.entity.name|safe}}
+Entry Review for {{entry.group.name|safe}}
 
 Below is your entry information for the {{entry.session|safe}}.
 Please review this carefully for any errors or omissions:  remember, every song
@@ -6,8 +6,8 @@ you sing and every person on stage must be in the Barberscore system before your
 performance or you risk disqualification.
 
 You may make changes to this information directly on https://www.barberscore.com up
-until the final deadline of Monday, June 26, 11:59PM CDT.  After that point
-you'll need to make any requests directly with Dusty Schleier or David Mills.
+until the final deadline of {{session.start.date}}.  After that point
+you'll need to make any requests directly with {{assignments}}.
 
 If you have any further questions or need additional assistance please contact
 support@barberscore.com.
@@ -32,8 +32,4 @@ Expiring Members:
 {% empty %}
     - None.  All Participants are Current.
 {% endfor %}
-
-NOTE -- This information may not be fully up-to-date for recent renewals/new
-members.  Check with eBiz for the most current information.  If an expiring
-member is current per eBiz then you are good to go!
 {% endif %}

@@ -1,3 +1,3 @@
 We have received notice that you will not be participating in the {{entry.session}}.
 
-If anything changes please contact the DRCJ directly.  Thank you.
+If anything changes please contact {{assignments}} directly.  Thank you.
