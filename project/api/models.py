@@ -1542,7 +1542,7 @@ class Entry(TimeStampedModel):
         (5, 'invited', 'Invited',),
         (7, 'declined', 'Declined',),
         (10, 'submitted', 'Submitted',),
-        (20, 'accepted', 'Accepted',),
+        (20, 'approved', 'Approved',),
         (30, 'rejected', 'Rejected',),
         (40, 'withdrew', 'Withdrew',),
         (50, 'verified', 'Verified',),
@@ -1883,9 +1883,9 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.accepted)
-    def accept(self, *args, **kwargs):
-        send_entry(self, 'entry_accept.txt')
+    @transition(field=status, source='*', target=STATUS.approved)
+    def approve(self, *args, **kwargs):
+        send_entry(self, 'entry_approve.txt')
         return
 
     @fsm_log_by
@@ -3732,10 +3732,10 @@ class Round(TimeStampedModel):
         #         top = contest.contestants.filter(
         #             rank=1,
         #         ).first()
-        #         # Derive the accept threshold from that top score.
-        #         accept = top.calculate_tot_score() - 4.0
+        #         # Derive the approve threshold from that top score.
+        #         approve = top.calculate_tot_score() - 4.0
         #         contestants = contest.contestants.filter(
-        #             tot_score__gte=accept,
+        #             tot_score__gte=approve,
         #         )
         #         for contestant in contestants:
         #             advancing.append(contestant.entry)
@@ -4261,7 +4261,7 @@ class Session(TimeStampedModel):
     def close(self, *args, **kwargs):
         """Make session unavailable and set initial draw."""
         entries = self.entries.filter(
-            status=self.entries.model.STATUS.accepted,
+            status=self.entries.model.STATUS.approved,
         )
         i = 1
         for entry in entries:
@@ -4299,7 +4299,7 @@ class Session(TimeStampedModel):
             num=i,
             kind=max,
         )
-        for entry in self.entries.filter(status=Entry.STATUS.accepted):
+        for entry in self.entries.filter(status=Entry.STATUS.approved):
             slot = Slot.objects.create(
                 num=entry.draw,
                 round=round,

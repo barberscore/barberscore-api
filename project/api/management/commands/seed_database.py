@@ -478,14 +478,14 @@ class Command(BaseCommand):
                 session=quartet_session,
                 group=quartet,
                 is_evaluation=False,
-                status=Entry.STATUS.accepted,
+                status=Entry.STATUS.approved,
             )
         for quartet in ybqc_quartets:
             EntryFactory(
                 session=ybqc_session,
                 group=quartet,
                 is_evaluation=False,
-                status=Entry.STATUS.accepted,
+                status=Entry.STATUS.approved,
             )
         # Add Participants to Entries
         for entry in quartet_session.entries.all():

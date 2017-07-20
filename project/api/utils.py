@@ -221,7 +221,7 @@ def create_bbscores(session):
             'song_title',
         ]
         entries = session.entries.filter(
-            status=Entry.STATUS.accepted,
+            status=Entry.STATUS.approved,
         ).order_by('draw')
         for entry in entries:
             oa = entry.draw

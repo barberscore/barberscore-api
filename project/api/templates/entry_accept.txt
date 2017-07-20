@@ -1,4 +1,4 @@
-Your contest entry has been Accepted!  You're all set for the
+Your contest entry has been Approved!  You're all set for the
 {{entry.session}} Session.
 
 You may make changes to your Repertory (the list of songs you are singing) or
