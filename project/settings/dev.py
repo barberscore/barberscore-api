@@ -82,6 +82,12 @@ LOGGING = {
                 'console',
             ],
         },
+        'console': {
+            'level': 'DEBUG',
+            'handlers': [
+                'console',
+            ],
+        },
     },
     'handlers': {
         'console': {

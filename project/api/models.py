@@ -1855,6 +1855,7 @@ class Entry(TimeStampedModel):
                 kind=10,
             ),
             self.group.members.filter(
+                person=request.user.person,
                 status__gt=0,
                 is_admin=True,
             ),
@@ -3194,7 +3195,6 @@ class Person(TimeStampedModel):
     @cached_property
     def is_group_manager(self):
         return bool(self.members.filter(
-            is_admin=True,
             status__gt=0,
         ))
 
