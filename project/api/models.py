@@ -1277,8 +1277,8 @@ class Contestant(TimeStampedModel):
                 office__is_convention_manager=True,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
+            request.user.person.members.filter(
+                is_admin=True,
                 status__gt=0,
             ),
         ])
@@ -1287,17 +1287,16 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            True,
             # self.contest.session.convention.assignments.filter(
             #     person=request.user.person,
             #     category__lte=10,
             #     kind=10,
             # ),
-            # self.entry.organr.officers.filter(
-            #     person=request.user.person,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
+            self.entry.group.members.filter(
+                person=request.user.person,
+                is_admin=True,
+                status__gt=0,
+            ),
         ])
 
 
@@ -2962,8 +2961,8 @@ class Participant(TimeStampedModel):
                 office__is_convention_manager=True,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
+            request.user.person.members.filter(
+                is_admin=True,
                 status__gt=0,
             ),
         ])
@@ -2972,16 +2971,16 @@ class Participant(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # self.entry.session.convention.assignments.filter(
-            #     person=request.user.person,
-            #     category__lte=10,
-            #     kind=10,
-            # ),
-            # self.entry.entity.officers.filter(
-            #     person=request.user.person,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
+            self.entry.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            ),
+            self.entry.group.members.filter(
+                person=request.user.person,
+                is_admin=True,
+                status__gt=0,
+            ),
         ])
 
 
@@ -3487,7 +3486,6 @@ class Repertory(TimeStampedModel):
     def deactivate(self, *args, **kwargs):
         """Deactivate the Repertory."""
         return
-
 
 
 class Round(TimeStampedModel):

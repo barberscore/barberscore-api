@@ -194,6 +194,7 @@ class MemberInline(admin.TabularInline):
         'person',
         'group',
         'part',
+        'is_admin',
         'status',
     ]
     raw_id_fields = [
