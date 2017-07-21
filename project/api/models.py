@@ -2097,15 +2097,14 @@ class Group(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            True,
-            # request.user.person.officers.filter(
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
-            # request.user.person.officers.filter(
-            #     office__is_organization_manager=True,
-            #     status__gt=0,
-            # ),
+            request.user.person.officers.filter(
+                office__is_group_manager=True,
+                status__gt=0,
+            ),
+            request.user.person.members.filter(
+                is_admin=True,
+                status__gt=0,
+            ),
         ])
 
 
@@ -2113,16 +2112,11 @@ class Group(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            True,
-            # self.officers.filter(
-            #     person=request.user.person,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
-            # request.user.person.officers.filter(
-            #     office__is_organization_manager=True,
-            #     status__gt=0,
-            # ),
+            self.members.filter(
+                person=request.user.person,
+                is_admin=True,
+                status__gt=0,
+            ),
         ])
 
     # Transitions
@@ -2220,8 +2214,8 @@ class Member(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.group,
                     self.person,
+                    self.group,
                 ]
             )
         )
@@ -2271,7 +2265,6 @@ class Member(TimeStampedModel):
     def deactivate(self, *args, **kwargs):
         """Deactivate the Member."""
         return
-
 
 
 class Office(TimeStampedModel):
@@ -3482,8 +3475,19 @@ class Repertory(TimeStampedModel):
             ),
         ])
 
-
     # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Repertory."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Repertory."""
+        return
+
 
 
 class Round(TimeStampedModel):
