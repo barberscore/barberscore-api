@@ -628,6 +628,26 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    description = models.TextField(
+        help_text="""
+            The Public description of the award.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
+    )
+
+    footnote = models.CharField(
+        help_text="""
+            The text to present on the OSS""",
+        blank=True,
+        max_length=255,
+    )
+
     is_improved = models.BooleanField(
         help_text="""Designates 'Most-Improved'.  Implies manual.""",
         default=False,

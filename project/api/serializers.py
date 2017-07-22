@@ -118,6 +118,9 @@ class AwardSerializer(serializers.ModelSerializer):
             'threshold',
             'minimum',
             'advance',
+            'footnote',
+            'description',
+            'notes',
 
             'is_improved',
             'is_multi',

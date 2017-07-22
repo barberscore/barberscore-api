@@ -58,7 +58,6 @@ from .models import (
     Venue,
 )
 
-
 @admin.register(Appearance)
 class AppearanceAdmin(admin.ModelAdmin):
     fields = [
@@ -171,6 +170,9 @@ class AwardAdmin(admin.ModelAdmin):
         ('is_primary', 'is_invitational', 'is_manual'),
         'parent',
         ('threshold','minimum','advance',),
+        'footnote',
+        'description',
+        'notes',
     ]
 
     list_display = [
