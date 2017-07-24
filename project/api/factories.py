@@ -56,7 +56,7 @@ class AppearanceFactory(DjangoModelFactory):
 
 
 class AssignmentFactory(DjangoModelFactory):
-    status = Assignment.STATUS.new
+    status = Assignment.STATUS.active
     kind = Assignment.KIND.official
     category = Assignment.CATEGORY.drcj
     convention = SubFactory('api.factories.ConventionFactory')

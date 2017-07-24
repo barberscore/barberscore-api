@@ -152,7 +152,10 @@ class AppearanceViewSet(
         return Response(serializer.data)
 
 
-class AssignmentViewSet(viewsets.ModelViewSet):
+class AssignmentViewSet(
+        get_viewset_transition_action_mixin(Assignment),
+        viewsets.ModelViewSet,
+):
     queryset = Assignment.objects.select_related(
         'convention',
         'person',

@@ -410,15 +410,12 @@ class Assignment(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'archived', 'Archived',),
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
-        (10, 'published', 'Published',),
-        (20, 'confirmed', 'Confirmed',),
-        (25, 'verified', 'Verified',),
-        (30, 'final', 'Final',),
+        (10, 'active', 'Active',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -498,6 +495,10 @@ class Assignment(TimeStampedModel):
             request.user.person.officers.filter(
                 office__is_judge_manager=True,
                 status__gt=0,
+            ),
+            request.user.person.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
             )
         ])
 
@@ -505,11 +506,25 @@ class Assignment(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.person.officers.filter(
-                office__is_judge_manager=True,
+            self.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=20,
                 status__gt=0,
             )
         ])
+
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Assignment."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Assignment."""
+        return
 
 
 class Award(TimeStampedModel):
@@ -2757,12 +2772,9 @@ class Panelist(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'archived', 'Archived',),
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
-        (10, 'published', 'Published',),
-        (20, 'confirmed', 'Confirmed',),
-        (25, 'verified', 'Verified',),
-        (30, 'final', 'Final',),
+        (10, 'active', 'Active',),
     )
 
     status = models.IntegerField(
@@ -3798,7 +3810,7 @@ class Round(TimeStampedModel):
                 e.complete()
                 e.save()
             for assignment in self.session.convention.assignments.filter(
-                status=Assignment.STATUS.confirmed,
+                status=Assignment.STATUS.active,
             ):
                 round.panelists.create(
                     kind=assignment.kind,
@@ -4327,7 +4339,7 @@ class Session(TimeStampedModel):
                 status=Appearance.STATUS.published,
             )
         for assignment in self.convention.assignments.filter(
-            status=Assignment.STATUS.confirmed,
+            status=Assignment.STATUS.active,
         ):
             round.panelists.create(
                 kind=assignment.kind,

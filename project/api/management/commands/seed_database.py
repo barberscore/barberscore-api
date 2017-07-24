@@ -91,7 +91,7 @@ class Command(BaseCommand):
             email='scjc@barberscore.com',
         )
         drcj_person=PersonFactory(
-            name='DRCJ North',
+            name='DRCJ Person',
             email='drcj@barberscore.com',
         )
         ca_person=PersonFactory(
@@ -450,7 +450,7 @@ class Command(BaseCommand):
         conventions = Convention.objects.all()
         for convention in conventions:
             convention.assignments.create(
-                status=Assignment.STATUS.confirmed,
+                status=Assignment.STATUS.active,
                 category=Assignment.CATEGORY.drcj,
                 kind=Assignment.KIND.official,
                 person=drcj_person,
@@ -458,7 +458,7 @@ class Command(BaseCommand):
             js = Officer.objects.filter(office__short_name='CA').order_by('?')[:2]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.confirmed,
+                    status=Assignment.STATUS.active,
                     category=Assignment.CATEGORY.admin,
                     kind=Assignment.KIND.official,
                     person=j.person,
@@ -466,7 +466,7 @@ class Command(BaseCommand):
             js = Officer.objects.filter(office__short_name='MUS').order_by('?')[:convention.panel]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.confirmed,
+                    status=Assignment.STATUS.active,
                     category=Assignment.CATEGORY.music,
                     kind=Assignment.KIND.official,
                     person=j.person,
@@ -474,7 +474,7 @@ class Command(BaseCommand):
             js = Officer.objects.filter(office__short_name='PER').order_by('?')[:convention.panel]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.confirmed,
+                    status=Assignment.STATUS.active,
                     category=Assignment.CATEGORY.performance,
                     kind=Assignment.KIND.official,
                     person=j.person,
@@ -482,7 +482,7 @@ class Command(BaseCommand):
             js = Officer.objects.filter(office__short_name='SNG').order_by('?')[:convention.panel]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.confirmed,
+                    status=Assignment.STATUS.active,
                     category=Assignment.CATEGORY.singing,
                     kind=Assignment.KIND.official,
                     person=j.person,
