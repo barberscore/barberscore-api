@@ -562,6 +562,7 @@ class Award(TimeStampedModel):
         (10, 'championship', "Championship"),
         (20, 'award', "Award"),
         (30, 'qualifier', "Qualifier"),
+        (40, 'sentinel', "Sentinel"),
     )
 
     level = models.IntegerField(
@@ -2340,10 +2341,6 @@ class Office(TimeStampedModel):
         choices=KIND,
         null=True,
         blank=True,
-    )
-
-    is_cj = models.BooleanField(
-        default=False,
     )
 
     short_name = models.CharField(

@@ -644,7 +644,6 @@ class OfficeAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
-        'is_cj',
         'is_convention_manager',
         'is_session_manager',
         'is_scoring_manager',
