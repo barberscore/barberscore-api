@@ -91,7 +91,7 @@ class Command(BaseCommand):
             email='scjc@barberscore.com',
         )
         drcj_person=PersonFactory(
-            name='DRCJ Person',
+            name='DRCJ North',
             email='drcj@barberscore.com',
         )
         ca_person=PersonFactory(
@@ -102,12 +102,16 @@ class Command(BaseCommand):
             name='Quartet Person',
             email='quartet@barberscore.com',
         )
+        chorus_person=PersonFactory(
+            name='Chorus Person',
+            email='chorus@barberscore.com',
+        )
         # Create Core Users
         scjc_user=UserFactory(
             email=scjc_person.email,
             person=scjc_person,
         )
-        drcj_user=UserFactory(
+        drch_user=UserFactory(
             email=drcj_person.email,
             person=drcj_person,
         )
@@ -119,35 +123,50 @@ class Command(BaseCommand):
             email=quartet_person.email,
             person=quartet_person,
         )
+        chorus_user=UserFactory(
+            email=chorus_person.email,
+            person=chorus_person,
+        )
         # Create International and Districts
-        bhs=OrganizationFactory(
-            name='Barbershop Harmony Society',
-            short_name='BHS',
+        international=OrganizationFactory(
+            name='International Organization',
+            short_name='INT',
             kind=Organization.KIND.international,
         )
-        district=OrganizationFactory(
-            name='BHS District',
-            short_name='DIS',
-            parent=bhs,
+        district_north=OrganizationFactory(
+            name='District North',
+            short_name='NTH',
+            parent=international,
             kind=Organization.KIND.district,
         )
-        division=OrganizationFactory(
-            name='BHS Division',
-            short_name='DIV',
-            parent=district,
+        district_south=OrganizationFactory(
+            name='District South',
+            short_name='STH',
+            parent=international,
+            kind=Organization.KIND.district,
+        )
+        division_east=OrganizationFactory(
+            name='Division South East',
+            short_name='STH ED',
+            parent=district_south,
+            kind=Organization.KIND.division,
+        )
+        division_west=OrganizationFactory(
+            name='Division South West',
+            short_name='STH WD',
+            parent=district_south,
             kind=Organization.KIND.division,
         )
         affiliate=OrganizationFactory(
-            name='INT Affiliate',
-            short_name='INT',
-            parent=bhs,
+            name='Affiliate Organization',
+            short_name='AFF',
+            parent=international,
             kind=Organization.KIND.affiliate,
         )
         # Create Core Offices
         scjc_office=OfficeFactory(
             name='Society Chairman of C&J',
             short_name='SCJC',
-            is_cj=True,
             is_convention_manager=True,
             is_session_manager=True,
             is_scoring_manager=True,
@@ -161,7 +180,6 @@ class Command(BaseCommand):
         drcj_office=OfficeFactory(
             name='District Director C&J',
             short_name='DRCJ',
-            is_cj=True,
             is_convention_manager=True,
             is_session_manager=True,
             is_organization_manager=True,
@@ -170,64 +188,55 @@ class Command(BaseCommand):
         ca_office=OfficeFactory(
             name='Contest Administrator',
             short_name='CA',
-            is_cj=True,
             is_scoring_manager=True,
         )
         mus_office=OfficeFactory(
             name='Music Judge',
             short_name='MUS',
-            is_cj=True,
         )
         per_office=OfficeFactory(
             name='Performance Judge',
             short_name='PER',
-            is_cj=True,
         )
         sng_office=OfficeFactory(
             name='Singing Judge',
             short_name='SNG',
-            is_cj=True,
-        )
-        quartet_office=OfficeFactory(
-            name='Quartet Representative',
-            short_name='QREP',
-            is_group_manager=True,
         )
         # Create Core Officers
         scjc_officer=OfficerFactory(
             office=scjc_office,
             person=scjc_person,
-            organization=bhs,
+            organization=international,
             status=Officer.STATUS.active,
         )
-        scjc_dis=OfficerFactory(
-            office=scjc_office,
-            person=scjc_person,
-            organization=district,
-            status=Officer.STATUS.active,
-        )
-        scjc_div=OfficerFactory(
-            office=scjc_office,
-            person=scjc_person,
-            organization=division,
-            status=Officer.STATUS.active,
-        )
-        drcj_officer=OfficerFactory(
+        drcj_north_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=district,
+            organization=district_north,
             status=Officer.STATUS.active,
         )
-        drcj_div=OfficerFactory(
+        drcj_south_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=division,
+            organization=district_south,
+            status=Officer.STATUS.active,
+        )
+        drcj_south_east_officer=OfficerFactory(
+            office=drcj_office,
+            person=drcj_person,
+            organization=division_east,
+            status=Officer.STATUS.active,
+        )
+        drcj_south_west_officer=OfficerFactory(
+            office=drcj_office,
+            person=drcj_person,
+            organization=division_west,
             status=Officer.STATUS.active,
         )
         ca_officer=OfficerFactory(
             office=ca_office,
             person=ca_person,
-            organization=bhs,
+            organization=international,
             status=Officer.STATUS.active,
         )
         # Create Charts
@@ -236,215 +245,260 @@ class Command(BaseCommand):
             status=Chart.STATUS.active,
         )
         # Create Quartets
-        quartets = GroupFactory.create_batch(
-            size=50,
+        quartets = GroupFactory.build_batch(
+            size=90,
             kind=Group.KIND.quartet,
-            organization=district,
         )
-        division_quartets = GroupFactory.create_batch(
-            size=20,
-            kind=Group.KIND.quartet,
-            organization=division,
-        )
-        groups = Group.objects.filter(
-            kind__gte=30,
-        )
-        for idx, quartet in enumerate(groups):
+        n = 1
+        for quartet in quartets:
+            if n <= 50:
+                quartet.organization = district_north
+            elif n <= 70:
+                quartet.organization = division_west
+            elif n <= 90:
+                quartet.organization = division_east
+            n += 1
+            quartet.save()
             i = 1
             while i <= 4:
-                if i==1 and idx==0:
-                    person = quartet_person
-                else:
-                    try:
-                        person = PersonFactory()
-                    except IntegrityError:
-                        continue
-                MemberFactory(
-                    group=quartet,
-                    person=person,
-                    part=i,
-                    status=Member.STATUS.active,
-                )
-                OfficerFactory(
-                    office=quartet_office,
-                    group=quartet,
-                    person=person,
-                    status=Member.STATUS.active,
-                )
+                try:
+                    MemberFactory(
+                        group=quartet,
+                        part=i,
+                        status=Member.STATUS.active,
+                    )
+                except IntegrityError:
+                    continue
                 i += 1
-        for group in groups:
             i = 1
             while i <= 6:
                 try:
                     chart = Chart.objects.order_by('?').first()
                     RepertoryFactory(
-                        group=group,
+                        group=quartet,
                         chart=chart,
                     )
                 except IntegrityError:
                     continue
                 i += 1
+
+
+
+        member = Group.objects.filter(organization__name='District North').first().members.get(part=1)
+        member.person = quartet_person
+        member.save()
+        member = Group.objects.filter(organization__name='Division South East').first().members.get(part=1)
+        member.person = quartet_person
+        member.save()
+        member = Group.objects.filter(organization__name='Division South East').first().members.get(part=1)
+        member.person = quartet_person
+        member.save()
+
         # Create Judges
         mus_judges=OfficerFactory.create_batch(
             size=30,
             office=mus_office,
-            organization=bhs,
+            organization=international,
             status=Officer.STATUS.active,
         )
         per_judges=OfficerFactory.create_batch(
             size=30,
             office=per_office,
-            organization=bhs,
+            organization=international,
             status=Officer.STATUS.active,
         )
         sng_judges=OfficerFactory.create_batch(
             size=30,
             office=sng_office,
-            organization=bhs,
+            organization=international,
             status=Officer.STATUS.active,
         )
         # Create Awards
-        quartet_award=AwardFactory(
+        international_quartet_championship=AwardFactory(
             name='International Quartet Championship',
-            organization=bhs,
+            organization=international,
             rounds=3,
+            level=Award.LEVEL.championship,
         )
-        dc_award=AwardFactory(
-            name='International Dealers Choice',
-            organization=bhs,
+        international_dc_award=AwardFactory(
+            name='International Dealers Choice Award',
+            organization=international,
             rounds=3,
+            level=Award.LEVEL.award,
         )
-        international_quartet_district_qualifier=AwardFactory(
-            name='International Quartet District Qualifier',
-            organization=district,
+        district_north_quartet_championship=AwardFactory(
+            name='District North Quartet Championship',
+            organization=district_north,
             rounds=2,
-            group=quartet_award,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.fall,
         )
-        district_quartet_championship=AwardFactory(
-            name='District Quartet Championship',
-            organization=district,
+        district_south_quartet_championship=AwardFactory(
+            name='District South Quartet Championship',
+            organization=district_south,
             rounds=2,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.fall,
         )
-        division_quartet_championship=AwardFactory(
-            name='Division Quartet Championship',
-            organization=division,
+        division_west_quartet_championship=AwardFactory(
+            name='Division West Quartet Championship',
+            organization=division_west,
             rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
         )
-        district_quartet_division_qualifier=AwardFactory(
-            name='District Quartet Division Qualifier',
-            organization=division,
+        division_east_quartet_championship=AwardFactory(
+            name='Division East Quartet Championship',
+            organization=division_east,
             rounds=1,
-            group=district_quartet_championship,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
         )
-        ybqc_award=AwardFactory(
-            name='Harmony Foundation Youth Championship',
-            organization=bhs,
+        district_north_international_quartet_championship_qualifier=AwardFactory(
+            name='District North International Quartet Championship Qualifier',
+            organization=district_north,
+            rounds=2,
+            parent=international_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        district_south_international_quartet_championship_qualifier=AwardFactory(
+            name='District South International Quartet Championship Qualifier',
+            organization=district_south,
+            rounds=2,
+            parent=international_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        division_west_district_south_quartet_championship_qualifier=AwardFactory(
+            name='Division West District South Quartet Championship Qualifier',
+            organization=division_west,
             rounds=1,
+            parent=district_south_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
         )
-        oy_award=AwardFactory(
-            name='Other Youth Award',
-            organization=bhs,
+        division_east_district_south_quartet_championship_qualifier=AwardFactory(
+            name='Division West District South Quartet Championship Qualifier',
+            organization=division_east,
             rounds=1,
+            parent=district_south_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
         )
-        # Create Conventions
-        convention=ConventionFactory(
+        # Create Conventions and Sessions
+        international_convention=ConventionFactory(
             name='International Convention',
             start_date='2017-07-01',
             end_date='2017-07-08',
-            organization=bhs,
+            organization=international,
         )
-        convention_ybqc=ConventionFactory(
+        international_convention.sessions.create(kind=Session.KIND.quartet)
+        international_convention.sessions.create(kind=Session.KIND.chorus)
+        international_convention_ybqc=ConventionFactory(
             name='Youth Harmony Convention',
-            organization=bhs,
+            organization=international,
             start_date='2017-07-02',
             end_date='2017-07-02',
-            panel=3
+            panel=3,
         )
+        international_convention_ybqc.sessions.create(kind=Session.KIND.quartet)
+        international_convention_ybqc.sessions.create(kind=Session.KIND.chorus)
+        district_north_fall_convention=ConventionFactory(
+            name='District North Fall Convention',
+            start_date='2017-10-01',
+            end_date='2017-10-02',
+            organization=district_north,
+            panel=3,
+            season=Convention.SEASON.fall,
+        )
+        district_north_fall_convention.sessions.create(kind=Session.KIND.quartet)
+        district_north_fall_convention.sessions.create(kind=Session.KIND.chorus)
+        district_south_fall_convention=ConventionFactory(
+            name='District South Fall Convention',
+            start_date='2017-09-01',
+            end_date='2017-09-02',
+            organization=district_south,
+            panel=3,
+            season=Convention.SEASON.fall,
+        )
+        district_south_fall_convention.sessions.create(kind=Session.KIND.quartet)
+        district_south_fall_convention.sessions.create(kind=Session.KIND.chorus)
+        division_east_spring_convention=ConventionFactory(
+            name='Division East Spring Convention',
+            start_date='2018-03-01',
+            end_date='2018-03-01',
+            organization=division_east,
+            year=2018,
+            panel=2,
+            season=Convention.SEASON.spring,
+        )
+        division_east_spring_convention.sessions.create(kind=Session.KIND.quartet)
+        division_east_spring_convention.sessions.create(kind=Session.KIND.chorus)
+        division_west_spring_convention=ConventionFactory(
+            name='Division West Spring Convention',
+            start_date='2018-04-01',
+            end_date='2018-04-01',
+            organization=division_west,
+            year=2018,
+            panel=2,
+            season=Convention.SEASON.spring,
+        )
+        division_west_spring_convention.sessions.create(kind=Session.KIND.quartet)
+        division_west_spring_convention.sessions.create(kind=Session.KIND.chorus)
         # Add Assignments
-        drcj_assignment=AssignmentFactory(
-            category=Assignment.CATEGORY.drcj,
-            person=drcj_person,
-            convention=convention,
-            status=Assignment.STATUS.confirmed,
-        )
-        ca_assignment=AssignmentFactory(
-            category=Assignment.CATEGORY.ca,
-            person=ca_person,
-            convention=convention,
-            status=Assignment.STATUS.confirmed,
-        )
-        drcj_assignment_ybqc=AssignmentFactory(
-            category=Assignment.CATEGORY.drcj,
-            person=drcj_person,
-            convention=convention_ybqc,
-            status=Assignment.STATUS.confirmed,
-        )
-        ca_assignment_ybqc=AssignmentFactory(
-            category=Assignment.CATEGORY.ca,
-            person=ca_person,
-            convention=convention_ybqc,
-            status=Assignment.STATUS.confirmed,
-        )
-        for judge in mus_judges[:5]:
-            AssignmentFactory(
-                category=Assignment.CATEGORY.music,
-                person=judge.person,
-                convention=convention,
+        conventions = Convention.objects.all()
+        for convention in conventions:
+            convention.assignments.create(
                 status=Assignment.STATUS.confirmed,
+                category=Assignment.CATEGORY.drcj,
+                kind=Assignment.KIND.official,
+                person=drcj_person,
             )
-        for judge in per_judges[:5]:
-            AssignmentFactory(
-                category=Assignment.CATEGORY.performance,
-                person=judge.person,
-                convention=convention,
-                status=Assignment.STATUS.confirmed,
-            )
-        for judge in sng_judges[:5]:
-            AssignmentFactory(
-                category=Assignment.CATEGORY.singing,
-                person=judge.person,
-                convention=convention,
-                status=Assignment.STATUS.confirmed,
-            )
-        for judge in mus_judges[:3]:
-            AssignmentFactory(
-                category=Assignment.CATEGORY.music,
-                person=judge.person,
-                convention=convention_ybqc,
-                status=Assignment.STATUS.confirmed,
-            )
-        for judge in per_judges[:3]:
-            AssignmentFactory(
-                category=Assignment.CATEGORY.performance,
-                person=judge.person,
-                convention=convention_ybqc,
-                status=Assignment.STATUS.confirmed,
-            )
-        for judge in sng_judges[:3]:
-            AssignmentFactory(
-                category=Assignment.CATEGORY.singing,
-                person=judge.person,
-                convention=convention_ybqc,
-                status=Assignment.STATUS.confirmed,
-            )
-        # Create Quartet Session
-        quartet_session=SessionFactory(
-            convention=convention,
-            kind=Session.KIND.quartet,
-        )
-        ybqc_session=SessionFactory(
-            convention=convention_ybqc,
-            kind=Session.KIND.quartet,
-        )
+            js = Officer.objects.filter(office__short_name='CA').order_by('?')[:2]
+            for j in js:
+                convention.assignments.create(
+                    status=Assignment.STATUS.confirmed,
+                    category=Assignment.CATEGORY.ca,
+                    kind=Assignment.KIND.official,
+                    person=j.person,
+                )
+            js = Officer.objects.filter(office__short_name='MUS').order_by('?')[:convention.panel]
+            for j in js:
+                convention.assignments.create(
+                    status=Assignment.STATUS.confirmed,
+                    category=Assignment.CATEGORY.music,
+                    kind=Assignment.KIND.official,
+                    person=j.person,
+                )
+            js = Officer.objects.filter(office__short_name='PER').order_by('?')[:convention.panel]
+            for j in js:
+                convention.assignments.create(
+                    status=Assignment.STATUS.confirmed,
+                    category=Assignment.CATEGORY.performance,
+                    kind=Assignment.KIND.official,
+                    person=j.person,
+                )
+            js = Officer.objects.filter(office__short_name='SNG').order_by('?')[:convention.panel]
+            for j in js:
+                convention.assignments.create(
+                    status=Assignment.STATUS.confirmed,
+                    category=Assignment.CATEGORY.singing,
+                    kind=Assignment.KIND.official,
+                    person=j.person,
+                )
+        # Convention New
+        if options['breakpoint'] == 'convention_new':
+            return
         # Add Quartet Contest
         quartet_contest = ContestFactory(
             session=quartet_session,
-            award=quartet_award,
+            award=international_quartet_championship,
             is_primary=True,
         )
         dc_contest = ContestFactory(
             session=quartet_session,
-            award=dc_award,
+            award=international_dc_award,
         )
         ybqc_contest = ContestFactory(
             session=ybqc_session,
