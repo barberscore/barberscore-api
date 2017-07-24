@@ -435,8 +435,7 @@ class Assignment(TimeStampedModel):
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
-        (10, 'ca', 'CA'),
-        (20, 'aca', 'ACA'),
+        (10, 'admin', 'CA'),
         (30, 'music', 'Music'),
         (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
@@ -2809,8 +2808,7 @@ class Panelist(TimeStampedModel):
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
-        (10, 'ca', 'CA'),
-        (20, 'aca', 'ACA'),
+        (10, 'admin', 'CA'),
         (30, 'music', 'Music'),
         (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
