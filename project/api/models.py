@@ -1368,12 +1368,7 @@ class Convention(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (2, 'published', 'Published',),
-        (4, 'opened', 'Opened',),
-        (8, 'closed', 'Closed',),
-        (10, 'verified', 'Verified',),
-        (20, 'started', 'Started',),
-        (30, 'finished', 'Finished',),
-        (45, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -1503,9 +1498,6 @@ class Convention(TimeStampedModel):
 
     # Convention Transition Conditions
     def can_publish_convention(self):
-        self.sessions.count() == self.sessions.filter(
-            status=self.sessions.model.STATUS.published
-        )
         return all([
             self.name,
             self.organization,
@@ -1515,9 +1507,6 @@ class Convention(TimeStampedModel):
             self.close_date,
             self.start_date,
             self.end_date,
-            self.sessions.count() == self.sessions.filter(
-                status=self.sessions.model.STATUS.published
-            ).count(),
         ])
 
 
@@ -1529,18 +1518,8 @@ class Convention(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.opened)
-    def open(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.archived)
+    def archive(self, *args, **kwargs):
         return
 
 
