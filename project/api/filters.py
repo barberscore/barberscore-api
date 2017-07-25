@@ -114,6 +114,9 @@ class ConventionFilter(FilterSet):
             'assignments__kind': [
                 'exact',
             ],
+            'assignments__category': [
+                'exact',
+            ],
         }
 
 
