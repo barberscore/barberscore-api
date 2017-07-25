@@ -274,6 +274,9 @@ class PersonFilter(FilterSet):
             'officers__office__kind': [
                 'exact',
             ],
+            'officers__office__is_judge_manager': [
+                'exact',
+            ],
         }
 
 

@@ -189,18 +189,22 @@ class Command(BaseCommand):
             name='Contest Administrator',
             short_name='CA',
             is_scoring_manager=True,
+            is_judge_manager=True,
         )
         mus_office=OfficeFactory(
             name='Music Judge',
             short_name='MUS',
+            is_judge_manager=True,
         )
         per_office=OfficeFactory(
             name='Performance Judge',
             short_name='PER',
+            is_judge_manager=True,
         )
         sng_office=OfficeFactory(
             name='Singing Judge',
             short_name='SNG',
+            is_judge_manager=True,
         )
         # Create Core Officers
         scjc_officer=OfficerFactory(
