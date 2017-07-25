@@ -319,6 +319,7 @@ class SessionFilter(FilterSet):
         fields = {
             'status': [
                 'exact',
+                'lt',
             ],
             'convention': [
                 'exact',

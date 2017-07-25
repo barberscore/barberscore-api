@@ -4096,6 +4096,7 @@ class Session(TimeStampedModel):
         (30, 'finished', 'Finished',),
         # (40, 'drafted', 'Drafted',),
         (45, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
         # (50, 'final', 'Final',),
     )
 
