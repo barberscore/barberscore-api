@@ -4089,6 +4089,7 @@ class Session(TimeStampedModel):
         (0, 'new', 'New',),
         (2, 'published', 'Published',),
         (4, 'opened', 'Opened',),
+        (6, 'restricted', 'Restrict',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
@@ -4278,7 +4279,13 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
-        """Make session available for entry."""
+        """Make session available for public entry."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.restricted)
+    def restrict(self, *args, **kwargs):
+        """Make session available for private entry."""
         return
 
     @fsm_log_by
