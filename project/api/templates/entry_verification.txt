@@ -7,7 +7,7 @@ performance or you risk disqualification.
 
 You may make changes to this information directly on https://www.barberscore.com up
 until the final deadline of {{session.start.date}}.  After that point
-you'll need to make any requests directly with {{assignments}}.
+you'll need to make any requests directly with the DRCJ.
 
 If you have any further questions or need additional assistance please contact
 support@barberscore.com.
