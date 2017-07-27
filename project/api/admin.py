@@ -1079,6 +1079,7 @@ class SessionAdmin(admin.ModelAdmin):
         'status',
         'convention',
         'kind',
+        'is_invitational',
         'scoresheet',
         'bbscores',
     ]
@@ -1087,11 +1088,13 @@ class SessionAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'kind',
+        'is_invitational',
     ]
 
     list_filter = (
         'status',
         'kind',
+        'is_invitational',
         'convention__season',
         'convention__year',
     )
