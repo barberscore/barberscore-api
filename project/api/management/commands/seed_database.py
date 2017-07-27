@@ -111,7 +111,7 @@ class Command(BaseCommand):
             email=scjc_person.email,
             person=scjc_person,
         )
-        drch_user=UserFactory(
+        drcj_user=UserFactory(
             email=drcj_person.email,
             person=drcj_person,
         )
@@ -133,28 +133,40 @@ class Command(BaseCommand):
             short_name='INT',
             kind=Organization.KIND.international,
         )
-        district_north=OrganizationFactory(
-            name='District North',
-            short_name='NTH',
+        district_alpha=OrganizationFactory(
+            name='District Alpha',
+            short_name='ALF',
             parent=international,
             kind=Organization.KIND.district,
         )
-        district_south=OrganizationFactory(
-            name='District South',
-            short_name='STH',
+        district_beta=OrganizationFactory(
+            name='District Beta',
+            short_name='BTA',
             parent=international,
             kind=Organization.KIND.district,
         )
-        division_east=OrganizationFactory(
-            name='Division South East',
-            short_name='STH ED',
-            parent=district_south,
+        district_beta_division_north=OrganizationFactory(
+            name='Division Beta North',
+            short_name='BTA ND',
+            parent=district_beta,
             kind=Organization.KIND.division,
         )
-        division_west=OrganizationFactory(
-            name='Division South West',
-            short_name='STH WD',
-            parent=district_south,
+        district_beta_division_south=OrganizationFactory(
+            name='Division Beta South',
+            short_name='BTA SD',
+            parent=district_beta,
+            kind=Organization.KIND.division,
+        )
+        district_beta_division_east=OrganizationFactory(
+            name='Division Beta East',
+            short_name='BTA ED',
+            parent=district_beta,
+            kind=Organization.KIND.division,
+        )
+        district_beta_division_west=OrganizationFactory(
+            name='Division Beta West',
+            short_name='BTA WD',
+            parent=district_beta,
             kind=Organization.KIND.division,
         )
         affiliate=OrganizationFactory(
@@ -213,28 +225,40 @@ class Command(BaseCommand):
             organization=international,
             status=Officer.STATUS.active,
         )
-        drcj_north_officer=OfficerFactory(
+        drcj_alpha_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=district_north,
+            organization=district_alpha,
             status=Officer.STATUS.active,
         )
-        drcj_south_officer=OfficerFactory(
+        drcj_beta_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=district_south,
+            organization=district_beta,
             status=Officer.STATUS.active,
         )
-        drcj_south_east_officer=OfficerFactory(
+        drcj_beta_north_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=division_east,
+            organization=district_beta_division_north,
             status=Officer.STATUS.active,
         )
-        drcj_south_west_officer=OfficerFactory(
+        drcj_beta_south_officer=OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=division_west,
+            organization=district_beta_division_south,
+            status=Officer.STATUS.active,
+        )
+        drcj_beta_east_officer=OfficerFactory(
+            office=drcj_office,
+            person=drcj_person,
+            organization=district_beta_division_east,
+            status=Officer.STATUS.active,
+        )
+        drcj_beta_west_officer=OfficerFactory(
+            office=drcj_office,
+            person=drcj_person,
+            organization=district_beta_division_west,
             status=Officer.STATUS.active,
         )
         ca_officer=OfficerFactory(
@@ -250,17 +274,21 @@ class Command(BaseCommand):
         )
         # Create Quartets
         quartets = GroupFactory.build_batch(
-            size=90,
+            size=140,
             kind=Group.KIND.quartet,
         )
         n = 1
         for quartet in quartets:
-            if n <= 50:
-                quartet.organization = district_north
-            elif n <= 70:
-                quartet.organization = division_west
-            elif n <= 90:
-                quartet.organization = division_east
+            if n <= 60:
+                quartet.organization = district_alpha
+            elif n <= 80:
+                quartet.organization = district_beta_division_north
+            elif n <= 100:
+                quartet.organization = district_beta_division_south
+            elif n <= 120:
+                quartet.organization = district_beta_division_east
+            elif n <= 140:
+                quartet.organization = district_beta_division_west
             n += 1
             quartet.save()
             i = 1
@@ -288,13 +316,19 @@ class Command(BaseCommand):
 
 
 
-        member = Group.objects.filter(organization__name='District North').first().members.get(part=1)
+        member = Group.objects.filter(organization__name='District Alpha').first().members.get(part=1)
         member.person = quartet_person
         member.save()
-        member = Group.objects.filter(organization__name='Division South East').first().members.get(part=1)
+        member = Group.objects.filter(organization__name='Division Beta North').first().members.get(part=1)
         member.person = quartet_person
         member.save()
-        member = Group.objects.filter(organization__name='Division South East').first().members.get(part=1)
+        member = Group.objects.filter(organization__name='Division Beta South').first().members.get(part=1)
+        member.person = quartet_person
+        member.save()
+        member = Group.objects.filter(organization__name='Division Beta East').first().members.get(part=1)
+        member.person = quartet_person
+        member.save()
+        member = Group.objects.filter(organization__name='Division Beta West').first().members.get(part=1)
         member.person = quartet_person
         member.save()
 
@@ -324,132 +358,307 @@ class Command(BaseCommand):
             rounds=3,
             level=Award.LEVEL.championship,
         )
-        international_dc_award=AwardFactory(
-            name='International Dealers Choice Award',
+        district_alpha_international_quartet_championship_qualifier=AwardFactory(
+            name='District Alpha International Quartet Championship Qualifier',
+            organization=district_alpha,
+            rounds=2,
+            parent=international_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        district_beta_international_quartet_championship_qualifier=AwardFactory(
+            name='District Beta International Quartet Championship Qualifier',
+            organization=district_beta,
+            rounds=2,
+            parent=international_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        international_chorus_championship=AwardFactory(
+            name='International Chorus Championship',
             organization=international,
-            rounds=3,
-            level=Award.LEVEL.award,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            kind=Award.KIND.chorus,
         )
-        district_north_quartet_championship=AwardFactory(
-            name='District North Quartet Championship',
-            organization=district_north,
+        district_alpha_international_chorus_championship_qualifier=AwardFactory(
+            name='District Alpha International Chorus Championship Qualifier',
+            organization=district_alpha,
+            rounds=1,
+            parent=international_chorus_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.fall,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_international_chorus_championship_qualifier=AwardFactory(
+            name='District Beta International Chorus Championship Qualifier',
+            organization=district_beta,
+            rounds=1,
+            parent=international_chorus_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.fall,
+            kind=Award.KIND.chorus,
+        )
+        # international_youth_quartet_championship=AwardFactory(
+        #     name='International Youth Quartet Championship',
+        #     organization=international,
+        #     rounds=1,
+        #     level=Award.LEVEL.championship,
+        # )
+        # international_dc_award=AwardFactory(
+        #     name='International Dealers Choice Award',
+        #     organization=international,
+        #     rounds=3,
+        #     level=Award.LEVEL.award,
+        # )
+        district_alpha_quartet_championship=AwardFactory(
+            name='District Alpha Quartet Championship',
+            organization=district_alpha,
             rounds=2,
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
-        district_south_quartet_championship=AwardFactory(
-            name='District South Quartet Championship',
-            organization=district_south,
+        district_alpha_chorus_championship=AwardFactory(
+            name='District Alpha Chorus Championship',
+            organization=district_alpha,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_quartet_championship=AwardFactory(
+            name='District Beta Quartet Championship',
+            organization=district_beta,
             rounds=2,
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
-        division_west_quartet_championship=AwardFactory(
-            name='Division West Quartet Championship',
-            organization=division_west,
+        district_beta_division_east_district_beta_quartet_championship_qualifier=AwardFactory(
+            name='BTA Division North District Beta Quartet Championship Qualifier',
+            organization=district_beta_division_north,
+            rounds=1,
+            parent=district_beta_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        district_beta_division_west_district_beta_quartet_championship_qualifier=AwardFactory(
+            name='BTA Division South District Beta Quartet Championship Qualifier',
+            organization=district_beta_division_south,
+            rounds=1,
+            parent=district_beta_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        district_beta_division_east_district_beta_quartet_championship_qualifier=AwardFactory(
+            name='BTA Division East District Beta Quartet Championship Qualifier',
+            organization=district_beta_division_east,
+            rounds=1,
+            parent=district_beta_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        district_beta_division_west_district_beta_quartet_championship_qualifier=AwardFactory(
+            name='BTA Division West District Beta Quartet Championship Qualifier',
+            organization=district_beta_division_west,
+            rounds=1,
+            parent=district_beta_quartet_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+        )
+        district_beta_chorus_championship=AwardFactory(
+            name='District Beta Chorus Championship',
+            organization=district_beta,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.fall,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_north_district_beta_chorus_championship_qualifier=AwardFactory(
+            name='BTA Division North District Beta Chorus Championship Qualifier',
+            organization=district_beta_division_east,
+            rounds=1,
+            parent=district_beta_chorus_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_south_district_beta_chorus_championship_qualifier=AwardFactory(
+            name='BTA Division South District Beta Chorus Championship Qualifier',
+            organization=district_beta_division_west,
+            rounds=1,
+            parent=district_beta_chorus_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_east_district_beta_chorus_championship_qualifier=AwardFactory(
+            name='BTA Division East District Beta Chorus Championship Qualifier',
+            organization=district_beta_division_east,
+            rounds=1,
+            parent=district_beta_chorus_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_west_district_beta_chorus_championship_qualifier=AwardFactory(
+            name='BTA Division West District Beta Chorus Championship Qualifier',
+            organization=district_beta_division_west,
+            rounds=1,
+            parent=district_beta_chorus_championship,
+            level=Award.LEVEL.qualifier,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_north_quartet_championship=AwardFactory(
+            name='BTA Division North Quartet Championship',
+            organization=district_beta_division_north,
             rounds=1,
             level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        division_east_quartet_championship=AwardFactory(
-            name='Division East Quartet Championship',
-            organization=division_east,
+        district_beta_division_south_quartet_championship=AwardFactory(
+            name='BTA Division South Quartet Championship',
+            organization=district_beta_division_south,
             rounds=1,
             level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        district_north_international_quartet_championship_qualifier=AwardFactory(
-            name='District North International Quartet Championship Qualifier',
-            organization=district_north,
-            rounds=2,
-            parent=international_quartet_championship,
-            level=Award.LEVEL.qualifier,
-            season=Award.SEASON.spring,
-        )
-        district_south_international_quartet_championship_qualifier=AwardFactory(
-            name='District South International Quartet Championship Qualifier',
-            organization=district_south,
-            rounds=2,
-            parent=international_quartet_championship,
-            level=Award.LEVEL.qualifier,
-            season=Award.SEASON.spring,
-        )
-        division_west_district_south_quartet_championship_qualifier=AwardFactory(
-            name='Division West District South Quartet Championship Qualifier',
-            organization=division_west,
+        district_beta_division_east_quartet_championship=AwardFactory(
+            name='BTA Division East Quartet Championship',
+            organization=district_beta_division_east,
             rounds=1,
-            parent=district_south_quartet_championship,
-            level=Award.LEVEL.qualifier,
+            level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        division_east_district_south_quartet_championship_qualifier=AwardFactory(
-            name='Division West District South Quartet Championship Qualifier',
-            organization=division_east,
+        district_beta_division_west_quartet_championship=AwardFactory(
+            name='BTA Division West Quartet Championship',
+            organization=district_beta_division_west,
             rounds=1,
-            parent=district_south_quartet_championship,
-            level=Award.LEVEL.qualifier,
+            level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
+        )
+        district_beta_division_north_chorus_championship=AwardFactory(
+            name='BTA Division North Chorus Championship',
+            organization=district_beta_division_north,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_south_chorus_championship=AwardFactory(
+            name='BTA Division South Chorus Championship',
+            organization=district_beta_division_south,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_east_chorus_championship=AwardFactory(
+            name='BTA Division East Chorus Championship',
+            organization=district_beta_division_east,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
+        )
+        district_beta_division_west_chorus_championship=AwardFactory(
+            name='BTA Division West Chorus Championship',
+            organization=district_beta_division_west,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            season=Award.SEASON.spring,
+            kind=Award.KIND.chorus,
         )
         # Create Conventions and Sessions
-        international_convention=ConventionFactory(
-            name='International Convention',
-            start_date='2017-07-01',
-            end_date='2017-07-08',
-            organization=international,
-        )
-        international_convention.sessions.create(kind=Session.KIND.quartet)
-        international_convention.sessions.create(kind=Session.KIND.chorus)
-        international_convention_ybqc=ConventionFactory(
-            name='Youth Harmony Convention',
-            organization=international,
-            start_date='2017-07-02',
-            end_date='2017-07-02',
-            panel=3,
-        )
-        international_convention_ybqc.sessions.create(kind=Session.KIND.quartet)
-        international_convention_ybqc.sessions.create(kind=Session.KIND.chorus)
-        district_north_fall_convention=ConventionFactory(
-            name='District North Fall Convention',
+
+        # international_convention=ConventionFactory(
+        #     name='International Convention',
+        #     start_date='2017-07-01',
+        #     end_date='2017-07-08',
+        #     organization=international,
+        # )
+        # international_convention_quartet_session = international_convention.sessions.create(kind=Session.KIND.quartet)
+        # international_convention_chorus_session = international_convention.sessions.create(kind=Session.KIND.chorus)
+        #
+        # international_youth_convention=ConventionFactory(
+        #     name='International Youth Convention',
+        #     organization=international,
+        #     start_date='2017-07-02',
+        #     end_date='2017-07-02',
+        #     panel=3,
+        # )
+        # international_youth_convention_quartet_session = international_youth_convention.sessions.create(kind=Session.KIND.quartet)
+        # international_youth_convention_chorus_session = international_youth_convention.sessions.create(kind=Session.KIND.chorus)
+
+        district_alpha_fall_convention=ConventionFactory(
+            name='District Alpha Fall Convention',
             start_date='2017-10-01',
             end_date='2017-10-02',
-            organization=district_north,
+            organization=district_alpha,
             panel=3,
             season=Convention.SEASON.fall,
         )
-        district_north_fall_convention.sessions.create(kind=Session.KIND.quartet)
-        district_north_fall_convention.sessions.create(kind=Session.KIND.chorus)
-        district_south_fall_convention=ConventionFactory(
-            name='District South Fall Convention',
+        district_alpha_fall_convention_quartet_session = district_alpha_fall_convention.sessions.create(kind=Session.KIND.quartet)
+        district_alpha_fall_convention_chorus_session = district_alpha_fall_convention.sessions.create(kind=Session.KIND.chorus)
+
+        district_alpha_spring_convention=ConventionFactory(
+            name='District Alpha Spring Convention',
+            start_date='2018-05-01',
+            end_date='2018-05-02',
+            organization=district_alpha,
+            panel=3,
+            season=Convention.SEASON.spring,
+        )
+        district_alpha_spring_convention_quartet_session = district_alpha_spring_convention.sessions.create(kind=Session.KIND.quartet)
+        district_alpha_spring_convention_chorus_session = district_alpha_spring_convention.sessions.create(kind=Session.KIND.chorus)
+
+        district_beta_fall_convention=ConventionFactory(
+            name='District Beta Fall Convention',
             start_date='2017-09-01',
             end_date='2017-09-02',
-            organization=district_south,
+            organization=district_beta,
             panel=3,
             season=Convention.SEASON.fall,
         )
-        district_south_fall_convention.sessions.create(kind=Session.KIND.quartet)
-        district_south_fall_convention.sessions.create(kind=Session.KIND.chorus)
-        division_east_spring_convention=ConventionFactory(
-            name='Division East Spring Convention',
+        district_beta_fall_convention_quartet_session = district_beta_fall_convention.sessions.create(kind=Session.KIND.quartet)
+        district_beta_fall_convention_chorus_session = district_beta_fall_convention.sessions.create(kind=Session.KIND.chorus)
+
+        district_beta_division_north_spring_convention=ConventionFactory(
+            name='BTA Division North Spring Convention',
             start_date='2018-03-01',
             end_date='2018-03-01',
-            organization=division_east,
+            organization=district_beta,
             year=2018,
             panel=2,
             season=Convention.SEASON.spring,
         )
-        division_east_spring_convention.sessions.create(kind=Session.KIND.quartet)
-        division_east_spring_convention.sessions.create(kind=Session.KIND.chorus)
-        division_west_spring_convention=ConventionFactory(
-            name='Division West Spring Convention',
+        district_beta_division_north_spring_convention_quartet_session = district_beta_division_north_spring_convention.sessions.create(kind=Session.KIND.quartet)
+        district_beta_division_north_spring_convention_chorus_session = district_beta_division_north_spring_convention.sessions.create(kind=Session.KIND.chorus)
+
+        district_beta_division_south_spring_convention=ConventionFactory(
+            name='BTA Division South Spring Convention',
             start_date='2018-04-01',
             end_date='2018-04-01',
-            organization=division_west,
+            organization=district_beta,
             year=2018,
             panel=2,
             season=Convention.SEASON.spring,
         )
-        division_west_spring_convention.sessions.create(kind=Session.KIND.quartet)
-        division_west_spring_convention.sessions.create(kind=Session.KIND.chorus)
+        district_beta_division_south_spring_convention_quartet_session = district_beta_division_south_spring_convention.sessions.create(kind=Session.KIND.quartet)
+        district_beta_division_south_spring_convention_chorus_session = district_beta_division_south_spring_convention.sessions.create(kind=Session.KIND.chorus)
+
+        district_beta_division_east_west_spring_convention=ConventionFactory(
+            name='BTA Division East & West Spring Convention',
+            start_date='2018-04-01',
+            end_date='2018-04-01',
+            organization=district_beta,
+            year=2018,
+            panel=2,
+            season=Convention.SEASON.spring,
+        )
+        district_beta_division_east_west_spring_convention_quartet_session = district_beta_division_east_west_spring_convention.sessions.create(kind=Session.KIND.quartet)
+        district_beta_division_east_west_spring_convention_chorus_session = district_beta_division_east_west_spring_convention.sessions.create(kind=Session.KIND.chorus)
+
         # Add Assignments
         conventions = Convention.objects.all()
         for convention in conventions:
@@ -491,35 +700,38 @@ class Command(BaseCommand):
                     kind=Assignment.KIND.official,
                     person=j.person,
                 )
+
         # Convention New
-        if options['breakpoint'] == 'convention_new':
+        if options['breakpoint'] == 'conventions_created':
             return
-        # Add Quartet Contest
-        quartet_contest = ContestFactory(
-            session=quartet_session,
-            award=international_quartet_championship,
-            is_primary=True,
-        )
-        dc_contest = ContestFactory(
-            session=quartet_session,
-            award=international_dc_award,
-        )
-        ybqc_contest = ContestFactory(
-            session=ybqc_session,
-            award=ybqc_award,
-            is_primary=True,
-        )
-        oy_contest = ContestFactory(
-            session=ybqc_session,
-            award=oy_award,
-        )
-        # Publish Convention
-        convention.publish()
-        convention.save()
-        convention_ybqc.publish()
-        convention_ybqc.save()
-        if options['breakpoint'] == 'convention_published':
+
+        # Add Contests
+        conventions = Convention.objects.all()
+        for convention in conventions:
+            for session in convention.sessions.all():
+                awards = Award.objects.filter(
+                    kind=session.kind,
+                    season=session.convention.season,
+                    organization=convention.organization,
+                )
+                for award in awards:
+                    session.contests.create(
+                        award=award,
+                    )
+
+        # Publish Conventions
+        district_alpha_fall_convention.publish()
+        district_alpha_fall_convention.save()
+        district_beta_fall_convention.publish()
+        district_beta_fall_convention.save()
+        district_beta_division_east_spring_convention.publish()
+        district_beta_division_east_spring_convention.save()
+        district_beta_division_west_spring_convention.publish()
+        district_beta_division_west_spring_convention.save()
+
+        if options['breakpoint'] == 'conventions_published':
             return
+
         # Open the Session for Entries
         quartet_session.open()
         quartet_session.save()
@@ -527,7 +739,7 @@ class Command(BaseCommand):
         quartets = Group.objects.filter(
             kind=Group.KIND.quartet,
         ).order_by('?')[:50]
-        ybqc_quartets = Group.objects.filter(
+        youth_quartets = Group.objects.filter(
             kind=Group.KIND.quartet,
         ).order_by('?')[:20]
         # Create Quartet Entries
@@ -538,9 +750,9 @@ class Command(BaseCommand):
                 is_evaluation=False,
                 status=Entry.STATUS.approved,
             )
-        for quartet in ybqc_quartets:
+        for quartet in youth_quartets:
             EntryFactory(
-                session=ybqc_session,
+                session=youth_session,
                 group=quartet,
                 is_evaluation=False,
                 status=Entry.STATUS.approved,
@@ -552,7 +764,7 @@ class Command(BaseCommand):
                     entry=entry,
                     member=member,
                 )
-        for entry in ybqc_session.entries.all():
+        for entry in youth_session.entries.all():
             for member in entry.group.members.all():
                 ParticipantFactory(
                     entry=entry,
@@ -564,17 +776,17 @@ class Command(BaseCommand):
                 entry=entry,
                 contest=quartet_contest,
             )
-        for entry in ybqc_session.entries.all():
+        for entry in youth_session.entries.all():
             ContestantFactory(
                 entry=entry,
-                contest=ybqc_contest,
+                contest=youth_contest,
             )
         for entry in quartet_session.entries.all().order_by('?')[:10]:
             ContestantFactory(
                 entry=entry,
                 contest=dc_contest,
             )
-        for entry in ybqc_session.entries.all().order_by('?')[:10]:
+        for entry in youth_session.entries.all().order_by('?')[:10]:
             ContestantFactory(
                 entry=entry,
                 contest=oy_contest,
@@ -582,28 +794,28 @@ class Command(BaseCommand):
         # Close Session
         quartet_session.close()
         quartet_session.save()
-        ybqc_session.close()
-        ybqc_session.save()
+        youth_session.close()
+        youth_session.save()
         if options['breakpoint'] == 'session_closed':
             return
         # Verify Session
         quartet_session.verify()
         quartet_session.save()
-        ybqc_session.verify()
-        ybqc_session.save()
+        youth_session.verify()
+        youth_session.save()
 
-        # YBQC
-        ybqc_session.start()
-        ybqc_session.save()
-        if options['breakpoint'] == 'ybqc_started':
+        # youth
+        youth_session.start()
+        youth_session.save()
+        if options['breakpoint'] == 'youth_started':
             return
         # Get the first round
-        ybqc_finals = ybqc_session.rounds.get(num=1)
+        youth_finals = youth_session.rounds.get(num=1)
         # Start the round
-        ybqc_finals.start()
-        ybqc_finals.save()
+        youth_finals.start()
+        youth_finals.save()
         # Score the round
-        for appearance in ybqc_finals.appearances.filter(
+        for appearance in youth_finals.appearances.filter(
             status=Appearance.STATUS.published,
         ):
             appearance.start()
@@ -619,11 +831,11 @@ class Command(BaseCommand):
                     score.save()
             appearance.confirm()
             appearance.save()
-        if options['breakpoint'] == 'ybqc_scored':
+        if options['breakpoint'] == 'youth_scored':
             return
-        ybqc_finals.finish()
-        ybqc_finals.announce()
-        ybqc_finals.save()
+        youth_finals.finish()
+        youth_finals.announce()
+        youth_finals.save()
 
         # Start Session
         quartet_session.start()

@@ -1530,9 +1530,6 @@ class Convention(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published, conditions=[can_publish_convention])
     def publish(self, *args, **kwargs):
         """Publish convention and related sessions"""
-        for session in self.sessions.all():
-            session.publish()
-            session.save()
         return
 
     @fsm_log_by
