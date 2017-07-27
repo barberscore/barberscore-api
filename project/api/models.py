@@ -4087,9 +4087,8 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'published', 'Published',),
         (4, 'opened', 'Opened',),
-        (6, 'restricted', 'Restrict',),
+        (6, 'restricted', 'Restricted',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
@@ -4270,12 +4269,6 @@ class Session(TimeStampedModel):
         ])
 
     # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published)
-    def publish(self, *args, **kwargs):
-        """Calendar the session."""
-        return
-
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
