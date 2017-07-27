@@ -4085,7 +4085,6 @@ class Session(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (4, 'opened', 'Opened',),
-        (6, 'restricted', 'Restricted',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
@@ -4114,6 +4113,11 @@ class Session(TimeStampedModel):
             The kind of session.  Generally this will be either quartet or chorus.
         """,
         choices=KIND,
+    )
+
+    is_invitational = models.BooleanField(
+        help_text="""Invite-only (v. Open).""",
+        default=False,
     )
 
     scoresheet = models.FileField(
@@ -4269,13 +4273,7 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
-        """Make session available for public entry."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.restricted)
-    def restrict(self, *args, **kwargs):
-        """Make session available for private entry."""
+        """Make session available for entry."""
         return
 
     @fsm_log_by

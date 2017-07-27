@@ -729,6 +729,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'kind',
+            'is_invitational',
             'scoresheet',
             'bbscores',
             'num_rounds',

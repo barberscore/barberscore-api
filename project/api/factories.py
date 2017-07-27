@@ -304,6 +304,7 @@ class ScoreFactory(DjangoModelFactory):
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
     kind = Session.KIND.quartet
+    is_invitational = False
     scoresheet = None
     convention = SubFactory('api.factories.ConventionFactory')
 

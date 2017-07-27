@@ -324,6 +324,9 @@ class SessionFilter(FilterSet):
             'convention': [
                 'exact',
             ],
+            'is_invitational': [
+                'exact',
+            ],
             'convention__status': [
                 'exact',
             ],
