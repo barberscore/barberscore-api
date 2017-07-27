@@ -3,8 +3,10 @@ Congratulations on qualifying for the {{entry.session}}!
 This is your formal invitation to enter the contest using Barberscore, the
 new contest manager for the Barbershop Harmony Society.
 
-To get started, go to https://www.barberscore.com.  There you'll find detailed
-instructions, tutorials, and videos to help guide you through the new process.
+To get started, go to https://www.barberscore.com/tutorials.  There you'll find
+helpful materials to guide you through the new process.
+
+
 If you experience any problems or need help then please don't hesitate to reach
 out to support@barbershop.org.
 
