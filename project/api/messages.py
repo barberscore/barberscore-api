@@ -35,6 +35,9 @@ def send_entry(entry, template):
         from_email='Barberscore <admin@barberscore.com>',
         to=tos,
         cc=ccs,
+        bcc=[
+            'admin@barberscore.com',
+        ],
     )
     result = email.send()
     if result == 1:
