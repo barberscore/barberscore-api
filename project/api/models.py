@@ -1322,11 +1322,11 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # self.contest.session.convention.assignments.filter(
-            #     person=request.user.person,
-            #     category__lte=10,
-            #     kind=10,
-            # ),
+            self.contest.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lte=10,
+                kind=10,
+            ),
             self.entry.group.members.filter(
                 person=request.user.person,
                 is_admin=True,
