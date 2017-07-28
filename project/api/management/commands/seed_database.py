@@ -318,18 +318,23 @@ class Command(BaseCommand):
 
         member = Group.objects.filter(organization__name='District Alpha').first().members.get(part=1)
         member.person = quartet_person
+        member.is_admin = True
         member.save()
         member = Group.objects.filter(organization__name='Division Beta North').first().members.get(part=1)
         member.person = quartet_person
+        member.is_admin = True
         member.save()
         member = Group.objects.filter(organization__name='Division Beta South').first().members.get(part=1)
         member.person = quartet_person
+        member.is_admin = True
         member.save()
         member = Group.objects.filter(organization__name='Division Beta East').first().members.get(part=1)
         member.person = quartet_person
+        member.is_admin = True
         member.save()
         member = Group.objects.filter(organization__name='Division Beta West').first().members.get(part=1)
         member.person = quartet_person
+        member.is_admin = True
         member.save()
 
         # Create Judges
@@ -706,12 +711,11 @@ class Command(BaseCommand):
             return
 
         # Add Contests
-        conventions = Convention.objects.all()
         for convention in conventions:
             for session in convention.sessions.all():
                 awards = Award.objects.filter(
                     kind=session.kind,
-                    season=session.convention.season,
+                    season=convention.season,
                     organization=convention.organization,
                 )
                 for award in awards:
@@ -719,15 +723,29 @@ class Command(BaseCommand):
                         award=award,
                     )
 
+                children = convention.organization.children.filter(
+
+                )
+                dawards = Award.objects.filter(
+                    kind=session.kind,
+                    season=session.convention.season,
+                    organization__in=convention.organization.children,
+                )
+
+
         # Publish Conventions
         district_alpha_fall_convention.publish()
         district_alpha_fall_convention.save()
+        district_alpha_spring_convention.publish()
+        district_alpha_spring_convention.save()
         district_beta_fall_convention.publish()
         district_beta_fall_convention.save()
-        district_beta_division_east_spring_convention.publish()
-        district_beta_division_east_spring_convention.save()
-        district_beta_division_west_spring_convention.publish()
-        district_beta_division_west_spring_convention.save()
+        district_beta_division_north_spring_convention.publish()
+        district_beta_division_north_spring_convention.save()
+        district_beta_division_south_spring_convention.publish()
+        district_beta_division_south_spring_convention.save()
+        district_beta_division_east_west_spring_convention.publish()
+        district_beta_division_east_west_spring_convention.save()
 
         if options['breakpoint'] == 'conventions_published':
             return
