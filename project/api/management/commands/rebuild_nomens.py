@@ -11,7 +11,8 @@ class Command(BaseCommand):
 
         models = [
             # Primitives
-            'Entity',
+            'Organization',
+            'Group',
             'Chart',
             'Office',
             'Person',
@@ -31,6 +32,7 @@ class Command(BaseCommand):
             'Score',
             'Session',
             'Participant',
+            'Panelist',
             'Slot',
             'Song',
         ]
