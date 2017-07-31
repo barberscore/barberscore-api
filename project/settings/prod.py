@@ -76,14 +76,14 @@ LOGGING = {
                 'console',
                 'bugsnag',
             ],
-            'level': 'ERROR',
+            'level': 'INFO',
         },
         'importer': {
             'handlers': [
                 'console',
                 'bugsnag',
             ],
-            'level': 'ERROR',
+            'level': 'INFO',
         },
     },
     'handlers': {
