@@ -225,16 +225,16 @@ def create_bbscores(session):
         ).order_by('draw')
         for entry in entries:
             oa = entry.draw
-            group_name = entry.entity.name
-            group_type = entry.entity.get_kind_display()
+            group_name = entry.group.name
+            group_type = entry.group.get_kind_display()
             if group_type == 'Quartet':
-                contestant_id = entry.entity.bhs_id
+                contestant_id = entry.group.bhs_id
             elif group_type == 'Chorus':
-                contestant_id = entry.entity.code
+                contestant_id = entry.group.code
             else:
                 raise RuntimeError("Improper Entity Type")
             i = 1
-            for repertory in entry.entity.repertories.order_by('chart__title'):
+            for repertory in entry.group.repertories.order_by('chart__title'):
                 song_number = i
                 song_title = repertory.chart.title
                 i += 1
