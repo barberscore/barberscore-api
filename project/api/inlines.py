@@ -151,7 +151,7 @@ class EntryInline(admin.TabularInline):
         'session',
         'group',
         'prelim',
-        'seed',
+        'draw',
         'status',
     ]
     readonly_fields = [
