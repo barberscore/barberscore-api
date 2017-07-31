@@ -1524,7 +1524,6 @@ class Convention(TimeStampedModel):
             self.end_date,
         ])
 
-
     # Transitions
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published, conditions=[can_publish_convention])
@@ -1877,9 +1876,17 @@ class Entry(TimeStampedModel):
 
 
     # Methods
+
+    # Entry Transition Conditions
+    def can_invite_entry(self):
+        return all([
+            self.group.members.filter(is_admin=True),
+        ])
+
+
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.invited)
+    @transition(field=status, source='*', target=STATUS.invited, conditions=[can_invite_entry])
     def invite(self, *args, **kwargs):
         send_entry(self, 'entry_invite.txt')
         return
