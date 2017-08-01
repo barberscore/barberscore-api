@@ -50,7 +50,7 @@ from .fields import (
     PathAndRename,
 )
 from .managers import UserManager
-from .messages import send_entry
+from .messages import send_entry, send_session
 from .utils import create_bbscores
 
 config = api_apps.get_app_config('api')
@@ -4238,7 +4238,7 @@ class Session(TimeStampedModel):
             print(error)
         return "Complete"
 
-    # Permissions
+    # Session Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -4276,11 +4276,12 @@ class Session(TimeStampedModel):
             ),
         ])
 
-    # Transitions
+    # Session Transitions
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         """Make session available for entry."""
+        send_session(self, 'session_open.txt')
         return
 
     @fsm_log_by
