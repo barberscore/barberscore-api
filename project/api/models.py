@@ -1951,6 +1951,7 @@ class Group(TimeStampedModel):
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
+        (-5, 'aic', 'AIC',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
     )
