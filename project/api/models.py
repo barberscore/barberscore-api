@@ -66,6 +66,8 @@ import docraptor
 docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
 doc_api = docraptor.DocApi()
 
+log = logging.getLogger(__name__)
+
 
 class Appearance(TimeStampedModel):
     id = models.UUIDField(
