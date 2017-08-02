@@ -5,6 +5,7 @@ import random
 import uuid
 
 # Third-Party
+from auth0.v3.management.rest import Auth0Error
 from auth0.v3.authentication import Passwordless
 from django_fsm import (
     RETURN_VALUE,
@@ -33,13 +34,18 @@ from django.contrib.postgres.fields import (
     IntegerRangeField,
     # CIEmailField,
 )
+from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
+    validate_email,
 )
-from django.db import models
+from django.db import (
+    models,
+    IntegrityError,
+)
 from django.utils.encoding import smart_text
 from django.utils.timezone import now
 from django.template.loader import get_template
@@ -2344,6 +2350,25 @@ class Member(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
+
+    def create_account(self):
+        try:
+            validate_email(self.person.email)
+        except ValidationError as e:
+            log.error((e, self))
+            return e
+        try:
+            user, created = User.objects.get_or_create(
+                person=self.person,
+                email=self.person.email.lower()
+            )
+            return user, created
+        except IntegrityError as e:
+            log.error((e, self))
+            return e
+        except Auth0Error as e:
+            log.error((e.details, self))
+            return e
 
     # Permissions
     @staticmethod
