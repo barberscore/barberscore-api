@@ -2357,8 +2357,7 @@ class Member(TimeStampedModel):
         try:
             validate_email(self.person.email)
         except ValidationError as e:
-            log.error((e, self))
-            return e
+            return
         try:
             user, created = User.objects.get_or_create(
                 person=self.person,
@@ -2366,8 +2365,7 @@ class Member(TimeStampedModel):
             )
             return user, created
         except IntegrityError as e:
-            log.error((e, self))
-            return e
+            return
         except Auth0Error as e:
             log.error((e.details, self))
             return e
