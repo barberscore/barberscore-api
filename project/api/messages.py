@@ -37,6 +37,7 @@ def send_entry(entry, template):
         cc=ccs,
         bcc=[
             'admin@barberscore.com',
+            'proclamation56@gmail.com',
         ],
     )
     result = email.send()
@@ -90,6 +91,7 @@ def send_session(session, template):
                 cc=ccs,
                 bcc=[
                     'admin@barberscore.com',
+                    'proclamation56@gmail.com',
                 ],
             )
             result = email.send()
