@@ -379,12 +379,15 @@ class ConventionAdmin(admin.ModelAdmin):
         'organization',
         'start_date',
         'end_date',
+        'year',
+        'season',
         'status',
     )
 
     list_filter = (
         'status',
         'season',
+        'organization',
         'year',
     )
 
@@ -412,6 +415,9 @@ class ConventionAdmin(admin.ModelAdmin):
 
     ordering = (
         '-year',
+        '-season',
+        'organization__org_sort',
+        'organization__short_name',
     )
 
     save_on_top = True
@@ -1095,6 +1101,7 @@ class SessionAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'is_invitational',
+        'convention__organization',
         'convention__season',
         'convention__year',
     )
@@ -1120,6 +1127,8 @@ class SessionAdmin(admin.ModelAdmin):
     ordering = (
         '-convention__year',
         '-convention__season',
+        'convention__organization__org_sort',
+        'convention__organization__short_name',
         'kind',
     )
 
