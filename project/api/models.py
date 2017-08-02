@@ -31,6 +31,7 @@ from django.contrib.postgres.fields import (
     ArrayField,
     FloatRangeField,
     IntegerRangeField,
+    CIEmailField,
 )
 from django.core.files import File
 from django.core.validators import (
@@ -4845,7 +4846,7 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
-    email = models.EmailField(
+    email = CIEmailField(
         unique=True,
         editable=False,
     )
