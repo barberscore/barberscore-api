@@ -14,6 +14,12 @@ def test_api_endpoint(bhs_member):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_appearance_endpoint_list(bhs_member, appearance):
+    path = reverse('appearance-list')
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_assignment_endpoint_list(bhs_member, assignment):
     path = reverse('assignment-list')
     response = bhs_member.get(path)
@@ -50,6 +56,24 @@ def test_convention_endpoint_list(bhs_member, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_entry_endpoint_list(bhs_member, entry):
+    path = reverse('entry-list')
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_grantor_endpoint_list(bhs_member, grantor):
+    path = reverse('grantor-list')
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_group_endpoint_list(bhs_member, group):
+    path = reverse('group-list')
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_member_endpoint_list(bhs_member, member):
     path = reverse('member-list')
     response = bhs_member.get(path)
@@ -68,14 +92,8 @@ def test_officer_endpoint_list(bhs_member, officer):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_appearance_endpoint_list(bhs_member, appearance):
-    path = reverse('appearance-list')
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entry_endpoint_list(bhs_member, entry):
-    path = reverse('entry-list')
+def test_organization_endpoint_list(bhs_member, organization):
+    path = reverse('organization-list')
     response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -148,6 +166,12 @@ def test_user_endpoint_list(bhs_member, user):
 
 # Detail Views
 
+def test_appearance_endpoint_detail(bhs_member, appearance):
+    path = reverse('appearance-detail', args=(str(appearance.id),))
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_assignment_endpoint_detail(bhs_member, assignment):
     path = reverse('assignment-detail', args=(str(assignment.id),))
     response = bhs_member.get(path)
@@ -184,6 +208,24 @@ def test_convention_endpoint_detail(bhs_member, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_entry_endpoint_detail(bhs_member, entry):
+    path = reverse('entry-detail', args=(str(entry.id),))
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_grantor_endpoint_detail(bhs_member, grantor):
+    path = reverse('grantor-detail', args=(str(grantor.id),))
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_group_endpoint_detail(bhs_member, group):
+    path = reverse('group-detail', args=(str(group.id),))
+    response = bhs_member.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_member_endpoint_detail(bhs_member, member):
     path = reverse('member-detail', args=(str(member.id),))
     response = bhs_member.get(path)
@@ -202,14 +244,8 @@ def test_officer_endpoint_detail(bhs_member, officer):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_appearance_endpoint_detail(bhs_member, appearance):
-    path = reverse('appearance-detail', args=(str(appearance.id),))
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_entry_endpoint_detail(bhs_member, entry):
-    path = reverse('entry-detail', args=(str(entry.id),))
+def test_organization_endpoint_detail(bhs_member, organization):
+    path = reverse('organization-detail', args=(str(organization.id),))
     response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 

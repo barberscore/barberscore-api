@@ -11,6 +11,7 @@ from .models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Office,
@@ -126,6 +127,22 @@ class EntryFilter(FilterSet):
         fields = {
             'nomen': [
                 'icontains',
+            ],
+        }
+
+
+class GrantorFilter(FilterSet):
+    class Meta:
+        model = Grantor
+        fields = {
+            'status': [
+                'exact',
+            ],
+            'organization': [
+                'exact',
+            ],
+            'convention': [
+                'exact',
             ],
         }
 

@@ -23,6 +23,7 @@ from api.models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Office,
@@ -143,6 +144,15 @@ class EntryFactory(DjangoModelFactory):
 
     class Meta:
         model = Entry
+
+
+class GrantorFactory(DjangoModelFactory):
+    status = Grantor.STATUS.new
+    convention = SubFactory('api.factories.ConventionFactory')
+    organization = SubFactory('api.factories.OrganizationFactory')
+
+    class Meta:
+        model = Grantor
 
 
 class GroupFactory(DjangoModelFactory):

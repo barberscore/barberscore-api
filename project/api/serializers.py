@@ -15,6 +15,7 @@ from .models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Office,
@@ -258,6 +259,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'organization',
             'assignments',
             'sessions',
+            'grantors',
             'permissions',
         )
     # class JSONAPIMeta:
@@ -310,6 +312,22 @@ class EntrySerializer(serializers.ModelSerializer):
     #         'contestants',
     #         'participants',
     #     ]
+
+
+class GrantorSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Grantor
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'organization',
+            'convention',
+            'permissions',
+        )
 
 
 class GroupSerializer(serializers.ModelSerializer):

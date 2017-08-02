@@ -64,6 +64,12 @@ def test_entry_admin_list(admin_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_grantor_admin_list(admin_client, group):
+    path = reverse('admin:api_grantor_changelist')
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_group_admin_list(admin_client, group):
     path = reverse('admin:api_group_changelist')
     response = admin_client.get(path)
@@ -204,6 +210,12 @@ def test_convention_admin_detail(admin_client, convention):
 
 def test_entry_admin_detail(admin_client, entry):
     path = reverse('admin:api_entry_change', args=(str(entry.id),))
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_grantor_admin_detail(admin_client, grantor):
+    path = reverse('admin:api_grantor_change', args=(str(grantor.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

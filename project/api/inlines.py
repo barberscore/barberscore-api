@@ -10,6 +10,7 @@ from .models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Officer,
@@ -167,6 +168,23 @@ class EntryInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+
+
+class GrantorInline(admin.TabularInline):
+    model = Grantor
+    fields = [
+        'convention',
+        'organization',
+    ]
+    raw_id_fields = [
+        'convention',
+        'organization',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class GroupInline(admin.TabularInline):

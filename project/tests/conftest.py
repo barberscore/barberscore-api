@@ -15,6 +15,7 @@ from api.factories import (
     ContestFactory,
     ConventionFactory,
     EntryFactory,
+    GrantorFactory,
     GroupFactory,
     MemberFactory,
     OfficeFactory,
@@ -118,6 +119,11 @@ def convention():
 @pytest.fixture
 def entry():
     return EntryFactory()
+
+
+@pytest.fixture
+def grantor():
+    return GrantorFactory()
 
 
 @pytest.fixture

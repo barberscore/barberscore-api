@@ -19,6 +19,7 @@ from .inlines import (
     ContestInline,
     ConventionInline,
     EntryInline,
+    GrantorInline,
     GroupInline,
     MemberInline,
     OfficerInline,
@@ -40,6 +41,7 @@ from .models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Office,
@@ -402,6 +404,7 @@ class ConventionAdmin(admin.ModelAdmin):
     inlines = [
         AssignmentInline,
         SessionInline,
+        GrantorInline,
     ]
 
     readonly_fields = (
@@ -482,6 +485,29 @@ class EntryAdmin(admin.ModelAdmin):
     ordering = (
         'nomen',
     )
+
+
+@admin.register(Grantor)
+class GrantorAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        'status',
+        'organization',
+        'convention',
+    ]
+    list_display = [
+        'nomen',
+        'organization',
+        'convention',
+    ]
+
+    readonly_fields = [
+        'nomen',
+    ]
+    raw_id_fields = [
+        'organization',
+        'convention',
+    ]
 
 
 @admin.register(Group)

@@ -42,6 +42,7 @@ from .filters import (
     ContestantFilter,
     ConventionFilter,
     EntryFilter,
+    GrantorFilter,
     GroupFilter,
     MemberFilter,
     OfficeFilter,
@@ -64,6 +65,7 @@ from .models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Office,
@@ -91,6 +93,7 @@ from .serializers import (
     ContestSerializer,
     ConventionSerializer,
     EntrySerializer,
+    GrantorSerializer,
     GroupSerializer,
     MemberSerializer,
     OfficeCSVSerializer,
@@ -288,6 +291,7 @@ class ConventionViewSet(
         'sessions__contests',
         'sessions__entries',
         'assignments',
+        'grantors',
         'assignments__person',
     ).order_by('nomen')
     serializer_class = ConventionSerializer
@@ -329,6 +333,24 @@ class EntryViewSet(
         DRYPermissions,
     ]
     resource_name = "entry"
+
+
+class GrantorViewSet(viewsets.ModelViewSet):
+    queryset = Grantor.objects.select_related(
+        'organization',
+        'convention',
+    ).prefetch_related(
+    ).order_by('nomen')
+    serializer_class = GrantorSerializer
+    filter_class = None
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "grantor"
 
 
 class GroupViewSet(

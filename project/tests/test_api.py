@@ -62,6 +62,12 @@ def test_entry_endpoint_list(api_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_grantor_endpoint_list(api_client, grantor):
+    path = reverse('grantor-list')
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_group_endpoint_list(api_client, group):
     path = reverse('group-list')
     response = api_client.get(path)
@@ -204,6 +210,12 @@ def test_convention_endpoint_detail(api_client, convention):
 
 def test_entry_endpoint_detail(api_client, entry):
     path = reverse('entry-detail', args=(str(entry.id),))
+    response = api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_grantor_endpoint_detail(api_client, grantor):
+    path = reverse('grantor-detail', args=(str(grantor.id),))
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
