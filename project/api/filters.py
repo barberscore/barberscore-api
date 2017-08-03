@@ -356,6 +356,9 @@ class SessionFilter(FilterSet):
             'convention__assignments__kind': [
                 'exact',
             ],
+            'convention__assignments__category': [
+                'exact',
+            ],
         }
 
 
