@@ -4405,7 +4405,8 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.opened)
     def open(self, *args, **kwargs):
         """Make session available for entry."""
-        send_session(self, 'session_open.txt')
+        if not self.is_invitational:
+            send_session(self, 'session_open.txt')
         return
 
     @fsm_log_by
