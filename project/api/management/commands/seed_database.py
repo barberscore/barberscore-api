@@ -440,7 +440,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
-        district_beta_division_east_district_beta_quartet_championship_qualifier=AwardFactory(
+        district_beta_division_north_district_beta_quartet_championship_qualifier=AwardFactory(
             name='BTA Division North District Beta Quartet Championship Qualifier',
             organization=district_beta_division_north,
             rounds=1,
@@ -448,7 +448,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        district_beta_division_west_district_beta_quartet_championship_qualifier=AwardFactory(
+        district_beta_division_south_district_beta_quartet_championship_qualifier=AwardFactory(
             name='BTA Division South District Beta Quartet Championship Qualifier',
             organization=district_beta_division_south,
             rounds=1,
@@ -480,8 +480,8 @@ class Command(BaseCommand):
             season=Award.SEASON.fall,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_north_district_beta_chorus_championship_qualifier=AwardFactory(
-            name='BTA Division North District Beta Chorus Championship Qualifier',
+        district_beta_division_east_district_beta_chorus_championship_qualifier=AwardFactory(
+            name='BTA Division East District Beta Chorus Championship Qualifier',
             organization=district_beta_division_east,
             rounds=1,
             parent=district_beta_chorus_championship,
@@ -489,8 +489,8 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_south_district_beta_chorus_championship_qualifier=AwardFactory(
-            name='BTA Division South District Beta Chorus Championship Qualifier',
+        district_beta_division_west_district_beta_chorus_championship_qualifier=AwardFactory(
+            name='BTA Division West District Beta Chorus Championship Qualifier',
             organization=district_beta_division_west,
             rounds=1,
             parent=district_beta_chorus_championship,
