@@ -108,6 +108,9 @@ class ContestInline(admin.TabularInline):
     )
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class ContestantInline(admin.TabularInline):
@@ -168,6 +171,9 @@ class EntryInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class GrantorInline(admin.TabularInline):
@@ -395,3 +401,6 @@ class RoundInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
