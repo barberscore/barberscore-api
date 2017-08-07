@@ -498,24 +498,6 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_east_district_beta_chorus_championship_qualifier=AwardFactory(
-            name='BTA Division East District Beta Chorus Championship Qualifier',
-            organization=district_beta_division_east,
-            rounds=1,
-            parent=district_beta_chorus_championship,
-            level=Award.LEVEL.qualifier,
-            season=Award.SEASON.spring,
-            kind=Award.KIND.chorus,
-        )
-        district_beta_division_west_district_beta_chorus_championship_qualifier=AwardFactory(
-            name='BTA Division West District Beta Chorus Championship Qualifier',
-            organization=district_beta_division_west,
-            rounds=1,
-            parent=district_beta_chorus_championship,
-            level=Award.LEVEL.qualifier,
-            season=Award.SEASON.spring,
-            kind=Award.KIND.chorus,
-        )
         district_beta_division_north_quartet_championship=AwardFactory(
             name='BTA Division North Quartet Championship',
             organization=district_beta_division_north,
