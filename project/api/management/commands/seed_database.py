@@ -20,6 +20,7 @@ from api.factories import (
     ContestFactory,
     ConventionFactory,
     EntryFactory,
+    GrantorFactory,
     GroupFactory,
     MemberFactory,
     OfficeFactory,
@@ -46,6 +47,7 @@ from api.models import (
     Contestant,
     Convention,
     Entry,
+    Grantor,
     Group,
     Member,
     Office,
@@ -603,9 +605,6 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.fall,
         )
-        district_alpha_fall_convention_quartet_session = district_alpha_fall_convention.sessions.create(kind=Session.KIND.quartet)
-        district_alpha_fall_convention_chorus_session = district_alpha_fall_convention.sessions.create(kind=Session.KIND.chorus)
-
         district_alpha_spring_convention=ConventionFactory(
             name='District Alpha Spring Convention',
             start_date='2018-05-01',
@@ -614,9 +613,6 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.spring,
         )
-        district_alpha_spring_convention_quartet_session = district_alpha_spring_convention.sessions.create(kind=Session.KIND.quartet)
-        district_alpha_spring_convention_chorus_session = district_alpha_spring_convention.sessions.create(kind=Session.KIND.chorus)
-
         district_beta_fall_convention=ConventionFactory(
             name='District Beta Fall Convention',
             start_date='2017-09-01',
@@ -625,9 +621,6 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.fall,
         )
-        district_beta_fall_convention_quartet_session = district_beta_fall_convention.sessions.create(kind=Session.KIND.quartet)
-        district_beta_fall_convention_chorus_session = district_beta_fall_convention.sessions.create(kind=Session.KIND.chorus)
-
         district_beta_division_north_spring_convention=ConventionFactory(
             name='BTA Division North Spring Convention',
             start_date='2018-03-01',
@@ -637,9 +630,6 @@ class Command(BaseCommand):
             panel=2,
             season=Convention.SEASON.spring,
         )
-        district_beta_division_north_spring_convention_quartet_session = district_beta_division_north_spring_convention.sessions.create(kind=Session.KIND.quartet)
-        district_beta_division_north_spring_convention_chorus_session = district_beta_division_north_spring_convention.sessions.create(kind=Session.KIND.chorus)
-
         district_beta_division_south_spring_convention=ConventionFactory(
             name='BTA Division South Spring Convention',
             start_date='2018-04-01',
@@ -649,9 +639,6 @@ class Command(BaseCommand):
             panel=2,
             season=Convention.SEASON.spring,
         )
-        district_beta_division_south_spring_convention_quartet_session = district_beta_division_south_spring_convention.sessions.create(kind=Session.KIND.quartet)
-        district_beta_division_south_spring_convention_chorus_session = district_beta_division_south_spring_convention.sessions.create(kind=Session.KIND.chorus)
-
         district_beta_division_east_west_spring_convention=ConventionFactory(
             name='BTA Division East & West Spring Convention',
             start_date='2018-04-01',
@@ -661,8 +648,61 @@ class Command(BaseCommand):
             panel=2,
             season=Convention.SEASON.spring,
         )
-        district_beta_division_east_west_spring_convention_quartet_session = district_beta_division_east_west_spring_convention.sessions.create(kind=Session.KIND.quartet)
-        district_beta_division_east_west_spring_convention_chorus_session = district_beta_division_east_west_spring_convention.sessions.create(kind=Session.KIND.chorus)
+
+        # Add Sessions
+        district_alpha_fall_convention_quartet_session = SessionFactory(
+            convention=district_alpha_fall_convention,
+            kind=Session.KIND.quartet,
+        )
+        district_alpha_fall_convention_chorus_session = SessionFactory(
+            convention=district_alpha_fall_convention,
+            kind=Session.KIND.chorus,
+        )
+
+        district_alpha_spring_convention_quartet_session = SessionFactory(
+            convention=district_alpha_spring_convention,
+            kind=Session.KIND.quartet,
+        )
+        district_alpha_spring_convention_chorus_session = SessionFactory(
+            convention=district_alpha_spring_convention,
+            kind=Session.KIND.chorus,
+        )
+
+        district_beta_fall_convention_quartet_session = SessionFactory(
+            convention=district_beta_fall_convention,
+            kind=Session.KIND.quartet,
+        )
+        district_beta_fall_convention_chorus_session = SessionFactory(
+            convention=district_beta_fall_convention,
+            kind=Session.KIND.chorus,
+        )
+
+        district_beta_division_north_spring_convention_quartet_session = SessionFactory(
+            convention=district_beta_division_north_spring_convention,
+            kind=Session.KIND.quartet,
+        )
+        district_beta_division_north_spring_convention_chorus_session = SessionFactory(
+            convention=district_beta_division_north_spring_convention,
+            kind=Session.KIND.chorus,
+        )
+
+        district_beta_division_south_spring_convention_quartet_session = SessionFactory(
+            convention=district_beta_division_south_spring_convention,
+            kind=Session.KIND.quartet,
+        )
+        district_beta_division_south_spring_convention_chorus_session = SessionFactory(
+            convention=district_beta_division_south_spring_convention,
+            kind=Session.KIND.chorus,
+        )
+
+        district_beta_division_east_west_spring_convention_quartet_session = SessionFactory(
+            convention=district_beta_division_east_west_spring_convention,
+            kind=Session.KIND.quartet,
+        )
+        district_beta_division_east_west_spring_convention_chorus_session = SessionFactory(
+            convention=district_beta_division_east_west_spring_convention,
+            kind=Session.KIND.chorus,
+        )
 
         # Add Assignments
         conventions = Convention.objects.all()
@@ -710,28 +750,71 @@ class Command(BaseCommand):
         if options['breakpoint'] == 'conventions_created':
             return
 
+        # Add Grantors
+        GrantorFactory(
+            organization=district_alpha,
+            session=district_alpha_fall_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_alpha,
+            session=district_alpha_fall_convention_chorus_session,
+        )
+        GrantorFactory(
+            organization=district_alpha,
+            session=district_alpha_spring_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_alpha,
+            session=district_alpha_spring_convention_chorus_session,
+        )
+        GrantorFactory(
+            organization=district_beta,
+            session=district_beta_fall_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_beta,
+            session=district_beta_fall_convention_chorus_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_north,
+            session=district_beta_division_north_spring_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_north,
+            session=district_beta_division_north_spring_convention_chorus_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_south,
+            session=district_beta_division_south_spring_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_south,
+            session=district_beta_division_south_spring_convention_chorus_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_east,
+            session=district_beta_division_east_west_spring_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_east,
+            session=district_beta_division_east_west_spring_convention_chorus_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_west,
+            session=district_beta_division_east_west_spring_convention_quartet_session,
+        )
+        GrantorFactory(
+            organization=district_beta_division_west,
+            session=district_beta_division_east_west_spring_convention_chorus_session,
+        )
         # Add Contests
         for convention in conventions:
             for session in convention.sessions.all():
-                awards = Award.objects.filter(
-                    kind=session.kind,
-                    season=convention.season,
-                    organization=convention.organization,
-                )
-                for award in awards:
-                    session.contests.create(
-                        award=award,
-                    )
-
-                children = convention.organization.children.filter(
-
-                )
-                dawards = Award.objects.filter(
-                    kind=session.kind,
-                    season=session.convention.season,
-                    organization__in=convention.organization.children,
-                )
-
+                for grantor in session.grantors.all():
+                    for award in grantor.organization.awards.all():
+                        session.contests.create(
+                            award=award,
+                        )
 
         # Publish Conventions
         district_alpha_fall_convention.publish()
