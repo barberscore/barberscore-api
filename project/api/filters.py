@@ -141,7 +141,7 @@ class GrantorFilter(FilterSet):
             'organization': [
                 'exact',
             ],
-            'convention': [
+            'session': [
                 'exact',
             ],
         }

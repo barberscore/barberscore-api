@@ -291,7 +291,6 @@ class ConventionViewSet(
         'sessions__contests',
         'sessions__entries',
         'assignments',
-        'grantors',
         'assignments__person',
     ).order_by('nomen')
     serializer_class = ConventionSerializer
@@ -338,7 +337,7 @@ class EntryViewSet(
 class GrantorViewSet(viewsets.ModelViewSet):
     queryset = Grantor.objects.select_related(
         'organization',
-        'convention',
+        'session',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = GrantorSerializer
@@ -701,6 +700,7 @@ class SessionViewSet(
         'rounds__appearances',
         'rounds__slots',
         'rounds__panelists',
+        'grantors',
     ).order_by('nomen')
     serializer_class = SessionSerializer
     filter_class = SessionFilter

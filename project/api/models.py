@@ -1961,8 +1961,8 @@ class Grantor(TimeStampedModel):
     )
 
     # FKs
-    convention = models.ForeignKey(
-        'Convention',
+    session = models.ForeignKey(
+        'Session',
         related_name='grantors',
         on_delete=models.CASCADE,
     )
@@ -1975,7 +1975,7 @@ class Grantor(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('convention', 'organization',),
+            ('session', 'organization',),
         )
 
     class JSONAPIMeta:
@@ -1988,7 +1988,7 @@ class Grantor(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.convention,
+                    self.session,
                     self.organization,
                 ]
             )

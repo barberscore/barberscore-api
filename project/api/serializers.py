@@ -259,7 +259,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'organization',
             'assignments',
             'sessions',
-            'grantors',
             'permissions',
         )
     # class JSONAPIMeta:
@@ -325,7 +324,7 @@ class GrantorSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'organization',
-            'convention',
+            'session',
             'permissions',
         )
 
@@ -755,6 +754,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'contests',
             'entries',
             'rounds',
+            'grantors',
             'permissions',
         )
     # class JSONAPIMeta:
