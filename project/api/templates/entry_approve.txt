@@ -1,16 +1,27 @@
-Your contest entry has been Approved!  You're all set for the
-{{entry.session}} Session.
+Your contest entry has been Approved!
+You are officially entered for the {{entry.session.nomen}}.
 
-You may make changes to your Repertory (the list of songs you are singing) or
-your Participants (the list of those singing on stage) at any time from now
-until the convention.  Remember: every song you sing and every person on stage
-must be in the Barberscore system before your performance or you risk
-disqualification.
+However, prior to competing it is your responsibility to ensure your songs are
+in your Repertory. As of now, your Repertory contains the following songs:
 
-If you have any significant changes related to your contest entry (such as you
-need to scratch, etc.) please contact the DRCJ directly.
+{% for repertory in entry.group.repertories.all %}
+    - {{repertory.chart.nomen|safe}}
+{% empty %}
+  No Songs in Your Repertory
+{% endfor %}
 
-If you have any further questions or need additional assistance please contact
-customerservice@barbershop.org
+You can add additional songs to your Repertory at any time from now until the
+convention. Remember: every song you sing on stage must be in the Barberscore
+system prior to your performance or you risk disqualification.
+
+For choruses, you may make changes to your Participants (the list of those
+singing on stage) at any time from now until the convention.
+
+If you have any significant changes (such as you need to scratch, etc.) or have
+questions related to your contest entry, please contact the DRCJ(s) of the
+contest directly (cc'd on this email.)
+
+If you need additional support or technical assistance, please contact
+customerservice@barbershop.org.
 
 Break a leg!
