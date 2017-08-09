@@ -1459,6 +1459,13 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    description = models.TextField(
+        help_text="""
+            A general description field; usually used for hotel and venue info.""",
+        blank=True,
+        max_length=1000,
+    )
+
     # FKs
     venue = models.ForeignKey(
         'Venue',

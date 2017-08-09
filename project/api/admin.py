@@ -374,6 +374,7 @@ class ConventionAdmin(admin.ModelAdmin):
         'close_date',
         'start_date',
         'end_date',
+        'description',
     )
 
     list_display = (
