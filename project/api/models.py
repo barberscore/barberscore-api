@@ -1714,6 +1714,7 @@ class Entry(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.group,
+                    '; ',
                     self.session,
                 ]
             )
