@@ -1710,11 +1710,10 @@ class Entry(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
+        self.nomen = "; ".join(
             map(
                 lambda x: smart_text(x), [
                     self.group,
-                    '; ',
                     self.session,
                 ]
             )
