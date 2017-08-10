@@ -304,6 +304,7 @@ class RepertoryInline(admin.TabularInline):
     fields = [
         'chart',
         'group',
+        'status',
     ]
     raw_id_fields = [
         'chart',
