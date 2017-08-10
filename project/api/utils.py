@@ -2,9 +2,11 @@
 import csv
 import logging
 import sys
+from urllib.parse import urljoin
 
 # Third-Party
 import requests
+from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
 from cloudinary.uploader import upload
 
@@ -100,17 +102,22 @@ def update_members():
 
 
 def get_auth0_token():
-    url = 'https://barberscore.auth0.com/oauth/token'
-    payload = {
-        'grant_type': 'client_credentials',
-        'client_id': settings.AUTH0_API_ID,
-        'client_secret': settings.AUTH0_API_SECRET,
-        'audience': settings.AUTH0_AUDIENCE,
-    }
-    response = requests.post(url, payload)
-    json = response.json()
-    return json['access_token']
+    client = GetToken(settings.AUTH0_DOMAIN)
+    token = client.client_credentials(
+        settings.AUTH0_API_ID,
+        settings.AUTH0_API_SECRET,
+        settings.AUTH0_AUDIENCE,
+    )
+    return token['access_token']
 
+
+def get_auth0_me(token):
+    url = urljoin("https://{0}".format(settings.AUTH0_DOMAIN), 'userinfo')
+    headers = {
+        'Authorization': 'Bearer {0}'.format(token)
+    }
+    response = requests.get(url, headers=headers)
+    return response
 
 def update_auth0_id(user):
     token = get_auth0_token()
@@ -130,6 +137,24 @@ def update_auth0_id(user):
     return log.info("Updated {0}".format(user))
 
 
+def impersonate(user):
+    token = get_auth0_token()
+    me = get_auth0_me()
+    url = urljoin("https://{0}".format(settings.AUTH0_DOMAIN), 'users/{0}/impersonate'.format(user.auth0_id))
+    headers = {
+        'Authorization': 'Bearer {0}'.format(token),
+    }
+    data = {
+        'protocol': 'oauth2',
+        'impersonator_id': me.auth0_id,
+        'client_id': settings.AUTH0_CLIENT_ID,
+        'additionalParameters': {
+            'response_type': 'code',
+            'scope': 'openid profile',
+        },
+    }
+    response = requests.post(url, data=data, headers=headers)
+    return response
 # def create_account(person):
 #     if not person.email:
 #         raise RuntimeError("No email")
@@ -247,6 +272,92 @@ def create_bbscores(session):
                     'song_title': song_title,
                 }
                 output.append(row)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for row in output:
+            writer.writerow(row)
+
+
+def create_drcj_report(session):
+    Entry = config.get_model('Entry')
+    with open('drcj_report.csv', 'w') as f:
+        output = []
+        fieldnames = [
+            'oa',
+            'group_name',
+            'representing',
+            'evaluation',
+            'private',
+            'bhs_id',
+            'group_exp_date',
+            'repertory_count',
+            'particpant_count',
+            'expiring_count',
+            'awards',
+            'persons',
+        ]
+        entries = session.entries.filter(
+            status=Entry.STATUS.approved,
+        ).order_by('draw')
+        for entry in entries:
+            oa = entry.draw
+            group_name = entry.group.name
+            representing = entry.group.organization.name
+            evaluation = entry.is_evaluation
+            private = entry.is_private
+            bhs_id = entry.group.bhs_id
+            repertory_count = entry.group.repertories.filter(
+                status__gt=0,
+            ).count()
+            group_exp_date = None
+            repertory_count = entry.group.repertories.filter(
+                status__gt=0,
+            ).count()
+            participants = entry.participants.all()
+            participant_count = participants.count()
+            expiring_count = participants.filter(
+                member__person__dues_thru__lte=session.convention.close_date,
+            ).count()
+            awards_list = []
+            for contestant in entry.contestants.all():
+                awards_list.append(contestant.contest.award.name)
+            awards = "\n".join(filter(None, awards_list))
+            persons_list = []
+            if entry.group.kind == entry.group.KIND.chorus:
+                participants = entry.participants.filter(
+                    part=entry.participants.model.PART.director,
+                ).order_by('part')
+            else:
+                participants = entry.participants.all().order_by('part')
+            for participant in participants:
+                persons_list.append(
+                    participant.get_part_display(),
+                )
+                persons_list.append(
+                    participant.member.person.nomen,
+                )
+                persons_list.append(
+                    participant.member.person.email,
+                )
+                persons_list.append(
+                    participant.member.person.phone,
+                )
+            persons = "\n".join(filter(None, persons_list))
+            row = {
+                'oa': oa,
+                'group_name': group_name,
+                'representing': representing,
+                'evaluation': evaluation,
+                'private': private,
+                'bhs_id': bhs_id,
+                'group_exp_date': group_exp_date,
+                'repertory_count': repertory_count,
+                'particpant_count': participant_count,
+                'expiring_count': expiring_count,
+                'awards': awards,
+                'persons': persons,
+            }
+            output.append(row)
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for row in output:

@@ -58,7 +58,7 @@ from .fields import (
 )
 from .managers import UserManager
 from .messages import send_entry, send_session
-from .utils import create_bbscores
+from .utils import create_bbscores, create_drcj_report
 
 config = api_apps.get_app_config('api')
 
@@ -4278,6 +4278,16 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
+    drcj_report = models.FileField(
+        upload_to=PathAndRename(
+            prefix='drcj_report',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     oss_pdf = models.FileField(
         upload_to=PathAndRename(
             prefix='oss',
@@ -4434,6 +4444,16 @@ class Session(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Make draw public."""
+        create_bbscores(self)
+        self.bbscores.save(
+            'bbscores.csv',
+            File(open('bbscores.csv')),
+        )
+        create_drcj_report(self)
+        self.drcj_report.save(
+            'drcj_report.csv',
+            File(open('drcj_report.csv')),
+        )
         return
 
     @fsm_log_by
@@ -4445,6 +4465,11 @@ class Session(TimeStampedModel):
         self.bbscores.save(
             'bbscores.csv',
             File(open('bbscores.csv')),
+        )
+        create_drcj_report(self)
+        self.drcj_report.save(
+            'drcj_report.csv',
+            File(open('drcj_report.csv')),
         )
         # Build the rounds
         Assignment = config.get_model('Assignment')

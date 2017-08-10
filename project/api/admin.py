@@ -1114,6 +1114,7 @@ class SessionAdmin(admin.ModelAdmin):
         'is_invitational',
         'scoresheet',
         'bbscores',
+        'drcj_report',
     ]
 
     list_display = [

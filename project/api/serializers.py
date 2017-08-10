@@ -750,6 +750,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'is_invitational',
             'scoresheet',
             'bbscores',
+            'drcj_report',
             'num_rounds',
             'convention',
             'contests',
