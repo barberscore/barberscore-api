@@ -62,7 +62,6 @@ CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
 # Bugsnag
 BUGSNAG_API_KEY = get_env_variable("BUGSNAG_API_KEY")
-BUGSNAG_RELEASE_STAGE = get_env_variable("BUGSNAG_RELEASE_STAGE")
 MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
 
 
