@@ -1,33 +1,19 @@
-# Local
+# Standard Libary
+import sys
+
 # Third-Party
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
+# Local
 from .base import *
 
-# Core
-DEBUG = True
-
-# Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Debug Toolbar
-MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-] + MIDDLEWARE
-
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-
-INTERNAL_IPS = [
-    '127.0.0.1',
+# Heroku
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+ALLOWED_HOSTS = [
+    '.barberscore.com',
+    '.herokuapp.com',
 ]
 
 # Auth0
@@ -59,50 +45,39 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 #  Docraptor
 DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
 
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
+
 # Logging
 LOGGING = {
     'version': 1,
-    "disable_existing_loggers": False,
+    'disable_existing_loggers': False,
     'loggers': {
         'api': {
-            'level': 'DEBUG',
             'handlers': [
                 'console',
             ],
+            'level': 'INFO',
         },
         'importer': {
-            'level': 'DEBUG',
             'handlers': [
                 'console',
             ],
-        },
-        'console': {
-            'level': 'DEBUG',
-            'handlers': [
-                'console',
-            ],
+            'level': 'INFO',
         },
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-    },
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(message)s',
+            'stream': sys.stdout,
         },
     },
 }
-
-INSTALLED_APPS += [
-    'debug_toolbar',
-]

@@ -58,13 +58,10 @@ from .fields import (
 )
 from .managers import UserManager
 from .messages import send_entry, send_session
+from .services import create_pdf
 from .utils import create_bbscores, create_drcj_report
 
 config = api_apps.get_app_config('api')
-
-import docraptor
-docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-doc_api = docraptor.DocApi()
 
 log = logging.getLogger(__name__)
 
@@ -236,21 +233,19 @@ class Appearance(TimeStampedModel):
             'scores_one_avg' : scores_one_avg,
             'scores_two_avg' : scores_two_avg,
         })
-        try:
-            create_response = doc_api.create_doc({
-                "test": True,
-                "document_content": template,
-                "name": "var-{0}.pdf".format(id),
-                "document_type": "pdf",
-            })
-            f = ContentFile(create_response)
-            appearance.var_pdf.save(
-                "{0}.pdf".format(id),
-                f
-            )
-            appearance.save()
-        except docraptor.rest.ApiException as error:
-            print(error)
+        payload = {
+            "test": True,
+            "document_content": template,
+            "name": "var-{0}.pdf".format(id),
+            "document_type": "pdf",
+        }
+        response = create_pdf(payload)
+        f = ContentFile(response)
+        appearance.var_pdf.save(
+            "{0}.pdf".format(id),
+            f
+        )
+        appearance.save()
         return "Complete"
 
     def calculate(self, *args, **kwargs):
@@ -1763,21 +1758,19 @@ class Entry(TimeStampedModel):
             'assignments': assignments,
             'contestants': contestants,
         })
-        try:
-            create_response = doc_api.create_doc({
-                "test": True,
-                "document_content": template,
-                "name": "csa-{0}.pdf".format(id),
-                "document_type": "pdf",
-            })
-            f = ContentFile(create_response)
-            entry.csa_pdf.save(
-                "{0}.pdf".format(id),
-                f
-            )
-            entry.save()
-        except docraptor.rest.ApiException as error:
-            print(error)
+        payload = {
+            "test": True,
+            "document_content": template,
+            "name": "csa-{0}.pdf".format(id),
+            "document_type": "pdf",
+        }
+        response = create_pdf(payload)
+        f = ContentFile(response)
+        entry.csa_pdf.save(
+            "{0}.pdf".format(id),
+            f
+        )
+        entry.save()
         return "Complete"
 
     def calculate_rank(self):
@@ -3771,21 +3764,24 @@ class Round(TimeStampedModel):
             'winners': winners,
             'medalists': medalists,
         })
-        try:
-            create_response = doc_api.create_doc({
-                "test": True,
-                "document_content": template,
-                "name": "announcements-{0}.pdf".format(id),
-                "document_type": "pdf",
-            })
-            f = ContentFile(create_response)
-            self.ann_pdf.save(
-                "{0}.pdf".format(id),
-                f
-            )
-            self.save()
-        except docraptor.rest.ApiException as error:
-            print(error)
+        payload = {
+            "test": True,
+            "document_content": template,
+            "name": "announcements-{0}.pdf".format(id),
+            "document_type": "pdf",
+        }
+        create_response = create_pdf({
+            "test": True,
+            "document_content": template,
+            "name": "announcements-{0}.pdf".format(id),
+            "document_type": "pdf",
+        })
+        f = ContentFile(create_response)
+        self.ann_pdf.save(
+            "{0}.pdf".format(id),
+            f
+        )
+        self.save()
         return "Complete"
 
     # Transitions

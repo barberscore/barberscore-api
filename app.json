@@ -24,7 +24,7 @@
   "env": {
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures which settings to use.  Do not edit.",
-      "value": "settings.dev",
+      "value": "settings.review",
       "required": true
     },
     "PYTHONPATH": {

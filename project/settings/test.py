@@ -11,6 +11,3 @@ DATABASES['default']['TEST'] = {
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-#  Docraptor
-DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
