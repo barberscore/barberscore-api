@@ -21,9 +21,6 @@
     "docraptor:starter",
     "heroku-postgresql:hobby-dev"
   ],
-  "scripts": {
-    "postdeploy": "django-admin seed_database"
-  },
   "env": {
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures which settings to use.  Do not edit.",
