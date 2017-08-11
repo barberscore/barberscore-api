@@ -135,12 +135,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Bugsnag
-BUGSNAG_NOTIFY_RELEASE = 'staging,production'
-
-# Docraptor
-DOCRAPTOR_URL = 'https://docraptor.com'
-
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
