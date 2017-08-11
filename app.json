@@ -21,6 +21,9 @@
     "docraptor:starter",
     "heroku-postgresql:hobby-dev"
   ],
+  "scripts": {
+    "postdeploy": "django-admin migrate --noinput"
+  },
   "env": {
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures which settings to use.  Do not edit.",
