@@ -1,7 +1,7 @@
 {
   "name": "Barberscore API",
   "description": "Scoring API for the Barbershop Harmony Society",
-  "logo": "https://barberscore-api.herokuapp.com/static/api/bhs_logo.png",
+  "logo": "https://s3-us-west-1.amazonaws.com/barberscore/bhs_logo.png",
   "repository": "https://github.com/barberscore/barberscore-api",
   "stack": "heroku-16",
   "success_url": "/admin/",
@@ -19,9 +19,7 @@
   "addons": [
     "cloudinary:starter",
     "docraptor:starter",
-    "heroku-postgresql:hobby-dev",
-    "papertrail:choklad",
-    "sendgrid:starter"
+    "heroku-postgresql:hobby-dev"
   ],
   "scripts": {
     "postdeploy": "django-admin seed_database"
@@ -29,7 +27,7 @@
   "env": {
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures which settings to use.  Do not edit.",
-      "value": "settings.prod",
+      "value": "settings.dev",
       "required": true
     },
     "PYTHONPATH": {
@@ -44,45 +42,36 @@
     },
     "AUTH0_API_ID": {
       "description": "Auth0 Management app id.",
+      "value": "SUFlInihKYP3Dt7FNVRMFnyZE5aujqym",
       "required": true
     },
     "AUTH0_API_SECRET": {
-      "description": "Auth0 Management secret.",
+      "description": "Auth0 Management secret.  Get from admin.",
       "required": true
     },
     "AUTH0_AUDIENCE": {
       "description": "Auth0 Management endpoint.",
+      "value": "https://barberscore-dev.auth0.com/api/v2/",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
       "description": "Auth0 Authentication app id.",
+      "value": "C68OwqrFDjUa6lv8t4jZQPDksWmrtvoF",
       "required": true
     },
     "AUTH0_CLIENT_SECRET": {
-      "description": "Auth0 Authentication secret.",
+      "description": "Auth0 Authentication secret.  Get from admin.",
       "required": true
     },
     "AUTH0_DOMAIN": {
       "description": "Auth0 Authentication endpoint.",
+      "value": "barberscore-dev.auth0.com",
       "required": true
     },
     "AUTH0_PUBLIC_KEY": {
       "description": "Auth0 X509 Certificate for RS256 encryption.",
+      "value": "MIIC+jCCAeKgAwIBAgIJbuZM6FlzJ6TDMA0GCSqGSIb3DQEBBQUAMCQxIjAgBgNVBAMTGWJhcmJlcnNjb3JlLWRldi5hdXRoMC5jb20wHhcNMTYxMDI2MjAzNDE0WhcNMzAwNzA1MjAzNDE0WjAkMSIwIAYDVQQDExliYXJiZXJzY29yZS1kZXYuYXV0aDAuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArktLSct+7BT6SDLJk6P7esPEk2rWTd6+S97gB8oZ9I4WTiGx7jsPgoYn9pUltnHF2r0N1WuOM8UCUMfkb/lwHcpBGsNx2cxsvr0oVsgKEynJNn0ynRCR2EH7b/iYrtOtMyE1CXtMMgT9vMhSe/mE8VxsTvgev1nQmR8lq/jXZvLY068/BbicWsrJ11/7toSiJEMH3yEwzlK7ZRDjOorp0sp3//ZCZeP4ep9SwK/dNthUgAe1yfQokKQCnW5aMYYZgMG4RDIKND28PGMe7QmesTbSzoXTPDZBMLJC0o/CSZlQrPzg5SmfyGO0sl+ZnWt9PBeCYjLgtBbKDOH9o8gNTQIDAQABoy8wLTAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBS9m0sa23+rX1a13/2+h9f2UTlrzDANBgkqhkiG9w0BAQUFAAOCAQEALsbWOoKVb4hEFl7akai9bqRKDMxXf6ZBu7tQMFVDE3xr5Rzc11aeyUCWA9oIrv07JNHQI1OPrXHSKdd+UDAiO2N1pTIfrOjySNxBoTkr0IJWp+SQjiNr+vvbJGSgThvebHmxNVIQ+WQosVmWHobuZ+tFLXyoMAxse01/vNGW3LqsMWG32icIQ4Xra2wKmXag/oQGlu4NASRuEhtP8Lp47v1Dm+rablf5MmFd3dtErVU9a3cqeGUEIjYhTK18slv55LOEdMPklRgkDUlvCIxd3RA1yZw/f9vAojVPQmXNY95Kzg14aqhiRGSeNhG6BRMnDvzm3/rx4UezNmLxT6F1cg==",
       "required": true
-    },
-    "BUGSNAG_API_KEY": {
-      "description": "The Bugsnag API key.  Used for exception reporting.",
-      "required": true
-    },
-    "BUGSNAG_NOTIFY_RELEASE": {
-      "description": "Comma seperated list of release stages reported to Bugsnag.",
-      "value": "staging, production",
-      "required": false
-    },
-    "BUGSNAG_RELEASE_STAGE": {
-      "description": "The current release stage reported to Bugsnag.",
-      "value": "development",
-      "required": false
     },
     "HEROKU_APP_NAME": {
       "description": "Will be populated by Heroku in Review App."
