@@ -280,6 +280,7 @@ def create_bbscores(session):
 
 def create_drcj_report(session):
     Entry = config.get_model('Entry')
+    Group = config.get_model('Group')
     with open('drcj_report.csv', 'w') as f:
         output = []
         fieldnames = [
@@ -295,6 +296,7 @@ def create_drcj_report(session):
             'expiring_count',
             'awards',
             'persons',
+            'chapters',
         ]
         entries = session.entries.filter(
             status=Entry.STATUS.approved,
@@ -319,19 +321,20 @@ def create_drcj_report(session):
                 member__person__dues_thru__lte=session.convention.close_date,
             ).count()
             awards_list = []
-            for contestant in entry.contestants.all():
+            for contestant in entry.contestants.all().order_by('contest__award__name'):
                 awards_list.append(contestant.contest.award.name)
             awards = "\n".join(filter(None, awards_list))
             persons_list = []
             if entry.group.kind == entry.group.KIND.chorus:
                 participants = entry.participants.filter(
-                    part=entry.participants.model.PART.director,
-                ).order_by('part')
+                    member__part=entry.participants.member.PART.director,
+                ).order_by('member__part')
             else:
-                participants = entry.participants.all().order_by('part')
+                participants = entry.participants.all().order_by('member__part')
+            chapters_list = []
             for participant in participants:
                 persons_list.append(
-                    participant.get_part_display(),
+                    participant.member.get_part_display(),
                 )
                 persons_list.append(
                     participant.member.person.nomen,
@@ -342,6 +345,22 @@ def create_drcj_report(session):
                 persons_list.append(
                     participant.member.person.phone,
                 )
+                if entry.group.kind == Group.KIND.chorus:
+                    chapters = None
+                    continue
+                person_chapter_list = []
+                for member in participant.member.person.members.filter(
+                    status=10,
+                    group__kind=Group.KIND.chorus,
+                ).distinct('group'):
+                    person_chapter_list.append(
+                        member.group.name,
+                    )
+                chapters_list.extend(
+                    person_chapter_list
+                )
+                list(set(chapters_list))
+            chapters = "\n".join(filter(None, chapters_list))
             persons = "\n".join(filter(None, persons_list))
             row = {
                 'oa': oa,
@@ -356,6 +375,7 @@ def create_drcj_report(session):
                 'expiring_count': expiring_count,
                 'awards': awards,
                 'persons': persons,
+                'chapters': chapters,
             }
             output.append(row)
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
