@@ -327,7 +327,7 @@ def create_drcj_report(session):
             persons_list = []
             if entry.group.kind == entry.group.KIND.chorus:
                 participants = entry.participants.filter(
-                    member__part=entry.participants.member.PART.director,
+                    member__part=-1,
                 ).order_by('member__part')
             else:
                 participants = entry.participants.all().order_by('member__part')
