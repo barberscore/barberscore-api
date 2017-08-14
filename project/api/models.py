@@ -5056,7 +5056,7 @@ class User(AbstractBaseUser):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
@@ -5067,7 +5067,7 @@ class User(AbstractBaseUser):
     def has_object_read_permission(self, request):
         if request.user.is_authenticated():
             return self == request.user
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_write_permission(self, request):

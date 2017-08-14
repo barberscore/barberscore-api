@@ -792,10 +792,10 @@ class UserViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "user"
 
-    @list_route(methods=['get'], permission_classes=[IsAuthenticated])
-    def me(self, request):
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+    # @list_route(methods=['get'], permission_classes=[IsAuthenticated])
+    # def me(self, request):
+    #     serializer = self.get_serializer(request.user)
+    #     return Response(serializer.data)
 
 
 class StateLogViewSet(viewsets.ModelViewSet):
