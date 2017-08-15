@@ -17,7 +17,7 @@ class CoalesceFilterBackend(DjangoFilterBackend):
 
 class ScoreFilterBackend(DRYPermissionFiltersBase):
     def filter_list_queryset(self, request, queryset, view):
-        """Limit all list requests to entry if not superuser."""
+        """Limit all requests to superuser."""
         if request.user.is_authenticated():
             if request.user.is_staff:
                 return queryset.all()
