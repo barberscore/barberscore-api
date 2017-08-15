@@ -3363,7 +3363,7 @@ class Person(TimeStampedModel):
             name = HumanName(self.name)
             return name.first
         else:
-            return None
+            return ""
 
     @cached_property
     def nick_name(self):
@@ -3371,7 +3371,7 @@ class Person(TimeStampedModel):
             name = HumanName(self.name)
             return name.nickname
         else:
-            return None
+            return ""
 
     @cached_property
     def common_name(self):
@@ -3385,7 +3385,7 @@ class Person(TimeStampedModel):
             last = name.last
             return "{0} {1}".format(first, last)
         else:
-            return None
+            return ""
 
     @cached_property
     def full_name(self):
@@ -3399,7 +3399,7 @@ class Person(TimeStampedModel):
             full.append(name.nickname)
             return " ".join(filter(None, full))
         else:
-            return None
+            return ""
 
     @cached_property
     def formal_name(self):
@@ -3413,7 +3413,7 @@ class Person(TimeStampedModel):
             formal.append(name.suffix)
             return " ".join(filter(None, formal))
         else:
-            return None
+            return ""
 
     # Internals
     class JSONAPIMeta:
