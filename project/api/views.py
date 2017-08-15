@@ -193,7 +193,6 @@ class AwardViewSet(
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    pagination_class = None
     permission_classes = [
         DRYPermissions,
     ]
@@ -840,7 +839,6 @@ class OfficeViewCSV(viewsets.ReadOnlyModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
     ]
-    pagination_class = None
     renderer_classes = [
         OfficeRendererCSV,
     ]
