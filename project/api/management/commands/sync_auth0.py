@@ -45,7 +45,11 @@ class Command(BaseCommand):
         return lst
 
     def generate_payload(self, user):
+        if user.person.email != user.email:
+            user.email = user.person.email
+            user.save()
         email = user.email
+
         try:
             name = user.person.name
         except ValueError:
@@ -54,6 +58,7 @@ class Command(BaseCommand):
             bhs_id = user.person.bhs_id
         except ValueError:
             bhs_id = None
+        barberscore_id = str(user.id)
         payload = {
             "connection": "email",
             "email": email,
@@ -62,7 +67,8 @@ class Command(BaseCommand):
                 "name": name
             },
             "app_metadata": {
-                "bhs_id": bhs_id
+                "bhs_id": bhs_id,
+                "barberscore_id": barberscore_id,
             }
         }
         return payload
@@ -93,17 +99,18 @@ class Command(BaseCommand):
             try:
                 # Update existing
                 account = auth0.users.update(user.auth0_id, payload)
-                log.info("UPDATED: {0}".format(account))
+                log.info("UPDATED: {0}".format(account['user_id']))
             except Auth0Error as e:
                 if e.status_code == 404:
                     # Reset orphans
                     account = auth0.users.create(payload)
                     user.auth0_id = account['user_id']
                     user.save()
-                    log.info("RESET: {0}".format(account))
+                    log.info("RESET: {0}".format(account['user_id']))
                 else:
                     # Other errors
                     log.error(e)
+        account = None
         # Get non-Auth0, non-admin
         users = User.objects.filter(
             is_staff=False,
@@ -119,4 +126,4 @@ class Command(BaseCommand):
                 continue
             user.auth0_id = account['user_id']
             user.save()
-            log.info("CREATED: {0}".format(account))
+            log.info("CREATED: {0}".format(account['user_id']))
