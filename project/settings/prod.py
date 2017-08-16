@@ -16,6 +16,13 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',
 ]
 
+# BHS Database
+BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
+DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
 # Auth0
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")

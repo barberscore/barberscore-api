@@ -40,15 +40,9 @@ TIME_FORMAT = 'c'
 DATETIME_FORMAT = 'c'
 
 # Database
-DATABASE_URL = get_env_variable("DATABASE_URL")
-BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
 DATABASES = {
     'default': dj_database_url.config(conn_max_age=600),
-    'bhs_db': dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
 }
-DATABASE_ROUTERS = [
-    'routers.BHSRouter',
-]
 
 # Authentication
 AUTH_USER_MODEL = "api.User"
