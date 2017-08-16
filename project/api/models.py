@@ -89,6 +89,7 @@ class Appearance(TimeStampedModel):
         (50, 'scratched', 'Scratched',),
         (60, 'cleared', 'Cleared',),
         (90, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -968,6 +969,7 @@ class Contest(TimeStampedModel):
         (35, 'verified', 'Verified',),
         (42, 'finished', 'Finished',),
         (45, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -1123,6 +1125,7 @@ class Contestant(TimeStampedModel):
         (70, 'scratched', 'Scratched',),
         (80, 'disqualified', 'Disqualified',),
         (90, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -1575,6 +1578,7 @@ class Entry(TimeStampedModel):
         (60, 'finished', 'Finished',),
         (70, 'completed', 'Completed',),
         (90, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -3643,6 +3647,7 @@ class Round(TimeStampedModel):
         # (40, 'drafted', 'Drafted',),
         (50, 'announced', 'Announced',),
         # (50, 'final', 'Final',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -4669,6 +4674,7 @@ class Song(TimeStampedModel):
         (40, 'confirmed', 'Confirmed',),
         (50, 'final', 'Final',),
         (90, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
