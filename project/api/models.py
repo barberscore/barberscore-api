@@ -1566,11 +1566,10 @@ class Entry(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (5, 'invited', 'Invited',),
-        (7, 'declined', 'Declined',),
+        (7, 'withdrawn', 'Withdrawn',),
         (10, 'submitted', 'Submitted',),
         (20, 'approved', 'Approved',),
         (30, 'rejected', 'Rejected',),
-        (40, 'withdrew', 'Withdrew',),
         (50, 'verified', 'Verified',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
@@ -1905,9 +1904,9 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.declined)
-    def decline(self, *args, **kwargs):
-        send_entry(self, 'entry_decline.txt')
+    @transition(field=status, source='*', target=STATUS.withdrawn)
+    def withdraw(self, *args, **kwargs):
+        send_entry(self, 'entry_withdraw.txt')
         return
 
     @fsm_log_by
