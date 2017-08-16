@@ -4,8 +4,10 @@ import logging
 # Django
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.apps import apps as api_apps
 
 log = logging.getLogger(__name__)
+config = api_apps.get_app_config('api')
 
 
 def send_entry(entry, template):
@@ -56,8 +58,10 @@ def send_entry(entry, template):
 
 
 def send_session(session, template):
-    groups = session.convention.organization.groups.filter(
+    Group = config.get_model('Group')
+    groups = Group.objects.filter(
         status=10,
+        organization__grantors__session=session,
         kind=session.kind,
     )
     assignments = session.convention.assignments.filter(
