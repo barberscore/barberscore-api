@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import (
     Human,
-    Entity,
+    Structure,
     Membership,
     Status,
     Subscription,
@@ -93,8 +93,8 @@ class HumanAdmin(ReadOnlyAdmin):
         'bhs_id',
     ]
 
-@admin.register(Entity)
-class EntityAdmin(ReadOnlyAdmin):
+@admin.register(Structure)
+class StructureAdmin(ReadOnlyAdmin):
     fields = [
         'id',
         'name',
@@ -151,19 +151,19 @@ class EntityAdmin(ReadOnlyAdmin):
 class MembershipAdmin(ReadOnlyAdmin):
     fields = [
         'id',
-        'entity',
+        'structure',
         'status',
     ]
 
     list_display = [
         'id',
-        'entity',
+        'structure',
         'status',
     ]
 
     readonly_fields = [
         'id',
-        'entity',
+        'structure',
         'status',
     ]
 

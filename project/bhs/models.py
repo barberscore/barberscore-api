@@ -90,7 +90,7 @@ class Human(models.Model):
         db_table = 'vwMembers'
 
 
-class Entity(models.Model):
+class Structure(models.Model):
     CHAPTER = 'chapter'
     DISTRICT = 'district'
     ORGANIZATION = 'organization'
@@ -145,7 +145,7 @@ class Entity(models.Model):
     # FKs
     status = models.ForeignKey(
         'Status',
-        related_name='entities',
+        related_name='structures',
         editable=False,
     )
 
@@ -167,7 +167,6 @@ class Entity(models.Model):
 
     class Meta:
         db_table = 'vwStructures'
-        verbose_name_plural = 'entities'
 
 
 class Status(models.Model):
@@ -196,8 +195,8 @@ class Membership(models.Model):
         editable=False,
     )
     # FKs
-    entity = models.ForeignKey(
-        'Entity',
+    structure = models.ForeignKey(
+        'Structure',
         related_name='memberships',
         editable=False,
         db_column='object_id',
