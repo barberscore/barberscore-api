@@ -1,6 +1,6 @@
 from django.db import models
 
-class Person(models.Model):
+class Human(models.Model):
     id = models.CharField(
         primary_key=True,
         max_length=255,
@@ -90,7 +90,7 @@ class Person(models.Model):
         db_table = 'vwMembers'
 
 
-class Group(models.Model):
+class Entity(models.Model):
     CHAPTER = 'chapter'
     DISTRICT = 'district'
     ORGANIZATION = 'organization'
@@ -145,7 +145,7 @@ class Group(models.Model):
     # FKs
     status = models.ForeignKey(
         'Status',
-        related_name='groups',
+        related_name='entities',
         editable=False,
     )
 
@@ -167,6 +167,7 @@ class Group(models.Model):
 
     class Meta:
         db_table = 'vwStructures'
+        verbose_name_plural = 'entities'
 
 
 class Status(models.Model):
@@ -195,8 +196,8 @@ class Membership(models.Model):
         editable=False,
     )
     # FKs
-    group = models.ForeignKey(
-        'Group',
+    entity = models.ForeignKey(
+        'Entity',
         related_name='memberships',
         editable=False,
         db_column='object_id',
@@ -229,8 +230,8 @@ class Subscription(models.Model):
         editable=False,
     )
     # FKs
-    person = models.ForeignKey(
-        'Person',
+    human = models.ForeignKey(
+        'Human',
         related_name='subscriptions',
         editable=False,
         db_column='members_id',

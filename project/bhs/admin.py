@@ -3,8 +3,8 @@
 from django.contrib import admin
 
 from .models import (
-    Person,
-    Group,
+    Human,
+    Entity,
     Membership,
     Status,
     Subscription,
@@ -28,8 +28,8 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         return super().changeform_view(request, object_id, extra_context=extra_context)
 
 
-@admin.register(Person)
-class PersonAdmin(ReadOnlyAdmin):
+@admin.register(Human)
+class HumanAdmin(ReadOnlyAdmin):
     fields = [
         'id',
         'first_name',
@@ -93,8 +93,8 @@ class PersonAdmin(ReadOnlyAdmin):
         'bhs_id',
     ]
 
-@admin.register(Group)
-class GroupAdmin(ReadOnlyAdmin):
+@admin.register(Entity)
+class EntityAdmin(ReadOnlyAdmin):
     fields = [
         'id',
         'name',
@@ -151,19 +151,19 @@ class GroupAdmin(ReadOnlyAdmin):
 class MembershipAdmin(ReadOnlyAdmin):
     fields = [
         'id',
-        'group',
+        'entity',
         'status',
     ]
 
     list_display = [
         'id',
-        'group',
+        'entity',
         'status',
     ]
 
     readonly_fields = [
         'id',
-        'group',
+        'entity',
         'status',
     ]
 
