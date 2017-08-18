@@ -5063,9 +5063,11 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     # FKs
-    person = models.OneToOneField(
+    person = OneToOneOrNoneField(
         'Person',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='user',
     )
 
     @property
