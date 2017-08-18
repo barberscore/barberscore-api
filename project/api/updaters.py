@@ -46,6 +46,8 @@ log = logging.getLogger('updater')
 def update_or_create_persons():
     hs = Human.objects.exclude(bhs_id=536190)
     for h in hs:
+        if not h.full_name:
+            continue
         name = h.full_name
         try:
             v = validate_email(h.username)
@@ -53,9 +55,18 @@ def update_or_create_persons():
         except EmailNotValidError as e:
             email = None
         birth_date = h.birth_date
-        phone = h.phone
-        cell_phone = h.cell_phone
-        work_phone = h.work_phone
+        if h.phone:
+            phone = h.phone
+        else:
+            phone = ''
+        if h.cell_phone:
+            cell_phone = h.cell_phone
+        else:
+            cell_phone = ''
+        if h.work_phone:
+            work_phone = h.work_phone
+        else:
+            work_phone = ''
         bhs_id = h.bhs_id
         if h.sex == 'male':
             gender = 10
@@ -84,7 +95,12 @@ def update_or_create_persons():
             'gender': gender,
             'part': part,
         }
-        person, created = Person.objects.update_or_create(
-            bhs_pk=h.id,
-            defaults=defaults,
-        )
+        try:
+            person, created = Person.objects.update_or_create(
+                bhs_pk=h.id,
+                defaults=defaults,
+            )
+            log.info((person, created))
+        except IntegrityError as e:
+            log.error((h, e))
+            continue

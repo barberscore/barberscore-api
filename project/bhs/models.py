@@ -66,16 +66,32 @@ class Human(models.Model):
     # Properties
     @property
     def full_name(self):
+        if self.first_name:
+            first_name = self.first_name
+        else:
+            first_name = None
+        if self.middle_name:
+            middle_name = self.middle_name
+        else:
+            middle_name = None
+        if self.last_name:
+            last_name = self.last_name
+        else:
+            last_name = None
         if self.nick_name:
             format_nick = "({0})".format(self.nick_name)
         else:
-            format_nick = ""
-        full_name = " ".join([
-            self.first_name,
-            self.middle_name,
-            self.last_name,
-            format_nick,
-        ])
+            format_nick = None
+        full_name = " ".join(
+            filter(
+                None, [
+                    self.first_name,
+                    self.middle_name,
+                    self.last_name,
+                    format_nick,
+                ]
+            )
+        )
         return full_name
 
 
