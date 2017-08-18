@@ -125,3 +125,71 @@ def update_or_create_person_from_human(h):
         log.info((person, created))
     except IntegrityError as e:
         log.error((h, str(e)))
+
+
+def update_or_create_group_from_structure(structure):
+    if not structure.name:
+        return
+    kind_map = {
+        'chapter': 32,
+        'quartet': 41,
+    }
+    try:
+        kind = kind_map[structure.kind]
+    except KeyError:
+        return
+    status_map = {
+        'active': 10,
+        'pending': 0,
+        'pending-voluntary': 0,
+        'expired': -10,
+        'closed-revoked': -10,
+        'closed-merged': -10,
+        'suspended-membership': -10,
+        'cancelled': -10,
+        'lapsed': -10,
+        'closed-voluntary': -10,
+        'expelled': -10,
+        'suspended': -10,
+    }
+    if kind == 41:
+        name = structure.name.strip()
+    else:
+        name = "{0} [{1}]".format(
+            structure.chorus_name.strip(),
+            structure.name.strip(),
+        )
+    status = status_map[str(structure.status)]
+    if kind == 32:
+        code = structure.chapter_code
+    else:
+        code = ''
+    start_date = structure.established_date
+    try:
+        v = validate_email(structure.email)
+        email = v["email"].lower()
+    except EmailNotValidError as e:
+        email = ''
+    if structure.phone:
+        phone = structure.phone
+    else:
+        phone = ''
+    bhs_id = structure.bhs_id
+    defaults = {
+        'name': name,
+        'status': status,
+        'kind': kind,
+        'code': code,
+        'start_date': start_date,
+        'email': email,
+        'phone': phone,
+        'bhs_id': bhs_id,
+    }
+    try:
+        group, created = Group.objects.update_or_create(
+            bhs_pk=structure.id,
+            defaults=defaults,
+        )
+        log.info((group, created))
+    except IntegrityError as e:
+        log.error((structure, str(e)))
