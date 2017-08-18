@@ -3169,6 +3169,7 @@ class Person(TimeStampedModel):
     spouse = models.CharField(
         max_length=255,
         blank=True,
+        default='',
     )
 
     location = models.CharField(
@@ -3176,6 +3177,7 @@ class Person(TimeStampedModel):
             The geographical location of the resource.""",
         max_length=255,
         blank=True,
+        default='',
     )
 
     PART = Choices(
@@ -3207,12 +3209,14 @@ class Person(TimeStampedModel):
         help_text="""
             The website URL of the resource.""",
         blank=True,
+        default='',
     )
 
     facebook = models.URLField(
         help_text="""
             The facebook URL of the resource.""",
         blank=True,
+        default='',
     )
 
     twitter = models.CharField(
@@ -3229,6 +3233,7 @@ class Person(TimeStampedModel):
                 """,
             ),
         ],
+        default='',
     )
 
     email = models.EmailField(
@@ -3244,6 +3249,7 @@ class Person(TimeStampedModel):
             The phone number of the resource.  Include country code.""",
         blank=True,
         max_length=25,
+        default='',
     )
 
     address = models.TextField(
@@ -3251,6 +3257,7 @@ class Person(TimeStampedModel):
             The complete address of the resource.""",
         blank=True,
         max_length=1000,
+        default='',
     )
 
     home_phone = models.CharField(
@@ -3258,6 +3265,7 @@ class Person(TimeStampedModel):
             The home phone number of the resource.  Include country code.""",
         blank=True,
         max_length=25,
+        default='',
     )
 
     work_phone = models.CharField(
@@ -3265,6 +3273,7 @@ class Person(TimeStampedModel):
             The work phone number of the resource.  Include country code.""",
         blank=True,
         max_length=25,
+        default='',
     )
 
     cell_phone = models.CharField(
@@ -3272,6 +3281,7 @@ class Person(TimeStampedModel):
             The cell phone number of the resource.  Include country code.""",
         blank=True,
         max_length=25,
+        default='',
     )
 
     airports = ArrayField(
@@ -3295,12 +3305,14 @@ class Person(TimeStampedModel):
             A bio of the person.  Max 1000 characters.""",
         blank=True,
         max_length=1000,
+        default='',
     )
 
     notes = models.TextField(
         help_text="""
             Notes (for internal use only).""",
         blank=True,
+        default='',
     )
 
     bhs_id = models.IntegerField(
