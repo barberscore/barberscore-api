@@ -39,7 +39,6 @@ from api.factories import (
 def admin_client():
     admin = UserFactory(
         is_staff=True,
-        person=None,
     )
     client = Client()
     client.force_login(admin)
@@ -50,7 +49,6 @@ def admin_client():
 def api_client():
     admin = UserFactory(
         is_staff=True,
-        person=None,
     )
     client = APIClient()
     client.force_authenticate(user=admin)
