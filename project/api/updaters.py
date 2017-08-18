@@ -46,9 +46,33 @@ log = logging.getLogger('updater')
 def update_or_create_persons():
     hs = Human.objects.exclude(bhs_id=536190)
     for h in hs:
-        if not h.full_name:
-            continue
-        name = h.full_name
+        first_name = h.first_name.strip()
+        middle_name = h.middle_name.strip()
+        last_name = h.last_name.strip()
+        nick_name = h.nick_name.strip()
+        if not first_name:
+            first_name = None
+        if not middle_name:
+            middle_name = None
+        if not last_name:
+            last_name = None
+        if nick_name and (nick_name != first_name):
+            nick_name = "({0})".format(nick_name)
+        else:
+            nick_name = None
+        name = " ".join(
+            map(
+                (lambda x: encoding.smart_text(x)),
+                filter(
+                    None, [
+                        first_name,
+                        middle_name,
+                        last_name,
+                        nick_name,
+                    ]
+                )
+            )
+        )
         try:
             v = validate_email(h.username)
             email = v["email"].lower()
@@ -102,5 +126,5 @@ def update_or_create_persons():
             )
             log.info((person, created))
         except IntegrityError as e:
-            log.error((h, e))
+            log.error((h, str(e)))
             continue
