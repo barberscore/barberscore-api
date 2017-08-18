@@ -38,18 +38,6 @@ class PathAndRename(object):
         return os.path.join(self.path, filename)
 
 
-class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):
-    def __get__(self, instance, cls=None):
-        try:
-            return super().__get__(instance=instance)
-        except ObjectDoesNotExist:
-            return None
-
-
-class OneToOneOrNoneField(models.OneToOneField):
-    related_accessor_class = ReverseOneToOneDescriptorReturnsNone
-
-
 class CloudinaryRenameField(CloudinaryField):
 
     def upload_options(self, model_instance):
