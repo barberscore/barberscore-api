@@ -12,9 +12,6 @@ from django.core.exceptions import (
     ValidationError,
 )
 from django.db import models
-from django.db.models.fields.related_descriptors import (
-    ReverseOneToOneDescriptor,
-)
 from django.utils.deconstruct import deconstructible
 from django.utils.text import slugify
 
@@ -36,18 +33,6 @@ class PathAndRename(object):
             name = instance.id
         filename = '{0}{1}'.format(name, ext.lower())
         return os.path.join(self.path, filename)
-
-
-class ReverseOneToOneDescriptorReturnsNone(ReverseOneToOneDescriptor):
-    def __get__(self, instance, cls=None):
-        try:
-            return super().__get__(instance=instance)
-        except ObjectDoesNotExist:
-            return None
-
-
-class OneToOneOrNoneField(models.OneToOneField):
-    related_accessor_class = ReverseOneToOneDescriptorReturnsNone
 
 
 class CloudinaryRenameField(CloudinaryField):

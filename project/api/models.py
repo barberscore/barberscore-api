@@ -53,7 +53,6 @@ from django.core.files.base import ContentFile
 from django.utils.functional import cached_property
 # Local
 from .fields import (
-    OneToOneOrNoneField,
     PathAndRename,
 )
 from .managers import UserManager
