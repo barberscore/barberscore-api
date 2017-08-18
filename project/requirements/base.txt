@@ -17,6 +17,7 @@ djangorestframework==3.6.3
 docraptor==1.2.0
 drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.9
+email-validator==1.0.2
 factory-boy==2.9.2
 faker==0.7.18
 markdown==2.6.8

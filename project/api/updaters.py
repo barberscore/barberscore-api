@@ -2,7 +2,11 @@
 import logging
 from datetime import datetime
 
-from django.core.validators import validate_email
+from email_validator import (
+    validate_email,
+    EmailNotValidError,
+)
+
 from django.db import (
     IntegrityError,
     transaction,
@@ -44,10 +48,9 @@ def update_or_create_persons():
     for h in hs:
         name = h.full_name
         try:
-            e_lower = h.username.lower()
-            validate_email(e_lower)
-            email = e_lower
-        except validate_email.ValidationError:
+            v = validate_email(h.username)
+            email = v["email"].lower()
+        except EmailNotValidError as e:
             email = None
         birth_date = h.birth_date
         phone = h.phone
@@ -85,4 +88,3 @@ def update_or_create_persons():
             bhs_pk=h.id,
             defaults=defaults,
         )
-        print(person, created)
