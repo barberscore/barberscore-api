@@ -6,6 +6,10 @@ class Human(models.Model):
         max_length=255,
         editable=False,
     )
+    username = models.CharField(
+        max_length=255,
+        editable=False,
+    )
     first_name = models.CharField(
         max_length=255,
         editable=False,

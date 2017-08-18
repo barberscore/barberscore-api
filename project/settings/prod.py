@@ -92,6 +92,13 @@ LOGGING = {
             ],
             'level': 'INFO',
         },
+        'updater': {
+            'handlers': [
+                'console',
+                'bugsnag',
+            ],
+            'level': 'INFO',
+        },
     },
     'handlers': {
         'console': {

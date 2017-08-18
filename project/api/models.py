@@ -3192,6 +3192,17 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    GENDER = Choices(
+        (10, 'male', 'Male'),
+        (20, 'female', 'Female'),
+    )
+
+    gender = models.IntegerField(
+        choices=GENDER,
+        null=True,
+        blank=True,
+    )
+
     website = models.URLField(
         help_text="""
             The website URL of the resource.""",

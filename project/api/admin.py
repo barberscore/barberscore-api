@@ -920,6 +920,7 @@ class PersonAdmin(admin.ModelAdmin):
         'birth_date',
         'dues_thru',
         'part',
+        'gender',
         'spouse',
         'location',
         'website',
@@ -938,6 +939,7 @@ class PersonAdmin(admin.ModelAdmin):
         'status',
         'bhs_id',
         'part',
+        'gender',
         'location',
         'website',
         'facebook',
@@ -946,6 +948,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'gender',
         'part',
     ]
 
