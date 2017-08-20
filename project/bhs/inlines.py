@@ -1,0 +1,81 @@
+# Django
+from django.contrib import admin
+
+# Local
+from .models import (
+    Human,
+    Structure,
+    Status,
+    Membership,
+    Subscription,
+    SMJoin,
+)
+
+
+class SubscriptionInline(admin.TabularInline):
+    model = Subscription
+    fields = [
+        'items_editable',
+        'valid_through',
+        'status',
+        'human',
+    ]
+    readonly_fields = [
+        'items_editable',
+        'valid_through',
+        'status',
+        'human',
+    ]
+    show_change_link = True
+    extra = 0
+    # classes = [
+    #     'collapse',
+    # ]
+    max_num = 0
+    can_delete = False
+
+
+class SMJoinInline(admin.TabularInline):
+    model = SMJoin
+    fields = [
+        '__str__',
+        'membership',
+        'structure',
+        # 'human',
+        'vocal_part',
+        'status',
+    ]
+    readonly_fields = [
+        '__str__',
+        'membership',
+        'structure',
+        # 'human',
+        'vocal_part',
+        'status',
+    ]
+    show_change_link = True
+    extra = 0
+    # classes = [
+    #     'collapse',
+    # ]
+    max_num = 0
+    can_delete = False
+
+
+class MembershipInline(admin.TabularInline):
+    model = Membership
+    fields = [
+        '__str__',
+        'status',
+    ]
+    readonly_fields = [
+        '__str__',
+        'status',
+    ]
+    show_change_link = True
+    extra = 0
+    # classes = [
+    #     'collapse',
+    # ]
+    max_num = 0
+    can_delete = False

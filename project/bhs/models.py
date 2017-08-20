@@ -175,8 +175,9 @@ class Structure(models.Model):
         else:
             name = self.name
         if self.kind == 'chapter':
-            nomen = "{0} [{1}]".format(
+            nomen = "{0} [{1} {2}]".format(
                 self.chorus_name,
+                self.chapter_code,
                 name,
             )
         else:
@@ -201,7 +202,7 @@ class Status(models.Model):
     )
     # Internals
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         db_table = 'vwStatuses'
@@ -214,6 +215,12 @@ class Membership(models.Model):
         max_length=255,
         editable=False,
     )
+
+    code = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+
     # FKs
     structure = models.ForeignKey(
         'Structure',
@@ -229,7 +236,10 @@ class Membership(models.Model):
 
     # Internals
     def __str__(self):
-        return self.id
+        return "{0} {1}".format(
+            self.structure,
+            self.code,
+        )
 
     class Meta:
         db_table = 'vwMemberships'
@@ -248,6 +258,9 @@ class Subscription(models.Model):
         max_length=255,
         editable=False,
     )
+    items_editable = models.BooleanField(
+        editable=False,
+    )
     # FKs
     human = models.ForeignKey(
         'Human',
@@ -258,13 +271,13 @@ class Subscription(models.Model):
 
     # Internals
     def __str__(self):
-        return self.id
+        return str(self.human)
 
     class Meta:
         db_table = 'vwSubscriptions'
 
 
-class SubscriptionMembershipJoin(models.Model):
+class SMJoin(models.Model):
     id = models.CharField(
         primary_key=True,
         max_length=255,
@@ -277,6 +290,9 @@ class SubscriptionMembershipJoin(models.Model):
         max_length=255,
         editable=False,
     )
+    @property
+    def human(self):
+        return self.subscription.human
     # FKs
     subscription = models.ForeignKey(
         'Subscription',
@@ -287,9 +303,18 @@ class SubscriptionMembershipJoin(models.Model):
         editable=False,
     )
 
+    structure = models.ForeignKey(
+        'Structure',
+        editable=False,
+        db_column='reference_structure_id',
+    )
+
     # Internals
     def __str__(self):
-        return self.id
+        return "{0} {1}".format(
+            self.subscription,
+            self.membership,
+        )
 
     class Meta:
         db_table = 'vwSubscriptions_Memberships'

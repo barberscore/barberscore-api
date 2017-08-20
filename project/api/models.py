@@ -64,7 +64,6 @@ config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
-
 class Appearance(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,

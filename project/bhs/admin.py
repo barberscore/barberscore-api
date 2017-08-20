@@ -8,7 +8,13 @@ from .models import (
     Membership,
     Status,
     Subscription,
-    SubscriptionMembershipJoin,
+    SMJoin,
+)
+
+from .inlines import (
+    SubscriptionInline,
+    SMJoinInline,
+    MembershipInline,
 )
 
 admin.site.disable_action('delete_selected')
@@ -93,6 +99,11 @@ class HumanAdmin(ReadOnlyAdmin):
         'bhs_id',
     ]
 
+    inlines = [
+        SubscriptionInline,
+    ]
+
+
 @admin.register(Structure)
 class StructureAdmin(ReadOnlyAdmin):
     fields = [
@@ -145,26 +156,49 @@ class StructureAdmin(ReadOnlyAdmin):
         'chapter_code',
         'chorus_name',
     ]
+    inlines = [
+        MembershipInline,
+    ]
+    ordering = (
+        'name',
+    )
 
 
 @admin.register(Membership)
 class MembershipAdmin(ReadOnlyAdmin):
     fields = [
-        'id',
         'structure',
+        'code',
         'status',
     ]
 
     list_display = [
-        'id',
         'structure',
+        'code',
         'status',
     ]
 
+    list_filter = [
+        'structure__kind',
+    ]
+
     readonly_fields = [
-        'id',
         'structure',
+        'code',
         'status',
+    ]
+
+    inlines = [
+        SMJoinInline,
+    ]
+
+    ordering = (
+        'structure__name',
+        'code',
+    )
+
+    search_fields = [
+        'structure__name',
     ]
 
 
@@ -189,19 +223,22 @@ class StatusAdmin(ReadOnlyAdmin):
 @admin.register(Subscription)
 class SubscriptionAdmin(ReadOnlyAdmin):
     fields = [
-        'id',
+        '__str__',
+        'items_editable',
         'valid_through',
         'status',
     ]
 
     list_display = [
-        'id',
+        '__str__',
+        'items_editable',
         'valid_through',
         'status',
     ]
 
     readonly_fields = [
-        'id',
+        '__str__',
+        'items_editable',
         'valid_through',
         'status',
     ]
@@ -209,34 +246,49 @@ class SubscriptionAdmin(ReadOnlyAdmin):
     list_filter = [
         'status',
     ]
-#
-#
-# @admin.register(SubscriptionMembershipJoin)
-# class SubscriptionMembershipJoinAdmin(ReadOnlyAdmin):
-#     fields = [
-#         'id',
-#         'status',
-#         'vocal_part',
-#         'subscription',
-#         'membership',
-#     ]
-#
-#     list_display = [
-#         'id',
-#         'status',
-#         'vocal_part',
-#         'subscription',
-#         'membership',
-#     ]
-#
-#     readonly_fields = [
-#         'id',
-#         'status',
-#         'vocal_part',
-#         'subscription',
-#         'membership',
-#     ]
-#
-#     list_filter = [
-#         'vocal_part',
-#     ]
+    search_fields = (
+        'human__last_name',
+        'human__first_name',
+        'human__bhs_id',
+    )
+
+    ordering = (
+        'human__last_name',
+    )
+
+    inlines = [
+        SMJoinInline,
+    ]
+
+
+
+
+@admin.register(SMJoin)
+class SMJoinAdmin(ReadOnlyAdmin):
+    fields = [
+        'id',
+        'status',
+        'vocal_part',
+        'subscription',
+        'membership',
+    ]
+
+    list_display = [
+        'id',
+        'status',
+        'vocal_part',
+        'subscription',
+        'membership',
+    ]
+
+    readonly_fields = [
+        'id',
+        'status',
+        'vocal_part',
+        'subscription',
+        'membership',
+    ]
+
+    list_filter = [
+        'vocal_part',
+    ]

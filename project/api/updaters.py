@@ -193,3 +193,45 @@ def update_or_create_group_from_structure(structure):
         log.info((group, created))
     except IntegrityError as e:
         log.error((structure, str(e)))
+
+
+def update_or_create_member_from_smjoin(smjoin):
+    if smjoin.vocal_part == 'Tenor':
+        part = 1
+    elif smjoin.vocal_part == 'Lead':
+        part = 2
+    elif smjoin.vocal_part == 'Baritone':
+        part = 3
+    elif smjoin.vocal_part == 'Bass':
+        part = 4
+    else:
+        part = None
+    if smjoin.status:
+        status = 10
+    else:
+        status = -10
+    try:
+        group = Group.objects.get(
+            bhs_pk=smjoin.structure.id
+        )
+    except Group.DoesNotExist as e:
+        log.error(str(e))
+    try:
+        person = Person.objects.get(
+            bhs_pk=smjoin.subscription.human.id
+        )
+    except Person.DoesNotExist as e:
+        log.error(str(e))
+    defaults = {
+        'status': status,
+        'part': part,
+        'person': person,
+        'group': group,
+    }
+    try:
+        member, created = Member.objects.update_or_create(
+            bhs_pk=smjoin.id,
+            defaults=defaults,
+        )
+    except IntegrityError as e:
+        log.error(str(e))
