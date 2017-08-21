@@ -206,6 +206,16 @@ class MemberFilter(FilterSet):
             'group': [
                 'exact',
             ],
+            'person__user': [
+                'exact',
+            ],
+            'is_admin': [
+                'exact',
+            ],
+            'status': [
+                'gte',
+                'exact',
+            ]
         }
 
 
