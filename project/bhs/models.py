@@ -63,6 +63,14 @@ class Human(models.Model):
         max_length=255,
         editable=False,
     )
+
+    created_ts = models.DateTimeField(
+        db_column='created',
+    )
+    updated_ts = models.DateTimeField(
+        db_column='updated',
+    )
+
     # Properties
     @property
     def full_name(self):
@@ -162,6 +170,12 @@ class Structure(models.Model):
     established_date = models.DateField(
         editable=False,
     )
+    created_ts = models.DateTimeField(
+        db_column='created',
+    )
+    updated_ts = models.DateTimeField(
+        db_column='updated',
+    )
     # FKs
     status = models.ForeignKey(
         'Status',
@@ -229,6 +243,12 @@ class Membership(models.Model):
         editable=False,
     )
 
+    created_ts = models.DateTimeField(
+        db_column='created',
+    )
+    updated_ts = models.DateTimeField(
+        db_column='modified',
+    )
     # FKs
     structure = models.ForeignKey(
         'Structure',
@@ -269,6 +289,12 @@ class Subscription(models.Model):
     items_editable = models.BooleanField(
         editable=False,
     )
+    created_ts = models.DateTimeField(
+        db_column='created',
+    )
+    updated_ts = models.DateTimeField(
+        db_column='updated',
+    )
     # FKs
     human = models.ForeignKey(
         'Human',
@@ -298,6 +324,12 @@ class SMJoin(models.Model):
         max_length=255,
         editable=False,
     )
+    created_ts = models.DateTimeField(
+        db_column='created',
+    )
+    updated_ts = models.DateTimeField(
+        db_column='updated',
+    )
     @property
     def human(self):
         return self.subscription.human
@@ -305,10 +337,12 @@ class SMJoin(models.Model):
     subscription = models.ForeignKey(
         'Subscription',
         editable=False,
+        related_name='smjoins',
     )
     membership = models.ForeignKey(
         'Membership',
         editable=False,
+        related_name='smjoins',
     )
 
     structure = models.ForeignKey(
@@ -326,3 +360,5 @@ class SMJoin(models.Model):
 
     class Meta:
         db_table = 'vwSubscriptions_Memberships'
+        verbose_name = 'SM Join'
+        verbose_name_plural = 'SM Joins'

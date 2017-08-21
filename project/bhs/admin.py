@@ -43,29 +43,31 @@ class HumanAdmin(ReadOnlyAdmin):
         'last_name',
         'nick_name',
         'email',
-        'birth_date',
-        'is_deceased',
+        # 'is_deceased',
         'phone',
         'cell_phone',
         'work_phone',
         'bhs_id',
+        'birth_date',
         'sex',
         'primary_voice_part',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_display = [
         '__str__',
-        'first_name',
-        'middle_name',
-        'last_name',
-        'nick_name',
+        # 'first_name',
+        # 'middle_name',
+        # 'last_name',
+        # 'nick_name',
         'email',
-        'birth_date',
-        'is_deceased',
+        # 'is_deceased',
         'phone',
         'cell_phone',
         'work_phone',
         'bhs_id',
+        'birth_date',
         'sex',
         'primary_voice_part',
     ]
@@ -77,19 +79,21 @@ class HumanAdmin(ReadOnlyAdmin):
         'last_name',
         'nick_name',
         'email',
-        'birth_date',
-        'is_deceased',
+        # 'is_deceased',
         'phone',
         'cell_phone',
         'work_phone',
         'bhs_id',
+        'birth_date',
         'sex',
         'primary_voice_part',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_filter = [
         'sex',
-        'is_deceased',
+        # 'is_deceased',
         'primary_voice_part',
     ]
 
@@ -97,12 +101,17 @@ class HumanAdmin(ReadOnlyAdmin):
         'first_name',
         'last_name',
         'bhs_id',
+        'email',
     ]
 
     inlines = [
         SubscriptionInline,
     ]
 
+    ordering = (
+        'last_name',
+        'first_name',
+    )
 
 @admin.register(Structure)
 class StructureAdmin(ReadOnlyAdmin):
@@ -118,6 +127,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'established_date',
         'status',
         'parent',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_display = [
@@ -146,6 +157,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'established_date',
         'status',
         'parent',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_filter = [
@@ -173,6 +186,8 @@ class MembershipAdmin(ReadOnlyAdmin):
         'structure',
         'code',
         'status',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_display = [
@@ -189,6 +204,8 @@ class MembershipAdmin(ReadOnlyAdmin):
         'structure',
         'code',
         'status',
+        'created_ts',
+        'updated_ts',
     ]
 
     inlines = [
@@ -230,6 +247,8 @@ class SubscriptionAdmin(ReadOnlyAdmin):
         'items_editable',
         'valid_through',
         'status',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_display = [
@@ -244,6 +263,8 @@ class SubscriptionAdmin(ReadOnlyAdmin):
         'items_editable',
         'valid_through',
         'status',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_filter = [
@@ -264,8 +285,6 @@ class SubscriptionAdmin(ReadOnlyAdmin):
     ]
 
 
-
-
 @admin.register(SMJoin)
 class SMJoinAdmin(ReadOnlyAdmin):
     fields = [
@@ -274,6 +293,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
         'subscription',
         'membership',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_display = [
@@ -290,6 +311,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
         'subscription',
         'membership',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_filter = [
