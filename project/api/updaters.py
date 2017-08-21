@@ -196,14 +196,21 @@ def update_or_create_group_from_structure(structure):
 
 
 def update_or_create_member_from_smjoin(smjoin):
-    if smjoin.vocal_part == 'Tenor':
-        part = 1
-    elif smjoin.vocal_part == 'Lead':
-        part = 2
-    elif smjoin.vocal_part == 'Baritone':
-        part = 3
-    elif smjoin.vocal_part == 'Bass':
-        part = 4
+    try:
+        part_stripped = smjoin.vocal_part.strip()
+    except AttributeError:
+        part_stripped = None
+    if part_stripped:
+        if part_stripped == 'Tenor':
+            part = 1
+        elif part_stripped == 'Lead':
+            part = 2
+        elif part_stripped == 'Baritone':
+            part = 3
+        elif part_stripped == 'Bass':
+            part = 4
+        else:
+            part = None
     else:
         part = None
     if smjoin.status:
@@ -216,12 +223,14 @@ def update_or_create_member_from_smjoin(smjoin):
         )
     except Group.DoesNotExist as e:
         log.error(str(e))
+        return
     try:
         person = Person.objects.get(
             bhs_pk=smjoin.subscription.human.id
         )
     except Person.DoesNotExist as e:
         log.error(str(e))
+        return
     defaults = {
         'status': status,
         'part': part,
@@ -235,3 +244,34 @@ def update_or_create_member_from_smjoin(smjoin):
         )
     except IntegrityError as e:
         log.error(str(e))
+
+
+def update_dues_thru(person):
+    try:
+        human = Human.objects.get(
+            id=person.bhs_pk,
+        )
+    except Human.DoesNotExist as e:
+        log.error(str(e))
+        return
+    try:
+        subscription = human.subscriptions.get(
+            items_editable=True,
+        )
+    except Subscription.DoesNotExist as e:
+        log.error(str(e))
+        return
+    except Subscription.MultipleObjectsReturned:
+        try:
+            subscription = human.subscriptions.get(
+                items_editable=True,
+                status='active',
+            )
+        except Subscription.DoesNotExist as e:
+            log.error(str(e))
+            return
+        except Subscription.MultipleObjectsReturned as e:
+            log.error(str(e))
+            return
+    person.dues_thru = subscription.valid_through
+    person.save()
