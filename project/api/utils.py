@@ -35,7 +35,40 @@ config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
-
+import csv
+from bhs.models import Structure
+def export_active_quartets():
+    with open('active_quartets.csv', 'w') as f:
+        output = []
+        fieldnames = [
+            'id',
+            'name',
+            'bhs_id',
+            'district',
+        ]
+        quartets = Structure.objects.filter(
+            kind='quartet',
+            status__name='active'
+        )
+        for quartet in quartets:
+            pk = str(quartet.id)
+            try:
+                name = quartet.name.strip()
+            except AttributeError:
+                name = '(UNKNOWN)'
+            bhs_id = quartet.bhs_id
+            district = str(quartet.parent)
+            row = {
+                'id': pk,
+                'name': name,
+                'bhs_id': bhs_id,
+                'district': district,
+            }
+            output.append(row)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for row in output:
+            writer.writerow(row)
 
 def do_org_sort(root):
     i = 1
