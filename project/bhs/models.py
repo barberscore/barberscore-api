@@ -169,6 +169,14 @@ class Structure(models.Model):
         editable=False,
     )
 
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_column='parent_id',
+    )
+
     def __str__(self):
         if not self.name:
             name = ""

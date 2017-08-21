@@ -117,6 +117,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'email',
         'established_date',
         'status',
+        'parent',
     ]
 
     list_display = [
@@ -130,6 +131,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'email',
         'established_date',
         'status',
+        'parent',
     ]
 
     readonly_fields = [
@@ -143,6 +145,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'email',
         'established_date',
         'status',
+        'parent',
     ]
 
     list_filter = [
