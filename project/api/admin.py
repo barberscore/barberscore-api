@@ -1,6 +1,7 @@
 # Django
 # Third-Party
 from django_fsm_log.models import StateLog
+from fsm_admin.mixins import FSMTransitionMixin
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -427,7 +428,11 @@ class ConventionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Entry)
-class EntryAdmin(admin.ModelAdmin):
+class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_fields = [
+        'status',
+    ]
+
     fields = (
         'status',
         'session',
@@ -1108,7 +1113,10 @@ class ScoreAdmin(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class SessionAdmin(admin.ModelAdmin):
+class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
     save_on_top = True
     fields = [
         'status',

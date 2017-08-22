@@ -149,6 +149,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'django_fsm',
     'django_fsm_log',
+    'fsm_admin',
     'timezone_field',
     'rest_framework',
     'django_filters',

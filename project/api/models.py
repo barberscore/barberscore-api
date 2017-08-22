@@ -1896,31 +1896,31 @@ class Entry(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.invited, conditions=[can_invite_entry])
+    @transition(field=status, source=STATUS.new, target=STATUS.invited, conditions=[can_invite_entry])
     def invite(self, *args, **kwargs):
         send_entry(self, 'entry_invite.txt')
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.withdrawn)
+    @transition(field=status, source=[STATUS.invited, STATUS.submitted], target=STATUS.withdrawn)
     def withdraw(self, *args, **kwargs):
         send_entry(self, 'entry_withdraw.txt')
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.submitted)
+    @transition(field=status, source=[STATUS.new, STATUS.invited], target=STATUS.submitted)
     def submit(self, *args, **kwargs):
         send_entry(self, 'entry_submit.txt')
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.approved)
+    @transition(field=status, source=[STATUS.new, STATUS.submitted], target=STATUS.approved)
     def approve(self, *args, **kwargs):
         send_entry(self, 'entry_approve.txt')
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.scratched)
+    @transition(field=status, source=[STATUS.approved,], target=STATUS.scratched)
     def scratch(self, *args, **kwargs):
         if self.session.status == self.session.STATUS.verified:
             remains = self.session.entries.filter(draw__gt=self.draw)
@@ -1933,7 +1933,7 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.completed)
+    @transition(field=status, source=[STATUS.approved,], target=STATUS.completed)
     def complete(self, *args, **kwargs):
         self.calculate()
         self.save()
@@ -4454,7 +4454,7 @@ class Session(TimeStampedModel):
 
     # Session Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.opened)
+    @transition(field=status, source=STATUS.new, target=STATUS.opened)
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         if not self.is_invitational:
@@ -4462,7 +4462,7 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.closed)
+    @transition(field=status, source=STATUS.opened, target=STATUS.closed)
     def close(self, *args, **kwargs):
         """Make session unavailable and set initial draw."""
         entries = self.entries.filter(
@@ -4476,7 +4476,7 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
+    @transition(field=status, source=[STATUS.closed, STATUS.verified], target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Make draw public."""
         create_bbscores(self)
@@ -4492,7 +4492,7 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.started)
+    @transition(field=status, source=STATUS.verified, target=STATUS.started)
     def start(self, *args, **kwargs):
         """Create round, seat panel, copy draw."""
         #  Create the BBScores export file
@@ -4544,7 +4544,7 @@ class Session(TimeStampedModel):
 
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
+    @transition(field=status, source=STATUS.started, target=STATUS.finished)
     def finish(self, *args, **kwargs):
         session = self
         for entry in session.entries.all():
@@ -4559,7 +4559,7 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.announced)
+    @transition(field=status, source=STATUS.finished, target=STATUS.announced)
     def announce(self, *args, **kwargs):
         return
 
