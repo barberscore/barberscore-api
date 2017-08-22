@@ -294,7 +294,7 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'subscription',
         'membership',
         'created_ts',
-        'updated_ts',
+        # 'updated_ts',
     ]
 
     list_display = [
@@ -312,7 +312,7 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'subscription',
         'membership',
         'created_ts',
-        'updated_ts',
+        # 'updated_ts',
     ]
 
     list_filter = [

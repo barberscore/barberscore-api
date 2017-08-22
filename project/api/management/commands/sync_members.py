@@ -5,9 +5,9 @@ import datetime
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.models import Person
-from bhs.models import Human
-from api.updaters import update_or_create_person_from_human
+from api.models import Member
+from bhs.models import SMJoin
+from api.updaters import update_or_create_member_from_smjoin
 
 from django.utils import (
     timezone,
@@ -22,23 +22,23 @@ class Command(BaseCommand):
             action='store_true',
             dest='all',
             default=False,
-            help='Update all persons.',
+            help='Update all members.',
         )
 
     def handle(self, *args, **options):
-        self.stdout.write("Updating users...")
+        self.stdout.write("Updating members...")
         if options['all']:
-            hs = Human.objects.all()
+            js = SMJoin.objects.all()
         else:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(hours=25)
-            hs = Human.objects.filter(
-                updated_ts__gt=cursor,
+            now = datetime.date.today()
+            cursor = now - datetime.timedelta(days=1)
+            js = SMJoin.objects.filter(
+                created_ts__gt=cursor,
             )
-        total = hs.count()
+        total = js.count()
         i = 0
-        for h in hs:
-            update_or_create_person_from_human(h)
+        for j in js:
+            update_or_create_member_from_smjoin(j)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
             i += 1

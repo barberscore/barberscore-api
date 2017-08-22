@@ -5,9 +5,9 @@ import datetime
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.models import Person
-from bhs.models import Human
-from api.updaters import update_or_create_person_from_human
+from api.models import Group
+from bhs.models import Structure
+from api.updaters import update_or_create_group_from_structure
 
 from django.utils import (
     timezone,
@@ -22,23 +22,23 @@ class Command(BaseCommand):
             action='store_true',
             dest='all',
             default=False,
-            help='Update all persons.',
+            help='Update all groups.',
         )
 
     def handle(self, *args, **options):
-        self.stdout.write("Updating users...")
+        self.stdout.write("Updating groups...")
         if options['all']:
-            hs = Human.objects.all()
+            ss = Structure.objects.all()
         else:
             now = timezone.now()
             cursor = now - datetime.timedelta(hours=25)
-            hs = Human.objects.filter(
+            ss = Structure.objects.filter(
                 updated_ts__gt=cursor,
             )
-        total = hs.count()
+        total = ss.count()
         i = 0
-        for h in hs:
-            update_or_create_person_from_human(h)
+        for s in ss:
+            update_or_create_group_from_structure(s)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
             i += 1
