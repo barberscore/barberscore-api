@@ -43,6 +43,7 @@ from bhs.models import (
 
 log = logging.getLogger('updater')
 
+
 def update_or_create_person_from_human(h):
     first_name = h.first_name.strip()
     middle_name = h.middle_name.strip()
@@ -106,6 +107,27 @@ def update_or_create_person_from_human(h):
         part = 4
     else:
         part = None
+
+    try:
+        subscription = h.subscriptions.get(
+            items_editable=True,
+        )
+    except Subscription.DoesNotExist as e:
+        subscription = None
+    except Subscription.MultipleObjectsReturned:
+        try:
+            subscription = h.subscriptions.get(
+                items_editable=True,
+                status='active',
+            )
+        except Subscription.DoesNotExist as e:
+            subscription = None
+        except Subscription.MultipleObjectsReturned as e:
+            subscription = None
+    if subscription:
+        dues_thru = subscription.valid_through
+    else:
+        dues_thru = None
     defaults = {
         'name': name,
         'email': email,
@@ -116,6 +138,7 @@ def update_or_create_person_from_human(h):
         'bhs_id': bhs_id,
         'gender': gender,
         'part': part,
+        'dues_thru': dues_thru,
     }
     try:
         person, created = Person.objects.update_or_create(
