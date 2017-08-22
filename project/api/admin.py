@@ -429,7 +429,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
 @admin.register(Entry)
 class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_fields = [
+    fsm_field = [
         'status',
     ]
 
@@ -445,6 +445,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'draw',
         'prelim',
         'seed',
+        'directors',
     )
 
     list_display = (
@@ -453,17 +454,18 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'tot_points',
         'rank',
         'csa_pdf',
+        'directors',
     )
+
+    list_editable = [
+        'directors',
+    ]
 
     list_filter = [
         'status',
         'session__kind',
         'session__convention__season',
         'session__convention__year',
-    ]
-
-    fsm_field = [
-        'status',
     ]
 
     inlines = [

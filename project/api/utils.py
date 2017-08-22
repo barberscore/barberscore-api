@@ -335,6 +335,7 @@ def create_drcj_report(session):
             expiring_count = participants.filter(
                 member__person__dues_thru__lte=session.convention.close_date,
             ).count()
+            directors = entry.directors
             awards_list = []
             for contestant in entry.contestants.all().order_by('contest__award__name'):
                 awards_list.append(contestant.contest.award.name)
@@ -388,6 +389,7 @@ def create_drcj_report(session):
                 'repertory_count': repertory_count,
                 'particpant_count': participant_count,
                 'expiring_count': expiring_count,
+                'directors': directors,
                 'awards': awards,
                 'persons': persons,
                 'chapters': chapters,

@@ -1623,6 +1623,12 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    directors = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     # Privates
     rank = models.IntegerField(
         null=True,
