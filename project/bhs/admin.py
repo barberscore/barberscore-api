@@ -318,3 +318,7 @@ class SMJoinAdmin(ReadOnlyAdmin):
     list_filter = [
         'vocal_part',
     ]
+
+    search_fields = [
+        'subscription',
+    ]
