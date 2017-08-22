@@ -949,15 +949,12 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'status',
+        'email',
         'bhs_id',
         'bhs_pk',
         'part',
         'gender',
-        'location',
-        'website',
-        'facebook',
-        'twitter',
+        'status',
     ]
 
     list_filter = [
