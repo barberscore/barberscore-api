@@ -290,6 +290,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'seed',
             'prelim',
             'rank',
+            'directors',
             'mus_points',
             'per_points',
             'sng_points',

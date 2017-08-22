@@ -309,6 +309,7 @@ def create_drcj_report(session):
             'repertory_count',
             'particpant_count',
             'expiring_count',
+            'directors',
             'awards',
             'persons',
             'chapters',
