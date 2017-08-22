@@ -451,9 +451,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'nomen',
         'status',
-        'tot_points',
-        'rank',
-        'csa_pdf',
         'directors',
     )
 
