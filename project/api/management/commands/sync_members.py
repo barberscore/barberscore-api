@@ -28,7 +28,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Updating members...")
         if options['all']:
-            js = SMJoin.objects.all()
+            js = SMJoin.objects.filter(
+                structure__kind__in=[
+                    'quartet',
+                    'chorus',
+                ]
+            )
         else:
             now = datetime.date.today()
             cursor = now - datetime.timedelta(days=1)

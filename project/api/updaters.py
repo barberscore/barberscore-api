@@ -219,6 +219,8 @@ def update_or_create_group_from_structure(structure):
 
 
 def update_or_create_member_from_smjoin(smjoin):
+    if smjoin.structure.kind not in ['chapter', 'quartet']:
+        return
     try:
         part_stripped = smjoin.vocal_part.strip()
     except AttributeError:
