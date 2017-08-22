@@ -521,6 +521,8 @@ class GroupAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
+        'bhs_id',
+        'bhs_pk',
         'organization',
         'kind',
         'code',
@@ -528,7 +530,6 @@ class GroupAdmin(admin.ModelAdmin):
         'end_date',
         'short_name',
         'location',
-        'bhs_id',
         # 'spots',
         'website',
         'facebook',
@@ -561,11 +562,13 @@ class GroupAdmin(admin.ModelAdmin):
         'organization',
         'location',
         'bhs_id',
+        'bhs_pk',
         'status',
     ]
 
     list_editable = [
         'bhs_id',
+        'bhs_pk',
         'organization',
         'kind',
         'location',
@@ -626,6 +629,7 @@ class GroupAdmin(admin.ModelAdmin):
 class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
+        'bhs_pk',
         'start_date',
         'end_date',
         'group',
@@ -635,6 +639,7 @@ class MemberAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'status',
+        'bhs_pk',
         'start_date',
         'end_date',
         'group',
@@ -922,6 +927,9 @@ class PersonAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
+        'email',
+        'bhs_id',
+        'bhs_pk',
         'birth_date',
         'dues_thru',
         'part',
@@ -931,9 +939,7 @@ class PersonAdmin(admin.ModelAdmin):
         'website',
         'facebook',
         'twitter',
-        'email',
         'phone',
-        'bhs_id',
         'image',
         'description',
         'notes',
@@ -943,6 +949,7 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'bhs_id',
+        'bhs_pk',
         'part',
         'gender',
         'location',
