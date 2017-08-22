@@ -2189,6 +2189,8 @@ class Group(TimeStampedModel):
     bhs_pk = models.UUIDField(
         null=True,
         blank=True,
+        unique=True,
+        db_index=True,
     )
 
     org_sort = models.IntegerField(
@@ -2332,6 +2334,8 @@ class Member(TimeStampedModel):
     bhs_pk = models.UUIDField(
         null=True,
         blank=True,
+        unique=True,
+        db_index=True,
     )
     # FKs
     group = models.ForeignKey(
@@ -3328,6 +3332,8 @@ class Person(TimeStampedModel):
     bhs_pk = models.UUIDField(
         null=True,
         blank=True,
+        unique=True,
+        db_index=True,
     )
 
     # Denormalizations
