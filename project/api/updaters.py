@@ -238,10 +238,8 @@ def update_or_create_group_from_structure(structure):
                     defaults=defaults,
                 )
             except IntegrityError as e:
-                raise(e)
                 log.error(str(e))
                 return
-            print(member)
 
 
 
