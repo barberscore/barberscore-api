@@ -256,47 +256,19 @@ def update_or_create_member_from_smjoin(smjoin):
     except Person.DoesNotExist as e:
         log.error(str(e))
         return
+    bhs_pk = smjoin.id
     defaults = {
         'status': status,
         'part': part,
-        'person': person,
-        'group': group,
+        'bhs_pk': bhs_pk,
     }
     try:
         member, created = Member.objects.update_or_create(
-            bhs_pk=smjoin.id,
+            person=person,
+            group=group,
             defaults=defaults,
         )
     except IntegrityError as e:
-        log.error(str(e))
-
-
-def update_dues_thru(person):
-    try:
-        human = Human.objects.get(
-            id=person.bhs_pk,
-        )
-    except Human.DoesNotExist as e:
+        raise(e)
         log.error(str(e))
         return
-    try:
-        subscription = human.subscriptions.get(
-            items_editable=True,
-        )
-    except Subscription.DoesNotExist as e:
-        log.error(str(e))
-        return
-    except Subscription.MultipleObjectsReturned:
-        try:
-            subscription = human.subscriptions.get(
-                items_editable=True,
-                status='active',
-            )
-        except Subscription.DoesNotExist as e:
-            log.error(str(e))
-            return
-        except Subscription.MultipleObjectsReturned as e:
-            log.error(str(e))
-            return
-    person.dues_thru = subscription.valid_through
-    person.save()

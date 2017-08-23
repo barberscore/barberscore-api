@@ -27,23 +27,31 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Updating members...")
-        if options['all']:
-            js = SMJoin.objects.filter(
-                structure__kind__in=[
-                    'quartet',
-                    'chorus',
-                ]
-            )
-        else:
-            now = datetime.date.today()
-            cursor = now - datetime.timedelta(days=1)
-            js = SMJoin.objects.filter(
-                created_ts__gt=cursor,
-            )
-        total = js.count()
+        duplicates = SMJoin.objects.filter(
+            structure__kind__in=[
+                'quartet',
+                'chapter',
+            ],
+        ).values(
+            'structure__id',
+            'subscription__human_id',
+        ).order_by(
+        ).annotate(
+            count_id=models.Count('id')
+        ).filter(count_id__gt=1)
+
         i = 0
-        for j in js:
+        total = duplicates.count()
+        for d in duplicates:
+            i += 1
+            j = SMJoin.objects.filter(
+                structure=d['structure__id'],
+                subscription__human=d['subscription__human_id'],
+            ).order_by(
+                'status',
+                'created_ts',
+            ).last()
             update_or_create_member_from_smjoin(j)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-            i += 1
+        self.stdout.write("Updated members.")

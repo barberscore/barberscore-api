@@ -26,7 +26,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        self.stdout.write("Updating users...")
+        self.stdout.write("Updating persons...")
         if options['all']:
             hs = Human.objects.all()
         else:
@@ -38,7 +38,8 @@ class Command(BaseCommand):
         total = hs.count()
         i = 0
         for h in hs:
+            i += 1
             update_or_create_person_from_human(h)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-            i += 1
+        self.stdout.write("Finished updating persons.")

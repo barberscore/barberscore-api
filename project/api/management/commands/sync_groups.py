@@ -38,7 +38,8 @@ class Command(BaseCommand):
         total = ss.count()
         i = 0
         for s in ss:
+            i += 1
             update_or_create_group_from_structure(s)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-            i += 1
+        self.stdout.write("Finished updating groups...")
