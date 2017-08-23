@@ -39,6 +39,7 @@ from bhs.models import (
     Status,
     Structure,
     Subscription,
+    Role,
 )
 
 log = logging.getLogger('updater')
@@ -216,6 +217,32 @@ def update_or_create_group_from_structure(structure):
         log.info((group, created))
     except IntegrityError as e:
         log.error((structure, str(e)))
+    if True:
+        roles = Role.objects.filter(
+            structure=structure,
+        )
+        for role in roles:
+            person = Person.objects.get(
+                bhs_pk=role.human.id,
+            )
+            status = Member.STATUS.active
+            is_admin = True
+            defaults = {
+                'status': status,
+                'is_admin': is_admin,
+            }
+            try:
+                member, created = Member.objects.update_or_create(
+                    person=person,
+                    group=group,
+                    defaults=defaults,
+                )
+            except IntegrityError as e:
+                raise(e)
+                log.error(str(e))
+                return
+            print(member)
+
 
 
 def update_or_create_member_from_smjoin(smjoin):

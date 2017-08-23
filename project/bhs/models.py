@@ -66,9 +66,11 @@ class Human(models.Model):
 
     created_ts = models.DateTimeField(
         db_column='created',
+        editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='updated',
+        editable=False,
     )
 
     # Properties
@@ -172,9 +174,11 @@ class Structure(models.Model):
     )
     created_ts = models.DateTimeField(
         db_column='created',
+        editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='updated',
+        editable=False,
     )
     # FKs
     status = models.ForeignKey(
@@ -245,9 +249,11 @@ class Membership(models.Model):
 
     created_ts = models.DateTimeField(
         db_column='created',
+        editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='modified',
+        editable=False,
     )
     # FKs
     structure = models.ForeignKey(
@@ -291,9 +297,11 @@ class Subscription(models.Model):
     )
     created_ts = models.DateTimeField(
         db_column='created',
+        editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='updated',
+        editable=False,
     )
     # FKs
     human = models.ForeignKey(
@@ -309,6 +317,48 @@ class Subscription(models.Model):
 
     class Meta:
         db_table = 'vwSubscriptions'
+
+
+class Role(models.Model):
+    id = models.CharField(
+        primary_key=True,
+        max_length=255,
+        editable=False,
+    )
+    name = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    start_date = models.DateField(
+        editable=False,
+    )
+    end_date = models.DateField(
+        editable=False,
+    )
+    # FKs
+    human = models.ForeignKey(
+        'Human',
+        related_name='roles',
+        editable=False,
+        db_column='member_id',
+    )
+    structure = models.ForeignKey(
+        'Structure',
+        related_name='roles',
+        editable=False,
+        db_column='object_id',
+    )
+
+    # Internals
+    def __str__(self):
+        return "{0} {1} {2}".format(
+            self.name,
+            self.human,
+            self.structure,
+        )
+
+    class Meta:
+        db_table = 'vwOfficers'
 
 
 class SMJoin(models.Model):

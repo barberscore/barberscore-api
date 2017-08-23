@@ -8,6 +8,7 @@ from .models import (
     Membership,
     Status,
     Subscription,
+    Role,
     SMJoin,
 )
 
@@ -15,6 +16,7 @@ from .inlines import (
     SubscriptionInline,
     SMJoinInline,
     MembershipInline,
+    RoleInline,
 )
 
 admin.site.disable_action('delete_selected')
@@ -282,6 +284,46 @@ class SubscriptionAdmin(ReadOnlyAdmin):
 
     inlines = [
         SMJoinInline,
+    ]
+
+
+@admin.register(Role)
+class RoleAdmin(ReadOnlyAdmin):
+    fields = [
+        'name',
+        'human',
+        'structure',
+        'start_date',
+        'end_date',
+    ]
+
+    list_display = [
+        'name',
+        'human',
+        'structure',
+        'start_date',
+        'end_date',
+    ]
+
+    list_filter = [
+        'name',
+    ]
+
+    readonly_fields = [
+        'name',
+        'human',
+        'structure',
+        'start_date',
+        'end_date',
+    ]
+
+    ordering = (
+        'structure__name',
+    )
+
+    search_fields = [
+        'structure__name',
+        'human__name',
     ]
 
 

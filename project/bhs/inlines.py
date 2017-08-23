@@ -5,6 +5,7 @@ from django.contrib import admin
 from .models import (
     Human,
     Structure,
+    Role,
     Status,
     Membership,
     Subscription,
@@ -71,6 +72,27 @@ class MembershipInline(admin.TabularInline):
     readonly_fields = [
         '__str__',
         'status',
+    ]
+    show_change_link = True
+    extra = 0
+    # classes = [
+    #     'collapse',
+    # ]
+    max_num = 0
+    can_delete = False
+
+
+class RoleInline(admin.TabularInline):
+    model = Role
+    fields = [
+        '__str__',
+        'start_date',
+        'end_date',
+    ]
+    readonly_fields = [
+        '__str__',
+        'start_date',
+        'end_date',
     ]
     show_change_link = True
     extra = 0
