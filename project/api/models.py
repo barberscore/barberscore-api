@@ -40,7 +40,6 @@ from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
-    validate_email,
 )
 from django.db import (
     models,
@@ -2372,23 +2371,6 @@ class Member(TimeStampedModel):
             )
         )
         super().save(*args, **kwargs)
-
-    def create_account(self):
-        try:
-            validate_email(self.person.email)
-        except ValidationError as e:
-            return
-        try:
-            user, created = User.objects.get_or_create(
-                person=self.person,
-                email=self.person.email.lower()
-            )
-            return user, created
-        except IntegrityError as e:
-            return
-        except Auth0Error as e:
-            log.error((e.details, self))
-            return e
 
     # Permissions
     @staticmethod
