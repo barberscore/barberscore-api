@@ -40,7 +40,7 @@ class Command(BaseCommand):
         ).order_by(
         ).annotate(
             count_id=Count('id')
-        ).filter(count_id__gt=1)
+        ).filter(count_id__gt=0)
 
         i = 0
         total = duplicates.count()
