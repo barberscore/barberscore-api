@@ -9,6 +9,8 @@ from api.models import Member
 from bhs.models import SMJoin
 from api.updaters import update_or_create_member_from_smjoin
 
+from django.db.models import Count
+
 from django.utils import (
     timezone,
 )
@@ -37,7 +39,7 @@ class Command(BaseCommand):
             'subscription__human_id',
         ).order_by(
         ).annotate(
-            count_id=models.Count('id')
+            count_id=Count('id')
         ).filter(count_id__gt=1)
 
         i = 0
