@@ -565,8 +565,6 @@ class Award(TimeStampedModel):
 
     KIND = Choices(
         (32, 'chorus', "Chorus"),
-        (33, 'vlq', "Very Large Quartet"),
-        (34, 'mixed', "Mixed Group"),
         (41, 'quartet', "Quartet"),
     )
 
@@ -2075,8 +2073,6 @@ class Group(TimeStampedModel):
 
     KIND = Choices(
         (32, 'chorus', "Chorus"),
-        (33, 'vlq', "Very Large Quartet"),
-        (34, 'mixed', "Mixed Group"),
         (41, 'quartet', "Quartet"),
     )
 
@@ -2459,8 +2455,6 @@ class Office(TimeStampedModel):
         ]),
         ('Group', [
             (32, 'chapter', "Chapter"),
-            (33, 'vlq', "Very Large Quartet"),
-            (34, 'mixed', "Mixed Group"),
             (41, 'quartet', "Quartet"),
         ]),
     )
@@ -4270,8 +4264,6 @@ class Session(TimeStampedModel):
 
     KIND = Choices(
         (32, 'chorus', "Chorus"),
-        (33, 'vlq', "Very Large Quartet"),
-        (34, 'mixed', "Mixed Group"),
         (41, 'quartet', "Quartet"),
     )
 
