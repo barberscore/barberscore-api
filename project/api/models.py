@@ -3466,7 +3466,7 @@ class Person(TimeStampedModel):
                 filter(
                     None, [
                         self.name,
-                        self.bhs_id,
+                        "[{0}]".format(self.bhs_id),
                     ]
                 )
             )
