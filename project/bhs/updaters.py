@@ -52,11 +52,11 @@ from bhs.models import (
 log = logging.getLogger('updater')
 
 
-def update_or_create_person_from_human(h):
-    first_name = h.first_name.strip()
-    middle_name = h.middle_name.strip()
-    last_name = h.last_name.strip()
-    nick_name = h.nick_name.strip()
+def update_or_create_person_from_human(human):
+    first_name = human.first_name.strip()
+    middle_name = human.middle_name.strip()
+    last_name = human.last_name.strip()
+    nick_name = human.nick_name.strip()
     if not first_name:
         first_name = None
     if not middle_name:
@@ -81,61 +81,41 @@ def update_or_create_person_from_human(h):
         )
     )
     try:
-        v = validate_email(h.username)
+        v = validate_email(human.username)
         email = v["email"].lower()
     except EmailNotValidError as e:
         email = None
-    birth_date = h.birth_date
-    if h.phone:
-        phone = h.phone
+    birth_date = human.birth_date
+    if human.phone:
+        phone = human.phone
     else:
         phone = ''
-    if h.cell_phone:
-        cell_phone = h.cell_phone
+    if human.cell_phone:
+        cell_phone = human.cell_phone
     else:
         cell_phone = ''
-    if h.work_phone:
-        work_phone = h.work_phone
+    if human.work_phone:
+        work_phone = human.work_phone
     else:
         work_phone = ''
-    bhs_id = h.bhs_id
-    if h.sex == 'male':
+    is_bhs = True
+    bhs_id = human.bhs_id
+    if human.sex == 'male':
         gender = 10
-    elif h.sex == 'female':
+    elif human.sex == 'female':
         gender = 20
     else:
         gender = None
-    if h.primary_voice_part == 'Tenor':
+    if human.primary_voice_part == 'Tenor':
         part = 1
-    elif h.primary_voice_part == 'Lead':
+    elif human.primary_voice_part == 'Lead':
         part = 2
-    elif h.primary_voice_part == 'Baritone':
+    elif human.primary_voice_part == 'Baritone':
         part = 3
-    elif h.primary_voice_part == 'Bass':
+    elif human.primary_voice_part == 'Bass':
         part = 4
     else:
         part = None
-
-    try:
-        subscription = h.subscriptions.get(
-            items_editable=True,
-        )
-    except Subscription.DoesNotExist as e:
-        subscription = None
-    except Subscription.MultipleObjectsReturned:
-        try:
-            subscription = h.subscriptions.get(
-                items_editable=True,
-                status='active',
-            )
-        except Subscription.DoesNotExist as e:
-            subscription = None
-        except Subscription.MultipleObjectsReturned as e:
-            subscription = None
-    if subscription:
-        dues_thru = subscription.valid_through
-    else:
-        dues_thru = None
     defaults = {
         'name': name,
         'email': email,
@@ -143,19 +123,19 @@ def update_or_create_person_from_human(h):
         'phone': phone,
         'cell_phone': cell_phone,
         'work_phone': work_phone,
+        'is_bhs': is_bhs,
         'bhs_id': bhs_id,
         'gender': gender,
         'part': part,
-        'dues_thru': dues_thru,
     }
     try:
         person, created = Person.objects.update_or_create(
-            bhs_pk=h.id,
+            bhs_pk=human.id,
             defaults=defaults,
         )
         log.info((person, created))
     except IntegrityError as e:
-        log.error((h, str(e)))
+        log.error((human, str(e)))
 
 
 def update_or_create_group_from_structure(structure):
@@ -205,6 +185,7 @@ def update_or_create_group_from_structure(structure):
         phone = structure.phone
     else:
         phone = ''
+    is_bhs = True
     bhs_id = structure.bhs_id
     defaults = {
         'name': name,
@@ -214,6 +195,7 @@ def update_or_create_group_from_structure(structure):
         'start_date': start_date,
         'email': email,
         'phone': phone,
+        'is_bhs': is_bhs,
         'bhs_id': bhs_id,
     }
     try:
@@ -224,14 +206,18 @@ def update_or_create_group_from_structure(structure):
         log.info((group, created))
     except IntegrityError as e:
         log.error((structure, str(e)))
-    if True:
+    if created:
         roles = Role.objects.filter(
             structure=structure,
         )
         for role in roles:
-            person = Person.objects.get(
-                bhs_pk=role.human.id,
-            )
+            try:
+                person = Person.objects.get(
+                    bhs_pk=role.human.id,
+                )
+            except Person.DoesNotExist as e:
+                log.info(e)
+                continue
             status = Member.STATUS.active
             is_admin = True
             defaults = {
@@ -247,7 +233,6 @@ def update_or_create_group_from_structure(structure):
             except IntegrityError as e:
                 log.error(str(e))
                 return
-
 
 
 def update_or_create_member_from_smjoin(smjoin):
@@ -289,8 +274,10 @@ def update_or_create_member_from_smjoin(smjoin):
         log.error(str(e))
         return
     bhs_pk = smjoin.id
+    valid_through = smjoin.subscription.valid_through
     defaults = {
         'status': status,
+        'valid_through': valid_through,
         'part': part,
         'bhs_pk': bhs_pk,
     }
@@ -301,7 +288,6 @@ def update_or_create_member_from_smjoin(smjoin):
             defaults=defaults,
         )
     except IntegrityError as e:
-        raise(e)
         log.error(str(e))
         return
 
@@ -312,6 +298,7 @@ def get_auth0():
         settings.AUTH0_DOMAIN,
         token,
     )
+
 
 def get_auth0_users(auth0):
     lst = []
@@ -342,6 +329,7 @@ def get_auth0_users(auth0):
         i += 1
         t = 0
     return lst
+
 
 def generate_payload(user):
     if user.person.email != user.email:
