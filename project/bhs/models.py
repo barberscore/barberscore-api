@@ -374,12 +374,12 @@ class SMJoin(models.Model):
         max_length=255,
         editable=False,
     )
-    created_ts = models.DateField(
+    established_date = models.DateField(
         db_column='created',
     )
-    # updated_ts = models.DateTimeField(
-    #     db_column='updated',
-    # )
+    updated_ts = models.DateTimeField(
+        db_column='modified',
+    )
     @property
     def human(self):
         return self.subscription.human

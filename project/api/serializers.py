@@ -395,6 +395,7 @@ class MemberSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'part',
+            'valid_through',
             'start_date',
             'end_date',
             'group',

@@ -335,8 +335,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
         'subscription',
         'membership',
-        'created_ts',
-        # 'updated_ts',
+        'established_date',
+        'updated_ts',
     ]
 
     list_display = [
@@ -353,8 +353,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
         'subscription',
         'membership',
-        'created_ts',
-        # 'updated_ts',
+        'established_date',
+        'updated_ts',
     ]
 
     list_filter = [
