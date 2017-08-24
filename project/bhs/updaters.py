@@ -275,6 +275,9 @@ def update_or_create_member_from_smjoin(smjoin):
         valid_through = smjoin.subscription.human.subscriptions.get(
             items_editable=True,
         ).valid_through
+    except Subscription.DoesNotExist as e:
+        log.error(e)
+        return
     except Subscription.MultipleObjectsReturned as e:
         log.error(e)
         return
