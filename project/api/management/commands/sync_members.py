@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 # First-Party
 from api.models import Member
 from bhs.models import SMJoin
-from api.updaters import update_or_create_member_from_smjoin
+from bhs.updaters import update_or_create_member_from_smjoin
 
 from django.db.models import Count
 

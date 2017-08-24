@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 # First-Party
 from api.models import Person
 from bhs.models import Human
-from api.updaters import update_or_create_person_from_human
+from bhs.updaters import update_or_create_person_from_human
 
 from django.utils import (
     timezone,

@@ -425,3 +425,34 @@ def crud_auth0():
         user.auth0_id = account['user_id']
         user.save()
         log.info("CREATED: {0}".format(account['user_id']))
+
+
+# def update_dues_thru(person):
+#     try:
+#         human = Human.objects.get(
+#             id=person.bhs_pk,
+#         )
+#     except Human.DoesNotExist as e:
+#         log.error(str(e))
+#         return
+#     try:
+#         subscription = human.subscriptions.get(
+#             items_editable=True,
+#         )
+#     except Subscription.DoesNotExist as e:
+#         log.error(str(e))
+#         return
+#     except Subscription.MultipleObjectsReturned:
+#     try:
+#     subscription = human.subscriptions.get(
+#     items_editable=True,
+#     status='active',
+#     )
+#     except Subscription.DoesNotExist as e:
+#     log.error(str(e))
+#     return
+#     except Subscription.MultipleObjectsReturned as e:
+#     log.error(str(e))
+#     return
+#     person.dues_thru = subscription.valid_through
+#     person.save()

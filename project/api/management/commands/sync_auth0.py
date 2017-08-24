@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.updaters import crud_auth0
+from bhs.updaters import crud_auth0
 
 
 class Command(BaseCommand):

@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 # First-Party
 from api.models import Group
 from bhs.models import Structure
-from api.updaters import update_or_create_group_from_structure
+from bhs.updaters import update_or_create_group_from_structure
 
 from django.utils import (
     timezone,
