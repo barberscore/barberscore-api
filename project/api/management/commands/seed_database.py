@@ -81,11 +81,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Create Admin
+        admin_person=PersonFactory(
+            name='Admin Person',
+            email='test@barberscore.com',
+        )
         admin=UserFactory(
             email='test@barberscore.com',
             password='password',
             is_staff=True,
-            person=None,
+            person=admin_person,
         )
         # Create Core Persons
         scjc_person=PersonFactory(
