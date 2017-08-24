@@ -520,6 +520,7 @@ class GroupAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
+        'is_bhs',
         'bhs_id',
         'bhs_pk',
         'organization',
@@ -542,6 +543,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'is_bhs',
         'kind',
         'organization',
     ]
@@ -560,6 +562,7 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
         'organization',
         'location',
+        'is_bhs',
         'bhs_id',
         'bhs_pk',
         'status',
@@ -927,6 +930,7 @@ class PersonAdmin(admin.ModelAdmin):
         'name',
         'status',
         'email',
+        'is_bhs',
         'bhs_id',
         'bhs_pk',
         'birth_date',
@@ -947,6 +951,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'email',
+        'is_bhs',
         'bhs_id',
         'bhs_pk',
         'part',
@@ -956,6 +961,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        'is_bhs',
         'gender',
         'part',
     ]

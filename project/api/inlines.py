@@ -199,6 +199,7 @@ class GroupInline(admin.TabularInline):
         'name',
         'organization',
         'kind',
+        'is_bhs',
         'bhs_id',
         'status',
     ]

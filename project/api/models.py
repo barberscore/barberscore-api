@@ -2083,6 +2083,10 @@ class Group(TimeStampedModel):
         choices=KIND,
     )
 
+    is_bhs = models.BooleanField(
+        default=False,
+    )
+
     short_name = models.CharField(
         help_text="""
             A short-form name for the resource.""",
@@ -3138,6 +3142,10 @@ class Person(TimeStampedModel):
     status = models.IntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    is_bhs = models.BooleanField(
+        default=False,
     )
 
     birth_date = models.DateField(
