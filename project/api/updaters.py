@@ -15,7 +15,14 @@ from django.utils import (
     dateparse,
     encoding,
 )
+from auth0.v3.management import Auth0
+from auth0.v3.management.rest import Auth0Error
 
+# Django
+from django.conf import settings
+
+# First-Party
+from api.utils import get_auth0_token
 # Local
 from api.models import (
     Chart,
@@ -297,3 +304,124 @@ def update_or_create_member_from_smjoin(smjoin):
         raise(e)
         log.error(str(e))
         return
+
+
+def get_auth0():
+    token = get_auth0_token()
+    return Auth0(
+        settings.AUTH0_DOMAIN,
+        token,
+    )
+
+def get_auth0_users(auth0):
+    lst = []
+    more = True
+    i = 0
+    t = 0
+    while more:
+        results = auth0.users.list(
+            fields=[
+                'user_id',
+                'email',
+                'app_metadata',
+                'user_metadata',
+            ],
+            per_page=100,
+            page=i,
+        )
+        try:
+            payload = [result for result in results['users']]
+        except KeyError:
+            t += 1
+            if t > 3:
+                break
+            else:
+                continue
+        lst.extend(payload)
+        more = bool(results['users'])
+        i += 1
+        t = 0
+    return lst
+
+def generate_payload(user):
+    if user.person.email != user.email:
+        user.email = user.person.email
+        user.save()
+    email = user.email
+
+    name = user.person.nomen
+    barberscore_id = str(user.id)
+    payload = {
+        "connection": "email",
+        "email": email,
+        "email_verified": True,
+        "user_metadata": {
+            "name": name
+        },
+        "app_metadata": {
+            "barberscore_id": barberscore_id,
+        }
+    }
+    return payload
+
+
+def crud_auth0():
+    # Get the Auth0 instance
+    auth0 = get_auth0()
+    # Get the accounts
+    accounts = get_auth0_users(auth0)
+    # Delete orphaned Auth0 accounts
+    for account in accounts:
+        try:
+            user = User.objects.get(
+                auth0_id=account['user_id'],
+            )
+        except User.DoesNotExist:
+            auth0.users.delete(account['user_id'])
+            log.info("DELETED: {0}".format(account['user_id']))
+    # Get User Accounts
+    users = User.objects.exclude(auth0_id=None)
+    # Update each User account
+    for user in users:
+        # First, check to see if the User account is in the Auth0 Account list
+        match = next((a for a in accounts if a['user_id'] == str(user.auth0_id)), None)
+        if match:
+            # If you find the account, check to see if it needs updating.
+            payload = {
+                'email': user.email,
+                'user_metadata': {
+                    'name': user.person.nomen,
+                },
+                'user_id': user.auth0_id,
+                'app_metadata': {
+                    'barberscore_id': str(user.id),
+                },
+            }
+            if payload != match:
+                # Details need updating
+                del payload['user_id']
+                payload['app_metadata']['bhs_id'] = None
+                account = auth0.users.update(user.auth0_id, payload)
+                log.info("UPDATED: {0}".format(account['user_id']))
+        else:
+            # The User account thinks it has an Auth0, but doesn't.  Create (reset)
+            payload = generate_payload(user)
+            account = auth0.users.create(payload)
+            user.auth0_id = account['user_id']
+            user.save()
+            log.info("RESET: {0}".format(account['user_id']))
+    # Create new accounts
+    users = User.objects.filter(
+        auth0_id=None,
+    )
+    for user in users:
+        payload = generate_payload(user)
+        # Create
+        try:
+            account = auth0.users.create(payload)
+        except Auth0Error as e:
+            log.error(e)
+            continue
+        user.auth0_id = account['user_id']
+        user.save()
+        log.info("CREATED: {0}".format(account['user_id']))
