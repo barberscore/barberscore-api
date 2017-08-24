@@ -2326,6 +2326,11 @@ class Member(TimeStampedModel):
         blank=True,
     )
 
+    valid_through = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     is_admin = models.BooleanField(
         default=False,
     )
