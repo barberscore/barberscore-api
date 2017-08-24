@@ -401,6 +401,7 @@ class MemberSerializer(serializers.ModelSerializer):
             'person',
             'participants',
             'is_admin',
+            'is_current',
             'permissions',
         ]
     # class JSONAPIMeta:

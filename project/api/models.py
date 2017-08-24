@@ -2335,6 +2335,10 @@ class Member(TimeStampedModel):
         default=False,
     )
 
+    is_current = models.BooleanField(
+        default=False,
+    )
+
     bhs_pk = models.UUIDField(
         null=True,
         blank=True,

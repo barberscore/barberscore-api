@@ -255,10 +255,7 @@ def update_or_create_member_from_smjoin(smjoin):
             part = None
     else:
         part = None
-    if smjoin.status:
-        status = 10
-    else:
-        status = -10
+    is_current = smjoin.status
     try:
         group = Group.objects.get(
             bhs_pk=smjoin.structure.id
@@ -276,7 +273,7 @@ def update_or_create_member_from_smjoin(smjoin):
     bhs_pk = smjoin.id
     valid_through = smjoin.subscription.valid_through
     defaults = {
-        'status': status,
+        'is_current': is_current,
         'valid_through': valid_through,
         'part': part,
         'bhs_pk': bhs_pk,

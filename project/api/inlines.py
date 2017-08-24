@@ -220,6 +220,7 @@ class MemberInline(admin.TabularInline):
         'group',
         'part',
         'is_admin',
+        'is_current',
         'status',
     ]
     raw_id_fields = [
