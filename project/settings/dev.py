@@ -89,6 +89,12 @@ LOGGING = {
                 'console',
             ],
         },
+        'updater': {
+            'level': 'DEBUG',
+            'handlers': [
+                'console',
+            ],
+        },
         'console': {
             'level': 'DEBUG',
             'handlers': [
