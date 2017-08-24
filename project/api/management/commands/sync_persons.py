@@ -42,4 +42,4 @@ class Command(BaseCommand):
             update_or_create_person_from_human(h)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-        self.stdout.write("Finished updating persons.")
+        self.stdout.write("Updated {0} persons.".format(total))

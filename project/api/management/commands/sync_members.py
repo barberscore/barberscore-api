@@ -29,18 +29,36 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Updating members...")
-        duplicates = SMJoin.objects.filter(
-            structure__kind__in=[
-                'quartet',
-                'chapter',
-            ],
-        ).values(
-            'structure__id',
-            'subscription__human_id',
-        ).order_by(
-        ).annotate(
-            count_id=Count('id')
-        ).filter(count_id__gt=0)
+
+        if options['all']:
+            duplicates = SMJoin.objects.filter(
+                structure__kind__in=[
+                    'quartet',
+                    'chapter',
+                ],
+            ).values(
+                'structure__id',
+                'subscription__human_id',
+            ).order_by(
+            ).annotate(
+                count_id=Count('id')
+            ).filter(count_id__gt=0)
+        else:
+            now = timezone.now()
+            cursor = now - datetime.timedelta(hours=25)
+            duplicates = SMJoin.objects.filter(
+                structure__kind__in=[
+                    'quartet',
+                    'chapter',
+                ],
+                updated_ts__gt=cursor,
+            ).values(
+                'structure__id',
+                'subscription__human_id',
+            ).order_by(
+            ).annotate(
+                count_id=Count('id')
+            ).filter(count_id__gt=0)
 
         i = 0
         total = duplicates.count()
@@ -51,9 +69,9 @@ class Command(BaseCommand):
                 subscription__human=d['subscription__human_id'],
             ).order_by(
                 'status',
-                'created_ts',
+                'established_date',
             ).last()
             update_or_create_member_from_smjoin(j)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-        self.stdout.write("Updated members.")
+        self.stdout.write("Updated {0} members.".format(total))
