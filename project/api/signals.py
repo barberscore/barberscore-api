@@ -34,7 +34,6 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                         "name": instance.person.name
                     },
                     "app_metadata": {
-                        "bhs_id": instance.person.bhs_id,
                         "barberscore_id": str(instance.id),
                     }
                 }
