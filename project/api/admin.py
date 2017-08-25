@@ -935,6 +935,7 @@ class PersonAdmin(admin.ModelAdmin):
         'name',
         'status',
         'email',
+        'is_deceased',
         'is_bhs',
         'bhs_id',
         'bhs_pk',
@@ -969,6 +970,7 @@ class PersonAdmin(admin.ModelAdmin):
         'is_bhs',
         'gender',
         'part',
+        'is_deceased',
     ]
 
     readonly_fields = [

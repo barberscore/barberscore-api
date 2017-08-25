@@ -3206,6 +3206,10 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    is_deceased = models.BooleanField(
+        default=False,
+    )
+
     website = models.URLField(
         help_text="""
             The website URL of the resource.""",
