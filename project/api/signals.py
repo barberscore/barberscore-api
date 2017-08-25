@@ -12,13 +12,13 @@ from django.dispatch import receiver
 
 # Local
 from .models import User
+from .utils import get_auth0_token
 
 
 @receiver(post_save, sender=User)
 def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create Auth0 from user and send verification email."""
     if not raw:
-        from .utils import get_auth0_token
         token = get_auth0_token()
         auth0 = Auth0(
             settings.AUTH0_DOMAIN,
@@ -62,7 +62,6 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if instance.auth0_id:
-        from .utils import get_auth0_token
         token = get_auth0_token()
         auth0 = Auth0(
             settings.AUTH0_DOMAIN,
