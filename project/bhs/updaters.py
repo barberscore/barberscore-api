@@ -124,7 +124,7 @@ def update_or_create_person_from_human(human):
             status = 10
         else:
             status = -10
-    except Subcription.DoesNotExist:
+    except Subscription.DoesNotExist:
         status = -10
     except Subscription.MultipleObjectsReturned:
         status = -10
