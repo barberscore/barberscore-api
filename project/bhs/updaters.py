@@ -149,6 +149,14 @@ def update_or_create_person_from_human(human):
         log.info((person, created))
     except IntegrityError as e:
         log.error((human, str(e)))
+        return
+    if created and status == 10:
+        user = User.objects.create_user(
+            email=person.email,
+            person=person,
+        )
+        user.auth0_id = response['user_id']
+        user.save()
 
 
 def update_or_create_group_from_structure(structure):
