@@ -28,7 +28,7 @@ Participants on Stage:
 {% if is_bhs %}
 Expiring Members:
 {% for expiration in expirations %}
-    - {{expiration.member.person.nomen|safe}}, Exp. {{expiration.member.person.dues_thru}}
+    - {{expiration.member.person.nomen|safe}}, Exp. {{expiration.member.valid_through}}
 {% empty %}
     - None.  All Participants are Current.
 {% endfor %}

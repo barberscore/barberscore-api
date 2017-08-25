@@ -3162,11 +3162,6 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
-    dues_thru = models.DateField(
-        null=True,
-        blank=True,
-    )
-
     spouse = models.CharField(
         max_length=255,
         blank=True,

@@ -940,7 +940,6 @@ class PersonAdmin(admin.ModelAdmin):
         'bhs_id',
         'bhs_pk',
         'birth_date',
-        'dues_thru',
         'part',
         'gender',
         'spouse',

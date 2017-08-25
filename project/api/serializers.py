@@ -588,7 +588,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'birth_date',
-            'dues_thru',
             'spouse',
             'location',
             'part',
