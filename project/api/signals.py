@@ -19,12 +19,12 @@ from .utils import get_auth0_token
 def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create Auth0 from user and send verification email."""
     if not raw:
-        token = get_auth0_token()
-        auth0 = Auth0(
-            settings.AUTH0_DOMAIN,
-            token,
-        )
         if created:
+            token = get_auth0_token()
+            auth0 = Auth0(
+                settings.AUTH0_DOMAIN,
+                token,
+            )
             payload = {
                 "connection": "email",
                 "email": instance.email,
@@ -46,6 +46,11 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
             instance.auth0_id = response['user_id']
             instance.save()
         else:
+            token = get_auth0_token()
+            auth0 = Auth0(
+                settings.AUTH0_DOMAIN,
+                token,
+            )
             payload = {
                 'email': instance.email,
                 'user_metadata': {

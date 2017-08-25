@@ -11,7 +11,7 @@ from factory.django import (
 from factory.fuzzy import FuzzyInteger
 
 # Django
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 
 # First-Party
 from api.models import (
@@ -355,7 +355,7 @@ class VenueFactory(DjangoModelFactory):
         model = Venue
 
 
-@mute_signals(post_save)
+@mute_signals(post_save, pre_delete)
 class UserFactory(DjangoModelFactory):
     email = Faker('email')
     password = PostGenerationMethodCall('set_password', 'password')
