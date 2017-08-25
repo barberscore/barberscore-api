@@ -19,44 +19,34 @@ from .utils import get_auth0_token
 def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     """Create Auth0 from user and send verification email."""
     if not raw:
-        token = get_auth0_token()
-        auth0 = Auth0(
-            settings.AUTH0_DOMAIN,
-            token,
-        )
         if created:
-            payload = {
-                "connection": "email",
-                "email": instance.email,
-                "email_verified": True,
-                "user_metadata": {
-                    "name": instance.person.name
-                },
-                "app_metadata": {
-                    "barberscore_id": str(instance.id),
+            if instance.person:
+                token = get_auth0_token()
+                auth0 = Auth0(
+                    settings.AUTH0_DOMAIN,
+                    token,
+                )
+                create_user_payload = {
+                    "connection": "email",
+                    "email": instance.email,
+                    "email_verified": True,
+                    "user_metadata": {
+                        "name": instance.person.name
+                    },
+                    "app_metadata": {
+                        "bhs_id": instance.person.bhs_id,
+                        "barberscore_id": str(instance.id),
+                    }
                 }
-            }
-            try:
-                response = auth0.users.create(payload)
-            except Auth0Error as e:
-                if 'The user already exists' in e.message:
-                    return
-                else:
-                    raise(e)
-            instance.auth0_id = response['user_id']
-            instance.save()
-        else:
-            payload = {
-                'email': instance.email,
-                'user_metadata': {
-                    'name': instance.person.nomen,
-                },
-                'app_metadata': {
-                    'barberscore_id': str(instance.id),
-                    'bhs_id': None,
-                },
-            }
-            account = auth0.users.update(instance.auth0_id, payload)
+                try:
+                    response = auth0.users.create(create_user_payload)
+                except Auth0Error as e:
+                    if 'The user already exists' in e.message:
+                        return
+                    else:
+                        raise(e)
+                instance.auth0_id = response['user_id']
+                instance.save()
 
 
 @receiver(pre_delete, sender=User)
