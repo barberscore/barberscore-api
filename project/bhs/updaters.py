@@ -81,7 +81,7 @@ def update_or_create_person_from_human(human):
         )
     )
     try:
-        v = validate_email(human.username)
+        v = validate_email(human.username.strip())
         email = v["email"].lower()
     except EmailNotValidError as e:
         email = None
