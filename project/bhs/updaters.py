@@ -116,8 +116,21 @@ def update_or_create_person_from_human(human):
         part = 4
     else:
         part = None
+    try:
+        subscription = human.subscriptions.get(
+            items_editable=True,
+        )
+        if subscription.status == 'active' and email:
+            status = 10
+        else:
+            status = -10
+    except Subcription.DoesNotExist:
+        status = -10
+    except Subscription.MultipleObjectsReturned:
+        status = -10
     defaults = {
         'name': name,
+        'status': status,
         'email': email,
         'birth_date': birth_date,
         'phone': phone,
@@ -420,3 +433,22 @@ def crud_auth0():
         user.auth0_id = account['user_id']
         user.save()
         log.info("CREATED: {0}".format(account['user_id']))
+
+
+def update_user_from_person(user):
+    user.email = user.person.email
+    user.save()
+    # Get the Auth0 instance
+    auth0 = get_auth0()
+    payload = {
+        'email': user.email,
+        'user_metadata': {
+            'name': user.person.nomen,
+        },
+        'app_metadata': {
+            'barberscore_id': str(user.id),
+        },
+    }
+    account = auth0.users.update(user.auth0_id, payload)
+    log.info("UPDATED: {0}".format(account['user_id']))
+    return
