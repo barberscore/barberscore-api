@@ -1,8 +1,31 @@
+# Standard Libary
+import datetime
+
 # Django
 from django.core.management.base import BaseCommand
 
 # First-Party
-from bhs.updaters import crud_auth0
+from api.models import (
+    Person,
+    Group,
+    Member,
+)
+from bhs.models import (
+    Human,
+    Structure,
+    SMJoin,
+)
+from bhs.updaters import (
+    update_or_create_person_from_human,
+    update_or_create_member_from_smjoin,
+    update_or_create_group_from_structure,
+)
+
+from django.db.models import Count
+
+from django.utils import (
+    timezone,
+)
 
 
 class Command(BaseCommand):
