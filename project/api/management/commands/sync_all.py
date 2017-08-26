@@ -17,7 +17,7 @@ class Command(BaseCommand):
             help='Update all groups.',
         )
 
-def handle(self, *args, **options):
+    def handle(self, *args, **options):
         # sync persons
         self.stdout.write("Updating persons...")
         if options['all']:

@@ -23,6 +23,7 @@ class Command(BaseCommand):
             'Assignment',
             'Contest',
             'Contestant',
+            'Grantor',
             'Member',
             'Officer',
             'Appearance',
