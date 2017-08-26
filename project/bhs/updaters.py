@@ -100,19 +100,19 @@ def update_or_create_person_from_human(human):
         work_phone = ''
     is_bhs = True
     bhs_id = human.bhs_id
-    if human.sex == 'male':
+    if human.sex.casefold() == 'male'.casefold():
         gender = 10
-    elif human.sex == 'female':
+    elif human.sex.casefold() == 'female'.casefold():
         gender = 20
     else:
         gender = None
-    if human.primary_voice_part == 'Tenor':
+    if human.primary_voice_part.casefold() == 'Tenor'.casefold():
         part = 1
-    elif human.primary_voice_part == 'Lead':
+    elif human.primary_voice_part.casefold() == 'Lead'.casefold():
         part = 2
-    elif human.primary_voice_part == 'Baritone':
+    elif human.primary_voice_part.casefold() == 'Baritone'.casefold():
         part = 3
-    elif human.primary_voice_part == 'Bass':
+    elif human.primary_voice_part.casefold() == 'Bass'.casefold():
         part = 4
     else:
         part = None
@@ -120,7 +120,7 @@ def update_or_create_person_from_human(human):
         subscription = human.subscriptions.get(
             items_editable=True,
         )
-        if subscription.status == 'active' and email:
+        if subscription.status.casefold() == 'active'.casefold() and email:
             status = 10
         else:
             status = -10
@@ -262,13 +262,13 @@ def update_or_create_member_from_smjoin(smjoin):
     except AttributeError:
         part_stripped = None
     if part_stripped:
-        if part_stripped == 'Tenor':
+        if part_stripped.casefold() == 'Tenor'.casefold():
             part = 1
-        elif part_stripped == 'Lead':
+        elif part_stripped.casefold() == 'Lead'.casefold():
             part = 2
-        elif part_stripped == 'Baritone':
+        elif part_stripped.casefold() == 'Baritone'.casefold():
             part = 3
-        elif part_stripped == 'Bass':
+        elif part_stripped.casefold() == 'Bass'.casefold():
             part = 4
         else:
             part = None

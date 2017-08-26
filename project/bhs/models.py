@@ -200,7 +200,7 @@ class Structure(models.Model):
             name = ""
         else:
             name = self.name
-        if self.kind == 'chapter':
+        if self.kind.casefold() == 'chapter'.casefold():
             nomen = "{0} [{1} {2}]".format(
                 self.chorus_name,
                 self.chapter_code,
