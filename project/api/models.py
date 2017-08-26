@@ -1894,6 +1894,12 @@ class Entry(TimeStampedModel):
     def can_invite_entry(self):
         return all([
             self.group.members.filter(is_admin=True),
+            self.group.status == self.group.STATUS.active,
+        ])
+
+    def can_submit_entry(self):
+        return all([
+            self.group.status == self.group.STATUS.active,
         ])
 
 
@@ -1911,7 +1917,7 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.invited], target=STATUS.submitted)
+    @transition(field=status, source=[STATUS.new, STATUS.invited], conditions=[can_submit_entry], target=STATUS.submitted)
     def submit(self, *args, **kwargs):
         send_entry(self, 'entry_submit.txt')
         return
