@@ -79,7 +79,6 @@ LOGGING = {
         'updater': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
