@@ -302,9 +302,17 @@ def update_or_create_member_from_smjoin(smjoin):
         log.error(e)
         return
     except Subscription.MultipleObjectsReturned as e:
-        log.error(e)
-        return
-    valid_through = smjoin.subscription.valid_through
+        try:
+            valid_through = smjoin.subscription.human.subscriptions.get(
+                items_editable=True,
+                status='active',
+            ).valid_through
+        except Subscription.DoesNotExist as e:
+            log.error(e)
+            return
+        except Subscription.MultipleObjectsReturned as e:
+            log.error(e)
+            return
     defaults = {
         'is_current': is_current,
         'status': status,
