@@ -5045,6 +5045,12 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
+    name = models.CharField(
+        max_length=255,
+        editable=False,
+        blank=True,
+    )
+
     email = models.EmailField(
         unique=True,
         editable=False,
