@@ -5090,10 +5090,10 @@ class User(AbstractBaseUser):
 
     # Methods
     def __str__(self):
-        return self.email
+        return self.name
 
     def get_full_name(self):
-        return self.email
+        return self.name
 
     def get_short_name(self):
         return self.email
