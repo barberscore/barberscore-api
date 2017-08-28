@@ -252,6 +252,16 @@ def update_or_create_group_from_structure(structure):
             except IntegrityError as e:
                 log.error(str(e))
                 return
+        parent_bhs_id = structure.parent.bhs_id
+        if parent_bhs_id:
+            try:
+                organization = Organization.objects.get(
+                    bhs_id=parent_bhs_id,
+                )
+            except Organization.DoesNotExist:
+                organization = None
+            group.organization = group.organization
+            group.save()
 
 
 def update_or_create_member_from_smjoin(smjoin):
