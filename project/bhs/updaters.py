@@ -386,7 +386,7 @@ def generate_payload(user):
         user.save()
     email = user.email
 
-    name = user.person.nomen
+    name = user.name
     barberscore_id = str(user.id)
     payload = {
         "connection": "email",
@@ -427,7 +427,7 @@ def crud_auth0():
             payload = {
                 'email': user.email,
                 'user_metadata': {
-                    'name': user.person.nomen,
+                    'name': user.name,
                 },
                 'user_id': user.auth0_id,
                 'app_metadata': {
@@ -465,13 +465,14 @@ def crud_auth0():
 
 def update_user_from_person(user):
     user.email = user.person.email
+    user.name = user.person.nomen
     user.save()
     # Get the Auth0 instance
     auth0 = get_auth0()
     payload = {
         'email': user.email,
         'user_metadata': {
-            'name': user.person.nomen,
+            'name': user.name,
         },
         'app_metadata': {
             'barberscore_id': str(user.id),
