@@ -294,14 +294,14 @@ def update_or_create_member_from_smjoin(smjoin):
             bhs_pk=smjoin.structure.id
         )
     except Group.DoesNotExist as e:
-        log.error(str(e))
+        # Usually due to pending status
         return
     try:
         person = Person.objects.get(
             bhs_pk=smjoin.subscription.human.id
         )
     except Person.DoesNotExist as e:
-        log.error(str(e))
+        # Generally an error
         return
     bhs_pk = smjoin.id
     try:
@@ -309,7 +309,7 @@ def update_or_create_member_from_smjoin(smjoin):
             items_editable=True,
         ).valid_through
     except Subscription.DoesNotExist as e:
-        log.error(e)
+        # Usually due to bad data.
         return
     except Subscription.MultipleObjectsReturned as e:
         try:
@@ -318,10 +318,10 @@ def update_or_create_member_from_smjoin(smjoin):
                 status='active',
             ).valid_through
         except Subscription.DoesNotExist as e:
-            log.error(e)
+            # Usually due to bad data.
             return
         except Subscription.MultipleObjectsReturned as e:
-            log.error(e)
+            # Usually due to bad data.
             return
     defaults = {
         'is_current': is_current,
