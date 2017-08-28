@@ -342,39 +342,37 @@ def create_drcj_report(session):
                 awards_list.append(contestant.contest.award.name)
             awards = "\n".join(filter(None, awards_list))
             persons_list = []
+            chapters_list = []
             if entry.group.kind == entry.group.KIND.quartet:
                 participants = entry.participants.all().order_by('member__part')
-            else:
-                participants = None
-            chapters_list = []
-            for participant in participants:
-                persons_list.append(
-                    participant.member.get_part_display(),
-                )
-                persons_list.append(
-                    participant.member.person.nomen,
-                )
-                persons_list.append(
-                    participant.member.person.email,
-                )
-                persons_list.append(
-                    participant.member.person.phone,
-                )
-                if entry.group.kind == Group.KIND.chorus:
-                    chapters = None
-                    continue
-                person_chapter_list = []
-                for member in participant.member.person.members.filter(
-                    status=10,
-                    group__kind=Group.KIND.chorus,
-                ).distinct('group'):
-                    person_chapter_list.append(
-                        member.group.name,
+                for participant in participants:
+                    persons_list.append(
+                        participant.member.get_part_display(),
                     )
-                chapters_list.extend(
-                    person_chapter_list
-                )
-                list(set(chapters_list))
+                    persons_list.append(
+                        participant.member.person.nomen,
+                    )
+                    persons_list.append(
+                        participant.member.person.email,
+                    )
+                    persons_list.append(
+                        participant.member.person.phone,
+                    )
+                    if entry.group.kind == Group.KIND.chorus:
+                        chapters = None
+                        continue
+                    person_chapter_list = []
+                    for member in participant.member.person.members.filter(
+                        status=10,
+                        group__kind=Group.KIND.chorus,
+                    ).distinct('group'):
+                        person_chapter_list.append(
+                            member.group.name,
+                        )
+                    chapters_list.extend(
+                        person_chapter_list
+                    )
+                    list(set(chapters_list))
             chapters = "\n".join(filter(None, chapters_list))
             persons = "\n".join(filter(None, persons_list))
             row = {
