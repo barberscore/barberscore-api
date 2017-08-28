@@ -342,11 +342,7 @@ def create_drcj_report(session):
                 awards_list.append(contestant.contest.award.name)
             awards = "\n".join(filter(None, awards_list))
             persons_list = []
-            if entry.group.kind == entry.group.KIND.chorus:
-                participants = entry.participants.filter(
-                    member__part=-1,
-                ).order_by('member__part')
-            else:
+            if entry.group.kind == entry.group.KIND.quartet:
                 participants = entry.participants.all().order_by('member__part')
             chapters_list = []
             for participant in participants:
