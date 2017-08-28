@@ -437,7 +437,6 @@ def crud_auth0():
             if payload != match:
                 # Details need updating
                 del payload['user_id']
-                payload['app_metadata']['bhs_id'] = None
                 account = auth0.users.update(user.auth0_id, payload)
                 log.info("UPDATED: {0}".format(account['user_id']))
         else:
