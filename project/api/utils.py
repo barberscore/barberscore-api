@@ -344,6 +344,8 @@ def create_drcj_report(session):
             persons_list = []
             if entry.group.kind == entry.group.KIND.quartet:
                 participants = entry.participants.all().order_by('member__part')
+            else:
+                participants = None
             chapters_list = []
             for participant in participants:
                 persons_list.append(
