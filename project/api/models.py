@@ -1913,6 +1913,13 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.invited, STATUS.submitted], target=STATUS.withdrawn)
     def withdraw(self, *args, **kwargs):
+        if self.session.status == self.session.STATUS.verified:
+            remains = self.session.entries.filter(draw__gt=self.draw)
+            self.draw = None
+            self.save()
+            for entry in remains:
+                entry.draw = entry.draw - 1
+                entry.save()
         send_entry(self, 'entry_withdraw.txt')
         return
 
