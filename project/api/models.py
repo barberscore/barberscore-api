@@ -1920,6 +1920,8 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
+        for contestant in self.contestants.all():
+            contestant.delete()
         send_entry(self, 'entry_withdraw.txt')
         return
 
@@ -1945,6 +1947,8 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
+        for contestant in self.contestants.all():
+            contestant.delete()
         send_entry(self, 'entry_scratch.txt')
         return
 
