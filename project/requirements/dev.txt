@@ -3,6 +3,9 @@
 pytest==3.2.1
 pytest-django==3.1.2
 pytest-cov==2.5.1
+pylint==1.7.2
+pycodestyle==2.3.1
+pydocstyle==2.0.0
 
 # Tools
 django-debug-toolbar==1.8
