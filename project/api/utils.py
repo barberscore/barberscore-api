@@ -37,6 +37,8 @@ log = logging.getLogger(__name__)
 
 import csv
 from bhs.models import Structure
+
+
 def export_active_quartets():
     with open('active_quartets.csv', 'w') as f:
         output = []
@@ -65,10 +67,12 @@ def export_active_quartets():
                 'district': district,
             }
             output.append(row)
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for row in output:
             writer.writerow(row)
+
 
 def do_org_sort(root):
     i = 1
@@ -82,7 +86,6 @@ def do_org_sort(root):
             i += 1
             grandchild.org_sort = i
             grandchild.save()
-
 
 
 def update_officers():
@@ -114,8 +117,6 @@ def update_members():
         # log.info(member)
 
 
-
-
 def get_auth0_token():
     client = GetToken(settings.AUTH0_DOMAIN)
     token = client.client_credentials(
@@ -126,6 +127,18 @@ def get_auth0_token():
     return token['access_token']
 
 
+def get_requests_token():
+    url = 'https://barberscore-dev.auth0.com/oauth/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': settings.AUTH0_API_ID,
+        'client_secret': settings.AUTH0_API_SECRET,
+        'audience': settings.AUTH0_AUDIENCE,
+    }
+    response = requests.post(url, data=data)
+    return response
+
+
 def get_auth0_me(token):
     url = urljoin("https://{0}".format(settings.AUTH0_DOMAIN), 'userinfo')
     headers = {
@@ -133,6 +146,7 @@ def get_auth0_me(token):
     }
     response = requests.get(url, headers=headers)
     return response
+
 
 def update_auth0_id(user):
     token = get_auth0_token()
@@ -152,19 +166,59 @@ def update_auth0_id(user):
     return log.info("Updated {0}".format(user))
 
 
+def get_requests_token():
+    url = 'https://barberscore-dev.auth0.com/oauth/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': settings.AUTH0_API_ID,
+        'client_secret': settings.AUTH0_API_SECRET,
+        'audience': settings.AUTH0_AUDIENCE,
+    }
+    response = requests.post(url, data=data)
+    return response
+
+
 def impersonate(user):
     token = get_auth0_token()
-    me = get_auth0_me()
-    url = urljoin("https://{0}".format(settings.AUTH0_DOMAIN), 'users/{0}/impersonate'.format(user.auth0_id))
+    impersonator_id = 'email|599e62507cd3126297fa63bc'.partition('|')[2]
+    url = "https://{0}/users/{1}/impersonate".format(
+        settings.AUTH0_DOMAIN,
+        user.auth0_id,
+    )
     headers = {
         'Authorization': 'Bearer {0}'.format(token),
     }
     data = {
         'protocol': 'oauth2',
-        'impersonator_id': me.auth0_id,
+        'impersonator_id': impersonator_id,
         'client_id': settings.AUTH0_CLIENT_ID,
         'additionalParameters': {
             'response_type': 'code',
+            'callback_url': 'http://localhost:4200/login',
+            'scope': 'openid profile',
+        },
+    }
+    response = requests.post(url, data=data, headers=headers)
+    return response
+
+
+def send_link(user):
+    token = get_auth0_token()
+    impersonator_id = 'email|599e62507cd3126297fa63bc'.partition('|')[2]
+    url = "https://{0}/users/{1}/impersonate".format(
+        settings.AUTH0_DOMAIN,
+        user.auth0_id,
+    )
+    headers = {
+        'Authorization': 'Bearer {0}'.format(token),
+    }
+    data = {
+        'protocol': 'oauth2',
+        'impersonator_id': impersonator_id,
+        'client_id': settings.AUTH0_CLIENT_ID,
+        'additionalParameters': {
+            'response_type': 'code',
+            'callback_url': 'http://localhost:4200/login',
             'scope': 'openid profile',
         },
     }
@@ -287,7 +341,8 @@ def create_bbscores(session):
                     'song_title': song_title,
                 }
                 output.append(row)
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for row in output:
             writer.writerow(row)
@@ -392,7 +447,8 @@ def create_drcj_report(session):
                 'chapters': chapters,
             }
             output.append(row)
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for row in output:
             writer.writerow(row)
@@ -417,7 +473,8 @@ def export_charts():
             'lyricists': chart.lyricists,
         }
         output.append(row)
-    writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, extrasaction='ignore')
+    writer = csv.DictWriter(
+        sys.stdout, fieldnames=fieldnames, extrasaction='ignore')
     writer.writeheader()
     for row in output:
         writer.writerow(row)
@@ -457,7 +514,8 @@ def export_db_chapters():
             'parent_id',
             'parent',
         ]
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for chapter in chapters:
             parent = Entity.objects.get(
@@ -489,7 +547,8 @@ def export_db_offices():
             'short_name',
             'long_name',
         ]
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for office in offices:
             try:
@@ -529,7 +588,8 @@ def export_db_awards():
             'advance',
             'entity',
         ]
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for office in offices:
             try:
