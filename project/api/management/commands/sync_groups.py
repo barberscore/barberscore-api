@@ -13,16 +13,26 @@ from django.utils import (
     timezone,
 )
 
+
 class Command(BaseCommand):
     help = "Command to sync database with BHS ."
 
     def add_arguments(self, parser):
         parser.add_argument(
+            '-a',
             '--all',
             action='store_true',
             dest='all',
             default=False,
             help='Update all groups.',
+        )
+
+        parser.add_argument(
+            '-d',
+            '--days',
+            type=int,
+            dest='days',
+            help='Number of days to update from.',
         )
 
     def handle(self, *args, **options):
@@ -31,7 +41,7 @@ class Command(BaseCommand):
             ss = Structure.objects.all()
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(hours=25)
+            cursor = now - datetime.timedelta(days=options['days'])
             ss = Structure.objects.filter(
                 updated_ts__gt=cursor,
             )
