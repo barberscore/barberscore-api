@@ -267,7 +267,7 @@ def update_or_create_group_from_structure(structure):
                 )
             except Organization.DoesNotExist:
                 organization = None
-            group.organization = group.organization
+            group.organization = organization
             group.save()
 
 
