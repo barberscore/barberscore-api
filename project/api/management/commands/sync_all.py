@@ -45,6 +45,7 @@ class Command(BaseCommand):
             '--days',
             type=int,
             dest='days',
+            nargs='?',
             const=2,
             help='Number of days to update.',
         )
