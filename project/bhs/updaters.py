@@ -32,6 +32,7 @@ from api.models import (
     Member,
     Office,
     Officer,
+    Organization,
     Participant,
     Person,
     Repertory,
