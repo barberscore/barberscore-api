@@ -427,7 +427,10 @@ def crud_auth0():
     # Update each User account
     for user in users:
         # First, check to see if the User account is in the Auth0 Account list
-        match = next((a for a in accounts if a['user_id'] == str(user.auth0_id)), None)
+        match = next(
+            (a for a in accounts if a['user_id'] == str(user.auth0_id)),
+            None,
+        )
         if match:
             # If you find the account, check to see if it needs updating.
             payload = {
