@@ -75,7 +75,7 @@ class Command(BaseCommand):
             ss = Structure.objects.all()
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(hours=25)
+            cursor = now - datetime.timedelta(days=options['days'])
             ss = Structure.objects.filter(
                 updated_ts__gt=cursor,
             )
@@ -105,7 +105,7 @@ class Command(BaseCommand):
             ).filter(count_id__gt=0)
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(hours=25)
+            cursor = now - datetime.timedelta(days=options['days'])
             duplicates = SMJoin.objects.filter(
                 structure__kind__in=[
                     'quartet',
