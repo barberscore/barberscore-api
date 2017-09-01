@@ -32,11 +32,13 @@ class Command(BaseCommand):
             '--days',
             type=int,
             dest='days',
-            help='Number of days to update from.',
+            const=2,
+            help='Number of days to update.',
         )
 
     def handle(self, *args, **options):
         self.stdout.write("Updating groups...")
+
         if options['all']:
             ss = Structure.objects.all()
         else:

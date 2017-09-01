@@ -15,6 +15,7 @@ from django.utils import (
     timezone,
 )
 
+
 class Command(BaseCommand):
     help = "Command to sync database with BHS ."
 
@@ -25,6 +26,15 @@ class Command(BaseCommand):
             dest='all',
             default=False,
             help='Update all members.',
+        )
+
+        parser.add_argument(
+            '-d',
+            '--days',
+            type=int,
+            dest='days',
+            const=2,
+            help='Number of days to update.',
         )
 
     def handle(self, *args, **options):
@@ -45,7 +55,7 @@ class Command(BaseCommand):
             ).filter(count_id__gt=0)
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(hours=25)
+            cursor = now - datetime.timedelta(days=options['days'])
             duplicates = SMJoin.objects.filter(
                 structure__kind__in=[
                     'quartet',

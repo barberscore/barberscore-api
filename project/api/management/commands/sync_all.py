@@ -40,6 +40,15 @@ class Command(BaseCommand):
             help='Update all groups.',
         )
 
+        parser.add_argument(
+            '-d',
+            '--days',
+            type=int,
+            dest='days',
+            const=2,
+            help='Number of days to update.',
+        )
+
     def handle(self, *args, **options):
         # sync persons
         self.stdout.write("Updating persons...")
@@ -47,7 +56,7 @@ class Command(BaseCommand):
             hs = Human.objects.all()
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(hours=25)
+            cursor = now - datetime.timedelta(days=options['days'])
             hs = Human.objects.filter(
                 updated_ts__gt=cursor,
             )
