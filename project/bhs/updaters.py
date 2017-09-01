@@ -100,20 +100,26 @@ def update_or_create_person_from_human(human):
         work_phone = ''
     is_bhs = True
     bhs_id = human.bhs_id
-    if human.sex.casefold() == 'male'.casefold():
-        gender = 10
-    elif human.sex.casefold() == 'female'.casefold():
-        gender = 20
+    if human.sex:
+        if human.sex.casefold() == 'male'.casefold():
+            gender = 10
+        elif human.sex.casefold() == 'female'.casefold():
+            gender = 20
+        else:
+            gender = None
     else:
         gender = None
-    if human.primary_voice_part.casefold() == 'Tenor'.casefold():
-        part = 1
-    elif human.primary_voice_part.casefold() == 'Lead'.casefold():
-        part = 2
-    elif human.primary_voice_part.casefold() == 'Baritone'.casefold():
-        part = 3
-    elif human.primary_voice_part.casefold() == 'Bass'.casefold():
-        part = 4
+    if human.primary_voice_part:
+        if human.primary_voice_part.casefold() == 'Tenor'.casefold():
+            part = 1
+        elif human.primary_voice_part.casefold() == 'Lead'.casefold():
+            part = 2
+        elif human.primary_voice_part.casefold() == 'Baritone'.casefold():
+            part = 3
+        elif human.primary_voice_part.casefold() == 'Bass'.casefold():
+            part = 4
+        else:
+            part = None
     else:
         part = None
     try:
