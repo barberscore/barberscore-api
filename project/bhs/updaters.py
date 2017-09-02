@@ -491,3 +491,18 @@ def update_user_from_person(user):
     account = auth0.users.update(user.auth0_id, payload)
     log.info("UPDATED: {0}".format(account['user_id']))
     return
+
+
+def create_user_from_person(person):
+    try:
+        v = validate_email(person.email.strip())
+        email = v["email"].lower()
+    except EmailNotValidError as e:
+        person.status = person.STATUS.inactive
+        person.save()
+        return
+    User.objects.create_user(
+        email=email,
+        name=person.name,
+        person=person,
+    )
