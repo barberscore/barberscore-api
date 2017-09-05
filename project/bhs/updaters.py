@@ -500,9 +500,11 @@ def create_user_from_person(person):
     except EmailNotValidError as e:
         person.status = person.STATUS.inactive
         person.save()
+        log.error("Can not create: {0}".format(person))
         return
-    User.objects.create_user(
+    user = User.objects.create_user(
         email=email,
         name=person.name,
         person=person,
     )
+    log.info("CREATED: {0}".format(user))
