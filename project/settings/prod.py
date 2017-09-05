@@ -19,7 +19,8 @@ ALLOWED_HOSTS = [
 # BHS Database
 BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
 DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
-DATABASES['bhs_db']['OPTIONS'] = {'ssl': {'ca': '/app/rds-combined-ca-bundle.pem'}}
+DATABASES['bhs_db']['OPTIONS'] = {
+    'ssl': {'ca': '/app/rds-combined-ca-bundle.pem'}}
 DATABASE_ROUTERS = [
     'routers.BHSRouter',
 ]
@@ -33,10 +34,8 @@ AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
 AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
-AUTH0_PUBLIC_KEY = get_env_variable("AUTH0_PUBLIC_KEY")
-
 # JWT Settings
-pem_data = AUTH0_PUBLIC_KEY.encode()
+pem_data = open('barberscore.pem', 'rb').read()
 cert = x509.load_pem_x509_certificate(pem_data, default_backend())
 jwt_public_key = cert.public_key()
 
