@@ -14,7 +14,7 @@ class UserCreationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['person'].email.lower()
-        user.name = self.cleaned_data['name'].name
+        user.name = self.cleaned_data['person'].name
         user.set_password(None)
         if commit:
             user.save()
