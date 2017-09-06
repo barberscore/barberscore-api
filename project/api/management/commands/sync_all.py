@@ -33,6 +33,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
+            '-a',
             '--all',
             action='store_true',
             dest='all',

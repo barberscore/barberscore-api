@@ -348,6 +348,7 @@ def update_or_create_member_from_smjoin(smjoin):
             group=group,
             defaults=defaults,
         )
+        log.info((member, created))
     except IntegrityError as e:
         log.error(str(e))
         return
