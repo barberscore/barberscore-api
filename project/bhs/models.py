@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Human(models.Model):
     id = models.CharField(
         primary_key=True,
@@ -104,7 +105,6 @@ class Human(models.Model):
         )
         return full_name
 
-
     # Internals
     def __str__(self):
         if self.bhs_id:
@@ -158,6 +158,10 @@ class Structure(models.Model):
         db_column='legacy_code',
     )
     chorus_name = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    preferred_name = models.CharField(
         max_length=255,
         editable=False,
     )
@@ -227,6 +231,7 @@ class Status(models.Model):
         editable=False,
     )
     # Internals
+
     def __str__(self):
         return str(self.name)
 
@@ -380,6 +385,7 @@ class SMJoin(models.Model):
     updated_ts = models.DateTimeField(
         db_column='modified',
     )
+
     @property
     def human(self):
         return self.subscription.human

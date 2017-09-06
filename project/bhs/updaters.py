@@ -165,8 +165,6 @@ def update_or_create_person_from_human(human):
 
 
 def update_or_create_group_from_structure(structure):
-    if not structure.name:
-        return
     kind_map = {
         'chapter': 32,
         'quartet': 41,
@@ -190,7 +188,14 @@ def update_or_create_group_from_structure(structure):
         'suspended': -10,
     }
     if kind == 41:
-        name = structure.name.strip()
+        if structure.name:
+            name = structure.name.strip()
+        else:
+            if not structure.preferred_name:
+                return
+            name = "{0} (NAME APPROVAL PENDING)".format(
+                structure.preferred_name.strip()
+            )
     else:
         name = "{0} [{1}]".format(
             structure.chorus_name.strip(),
