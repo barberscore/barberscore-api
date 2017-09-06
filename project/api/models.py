@@ -3588,6 +3588,7 @@ class Repertory(TimeStampedModel):
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
         return any([
             request.user.person.officers.filter(
