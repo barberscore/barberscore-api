@@ -40,6 +40,7 @@ class ReadOnlyAdmin(admin.ModelAdmin):
 class HumanAdmin(ReadOnlyAdmin):
     fields = [
         'id',
+        'username',
         'first_name',
         'middle_name',
         'last_name',
@@ -72,10 +73,13 @@ class HumanAdmin(ReadOnlyAdmin):
         'birth_date',
         'sex',
         'primary_voice_part',
+        'updated_ts',
+
     ]
 
     readonly_fields = [
         'id',
+        'username',
         'first_name',
         'middle_name',
         'last_name',
@@ -114,6 +118,7 @@ class HumanAdmin(ReadOnlyAdmin):
         'last_name',
         'first_name',
     )
+
 
 @admin.register(Structure)
 class StructureAdmin(ReadOnlyAdmin):
@@ -361,6 +366,6 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
     ]
 
-    search_fields = [
-        'subscription',
-    ]
+    # search_fields = [
+    #     'subscription',
+    # ]
