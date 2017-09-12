@@ -68,7 +68,8 @@ from api.models import (
 
 
 class Command(BaseCommand):
-    help="Command to seed convention."
+    help = "Command to seed convention."
+
     def add_arguments(self, parser):
         # Named (optional) arguments
         parser.add_argument(
@@ -81,108 +82,114 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Create Admin
-        admin_person=PersonFactory(
+        admin_person = PersonFactory(
             name='Admin Person',
             email='test@barberscore.com',
         )
-        admin=UserFactory(
+        admin = UserFactory(
+            name='Test Admin',
             email='test@barberscore.com',
             password='password',
             is_staff=True,
             person=admin_person,
         )
         # Create Core Persons
-        scjc_person=PersonFactory(
+        scjc_person = PersonFactory(
             name='SCJC Person',
             email='scjc@barberscore.com',
         )
-        drcj_person=PersonFactory(
+        drcj_person = PersonFactory(
             name='DRCJ Person',
             email='drcj@barberscore.com',
         )
-        ca_person=PersonFactory(
+        ca_person = PersonFactory(
             name='CA Person',
             email='ca@barberscore.com',
         )
-        quartet_person=PersonFactory(
+        quartet_person = PersonFactory(
             name='Quartet Person',
             email='quartet@barberscore.com',
         )
-        chorus_person=PersonFactory(
+        chorus_person = PersonFactory(
             name='Chorus Person',
             email='chorus@barberscore.com',
         )
         # Create Core Users
-        scjc_user=UserFactory(
+        scjc_user = UserFactory(
+            name='SCJC Person',
             email=scjc_person.email,
             person=scjc_person,
         )
-        drcj_user=UserFactory(
+        drcj_user = UserFactory(
+            name='DRCJ Person',
             email=drcj_person.email,
             person=drcj_person,
         )
-        ca_user=UserFactory(
+        ca_user = UserFactory(
+            name='CA Person',
             email=ca_person.email,
             person=ca_person,
         )
-        quartet_user=UserFactory(
+        quartet_user = UserFactory(
+            name='Quartet Person',
             email=quartet_person.email,
             person=quartet_person,
         )
-        chorus_user=UserFactory(
+        chorus_user = UserFactory(
+            name='Chorus Person',
             email=chorus_person.email,
             person=chorus_person,
         )
         # Create International and Districts
-        international=OrganizationFactory(
+        international = OrganizationFactory(
             name='International Organization',
             short_name='INT',
             kind=Organization.KIND.international,
         )
-        district_alpha=OrganizationFactory(
+        district_alpha = OrganizationFactory(
             name='District Alpha',
             short_name='ALF',
             parent=international,
             kind=Organization.KIND.district,
         )
-        district_beta=OrganizationFactory(
+        district_beta = OrganizationFactory(
             name='District Beta',
             short_name='BTA',
             parent=international,
             kind=Organization.KIND.district,
         )
-        district_beta_division_north=OrganizationFactory(
+        district_beta_division_north = OrganizationFactory(
             name='Division Beta North',
             short_name='BTA ND',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
-        district_beta_division_south=OrganizationFactory(
+        district_beta_division_south = OrganizationFactory(
             name='Division Beta South',
             short_name='BTA SD',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
-        district_beta_division_east=OrganizationFactory(
+        district_beta_division_east = OrganizationFactory(
             name='Division Beta East',
             short_name='BTA ED',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
-        district_beta_division_west=OrganizationFactory(
+        district_beta_division_west = OrganizationFactory(
             name='Division Beta West',
             short_name='BTA WD',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
-        affiliate=OrganizationFactory(
+        affiliate = OrganizationFactory(
             name='Affiliate Organization',
             short_name='AFF',
             parent=international,
             kind=Organization.KIND.affiliate,
         )
         # Create Core Offices
-        scjc_office=OfficeFactory(
+        scjc_office = OfficeFactory(
             name='Society Chairman of C&J',
             short_name='SCJC',
             is_convention_manager=True,
@@ -195,7 +202,7 @@ class Command(BaseCommand):
             is_judge_manager=True,
             is_chart_manager=True,
         )
-        drcj_office=OfficeFactory(
+        drcj_office = OfficeFactory(
             name='District Director C&J',
             short_name='DRCJ',
             is_convention_manager=True,
@@ -203,71 +210,71 @@ class Command(BaseCommand):
             is_organization_manager=True,
             is_award_manager=True,
         )
-        ca_office=OfficeFactory(
+        ca_office = OfficeFactory(
             name='Contest Administrator',
             short_name='CA',
             is_scoring_manager=True,
             is_judge_manager=True,
         )
-        mus_office=OfficeFactory(
+        mus_office = OfficeFactory(
             name='Music Judge',
             short_name='MUS',
             is_judge_manager=True,
         )
-        per_office=OfficeFactory(
+        per_office = OfficeFactory(
             name='Performance Judge',
             short_name='PER',
             is_judge_manager=True,
         )
-        sng_office=OfficeFactory(
+        sng_office = OfficeFactory(
             name='Singing Judge',
             short_name='SNG',
             is_judge_manager=True,
         )
         # Create Core Officers
-        scjc_officer=OfficerFactory(
+        scjc_officer = OfficerFactory(
             office=scjc_office,
             person=scjc_person,
             organization=international,
             status=Officer.STATUS.active,
         )
-        drcj_alpha_officer=OfficerFactory(
+        drcj_alpha_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
             organization=district_alpha,
             status=Officer.STATUS.active,
         )
-        drcj_beta_officer=OfficerFactory(
+        drcj_beta_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
             organization=district_beta,
             status=Officer.STATUS.active,
         )
-        drcj_beta_north_officer=OfficerFactory(
+        drcj_beta_north_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
             organization=district_beta_division_north,
             status=Officer.STATUS.active,
         )
-        drcj_beta_south_officer=OfficerFactory(
+        drcj_beta_south_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
             organization=district_beta_division_south,
             status=Officer.STATUS.active,
         )
-        drcj_beta_east_officer=OfficerFactory(
+        drcj_beta_east_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
             organization=district_beta_division_east,
             status=Officer.STATUS.active,
         )
-        drcj_beta_west_officer=OfficerFactory(
+        drcj_beta_west_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
             organization=district_beta_division_west,
             status=Officer.STATUS.active,
         )
-        ca_officer=OfficerFactory(
+        ca_officer = OfficerFactory(
             office=ca_office,
             person=ca_person,
             organization=international,
@@ -320,56 +327,147 @@ class Command(BaseCommand):
                     continue
                 i += 1
 
+        member = Group.objects.filter(
+            organization__name='District Alpha',
+            kind=Group.KIND.quartet,
+        ).first().members.get(part=1)
+        member.person = quartet_person
+        member.is_admin = True
+        member.save()
+        member = Group.objects.filter(
+            organization__name='Division Beta North',
+            kind=Group.KIND.quartet,
+        ).first().members.get(part=1)
+        member.person = quartet_person
+        member.is_admin = True
+        member.save()
+        member = Group.objects.filter(
+            organization__name='Division Beta South',
+            kind=Group.KIND.quartet,
+        ).first().members.get(part=1)
+        member.person = quartet_person
+        member.is_admin = True
+        member.save()
+        member = Group.objects.filter(
+            organization__name='Division Beta East',
+            kind=Group.KIND.quartet,
+        ).first().members.get(part=1)
+        member.person = quartet_person
+        member.is_admin = True
+        member.save()
+        member = Group.objects.filter(
+            organization__name='Division Beta West',
+            kind=Group.KIND.quartet,
+        ).first().members.get(part=1)
+        member.person = quartet_person
+        member.is_admin = True
+        member.save()
 
+        # Create Choruses
+        choruses = GroupFactory.build_batch(
+            size=70,
+            kind=Group.KIND.chorus,
+        )
+        n = 1
+        for chorus in choruses:
+            if n <= 30:
+                chorus.organization = district_alpha
+            elif n <= 40:
+                chorus.organization = district_beta_division_north
+            elif n <= 50:
+                chorus.organization = district_beta_division_south
+            elif n <= 60:
+                chorus.organization = district_beta_division_east
+            elif n <= 70:
+                chorus.organization = district_beta_division_west
+            n += 1
+            chorus.save()
+            i = 1
+            while i <= 4:
+                try:
+                    MemberFactory(
+                        group=chorus,
+                        part=i,
+                        status=Member.STATUS.active,
+                    )
+                except IntegrityError:
+                    continue
+                i += 1
+            i = 1
+            while i <= 6:
+                try:
+                    chart = Chart.objects.order_by('?').first()
+                    RepertoryFactory(
+                        group=chorus,
+                        chart=chart,
+                    )
+                except IntegrityError:
+                    continue
+                i += 1
 
-        member = Group.objects.filter(organization__name='District Alpha').first().members.get(part=1)
-        member.person = quartet_person
+        member = Group.objects.filter(
+            organization__name='District Alpha',
+            kind=Group.KIND.chorus,
+        ).first().members.first()
+        member.person = chorus_person
         member.is_admin = True
         member.save()
-        member = Group.objects.filter(organization__name='Division Beta North').first().members.get(part=1)
-        member.person = quartet_person
+        member = Group.objects.filter(
+            organization__name='Division Beta North',
+            kind=Group.KIND.chorus,
+        ).first().members.first()
+        member.person = chorus_person
         member.is_admin = True
         member.save()
-        member = Group.objects.filter(organization__name='Division Beta South').first().members.get(part=1)
-        member.person = quartet_person
+        member = Group.objects.filter(
+            organization__name='Division Beta South',
+            kind=Group.KIND.chorus,
+        ).first().members.first()
+        member.person = chorus_person
         member.is_admin = True
         member.save()
-        member = Group.objects.filter(organization__name='Division Beta East').first().members.get(part=1)
-        member.person = quartet_person
+        member = Group.objects.filter(
+            organization__name='Division Beta East',
+            kind=Group.KIND.chorus,
+        ).first().members.first()
+        member.person = chorus_person
         member.is_admin = True
         member.save()
-        member = Group.objects.filter(organization__name='Division Beta West').first().members.get(part=1)
-        member.person = quartet_person
+        member = Group.objects.filter(
+            organization__name='Division Beta West',
+            kind=Group.KIND.chorus,
+        ).first().members.first()
+        member.person = chorus_person
         member.is_admin = True
         member.save()
 
         # Create Judges
-        mus_judges=OfficerFactory.create_batch(
+        mus_judges = OfficerFactory.create_batch(
             size=30,
             office=mus_office,
             organization=international,
             status=Officer.STATUS.active,
         )
-        per_judges=OfficerFactory.create_batch(
+        per_judges = OfficerFactory.create_batch(
             size=30,
             office=per_office,
             organization=international,
             status=Officer.STATUS.active,
         )
-        sng_judges=OfficerFactory.create_batch(
+        sng_judges = OfficerFactory.create_batch(
             size=30,
             office=sng_office,
             organization=international,
             status=Officer.STATUS.active,
         )
         # Create Awards
-        international_quartet_championship=AwardFactory(
+        international_quartet_championship = AwardFactory(
             name='International Quartet Championship',
             organization=international,
             rounds=3,
             level=Award.LEVEL.championship,
         )
-        district_alpha_international_quartet_championship_qualifier=AwardFactory(
+        district_alpha_international_quartet_championship_qualifier = AwardFactory(
             name='District Alpha International Quartet Championship Qualifier',
             organization=district_alpha,
             rounds=2,
@@ -377,7 +475,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        district_beta_international_quartet_championship_qualifier=AwardFactory(
+        district_beta_international_quartet_championship_qualifier = AwardFactory(
             name='District Beta International Quartet Championship Qualifier',
             organization=district_beta,
             rounds=2,
@@ -385,14 +483,14 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        international_chorus_championship=AwardFactory(
+        international_chorus_championship = AwardFactory(
             name='International Chorus Championship',
             organization=international,
             rounds=1,
             level=Award.LEVEL.championship,
             kind=Award.KIND.chorus,
         )
-        district_alpha_international_chorus_championship_qualifier=AwardFactory(
+        district_alpha_international_chorus_championship_qualifier = AwardFactory(
             name='District Alpha International Chorus Championship Qualifier',
             organization=district_alpha,
             rounds=1,
@@ -401,7 +499,7 @@ class Command(BaseCommand):
             season=Award.SEASON.fall,
             kind=Award.KIND.chorus,
         )
-        district_beta_international_chorus_championship_qualifier=AwardFactory(
+        district_beta_international_chorus_championship_qualifier = AwardFactory(
             name='District Beta International Chorus Championship Qualifier',
             organization=district_beta,
             rounds=1,
@@ -422,14 +520,14 @@ class Command(BaseCommand):
         #     rounds=3,
         #     level=Award.LEVEL.award,
         # )
-        district_alpha_quartet_championship=AwardFactory(
+        district_alpha_quartet_championship = AwardFactory(
             name='District Alpha Quartet Championship',
             organization=district_alpha,
             rounds=2,
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
-        district_alpha_chorus_championship=AwardFactory(
+        district_alpha_chorus_championship = AwardFactory(
             name='District Alpha Chorus Championship',
             organization=district_alpha,
             rounds=1,
@@ -437,14 +535,14 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_quartet_championship=AwardFactory(
+        district_beta_quartet_championship = AwardFactory(
             name='District Beta Quartet Championship',
             organization=district_beta,
             rounds=2,
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
-        district_beta_division_north_district_beta_quartet_championship_qualifier=AwardFactory(
+        district_beta_division_north_district_beta_quartet_championship_qualifier = AwardFactory(
             name='BTA Division North District Beta Quartet Championship Qualifier',
             organization=district_beta_division_north,
             rounds=1,
@@ -452,7 +550,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        district_beta_division_south_district_beta_quartet_championship_qualifier=AwardFactory(
+        district_beta_division_south_district_beta_quartet_championship_qualifier = AwardFactory(
             name='BTA Division South District Beta Quartet Championship Qualifier',
             organization=district_beta_division_south,
             rounds=1,
@@ -460,7 +558,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        district_beta_division_east_district_beta_quartet_championship_qualifier=AwardFactory(
+        district_beta_division_east_district_beta_quartet_championship_qualifier = AwardFactory(
             name='BTA Division East District Beta Quartet Championship Qualifier',
             organization=district_beta_division_east,
             rounds=1,
@@ -468,7 +566,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        district_beta_division_west_district_beta_quartet_championship_qualifier=AwardFactory(
+        district_beta_division_west_district_beta_quartet_championship_qualifier = AwardFactory(
             name='BTA Division West District Beta Quartet Championship Qualifier',
             organization=district_beta_division_west,
             rounds=1,
@@ -476,7 +574,7 @@ class Command(BaseCommand):
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
         )
-        district_beta_chorus_championship=AwardFactory(
+        district_beta_chorus_championship = AwardFactory(
             name='District Beta Chorus Championship',
             organization=district_beta,
             rounds=1,
@@ -484,7 +582,7 @@ class Command(BaseCommand):
             season=Award.SEASON.fall,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_east_district_beta_chorus_championship_qualifier=AwardFactory(
+        district_beta_division_east_district_beta_chorus_championship_qualifier = AwardFactory(
             name='BTA Division East District Beta Chorus Championship Qualifier',
             organization=district_beta_division_east,
             rounds=1,
@@ -493,7 +591,7 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_west_district_beta_chorus_championship_qualifier=AwardFactory(
+        district_beta_division_west_district_beta_chorus_championship_qualifier = AwardFactory(
             name='BTA Division West District Beta Chorus Championship Qualifier',
             organization=district_beta_division_west,
             rounds=1,
@@ -502,35 +600,35 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_north_quartet_championship=AwardFactory(
+        district_beta_division_north_quartet_championship = AwardFactory(
             name='BTA Division North Quartet Championship',
             organization=district_beta_division_north,
             rounds=1,
             level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        district_beta_division_south_quartet_championship=AwardFactory(
+        district_beta_division_south_quartet_championship = AwardFactory(
             name='BTA Division South Quartet Championship',
             organization=district_beta_division_south,
             rounds=1,
             level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        district_beta_division_east_quartet_championship=AwardFactory(
+        district_beta_division_east_quartet_championship = AwardFactory(
             name='BTA Division East Quartet Championship',
             organization=district_beta_division_east,
             rounds=1,
             level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        district_beta_division_west_quartet_championship=AwardFactory(
+        district_beta_division_west_quartet_championship = AwardFactory(
             name='BTA Division West Quartet Championship',
             organization=district_beta_division_west,
             rounds=1,
             level=Award.LEVEL.championship,
             season=Award.SEASON.spring,
         )
-        district_beta_division_north_chorus_championship=AwardFactory(
+        district_beta_division_north_chorus_championship = AwardFactory(
             name='BTA Division North Chorus Championship',
             organization=district_beta_division_north,
             rounds=1,
@@ -538,7 +636,7 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_south_chorus_championship=AwardFactory(
+        district_beta_division_south_chorus_championship = AwardFactory(
             name='BTA Division South Chorus Championship',
             organization=district_beta_division_south,
             rounds=1,
@@ -546,7 +644,7 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_east_chorus_championship=AwardFactory(
+        district_beta_division_east_chorus_championship = AwardFactory(
             name='BTA Division East Chorus Championship',
             organization=district_beta_division_east,
             rounds=1,
@@ -554,7 +652,7 @@ class Command(BaseCommand):
             season=Award.SEASON.spring,
             kind=Award.KIND.chorus,
         )
-        district_beta_division_west_chorus_championship=AwardFactory(
+        district_beta_division_west_chorus_championship = AwardFactory(
             name='BTA Division West Chorus Championship',
             organization=district_beta_division_west,
             rounds=1,
@@ -583,7 +681,7 @@ class Command(BaseCommand):
         # international_youth_convention_quartet_session = international_youth_convention.sessions.create(kind=Session.KIND.quartet)
         # international_youth_convention_chorus_session = international_youth_convention.sessions.create(kind=Session.KIND.chorus)
 
-        district_alpha_fall_convention=ConventionFactory(
+        district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',
             start_date='2017-10-01',
             end_date='2017-10-02',
@@ -591,7 +689,7 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.fall,
         )
-        district_alpha_spring_convention=ConventionFactory(
+        district_alpha_spring_convention = ConventionFactory(
             name='District Alpha Spring Convention',
             start_date='2018-05-01',
             end_date='2018-05-02',
@@ -599,7 +697,7 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.spring,
         )
-        district_beta_fall_convention=ConventionFactory(
+        district_beta_fall_convention = ConventionFactory(
             name='District Beta Fall Convention',
             start_date='2017-09-01',
             end_date='2017-09-02',
@@ -607,7 +705,7 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.fall,
         )
-        district_beta_division_north_spring_convention=ConventionFactory(
+        district_beta_division_north_spring_convention = ConventionFactory(
             name='BTA Division North Spring Convention',
             start_date='2018-03-01',
             end_date='2018-03-01',
@@ -616,7 +714,7 @@ class Command(BaseCommand):
             panel=2,
             season=Convention.SEASON.spring,
         )
-        district_beta_division_south_spring_convention=ConventionFactory(
+        district_beta_division_south_spring_convention = ConventionFactory(
             name='BTA Division South Spring Convention',
             start_date='2018-04-01',
             end_date='2018-04-01',
@@ -625,7 +723,7 @@ class Command(BaseCommand):
             panel=2,
             season=Convention.SEASON.spring,
         )
-        district_beta_division_east_west_spring_convention=ConventionFactory(
+        district_beta_division_east_west_spring_convention = ConventionFactory(
             name='BTA Division East & West Spring Convention',
             start_date='2018-04-01',
             end_date='2018-04-01',
@@ -699,7 +797,8 @@ class Command(BaseCommand):
                 kind=Assignment.KIND.official,
                 person=drcj_person,
             )
-            js = Officer.objects.filter(office__short_name='CA').order_by('?')[:2]
+            js = Officer.objects.filter(
+                office__short_name='CA').order_by('?')[:2]
             for j in js:
                 convention.assignments.create(
                     status=Assignment.STATUS.active,
@@ -707,7 +806,8 @@ class Command(BaseCommand):
                     kind=Assignment.KIND.official,
                     person=j.person,
                 )
-            js = Officer.objects.filter(office__short_name='MUS').order_by('?')[:convention.panel]
+            js = Officer.objects.filter(office__short_name='MUS').order_by('?')[
+                :convention.panel]
             for j in js:
                 convention.assignments.create(
                     status=Assignment.STATUS.active,
@@ -715,7 +815,8 @@ class Command(BaseCommand):
                     kind=Assignment.KIND.official,
                     person=j.person,
                 )
-            js = Officer.objects.filter(office__short_name='PER').order_by('?')[:convention.panel]
+            js = Officer.objects.filter(office__short_name='PER').order_by('?')[
+                :convention.panel]
             for j in js:
                 convention.assignments.create(
                     status=Assignment.STATUS.active,
@@ -723,7 +824,8 @@ class Command(BaseCommand):
                     kind=Assignment.KIND.official,
                     person=j.person,
                 )
-            js = Officer.objects.filter(office__short_name='SNG').order_by('?')[:convention.panel]
+            js = Officer.objects.filter(office__short_name='SNG').order_by('?')[
+                :convention.panel]
             for j in js:
                 convention.assignments.create(
                     status=Assignment.STATUS.active,
@@ -907,13 +1009,14 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by(
+                    '?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
-                center = random.randint(60,70)
+                center = random.randint(60, 70)
                 for score in song.scores.all():
-                    offset = random.randint(-5,5)
+                    offset = random.randint(-5, 5)
                     score.points = center + offset
                     score.save()
             appearance.confirm()
@@ -941,13 +1044,14 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by(
+                    '?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
-                center = random.randint(70,80)
+                center = random.randint(70, 80)
                 for score in song.scores.all():
-                    offset = random.randint(-5,5)
+                    offset = random.randint(-5, 5)
                     score.points = center + offset
                     score.save()
             appearance.confirm()
@@ -966,13 +1070,14 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by(
+                    '?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
-                center = random.randint(75,85)
+                center = random.randint(75, 85)
                 for score in song.scores.all():
-                    offset = random.randint(-5,5)
+                    offset = random.randint(-5, 5)
                     score.points = center + offset
                     score.save()
             appearance.confirm()
@@ -991,13 +1096,14 @@ class Command(BaseCommand):
         ):
             appearance.start()
             for song in appearance.songs.all():
-                song.chart = appearance.entry.group.repertories.order_by('?').first().chart
+                song.chart = appearance.entry.group.repertories.order_by(
+                    '?').first().chart
                 song.save()
             appearance.finish()
             for song in appearance.songs.all():
-                center = random.randint(80,90)
+                center = random.randint(80, 90)
                 for score in song.scores.all():
-                    offset = random.randint(-3,3)
+                    offset = random.randint(-3, 3)
                     score.points = center + offset
                     score.save()
             appearance.confirm()
