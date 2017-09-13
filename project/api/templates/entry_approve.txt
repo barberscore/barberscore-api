@@ -14,16 +14,19 @@ You can add additional songs to your Repertory at any time from now until the
 convention. Remember: every song you sing on stage must be in the Barberscore
 system prior to your performance or you risk disqualification.
 
---Entry Details--
-Requested Evaluation: {{entry.is_evaluation}}
-Keep Scores Private: {{entry.is_private}}
+ENTRY DETAILS
 
-Awards Selected:
+Requested Evaluation: {{entry.is_evaluation|yesno}}
+
+Keep Scores Private: {{entry.is_private|yesno}}
+
+Contests Selected:
 {% for contestant in entry.contestants.all %}
     - {{contestant.contest.award.name}}
 {% empty %}
     Not competing for any awards.
 {% endfor %}
+
 {% if entry.group.kind == 32 %}
 Director(s): {{entry.directors|default:"(No Director Specified)"}}
 
