@@ -57,7 +57,11 @@ from .fields import (
 from .managers import UserManager
 from .messages import send_entry, send_session
 from .services import create_pdf
-from .utils import create_bbscores, create_drcj_report
+from .utils import (
+    create_bbscores, 
+    create_drcj_report,
+    create_admin_email_csv,
+)
 
 config = api_apps.get_app_config('api')
 
@@ -4363,6 +4367,16 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
+    admin_email_csv = models.FileField(
+        upload_to=PathAndRename(
+            prefix='admin',
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
     num_rounds = models.IntegerField(
         null=True,
         blank=True,
@@ -4515,7 +4529,7 @@ class Session(TimeStampedModel):
     @transition(field=status, source=STATUS.verified, target=STATUS.started)
     def start(self, *args, **kwargs):
         """Create round, seat panel, copy draw."""
-        #  Create the BBScores export file
+        #  Create the export files
         create_bbscores(self)
         self.bbscores.save(
             'bbscores.csv',
@@ -4525,6 +4539,11 @@ class Session(TimeStampedModel):
         self.drcj_report.save(
             'drcj_report.csv',
             File(open('drcj_report.csv')),
+        )
+        create_admin_email_csv(self)
+        self.admin_email_csv.save(
+            'admin_email.csv',
+            File(open('admin_email.csv')),
         )
         # Build the rounds
         Assignment = config.get_model('Assignment')

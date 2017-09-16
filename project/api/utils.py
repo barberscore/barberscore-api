@@ -454,6 +454,33 @@ def create_drcj_report(session):
             writer.writerow(row)
 
 
+def create_admin_email_csv(session):
+    Entry = config.get_model('Entry')
+    with open('admin_email.csv', 'w') as f:
+        output = []
+        fieldnames = [
+            'email',
+        ]
+        entries = session.entries.filter(
+            status=Entry.STATUS.approved,
+        ).order_by('draw')
+        for entry in entries:
+            admins = entry.group.members.filter(
+                is_admin=True,
+            )
+            for admin in admins:
+                email = admin.person.email
+                row = {
+                    'email': email,
+                }
+                output.append(row)
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for row in output:
+            writer.writerow(row)
+
+
 def export_charts():
     output = []
     fieldnames = [
