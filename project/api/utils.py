@@ -502,6 +502,7 @@ def create_drcj_report(session):
 def create_drcj_report_excel(session):
     Entry = config.get_model('Entry')
     Group = config.get_model('Group')
+    Participant = config.get_model('Participant')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -515,9 +516,12 @@ def create_drcj_report_excel(session):
         'repertory_count',
         'particpant_count',
         'expiring_count',
+        'tenor',
+        'lead',
+        'baritone',
+        'bass',
         'directors',
         'awards',
-        'persons',
         'chapters',
     ]
     ws.append(fieldnames)
@@ -548,26 +552,38 @@ def create_drcj_report_excel(session):
         for contestant in entry.contestants.all().order_by('contest__award__name'):
             awards_list.append(contestant.contest.award.name)
         awards = "\n".join(filter(None, awards_list))
-        persons_list = []
+        parts = {}
+        part = 1
+        while part <= 4:
+            try:
+                participant = entry.participants.get(
+                    part=part,
+                )
+            except Participant.DoesNotExist:
+                parts[part] = None
+                part += 1
+                continue
+            except Participant.MultipleObjectsReturned:
+                parts[part] = None
+                part += 1
+                continue
+            participant_list = []
+            participant_list.append(
+                participant.member.person.nomen,
+            )
+            participant_list.append(
+                participant.member.person.email,
+            )
+            participant_list.append(
+                participant.member.person.phone,
+            )
+            participant_detail = "\n".join(filter(None, participant_list))
+            parts[part] = participant_detail
+            part += 1
         chapters_list = []
         if entry.group.kind == entry.group.KIND.quartet:
-            participants = entry.participants.all().order_by('member__part')
+            participants = entry.participants.all()
             for participant in participants:
-                persons_list.append(
-                    participant.member.get_part_display(),
-                )
-                persons_list.append(
-                    participant.member.person.nomen,
-                )
-                persons_list.append(
-                    participant.member.person.email,
-                )
-                persons_list.append(
-                    participant.member.person.phone,
-                )
-                if entry.group.kind == Group.KIND.chorus:
-                    chapters = None
-                    continue
                 person_chapter_list = []
                 for member in participant.member.person.members.filter(
                     status=10,
@@ -580,8 +596,9 @@ def create_drcj_report_excel(session):
                     person_chapter_list
                 )
                 list(set(chapters_list))
-        chapters = "\n".join(filter(None, chapters_list))
-        persons = "\n".join(filter(None, persons_list))
+            chapters = "\n".join(filter(None, chapters_list))
+        else:
+            chapters = None
         row = [
             oa,
             group_name,
@@ -593,9 +610,12 @@ def create_drcj_report_excel(session):
             repertory_count,
             participant_count,
             expiring_count,
+            parts[1],
+            parts[2],
+            parts[3],
+            parts[4],
             directors,
             awards,
-            persons,
             chapters,
         ]
         ws.append(row)
