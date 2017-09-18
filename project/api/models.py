@@ -58,8 +58,9 @@ from .managers import UserManager
 from .messages import send_entry, send_session
 from .services import create_pdf
 from .utils import (
-    create_bbscores, 
+    create_bbscores_excel,
     create_drcj_report,
+    create_drcj_report_excel,
     create_admin_email_csv,
 )
 
@@ -4513,15 +4514,15 @@ class Session(TimeStampedModel):
     @transition(field=status, source=[STATUS.closed, STATUS.verified], target=STATUS.verified)
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        create_bbscores(self)
+        create_bbscores_excel(self)
         self.bbscores.save(
-            'bbscores.csv',
-            File(open('bbscores.csv')),
+            'bbscores.xlsx',
+            File(open('bbscores.xlsx', 'rb')),
         )
-        create_drcj_report(self)
+        create_drcj_report_excel(self)
         self.drcj_report.save(
-            'drcj_report.csv',
-            File(open('drcj_report.csv')),
+            'drcj_report.xlsx',
+            File(open('drcj_report.xlsx', 'rb')),
         )
         return
 
@@ -4530,7 +4531,7 @@ class Session(TimeStampedModel):
     def start(self, *args, **kwargs):
         """Create round, seat panel, copy draw."""
         #  Create the export files
-        create_bbscores(self)
+        create_bbscores_excel(self)
         self.bbscores.save(
             'bbscores.csv',
             File(open('bbscores.csv')),
