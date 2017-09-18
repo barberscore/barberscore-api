@@ -16,9 +16,9 @@ system prior to your performance or you risk disqualification.
 
 ENTRY DETAILS
 
-Requested Evaluation: {{entry.is_evaluation|yesno}}
+Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 
-Keep Scores Private: {{entry.is_private|yesno}}
+Keep Scores Private: {{entry.is_private|yesno|title}}
 
 Contests Selected:
 {% for contestant in entry.contestants.all %}
@@ -56,10 +56,10 @@ or you risk disqualification.
 
 {% endif %}
 If you need to scratch, please go to your Entry and click the red "Scratch" button
-on the bottom of the page.  Please note that if you scratch and then wish to re-enter 
+on the bottom of the page.  Please note that if you scratch and then wish to re-enter
 you'll need to speak directly with the DRCJ for approval (cc'd on this message.)
 
-For other questions or changes, please contact the DRCJ(s) of the contest directly 
+For other questions or changes, please contact the DRCJ(s) of the contest directly
 (cc'd on this email) or contact support at customerservice@barbershop.org.
 
 Break a leg!
