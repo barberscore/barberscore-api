@@ -20,3 +20,4 @@ api.json
 *.csv
 
 dump.json
+*.xlsx
