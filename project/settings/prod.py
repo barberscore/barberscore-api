@@ -53,13 +53,15 @@ JWT_AUTH = {
 }
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = get_env_variable("SENDGRID_USERNAME")
-EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_PASSWORD")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_HOST_USER = get_env_variable("SENDGRID_USERNAME")
+# EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_PASSWORD")
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = "[Barberscore] "
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
+SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 
 #  Docraptor
 DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")

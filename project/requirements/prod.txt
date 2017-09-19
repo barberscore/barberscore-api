@@ -2,3 +2,4 @@
 
 waitress==1.0.2
 bugsnag==3.1.1
+sendgrid-django==4.0.4
