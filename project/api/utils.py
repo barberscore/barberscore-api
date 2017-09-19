@@ -19,25 +19,9 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 
 config = api_apps.get_app_config('api')
-# from .models import (
-#     Award,
-#     Chart,
-#     Contestant,
-#     Convention,
-#     Entity,
-#     Entry,
-#     Office,
-#     Officer,
-#     Member,
-#     Person,
-#     Session,
-#     User,
-# )
+from bhs.models import Structure
 
 log = logging.getLogger(__name__)
-
-import csv
-from bhs.models import Structure
 
 
 def export_active_quartets():
@@ -595,8 +579,8 @@ def create_drcj_report_excel(session):
                 chapters_list.extend(
                     person_chapter_list
                 )
-                list(set(chapters_list))
-            chapters = "\n".join(filter(None, chapters_list))
+            dedupe = list(set(chapters_list))
+            chapters = "\n".join(filter(None, dedupe))
         else:
             chapters = None
         row = [
