@@ -1904,7 +1904,10 @@ class Entry(TimeStampedModel):
 
     def can_submit_entry(self):
         return all([
-            self.group.status == self.group.STATUS.active,
+            any([
+                self.group.status == self.group.STATUS.active,
+                self.group.status == self.group.STATUS.new,
+            ])
         ])
 
 
