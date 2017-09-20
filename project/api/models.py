@@ -1943,9 +1943,9 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.approved,], target=STATUS.scratched)
+    @transition(field=status, source=[STATUS.approved], target=STATUS.scratched)
     def scratch(self, *args, **kwargs):
-        if self.session.status == self.session.STATUS.verified:
+        if self.session.status == self.session.STATUS.verified and self.draw:
             remains = self.session.entries.filter(draw__gt=self.draw)
             self.draw = None
             self.save()
