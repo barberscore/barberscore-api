@@ -175,6 +175,7 @@ def update_or_create_group_from_structure(structure):
         return
     status_map = {
         'active': 10,
+        'active-licensed': 10,
         'pending': 0,
         'pending-voluntary': 0,
         'expired': -10,
