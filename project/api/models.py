@@ -4536,13 +4536,13 @@ class Session(TimeStampedModel):
         #  Create the export files
         create_bbscores_excel(self)
         self.bbscores.save(
-            'bbscores.csv',
-            File(open('bbscores.csv')),
+            'bbscores.xlsx',
+            File(open('bbscores.xlsx', 'rb')),
         )
-        create_drcj_report(self)
+        create_drcj_report_excel(self)
         self.drcj_report.save(
-            'drcj_report.csv',
-            File(open('drcj_report.csv')),
+            'drcj_report.xlsx',
+            File(open('drcj_report.xlsx', 'rb')),
         )
         create_admin_email_csv(self)
         self.admin_email_csv.save(
