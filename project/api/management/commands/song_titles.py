@@ -35,7 +35,7 @@ class Command(BaseCommand):
             subject='Song Title Report',
             body='Song Title Report Attached',
             from_email='admin@barberscore.com',
-            to=['chris.buechler@verizon.net', 'dbinetti@gmail.com']
+            to=['chris.buechler@verizon.net', ]
         )
         message.attach_file('song_title_report.xlsx')
         result = message.send()
