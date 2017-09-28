@@ -158,10 +158,14 @@ def update_or_create_person_from_human(human):
         log.error((human, str(e)))
         return
     if created and status == 10:
-        User.objects.create_user(
-            email=person.email,
-            person=person,
-        )
+        try:
+            User.objects.create_user(
+                email=person.email,
+                person=person,
+            )
+        except IntegrityError as e:
+            log.error(e)
+            return
 
 
 def update_or_create_group_from_structure(structure):
@@ -308,6 +312,7 @@ def update_or_create_member_from_smjoin(smjoin):
         )
     except Group.DoesNotExist as e:
         # Usually due to pending status
+        log.error(str(e))
         return
     try:
         person = Person.objects.get(
@@ -315,6 +320,7 @@ def update_or_create_member_from_smjoin(smjoin):
         )
     except Person.DoesNotExist as e:
         # Generally an error
+        log.error(str(e))
         return
     bhs_pk = smjoin.id
     try:
@@ -323,6 +329,7 @@ def update_or_create_member_from_smjoin(smjoin):
         ).valid_through
     except Subscription.DoesNotExist as e:
         # Usually due to bad data.
+        log.error(str(e))
         return
     except Subscription.MultipleObjectsReturned as e:
         try:
@@ -332,9 +339,11 @@ def update_or_create_member_from_smjoin(smjoin):
             ).valid_through
         except Subscription.DoesNotExist as e:
             # Usually due to bad data.
+            log.error(str(e))
             return
         except Subscription.MultipleObjectsReturned as e:
             # Usually due to bad data.
+            log.error(str(e))
             return
     defaults = {
         'is_current': is_current,
