@@ -109,18 +109,27 @@ def update_or_create_person_from_human(human):
             part = None
     else:
         part = None
-    try:
-        subscription = human.subscriptions.get(
-            items_editable=True,
-        )
-        if subscription.status.casefold() == 'active'.casefold() and email:
+
+    bhs = human.subscriptions.filter(
+        items_editable=True,
+    )
+    if bhs and email:
+        try:
+            valid_through = bhs.get(status='active').valid_through
             status = 10
-        else:
+        except Subscription.DoesNotExist:
+            # No active subscriptions; use most recent
+            valid_through = bhs.order_by('updated_ts').last().valid_through
             status = -10
-    except Subscription.DoesNotExist:
+        except Subscription.MultipleObjectsReturned as e:
+            # Otherwise, bad data.
+            log.error("{0}: {1}".format(e, human))
+            valid_through = None
+            status = -10
+    else:
+        valid_through = None
         status = -10
-    except Subscription.MultipleObjectsReturned:
-        status = -10
+
     defaults = {
         'name': name,
         'status': status,
@@ -131,6 +140,7 @@ def update_or_create_person_from_human(human):
         'work_phone': work_phone,
         'is_bhs': is_bhs,
         'bhs_id': bhs_id,
+        'valid_through': valid_through,
         'gender': gender,
         'part': part,
     }

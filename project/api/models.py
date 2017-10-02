@@ -3353,6 +3353,11 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
+    valid_through = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     # Denormalizations
     last_name = models.CharField(
         help_text="""
