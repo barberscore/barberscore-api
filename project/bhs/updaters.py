@@ -1,6 +1,5 @@
 # Standard Libary
 import logging
-from datetime import datetime
 
 from email_validator import (
     validate_email,
@@ -9,10 +8,9 @@ from email_validator import (
 
 from django.db import (
     IntegrityError,
-    transaction,
 )
+
 from django.utils import (
-    dateparse,
     encoding,
 )
 from auth0.v3.management import Auth0
@@ -25,27 +23,15 @@ from django.conf import settings
 from api.utils import get_auth0_token
 # Local
 from api.models import (
-    Chart,
-    Contestant,
-    Entry,
     Group,
     Member,
-    Office,
-    Officer,
     Organization,
-    Participant,
     Person,
-    Repertory,
-    Session,
     User,
 )
 
 # Remote
 from bhs.models import (
-    Human,
-    Membership,
-    Status,
-    Structure,
     Subscription,
     Role,
 )
@@ -315,7 +301,7 @@ def update_or_create_member_from_smjoin(smjoin):
         )
     except Group.DoesNotExist as e:
         # Usually due to pending status
-        log.error(str(e))
+        log.error("{0}: {1}".format(e, smjoin))
         return
     try:
         person = Person.objects.get(
@@ -323,7 +309,7 @@ def update_or_create_member_from_smjoin(smjoin):
         )
     except Person.DoesNotExist as e:
         # Generally an error
-        log.error(str(e))
+        log.error("{0}: {1}".format(e, smjoin))
         return
     bhs_pk = smjoin.id
     try:
@@ -332,7 +318,7 @@ def update_or_create_member_from_smjoin(smjoin):
         ).valid_through
     except Subscription.DoesNotExist as e:
         # Usually due to bad data.
-        log.error(str(e))
+        log.error("{0}: {1}".format(e, smjoin))
         return
     except Subscription.MultipleObjectsReturned as e:
         try:
@@ -342,11 +328,11 @@ def update_or_create_member_from_smjoin(smjoin):
             ).valid_through
         except Subscription.DoesNotExist as e:
             # Usually due to bad data.
-            log.error(str(e))
+            log.error("{0}: {1}".format(e, smjoin))
             return
         except Subscription.MultipleObjectsReturned as e:
             # Usually due to bad data.
-            log.error(str(e))
+            log.error("{0}: {1}".format(e, smjoin))
             return
     defaults = {
         'is_current': is_current,
@@ -363,7 +349,7 @@ def update_or_create_member_from_smjoin(smjoin):
         )
         log.info((member, created))
     except IntegrityError as e:
-        log.error(str(e))
+        log.error("{0}: {1}".format(e, smjoin))
         return
 
 
@@ -519,7 +505,7 @@ def create_user_from_person(person):
     except EmailNotValidError as e:
         person.status = person.STATUS.inactive
         person.save()
-        log.error("Can not create: {0}".format(person))
+        log.error("{0}: {1}".format(e, person))
         return
     user = User.objects.create_user(
         email=email,
