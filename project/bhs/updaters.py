@@ -269,7 +269,10 @@ def update_or_create_group_from_structure(structure):
             except IntegrityError as e:
                 log.error(str(e))
                 return
-        parent_bhs_id = structure.parent.bhs_id
+        try:
+            parent_bhs_id = structure.parent.bhs_id
+        except AttributeError:
+            return
         if parent_bhs_id:
             try:
                 organization = Organization.objects.get(
