@@ -276,7 +276,7 @@ class EntrySerializer(serializers.ModelSerializer):
     #     'contestants': 'api.serializers.ContestantSerializer',
     #     'participants': 'api.serializers.ParticipantSerializer',
     # }
-
+    logs = serializers.SerializerMethodField()
     class Meta:
         model = Entry
         fields = (
@@ -305,8 +305,22 @@ class EntrySerializer(serializers.ModelSerializer):
             'contestants',
             'participants',
             'permissions',
-            # 'logs',
+            'logs',
         )
+
+    def get_logs(self, obj):
+        output = []
+        logs = StateLog.objects.for_(obj)
+        for log in logs:
+            d = {
+                'transition': log.transition.title(),
+                'by': log.by.name,
+                'timestamp': log.timestamp,
+            }
+            output.append(d)
+        return output
+        # return StateLog.objects.for_(obj)
+
     # class JSONAPIMeta:
     #     included_resources = [
     #         'appearances',
