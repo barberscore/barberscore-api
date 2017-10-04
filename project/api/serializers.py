@@ -312,14 +312,20 @@ class EntrySerializer(serializers.ModelSerializer):
         output = []
         logs = StateLog.objects.for_(obj)
         for log in logs:
+            transition = log.transition.title()
+            if log.by:
+                by = log.by.name
+            else:
+                by = '(Unknown)'
+            by = log.by.name
+            timestamp = log.timestamp
             d = {
-                'transition': log.transition.title(),
-                'by': log.by.name,
-                'timestamp': log.timestamp,
+                'transition': transition,
+                'by': by,
+                'timestamp': timestamp,
             }
             output.append(d)
         return output
-        # return StateLog.objects.for_(obj)
 
     # class JSONAPIMeta:
     #     included_resources = [
