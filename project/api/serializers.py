@@ -317,7 +317,6 @@ class EntrySerializer(serializers.ModelSerializer):
                 by = log.by.name
             else:
                 by = '(Unknown)'
-            by = log.by.name
             timestamp = log.timestamp
             d = {
                 'transition': transition,
