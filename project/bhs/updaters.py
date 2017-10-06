@@ -1,5 +1,6 @@
 # Standard Libary
 import logging
+import datetime
 
 from email_validator import (
     validate_email,
@@ -113,18 +114,23 @@ def update_or_create_person_from_human(human):
     bhs = human.subscriptions.filter(
         items_editable=True,
     )
-    if bhs and email:
+    if bhs:
         try:
-            valid_through = bhs.get(status='active').valid_through
-            status = 10
+            valid_through = bhs.get(
+                status='active',
+            ).valid_through
         except Subscription.DoesNotExist:
             # No active subscriptions; use most recent
-            valid_through = bhs.order_by('updated_ts').last().valid_through
-            status = -10
+            valid_through = bhs.order_by(
+                'updated_ts',
+            ).last().valid_through
         except Subscription.MultipleObjectsReturned as e:
             # Otherwise, bad data.
             log.error("{0}: {1}".format(e, human))
             valid_through = None
+        if email and valid_through > datetime.date.today():
+            status = 10
+        else:
             status = -10
     else:
         valid_through = None
