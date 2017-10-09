@@ -4532,6 +4532,11 @@ class Session(TimeStampedModel):
             'drcj_report.xlsx',
             File(open('drcj_report.xlsx', 'rb')),
         )
+        create_admin_email_csv(self)
+        self.admin_email_csv.save(
+            'admin_email.csv',
+            File(open('admin_email.csv')),
+        )
         return
 
     @fsm_log_by
