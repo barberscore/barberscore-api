@@ -774,6 +774,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'scoresheet',
             'bbscores',
             'drcj_report',
+            'admin_emails',
             'num_rounds',
             'convention',
             'contests',
