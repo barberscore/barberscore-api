@@ -61,7 +61,7 @@ from .utils import (
     create_bbscores_excel,
     create_drcj_report,
     create_drcj_report_excel,
-    create_admin_email_csv,
+    create_admin_emails_excel,
 )
 
 config = api_apps.get_app_config('api')
@@ -4376,7 +4376,7 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
-    admin_email_csv = models.FileField(
+    admin_emails = models.FileField(
         upload_to=PathAndRename(
             prefix='admin',
         ),
@@ -4532,10 +4532,10 @@ class Session(TimeStampedModel):
             'drcj_report.xlsx',
             File(open('drcj_report.xlsx', 'rb')),
         )
-        create_admin_email_csv(self)
-        self.admin_email_csv.save(
-            'admin_email.csv',
-            File(open('admin_email.csv')),
+        create_admin_emails_excel(self)
+        self.admin_emails.save(
+            'admin_emails.xlsx',
+            File(open('admin_emails.xlsx', 'rb')),
         )
         return
 
@@ -4554,10 +4554,10 @@ class Session(TimeStampedModel):
             'drcj_report.xlsx',
             File(open('drcj_report.xlsx', 'rb')),
         )
-        create_admin_email_csv(self)
-        self.admin_email_csv.save(
-            'admin_email.csv',
-            File(open('admin_email.csv')),
+        create_admin_emails_excel(self)
+        self.admin_emails.save(
+            'admin_emails.xlsx',
+            File(open('admin_emails.xlsx', 'rb')),
         )
         # Build the rounds
         Assignment = config.get_model('Assignment')

@@ -1143,7 +1143,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'scoresheet',
         'bbscores',
         'drcj_report',
-        'admin_email_csv',
+        'admin_emails',
     ]
 
     list_display = [

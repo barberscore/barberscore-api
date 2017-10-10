@@ -606,11 +606,13 @@ def create_drcj_report_excel(session):
     wb.save('drcj_report.xlsx')
 
 
-def create_admin_email_csv(session):
+def create_admin_emails_csv(session):
     Entry = config.get_model('Entry')
-    with open('admin_email.csv', 'w') as f:
+    with open('admin_emails.csv', 'w') as f:
         output = []
         fieldnames = [
+            'group',
+            'person',
             'email',
         ]
         entries = session.entries.filter(
@@ -621,8 +623,12 @@ def create_admin_email_csv(session):
                 is_admin=True,
             )
             for admin in admins:
+                group = entry.group.nomen
+                person = admin.person.nomen
                 email = admin.person.email
                 row = {
+                    'group': group,
+                    'person': person,
                     'email': email,
                 }
                 output.append(row)
@@ -631,6 +637,36 @@ def create_admin_email_csv(session):
         writer.writeheader()
         for row in output:
             writer.writerow(row)
+
+
+def create_admin_emails_excel(session):
+    Entry = config.get_model('Entry')
+    wb = Workbook()
+    ws = wb.active
+    fieldnames = [
+        'group',
+        'admin',
+        'email',
+    ]
+    ws.append(fieldnames)
+    entries = session.entries.filter(
+        status=Entry.STATUS.approved,
+    ).order_by('draw')
+    for entry in entries:
+        admins = entry.group.members.filter(
+            is_admin=True,
+        )
+        for admin in admins:
+            group = entry.group.nomen.encode('utf-8').strip()
+            person = admin.person.nomen.encode('utf-8').strip()
+            email = admin.person.email.encode('utf-8').strip()
+            row = [
+                group,
+                person,
+                email,
+            ]
+            ws.append(row)
+    wb.save('admin_emails.xlsx')
 
 
 def export_charts():
