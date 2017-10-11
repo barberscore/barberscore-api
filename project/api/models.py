@@ -5,10 +5,7 @@ import random
 import uuid
 
 # Third-Party
-from auth0.v3.management.rest import Auth0Error
-from auth0.v3.authentication import Passwordless
 from django_fsm import (
-    RETURN_VALUE,
     FSMIntegerField,
     transition,
 )
@@ -43,7 +40,6 @@ from django.core.validators import (
 )
 from django.db import (
     models,
-    IntegrityError,
 )
 from django.utils.encoding import smart_text
 from django.utils.timezone import now
@@ -55,11 +51,13 @@ from .fields import (
     PathAndRename,
 )
 from .managers import UserManager
-from .messages import send_entry, send_session
-from .services import create_pdf
+from .services import (
+    send_entry,
+    send_session,
+    create_pdf,
+)
 from .utils import (
     create_bbscores_excel,
-    create_drcj_report,
     create_drcj_report_excel,
     create_admin_emails_excel,
 )
@@ -67,6 +65,7 @@ from .utils import (
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
+
 
 class Appearance(TimeStampedModel):
     id = models.UUIDField(
@@ -231,10 +230,10 @@ class Appearance(TimeStampedModel):
             'appearance': appearance,
             'song_one': song_one,
             'song_two': song_two,
-            'scores_one' : scores_one,
-            'scores_two' : scores_two,
-            'scores_one_avg' : scores_one_avg,
-            'scores_two_avg' : scores_two_avg,
+            'scores_one': scores_one,
+            'scores_two': scores_two,
+            'scores_one_avg': scores_one_avg,
+            'scores_two_avg': scores_two_avg,
         })
         payload = {
             "test": True,
@@ -363,7 +362,6 @@ class Appearance(TimeStampedModel):
                 kind=10,
             )
         ])
-
 
     # Transitions
     @fsm_log_by
@@ -1341,7 +1339,6 @@ class Contestant(TimeStampedModel):
             ),
         ])
 
-
     # Methods
 
     # Transitions
@@ -1542,11 +1539,11 @@ class Convention(TimeStampedModel):
             self.end_date,
         ])
 
-    # Transitions
+    # Convention Transitions
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.published, conditions=[can_publish_convention])
     def publish(self, *args, **kwargs):
-        """Publish convention and related sessions"""
+        """Publish convention and related sessions."""
         return
 
     @fsm_log_by
@@ -1896,7 +1893,6 @@ class Entry(TimeStampedModel):
             ),
         ])
 
-
     # Methods
 
     # Entry Transition Conditions
@@ -1914,8 +1910,7 @@ class Entry(TimeStampedModel):
             ])
         ])
 
-
-    # Transitions
+    # Entry Transitions
     @fsm_log_by
     @transition(field=status, source=STATUS.new, target=STATUS.invited, conditions=[can_invite_entry])
     def invite(self, *args, **kwargs):
@@ -1965,7 +1960,13 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.approved,], target=STATUS.completed)
+    @transition(
+        field=status,
+        source=[
+            STATUS.approved,
+        ],
+        target=STATUS.completed
+    )
     def complete(self, *args, **kwargs):
         self.calculate()
         self.save()
@@ -2036,13 +2037,11 @@ class Grantor(TimeStampedModel):
             True,
         ])
 
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return any([
             True,
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -2276,7 +2275,6 @@ class Group(TimeStampedModel):
                 status__gt=0,
             ),
         ])
-
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -2520,7 +2518,7 @@ class Office(TimeStampedModel):
         blank=True,
     )
 
-    # Module permissions
+    # Office Permissions
     is_convention_manager = models.BooleanField(
         default=False,
     )
@@ -2557,8 +2555,7 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-
-    # Methods
+    # Office Methods
     def save(self, *args, **kwargs):
         self.nomen = self.name
         super().save(*args, **kwargs)
@@ -2570,7 +2567,7 @@ class Office(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
-    # Permissions
+    # Office Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -2871,6 +2868,7 @@ class Organization(TimeStampedModel):
         ordering = [
             'org_sort',
         ]
+
     class JSONAPIMeta:
         resource_name = "organization"
 
@@ -2901,7 +2899,6 @@ class Organization(TimeStampedModel):
                 status__gt=0,
             ),
         ])
-
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -3438,7 +3435,6 @@ class Person(TimeStampedModel):
             status__gt=0,
         ))
 
-
     @cached_property
     def first_name(self):
         if self.name:
@@ -3539,7 +3535,6 @@ class Person(TimeStampedModel):
     def has_write_permission(request):
         return True
 
-
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
@@ -3628,7 +3623,6 @@ class Repertory(TimeStampedModel):
             ),
         ])
 
-
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
@@ -3647,7 +3641,6 @@ class Repertory(TimeStampedModel):
                 status__gt=0,
             ),
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -3814,7 +3807,10 @@ class Round(TimeStampedModel):
         return any([
             self.session.convention.assignments.filter(
                 person=request.user.person,
-                category__in=[10,20],
+                category__in=[
+                    10,
+                    20,
+                ],
                 kind=10,
             ),
         ])
@@ -3848,12 +3844,6 @@ class Round(TimeStampedModel):
             'winners': winners,
             'medalists': medalists,
         })
-        payload = {
-            "test": True,
-            "document_content": template,
-            "name": "announcements-{0}.pdf".format(id),
-            "document_type": "pdf",
-        }
         create_response = create_pdf({
             "test": True,
             "document_content": template,
@@ -3872,7 +3862,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
-        """Confirm panel and appearances"""
+        """Confirm panel and appearances."""
         return
 
     @fsm_log_by
@@ -3888,7 +3878,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        """Separate advancers and finishers"""
+        """Separate advancers and finishers."""
         # TODO This probably should not be hard-coded.
         if self.kind == self.KIND.finals:
             for appearance in self.appearances.all():
@@ -3905,7 +3895,7 @@ class Round(TimeStampedModel):
                 for contestant in contest.contestants.all():
                     contestant.calculate()
                     contestant.save()
-            foo = self.print_ann()
+            self.print_ann()
             return
         if self.kind == self.KIND.quarters:
             spots = 20
@@ -3919,12 +3909,12 @@ class Round(TimeStampedModel):
         ).order_by('-tot')
         # Check for tie at cutoff
         if spots:
-            cutoff = ordered_entries[spots-1:spots][0].tot
-            plus_one = ordered_entries[spots:spots+1][0].tot
+            cutoff = ordered_entries[spots - 1:spots][0].tot
+            plus_one = ordered_entries[spots:spots + 1][0].tot
             while cutoff == plus_one:
                 spots += 1
-                cutoff = ordered_entries[spots-1:spots][0].tot
-                plus_one = ordered_entries[spots:spots+1][0].tot
+                cutoff = ordered_entries[spots - 1:spots][0].tot
+                plus_one = ordered_entries[spots:spots + 1][0].tot
 
         # Get Advancers and finishers
         advancers = list(ordered_entries[:spots])
@@ -4252,7 +4242,6 @@ class Score(TimeStampedModel):
             ),
         ])
 
-
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
@@ -4263,7 +4252,6 @@ class Score(TimeStampedModel):
             #     status__gt=0,
             # ),
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -4428,44 +4416,6 @@ class Session(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    def print_oss(self):
-        session = self
-        entries = self.entries.filter(
-            status=self.entries.model.STATUS.complete,
-        )
-        appearances = entry.appearances.order_by(
-            'round__kind',
-        )
-        assignments = session.convention.assignments.filter(
-            category__gt=20,
-        ).order_by(
-            'category',
-            'kind',
-            'nomen',
-        )
-        tem = get_template('csa.html')
-        template = tem.render(context={
-            'entry': entry,
-            'appearances': appearances,
-            'assignments': assignments,
-            'contestants': contestants,
-        })
-        try:
-            create_response = doc_api.create_doc({
-                "test": True,
-                "document_content": template,
-                "name": "csa-{0}.pdf".format(id),
-                "document_type": "pdf",
-            })
-            f = ContentFile(create_response)
-            entry.csa_pdf.save(
-                "{0}.pdf".format(id),
-                f
-            )
-            entry.save()
-        except docraptor.rest.ApiException as error:
-            print(error)
-        return "Complete"
 
     # Session Permissions
     @staticmethod
@@ -4475,13 +4425,11 @@ class Session(TimeStampedModel):
             True,
         ])
 
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return any([
             True,
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -4605,7 +4553,6 @@ class Session(TimeStampedModel):
         round.save()
         return
 
-
     @fsm_log_by
     @transition(field=status, source=STATUS.started, target=STATUS.finished)
     def finish(self, *args, **kwargs):
@@ -4718,13 +4665,11 @@ class Slot(TimeStampedModel):
             True,
         ])
 
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return any([
             True,
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -4947,13 +4892,11 @@ class Song(TimeStampedModel):
             True,
         ])
 
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return any([
             True,
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -5060,13 +5003,11 @@ class Venue(TimeStampedModel):
             True,
         ])
 
-
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
         return any([
             True,
         ])
-
 
     @staticmethod
     @allow_staff_or_superuser
@@ -5159,8 +5100,7 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_staff
 
-
-    # Permissions
+    # User Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
