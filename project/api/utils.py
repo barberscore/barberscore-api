@@ -18,8 +18,10 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-config = api_apps.get_app_config('api')
+# First-Party
 from bhs.models import Structure
+
+config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 

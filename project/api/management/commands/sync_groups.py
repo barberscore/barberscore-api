@@ -3,15 +3,12 @@ import datetime
 
 # Django
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 # First-Party
 from api.models import Group
 from bhs.models import Structure
 from bhs.updaters import update_or_create_group_from_structure
-
-from django.utils import (
-    timezone,
-)
 
 
 class Command(BaseCommand):

@@ -1,12 +1,14 @@
 # Standard Libary
 import logging
 
+# Third-Party
+import docraptor
+
 # Django
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
 from django.apps import apps as api_apps
 from django.conf import settings
-import docraptor
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 log = logging.getLogger(__name__)
 config = api_apps.get_app_config('api')

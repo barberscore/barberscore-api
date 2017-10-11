@@ -3,28 +3,24 @@ import datetime
 
 # Django
 from django.core.management.base import BaseCommand
+from django.db.models import Count
+from django.utils import timezone
 
 # First-Party
 from api.models import (
-    Person,
     Group,
     Member,
+    Person,
 )
 from bhs.models import (
     Human,
-    Structure,
     SMJoin,
+    Structure,
 )
 from bhs.updaters import (
-    update_or_create_person_from_human,
-    update_or_create_member_from_smjoin,
     update_or_create_group_from_structure,
-)
-
-from django.db.models import Count
-
-from django.utils import (
-    timezone,
+    update_or_create_member_from_smjoin,
+    update_or_create_person_from_human,
 )
 
 

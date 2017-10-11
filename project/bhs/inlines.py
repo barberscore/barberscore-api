@@ -4,12 +4,12 @@ from django.contrib import admin
 # Local
 from .models import (
     Human,
-    Structure,
-    Role,
-    Status,
     Membership,
-    Subscription,
+    Role,
     SMJoin,
+    Status,
+    Structure,
+    Subscription,
 )
 
 

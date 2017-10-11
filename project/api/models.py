@@ -5,6 +5,7 @@ import random
 import uuid
 
 # Third-Party
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from django_fsm import (
     FSMIntegerField,
     transition,
@@ -19,47 +20,42 @@ from model_utils.models import TimeStampedModel
 from nameparser import HumanName
 from ranking import Ranking
 from timezone_field import TimeZoneField
-from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 # Django
 from django.apps import apps as api_apps
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.postgres.fields import (
+from django.contrib.postgres.fields import (  # CIEmailField,
     ArrayField,
     FloatRangeField,
     IntegerRangeField,
-    # CIEmailField,
 )
 from django.core.exceptions import ValidationError
 from django.core.files import File
+from django.core.files.base import ContentFile
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
     RegexValidator,
 )
-from django.db import (
-    models,
-)
-from django.utils.encoding import smart_text
-from django.utils.timezone import now
+from django.db import models
 from django.template.loader import get_template
-from django.core.files.base import ContentFile
+from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
+from django.utils.timezone import now
+
 # Local
-from .fields import (
-    PathAndRename,
-)
+from .fields import PathAndRename
 from .managers import UserManager
 from .services import (
+    create_pdf,
     send_entry,
     send_session,
-    create_pdf,
 )
 from .utils import (
+    create_admin_emails_excel,
     create_bbscores_excel,
     create_drcj_report_excel,
-    create_admin_emails_excel,
 )
 
 config = api_apps.get_app_config('api')

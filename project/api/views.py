@@ -83,7 +83,6 @@ from .models import (
     User,
     Venue,
 )
-
 from .serializers import (
     AppearanceSerializer,
     AssignmentSerializer,

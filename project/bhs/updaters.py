@@ -1,28 +1,21 @@
 # Standard Libary
-import logging
 import datetime
+import logging
 
-from email_validator import (
-    validate_email,
-    EmailNotValidError,
-)
-
-from django.db import (
-    IntegrityError,
-)
-
-from django.utils import (
-    encoding,
-)
+# Third-Party
 from auth0.v3.management import Auth0
 from auth0.v3.management.rest import Auth0Error
+from email_validator import (
+    EmailNotValidError,
+    validate_email,
+)
 
 # Django
 from django.conf import settings
+from django.db import IntegrityError
+from django.utils import encoding
 
 # First-Party
-from api.utils import get_auth0_token
-# Local
 from api.models import (
     Group,
     Member,
@@ -30,11 +23,11 @@ from api.models import (
     Person,
     User,
 )
-
+from api.utils import get_auth0_token
 # Remote
 from bhs.models import (
-    Subscription,
     Role,
+    Subscription,
 )
 
 log = logging.getLogger('updater')

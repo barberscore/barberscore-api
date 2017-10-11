@@ -3,17 +3,13 @@ import datetime
 
 # Django
 from django.core.management.base import BaseCommand
+from django.db.models import Count
+from django.utils import timezone
 
 # First-Party
 from api.models import Member
 from bhs.models import SMJoin
 from bhs.updaters import update_or_create_member_from_smjoin
-
-from django.db.models import Count
-
-from django.utils import (
-    timezone,
-)
 
 
 class Command(BaseCommand):
