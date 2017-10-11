@@ -1490,6 +1490,10 @@ class Convention(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
+    def clean(self):
+        if self.open_date > self.close_date:
+            raise ValidationError('Open date must be before close date')
+
     def save(self, *args, **kwargs):
         self.nomen = self.name
         super().save(*args, **kwargs)
@@ -2394,6 +2398,12 @@ class Member(TimeStampedModel):
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
+
+    def clean(self):
+        if self.is_admin and not self.person.email:
+            raise ValidationError(
+                {'is_admin': 'Admin must have a valid email.'}
+            )
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(

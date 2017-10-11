@@ -262,6 +262,12 @@ class ConventionSerializer(serializers.ModelSerializer):
             'sessions',
             'permissions',
         )
+
+    def validate(self, data):
+        if data['open_date'] > data['close_date']:
+            raise serializers.ValidationError("Session open must be before close")
+        return data
+
     # class JSONAPIMeta:
     #     included_resources = [
     #         'sessions',
