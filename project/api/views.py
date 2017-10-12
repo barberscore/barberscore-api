@@ -14,7 +14,6 @@ from rest_framework import (
 )
 from rest_framework.decorators import (
     detail_route,
-    list_route,
     parser_classes,
 )
 from rest_framework.parsers import (
@@ -23,18 +22,13 @@ from rest_framework.parsers import (
 )
 from rest_framework.permissions import (
     AllowAny,
-    IsAuthenticated,
 )
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
 
-# Django
-from django.db.models import Q
-
 # Local
 from .backends import (
     CoalesceFilterBackend,
-    ScoreFilterBackend,
 )
 from .filters import (
     AwardFilter,
@@ -339,7 +333,7 @@ class GrantorViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = GrantorSerializer
-    filter_class = None
+    filter_class = GrantorFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -672,7 +666,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
-        # ScoreFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -790,11 +783,6 @@ class UserViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "user"
 
-    # @list_route(methods=['get'], permission_classes=[IsAuthenticated])
-    # def me(self, request):
-    #     serializer = self.get_serializer(request.user)
-    #     return Response(serializer.data)
-
 
 class StateLogViewSet(viewsets.ModelViewSet):
     queryset = StateLog.objects.all()
@@ -804,16 +792,7 @@ class StateLogViewSet(viewsets.ModelViewSet):
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
-    # permission_classes = [
-    #     DRYPermissions,
-    # ]
     resource_name = "statelog"
-
-    # @list_route(methods=['get'], permission_classes=[IsAuthenticated])
-    # def me(self, request):
-    #     serializer = self.get_serializer(request.user)
-    #     return Response(serializer.data)
-
 
 
 # CSV View
@@ -841,45 +820,3 @@ class OfficeViewCSV(viewsets.ReadOnlyModelViewSet):
     renderer_classes = [
         OfficeRendererCSV,
     ]
-
-
-# from django.shortcuts import render
-# from django.db.models import Avg
-# def variance(request):
-#     appearance = Appearance.objects.get(id='a88b7462-0ede-4427-a35c-41bec4e1ab21')
-#     song_one = appearance.songs.all().order_by('num').first()
-#     song_two = appearance.songs.all().order_by('num').last()
-#     scores_one = song_one.scores.all().order_by('panelist__num')
-#     scores_two = song_two.scores.all().order_by('panelist__num')
-#     scores_one_avg = scores_one.aggregate(a=Avg('points'))['a']
-#     scores_two_avg = scores_two.aggregate(a=Avg('points'))['a']
-#     return render(request, 'variance.html', {
-#         'appearance': appearance,
-#         'song_one': song_one,
-#         'song_two': song_two,
-#         'scores_one' : scores_one,
-#         'scores_two' : scores_two,
-#         'scores_one_avg' : scores_one_avg,
-#         'scores_two_avg' : scores_two_avg,
-#     })
-#
-#
-# def ann(request):
-#     self = Round.objects.get(id='b3b64b4a-f48f-440a-a6be-5727ef729e4e')
-#     primary = self.session.contests.get(is_primary=True)
-#     contests = self.session.contests.filter(is_primary=False)
-#     winners = []
-#     for contest in contests:
-#         winner = contest.contestants.get(rank=1)
-#         winners.append(winner)
-#     medalists = []
-#     for contestant in primary.contestants.order_by('-rank'):
-#         medalists.append(contestant)
-#     medalists = medalists[-5:]
-#
-#     return render(request, 'ann.html', {
-#         'primary': primary,
-#         'contests': contests,
-#         'winners': winners,
-#         'medalists': medalists,
-#     })
