@@ -7,6 +7,7 @@ class UserManager(BaseUserManager):
     def create_user(self, email, person, password='', **kwargs):
         user = self.model(
             email=email,
+            name=person.name,
             person=person,
             password='',
             is_active=True,
@@ -19,6 +20,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, person, password, **kwargs):
         user = self.model(
             email=email,
+            name=person.name,
             person=person,
             is_staff=True,
             is_active=True,

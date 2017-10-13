@@ -257,6 +257,7 @@ class ParticipantFactory(DjangoModelFactory):
         model = Participant
 
 
+@mute_signals(post_save)
 class PersonFactory(DjangoModelFactory):
     name = Faker('name_male')
     status = Person.STATUS.active

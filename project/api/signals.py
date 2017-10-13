@@ -11,41 +11,95 @@ from django.db.models.signals import (
 from django.dispatch import receiver
 
 # Local
-from .models import User
+from .models import (
+    Person,
+    User,
+)
 from .utils import get_auth0_token
+
+
+@receiver(post_save, sender=Person)
+def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+    if not raw:
+        if created:
+            if instance.status == 10:
+                User.objects.create_user(
+                    email=instance.email,
+                    person=instance,
+                )
+        else:
+            try:
+                user = instance.user
+            except User.DoesNotExist:
+                if instance.status == 10:
+                    User.objects.create_user(
+                        email=instance.email,
+                        person=instance,
+                    )
+                return
+            if instance.status == 10:
+                is_active = True
+            else:
+                is_active = False
+            user.is_active = is_active
+            user.email = instance.email
+            user.name = instance.name
+            user.save()
 
 
 @receiver(post_save, sender=User)
 def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create Auth0 from user and send verification email."""
+    """Create/Update Auth0 from User."""
     if not raw:
         if created:
-            if instance.person:
-                token = get_auth0_token()
-                auth0 = Auth0(
-                    settings.AUTH0_DOMAIN,
-                    token,
-                )
-                create_user_payload = {
-                    "connection": "email",
-                    "email": instance.email,
-                    "email_verified": True,
-                    "user_metadata": {
-                        "name": instance.person.name
-                    },
-                    "app_metadata": {
-                        "barberscore_id": str(instance.id),
-                    }
+            token = get_auth0_token()
+            auth0 = Auth0(
+                settings.AUTH0_DOMAIN,
+                token,
+            )
+            payload = {
+                "connection": "email",
+                "email": instance.email,
+                "email_verified": True,
+                "user_metadata": {
+                    "name": instance.name
+                },
+                "app_metadata": {
+                    "barberscore_id": str(instance.id),
                 }
-                try:
-                    response = auth0.users.create(create_user_payload)
-                except Auth0Error as e:
-                    if 'The user already exists' in e.message:
-                        return
-                    else:
-                        raise(e)
-                instance.auth0_id = response['user_id']
-                instance.save()
+            }
+            try:
+                response = auth0.users.create(payload)
+            except Auth0Error as e:
+                if 'The user already exists' in e.message:
+                    return
+                else:
+                    raise(e)
+            instance.auth0_id = response['user_id']
+            instance.save()
+        else:
+            token = get_auth0_token()
+            auth0 = Auth0(
+                settings.AUTH0_DOMAIN,
+                token,
+            )
+            payload = {
+                "connection": "email",
+                "email": instance.email,
+                "email_verified": True,
+                "user_metadata": {
+                    "name": instance.name
+                },
+                "app_metadata": {
+                    "barberscore_id": str(instance.id),
+                }
+            }
+            try:
+                response = auth0.users.update(instance.auth0_id, payload)
+            except Auth0Error as e:
+                raise(e)
+            # instance.auth0_id = response['user_id']
+            # instance.save()
 
 
 @receiver(pre_delete, sender=User)
