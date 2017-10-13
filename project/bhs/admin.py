@@ -5,7 +5,7 @@ from django.contrib import admin
 # Local
 from .inlines import (
     MembershipInline,
-    RoleInline,
+    # RoleInline,
     SMJoinInline,
     SubscriptionInline,
 )
@@ -73,8 +73,8 @@ class HumanAdmin(ReadOnlyAdmin):
         'birth_date',
         'sex',
         'primary_voice_part',
+        'created_ts',
         'updated_ts',
-
     ]
 
     readonly_fields = [
@@ -150,6 +150,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'established_date',
         'status',
         'parent',
+        'created_ts',
+        'updated_ts',
     ]
 
     readonly_fields = [
@@ -201,6 +203,8 @@ class MembershipAdmin(ReadOnlyAdmin):
         'structure',
         'code',
         'status',
+        'created_ts',
+        'updated_ts',
     ]
 
     list_filter = [
@@ -263,6 +267,8 @@ class SubscriptionAdmin(ReadOnlyAdmin):
         'items_editable',
         'valid_through',
         'status',
+        'created_ts',
+        'updated_ts',
     ]
 
     readonly_fields = [
@@ -350,6 +356,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
         'subscription',
         'membership',
+        'created_ts',
+        'updated_ts',
     ]
 
     readonly_fields = [
