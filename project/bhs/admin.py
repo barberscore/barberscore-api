@@ -356,7 +356,7 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'vocal_part',
         'subscription',
         'membership',
-        'created_ts',
+        'established_date',
         'updated_ts',
     ]
 
