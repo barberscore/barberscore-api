@@ -649,6 +649,7 @@ def create_admin_emails_excel(session):
         'group',
         'admin',
         'email',
+        'cell',
     ]
     ws.append(fieldnames)
     entries = session.entries.filter(
@@ -662,10 +663,12 @@ def create_admin_emails_excel(session):
             group = entry.group.nomen.encode('utf-8').strip()
             person = admin.person.nomen.encode('utf-8').strip()
             email = admin.person.email.encode('utf-8').strip()
+            cell = admin.person.cell_phone
             row = [
                 group,
                 person,
                 email,
+                cell,
             ]
             ws.append(row)
     wb.save('admin_emails.xlsx')
