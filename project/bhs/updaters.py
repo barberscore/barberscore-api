@@ -1,17 +1,12 @@
 # Standard Libary
-import datetime
 import logging
 
-# Third-Party
-from auth0.v3.management import Auth0
-from auth0.v3.management.rest import Auth0Error
 from email_validator import (
     EmailNotValidError,
     validate_email,
 )
 
 # Django
-from django.conf import settings
 from django.db import IntegrityError
 from django.utils import encoding
 
@@ -21,13 +16,10 @@ from api.models import (
     Member,
     Organization,
     Person,
-    User,
 )
-from api.utils import get_auth0_token
 # Remote
 from bhs.models import (
     Role,
-    Subscription,
 )
 
 log = logging.getLogger('updater')
@@ -37,7 +29,7 @@ def update_or_create_person_from_human(human):
     first_name = human.first_name.strip()
     middle_name = human.middle_name.strip()
     last_name = human.last_name.strip()
-    nick_name = human.nick_name.strip()
+    nick_name = human.nick_name.replace("'", "").replace('"', '').strip()
     if not first_name:
         first_name = None
     if not middle_name:
@@ -103,35 +95,8 @@ def update_or_create_person_from_human(human):
             part = None
     else:
         part = None
-
-    bhs = human.subscriptions.filter(
-        items_editable=True,
-    )
-    if bhs:
-        try:
-            valid_through = bhs.get(
-                status='active',
-            ).valid_through
-        except Subscription.DoesNotExist:
-            # No active subscriptions; use most recent
-            valid_through = bhs.order_by(
-                'updated_ts',
-            ).last().valid_through
-        except Subscription.MultipleObjectsReturned as e:
-            # Otherwise, bad data.
-            log.error("{0}: {1}".format(e, human))
-            valid_through = None
-        if email and valid_through > datetime.date.today():
-            status = 10
-        else:
-            status = -10
-    else:
-        valid_through = None
-        status = -10
-
     defaults = {
         'name': name,
-        'status': status,
         'email': email,
         'birth_date': birth_date,
         'phone': phone,
@@ -139,7 +104,6 @@ def update_or_create_person_from_human(human):
         'work_phone': work_phone,
         'is_bhs': is_bhs,
         'bhs_id': bhs_id,
-        'valid_through': valid_through,
         'gender': gender,
         'part': part,
     }
@@ -150,17 +114,8 @@ def update_or_create_person_from_human(human):
         )
         log.info((person, created))
     except IntegrityError as e:
-        log.error((human, str(e)))
+        log.error("{0}: {1}".format(e, human))
         return
-    if created and status == 10:
-        try:
-            User.objects.create_user(
-                email=person.email,
-                person=person,
-            )
-        except IntegrityError as e:
-            log.error(e)
-            return
 
 
 def update_or_create_group_from_structure(structure):
@@ -170,7 +125,8 @@ def update_or_create_group_from_structure(structure):
     }
     try:
         kind = kind_map[structure.kind]
-    except KeyError:
+    except KeyError as e:
+        log.error("{0}: {1}".format(e, structure))
         return
     status_map = {
         'active': 10,
@@ -210,7 +166,7 @@ def update_or_create_group_from_structure(structure):
     try:
         v = validate_email(structure.email)
         email = v["email"].lower()
-    except EmailNotValidError as e:
+    except EmailNotValidError:
         email = ''
     if structure.phone:
         phone = structure.phone
@@ -236,7 +192,8 @@ def update_or_create_group_from_structure(structure):
         )
         log.info((group, created))
     except IntegrityError as e:
-        log.error((structure, str(e)))
+        log.error("{0}: {1}".format(e, group))
+        return
     if created:
         roles = Role.objects.filter(
             structure=structure,
@@ -247,7 +204,7 @@ def update_or_create_group_from_structure(structure):
                     bhs_pk=role.human.id,
                 )
             except Person.DoesNotExist as e:
-                log.info(e)
+                log.error("{0}: {1}".format(e, person))
                 continue
             status = Member.STATUS.active
             is_admin = True
@@ -262,7 +219,7 @@ def update_or_create_group_from_structure(structure):
                     defaults=defaults,
                 )
             except IntegrityError as e:
-                log.error(str(e))
+                log.error("{0}: {1}".format(e, member))
                 return
         try:
             parent_bhs_id = structure.parent.bhs_id
@@ -280,7 +237,32 @@ def update_or_create_group_from_structure(structure):
 
 
 def update_or_create_member_from_smjoin(smjoin):
+    if smjoin.structure.kind == 'district':
+        # Ignore districts
+        return
+    if smjoin.structure.kind == 'organization':
+        # Extract valid_through for Person
+        subscription = smjoin.subscription
+        human = smjoin.subscription.human
+        try:
+            person = Person.objects.get(
+                bhs_pk=human.id,
+            )
+        except Person.DoesNotExist as e:
+            log.error("{0}: {1}".format(e, human))
+            return
+        if subscription.status == 'active':
+            status = 10
+        else:
+            status = -10
+        valid_through = subscription.valid_through
+        person.status = status
+        person.valid_through = valid_through
+        person.save()
+        return
     if smjoin.structure.kind not in ['chapter', 'quartet']:
+        # This is actually an error.
+        log.error("Unknown Kind")
         return
     try:
         part_stripped = smjoin.vocal_part.strip()
@@ -299,8 +281,7 @@ def update_or_create_member_from_smjoin(smjoin):
             part = None
     else:
         part = None
-    is_current = smjoin.status
-    if is_current:
+    if smjoin.status:
         status = 10
     else:
         status = -10
@@ -321,32 +302,8 @@ def update_or_create_member_from_smjoin(smjoin):
         log.error("{0}: {1}".format(e, smjoin))
         return
     bhs_pk = smjoin.id
-    try:
-        valid_through = smjoin.subscription.human.subscriptions.get(
-            items_editable=True,
-        ).valid_through
-    except Subscription.DoesNotExist as e:
-        # Usually due to bad data.
-        log.error("{0}: {1}".format(e, smjoin))
-        return
-    except Subscription.MultipleObjectsReturned as e:
-        try:
-            valid_through = smjoin.subscription.human.subscriptions.get(
-                items_editable=True,
-                status='active',
-            ).valid_through
-        except Subscription.DoesNotExist as e:
-            # Usually due to bad data.
-            log.error("{0}: {1}".format(e, smjoin))
-            return
-        except Subscription.MultipleObjectsReturned as e:
-            # Usually due to bad data.
-            log.error("{0}: {1}".format(e, smjoin))
-            return
     defaults = {
-        'is_current': is_current,
         'status': status,
-        'valid_through': valid_through,
         'part': part,
         'bhs_pk': bhs_pk,
     }
@@ -361,164 +318,79 @@ def update_or_create_member_from_smjoin(smjoin):
         log.error("{0}: {1}".format(e, smjoin))
         return
 
+# Potential Cruft
 
-def get_auth0():
-    token = get_auth0_token()
-    return Auth0(
-        settings.AUTH0_DOMAIN,
-        token,
-    )
+    # bhs = human.subscriptions.filter(
+    #     items_editable=True,
+    # )
+    # if bhs:
+    #     try:
+    #         valid_through = bhs.get(
+    #             status='active',
+    #         ).valid_through
+    #     except Subscription.DoesNotExist:
+    #         # No active subscriptions; use most recent
+    #         valid_through = bhs.order_by(
+    #             'updated_ts',
+    #         ).last().valid_through
+    #     except Subscription.MultipleObjectsReturned as e:
+    #         # Otherwise, bad data.
+    #         log.error("{0}: {1}".format(e, human))
+    #         valid_through = None
+    #     if email and valid_through > datetime.date.today():
+    #         status = 10
+    #     else:
+    #         status = -10
+    # else:
+    #     valid_through = None
+    #     status = -10
+    # if created and status == 10:
+    #     try:
+    #         User.objects.create_user(
+    #             email=person.email,
+    #             person=person,
+    #         )
+    #     except IntegrityError as e:
+    #         log.error(e)
+    #         return
 
-
-def get_auth0_users(auth0):
-    lst = []
-    more = True
-    i = 0
-    t = 0
-    while more:
-        results = auth0.users.list(
-            fields=[
-                'user_id',
-                'email',
-                'app_metadata',
-                'user_metadata',
-            ],
-            per_page=100,
-            page=i,
-        )
-        try:
-            payload = [result for result in results['users']]
-        except KeyError:
-            t += 1
-            if t > 3:
-                break
-            else:
-                continue
-        lst.extend(payload)
-        more = bool(results['users'])
-        i += 1
-        t = 0
-    return lst
-
-
-def generate_payload(user):
-    if user.person.email != user.email:
-        user.email = user.person.email
-        user.save()
-    email = user.email
-
-    name = user.name
-    barberscore_id = str(user.id)
-    payload = {
-        "connection": "email",
-        "email": email,
-        "email_verified": True,
-        "user_metadata": {
-            "name": name
-        },
-        "app_metadata": {
-            "barberscore_id": barberscore_id,
-        }
-    }
-    return payload
-
-
-def crud_auth0():
-    # Get the Auth0 instance
-    auth0 = get_auth0()
-    # Get the accounts
-    accounts = get_auth0_users(auth0)
-    # Delete orphaned Auth0 accounts
-    for account in accounts:
-        try:
-            user = User.objects.get(
-                auth0_id=account['user_id'],
-            )
-        except User.DoesNotExist:
-            auth0.users.delete(account['user_id'])
-            log.info("DELETED: {0}".format(account['user_id']))
-    # Get User Accounts
-    users = User.objects.exclude(auth0_id=None)
-    # Update each User account
-    for user in users:
-        # First, check to see if the User account is in the Auth0 Account list
-        match = next(
-            (a for a in accounts if a['user_id'] == str(user.auth0_id)),
-            None,
-        )
-        if match:
-            # If you find the account, check to see if it needs updating.
-            payload = {
-                'email': user.email,
-                'user_metadata': {
-                    'name': user.name,
-                },
-                'user_id': user.auth0_id,
-                'app_metadata': {
-                    'barberscore_id': str(user.id),
-                },
-            }
-            if payload != match:
-                # Details need updating
-                del payload['user_id']
-                account = auth0.users.update(user.auth0_id, payload)
-                log.info("UPDATED: {0}".format(account['user_id']))
-        else:
-            # The User account thinks it has an Auth0, but doesn't.  Create (reset)
-            payload = generate_payload(user)
-            account = auth0.users.create(payload)
-            user.auth0_id = account['user_id']
-            user.save()
-            log.info("RESET: {0}".format(account['user_id']))
-    # Create new accounts
-    users = User.objects.filter(
-        auth0_id=None,
-    )
-    for user in users:
-        payload = generate_payload(user)
-        # Create
-        try:
-            account = auth0.users.create(payload)
-        except Auth0Error as e:
-            log.error(e)
-            continue
-        user.auth0_id = account['user_id']
-        user.save()
-        log.info("CREATED: {0}".format(account['user_id']))
+    # SMJOIN
+    # try:
+    #     valid_through = smjoin.subscription.human.subscriptions.get(
+    #         items_editable=True,
+    #     ).valid_through
+    # except Subscription.DoesNotExist as e:
+    #     # Usually due to bad data.
+    #     log.error("{0}: {1}".format(e, smjoin))
+    #     return
+    # except Subscription.MultipleObjectsReturned as e:
+    #     try:
+    #         valid_through = smjoin.subscription.human.subscriptions.get(
+    #             items_editable=True,
+    #             status='active',
+    #         ).valid_through
+    #     except Subscription.DoesNotExist as e:
+    #         # Usually due to bad data.
+    #         log.error("{0}: {1}".format(e, smjoin))
+    #         return
+    #     except Subscription.MultipleObjectsReturned as e:
+    #         # Usually due to bad data.
+    #         log.error("{0}: {1}".format(e, smjoin))
+    #         return
 
 
-def update_user_from_person(user):
-    user.email = user.person.email
-    user.name = user.person.nomen
-    user.save()
-    # Get the Auth0 instance
-    auth0 = get_auth0()
-    payload = {
-        'email': user.email,
-        'user_metadata': {
-            'name': user.name,
-        },
-        'app_metadata': {
-            'barberscore_id': str(user.id),
-        },
-    }
-    account = auth0.users.update(user.auth0_id, payload)
-    log.info("UPDATED: {0}".format(account['user_id']))
-    return
-
-
-def create_user_from_person(person):
-    try:
-        v = validate_email(person.email.strip())
-        email = v["email"].lower()
-    except EmailNotValidError as e:
-        person.status = person.STATUS.inactive
-        person.save()
-        log.error("{0}: {1}".format(e, person))
-        return
-    user = User.objects.create_user(
-        email=email,
-        name=person.name,
-        person=person,
-    )
-    log.info("CREATED: {0}".format(user))
+# def create_user_from_person(person):
+#     try:
+#         v = validate_email(person.email.strip())
+#         email = v["email"].lower()
+#     except EmailNotValidError as e:
+#         person.status = person.STATUS.inactive
+#         person.save()
+#         log.error("{0}: {1}".format(e, person))
+#         return
+#     user = User.objects.create_user(
+#         email=email,
+#         name=person.name,
+#         person=person,
+#     )
+#     log.info("CREATED: {0}".format(user))
