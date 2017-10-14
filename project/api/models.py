@@ -3508,7 +3508,7 @@ class Person(TimeStampedModel):
                 )
             if self.is_bhs and self.valid_through < datetime.date.today():
                 raise ValidationError(
-                    {'status': 'Active accounts must have current `valid_through`'}
+                    {'status': 'Active BHS accounts must have current `valid_through`'}
                 )
             if self.is_bhs and not self.bhs_id:
                 raise ValidationError(
@@ -5115,6 +5115,14 @@ class User(AbstractBaseUser):
         if self.name != self.person.name:
             raise ValidationError(
                 {'name': 'Name does not match person'}
+            )
+        if self.is_active and self.person.status == -10:
+            raise ValidationError(
+                {'is_active': 'Person account is inactive'}
+            )
+        if not self.is_active and self.person.status != -10:
+            raise ValidationError(
+                {'is_active': 'Person account is active'}
             )
 
     def get_full_name(self):

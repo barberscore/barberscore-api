@@ -38,8 +38,13 @@ def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                     )
                 return
             if instance.status == -10:
-                user.delete()
-            user.is_active = True
+                if not instance.email:
+                    user.delete()
+                else:
+                    is_active = False
+            else:
+                is_active = True
+            user.is_active = is_active
             user.email = instance.email
             user.name = instance.name
             user.save()
