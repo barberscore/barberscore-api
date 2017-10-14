@@ -332,6 +332,11 @@ class EntrySerializer(serializers.ModelSerializer):
             output.append(d)
         return output
 
+    def validate(self, data):
+        """Check that the start is before the stop."""
+        if data['is_private'] and data['contestants']:
+            raise serializers.ValidationError("Can not be private and compete for an award.")
+        return data
     # class JSONAPIMeta:
     #     included_resources = [
     #         'appearances',
