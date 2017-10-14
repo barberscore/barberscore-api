@@ -3498,6 +3498,10 @@ class Person(TimeStampedModel):
 
     def clean(self):
         if self.status == self.STATUS.active:
+            if not self.is_bhs:
+                raise ValidationError(
+                    {'is_bhs': 'Active accounts should be BHS'}
+                )
             if not self.valid_through:
                 raise ValidationError(
                     {'status': 'Active accounts must have `valid_through`'}
@@ -5106,6 +5110,16 @@ class User(AbstractBaseUser):
     # Methods
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.email != self.person.email:
+            raise ValidationError(
+                {'email': 'Email does not match person'}
+            )
+        if self.name != self.person.name:
+            raise ValidationError(
+                {'name': 'Name does not match person'}
+            )
 
     def get_full_name(self):
         return self.name
