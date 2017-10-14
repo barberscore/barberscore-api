@@ -3496,6 +3496,29 @@ class Person(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
+    def clean(self):
+        if self.status == self.STATUS.active:
+            if not self.valid_through:
+                raise ValidationError(
+                    {'status': 'Active accounts must have `valid_through`'}
+                )
+            if self.email is None:
+                raise ValidationError(
+                    {'status': 'Active accounts must have valid email'}
+                )
+            if self.valid_through < datetime.date.today():
+                raise ValidationError(
+                    {'status': 'Active accounts must have current `valid_through`'}
+                )
+            if self.is_bhs and not self.bhs_id:
+                raise ValidationError(
+                    {'is_bhs': 'BHS accounts require BHS ID'}
+                )
+            if not self.is_bhs and self.bhs_id:
+                raise ValidationError(
+                    {'is_bhs': 'Non BHS account should not have BHS ID'}
+                )
+
     def save(self, *args, **kwargs):
         if self.name:
             name = HumanName(self.name)
