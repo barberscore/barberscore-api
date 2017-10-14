@@ -103,9 +103,11 @@ class Command(BaseCommand):
                 ],
                 updated_ts__gt=cursor,
             ).order_by('updated_ts')
+        i = 0
         total = js.count()
         for j in js:
             j.full_clean()
+            i += 1
             update_or_create_member_from_smjoin(j)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
