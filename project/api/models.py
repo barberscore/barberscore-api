@@ -1710,6 +1710,12 @@ class Entry(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
+    def clean(self):
+        if self.is_private and self.contestants.exists():
+            raise ValidationError(
+                {'is_private': 'You may not compete for an award and remain private.'}
+            )
+
     def save(self, *args, **kwargs):
         self.nomen = "; ".join(
             map(
