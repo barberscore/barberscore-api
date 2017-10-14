@@ -54,6 +54,7 @@ class Command(BaseCommand):
         total = hs.count()
         i = 0
         for h in hs:
+            h.full_clean()
             i += 1
             update_or_create_person_from_human(h)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
@@ -72,6 +73,7 @@ class Command(BaseCommand):
         total = ss.count()
         i = 0
         for s in ss:
+            s.full_clean()
             i += 1
             update_or_create_group_from_structure(s)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
@@ -81,7 +83,7 @@ class Command(BaseCommand):
         # Sync Members
         self.stdout.write("Updating members...")
         if options['all']:
-            smjoins = SMJoin.objects.exclude(
+            js = SMJoin.objects.exclude(
                 updated_ts=None,
             ).filter(
                 structure__kind__in=[
@@ -93,7 +95,7 @@ class Command(BaseCommand):
         else:
             now = timezone.now()
             cursor = now - datetime.timedelta(days=options['days'])
-            smjoins = SMJoin.objects.filter(
+            js = SMJoin.objects.filter(
                 structure__kind__in=[
                     'organization',
                     'quartet',
@@ -101,8 +103,9 @@ class Command(BaseCommand):
                 ],
                 updated_ts__gt=cursor,
             ).order_by('updated_ts')
-        total = smjoins.count()
-        for j in smjoins:
+        total = js.count()
+        for j in js:
+            j.full_clean()
             update_or_create_member_from_smjoin(j)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
