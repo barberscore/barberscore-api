@@ -85,6 +85,7 @@ class Command(BaseCommand):
         admin_person = PersonFactory(
             name='Admin Person',
             email='test@barberscore.com',
+            status=Person.STATUS.active,
         )
         admin = UserFactory(
             name='Test Admin',
@@ -97,22 +98,27 @@ class Command(BaseCommand):
         scjc_person = PersonFactory(
             name='SCJC Person',
             email='scjc@barberscore.com',
+            status=Person.STATUS.active,
         )
         drcj_person = PersonFactory(
             name='DRCJ Person',
             email='drcj@barberscore.com',
+            status=Person.STATUS.active,
         )
         ca_person = PersonFactory(
             name='CA Person',
             email='ca@barberscore.com',
+            status=Person.STATUS.active,
         )
         quartet_person = PersonFactory(
             name='Quartet Person',
             email='quartet@barberscore.com',
+            status=Person.STATUS.active,
         )
         chorus_person = PersonFactory(
             name='Chorus Person',
             email='chorus@barberscore.com',
+            status=Person.STATUS.active,
         )
         # Create Core Users
         scjc_user = UserFactory(
