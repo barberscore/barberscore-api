@@ -3182,7 +3182,7 @@ class Person(TimeStampedModel):
         (10, 'active', 'Active',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
     )
@@ -3566,6 +3566,17 @@ class Person(TimeStampedModel):
         return any([
             self == request.user.person,
         ])
+
+    # Person transitions
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Deactivate the Person."""
+        return
+
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Person."""
+        return
 
 
 class Repertory(TimeStampedModel):

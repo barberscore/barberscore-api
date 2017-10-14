@@ -930,7 +930,7 @@ class ParticipantAdmin(admin.ModelAdmin):
 
 
 @admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
+class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'name',
         'status',
@@ -976,6 +976,10 @@ class PersonAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
+    ]
+
+    fsm_field = [
+        'status',
     ]
 
     search_fields = (
