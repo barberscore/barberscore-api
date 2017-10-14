@@ -3498,10 +3498,6 @@ class Person(TimeStampedModel):
 
     def clean(self):
         if self.status == self.STATUS.active:
-            if not self.is_bhs:
-                raise ValidationError(
-                    {'is_bhs': 'Active accounts should be BHS'}
-                )
             if not self.valid_through:
                 raise ValidationError(
                     {'status': 'Active accounts must have `valid_through`'}
