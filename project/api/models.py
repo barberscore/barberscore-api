@@ -3498,15 +3498,15 @@ class Person(TimeStampedModel):
 
     def clean(self):
         if self.status == self.STATUS.active:
-            if not self.valid_through:
-                raise ValidationError(
-                    {'status': 'Active accounts must have `valid_through`'}
-                )
             if self.email is None:
                 raise ValidationError(
                     {'status': 'Active accounts must have valid email'}
                 )
-            if self.valid_through < datetime.date.today():
+            if self.is_bhs and not self.valid_through:
+                raise ValidationError(
+                    {'status': 'Active BHS accounts must have `valid_through`'}
+                )
+            if self.is_bhs and self.valid_through < datetime.date.today():
                 raise ValidationError(
                     {'status': 'Active accounts must have current `valid_through`'}
                 )
