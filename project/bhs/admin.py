@@ -40,7 +40,6 @@ class ReadOnlyAdmin(admin.ModelAdmin):
 class HumanAdmin(ReadOnlyAdmin):
     fields = [
         'id',
-        'username',
         'first_name',
         'middle_name',
         'last_name',
@@ -79,7 +78,6 @@ class HumanAdmin(ReadOnlyAdmin):
 
     readonly_fields = [
         'id',
-        'username',
         'first_name',
         'middle_name',
         'last_name',

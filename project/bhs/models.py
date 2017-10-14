@@ -8,10 +8,6 @@ class Human(models.Model):
         max_length=255,
         editable=False,
     )
-    username = models.CharField(
-        max_length=255,
-        editable=False,
-    )
     first_name = models.CharField(
         max_length=255,
         editable=False,
@@ -33,6 +29,7 @@ class Human(models.Model):
     email = models.CharField(
         max_length=255,
         editable=False,
+        db_column='username',
     )
     birth_date = models.DateField(
         editable=False,
