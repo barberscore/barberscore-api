@@ -260,7 +260,7 @@ class ParticipantFactory(DjangoModelFactory):
 @mute_signals(post_save)
 class PersonFactory(DjangoModelFactory):
     name = Faker('name_male')
-    status = Person.STATUS.active
+    status = Person.STATUS.inactive
     birth_date = None
     location = ''
     website = ''
