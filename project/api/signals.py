@@ -37,11 +37,9 @@ def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                         person=instance,
                     )
                 return
-            if instance.status == 10:
-                is_active = True
-            else:
-                is_active = False
-            user.is_active = is_active
+            if instance.status == -10:
+                user.delete()
+            user.is_active = True
             user.email = instance.email
             user.name = instance.name
             user.save()
