@@ -28,6 +28,7 @@ class Human(models.Model):
     )
     email = models.CharField(
         max_length=255,
+        unique=True,
         editable=False,
         db_column='username',
     )
@@ -52,6 +53,7 @@ class Human(models.Model):
     )
     bhs_id = models.IntegerField(
         editable=False,
+        unique=True,
         db_column='legacy_id',
     )
     sex = models.CharField(
@@ -115,6 +117,14 @@ class Human(models.Model):
         return nomen
 
     class Meta:
+        # unique_together = (
+        #     (
+        #         'first_name',
+        #         'middle_name',
+        #         'last_name',
+        #         'birth_date',
+        #     )
+        # )
         db_table = 'vwMembers'
 
 
@@ -379,14 +389,14 @@ class SMJoin(models.Model):
     )
     established_date = models.DateField(
         db_column='created',
+        editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='modified',
+        null=True,
+        editable=False,
     )
 
-    @property
-    def human(self):
-        return self.subscription.human
     # FKs
     subscription = models.ForeignKey(
         'Subscription',
