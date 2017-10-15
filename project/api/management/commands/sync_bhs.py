@@ -63,11 +63,20 @@ class Command(BaseCommand):
         # Sync Groups
         self.stdout.write("Updating groups...")
         if options['all']:
-            ss = Structure.objects.all()
+            ss = Structure.objects.filter(
+                kind__in=[
+                    'quartet',
+                    'chapter',
+                ]
+            )
         else:
             now = timezone.now()
             cursor = now - datetime.timedelta(days=options['days'])
             ss = Structure.objects.filter(
+                kind__in=[
+                    'quartet',
+                    'chapter',
+                ],
                 updated_ts__gt=cursor,
             )
         total = ss.count()
