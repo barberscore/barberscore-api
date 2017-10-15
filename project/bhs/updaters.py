@@ -128,7 +128,7 @@ def update_or_create_person_from_human(human):
             bhs_pk=human.id,
             defaults=defaults,
         )
-        log.info((person, created))
+        log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
         log.error("{0}: {1}".format(e, human))
         return
@@ -206,7 +206,7 @@ def update_or_create_group_from_structure(structure):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        log.info((group, created))
+        log.info("{0}; {1}".format(group, created))
     except IntegrityError as e:
         log.error("{0}: {1}".format(e, group))
         return
@@ -275,7 +275,9 @@ def update_or_create_member_from_smjoin(smjoin):
         valid_through = subscription.valid_through
         person.status = status
         person.valid_through = valid_through
-        return person.save()
+        person.save()
+        log.info("{0} {1} {2}".format(person, get_status_display(), valid_through))
+        return
     if smjoin.structure.kind not in ['chapter', 'quartet']:
         # This is actually an error.
         log.error("Unknown Kind")
@@ -327,7 +329,7 @@ def update_or_create_member_from_smjoin(smjoin):
             group=group,
             defaults=defaults,
         )
-        log.info("{0} {1}".format(member, created))
+        log.info("{0}; {1}".format(member, created))
     except IntegrityError as e:
         log.error("{0}: {1}".format(e, smjoin))
         return
