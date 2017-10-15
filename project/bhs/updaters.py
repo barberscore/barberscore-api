@@ -276,7 +276,7 @@ def update_or_create_member_from_smjoin(smjoin):
         person.status = status
         person.valid_through = valid_through
         person.save()
-        log.info("{0} {1} {2}".format(person, get_status_display(), valid_through))
+        log.info("{0} {1}".format(person, valid_through))
         return
     if smjoin.structure.kind not in ['chapter', 'quartet']:
         # This is actually an error.
