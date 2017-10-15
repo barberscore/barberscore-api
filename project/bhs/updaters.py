@@ -107,18 +107,22 @@ def update_or_create_person_from_human(human):
         'gender': gender,
         'part': part,
     }
-    try:
-        person = Person.objects.get(email=email)
-        person.bhs_pk = human.id
-        person.save()
-    except Person.DoesNotExist:
-        pass
-    try:
-        person = Person.objects.get(bhs_id=bhs_id)
-        person.bhs_pk = human.id
-        person.save()
-    except Person.DoesNotExist:
-        pass
+    if email:
+        try:
+            person = Person.objects.get(email=email)
+            if not person.bhs_pk:
+                person.bhs_pk = human.id
+                person.save()
+        except Person.DoesNotExist:
+            pass
+    if bhs_id:
+        try:
+            person = Person.objects.get(bhs_id=bhs_id)
+            if not person.bhs_pk:
+                person.bhs_pk = human.id
+                person.save()
+        except Person.DoesNotExist:
+            pass
     try:
         person, created = Person.objects.update_or_create(
             bhs_pk=human.id,
