@@ -254,6 +254,7 @@ def update_or_create_group_from_structure(structure):
 
 def update_or_create_member_from_smjoin(smjoin):
     if smjoin.structure.kind == 'district':
+        log.error("District mismatch")
         # Ignore districts
         return
     if smjoin.structure.kind == 'organization':
@@ -275,6 +276,7 @@ def update_or_create_member_from_smjoin(smjoin):
         person.status = status
         person.valid_through = valid_through
         person.save()
+        log.info("{0} {1} {2}".format(person, status, valid_through))
         return
     if smjoin.structure.kind not in ['chapter', 'quartet']:
         # This is actually an error.
@@ -327,7 +329,7 @@ def update_or_create_member_from_smjoin(smjoin):
             group=group,
             defaults=defaults,
         )
-        log.info((member, created))
+        log.info("{0} {1}".format(member, created))
     except IntegrityError as e:
         log.error("{0}: {1}".format(e, smjoin))
         return
