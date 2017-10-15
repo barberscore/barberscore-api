@@ -317,11 +317,9 @@ def update_or_create_member_from_smjoin(smjoin):
         # Generally an error
         log.error("{0}: {1}".format(e, smjoin))
         return
-    bhs_pk = smjoin.id
     defaults = {
         'status': status,
         'part': part,
-        'bhs_pk': bhs_pk,
     }
     try:
         member, created = Member.objects.update_or_create(

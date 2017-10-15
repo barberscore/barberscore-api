@@ -2368,12 +2368,6 @@ class Member(TimeStampedModel):
         default=False,
     )
 
-    bhs_pk = models.UUIDField(
-        null=True,
-        blank=True,
-        unique=True,
-        db_index=True,
-    )
     # FKs
     group = models.ForeignKey(
         'Group',

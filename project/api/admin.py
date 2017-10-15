@@ -632,7 +632,6 @@ class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'valid_through',
-        'bhs_pk',
         # 'start_date',
         # 'end_date',
         'group',
@@ -644,7 +643,6 @@ class MemberAdmin(admin.ModelAdmin):
     list_display = [
         'status',
         'valid_through',
-        'bhs_pk',
         # 'start_date',
         # 'end_date',
         'group',
