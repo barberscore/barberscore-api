@@ -275,9 +275,7 @@ def update_or_create_member_from_smjoin(smjoin):
         valid_through = subscription.valid_through
         person.status = status
         person.valid_through = valid_through
-        person.save()
-        log.info("{0} {1} {2}".format(person, status, valid_through))
-        return
+        return person.save()
     if smjoin.structure.kind not in ['chapter', 'quartet']:
         # This is actually an error.
         log.error("Unknown Kind")
