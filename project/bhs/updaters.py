@@ -108,6 +108,18 @@ def update_or_create_person_from_human(human):
         'part': part,
     }
     try:
+        person = Person.objects.get(email=email)
+        person.bhs_pk = human.id
+        person.save()
+    except Person.DoesNotExist:
+        pass
+    try:
+        person = Person.objects.get(bhs_id=bhs_id)
+        person.bhs_pk = human.id
+        person.save()
+    except Person.DoesNotExist:
+        pass
+    try:
         person, created = Person.objects.update_or_create(
             bhs_pk=human.id,
             defaults=defaults,
