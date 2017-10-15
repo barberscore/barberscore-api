@@ -20,7 +20,13 @@ class Command(BaseCommand):
             status=10,
             valid_through__lt=today,
         )
+        total = ps.count()
+        i = 0
         for p in ps:
+            i += 1
             p.deactivate()
             p.save()
+            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            self.stdout.flush()
+        self.stdout.write("Updated {0} persons.".format(total))
         self.stdout.write("Complete")
