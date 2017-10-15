@@ -34,7 +34,7 @@ class Command(BaseCommand):
         # Get User Accounts
         users = User.objects.exclude(auth0_id=None)
         # Update each User account
-        self.stdout.write("Checking auth0 for User accounts...")
+        self.stdout.write("Updating Auth0 accounts...")
         for user in users:
             # First, check to see if the User account is in the Auth0 Account list
             match = next(
@@ -69,7 +69,7 @@ class Command(BaseCommand):
         users = User.objects.filter(
             auth0_id=None,
         )
-        self.stdout.write("Creating auth0 accounts...")
+        self.stdout.write("Creating Auth0 accounts...")
         for user in users:
             payload = generate_payload(user)
             # Create
@@ -82,4 +82,3 @@ class Command(BaseCommand):
             user.save()
             self.stdout.write("CREATED: {0}".format(account['user_id']))
         self.stdout.write("Complete.")
-
