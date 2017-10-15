@@ -19,6 +19,7 @@ class Command(BaseCommand):
         # Get the Auth0 instance
         auth0 = get_auth0()
         # Get the accounts
+        self.stdout.write("Getting Auth0 accounts...")
         accounts = get_auth0_users(auth0)
         # Delete orphaned Auth0 accounts
         self.stdout.write("Deleting orphaned accounts...")
