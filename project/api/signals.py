@@ -27,28 +27,6 @@ def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                     email=instance.email,
                     person=instance,
                 )
-        else:
-            try:
-                user = instance.user
-            except User.DoesNotExist:
-                if instance.status == 10:
-                    User.objects.create_user(
-                        email=instance.email,
-                        person=instance,
-                    )
-                return
-            if instance.status == -10:
-                if not instance.email:
-                    user.delete()
-                    return
-                else:
-                    is_active = False
-            else:
-                is_active = True
-            user.is_active = is_active
-            user.email = instance.email
-            user.name = instance.name
-            user.save()
 
 
 @receiver(post_save, sender=User)
