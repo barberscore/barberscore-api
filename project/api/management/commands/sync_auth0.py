@@ -81,3 +81,5 @@ class Command(BaseCommand):
             user.auth0_id = account['user_id']
             user.save()
             self.stdout.write("CREATED: {0}".format(account['user_id']))
+        self.stdout.write("Complete.")
+
