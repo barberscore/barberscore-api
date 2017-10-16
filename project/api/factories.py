@@ -2,6 +2,7 @@
 from factory import (
     Faker,
     PostGenerationMethodCall,
+    Sequence,
     SubFactory,
 )
 from factory.django import (
@@ -266,7 +267,7 @@ class PersonFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    email = Faker('email')
+    email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     phone = ''
     image = None
     description = ''
@@ -358,7 +359,7 @@ class VenueFactory(DjangoModelFactory):
 
 @mute_signals(post_save)
 class UserFactory(DjangoModelFactory):
-    email = Faker('email')
+    email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     password = PostGenerationMethodCall('set_password', 'password')
     is_active = True
     is_staff = False
