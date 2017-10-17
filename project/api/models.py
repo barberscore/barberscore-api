@@ -4426,6 +4426,23 @@ class Session(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    # Session Properties
+    @property
+    def open_date(self):
+        return self.convention.open_date
+
+    @property
+    def close_date(self):
+        return self.convention.close_date
+
+    @property
+    def start_date(self):
+        return self.convention.start_date
+
+    @property
+    def end_date(self):
+        return self.convention.end_date
+
     # Internals
     class JSONAPIMeta:
         resource_name = "session"
