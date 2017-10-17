@@ -4500,6 +4500,12 @@ class Session(TimeStampedModel):
             ),
         ])
 
+    # Session Conditions
+    def can_close_session(self):
+        return all([
+            self.close_date < datetime.date.today(),
+        ])
+
     # Session Transitions
     @fsm_log_by
     @transition(field=status, source=STATUS.new, target=STATUS.opened)
@@ -4510,7 +4516,12 @@ class Session(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=STATUS.opened, target=STATUS.closed)
+    @transition(
+        field=status,
+        source=STATUS.opened,
+        target=STATUS.closed,
+        conditions=[can_close_session]
+    )
     def close(self, *args, **kwargs):
         """Make session unavailable and set initial draw."""
         entries = self.entries.filter(
