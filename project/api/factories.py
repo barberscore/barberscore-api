@@ -173,7 +173,7 @@ class GroupFactory(DjangoModelFactory):
     image = None
     description = ''
     notes = ''
-    bhs_id = FuzzyInteger(100000, 999999)
+    bhs_id = Sequence(lambda x: x)
     organization = None
 
     class Meta:
@@ -231,7 +231,7 @@ class OrganizationFactory(DjangoModelFactory):
     image = None
     description = ''
     notes = ''
-    bhs_id = FuzzyInteger(100000, 999999)
+    bhs_id = Sequence(lambda x: x)
     parent = None
 
     class Meta:
@@ -272,7 +272,7 @@ class PersonFactory(DjangoModelFactory):
     image = None
     description = ''
     notes = ''
-    bhs_id = None
+    bhs_id = Sequence(lambda x: x)
 
     class Meta:
         model = Person
