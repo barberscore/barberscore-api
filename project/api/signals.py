@@ -12,21 +12,9 @@ from django.dispatch import receiver
 
 # Local
 from .models import (
-    Person,
     User,
 )
 from .utils import get_auth0_token
-
-
-@receiver(post_save, sender=Person)
-def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    if not raw:
-        if created:
-            if instance.status == 10:
-                User.objects.create_user(
-                    email=instance.email,
-                    person=instance,
-                )
 
 
 @receiver(post_save, sender=User)

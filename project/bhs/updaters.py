@@ -128,6 +128,8 @@ def update_or_create_person_from_human(human):
             bhs_pk=human.id,
             defaults=defaults,
         )
+        if created:
+            person.activate()
         log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
         log.error("{0}: {1}".format(e, human))

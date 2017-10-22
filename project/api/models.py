@@ -38,7 +38,11 @@ from django.core.validators import (
     MinValueValidator,
     RegexValidator,
 )
-from django.db import models
+from django.db import (
+    models,
+)
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import get_template
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
@@ -3570,11 +3574,23 @@ class Person(TimeStampedModel):
     # Person transitions
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
-        """Deactivate the Person."""
+        """Activate the Person."""
+        try:
+            user = self.user
+        except ObjectDoesNotExist:
+            User.objects.create_user(
+                email=self.email,
+                person=self,
+            )
+            return
+        user.is_active = True
+        user.save()
         return
 
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
+        self.user.is_active = False
+        self.user.save()
         """Deactivate the Person."""
         return
 

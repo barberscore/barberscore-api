@@ -4,15 +4,15 @@ from django.contrib.auth.models import BaseUserManager
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, person, password='', **kwargs):
+    def create_user(self, email, person, **kwargs):
         user = self.model(
             email=email,
             name=person.name,
             person=person,
-            password='',
             is_active=True,
             **kwargs
         )
+        user.set_unusable_password()
         user.save(using=self._db)
 
         return user
