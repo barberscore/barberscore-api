@@ -3546,6 +3546,7 @@ class Person(TimeStampedModel):
                 )
             )
         )
+        self.email = self.email.lower()
         super().save(*args, **kwargs)
 
     # Permissions
@@ -5185,6 +5186,10 @@ class User(AbstractBaseUser):
             raise ValidationError(
                 {'is_active': 'Person account is active'}
             )
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+        super().save(*args, **kwargs)
 
     def get_full_name(self):
         return self.name
