@@ -260,6 +260,9 @@ def update_or_create_member_from_smjoin(smjoin):
         # Ignore districts
         return
     if smjoin.structure.kind == 'organization':
+        # Return if not valid.
+        if not smjoin.status:
+            return
         # Extract valid_through for Person
         subscription = smjoin.subscription
         human = smjoin.subscription.human
