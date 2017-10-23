@@ -3546,7 +3546,8 @@ class Person(TimeStampedModel):
                 )
             )
         )
-        self.email = self.email.lower()
+        if self.email:
+            self.email = self.email.lower()
         super().save(*args, **kwargs)
 
     # Permissions
@@ -5188,7 +5189,8 @@ class User(AbstractBaseUser):
             )
 
     def save(self, *args, **kwargs):
-        self.email = self.email.lower()
+        if self.email:
+            self.email = self.email.lower()
         super().save(*args, **kwargs)
 
     def get_full_name(self):
