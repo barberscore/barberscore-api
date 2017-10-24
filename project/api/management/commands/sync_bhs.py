@@ -120,5 +120,5 @@ class Command(BaseCommand):
             update_or_create_member_from_smjoin(j)
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-        self.stdout.write("Updated {0} memberships.".format(total))
+        self.stdout.write("Updated {0} members.".format(total))
         self.stdout.write("Complete")

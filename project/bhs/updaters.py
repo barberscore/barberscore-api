@@ -256,10 +256,10 @@ def update_or_create_group_from_structure(structure):
 
 def update_or_create_member_from_smjoin(smjoin):
     if smjoin.structure.kind == 'district':
-        log.error("District mismatch")
         # Ignore districts
+        log.error("District mismatch")
         return
-    if smjoin.structure.kind == 'organization':
+    elif smjoin.structure.kind == 'organization':
         # Return if not valid.
         if not smjoin.status:
             return
@@ -283,15 +283,46 @@ def update_or_create_member_from_smjoin(smjoin):
         person.save()
         log.info("{0} {1}".format(person, valid_through))
         return
-    if smjoin.structure.kind not in ['chapter', 'quartet']:
-        # This is actually an error.
-        log.error("Unknown Kind")
-        return
-    try:
+    elif smjoin.structure.kind == 'chapter':
+        # Must abstract this because we can't trust updated_ts
+        smjoin = smjoin.subscription.smjoins.order_by('established_date').last()
+        if smjoin.subscription.status == 'active':
+            status = 10
+        else:
+            status = -10
+        try:
+            group = Group.objects.get(
+                bhs_pk=smjoin.structure.id
+            )
+        except Group.DoesNotExist as e:
+            # Probably due to pending status
+            log.error("{0}: {1}".format(e, smjoin))
+            return
+        try:
+            person = Person.objects.get(
+                bhs_pk=smjoin.subscription.human.id
+            )
+        except Person.DoesNotExist as e:
+            # Generally an error
+            log.error("{0}: {1}".format(e, smjoin))
+            return
+        defaults = {
+            'status': status,
+        }
+        try:
+            member, created = Member.objects.update_or_create(
+                person=person,
+                group=group,
+                defaults=defaults,
+            )
+            log.info("{0}; {1}".format(member, created))
+        except IntegrityError as e:
+            log.error("{0}: {1}".format(e, smjoin))
+            return
+    elif smjoin.structure.kind == 'quartet':
+        # Must abstract this because we can't trust updated_ts
+        smjoin = smjoin.subscription.smjoins.order_by('established_date').last()
         part_stripped = smjoin.vocal_part.strip()
-    except AttributeError:
-        part_stripped = None
-    if part_stripped:
         if part_stripped.casefold() == 'Tenor'.casefold():
             part = 1
         elif part_stripped.casefold() == 'Lead'.casefold():
@@ -302,41 +333,43 @@ def update_or_create_member_from_smjoin(smjoin):
             part = 4
         else:
             part = None
+        if smjoin.subscription.status == 'active':
+            status = 10
+        else:
+            status = -10
+        try:
+            group = Group.objects.get(
+                bhs_pk=smjoin.structure.id
+            )
+        except Group.DoesNotExist as e:
+            # Probably due to pending status
+            log.error("{0}: {1}".format(e, smjoin))
+            return
+        try:
+            person = Person.objects.get(
+                bhs_pk=smjoin.subscription.human.id
+            )
+        except Person.DoesNotExist as e:
+            # Generally an error
+            log.error("{0}: {1}".format(e, smjoin))
+            return
+        defaults = {
+            'status': status,
+            'part': part,
+        }
+        try:
+            member, created = Member.objects.update_or_create(
+                person=person,
+                group=group,
+                defaults=defaults,
+            )
+            log.info("{0}; {1}".format(member, created))
+        except IntegrityError as e:
+            log.error("{0}: {1}".format(e, smjoin))
+            return
     else:
-        part = None
-    if smjoin.status:
-        status = 10
-    else:
-        status = -10
-    try:
-        group = Group.objects.get(
-            bhs_pk=smjoin.structure.id
-        )
-    except Group.DoesNotExist as e:
-        # Usually due to pending status
-        log.error("{0}: {1}".format(e, smjoin))
-        return
-    try:
-        person = Person.objects.get(
-            bhs_pk=smjoin.subscription.human.id
-        )
-    except Person.DoesNotExist as e:
-        # Generally an error
-        log.error("{0}: {1}".format(e, smjoin))
-        return
-    defaults = {
-        'status': status,
-        'part': part,
-    }
-    try:
-        member, created = Member.objects.update_or_create(
-            person=person,
-            group=group,
-            defaults=defaults,
-        )
-        log.info("{0}; {1}".format(member, created))
-    except IntegrityError as e:
-        log.error("{0}: {1}".format(e, smjoin))
+        # This is an error.
+        log.error("Unknown Kind")
         return
 
 # Potential Cruft

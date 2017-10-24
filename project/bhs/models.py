@@ -214,7 +214,7 @@ class Structure(models.Model):
             name = self.name.strip()
         if self.kind.casefold() == 'chapter'.casefold():
             nomen = "{0} [{1} {2}]".format(
-                self.chorus_name,
+                self.chorus_name.strip(),
                 self.chapter_code,
                 name,
             )

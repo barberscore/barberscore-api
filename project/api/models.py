@@ -2258,6 +2258,13 @@ class Group(TimeStampedModel):
             raise ValidationError(
                 {'is_bhs': 'Can not be BHS without BHS ID.'}
             )
+        if self.kind == self.KIND.quartet:
+            if self.members.filter(
+                is_current=True,
+            ).count() > 4:
+                raise ValidationError(
+                    {'kind': 'Quartets can not have more than four current members.'}
+                )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -2330,7 +2337,7 @@ class Member(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
+        (-10, 'alum', 'Alum',),
         (0, 'new', 'New',),
         (5, 'provisional', 'Provisional',),
         (10, 'active', 'Active',),
@@ -2460,7 +2467,7 @@ class Member(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
+    @transition(field=status, source='*', target=STATUS.alum)
     def deactivate(self, *args, **kwargs):
         """Deactivate the Member."""
         return
