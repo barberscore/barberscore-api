@@ -220,7 +220,6 @@ class MemberInline(admin.TabularInline):
         'group',
         'part',
         'is_admin',
-        'is_current',
         'status',
     ]
     raw_id_fields = [
@@ -228,11 +227,14 @@ class MemberInline(admin.TabularInline):
         'group',
     ]
     ordering = (
-        'group__kind',
-        'group__name',
+        '-status',
+        'part',
     )
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class OfficerInline(admin.TabularInline):
@@ -314,6 +316,9 @@ class RepertoryInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class ScoreInline(admin.TabularInline):

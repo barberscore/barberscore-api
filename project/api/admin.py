@@ -439,8 +439,8 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'image',
         'csa_pdf',
-        ('tot_points', 'mus_points','per_points', 'sng_points',),
-        ('tot_score', 'mus_score','per_score', 'sng_score',),
+        ('tot_points', 'mus_points', 'per_points', 'sng_points',),
+        ('tot_score', 'mus_score', 'per_score', 'sng_score',),
         ('is_evaluation', 'is_private',),
         'draw',
         'prelim',
@@ -520,11 +520,9 @@ class GroupAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
-        'is_bhs',
-        'bhs_id',
-        'bhs_pk',
-        'organization',
         'kind',
+        ('is_bhs', 'bhs_id', 'bhs_pk',),
+        'organization',
         'code',
         'start_date',
         'end_date',
@@ -578,9 +576,9 @@ class GroupAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        EntryInline,
         MemberInline,
         RepertoryInline,
+        EntryInline,
     ]
     # quartet_inlines = [
     #     # AwardInline,
