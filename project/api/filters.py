@@ -215,9 +215,6 @@ class MemberFilter(FilterSet):
             'is_admin': [
                 'exact',
             ],
-            'is_current': [
-                'exact',
-            ],
             'status': [
                 'gte',
                 'exact',

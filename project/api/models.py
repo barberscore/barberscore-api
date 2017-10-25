@@ -2260,7 +2260,7 @@ class Group(TimeStampedModel):
             )
         if self.kind == self.KIND.quartet:
             if self.members.filter(
-                is_current=True,
+                status=self.members.model.STATUS.active,
             ).count() > 4:
                 raise ValidationError(
                     {'kind': 'Quartets can not have more than four current members.'}
@@ -2378,10 +2378,6 @@ class Member(TimeStampedModel):
     )
 
     is_admin = models.BooleanField(
-        default=False,
-    )
-
-    is_current = models.BooleanField(
         default=False,
     )
 

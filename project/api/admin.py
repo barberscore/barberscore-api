@@ -524,16 +524,16 @@ class GroupAdmin(admin.ModelAdmin):
         ('is_bhs', 'bhs_id', 'bhs_pk',),
         'organization',
         'code',
-        'start_date',
-        'end_date',
+        # 'start_date',
+        # 'end_date',
         'short_name',
         'location',
+        'email',
+        'phone',
         # 'spots',
         'website',
         'facebook',
         'twitter',
-        'email',
-        'phone',
         'image',
         'description',
         'notes',
@@ -636,7 +636,6 @@ class MemberAdmin(admin.ModelAdmin):
         'person',
         'part',
         'is_admin',
-        'is_current',
     ]
     list_display = [
         'status',
@@ -647,7 +646,6 @@ class MemberAdmin(admin.ModelAdmin):
         'person',
         'part',
         'is_admin',
-        'is_current',
     ]
     raw_id_fields = [
         'person',
@@ -661,7 +659,6 @@ class MemberAdmin(admin.ModelAdmin):
         'part',
         'group__kind',
         'is_admin',
-        'is_current',
     ]
 
 
