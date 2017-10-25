@@ -20,6 +20,7 @@ from api.models import (
 # Remote
 from bhs.models import (
     Role,
+    SMJoin,
 )
 
 log = logging.getLogger('updater')
@@ -285,8 +286,8 @@ def update_or_create_member_from_smjoin(smjoin):
         return
     elif smjoin.structure.kind == 'chapter':
         # Must abstract this because we can't trust updated_ts
-        smjoin = smjoin.subscription.smjoins.filter(
-            structure__kind='chapter',
+        smjoin = SMJoin.objects.filter(
+            structure=smjoin.structure,
         ).order_by('established_date').last()
         if smjoin.subscription.status == 'active':
             status = 10
@@ -323,7 +324,9 @@ def update_or_create_member_from_smjoin(smjoin):
             return
     elif smjoin.structure.kind == 'quartet':
         # Must abstract this because we can't trust updated_ts
-        smjoin = smjoin.subscription.smjoins.order_by('established_date').last()
+        smjoin = SMJoin.objects.filter(
+            structure=smjoin.structure,
+        ).order_by('established_date').last()
         try:
             part_stripped = smjoin.vocal_part.strip()
         except AttributeError:
