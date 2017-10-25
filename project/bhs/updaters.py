@@ -30,7 +30,7 @@ def update_or_create_person_from_human(human):
     first_name = human.first_name.strip()
     middle_name = human.middle_name.strip()
     last_name = human.last_name.strip()
-    nick_name = human.nick_name.replace("'", "").replace('"', '').strip()
+    nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
     if not first_name:
         first_name = None
     if not middle_name:
@@ -261,12 +261,14 @@ def update_or_create_member_from_smjoin(smjoin):
         log.error("District mismatch")
         return
     elif smjoin.structure.kind == 'organization':
-        # Return if not valid.
-        if not smjoin.status:
-            return
-        # Extract valid_through for Person
-        subscription = smjoin.subscription
+        # Must abstract this because we can't trust updated_ts
         human = smjoin.subscription.human
+        smjoin = SMJoin.objects.filter(
+            structure=smjoin.structure,
+            subscription__human=human,
+        ).order_by('established_date').last()
+        # Extract current Subscription from SMJoin
+        subscription = smjoin.subscription
         try:
             person = Person.objects.get(
                 bhs_pk=human.id,
