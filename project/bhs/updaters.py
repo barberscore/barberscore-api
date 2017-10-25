@@ -132,7 +132,7 @@ def update_or_create_person_from_human(human):
             person.activate()
         log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
-        log.error("{0}: {1}".format(e, human))
+        log.error("{0} {1}".format(e, human))
         return
 
 
@@ -144,7 +144,7 @@ def update_or_create_group_from_structure(structure):
     try:
         kind = kind_map[structure.kind]
     except KeyError as e:
-        log.error("{0}: {1}".format(e, structure))
+        log.error("{0} {1}".format(e, structure))
         return
     status_map = {
         'active': 10,
@@ -210,7 +210,7 @@ def update_or_create_group_from_structure(structure):
         )
         log.info("{0}; {1}".format(group, created))
     except IntegrityError as e:
-        log.error("{0}: {1}".format(e, group))
+        log.error("{0} {1}".format(e, group))
         return
     if created:
         roles = Role.objects.filter(
@@ -222,7 +222,7 @@ def update_or_create_group_from_structure(structure):
                     bhs_pk=role.human.id,
                 )
             except Person.DoesNotExist as e:
-                log.error("{0}: {1}".format(e, person))
+                log.error("{0} {1}".format(e, person))
                 continue
             status = Member.STATUS.active
             is_admin = True
@@ -237,7 +237,7 @@ def update_or_create_group_from_structure(structure):
                     defaults=defaults,
                 )
             except IntegrityError as e:
-                log.error("{0}: {1}".format(e, member))
+                log.error("{0} {1}".format(e, member))
                 return
         try:
             parent_bhs_id = structure.parent.bhs_id
@@ -271,7 +271,7 @@ def update_or_create_member_from_smjoin(smjoin):
                 bhs_pk=human.id,
             )
         except Person.DoesNotExist as e:
-            log.error("{0}: {1}".format(e, human))
+            log.error("{0} {1}".format(e, human))
             return
         if subscription.status == 'active':
             status = 10
@@ -285,7 +285,9 @@ def update_or_create_member_from_smjoin(smjoin):
         return
     elif smjoin.structure.kind == 'chapter':
         # Must abstract this because we can't trust updated_ts
-        smjoin = smjoin.subscription.smjoins.order_by('established_date').last()
+        smjoin = smjoin.subscription.smjoins.filter(
+            structure__kind='chapter',
+        ).order_by('established_date').last()
         if smjoin.subscription.status == 'active':
             status = 10
         else:
@@ -296,7 +298,7 @@ def update_or_create_member_from_smjoin(smjoin):
             )
         except Group.DoesNotExist as e:
             # Probably due to pending status
-            log.error("{0}: {1}".format(e, smjoin))
+            log.error("{0} {1}".format(e, smjoin))
             return
         try:
             person = Person.objects.get(
@@ -304,7 +306,7 @@ def update_or_create_member_from_smjoin(smjoin):
             )
         except Person.DoesNotExist as e:
             # Generally an error
-            log.error("{0}: {1}".format(e, smjoin))
+            log.error("{0} {1}".format(e, smjoin))
             return
         defaults = {
             'status': status,
@@ -317,7 +319,7 @@ def update_or_create_member_from_smjoin(smjoin):
             )
             log.info("{0}; {1}".format(member, created))
         except IntegrityError as e:
-            log.error("{0}: {1}".format(e, smjoin))
+            log.error("{0} {1}".format(e, smjoin))
             return
     elif smjoin.structure.kind == 'quartet':
         # Must abstract this because we can't trust updated_ts
@@ -346,7 +348,7 @@ def update_or_create_member_from_smjoin(smjoin):
             )
         except Group.DoesNotExist as e:
             # Probably due to pending status
-            log.error("{0}: {1}".format(e, smjoin))
+            log.error("{0} {1}".format(e, smjoin))
             return
         try:
             person = Person.objects.get(
@@ -354,7 +356,7 @@ def update_or_create_member_from_smjoin(smjoin):
             )
         except Person.DoesNotExist as e:
             # Generally an error
-            log.error("{0}: {1}".format(e, smjoin))
+            log.error("{0} {1}".format(e, smjoin))
             return
         defaults = {
             'status': status,
@@ -368,7 +370,7 @@ def update_or_create_member_from_smjoin(smjoin):
             )
             log.info("{0}; {1}".format(member, created))
         except IntegrityError as e:
-            log.error("{0}: {1}".format(e, smjoin))
+            log.error("{0} {1}".format(e, smjoin))
             return
     else:
         # This is an error.
