@@ -229,6 +229,7 @@ class MemberInline(admin.TabularInline):
     ordering = (
         '-status',
         'part',
+        'person__last_name',
     )
     show_change_link = True
     extra = 0
