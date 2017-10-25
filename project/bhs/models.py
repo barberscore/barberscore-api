@@ -54,6 +54,7 @@ class Human(models.Model):
     bhs_id = models.IntegerField(
         editable=False,
         unique=True,
+        null=False,
         db_column='legacy_id',
     )
     sex = models.CharField(
@@ -107,14 +108,10 @@ class Human(models.Model):
 
     # Internals
     def __str__(self):
-        if self.bhs_id:
-            nomen = "{0} [{1}]".format(
-                self.full_name,
-                self.bhs_id,
-            )
-        else:
-            nomen = self.full_name
-        return nomen
+        return "{0} [{1}]".format(
+            self.full_name,
+            self.bhs_id,
+        )
 
     class Meta:
         # unique_together = (
@@ -158,6 +155,8 @@ class Structure(models.Model):
     )
     bhs_id = models.IntegerField(
         editable=False,
+        unique=True,
+        null=False,
         db_column='legacy_id',
     )
     chapter_code = models.CharField(
