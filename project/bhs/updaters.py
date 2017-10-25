@@ -322,7 +322,10 @@ def update_or_create_member_from_smjoin(smjoin):
     elif smjoin.structure.kind == 'quartet':
         # Must abstract this because we can't trust updated_ts
         smjoin = smjoin.subscription.smjoins.order_by('established_date').last()
-        part_stripped = smjoin.vocal_part.strip()
+        try:
+            part_stripped = smjoin.vocal_part.strip()
+        except AttributeError:
+            part_stripped = "Unknown"
         if part_stripped.casefold() == 'Tenor'.casefold():
             part = 1
         elif part_stripped.casefold() == 'Lead'.casefold():
@@ -371,80 +374,3 @@ def update_or_create_member_from_smjoin(smjoin):
         # This is an error.
         log.error("Unknown Kind")
         return
-
-# Potential Cruft
-
-    # bhs = human.subscriptions.filter(
-    #     items_editable=True,
-    # )
-    # if bhs:
-    #     try:
-    #         valid_through = bhs.get(
-    #             status='active',
-    #         ).valid_through
-    #     except Subscription.DoesNotExist:
-    #         # No active subscriptions; use most recent
-    #         valid_through = bhs.order_by(
-    #             'updated_ts',
-    #         ).last().valid_through
-    #     except Subscription.MultipleObjectsReturned as e:
-    #         # Otherwise, bad data.
-    #         log.error("{0}: {1}".format(e, human))
-    #         valid_through = None
-    #     if email and valid_through > datetime.date.today():
-    #         status = 10
-    #     else:
-    #         status = -10
-    # else:
-    #     valid_through = None
-    #     status = -10
-    # if created and status == 10:
-    #     try:
-    #         User.objects.create_user(
-    #             email=person.email,
-    #             person=person,
-    #         )
-    #     except IntegrityError as e:
-    #         log.error(e)
-    #         return
-
-    # SMJOIN
-    # try:
-    #     valid_through = smjoin.subscription.human.subscriptions.get(
-    #         items_editable=True,
-    #     ).valid_through
-    # except Subscription.DoesNotExist as e:
-    #     # Usually due to bad data.
-    #     log.error("{0}: {1}".format(e, smjoin))
-    #     return
-    # except Subscription.MultipleObjectsReturned as e:
-    #     try:
-    #         valid_through = smjoin.subscription.human.subscriptions.get(
-    #             items_editable=True,
-    #             status='active',
-    #         ).valid_through
-    #     except Subscription.DoesNotExist as e:
-    #         # Usually due to bad data.
-    #         log.error("{0}: {1}".format(e, smjoin))
-    #         return
-    #     except Subscription.MultipleObjectsReturned as e:
-    #         # Usually due to bad data.
-    #         log.error("{0}: {1}".format(e, smjoin))
-    #         return
-
-
-# def create_user_from_person(person):
-#     try:
-#         v = validate_email(person.email.strip())
-#         email = v["email"].lower()
-#     except EmailNotValidError as e:
-#         person.status = person.STATUS.inactive
-#         person.save()
-#         log.error("{0}: {1}".format(e, person))
-#         return
-#     user = User.objects.create_user(
-#         email=email,
-#         name=person.name,
-#         person=person,
-#     )
-#     log.info("CREATED: {0}".format(user))
