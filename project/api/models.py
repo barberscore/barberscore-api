@@ -1894,7 +1894,7 @@ class Entry(TimeStampedModel):
                     is_admin=True,
                 ),
                 self.status <= self.STATUS.approved,
-                ]),
+            ]),
         ])
 
     # Methods
