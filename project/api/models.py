@@ -1570,14 +1570,9 @@ class Entry(TimeStampedModel):
         (7, 'withdrawn', 'Withdrawn',),
         (10, 'submitted', 'Submitted',),
         (20, 'approved', 'Approved',),
-        (30, 'rejected', 'Rejected',),
-        (50, 'verified', 'Verified',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
-        (57, 'started', 'Started',),
-        (60, 'finished', 'Finished',),
-        (70, 'completed', 'Completed',),
-        (90, 'announced', 'Announced',),
+        (57, 'final', 'Final',),
         (95, 'archived', 'Archived',),
     )
 
@@ -1892,10 +1887,13 @@ class Entry(TimeStampedModel):
                 category__lt=10,
                 kind=10,
             ),
-            self.group.members.filter(
-                person=request.user.person,
-                status__gt=0,
-                is_admin=True,
+            all(
+                self.group.members.filter(
+                    person=request.user.person,
+                    status__gt=0,
+                    is_admin=True,
+                ),
+                self.status <= self.STATUS.approved,
             ),
         ])
 
@@ -1966,16 +1964,9 @@ class Entry(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(
-        field=status,
-        source=[
-            STATUS.approved,
-        ],
-        target=STATUS.completed
-    )
-    def complete(self, *args, **kwargs):
-        self.calculate()
-        self.save()
+    @transition(field=status, source=[STATUS.approved], target=STATUS.final)
+    def finalize(self, *args, **kwargs):
+        # Finalize the Entry (locks to further edits)
         return
 
 
@@ -3577,7 +3568,7 @@ class Person(TimeStampedModel):
         ])
 
     # Person transitions
-    @transition(field=status, source='*', target=STATUS.active)
+    @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.active)
     def activate(self, *args, **kwargs):
         """Activate the Person."""
         try:
@@ -3592,7 +3583,7 @@ class Person(TimeStampedModel):
         user.save()
         return
 
-    @transition(field=status, source='*', target=STATUS.inactive)
+    @transition(field=status, source=[STATUS.new, STATUS.active], target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
         self.user.is_active = False
         self.user.save()
