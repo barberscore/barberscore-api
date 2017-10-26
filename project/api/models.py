@@ -4345,7 +4345,6 @@ class Session(TimeStampedModel):
         # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
         # (40, 'drafted', 'Drafted',),
-        (45, 'announced', 'Announced',),
         (95, 'archived', 'Archived',),
         # (50, 'final', 'Final',),
     )
@@ -4642,11 +4641,6 @@ class Session(TimeStampedModel):
                 appearance.save()
             entry.calculate()
             entry.save()
-        return
-
-    @fsm_log_by
-    @transition(field=status, source=STATUS.finished, target=STATUS.announced)
-    def announce(self, *args, **kwargs):
         return
 
 
