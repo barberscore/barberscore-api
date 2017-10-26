@@ -107,26 +107,21 @@ def create_pdf(payload):
     return client.create_doc(payload)
 
 
-def send_entry(entry, template):
+def send_entry(context, template):
+    entry = context['entry']
     contacts = entry.group.members.filter(
         is_admin=True,
     ).exclude(person__email=None)
     if not contacts:
-        log.error(
-            "No valid contacts for {0}".format(
-                entry,
-            )
-        )
+        log.error("No valid contacts for {0}".format(entry))
         return
     assignments = entry.session.convention.assignments.filter(
         category__lt=10,
     ).exclude(person__email=None)
     tos = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
     ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-    rendered = render_to_string(template, {'entry': entry})
-    subject = "[Barberscore] {0}".format(
-        entry.nomen,
-    )
+    rendered = render_to_string(template, context)
+    subject = "[Barberscore] {0}".format(entry.nomen)
     email = EmailMessage(
         subject=subject,
         body=rendered,

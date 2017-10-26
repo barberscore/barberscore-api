@@ -1918,7 +1918,8 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=STATUS.new, target=STATUS.invited, conditions=[can_invite_entry])
     def invite(self, *args, **kwargs):
-        send_entry(self, 'entry_invite.txt')
+        context = {'entry': self}
+        send_entry(context, 'entry_invite.txt')
         return
 
     @fsm_log_by
@@ -1933,19 +1934,22 @@ class Entry(TimeStampedModel):
                 entry.save()
         for contestant in self.contestants.all():
             contestant.delete()
-        send_entry(self, 'entry_withdraw.txt')
+        context = {'entry': self}
+        send_entry(context, 'entry_withdraw.txt')
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.new, STATUS.invited], conditions=[can_submit_entry], target=STATUS.submitted)
     def submit(self, *args, **kwargs):
-        send_entry(self, 'entry_submit.txt')
+        context = {'entry': self}
+        send_entry(context, 'entry_submit.txt')
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.new, STATUS.submitted], target=STATUS.approved)
     def approve(self, *args, **kwargs):
-        send_entry(self, 'entry_approve.txt')
+        context = {'entry': self}
+        send_entry(context, 'entry_approve.txt')
         return
 
     @fsm_log_by
@@ -1960,7 +1964,8 @@ class Entry(TimeStampedModel):
                 entry.save()
         for contestant in self.contestants.all():
             contestant.delete()
-        send_entry(self, 'entry_scratch.txt')
+        context = {'entry': self}
+        send_entry(context, 'entry_scratch.txt')
         return
 
     @fsm_log_by
