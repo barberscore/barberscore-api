@@ -1887,14 +1887,14 @@ class Entry(TimeStampedModel):
                 category__lt=10,
                 kind=10,
             ),
-            all(
+            all([
                 self.group.members.filter(
                     person=request.user.person,
                     status__gt=0,
                     is_admin=True,
                 ),
                 self.status <= self.STATUS.approved,
-            ),
+                ]),
         ])
 
     # Methods
