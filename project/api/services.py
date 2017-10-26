@@ -118,7 +118,6 @@ def send_entry(entry, template):
             )
         )
         return
-
     assignments = entry.session.convention.assignments.filter(
         category__lt=10,
     ).exclude(person__email=None)
@@ -139,19 +138,13 @@ def send_entry(entry, template):
             'proclamation56@gmail.com',
         ],
     )
-    result = email.send()
-    if result == 1:
-        log.info(
-            "{0}".format(
-                entry.nomen,
-            )
-        )
-    else:
-        log.error(
-            "{0}".format(
-                entry.nomen,
-            )
-        )
+    try:
+        result = email.send()
+    except Exception as e:
+        log.error("{0} {1}".format(e, entry))
+        return
+    if result != 1:
+        log.error("{0} {1}".format(e, entry))
 
 
 def send_session(session, template):
