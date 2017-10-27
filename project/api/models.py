@@ -4556,8 +4556,10 @@ class Session(TimeStampedModel):
 
     # Session Conditions
     def can_close_session(self):
+        Entry = config.get_model('Entry')
         return all([
             self.close_date < datetime.date.today(),
+            self.entries.filter(status=Entry.STATUS.submitted).count() == 0,
         ])
 
     # Session Transitions
@@ -4566,6 +4568,7 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.new,
         target=STATUS.opened,
+        conditions=[],
     )
     def open(self, *args, **kwargs):
         """Make session available for entry."""
@@ -4582,6 +4585,20 @@ class Session(TimeStampedModel):
     )
     def close(self, *args, **kwargs):
         """Make session unavailable and set initial draw."""
+        # Remove orphaned entries
+        entries = self.entries.filter(
+            status=self.entries.model.STATUS.new,
+        )
+        for entry in entries:
+            entry.delete()
+        # Withdraw dangling invitations
+        entries = self.entries.filter(
+            status=self.entries.model.STATUS.invited,
+        )
+        for entry in entries:
+            entry.withdraw()
+            entry.save()
+        # Set initial draw for all Approved entries.
         entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,
         )
@@ -4597,6 +4614,7 @@ class Session(TimeStampedModel):
         field=status,
         source=[STATUS.closed, STATUS.verified],
         target=STATUS.verified,
+        conditions=[],
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
@@ -4622,6 +4640,7 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.verified,
         target=STATUS.started,
+        conditions=[],
     )
     def start(self, *args, **kwargs):
         """Create round, seat panel, copy draw."""
@@ -4666,6 +4685,7 @@ class Session(TimeStampedModel):
                 status=Appearance.STATUS.published,
             )
             entry.finalize()
+            entry.save()
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
         for assignment in self.convention.assignments.filter(
@@ -4685,6 +4705,7 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.started,
         target=STATUS.finished,
+        conditions=[],
     )
     def finish(self, *args, **kwargs):
         session = self

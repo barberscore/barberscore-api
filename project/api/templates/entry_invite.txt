@@ -6,6 +6,8 @@ new contest manager for the Barbershop Harmony Society.
 To get started, go to https://www.barberscore.com/tutorials.  There you'll find
 helpful materials to guide you through the new process.
 
+Please note that if not responded to your invitation will automatically expire
+on {{session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
 
 If you experience any problems or need help then please don't hesitate to reach
 out to customerservice@barbershop.org and we'll respond ASAP.
