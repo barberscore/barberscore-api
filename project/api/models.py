@@ -4621,6 +4621,9 @@ class Session(TimeStampedModel):
                 num=entry.draw,
                 status=Appearance.STATUS.published,
             )
+            entry.finalize()
+        for entry in self.entries.filter(status=Entry.STATUS.new):
+            entry.delete()
         for assignment in self.convention.assignments.filter(
             status=Assignment.STATUS.active,
         ):
