@@ -131,6 +131,9 @@ class EntryFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
+            'is_archived': [
+                'exact',
+            ],
         }
 
 

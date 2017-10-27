@@ -290,6 +290,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
+            'is_archived',
             'is_evaluation',
             'is_private',
             'draw',

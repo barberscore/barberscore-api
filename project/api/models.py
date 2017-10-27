@@ -1581,6 +1581,10 @@ class Entry(TimeStampedModel):
         default=STATUS.new,
     )
 
+    is_archived = models.BooleanField(
+        default=False,
+    )
+
     image = models.ImageField(
         upload_to=PathAndRename(),
         max_length=255,

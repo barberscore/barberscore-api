@@ -61,6 +61,7 @@ from .models import (
     Venue,
 )
 
+
 @admin.register(Appearance)
 class AppearanceAdmin(admin.ModelAdmin):
     fields = [
@@ -172,7 +173,7 @@ class AwardAdmin(admin.ModelAdmin):
         'rounds',
         ('is_primary', 'is_invitational', 'is_manual'),
         'parent',
-        ('threshold','minimum','advance',),
+        ('threshold', 'minimum', 'advance',),
         'footnote',
         'description',
         'notes',
@@ -435,6 +436,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     fields = (
         'status',
+        'is_archived',
         'session',
         'group',
         'image',
@@ -454,6 +456,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = [
+        'is_archived',
         'status',
         'session__kind',
         'session__convention__season',

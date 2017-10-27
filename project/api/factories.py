@@ -137,6 +137,7 @@ class ConventionFactory(DjangoModelFactory):
 
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
+    is_archived = False
     image = None
     is_evaluation = True
     is_private = False
