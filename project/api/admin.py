@@ -451,12 +451,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'nomen',
         'status',
-        'directors',
     )
-
-    list_editable = [
-        'directors',
-    ]
 
     list_filter = [
         'status',
