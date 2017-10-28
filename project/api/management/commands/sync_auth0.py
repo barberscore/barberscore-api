@@ -31,7 +31,7 @@ class Command(BaseCommand):
             except User.DoesNotExist:
                 auth0.users.delete(account['user_id'])
                 self.stdout.write("DELETED: {0}".format(account['user_id']))
-        # Get User Accounts
+        # Get User Accounts with existing Auth0
         users = User.objects.exclude(auth0_id=None)
         # Update each User account
         self.stdout.write("Updating Auth0 accounts...")
@@ -65,8 +65,9 @@ class Command(BaseCommand):
                 user.auth0_id = account['user_id']
                 user.save()
                 self.stdout.write("RESET: {0}".format(account['user_id']))
-        # Create new accounts
+        # Create new accounts for Active users
         users = User.objects.filter(
+            is_active=True,
             auth0_id=None,
         )
         self.stdout.write("Creating Auth0 accounts...")
