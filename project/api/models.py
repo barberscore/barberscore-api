@@ -3322,6 +3322,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         unique=True,
+        editable=False,
     )
 
     phone = models.CharField(

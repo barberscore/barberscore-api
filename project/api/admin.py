@@ -967,6 +967,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
+        'email',
     ]
 
     fsm_field = [
