@@ -4,17 +4,17 @@ from django.contrib.auth.models import BaseUserManager
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, person, **kwargs):
+    def create_user(self, person, is_active=True, **kwargs):
         user = self.model(
-            email=email,
+            email=person.email,
             name=person.name,
             person=person,
-            is_active=True,
+            is_active=is_active,
             **kwargs
         )
         user.set_unusable_password()
+        user.full_clean()
         user.save(using=self._db)
-
         return user
 
     def create_superuser(self, email, person, password, **kwargs):
