@@ -3224,8 +3224,8 @@ class Person(TimeStampedModel):
 
     STATUS = Choices(
         (-40, 'sentinel', 'Sentinel',),
-        (-30, 'expired', 'Expired',),
-        (-20, 'legacy', 'Legacy',),
+        (-30, 'legacy', 'Legacy',),
+        (-20, 'missing', 'Missing',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
