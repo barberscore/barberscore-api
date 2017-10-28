@@ -290,11 +290,11 @@ def update_or_create_member_from_smjoin(smjoin):
             return
         person.save()
         if status == Person.STATUS.active:
-            user.is_active = True
-            user.save()
+            person.user.is_active = True
+            person.user.save()
         else:
-            user.is_active = False
-            user.save()
+            person.user.is_active = False
+            person.user.save()
         log.info("{0} {1}".format(person, valid_through))
         return
     elif smjoin.structure.kind == 'chapter':
