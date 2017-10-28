@@ -36,8 +36,18 @@ class Command(BaseCommand):
             type=int,
             dest='days',
             nargs='?',
-            const=2,
+            const=1,
             help='Number of days to update.',
+        )
+
+        parser.add_argument(
+            '-h',
+            '--hours',
+            type=int,
+            dest='hours',
+            nargs='?',
+            const=1,
+            help='Number of hours to update.',
         )
 
     def handle(self, *args, **options):
@@ -45,9 +55,15 @@ class Command(BaseCommand):
         self.stdout.write("Updating persons...")
         if options['all']:
             hs = Human.objects.all()
+        elif options['hours']:
+            now = timezone.now()
+            cursor = now - datetime.timedelta(hours=options['hours'], minutes=5)
+            hs = Human.objects.filter(
+                updated_ts__gt=cursor,
+            )
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(days=options['days'])
+            cursor = now - datetime.timedelta(days=options['days'], hours=1)
             hs = Human.objects.filter(
                 updated_ts__gt=cursor,
             )
@@ -69,9 +85,19 @@ class Command(BaseCommand):
                     'chapter',
                 ]
             )
+        elif options['hours']:
+            now = timezone.now()
+            cursor = now - datetime.timedelta(hours=options['hours'], minutes=5)
+            ss = Structure.objects.filter(
+                kind__in=[
+                    'quartet',
+                    'chapter',
+                ],
+                updated_ts__gt=cursor,
+            )
         else:
             now = timezone.now()
-            cursor = now - datetime.timedelta(days=options['days'])
+            cursor = now - datetime.timedelta(days=options['days'], hours=1)
             ss = Structure.objects.filter(
                 kind__in=[
                     'quartet',
@@ -100,6 +126,17 @@ class Command(BaseCommand):
                     'quartet',
                     'chapter',
                 ],
+            ).order_by('updated_ts')
+        elif options['hours']:
+            now = timezone.now()
+            cursor = now - datetime.timedelta(hours=options['hours'], minutes=5)
+            js = SMJoin.objects.filter(
+                structure__kind__in=[
+                    'organization',
+                    'quartet',
+                    'chapter',
+                ],
+                updated_ts__gt=cursor,
             ).order_by('updated_ts')
         else:
             now = timezone.now()
