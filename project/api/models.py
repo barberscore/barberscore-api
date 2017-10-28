@@ -3549,28 +3549,28 @@ class Person(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
-    def clean(self):
-        if self.status == self.STATUS.active:
-            if self.email is None:
-                raise ValidationError(
-                    {'status': 'Active accounts must have valid email'}
-                )
-            if self.is_bhs and not self.valid_through:
-                raise ValidationError(
-                    {'status': 'Active BHS accounts must have `valid_through`'}
-                )
-            if self.is_bhs and self.valid_through < datetime.date.today():
-                raise ValidationError(
-                    {'status': 'Active BHS accounts must have current `valid_through`'}
-                )
-            if self.is_bhs and not self.bhs_id:
-                raise ValidationError(
-                    {'is_bhs': 'BHS accounts require BHS ID'}
-                )
-            if not self.is_bhs and self.bhs_id:
-                raise ValidationError(
-                    {'is_bhs': 'Non BHS account should not have BHS ID'}
-                )
+    # def clean(self):
+    #     if self.status == self.STATUS.active:
+    #         if self.email is None:
+    #             raise ValidationError(
+    #                 {'status': 'Active accounts must have valid email'}
+    #             )
+    #         if self.is_bhs and not self.valid_through:
+    #             raise ValidationError(
+    #                 {'status': 'Active BHS accounts must have `valid_through`'}
+    #             )
+    #         if self.is_bhs and self.valid_through < datetime.date.today():
+    #             raise ValidationError(
+    #                 {'status': 'Active BHS accounts must have current `valid_through`'}
+    #             )
+    #         if self.is_bhs and not self.bhs_id:
+    #             raise ValidationError(
+    #                 {'is_bhs': 'BHS accounts require BHS ID'}
+    #             )
+    #         if not self.is_bhs and self.bhs_id:
+    #             raise ValidationError(
+    #                 {'is_bhs': 'Non BHS account should not have BHS ID'}
+    #             )
 
     def save(self, *args, **kwargs):
         if self.name:
@@ -3617,28 +3617,28 @@ class Person(TimeStampedModel):
         ])
 
     # Person transitions
-    @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        """Activate the Person."""
-        try:
-            user = self.user
-        except ObjectDoesNotExist:
-            User.objects.create_user(
-                email=self.email,
-                person=self,
-            )
-            return
-        user.is_active = True
-        user.full_clean()
-        user.save()
-        return
+    # @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.active)
+    # def activate(self, *args, **kwargs):
+    #     """Activate the Person."""
+    #     try:
+    #         user = self.user
+    #     except ObjectDoesNotExist:
+    #         User.objects.create_user(
+    #             email=self.email,
+    #             person=self,
+    #         )
+    #         return
+    #     user.is_active = True
+    #     user.full_clean()
+    #     user.save()
+    #     return
 
-    @transition(field=status, source=[STATUS.new, STATUS.active], target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        self.user.is_active = False
-        self.user.save()
-        """Deactivate the Person."""
-        return
+    # @transition(field=status, source=[STATUS.new, STATUS.active], target=STATUS.inactive)
+    # def deactivate(self, *args, **kwargs):
+    #     self.user.is_active = False
+    #     self.user.save()
+    #     """Deactivate the Person."""
+    #     return
 
 
 class Repertory(TimeStampedModel):
