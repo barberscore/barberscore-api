@@ -2439,10 +2439,17 @@ class Member(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.is_admin and not self.person.email:
-            raise ValidationError(
-                {'is_admin': 'Admin must have a valid email.'}
-            )
+        if self.is_admin:
+            try:
+                is_active = self.person.user.is_active
+            except ObjectDoesNotExist:
+                raise ValidationError(
+                    {'is_admin': 'Admin must User account.'}
+                )
+            if not is_active:
+                raise ValidationError(
+                    {'is_admin': 'Admin User account must be active.'}
+                )
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -5247,14 +5254,6 @@ class User(AbstractBaseUser):
         if self.name != self.person.name:
             raise ValidationError(
                 {'name': 'Name does not match person'}
-            )
-        if self.is_active and self.person.status == -10:
-            raise ValidationError(
-                {'is_active': 'Person account is inactive'}
-            )
-        if not self.is_active and self.person.status != -10:
-            raise ValidationError(
-                {'is_active': 'Person account is active'}
             )
 
     def save(self, *args, **kwargs):

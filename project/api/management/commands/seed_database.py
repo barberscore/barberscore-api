@@ -87,8 +87,8 @@ class Command(BaseCommand):
             email='test@barberscore.com',
             status=Person.STATUS.active,
         )
-        admin = UserFactory(
-            name='Test Admin',
+        UserFactory(
+            name='Admin Person',
             email='test@barberscore.com',
             password='password',
             is_staff=True,

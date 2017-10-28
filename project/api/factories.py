@@ -2,6 +2,7 @@
 from factory import (
     Faker,
     PostGenerationMethodCall,
+    LazyAttribute,
     Sequence,
     SubFactory,
 )
@@ -259,7 +260,6 @@ class ParticipantFactory(DjangoModelFactory):
         model = Participant
 
 
-@mute_signals(post_save)
 class PersonFactory(DjangoModelFactory):
     name = Faker('name_male')
     status = Person.STATUS.inactive
@@ -268,12 +268,14 @@ class PersonFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
+    email = LazyAttribute(lambda x: '{0}@barberscore.com'.format(x.bhs_id))
     phone = ''
     image = None
     description = ''
     notes = ''
-    bhs_id = Sequence(lambda x: x)
+    valid_through = '2018-12-31'
+    is_bhs = True
+    bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
 
     class Meta:
         model = Person
