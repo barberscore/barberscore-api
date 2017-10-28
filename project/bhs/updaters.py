@@ -7,6 +7,7 @@ from email_validator import (
 )
 
 # Django
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils import encoding
 
@@ -16,6 +17,7 @@ from api.models import (
     Member,
     Organization,
     Person,
+    User,
 )
 # Remote
 from bhs.models import (
@@ -108,29 +110,16 @@ def update_or_create_person_from_human(human):
         'gender': gender,
         'part': part,
     }
-    if email:
-        try:
-            person = Person.objects.get(email=email)
-            if not person.bhs_pk:
-                person.bhs_pk = human.id
-                person.save()
-        except Person.DoesNotExist:
-            pass
-    if bhs_id:
-        try:
-            person = Person.objects.get(bhs_id=bhs_id)
-            if not person.bhs_pk:
-                person.bhs_pk = human.id
-                person.save()
-        except Person.DoesNotExist:
-            pass
     try:
         person, created = Person.objects.update_or_create(
             bhs_pk=human.id,
             defaults=defaults,
         )
-        if created:
-            person.activate()
+        if created and email:
+            User.objects.create_user(
+                person=person,
+                is_active=False,
+            )
         log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
         log.error("{0} {1}".format(e, human))
@@ -276,13 +265,29 @@ def update_or_create_member_from_smjoin(smjoin):
         except Person.DoesNotExist as e:
             log.error("{0} {1}".format(e, human))
             return
-        if subscription.status == 'active':
-            status = 10
+        if person.email:
+            if subscription.status == 'active':
+                status = Person.STATUS.active
+                is_valid = True
+            else:
+                status = Person.STATUS.inactive
+                is_valid = False
         else:
-            status = -10
+            if subscription.status == 'active':
+                status = Person.STATUS.missing
+                is_valid = True
+            else:
+                status = Person.STATUS.legacy
+                is_valid = False
         valid_through = subscription.valid_through
         person.status = status
+        person.is_valid = is_valid
         person.valid_through = valid_through
+        try:
+            person.full_clean()
+        except ValidationError as e:
+            log.error("{0} {1}".format(e, person))
+            return
         person.save()
         log.info("{0} {1}".format(person, valid_through))
         return
