@@ -4383,11 +4383,7 @@ class Session(TimeStampedModel):
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
         (20, 'started', 'Started',),
-        # (25, 'ranked', 'Ranked',),
         (30, 'finished', 'Finished',),
-        # (40, 'drafted', 'Drafted',),
-        (95, 'archived', 'Archived',),
-        # (50, 'final', 'Final',),
     )
 
     is_archived = models.BooleanField(
