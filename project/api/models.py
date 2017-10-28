@@ -3629,6 +3629,7 @@ class Person(TimeStampedModel):
             )
             return
         user.is_active = True
+        user.full_clean()
         user.save()
         return
 
