@@ -68,8 +68,6 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                 response = auth0.users.update(instance.auth0_id, payload)
             except Auth0Error as e:
                 raise(e)
-            # instance.auth0_id = response['user_id']
-            # instance.save()
 
 
 @receiver(pre_delete, sender=User)
