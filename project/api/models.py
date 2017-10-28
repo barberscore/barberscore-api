@@ -3223,9 +3223,13 @@ class Person(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-40, 'sentinel', 'Sentinel',),
+        (-30, 'expired', 'Expired',),
+        (-20, 'legacy', 'Legacy',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
+        (20, 'affiliate', 'Affiliate',),
     )
 
     status = FSMIntegerField(
