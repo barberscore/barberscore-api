@@ -1132,6 +1132,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
     fields = [
         'status',
+        'is_archived',
         'convention',
         'kind',
         'is_invitational',
@@ -1156,6 +1157,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = (
+        'is_archived',
         'status',
         'kind',
         'is_invitational',

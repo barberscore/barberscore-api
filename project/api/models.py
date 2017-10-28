@@ -4390,6 +4390,10 @@ class Session(TimeStampedModel):
         # (50, 'final', 'Final',),
     )
 
+    is_archived = models.BooleanField(
+        default=False,
+    )
+
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,

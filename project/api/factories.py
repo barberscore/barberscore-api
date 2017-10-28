@@ -316,6 +316,7 @@ class ScoreFactory(DjangoModelFactory):
 
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
+    is_archived = False
     kind = Session.KIND.quartet
     is_invitational = False
     scoresheet = None

@@ -780,6 +780,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
+            'is_archived',
             'kind',
             'is_invitational',
             'scoresheet',

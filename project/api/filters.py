@@ -360,6 +360,9 @@ class SessionFilter(FilterSet):
                 'exact',
                 'lt',
             ],
+            'is_archived': [
+                'exact',
+            ],
             'convention': [
                 'exact',
             ],
