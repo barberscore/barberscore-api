@@ -930,6 +930,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_bhs',
         'bhs_id',
         'bhs_pk',
+        'is_valid',
         'valid_through',
         'birth_date',
         'part',
@@ -960,6 +961,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         'is_bhs',
+        'is_valid',
         'gender',
         'part',
         'is_deceased',
@@ -968,6 +970,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'nomen',
         'email',
+        'is_valid',
+        'valid_through',
     ]
 
     fsm_field = [

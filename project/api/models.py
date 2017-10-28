@@ -3413,9 +3413,15 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
+    is_valid = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+
     valid_through = models.DateField(
         null=True,
         blank=True,
+        editable=False,
     )
 
     # Denormalizations
@@ -3553,7 +3559,17 @@ class Person(TimeStampedModel):
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 
-    # def clean(self):
+    def clean(self):
+        today = datetime.date.today()
+        if self.is_valid and self.valid_through < today:
+            raise ValidationError(
+                {'is_valid': 'Expired memberships can not be valid.'}
+            )
+        if not self.is_valid and self.valid_through >= today:
+            raise ValidationError(
+                {'is_valid': 'Current memberships can not be invalid.'}
+            )
+
     #     if self.status == self.STATUS.active:
     #         if self.email is None:
     #             raise ValidationError(
