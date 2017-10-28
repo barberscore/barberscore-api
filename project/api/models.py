@@ -3429,7 +3429,7 @@ class Person(TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=255,
-        default='',
+        blank=True,
     )
 
     @cached_property
@@ -3496,61 +3496,46 @@ class Person(TimeStampedModel):
 
     @cached_property
     def first_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.first
-        else:
-            return ""
+        name = HumanName(self.name)
+        return name.first
 
     @cached_property
     def nick_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            return name.nickname
-        else:
-            return ""
+        name = HumanName(self.name)
+        return name.nickname
 
     @cached_property
     def common_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            nickname = name.nickname
-            if nickname:
-                first = nickname
-            else:
-                first = name.first
-            last = name.last
-            return "{0} {1}".format(first, last)
+        name = HumanName(self.name)
+        nickname = name.nickname
+        if nickname:
+            first = nickname
         else:
-            return ""
+            first = name.first
+        last = name.last
+        return "{0} {1}".format(first, last)
 
     @cached_property
     def full_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            full = []
-            full.append(name.first)
-            full.append(name.middle)
-            full.append(name.last)
-            full.append(name.suffix)
-            full.append(name.nickname)
-            return " ".join(filter(None, full))
-        else:
-            return ""
+        name = HumanName(self.name)
+        full = []
+        full.append(name.first)
+        full.append(name.middle)
+        full.append(name.last)
+        full.append(name.suffix)
+        full.append(name.nickname)
+        return " ".join(filter(None, full))
 
     @cached_property
     def formal_name(self):
-        if self.name:
-            name = HumanName(self.name)
-            formal = []
-            formal.append(name.title)
-            formal.append(name.first)
-            formal.append(name.middle)
-            formal.append(name.last)
-            formal.append(name.suffix)
-            return " ".join(filter(None, formal))
-        else:
-            return ""
+        name = HumanName(self.name)
+        formal = []
+        formal.append(name.title)
+        formal.append(name.first)
+        formal.append(name.middle)
+        formal.append(name.last)
+        formal.append(name.suffix)
+        return " ".join(filter(None, formal))
 
     # Internals
     class JSONAPIMeta:
@@ -3597,11 +3582,8 @@ class Person(TimeStampedModel):
     #             )
 
     def save(self, *args, **kwargs):
-        if self.name:
-            name = HumanName(self.name)
-            self.last_name = name.last
-        else:
-            self.last_name = None
+        name = HumanName(self.name)
+        self.last_name = name.last
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x),
