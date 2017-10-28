@@ -41,7 +41,6 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            '-h',
             '--hours',
             type=int,
             dest='hours',
