@@ -3561,6 +3561,10 @@ class Person(TimeStampedModel):
 
     def clean(self):
         today = datetime.date.today()
+        if self.is_valid and not self.valid_through:
+            raise ValidationError(
+                {'is_valid': 'Current memberships must have valid through date.'}
+            )
         if self.is_valid and self.valid_through < today:
             raise ValidationError(
                 {'is_valid': 'Expired memberships can not be valid.'}
