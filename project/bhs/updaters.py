@@ -111,19 +111,30 @@ def update_or_create_person_from_human(human):
         'part': part,
     }
     try:
+        person = Person.objects.get(
+            bhs_pk=None,
+            bhs_id=bhs_id,
+        )
+        person.bhs_pk = human.id
+        person.save()
+    except Person.DoesNotExist:
+        pass
+    try:
         person, created = Person.objects.update_or_create(
             bhs_pk=human.id,
             defaults=defaults,
         )
-        if created and email:
-            User.objects.create_user(
-                person=person,
-                is_active=False,
-            )
         log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
+        person = Person.objects.get(bhs_id)
         log.error("{0} {1}".format(e, human))
         return
+    if created and email:
+        User.objects.create_user(
+            person=person,
+            is_active=False,
+        )
+    return
 
 
 def update_or_create_group_from_structure(structure):
