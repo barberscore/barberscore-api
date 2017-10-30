@@ -280,25 +280,25 @@ def update_or_create_member_from_smjoin(smjoin):
             if subscription.status == 'active':
                 status = Person.STATUS.active
                 is_valid = True
-            try:
-                person.user.is_active = True
-                person.user.save()
-            except User.DoesNotExist:
-                User.objects.create_user(
-                    person=person,
-                    is_active=True
-                )
+                try:
+                    person.user.is_active = True
+                    person.user.save()
+                except User.DoesNotExist:
+                    User.objects.create_user(
+                        person=person,
+                        is_active=True
+                    )
             else:
                 status = Person.STATUS.inactive
                 is_valid = False
-            try:
-                person.user.is_active = False
-                person.user.save()
-            except User.DoesNotExist:
-                User.objects.create_user(
-                    person=person,
-                    is_active=False
-                )
+                try:
+                    person.user.is_active = False
+                    person.user.save()
+                except User.DoesNotExist:
+                    User.objects.create_user(
+                        person=person,
+                        is_active=False
+                    )
         else:
             if subscription.status == 'active':
                 status = Person.STATUS.missing
