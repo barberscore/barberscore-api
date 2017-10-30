@@ -292,7 +292,7 @@ def update_or_create_member_from_smjoin(smjoin):
         if status == Person.STATUS.active:
             person.user.is_active = True
             person.user.save()
-        else:
+        if status == Person.STATUS.inactive:
             person.user.is_active = False
             person.user.save()
         log.info("{0} {1}".format(person, valid_through))
