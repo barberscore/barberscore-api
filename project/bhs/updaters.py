@@ -289,6 +289,8 @@ def update_or_create_member_from_smjoin(smjoin):
                         is_active=True
                     )
             else:
+                if subscription.status == 'cancelled':
+                    subscription.valid_through = None
                 status = Person.STATUS.inactive
                 is_valid = False
                 try:
