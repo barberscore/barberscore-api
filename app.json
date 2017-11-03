@@ -87,6 +87,7 @@
     "test": {
       "addons": [
         "heroku-postgresql:hobby-dev",
+        "heroku-redis:hobby-dev",
         "cloudinary:starter"
       ],
       "env": {
