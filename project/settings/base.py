@@ -135,6 +135,28 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+# Redis
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'high': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'low': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
+
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -155,6 +177,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'dry_rest_permissions',
+    'django_rq',
     'api',
     'bhs',
 ]
