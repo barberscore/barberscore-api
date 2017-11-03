@@ -3,7 +3,6 @@ from django.apps import apps as api_apps
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
-from rq import get_current_job
 from django_rq import job
 
 
@@ -52,16 +51,19 @@ def send_entry(context, template):
         log.error("{0} {1}".format(e, entry))
         raise RuntimeError("Email unsuccessful {0}".format(entry))
 
+
 @job
-def send_session(session, template):
+def send_session(context, template):
+    session = context['session']
     Group = config.get_model('Group')
+    Assignment = config.get_model('Assignment')
     groups = Group.objects.filter(
-        status=10,
+        status=Group.STATUS.active,
         organization__grantors__session=session,
         kind=session.kind,
     )
     assignments = session.convention.assignments.filter(
-        category__lt=10,
+        category__lt=Assignment.STATUS.active,
     ).exclude(person__email=None)
     ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     for group in groups:

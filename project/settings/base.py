@@ -138,24 +138,12 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # Redis
 RQ_QUEUES = {
     'default': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
+        'URL': get_env_variable("REDIS_URL"),
         'DEFAULT_TIMEOUT': 360,
+        'ASYNC': True,
     },
-    'high': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        'DEFAULT_TIMEOUT': 360,
-    },
-    'low': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        'DEFAULT_TIMEOUT': 360,
-    }
 }
+
 
 # Applications
 INSTALLED_APPS = [

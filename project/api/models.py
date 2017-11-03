@@ -53,8 +53,13 @@ from .fields import PathAndRename
 from .managers import UserManager
 from .services import (
     create_pdf,
-    send_entry,
+    # send_entry,
     send_session,
+)
+from .tasks import (
+    # create_pdf,
+    send_entry,
+    # send_session,
 )
 from .utils import (
     create_admin_emails_excel,
@@ -1928,7 +1933,7 @@ class Entry(TimeStampedModel):
     )
     def invite(self, *args, **kwargs):
         context = {'entry': self}
-        send_entry(context, 'entry_invite.txt')
+        send_entry.delay(context, 'entry_invite.txt')
         return
 
     @fsm_log_by
@@ -1949,7 +1954,7 @@ class Entry(TimeStampedModel):
         for contestant in self.contestants.all():
             contestant.delete()
         context = {'entry': self}
-        send_entry(context, 'entry_withdraw.txt')
+        send_entry.delay(context, 'entry_withdraw.txt')
         return
 
     @fsm_log_by
@@ -1961,7 +1966,7 @@ class Entry(TimeStampedModel):
     )
     def submit(self, *args, **kwargs):
         context = {'entry': self}
-        send_entry(context, 'entry_submit.txt')
+        send_entry.delay(context, 'entry_submit.txt')
         return
 
     @fsm_log_by
@@ -1973,7 +1978,7 @@ class Entry(TimeStampedModel):
     )
     def approve(self, *args, **kwargs):
         context = {'entry': self}
-        send_entry(context, 'entry_approve.txt')
+        send_entry.delay(context, 'entry_approve.txt')
         return
 
     @fsm_log_by
@@ -1994,7 +1999,7 @@ class Entry(TimeStampedModel):
         for contestant in self.contestants.all():
             contestant.delete()
         context = {'entry': self}
-        send_entry(context, 'entry_scratch.txt')
+        send_entry.delay(context, 'entry_scratch.txt')
         return
 
     @fsm_log_by
@@ -2007,7 +2012,7 @@ class Entry(TimeStampedModel):
     def finalize(self, *args, **kwargs):
         # Finalize the Entry (locks to further edits)
         context = {'entry': self}
-        send_entry(context, 'entry_finalize.txt')
+        send_entry.delay(context, 'entry_finalize.txt')
         return
 
 
