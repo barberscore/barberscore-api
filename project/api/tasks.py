@@ -50,65 +50,39 @@ def send_entry(context, template):
     if result != 1:
         log.error("{0} {1}".format(e, entry))
         raise RuntimeError("Email unsuccessful {0}".format(entry))
+    return
 
 
 @job
 def send_session(context, template):
     session = context['session']
     Group = config.get_model('Group')
+    Member = config.get_model('Member')
     Assignment = config.get_model('Assignment')
-    groups = Group.objects.filter(
-        status=Group.STATUS.active,
-        organization__grantors__session=session,
-        kind=session.kind,
-    )
-    assignments = session.convention.assignments.filter(
-        category__lt=Assignment.STATUS.active,
+    contacts = Member.objects.filter(
+        is_admin=True,
+        group__status=Group.STATUS.active,
+        group__organization__grantors__session=session,
+        group__kind=session.kind,
     ).exclude(person__email=None)
-    ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-    for group in groups:
-        try:
-            contacts = group.members.filter(
-                is_admin=True,
-            ).exclude(person__email=None)
-            if not contacts:
-                log.error(
-                    "No valid contacts for {0}".format(
-                        group,
-                    )
-                )
-                continue
-
-            tos = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
-            ccs = ccs
-            rendered = render_to_string(template, {'session': session, 'group': group})
-            subject = "[Barberscore] {0}".format(
-                group.nomen,
-            )
-            email = EmailMessage(
-                subject=subject,
-                body=rendered,
-                from_email='Barberscore <admin@barberscore.com>',
-                to=tos,
-                cc=ccs,
-                bcc=[
-                    'admin@barberscore.com',
-                    'proclamation56@gmail.com',
-                ],
-            )
-            result = email.send()
-            if result == 1:
-                log.info(
-                    "{0}".format(
-                        group.nomen,
-                    )
-                )
-            else:
-                log.error(
-                    "{0}".format(
-                        group.nomen,
-                    )
-                )
-        except Exception as e:
-            log.error(e)
-            continue
+    assignments = Assignment.objects.filter(
+        convention=session.convention,
+        category=Assignment.CATEGORY.drcj,
+        status=Assignment.STATUS.active,
+    ).exclude(person__email=None)
+    to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+    bcc = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
+    bcc.extend([
+        'Barberscore Admin <admin@barberscore.com>',
+        'David Mills <proclamation56@gmail.com>',
+    ])
+    rendered = render_to_string(template, context)
+    subject = "[Barberscore] {0}".format(session.nomen)
+    email = EmailMessage(
+        subject=subject,
+        body=rendered,
+        from_email='Barberscore <admin@barberscore.com>',
+        to=to,
+        bcc=bcc,
+    )
+    return email.send()
