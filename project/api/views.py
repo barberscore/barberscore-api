@@ -232,7 +232,10 @@ class ChartViewSet(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class ContestViewSet(viewsets.ModelViewSet):
+class ContestViewSet(
+    get_viewset_transition_action_mixin(Contest),
+    viewsets.ModelViewSet,
+):
     queryset = Contest.objects.select_related(
         'session',
         'award',
