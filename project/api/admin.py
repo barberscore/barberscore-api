@@ -316,6 +316,10 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ContestantInline,
     ]
 
+    fsm_field = [
+        'status',
+    ]
+
     readonly_fields = [
         'nomen',
     ]
