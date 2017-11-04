@@ -3105,7 +3105,9 @@ class Participant(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
+        (10, 'included', 'Included',),
     )
 
     status = FSMIntegerField(
@@ -3203,6 +3205,17 @@ class Participant(TimeStampedModel):
                 status__gt=0,
             ),
         ])
+
+    # Participant Transitions
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.new, STATUS.excluded], target=STATUS.included)
+    def include(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.new, STATUS.included], target=STATUS.excluded)
+    def exclude(self, *args, **kwargs):
+        return
 
 
 class Person(TimeStampedModel):

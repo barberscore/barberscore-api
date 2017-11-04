@@ -883,7 +883,7 @@ class PanelistAdmin(admin.ModelAdmin):
 
 
 @admin.register(Participant)
-class ParticipantAdmin(admin.ModelAdmin):
+class ParticipantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     fields = [
         'status',
@@ -913,6 +913,9 @@ class ParticipantAdmin(admin.ModelAdmin):
         'member',
     ]
 
+    fsm_field = [
+        'status',
+    ]
     search_fields = [
         'nomen',
     ]
