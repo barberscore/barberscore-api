@@ -279,7 +279,7 @@ def update_or_create_member_from_smjoin(smjoin):
         if person.email:
             if subscription.status == 'active':
                 status = Person.STATUS.active
-                is_valid = True
+                is_current = True
                 try:
                     person.user.is_active = True
                     person.user.save()
@@ -290,9 +290,9 @@ def update_or_create_member_from_smjoin(smjoin):
                     )
             else:
                 if subscription.status == 'cancelled':
-                    subscription.valid_through = None
+                    subscription.current_through = None
                 status = Person.STATUS.inactive
-                is_valid = False
+                is_current = False
                 try:
                     person.user.is_active = False
                     person.user.save()
@@ -304,21 +304,21 @@ def update_or_create_member_from_smjoin(smjoin):
         else:
             if subscription.status == 'active':
                 status = Person.STATUS.missing
-                is_valid = True
+                is_current = True
             else:
                 status = Person.STATUS.legacy
-                is_valid = False
-        valid_through = subscription.valid_through
+                is_current = False
+        current_through = subscription.current_through
         person.status = status
-        person.is_valid = is_valid
-        person.valid_through = valid_through
+        person.is_current = is_current
+        person.current_through = current_through
         try:
             person.full_clean()
         except ValidationError as e:
             log.error("{0} {1}".format(e, person))
             return
         person.save()
-        log.info("{0} {1}".format(person, valid_through))
+        log.info("{0} {1}".format(person, current_through))
         return
     elif smjoin.structure.kind == 'chapter':
         # Must abstract this because we can't trust updated_ts

@@ -2409,11 +2409,6 @@ class Member(TimeStampedModel):
         blank=True,
     )
 
-    valid_through = models.DateField(
-        null=True,
-        blank=True,
-    )
-
     is_admin = models.BooleanField(
         default=False,
     )
@@ -3418,12 +3413,12 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
-    is_valid = models.BooleanField(
+    is_current = models.BooleanField(
         default=False,
         editable=False,
     )
 
-    valid_through = models.DateField(
+    current_through = models.DateField(
         null=True,
         blank=True,
         editable=False,
@@ -3552,16 +3547,16 @@ class Person(TimeStampedModel):
     def clean(self):
         today = datetime.date.today()
         current = False
-        if self.valid_through:
-            if self.valid_through >= today:
+        if self.current_through:
+            if self.current_through >= today:
                 current = True
-        if self.is_valid and not current:
+        if self.is_current and not current:
             raise ValidationError(
-                {'is_valid': 'Current memberships must have valid through date.'}
+                {'is_current': 'Current memberships must have valid through date.'}
             )
-        if not self.is_valid and current:
+        if not self.is_current and current:
             raise ValidationError(
-                {'is_valid': 'Current memberships can not be invalid.'}
+                {'is_current': 'Current memberships can not be invalid.'}
             )
 
     #     if self.status == self.STATUS.active:
@@ -3569,13 +3564,13 @@ class Person(TimeStampedModel):
     #             raise ValidationError(
     #                 {'status': 'Active accounts must have valid email'}
     #             )
-    #         if self.is_bhs and not self.valid_through:
+    #         if self.is_bhs and not self.current_through:
     #             raise ValidationError(
-    #                 {'status': 'Active BHS accounts must have `valid_through`'}
+    #                 {'status': 'Active BHS accounts must have `current_through`'}
     #             )
-    #         if self.is_bhs and self.valid_through < datetime.date.today():
+    #         if self.is_bhs and self.current_through < datetime.date.today():
     #             raise ValidationError(
-    #                 {'status': 'Active BHS accounts must have current `valid_through`'}
+    #                 {'status': 'Active BHS accounts must have current `current_through`'}
     #             )
     #         if self.is_bhs and not self.bhs_id:
     #             raise ValidationError(

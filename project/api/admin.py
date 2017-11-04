@@ -627,7 +627,7 @@ class GroupAdmin(admin.ModelAdmin):
 class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
-        'valid_through',
+        'current_through',
         # 'start_date',
         # 'end_date',
         'group',
@@ -637,7 +637,7 @@ class MemberAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'status',
-        'valid_through',
+        'current_through',
         # 'start_date',
         # 'end_date',
         'group',
@@ -930,8 +930,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_bhs',
         'bhs_id',
         'bhs_pk',
-        'is_valid',
-        'valid_through',
+        'is_current',
+        'current_through',
         'birth_date',
         'part',
         'gender',
@@ -952,7 +952,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_bhs',
         'bhs_id',
         'bhs_pk',
-        'valid_through',
+        'current_through',
         'part',
         'gender',
         'status',
@@ -961,7 +961,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         'is_bhs',
-        'is_valid',
+        'is_current',
         'gender',
         'part',
         'is_deceased',
@@ -970,8 +970,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'nomen',
         'email',
-        'is_valid',
-        'valid_through',
+        'is_current',
+        'current_through',
     ]
 
     fsm_field = [

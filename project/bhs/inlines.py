@@ -17,13 +17,13 @@ class SubscriptionInline(admin.TabularInline):
     model = Subscription
     fields = [
         'items_editable',
-        'valid_through',
+        'current_through',
         'status',
         'human',
     ]
     readonly_fields = [
         'items_editable',
-        'valid_through',
+        'current_through',
         'status',
         'human',
     ]

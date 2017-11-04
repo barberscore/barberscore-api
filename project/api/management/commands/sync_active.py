@@ -18,7 +18,7 @@ class Command(BaseCommand):
         today = datetime.date.today()
         ps = Person.objects.filter(
             status=10,
-            valid_through__lt=today,
+            current_through__lt=today,
         )
         total = ps.count()
         i = 0

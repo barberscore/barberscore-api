@@ -254,7 +254,7 @@ class SubscriptionAdmin(ReadOnlyAdmin):
     fields = [
         '__str__',
         'items_editable',
-        'valid_through',
+        'current_through',
         'status',
         'created_ts',
         'updated_ts',
@@ -263,7 +263,7 @@ class SubscriptionAdmin(ReadOnlyAdmin):
     list_display = [
         '__str__',
         'items_editable',
-        'valid_through',
+        'current_through',
         'status',
         'created_ts',
         'updated_ts',
@@ -272,7 +272,7 @@ class SubscriptionAdmin(ReadOnlyAdmin):
     readonly_fields = [
         '__str__',
         'items_editable',
-        'valid_through',
+        'current_through',
         'status',
         'created_ts',
         'updated_ts',

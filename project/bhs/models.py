@@ -297,7 +297,7 @@ class Subscription(models.Model):
         max_length=255,
         editable=False,
     )
-    valid_through = models.DateField(
+    current_through = models.DateField(
         editable=False,
     )
     status = models.CharField(
