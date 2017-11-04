@@ -966,13 +966,9 @@ class Contest(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
-        (10, 'opened', 'Opened',),
-        (15, 'closed', 'Closed',),
-        (35, 'verified', 'Verified',),
-        (42, 'finished', 'Finished',),
-        (45, 'announced', 'Announced',),
-        (95, 'archived', 'Archived',),
+        (10, 'included', 'Included',),
     )
 
     status = FSMIntegerField(
@@ -1100,8 +1096,13 @@ class Contest(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    @transition(field=status, source=[STATUS.new, STATUS.excluded], target=STATUS.included)
+    def include(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.new, STATUS.included], target=STATUS.excluded)
+    def exclude(self, *args, **kwargs):
         return
 
 

@@ -287,7 +287,7 @@ class ChartAdmin(admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(admin.ModelAdmin):
+class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'status',
         'award',
@@ -627,7 +627,6 @@ class GroupAdmin(admin.ModelAdmin):
 class MemberAdmin(admin.ModelAdmin):
     fields = [
         'status',
-        'current_through',
         # 'start_date',
         # 'end_date',
         'group',
@@ -637,7 +636,6 @@ class MemberAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'status',
-        'current_through',
         # 'start_date',
         # 'end_date',
         'group',
