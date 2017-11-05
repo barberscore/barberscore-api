@@ -254,7 +254,7 @@ class PanelistFactory(DjangoModelFactory):
 class ParticipantFactory(DjangoModelFactory):
     status = Contestant.STATUS.new
     entry = SubFactory('api.factories.EntryFactory')
-    member = SubFactory('api.factories.MemberFactory')
+    person = SubFactory('api.factories.PersonFactory')
 
     class Meta:
         model = Participant

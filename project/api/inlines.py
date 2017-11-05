@@ -288,13 +288,13 @@ class PanelistInline(admin.TabularInline):
 class ParticipantInline(admin.TabularInline):
     model = Participant
     fields = [
-        'member',
+        'person',
         'entry',
         'status',
         'part',
     ]
     raw_id_fields = [
-        'member',
+        'person',
         'entry',
     ]
     show_change_link = True

@@ -430,7 +430,6 @@ class MemberSerializer(serializers.ModelSerializer):
             'end_date',
             'group',
             'person',
-            'participants',
             'is_admin',
             'permissions',
         ]
@@ -593,7 +592,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
             'status',
             'part',
             'entry',
-            'member',
+            'person',
             'permissions',
         )
 
@@ -645,6 +644,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'members',
             'officers',
             'panelists',
+            'participants',
             'user',
             'permissions',
             'is_convention_manager',

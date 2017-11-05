@@ -3136,16 +3136,16 @@ class Participant(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    member = models.ForeignKey(
-        'Member',
-        related_name='participants',
-        on_delete=models.CASCADE,
-    )
+    # member = models.ForeignKey(
+    #     'Member',
+    #     related_name='participants',
+    #     on_delete=models.CASCADE,
+    #     null=True,
+    #     blank=True,
+    # )
 
     person = models.ForeignKey(
         'Person',
-        null=True,
-        blank=True,
         related_name='participants',
         on_delete=models.CASCADE,
     )
@@ -3153,7 +3153,7 @@ class Participant(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('entry', 'member',),
+            ('entry', 'person',),
         )
 
     class JSONAPIMeta:
@@ -3167,7 +3167,7 @@ class Participant(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.entry,
-                    self.member,
+                    self.person,
                 ]
             )
         )

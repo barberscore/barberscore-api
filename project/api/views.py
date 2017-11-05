@@ -315,7 +315,7 @@ class EntryViewSet(
         'contestants',
         'contestants__contest',
         'participants',
-        'participants__member',
+        'participants__person',
     ).order_by('nomen')
     serializer_class = EntrySerializer
     filter_class = EntryFilter
@@ -359,7 +359,6 @@ class GroupViewSet(
         'entries__contestants',
         'entries__session',
         'entries__participants',
-        'members__participants',
         'members__person',
         'repertories',
         'repertories__chart',
@@ -404,9 +403,6 @@ class MemberViewSet(
     queryset = Member.objects.select_related(
         'group',
         'person',
-    ).prefetch_related(
-        'participants',
-        'participants__entry',
     ).order_by('nomen')
     serializer_class = MemberSerializer
     filter_class = MemberFilter
@@ -539,10 +535,13 @@ class PanelistViewSet(viewsets.ModelViewSet):
     resource_name = "panelist"
 
 
-class ParticipantViewSet(viewsets.ModelViewSet):
+class ParticipantViewSet(
+    get_viewset_transition_action_mixin(Participant),
+    viewsets.ModelViewSet
+):
     queryset = Participant.objects.select_related(
         'entry',
-        'member'
+        'person'
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = ParticipantSerializer
@@ -566,6 +565,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'officers',
         'officers__office',
         'panelists',
+        'participants',
     ).order_by('nomen')
     serializer_class = PersonSerializer
     filter_class = PersonFilter

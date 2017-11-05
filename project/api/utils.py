@@ -436,19 +436,19 @@ def create_drcj_report(session):
                         participant.member.get_part_display(),
                     )
                     persons_list.append(
-                        participant.member.person.nomen,
+                        participant.person.nomen,
                     )
                     persons_list.append(
-                        participant.member.person.email,
+                        participant.person.email,
                     )
                     persons_list.append(
-                        participant.member.person.phone,
+                        participant.person.phone,
                     )
                     if entry.group.kind == Group.KIND.chorus:
                         chapters = None
                         continue
                     person_chapter_list = []
-                    for member in participant.member.person.members.filter(
+                    for member in participant.person.members.filter(
                         status=10,
                         group__kind=Group.KIND.chorus,
                     ).distinct('group'):
@@ -555,13 +555,13 @@ def create_drcj_report_excel(session):
                 continue
             participant_list = []
             participant_list.append(
-                participant.member.person.nomen,
+                participant.person.nomen,
             )
             participant_list.append(
-                participant.member.person.email,
+                participant.person.email,
             )
             participant_list.append(
-                participant.member.person.phone,
+                participant.person.phone,
             )
             participant_detail = "\n".join(filter(None, participant_list))
             parts[part] = participant_detail
@@ -571,7 +571,7 @@ def create_drcj_report_excel(session):
             participants = entry.participants.all()
             for participant in participants:
                 person_chapter_list = []
-                for member in participant.member.person.members.filter(
+                for member in participant.person.members.filter(
                     status=10,
                     group__kind=Group.KIND.chorus,
                 ).distinct('group'):

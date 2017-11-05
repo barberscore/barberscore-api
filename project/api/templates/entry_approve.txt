@@ -32,7 +32,7 @@ Director(s): {{entry.directors|default:"(No Director Specified)"}}
 
 Participants on Stage:
 {% for participant in entry.participants.all %}
-    - {{participant.member.person.nomen|safe}}
+    - {{participant.person.nomen|safe}}
 {% empty %}
     No Participants currently selected.
 {% endfor %}
@@ -42,7 +42,7 @@ Participants on Stage:
 {% if is_bhs %}
 Expiring Members:
 {% for expiration in expirations %}
-    - {{expiration.member.person.nomen|safe}}, Exp. {{expiration.member.current_through}}
+    - {{expiration.person.nomen|safe}}, Exp. {{expiration.member.current_through}}
 {% empty %}
     None.  All Participants are Current.
 {% endfor %}

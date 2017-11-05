@@ -888,14 +888,14 @@ class ParticipantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'status',
         'entry',
-        'member',
+        'person',
         'part',
     ]
 
     list_display = [
         'status',
         'entry',
-        'member',
+        'person',
         'part',
     ]
 
@@ -910,7 +910,7 @@ class ParticipantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     raw_id_fields = [
         'entry',
-        'member',
+        'person',
     ]
 
     fsm_field = [
