@@ -3142,6 +3142,14 @@ class Participant(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    person = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        related_name='participants',
+        on_delete=models.CASCADE,
+    )
+
     # Internals
     class Meta:
         unique_together = (
