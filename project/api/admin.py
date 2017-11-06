@@ -374,6 +374,7 @@ class ConventionAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'status',
+        'is_archived',
         'organization',
         'year',
         'season',
@@ -397,6 +398,7 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        'is_archived',
         'status',
         'season',
         'organization',
