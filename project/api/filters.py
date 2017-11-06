@@ -68,7 +68,7 @@ class AwardFilter(FilterSet):
                 'exact',
                 'gt',
             ],
-            'organization__grantors__session': [
+            'organization__grantors__session__convention': [
                 'exact',
             ],
         }

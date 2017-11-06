@@ -290,6 +290,7 @@ class ConventionViewSet(
         'sessions__entries',
         'assignments',
         'assignments__person',
+        'grantors',
     ).order_by('nomen')
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
@@ -697,7 +698,6 @@ class SessionViewSet(
         'rounds__appearances',
         'rounds__slots',
         'rounds__panelists',
-        'grantors',
     ).order_by('nomen')
     serializer_class = SessionSerializer
     filter_class = SessionFilter

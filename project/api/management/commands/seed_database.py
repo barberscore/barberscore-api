@@ -847,64 +847,36 @@ class Command(BaseCommand):
         # Add Grantors
         GrantorFactory(
             organization=district_alpha,
-            session=district_alpha_fall_convention_quartet_session,
+            convention=district_alpha_fall_convention,
         )
         GrantorFactory(
             organization=district_alpha,
-            session=district_alpha_fall_convention_chorus_session,
-        )
-        GrantorFactory(
-            organization=district_alpha,
-            session=district_alpha_spring_convention_quartet_session,
-        )
-        GrantorFactory(
-            organization=district_alpha,
-            session=district_alpha_spring_convention_chorus_session,
+            convention=district_alpha_spring_convention,
         )
         GrantorFactory(
             organization=district_beta,
-            session=district_beta_fall_convention_quartet_session,
-        )
-        GrantorFactory(
-            organization=district_beta,
-            session=district_beta_fall_convention_chorus_session,
+            convention=district_beta_fall_convention,
         )
         GrantorFactory(
             organization=district_beta_division_north,
-            session=district_beta_division_north_spring_convention_quartet_session,
-        )
-        GrantorFactory(
-            organization=district_beta_division_north,
-            session=district_beta_division_north_spring_convention_chorus_session,
+            convention=district_beta_division_north_spring_convention,
         )
         GrantorFactory(
             organization=district_beta_division_south,
-            session=district_beta_division_south_spring_convention_quartet_session,
-        )
-        GrantorFactory(
-            organization=district_beta_division_south,
-            session=district_beta_division_south_spring_convention_chorus_session,
+            convention=district_beta_division_south_spring_convention,
         )
         GrantorFactory(
             organization=district_beta_division_east,
-            session=district_beta_division_east_west_spring_convention_quartet_session,
-        )
-        GrantorFactory(
-            organization=district_beta_division_east,
-            session=district_beta_division_east_west_spring_convention_chorus_session,
+            convention=district_beta_division_east_west_spring_convention,
         )
         GrantorFactory(
             organization=district_beta_division_west,
-            session=district_beta_division_east_west_spring_convention_quartet_session,
-        )
-        GrantorFactory(
-            organization=district_beta_division_west,
-            session=district_beta_division_east_west_spring_convention_chorus_session,
+            convention=district_beta_division_east_west_spring_convention,
         )
         # Add Contests
         for convention in conventions:
             for session in convention.sessions.all():
-                for grantor in session.grantors.all():
+                for grantor in session.convention.grantors.all():
                     for award in grantor.organization.awards.all():
                         session.contests.create(
                             award=award,

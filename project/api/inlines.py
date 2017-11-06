@@ -179,11 +179,11 @@ class EntryInline(admin.TabularInline):
 class GrantorInline(admin.TabularInline):
     model = Grantor
     fields = [
-        'session',
+        'convention',
         'organization',
     ]
     raw_id_fields = [
-        'session',
+        'convention',
         'organization',
     ]
     show_change_link = True

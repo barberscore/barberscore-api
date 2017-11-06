@@ -414,6 +414,7 @@ class ConventionAdmin(admin.ModelAdmin):
     inlines = [
         AssignmentInline,
         SessionInline,
+        GrantorInline,
     ]
 
     readonly_fields = (
@@ -502,12 +503,12 @@ class GrantorAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'organization',
-        'session',
+        'convention',
     ]
     list_display = [
         'nomen',
         'organization',
-        'session',
+        'convention',
     ]
 
     readonly_fields = [
@@ -515,7 +516,7 @@ class GrantorAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = [
         'organization',
-        'session',
+        'convention',
     ]
 
 
@@ -1195,7 +1196,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         RoundInline,
         EntryInline,
         ContestInline,
-        GrantorInline,
     ]
 
     list_select_related = [

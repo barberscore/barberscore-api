@@ -2021,6 +2021,8 @@ class Grantor(TimeStampedModel):
         'Session',
         related_name='grantors',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     convention = models.ForeignKey(

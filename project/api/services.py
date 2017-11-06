@@ -111,7 +111,7 @@ def send_session(session, template):
     Group = config.get_model('Group')
     groups = Group.objects.filter(
         status=10,
-        organization__grantors__session=session,
+        organization__grantors__session__convention=session.convention,
         kind=session.kind,
     )
     assignments = session.convention.assignments.filter(

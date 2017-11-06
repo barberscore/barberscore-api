@@ -151,7 +151,7 @@ class EntryFactory(DjangoModelFactory):
 
 class GrantorFactory(DjangoModelFactory):
     status = Grantor.STATUS.new
-    session = SubFactory('api.factories.SessionFactory')
+    convention = SubFactory('api.factories.ConventionFactory')
     organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:

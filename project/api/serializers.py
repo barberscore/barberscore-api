@@ -260,6 +260,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'organization',
             'assignments',
             'sessions',
+            'grantors',
             'permissions',
         )
 
@@ -792,7 +793,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'contests',
             'entries',
             'rounds',
-            'grantors',
             'permissions',
         )
     # class JSONAPIMeta:

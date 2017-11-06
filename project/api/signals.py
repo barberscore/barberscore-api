@@ -14,7 +14,6 @@ from django.dispatch import receiver
 from .models import (
     Award,
     Entry,
-    Session,
     User,
 )
 from .utils import get_auth0_token
@@ -42,23 +41,6 @@ def entry_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                 instance.participants.create(
                     person=member.person,
                     status=instance.participants.model.STATUS.included,
-                )
-
-
-@receiver(post_save, sender=Session)
-def session_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create/Update Auth0 from User."""
-    if not raw:
-        if created:
-            # Add contestants
-            awards = Award.objects.filter(
-                status=Award.STATUS.active,
-                organization__grantors__session=instance,
-            )
-            for award in awards:
-                instance.contests.create(
-                    award=award,
-                    status=instance.contests.model.STATUS.included,
                 )
 
 
