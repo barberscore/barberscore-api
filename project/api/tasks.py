@@ -62,7 +62,7 @@ def send_session(context, template):
     contacts = Member.objects.filter(
         is_admin=True,
         group__status=Group.STATUS.active,
-        group__organization__grantors__session__convention=session.convention,
+        group__organization__grantors__convention=session.convention,
         group__kind=session.kind,
     ).exclude(person__email=None)
     assignments = Assignment.objects.filter(

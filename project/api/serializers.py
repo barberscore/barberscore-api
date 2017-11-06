@@ -358,7 +358,7 @@ class GrantorSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'organization',
-            'session',
+            'convention',
             'permissions',
         )
 

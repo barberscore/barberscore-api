@@ -336,7 +336,7 @@ class EntryViewSet(
 class GrantorViewSet(viewsets.ModelViewSet):
     queryset = Grantor.objects.select_related(
         'organization',
-        'session',
+        'convention',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = GrantorSerializer

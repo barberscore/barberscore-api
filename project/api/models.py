@@ -2017,20 +2017,10 @@ class Grantor(TimeStampedModel):
     )
 
     # FKs
-    session = models.ForeignKey(
-        'Session',
-        related_name='grantors',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
     convention = models.ForeignKey(
         'Convention',
         related_name='grantors',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     organization = models.ForeignKey(
@@ -2041,7 +2031,7 @@ class Grantor(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('session', 'organization',),
+            ('convention', 'organization',),
         )
 
     class JSONAPIMeta:
@@ -2054,7 +2044,7 @@ class Grantor(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.session,
+                    self.convention,
                     self.organization,
                 ]
             )
@@ -2080,23 +2070,21 @@ class Grantor(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            True,
-            # request.user.person.officers.filter(
-            #     office__is_convention_manager=True,
-            #     status__gt=0,
-            # ),
+            request.user.person.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            True,
-            # self.round.session.convention.assignments.filter(
-            #     person=request.user.person,
-            #     category__lt=30,
-            #     kind=10,
-            # ),
+            self.round.session.convention.assignments.filter(
+                person=request.user.person,
+                category__lt=30,
+                kind=10,
+            ),
         ])
 
 
