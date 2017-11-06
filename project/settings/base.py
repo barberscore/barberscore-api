@@ -143,7 +143,7 @@ RQ_QUEUES = {
         'ASYNC': True,
     },
 }
-
+RQ_SHOW_ADMIN_LINK = True
 
 # Applications
 INSTALLED_APPS = [
