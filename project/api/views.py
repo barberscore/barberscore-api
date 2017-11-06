@@ -255,7 +255,10 @@ class ContestViewSet(
     resource_name = "contest"
 
 
-class ContestantViewSet(viewsets.ModelViewSet):
+class ContestantViewSet(
+    get_viewset_transition_action_mixin(Contestant),
+    viewsets.ModelViewSet
+):
     queryset = Contestant.objects.select_related(
         'entry',
         'contest',

@@ -943,13 +943,13 @@ class Chart(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
-        """Activate the Chart."""
+        """Activate the Award."""
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
-        """Deactivate the Chart."""
+        """Deactivate the Award."""
         return
 
 
@@ -1119,17 +1119,9 @@ class Contestant(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
-        (10, 'eligible', 'Eligible',),
-        (20, 'ineligible', 'Ineligible',),
-        (40, 'rep', 'District Representative',),
-        (50, 'qualified', 'Qualified',),
-        (55, 'verified', 'Verified',),
-        (60, 'finished', 'Finished',),
-        (70, 'scratched', 'Scratched',),
-        (80, 'disqualified', 'Disqualified',),
-        (90, 'announced', 'Announced',),
-        (95, 'archived', 'Archived',),
+        (10, 'included', 'Included',),
     )
 
     status = FSMIntegerField(
@@ -1347,30 +1339,15 @@ class Contestant(TimeStampedModel):
 
     # Methods
 
-    # Transitions
+    # Contestant Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.disqualified)
-    def process(self, *args, **kwargs):
+    @transition(field=status, source=[STATUS.new, STATUS.excluded], target=STATUS.included)
+    def include(self, *args, **kwargs):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.scratched)
-    def scratch(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.disqualified)
-    def disqualify(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.announced)
-    def announce(self, *args, **kwargs):
+    @transition(field=status, source=[STATUS.new, STATUS.included], target=STATUS.excluded)
+    def exclude(self, *args, **kwargs):
         return
 
 

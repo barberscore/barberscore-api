@@ -335,7 +335,10 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Contestant)
-class ContestantAdmin(admin.ModelAdmin):
+class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
 
     fields = [
         'status',
