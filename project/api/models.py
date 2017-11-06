@@ -1071,7 +1071,7 @@ class Contest(TimeStampedModel):
     def ranking(self, point_total):
         if not point_total:
             return None
-        contestants = self.contestants.all()
+        contestants = self.contestants.filter(status__gt=0)
         points = [contestant.calculate_tot_points() for contestant in contestants]
         points = sorted(points, reverse=True)
         ranking = Ranking(points, start=1)
@@ -1738,7 +1738,7 @@ class Entry(TimeStampedModel):
 
     def print_csa(self):
         entry = self
-        contestants = entry.contestants.all()
+        contestants = entry.contestants.filter(status__gt=0)
         appearances = entry.appearances.order_by(
             'round__kind',
         )
@@ -1929,7 +1929,8 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
-        for contestant in self.contestants.all():
+        contestants = self.contestants.filter(status__gt=0)
+        for contestant in contestants:
             contestant.delete()
         context = {'entry': self}
         send_entry.delay(context, 'entry_withdraw.txt')
@@ -1974,7 +1975,7 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
-        for contestant in self.contestants.all():
+        for contestant in self.contestants.filter(status__gt=0):
             contestant.delete()
         context = {'entry': self}
         send_entry.delay(context, 'entry_scratch.txt')
@@ -3937,7 +3938,10 @@ class Round(TimeStampedModel):
             winner = contest.contestants.get(rank=1)
             winners.append(winner)
         medalists = []
-        for contestant in primary.contestants.order_by('-rank'):
+        contestants = primary.contestants.filter(
+            status__gt=0,
+        ).order_by('-rank')
+        for contestant in contestants:
             medalists.append(contestant)
         medalists = medalists[-5:]
         tem = get_template('ann.html')
@@ -3993,9 +3997,9 @@ class Round(TimeStampedModel):
             for entry in entries:
                 entry.calculate_pdf()
                 entry.save()
-            contests = self.session.contests.all()
+            contests = self.session.contests.filter(status__gt=0)
             for contest in contests:
-                for contestant in contest.contestants.all():
+                for contestant in contest.contestants.filter(status__gt=0):
                     contestant.calculate()
                     contestant.save()
             self.print_ann()
@@ -4683,7 +4687,7 @@ class Session(TimeStampedModel):
         Slot = config.get_model('Slot')
         Entry = config.get_model('Entry')
         Appearance = config.get_model('Appearance')
-        max = self.contests.all().aggregate(
+        max = self.contests.filter(status__gt=0).aggregate(
             max=models.Max('award__rounds')
         )['max']
         i = 1
@@ -4727,7 +4731,9 @@ class Session(TimeStampedModel):
     )
     def finish(self, *args, **kwargs):
         session = self
-        for entry in session.entries.all():
+        for entry in session.entries.filter(
+            status=session.entries.model.STATUS.final
+        ):
             for appearance in entry.appearances.all():
                 for song in appearance.songs.all():
                     song.calculate()
