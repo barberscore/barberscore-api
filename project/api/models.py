@@ -2023,6 +2023,14 @@ class Grantor(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    convention = models.ForeignKey(
+        'Convention',
+        related_name='grantors',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     organization = models.ForeignKey(
         'Organization',
         related_name='grantors',
