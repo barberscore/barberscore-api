@@ -369,8 +369,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Convention)
-class ConventionAdmin(admin.ModelAdmin):
-
+class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'name',
         'status',
@@ -1195,9 +1194,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        RoundInline,
-        EntryInline,
         ContestInline,
+        EntryInline,
+        RoundInline,
     ]
 
     list_select_related = [

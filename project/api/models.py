@@ -1474,8 +1474,7 @@ class Convention(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.open_date > self.close_date:
-            raise ValidationError('Open date must be before close date')
+        pass
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
@@ -1514,22 +1513,47 @@ class Convention(TimeStampedModel):
 
     # Convention Transition Conditions
     def can_publish_convention(self):
+        if any([
+            not self.open_date,
+            not self.close_date,
+            not self.start_date,
+            not self.close_date,
+        ]):
+            return False
         return all([
-            self.name,
-            self.organization,
-            self.season,
-            self.year,
             self.open_date,
             self.close_date,
             self.start_date,
             self.end_date,
+            self.open_date < self.close_date,
+            self.close_date < self.start_date,
+            self.start_date < self.end_date,
+            self.grantors.count() > 0,
+            self.sessions.count() > 0,
         ])
 
     # Convention Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.published, conditions=[can_publish_convention])
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.published,
+        conditions=[can_publish_convention],
+    )
     def publish(self, *args, **kwargs):
         """Publish convention and related sessions."""
+        grantors = self.grantors.all()
+        sessions = self.sessions.all()
+        for session in sessions:
+            for grantor in grantors:
+                awards = grantor.organzation.awards.filter(
+                    status=grantor.organization.awards.model.STATUS.active,
+                    kind=session.kind,
+                )
+                for award in awards:
+                    session.contests.create(
+                        award=award,
+                    )
         return
 
 
@@ -4576,6 +4600,7 @@ class Session(TimeStampedModel):
     def can_open_session(self):
         Contest = config.get_model('Contest')
         return all([
+            self.contests.count() > 0,
             self.contests.filter(status=Contest.STATUS.new).count() == 0,
         ])
 
