@@ -60,6 +60,11 @@ class AssignmentInline(admin.TabularInline):
         'person',
         'convention',
     ]
+    ordering = (
+        'category',
+        'kind',
+        'person__last_name',
+    )
     extra = 0
     show_change_link = True
 
