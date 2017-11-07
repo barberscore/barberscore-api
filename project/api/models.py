@@ -1527,7 +1527,7 @@ class Convention(TimeStampedModel):
         sessions = self.sessions.all()
         for session in sessions:
             for grantor in grantors:
-                awards = grantor.organzation.awards.filter(
+                awards = grantor.organization.awards.filter(
                     status=grantor.organization.awards.model.STATUS.active,
                     kind=session.kind,
                 )
