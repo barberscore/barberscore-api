@@ -976,25 +976,6 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_qualifier = models.BooleanField(
-        default=False,
-    )
-
-    is_primary = models.BooleanField(
-        default=False,
-    )
-
-    KIND = Choices(
-        (-10, 'qualifier', 'Qualifier',),
-        (0, 'new', 'New',),
-        (10, 'championship', 'Championship',),
-    )
-
-    kind = FSMIntegerField(
-        choices=KIND,
-        default=KIND.new,
-    )
-
     # Private
     champion = models.ForeignKey(
         'Entry',

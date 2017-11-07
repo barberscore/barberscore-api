@@ -193,8 +193,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'is_qualifier',
-            'kind',
             'champion',
             'session',
             'award',

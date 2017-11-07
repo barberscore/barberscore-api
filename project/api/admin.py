@@ -292,9 +292,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
-        'is_qualifier',
-        'is_primary',
-        'kind',
     ]
 
     list_display = (
@@ -304,10 +301,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'kind',
         'award__kind',
         'award__is_primary',
-        'is_qualifier',
     ]
 
     save_on_top = True

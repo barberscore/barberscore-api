@@ -101,7 +101,6 @@ class ChartFactory(DjangoModelFactory):
 
 class ContestFactory(DjangoModelFactory):
     status = Contest.STATUS.new
-    is_qualifier = False
     session = SubFactory('api.factories.SessionFactory')
     award = SubFactory('api.factories.AwardFactory')
 

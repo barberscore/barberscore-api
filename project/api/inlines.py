@@ -90,17 +90,11 @@ class ContestInline(admin.TabularInline):
         'status',
         'award',
         'session',
-        'is_qualifier',
-        'kind',
     ]
     raw_id_fields = [
         'award',
     ]
-    readonly_fields = [
-        'is_qualifier',
-    ]
     ordering = (
-        'award__kind',
         '-award__is_primary',
         'award__is_improved',
         'award__size',
