@@ -687,6 +687,10 @@ class Command(BaseCommand):
         # international_youth_convention_quartet_session = international_youth_convention.sessions.create(kind=Session.KIND.quartet)
         # international_youth_convention_chorus_session = international_youth_convention.sessions.create(kind=Session.KIND.chorus)
 
+        # Only Primitives
+        if not options['breakpoint']:
+            return
+
         district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',
             start_date='2017-10-01',
