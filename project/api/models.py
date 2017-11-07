@@ -4573,6 +4573,12 @@ class Session(TimeStampedModel):
         ])
 
     # Session Conditions
+    def can_open_session(self):
+        Contest = config.get_model('Contest')
+        return all([
+            self.contests.filter(status=Contest.STATUS.new).count() == 0,
+        ])
+
     def can_close_session(self):
         Entry = config.get_model('Entry')
         return all([
@@ -4586,7 +4592,7 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.new,
         target=STATUS.opened,
-        conditions=[],
+        conditions=[can_open_session],
     )
     def open(self, *args, **kwargs):
         """Make session available for entry."""
