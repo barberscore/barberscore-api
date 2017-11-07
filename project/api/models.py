@@ -1370,7 +1370,6 @@ class Convention(TimeStampedModel):
     STATUS = Choices(
         (0, 'new', 'New',),
         (2, 'published', 'Published',),
-        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -1531,11 +1530,6 @@ class Convention(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.published, conditions=[can_publish_convention])
     def publish(self, *args, **kwargs):
         """Publish convention and related sessions."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.archived)
-    def archive(self, *args, **kwargs):
         return
 
 
