@@ -369,8 +369,11 @@ def update_or_create_member_from_smjoin(smjoin):
             log.error("{0} {1}".format(e, smjoin))
             return
     elif smjoin.structure.kind == 'quartet':
-        # Assumes quartets have precisely one Subscription
-        smjoin = smjoin.subscription.smjoins.order_by('established_date').last()
+        # Must abstract this because we can't trust updated_ts
+        smjoin = SMJoin.objects.filter(
+            structure=smjoin.structure,
+            subscription__human=smjoin.subscription.human,
+        ).order_by('established_date').last()
         try:
             part_stripped = smjoin.vocal_part.strip()
         except AttributeError:
