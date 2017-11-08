@@ -120,13 +120,21 @@ def update_or_create_person_from_human(human):
     except Person.DoesNotExist:
         pass
     try:
+        person = Person.objects.get(
+            bhs_pk=None,
+            email=email,
+        )
+        person.bhs_pk = human.id
+        person.save()
+    except Person.DoesNotExist:
+        pass
+    try:
         person, created = Person.objects.update_or_create(
             bhs_pk=human.id,
             defaults=defaults,
         )
         log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
-        person = Person.objects.get(bhs_id)
         log.error("{0} {1}".format(e, human))
         return
     if created and email:
