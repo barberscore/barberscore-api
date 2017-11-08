@@ -298,6 +298,7 @@ class Subscription(models.Model):
         editable=False,
     )
     current_through = models.DateField(
+        db_column='valid_through',
         editable=False,
     )
     status = models.CharField(
