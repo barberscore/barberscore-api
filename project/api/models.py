@@ -3528,11 +3528,11 @@ class Person(TimeStampedModel):
             first = self.nick_name
         else:
             first = self.first_name
-        return "{0} {1}".format(first, self.last)
+        return "{0} {1}".format(first, self.last_name)
 
     @cached_property
     def sort_name(self):
-        return "{0}, {1}".format(self.last, self.first)
+        return "{0}, {1}".format(self.last_name, self.first_name)
 
     # Internals
     class JSONAPIMeta:
