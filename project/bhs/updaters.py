@@ -9,7 +9,6 @@ from email_validator import (
 # Django
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.utils import encoding
 
 # First-Party
 from api.models import (
@@ -37,7 +36,6 @@ def update_or_create_person_from_human(human):
         nick_name = "({0})".format(nick_name)
     else:
         nick_name = ""
-    name = last_name
     try:
         v = validate_email(human.email.strip())
         email = v["email"].lower()
@@ -81,7 +79,6 @@ def update_or_create_person_from_human(human):
     else:
         part = None
     defaults = {
-        'name': name,
         'first_name': first_name,
         'middle_name': middle_name,
         'last_name': last_name,
