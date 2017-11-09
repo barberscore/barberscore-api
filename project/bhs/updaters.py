@@ -32,9 +32,7 @@ def update_or_create_person_from_human(human):
     middle_name = human.middle_name.strip()
     last_name = human.last_name.strip()
     nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
-    if nick_name and (nick_name != first_name):
-        nick_name = "({0})".format(nick_name)
-    else:
+    if nick_name == first_name:
         nick_name = ""
     try:
         v = validate_email(human.email.strip())
