@@ -239,13 +239,11 @@ class OfficerFilter(FilterSet):
     ordering = OrderingFilter(
         # tuple-mapping retains order
         fields=(
-            ('person__name', 'personName'),
             ('office__name', 'officeName'),
         ),
 
         # labels do not need to retain order
         field_labels={
-            'person__name': 'Person',
             'office__name': 'Office',
         }
     )

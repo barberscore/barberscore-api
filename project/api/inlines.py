@@ -67,6 +67,7 @@ class AssignmentInline(admin.TabularInline):
         'category',
         'kind',
         'person__last_name',
+        'person__first_name',
     )
     extra = 0
     show_change_link = True
@@ -238,6 +239,7 @@ class MemberInline(admin.TabularInline):
         '-status',
         'part',
         'person__last_name',
+        'person__first_name',
     )
     show_change_link = True
     extra = 0
@@ -288,6 +290,7 @@ class PanelistInline(admin.TabularInline):
         'category',
         'kind',
         'person__last_name',
+        'person__first_name',
     )
     extra = 0
     show_change_link = True

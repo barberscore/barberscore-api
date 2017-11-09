@@ -3216,12 +3216,6 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-    name = models.CharField(
-        help_text="""
-            The name of the person.""",
-        max_length=255,
-    )
-
     first_name = models.CharField(
         help_text="""
             The first name of the person.""",

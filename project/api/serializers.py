@@ -612,6 +612,10 @@ class PersonSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'nomen',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'nick_name',
             'status',
             'birth_date',
             'spouse',
@@ -632,14 +636,9 @@ class PersonSerializer(serializers.ModelSerializer):
             'is_bhs',
             'bhs_id',
             'current_through',
-            'last_name',
             'common_name',
             'full_name',
             'sort_name',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'nick_name',
             'assignments',
             'members',
             'officers',
@@ -862,7 +861,6 @@ class VenueSerializer(serializers.ModelSerializer):
     # included_serializers = {
     #     'conventions': 'api.serializers.ConventionSerializer',
     # }
-
 
     class Meta:
         model = Venue
