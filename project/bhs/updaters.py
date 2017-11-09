@@ -33,29 +33,11 @@ def update_or_create_person_from_human(human):
     middle_name = human.middle_name.strip()
     last_name = human.last_name.strip()
     nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
-    if not first_name:
-        first_name = None
-    if not middle_name:
-        middle_name = None
-    if not last_name:
-        last_name = None
     if nick_name and (nick_name != first_name):
         nick_name = "({0})".format(nick_name)
     else:
-        nick_name = None
-    name = " ".join(
-        map(
-            (lambda x: encoding.smart_text(x)),
-            filter(
-                None, [
-                    first_name,
-                    middle_name,
-                    last_name,
-                    nick_name,
-                ]
-            )
-        )
-    )
+        nick_name = ""
+    name = last_name
     try:
         v = validate_email(human.email.strip())
         email = v["email"].lower()
@@ -100,6 +82,10 @@ def update_or_create_person_from_human(human):
         part = None
     defaults = {
         'name': name,
+        'first_name': first_name,
+        'middle_name': middle_name,
+        'last_name': last_name,
+        'nick_name': nick_name,
         'email': email,
         'birth_date': birth_date,
         'phone': phone,
