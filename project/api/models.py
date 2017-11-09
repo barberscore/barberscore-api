@@ -3226,7 +3226,7 @@ class Person(TimeStampedModel):
         help_text="""
             The first name of the person.""",
         max_length=255,
-        blank=True,
+        blank=False,
     )
 
     middle_name = models.CharField(
