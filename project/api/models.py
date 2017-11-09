@@ -3559,6 +3559,22 @@ class Person(TimeStampedModel):
             raise ValidationError(
                 {'is_current': 'Current memberships can not be invalid.'}
             )
+        if any([
+            self.status == self.STATUS.missing,
+            self.status == self.STATUS.legacy,
+            self.status == self.STATUS.sentinel,
+        ]) and hasattr(self, 'user'):
+            raise ValidationError(
+                {'status': 'Status should not have user.'}
+            )
+        if any([
+            self.status == self.STATUS.active,
+            self.status == self.STATUS.inactive,
+            self.status == self.STATUS.affiliate,
+        ]) and not hasattr(self, 'user'):
+            raise ValidationError(
+                {'status': 'Status should have user.'}
+            )
 
     #     if self.status == self.STATUS.active:
     #         if self.email is None:
@@ -5306,13 +5322,11 @@ class User(AbstractBaseUser):
         return False
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
-        if request.user.is_authenticated():
-            return self == request.user
-        return True
+        return self == request.user
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_write_permission(self, request):
-        if request.user.is_authenticated():
-            return self == request.user
-        return False
+        return self == request.user

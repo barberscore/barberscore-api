@@ -289,6 +289,7 @@ def update_or_create_member_from_smjoin(smjoin):
             if subscription.status == 'active':
                 status = Person.STATUS.active
                 is_current = True
+                current_through = subscription.current_through
                 try:
                     person.user.is_active = True
                     person.user.save()
@@ -298,10 +299,9 @@ def update_or_create_member_from_smjoin(smjoin):
                         is_active=True
                     )
             else:
-                if subscription.status == 'cancelled':
-                    subscription.current_through = None
                 status = Person.STATUS.inactive
                 is_current = False
+                current_through = None
                 try:
                     person.user.is_active = False
                     person.user.save()
@@ -314,10 +314,13 @@ def update_or_create_member_from_smjoin(smjoin):
             if subscription.status == 'active':
                 status = Person.STATUS.missing
                 is_current = True
+                current_through = subscription.current_through
             else:
                 status = Person.STATUS.legacy
                 is_current = False
-        current_through = subscription.current_through
+                current_through = None
+            if hasattr(person, 'user'):
+                person.user.delete()
         person.status = status
         person.is_current = is_current
         person.current_through = current_through
