@@ -636,7 +636,11 @@ class MemberAdmin(admin.ModelAdmin):
         'group',
         'person',
         'part',
+        'bhs_pk',
         'is_admin',
+        'sub_status',
+        'mem_status',
+        'code',
     ]
     list_display = [
         'status',
@@ -646,6 +650,9 @@ class MemberAdmin(admin.ModelAdmin):
         'person',
         'part',
         'is_admin',
+        'sub_status',
+        'mem_status',
+        'code',
     ]
     raw_id_fields = [
         'person',
@@ -659,6 +666,14 @@ class MemberAdmin(admin.ModelAdmin):
         'part',
         'group__kind',
         'is_admin',
+        'sub_status',
+        'mem_status',
+        'code',
+    ]
+    readonly_fields = [
+        'sub_status',
+        'mem_status',
+        'code',
     ]
 
 

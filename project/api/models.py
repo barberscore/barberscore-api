@@ -2364,6 +2364,68 @@ class Member(TimeStampedModel):
         default=STATUS.new,
     )
 
+    MEM_STATUS = Choices(
+        (10, 'active', 'Active',),
+        (20, 'active_internal', 'Active Internal',),
+        (30, 'active_licensed', 'Active Licensed',),
+        (40, 'cancelled', 'Cancelled',),
+        (50, 'closed', 'Closed',),
+        (60, 'closed_merged', 'Closed Merged',),
+        (70, 'closed_revoked', 'Closed Revoked',),
+        (80, 'closed_voluntary', 'Closed Voluntary',),
+        (90, 'expelled', 'Expelled',),
+        (100, 'expired', 'Expired',),
+        (105, 'expired_licensed', 'Expired Licensed',),
+        (110, 'lapsed', 'Lapsed',),
+        (120, 'not_approved', 'Not Approved',),
+        (130, 'pending', 'Pending',),
+        (140, 'pending_voluntary', 'Pending Voluntary',),
+        (150, 'suspended', 'Suspended',),
+        (160, 'suspended_membership', 'Suspended Membership',),
+    )
+
+    mem_status = models.IntegerField(
+        choices=MEM_STATUS,
+        null=True,
+        blank=True,
+    )
+
+    SUB_STATUS = Choices(
+        (10, 'active', 'Active',),
+        (20, 'expired', 'Expired',),
+        (30, 'pending', 'Pending',),
+        (40, 'lapsed_renew', 'Lapsed',),
+        (50, 'cancelled', 'Cancelled',),
+        (60, 'swapped', 'Swapped',),
+    )
+
+    sub_status = models.IntegerField(
+        choices=SUB_STATUS,
+        null=True,
+        blank=True,
+    )
+
+    CODE = Choices(
+        (10, 'RG', 'RG Regular'),
+        (20, 'R5', 'R5 Regular 50 Year'),
+        (30, 'SN', 'SN Senior'),
+        (40, 'S5', 'S5 Senior 50 Year'),
+        (50, 'SL', 'SL Senior Legacy'),
+        (60, 'Y1', 'Y1 Youth Initial'),
+        (70, 'Y2', 'Y2 Youth Subsequent'),
+        (80, 'LF', 'LF Lifetime Regular'),
+        (90, 'L5', 'L5 Lifetime 50 Year'),
+        (100, 'LY', 'LY Lifetime Youth'),
+        (110, 'LS', 'LS Lifetime Senior'),
+        (120, 'AS', 'AS Associate'),
+    )
+
+    code = models.IntegerField(
+        choices=CODE,
+        null=True,
+        blank=True,
+    )
+
     PART = Choices(
         (-1, 'director', 'Director'),
         (1, 'tenor', 'Tenor'),
@@ -2390,6 +2452,13 @@ class Member(TimeStampedModel):
 
     is_admin = models.BooleanField(
         default=False,
+    )
+
+    bhs_pk = models.UUIDField(
+        null=True,
+        blank=True,
+        unique=True,
+        db_index=True,
     )
 
     # FKs

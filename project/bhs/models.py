@@ -391,6 +391,15 @@ class SMJoin(models.Model):
         db_column='created',
         editable=False,
     )
+    inactive_date = models.DateField(
+        db_column='inactive',
+        editable=False,
+    )
+    inactive_reason = models.CharField(
+        max_length=255,
+        db_column='inactive_reason',
+        editable=False,
+    )
     updated_ts = models.DateTimeField(
         db_column='modified',
         null=True,

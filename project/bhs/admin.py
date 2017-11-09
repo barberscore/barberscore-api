@@ -345,6 +345,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'subscription',
         'membership',
         'established_date',
+        'inactive_date',
+        'inactive_reason',
         'updated_ts',
     ]
 
@@ -355,6 +357,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'subscription',
         'membership',
         'established_date',
+        'inactive_date',
+        'inactive_reason',
         'updated_ts',
     ]
 
@@ -365,6 +369,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'subscription',
         'membership',
         'established_date',
+        'inactive_date',
+        'inactive_reason',
         'updated_ts',
     ]
 
