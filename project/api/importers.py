@@ -864,7 +864,7 @@ def import_aff_membership(path, entity):
             person, created = Person.objects.get_or_create(
                 email=email,
             )
-            person.name = name
+            person.full_name = name
             person.email = email
             person.cell_phone = cell_phone
             person.location = 'AUS'

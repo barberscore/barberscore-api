@@ -182,7 +182,7 @@ def send_link(user):
 #         "email": person.email,
 #         "password": password,
 #         "user_metadata": {
-#             "name": person.name
+#             "name": person.full_name
 #         },
 #         "app_metadata": {
 #             "bhs_id": person.bhs_id,

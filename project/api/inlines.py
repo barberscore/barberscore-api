@@ -41,6 +41,9 @@ class AppearanceInline(admin.TabularInline):
     )
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class AssignmentInline(admin.TabularInline):
@@ -67,6 +70,9 @@ class AssignmentInline(admin.TabularInline):
     )
     extra = 0
     show_change_link = True
+    classes = [
+        'collapse',
+    ]
 
 
 class AwardInline(admin.TabularInline):
@@ -129,6 +135,9 @@ class ContestantInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class ConventionInline(admin.TabularInline):
@@ -282,6 +291,9 @@ class PanelistInline(admin.TabularInline):
     )
     extra = 0
     show_change_link = True
+    classes = [
+        'collapse',
+    ]
 
 
 class ParticipantInline(admin.TabularInline):
@@ -345,6 +357,9 @@ class ScoreInline(admin.TabularInline):
     )
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class SongInline(admin.TabularInline):
@@ -358,6 +373,9 @@ class SongInline(admin.TabularInline):
     show_change_link = True
     extra = 0
     can_delete = False
+    classes = [
+        'collapse',
+    ]
 
 
 class SessionInline(admin.TabularInline):
@@ -371,6 +389,9 @@ class SessionInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class SlotInline(admin.TabularInline):
@@ -387,6 +408,9 @@ class SlotInline(admin.TabularInline):
     extra = 0
     ordering = [
         'num',
+    ]
+    classes = [
+        'collapse',
     ]
 
 

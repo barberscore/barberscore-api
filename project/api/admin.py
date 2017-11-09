@@ -928,7 +928,8 @@ class ParticipantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Person)
 class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
-        'name',
+        'id',
+        ('first_name', 'middle_name', 'last_name', 'nick_name',),
         'status',
         'email',
         'is_deceased',
@@ -973,6 +974,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = [
+        'id',
         'nomen',
         'email',
         'is_current',

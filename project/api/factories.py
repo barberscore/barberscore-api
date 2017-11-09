@@ -261,6 +261,11 @@ class ParticipantFactory(DjangoModelFactory):
 
 class PersonFactory(DjangoModelFactory):
     name = Faker('name_male')
+    first_name = Faker('first_name_male')
+    middle_name = ''
+    last_name = Faker('last_name_male')
+    nick_name = ''
+    name = Faker('name_male')
     status = Person.STATUS.inactive
     birth_date = None
     location = ''

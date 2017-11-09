@@ -17,7 +17,6 @@ from dry_rest_permissions.generics import (
 )
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from nameparser import HumanName
 from ranking import Ranking
 from timezone_field import TimeZoneField
 
@@ -3223,6 +3222,34 @@ class Person(TimeStampedModel):
         max_length=255,
     )
 
+    first_name = models.CharField(
+        help_text="""
+            The first name of the person.""",
+        max_length=255,
+        blank=True,
+    )
+
+    middle_name = models.CharField(
+        help_text="""
+            The middle name of the person.""",
+        max_length=255,
+        blank=True,
+    )
+
+    last_name = models.CharField(
+        help_text="""
+            The last name of the person.""",
+        max_length=255,
+        blank=False,
+    )
+
+    nick_name = models.CharField(
+        help_text="""
+            The nickname of the person.""",
+        max_length=255,
+        blank=True,
+    )
+
     STATUS = Choices(
         (-40, 'sentinel', 'Sentinel',),
         (-30, 'legacy', 'Legacy',),
@@ -3425,14 +3452,6 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-    # Denormalizations
-    last_name = models.CharField(
-        help_text="""
-            The name of the resource.""",
-        max_length=255,
-        blank=True,
-    )
-
     @cached_property
     def is_convention_manager(self):
         return bool(self.officers.filter(
@@ -3496,47 +3515,30 @@ class Person(TimeStampedModel):
         ))
 
     @cached_property
-    def first_name(self):
-        name = HumanName(self.name)
-        return name.first
-
-    @cached_property
-    def nick_name(self):
-        name = HumanName(self.name)
-        return name.nickname
+    def full_name(self):
+        if self.nick_name:
+            nick = "({0})".format(self.nick_name)
+        else:
+            nick = ""
+        full = "{0} {1} {2} {3}".format(
+            self.first_name,
+            self.middle_name,
+            self.last_name,
+            nick,
+        )
+        return " ".join(full.split())
 
     @cached_property
     def common_name(self):
-        name = HumanName(self.name)
-        nickname = name.nickname
-        if nickname:
-            first = nickname
+        if self.nick_name:
+            first = self.nick_name
         else:
-            first = name.first
-        last = name.last
-        return "{0} {1}".format(first, last)
+            first = self.first_name
+        return "{0} {1}".format(first, self.last)
 
     @cached_property
-    def full_name(self):
-        name = HumanName(self.name)
-        full = []
-        full.append(name.first)
-        full.append(name.middle)
-        full.append(name.last)
-        full.append(name.suffix)
-        full.append(name.nickname)
-        return " ".join(filter(None, full))
-
-    @cached_property
-    def formal_name(self):
-        name = HumanName(self.name)
-        formal = []
-        formal.append(name.title)
-        formal.append(name.first)
-        formal.append(name.middle)
-        formal.append(name.last)
-        formal.append(name.suffix)
-        return " ".join(filter(None, formal))
+    def sort_name(self):
+        return "{0}, {1}".format(self.last, self.first)
 
     # Internals
     class JSONAPIMeta:
@@ -3576,37 +3578,13 @@ class Person(TimeStampedModel):
                 {'status': 'Status should have user.'}
             )
 
-    #     if self.status == self.STATUS.active:
-    #         if self.email is None:
-    #             raise ValidationError(
-    #                 {'status': 'Active accounts must have valid email'}
-    #             )
-    #         if self.is_bhs and not self.current_through:
-    #             raise ValidationError(
-    #                 {'status': 'Active BHS accounts must have `current_through`'}
-    #             )
-    #         if self.is_bhs and self.current_through < datetime.date.today():
-    #             raise ValidationError(
-    #                 {'status': 'Active BHS accounts must have current `current_through`'}
-    #             )
-    #         if self.is_bhs and not self.bhs_id:
-    #             raise ValidationError(
-    #                 {'is_bhs': 'BHS accounts require BHS ID'}
-    #             )
-    #         if not self.is_bhs and self.bhs_id:
-    #             raise ValidationError(
-    #                 {'is_bhs': 'Non BHS account should not have BHS ID'}
-    #             )
-
     def save(self, *args, **kwargs):
-        name = HumanName(self.name)
-        self.last_name = name.last
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x),
                 filter(
                     None, [
-                        self.name,
+                        self.full_name,
                         "[{0}]".format(self.bhs_id),
                     ]
                 )
@@ -5288,7 +5266,7 @@ class User(AbstractBaseUser):
             raise ValidationError(
                 {'email': 'Email does not match person'}
             )
-        if self.name != self.person.name:
+        if self.name != self.person.full_name:
             raise ValidationError(
                 {'name': 'Name does not match person'}
             )
