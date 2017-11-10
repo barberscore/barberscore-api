@@ -192,7 +192,7 @@ def update_or_create_group_from_structure(structure):
     }
     if bhs_id in aic_map:
         status = Group.STATUS.aic
-        name = aic_map[bhs_id]
+        name = aic_map[str(bhs_id)]
     defaults = {
         'name': name,
         'status': status,
