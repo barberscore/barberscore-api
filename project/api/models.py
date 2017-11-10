@@ -3595,7 +3595,26 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        pass
+        if hasattr(self, 'user') and not self.email:
+            raise ValidationError(
+                {'email': 'User account must have email.'}
+            )
+        if not hasattr(self, 'user') and self.email:
+            raise ValidationError(
+                {'email': 'Person with email should have User account.'}
+            )
+        if self.status == self.STATUS.exempt and (self.bhs_id or self.bhs_pk):
+            raise ValidationError(
+                {'status': 'Exempt users should not be in BHS or MC.'}
+            )
+        if self.status == self.STATUS.active and self.current_through < datetime.date.today():
+            raise ValidationError(
+                {'status': 'Active user beyond current_through date.'}
+            )
+        if self.status == self.STATUS.inactive and self.current_through > datetime.date.today():
+            raise ValidationError(
+                {'status': 'Inactive user within current_through date.'}
+            )
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -5288,6 +5307,14 @@ class User(AbstractBaseUser):
         if self.name != self.person.full_name:
             raise ValidationError(
                 {'name': 'Name does not match person'}
+            )
+        if self.is_active and self.person.status <= 0:
+            raise ValidationError(
+                {'name': 'Should not be active.'}
+            )
+        if not self.is_active and self.person.status > 0:
+            raise ValidationError(
+                {'is_active': 'Should be active.'}
             )
 
     def save(self, *args, **kwargs):
