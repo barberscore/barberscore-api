@@ -189,6 +189,12 @@ def update_or_create_group_from_structure(structure):
     bhs_id = structure.bhs_id
     aic_map = {
         '304772': 'Musical Island Boys',
+        '1727': 'Side Street Ramblers',
+        '1871': 'Suntones',
+        '801492': 'O.C. Times',
+        '801497': 'Bluegrass Student Union',
+        '801494': 'Grandma\'s Boys',
+        '801501': 'Bartlesville Barflies',
     }
     if str(bhs_id) in aic_map:
         status = Group.STATUS.aic
