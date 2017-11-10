@@ -160,9 +160,6 @@ class GroupFilter(FilterSet):
             'id': [
                 'exact',
             ],
-            'is_bhs': [
-                'exact',
-            ],
             'kind': [
                 'exact',
                 'lt',
@@ -303,9 +300,6 @@ class PersonFilter(FilterSet):
                 'icontains',
             ],
             'status': [
-                'exact',
-            ],
-            'is_bhs': [
                 'exact',
             ],
             'user': [

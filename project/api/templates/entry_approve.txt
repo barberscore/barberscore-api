@@ -37,18 +37,6 @@ Participants on Stage:
     No Participants currently selected.
 {% endfor %}
 
-{% comment %}
-{% if entry.participants %}
-{% if is_bhs %}
-Expiring Members:
-{% for expiration in expirations %}
-    - {{expiration.person.nomen|safe}}, Exp. {{expiration.member.current_through}}
-{% empty %}
-    None.  All Participants are Current.
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endcomment %}
 NOTE: Choruses may make changes to your Participants (the list of those
 singing on stage) at any time from now until the convention.  Please note that
 every person on stage must have a current BHS membership and convention registration

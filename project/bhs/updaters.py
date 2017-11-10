@@ -52,7 +52,6 @@ def update_or_create_person_from_human(human):
         work_phone = human.work_phone
     else:
         work_phone = ''
-    is_bhs = True
     bhs_id = human.bhs_id
     if human.sex:
         if human.sex.casefold() == 'male'.casefold():
@@ -86,7 +85,6 @@ def update_or_create_person_from_human(human):
         'phone': phone,
         'cell_phone': cell_phone,
         'work_phone': work_phone,
-        'is_bhs': is_bhs,
         'bhs_id': bhs_id,
         'gender': gender,
         'part': part,
@@ -185,7 +183,6 @@ def update_or_create_group_from_structure(structure):
         phone = structure.phone
     else:
         phone = ''
-    is_bhs = True
     bhs_id = structure.bhs_id
     aic_map = {
         '304772': 'Musical Island Boys',
@@ -207,7 +204,6 @@ def update_or_create_group_from_structure(structure):
         'start_date': start_date,
         'email': email,
         'phone': phone,
-        'is_bhs': is_bhs,
         'bhs_id': bhs_id,
     }
     try:
@@ -285,7 +281,6 @@ def update_or_create_member_from_smjoin(smjoin):
         if person.email:
             if subscription.status == 'active':
                 status = Person.STATUS.active
-                is_current = True
                 current_through = subscription.current_through
                 try:
                     person.user.is_active = True
@@ -297,7 +292,6 @@ def update_or_create_member_from_smjoin(smjoin):
                     )
             else:
                 status = Person.STATUS.inactive
-                is_current = False
                 current_through = None
                 try:
                     person.user.is_active = False
@@ -310,16 +304,13 @@ def update_or_create_member_from_smjoin(smjoin):
         else:
             if subscription.status == 'active':
                 status = Person.STATUS.missing
-                is_current = True
                 current_through = subscription.current_through
             else:
                 status = Person.STATUS.legacy
-                is_current = False
                 current_through = None
             if hasattr(person, 'user'):
                 person.user.delete()
         person.status = status
-        person.is_current = is_current
         person.current_through = current_through
         try:
             person.full_clean()

@@ -523,7 +523,7 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         'status',
         'kind',
-        ('is_bhs', 'bhs_id', 'bhs_pk',),
+        ('bhs_id', 'bhs_pk',),
         'organization',
         'code',
         # 'start_date',
@@ -543,7 +543,6 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'is_bhs',
         'kind',
         'organization',
     ]
@@ -562,7 +561,6 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
         'organization',
         'location',
-        'is_bhs',
         'bhs_id',
         'bhs_pk',
         'status',
@@ -948,10 +946,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'email',
         'is_deceased',
-        'is_bhs',
         'bhs_id',
         'bhs_pk',
-        'is_current',
         'current_through',
         'birth_date',
         'part',
@@ -970,7 +966,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'nomen',
         'email',
-        'is_bhs',
         'bhs_id',
         'bhs_pk',
         'current_through',
@@ -981,8 +976,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'is_bhs',
-        'is_current',
         'gender',
         'part',
         'is_deceased',
@@ -992,7 +985,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'nomen',
         'email',
-        'is_current',
         'current_through',
     ]
 

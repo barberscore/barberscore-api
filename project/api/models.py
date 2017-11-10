@@ -2136,10 +2136,6 @@ class Group(TimeStampedModel):
         choices=KIND,
     )
 
-    is_bhs = models.BooleanField(
-        default=False,
-    )
-
     short_name = models.CharField(
         help_text="""
             A short-form name for the resource.""",
@@ -2273,14 +2269,6 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.is_bhs and not self.bhs_id:
-            raise ValidationError(
-                {'is_bhs': 'Can not be BHS without BHS ID.'}
-            )
-        if not self.is_bhs and self.bhs_id:
-            raise ValidationError(
-                {'is_bhs': 'Should not have BHS ID with being BHS.'}
-            )
         if self.kind == self.KIND.quartet:
             if self.members.filter(
                 status=self.members.model.STATUS.active,
@@ -3321,22 +3309,16 @@ class Person(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-40, 'sentinel', 'Sentinel',),
-        (-30, 'legacy', 'Legacy',),
-        (-20, 'missing', 'Missing',),
+        (-20, 'legacy', 'Legacy',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
-        (20, 'affiliate', 'Affiliate',),
+        (20, 'exempt', 'Exempt',),
     )
 
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    is_bhs = models.BooleanField(
-        default=False,
     )
 
     birth_date = models.DateField(
@@ -3511,11 +3493,6 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
-    is_current = models.BooleanField(
-        default=False,
-        editable=False,
-    )
-
     current_through = models.DateField(
         null=True,
         blank=True,
@@ -3618,35 +3595,7 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        today = datetime.date.today()
-        current = False
-        if self.current_through:
-            if self.current_through >= today:
-                current = True
-        if self.is_current and not current:
-            raise ValidationError(
-                {'is_current': 'Current memberships must have valid through date.'}
-            )
-        if not self.is_current and current:
-            raise ValidationError(
-                {'is_current': 'Current memberships can not be invalid.'}
-            )
-        if any([
-            self.status == self.STATUS.missing,
-            self.status == self.STATUS.legacy,
-            self.status == self.STATUS.sentinel,
-        ]) and hasattr(self, 'user'):
-            raise ValidationError(
-                {'status': 'Status should not have user.'}
-            )
-        if any([
-            self.status == self.STATUS.active,
-            self.status == self.STATUS.inactive,
-            self.status == self.STATUS.affiliate,
-        ]) and not hasattr(self, 'user'):
-            raise ValidationError(
-                {'status': 'Status should have user.'}
-            )
+        pass
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(

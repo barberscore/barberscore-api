@@ -277,7 +277,6 @@ class PersonFactory(DjangoModelFactory):
     description = ''
     notes = ''
     current_through = '2018-12-31'
-    is_bhs = True
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
 
     class Meta:
