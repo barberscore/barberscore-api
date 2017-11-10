@@ -2113,6 +2113,8 @@ class Group(TimeStampedModel):
         (-10, 'inactive', 'Inactive',),
         (-5, 'aic', 'AIC',),
         (0, 'new', 'New',),
+        (2, 'exempt', 'Exempt',),
+        (5, 'pending', 'Pending',),
         (10, 'active', 'Active',),
     )
 
