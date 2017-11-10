@@ -129,8 +129,8 @@ def update_or_create_person_from_human(human):
 
 def update_or_create_group_from_structure(structure):
     kind_map = {
-        'chapter': 32,
-        'quartet': 41,
+        'chapter': Group.KIND.chorus,
+        'quartet': Group.KIND.quartet,
     }
     try:
         kind = kind_map[structure.kind]
@@ -138,21 +138,25 @@ def update_or_create_group_from_structure(structure):
         log.error("{0} {1}".format(e, structure))
         return
     status_map = {
-        'active': 10,
-        'active-licensed': 10,
-        'pending': 0,
-        'pending-voluntary': 0,
-        'expired': -10,
-        'closed-revoked': -10,
-        'closed-merged': -10,
-        'suspended-membership': -10,
-        'cancelled': -10,
-        'lapsed': -10,
-        'closed-voluntary': -10,
-        'expelled': -10,
-        'suspended': -10,
+        'active': Group.STATUS.active,
+        'active-internal': Group.STATUS.pending,
+        'active-licensed': Group.STATUS.pending,
+        'cancelled': Group.STATUS.inactive,
+        'closed': Group.STATUS.inactive,
+        'closed-merged': Group.STATUS.inactive,
+        'closed-revoked': Group.STATUS.inactive,
+        'closed-voluntary': Group.STATUS.inactive,
+        'expelled': Group.STATUS.inactive,
+        'expired': Group.STATUS.inactive,
+        'expired-licensed': Group.STATUS.inactive,
+        'lapsed': Group.STATUS.inactive,
+        'not-approved': Group.STATUS.inactive,
+        'pending': Group.STATUS.pending,
+        'pending-voluntary': Group.STATUS.pending,
+        'suspended': Group.STATUS.inactive,
+        'suspended-membership': Group.STATUS.inactive,
     }
-    if kind == 41:
+    if kind == Group.KIND.quartet:
         if structure.name:
             name = structure.name.strip()
         else:
@@ -167,7 +171,7 @@ def update_or_create_group_from_structure(structure):
             structure.name.strip(),
         )
     status = status_map[str(structure.status)]
-    if kind == 32:
+    if kind == Group.KIND.chorus:
         code = structure.chapter_code
     else:
         code = ''
@@ -183,6 +187,12 @@ def update_or_create_group_from_structure(structure):
         phone = ''
     is_bhs = True
     bhs_id = structure.bhs_id
+    aic_map = {
+        '304772': 'Musical Island Boys',
+    }
+    if bhs_id in aic_map:
+        status = Group.STATUS.aic
+        name = aic_map[bhs_id]
     defaults = {
         'name': name,
         'status': status,
