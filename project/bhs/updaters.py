@@ -190,7 +190,7 @@ def update_or_create_group_from_structure(structure):
     aic_map = {
         '304772': 'Musical Island Boys',
     }
-    if bhs_id in aic_map:
+    if str(bhs_id) in aic_map:
         status = Group.STATUS.aic
         name = aic_map[str(bhs_id)]
     defaults = {
