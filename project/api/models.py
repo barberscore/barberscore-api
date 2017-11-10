@@ -2276,6 +2276,10 @@ class Group(TimeStampedModel):
             raise ValidationError(
                 {'is_bhs': 'Can not be BHS without BHS ID.'}
             )
+        if not self.is_bhs and self.bhs_id:
+            raise ValidationError(
+                {'is_bhs': 'Should not have BHS ID with being BHS.'}
+            )
         if self.kind == self.KIND.quartet:
             if self.members.filter(
                 status=self.members.model.STATUS.active,
