@@ -3607,14 +3607,20 @@ class Person(TimeStampedModel):
             raise ValidationError(
                 {'status': 'Exempt users should not be in BHS or MC.'}
             )
-        if self.status == self.STATUS.active and self.current_through < datetime.date.today():
-            raise ValidationError(
-                {'status': 'Active user beyond current_through date.'}
-            )
-        if self.status == self.STATUS.inactive and self.current_through > datetime.date.today():
-            raise ValidationError(
-                {'status': 'Inactive user within current_through date.'}
-            )
+        if self.current_through:
+            if self.status == self.STATUS.active and self.current_through < datetime.date.today():
+                raise ValidationError(
+                    {'status': 'Active user beyond current_through date.'}
+                )
+            if self.status == self.STATUS.inactive and self.current_through > datetime.date.today():
+                raise ValidationError(
+                    {'status': 'Inactive user within current_through date.'}
+                )
+        else:
+            if self.status == self.STATUS.active:
+                raise ValidationError(
+                    {'status': 'Active status without current_through date.'}
+                )
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(

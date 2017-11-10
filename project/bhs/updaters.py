@@ -258,58 +258,44 @@ def update_or_create_group_from_structure(structure):
 
 
 def update_or_create_member_from_smjoin(smjoin):
+    if not smjoin.status:
+        # Not the canonical record
+        return
     if smjoin.structure.kind == 'district':
         # Ignore districts
-        log.error("District mismatch")
         return
     elif smjoin.structure.kind == 'organization':
-        # Must abstract this because we can't trust updated_ts
-        human = smjoin.subscription.human
-        smjoin = SMJoin.objects.filter(
-            structure=smjoin.structure,
-            subscription__human=human,
-        ).order_by('established_date').last()
         # Extract current Subscription from SMJoin
         subscription = smjoin.subscription
+        human = smjoin.subscription.human
         try:
+            # Extract Person from Human
             person = Person.objects.get(
                 bhs_pk=human.id,
             )
         except Person.DoesNotExist as e:
+            # Sometimes there is a race condition that produces an error
             log.error("{0} {1}".format(e, human))
             return
-        if person.email:
-            if subscription.status == 'active':
-                status = Person.STATUS.active
-                current_through = subscription.current_through
-                try:
-                    person.user.is_active = True
-                    person.user.save()
-                except User.DoesNotExist:
-                    User.objects.create_user(
-                        person=person,
-                        is_active=True
-                    )
-            else:
-                status = Person.STATUS.inactive
-                current_through = None
-                try:
-                    person.user.is_active = False
-                    person.user.save()
-                except User.DoesNotExist:
-                    User.objects.create_user(
-                        person=person,
-                        is_active=False
-                    )
+        is_active = bool(subscription.status == 'active')
+        if is_active:
+            # If the subscription is active, make person active and set CT
+            status = Person.STATUS.active
+            current_through = subscription.current_through
         else:
-            if subscription.status == 'active':
-                status = Person.STATUS.missing
-                current_through = subscription.current_through
-            else:
-                status = Person.STATUS.legacy
-                current_through = None
-            if hasattr(person, 'user'):
-                person.user.delete()
+            status = Person.STATUS.inactive
+            current_through = None
+        # set the User record to match
+        try:
+            person.user.is_active = is_active
+            person.user.save()
+        except User.DoesNotExist:
+            if person.email:
+                # Create a User if we have an email
+                User.objects.create_user(
+                    person=person,
+                    is_active=is_active
+                )
         person.status = status
         person.current_through = current_through
         try:

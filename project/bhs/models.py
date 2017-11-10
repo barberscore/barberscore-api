@@ -34,6 +34,7 @@ class Human(models.Model):
     )
     birth_date = models.DateField(
         editable=False,
+        null=True,
         db_column='birthday'
     )
     is_deceased = models.BooleanField(
@@ -68,10 +69,12 @@ class Human(models.Model):
 
     created_ts = models.DateTimeField(
         db_column='created',
+        null=False,
         editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='updated',
+        null=True,
         editable=False,
     )
 
@@ -299,6 +302,7 @@ class Subscription(models.Model):
     )
     current_through = models.DateField(
         db_column='valid_through',
+        null=True,
         editable=False,
     )
     status = models.CharField(
@@ -310,10 +314,12 @@ class Subscription(models.Model):
     )
     created_ts = models.DateTimeField(
         db_column='created',
+        null=False,
         editable=False,
     )
     updated_ts = models.DateTimeField(
         db_column='updated',
+        null=True,
         editable=False,
     )
     # FKs
@@ -343,9 +349,11 @@ class Role(models.Model):
         editable=False,
     )
     start_date = models.DateField(
+        null=True,
         editable=False,
     )
     end_date = models.DateField(
+        null=True,
         editable=False,
     )
     # FKs
@@ -389,10 +397,12 @@ class SMJoin(models.Model):
     )
     established_date = models.DateField(
         db_column='created',
+        null=False,
         editable=False,
     )
     inactive_date = models.DateField(
         db_column='inactive',
+        null=True,
         editable=False,
     )
     inactive_reason = models.CharField(
