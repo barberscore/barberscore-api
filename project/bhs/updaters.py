@@ -21,7 +21,6 @@ from api.models import (
 # Remote
 from bhs.models import (
     Role,
-    SMJoin,
 )
 
 log = logging.getLogger('updater')
@@ -113,7 +112,6 @@ def update_or_create_person_from_human(human):
             bhs_pk=human.id,
             defaults=defaults,
         )
-        log.info("{0}; {1}".format(person, created))
     except IntegrityError as e:
         log.error("{0} {1}".format(e, human))
         return
@@ -122,7 +120,7 @@ def update_or_create_person_from_human(human):
             person=person,
             is_active=False,
         )
-    return
+    return person, created
 
 
 def update_or_create_group_from_structure(structure):
@@ -288,7 +286,6 @@ def update_or_create_group_from_structure(structure):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        log.info("{0}; {1}".format(group, created))
     except IntegrityError as e:
         log.error("{0} {1}".format(e, group))
         return
@@ -332,6 +329,7 @@ def update_or_create_group_from_structure(structure):
                 organization = None
             group.organization = organization
             group.save()
+    return group, created
 
 
 def update_or_create_member_from_smjoin(smjoin):
@@ -343,17 +341,8 @@ def update_or_create_member_from_smjoin(smjoin):
         return
     elif smjoin.structure.kind == 'organization':
         # Extract current Subscription from SMJoin
+        person, created = update_or_create_person_from_human(smjoin.subscription.human)
         subscription = smjoin.subscription
-        human = smjoin.subscription.human
-        try:
-            # Extract Person from Human
-            person = Person.objects.get(
-                bhs_pk=human.id,
-            )
-        except Person.DoesNotExist as e:
-            # Sometimes there is a race condition that produces an error
-            log.error("{0} {1}".format(e, human))
-            return
         is_active = bool(subscription.status == 'active')
         if is_active:
             # If the subscription is active, make person active and set CT
@@ -381,51 +370,32 @@ def update_or_create_member_from_smjoin(smjoin):
             log.error("{0} {1}".format(e, person))
             return
         person.save()
-        log.info("{0} {1}".format(person, current_through))
-        return
-    elif smjoin.structure.kind == 'chapter':
+        return person, created
+    elif smjoin.structure.kind in ['chapter', 'quartet']:
         # Extract current Subscription from SMJoin
         subscription = smjoin.subscription
         membership = smjoin.membership
-        structure = smjoin.structure
-        human = smjoin.subscription.human
-        try:
-            group = Group.objects.get(
-                bhs_pk=structure.id
-            )
-        except Group.DoesNotExist as e:
-            # Generally due to race condition
-            log.error("{0} {1}".format(e, structure))
-            return
-        try:
-            person = Person.objects.get(
-                bhs_pk=human.id
-            )
-        except Person.DoesNotExist as e:
-            # Generally due to race condition
-            log.error("{0} {1}".format(e, human))
-            return
+        group, created = update_or_create_group_from_structure(smjoin.structure)
+        person, created = update_or_create_person_from_human(smjoin.subscription.human)
         is_active = bool(subscription.status == 'active')
         if is_active:
             status = Member.STATUS.active
         else:
             status = Member.STATUS.inactive
-        sub_status = getattr(
-            Member.SUB_STATUS,
-            subscription.status,
-        )
-        mem_status = getattr(
-            Member.MEM_STATUS,
-            membership.status.name.replace("-", "_")
-        )
-        code = getattr(
-            Member.CODE,
-            membership.code,
-        )
+        sub_status = getattr(Member.SUB_STATUS, subscription.status)
+        code = getattr(Member.CODE, membership.code)
+        mem_clean = membership.status.name.replace("-", "_")
+        mem_status = getattr(Member.MEM_STATUS, mem_clean)
+        try:
+            part_clean = smjoin.vocal_part.strip().casefold()
+        except AttributeError:
+            part_clean = 'Unknown'
+        part = getattr(Member.PART, part_clean, None)
         defaults = {
             'person': person,
             'group': group,
             'status': status,
+            'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
             'code': code,
@@ -435,61 +405,6 @@ def update_or_create_member_from_smjoin(smjoin):
                 bhs_pk=smjoin.id,
                 defaults=defaults,
             )
-            log.info("{0}; {1}".format(member, created))
-        except IntegrityError as e:
-            log.error("{0} {1}".format(e, smjoin))
-            return
-    elif smjoin.structure.kind == 'quartet':
-        # Must abstract this because we can't trust updated_ts
-        smjoin = SMJoin.objects.filter(
-            structure=smjoin.structure,
-            subscription__human=smjoin.subscription.human,
-        ).order_by('established_date').last()
-        try:
-            part_stripped = smjoin.vocal_part.strip()
-        except AttributeError:
-            part_stripped = "Unknown"
-        if part_stripped.casefold() == 'Tenor'.casefold():
-            part = 1
-        elif part_stripped.casefold() == 'Lead'.casefold():
-            part = 2
-        elif part_stripped.casefold() == 'Baritone'.casefold():
-            part = 3
-        elif part_stripped.casefold() == 'Bass'.casefold():
-            part = 4
-        else:
-            part = None
-        if smjoin.subscription.status == 'active':
-            status = 10
-        else:
-            status = -10
-        try:
-            group = Group.objects.get(
-                bhs_pk=smjoin.structure.id
-            )
-        except Group.DoesNotExist as e:
-            # Probably due to pending status
-            log.error("{0} {1}".format(e, smjoin))
-            return
-        try:
-            person = Person.objects.get(
-                bhs_pk=smjoin.subscription.human.id
-            )
-        except Person.DoesNotExist as e:
-            # Generally an error
-            log.error("{0} {1}".format(e, smjoin))
-            return
-        defaults = {
-            'status': status,
-            'part': part,
-        }
-        try:
-            member, created = Member.objects.update_or_create(
-                person=person,
-                group=group,
-                defaults=defaults,
-            )
-            log.info("{0}; {1}".format(member, created))
         except IntegrityError as e:
             log.error("{0} {1}".format(e, smjoin))
             return
@@ -497,3 +412,4 @@ def update_or_create_member_from_smjoin(smjoin):
         # This is an error.
         log.error("Unknown Kind")
         return
+    return member, created
