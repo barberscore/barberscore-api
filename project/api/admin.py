@@ -526,6 +526,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('bhs_id', 'bhs_pk',),
         'organization',
         'code',
+        'mem_status',
         # 'start_date',
         # 'end_date',
         'short_name',
@@ -544,6 +545,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'mem_status',
         'organization',
     ]
 

@@ -135,10 +135,10 @@ def update_or_create_group_from_structure(structure):
     except KeyError as e:
         log.error("{0} {1}".format(e, structure))
         return
-    status_map = {
+    STATUS = {
         'active': Group.STATUS.active,
-        'active-internal': Group.STATUS.pending,
-        'active-licensed': Group.STATUS.pending,
+        'active-internal': Group.STATUS.active,
+        'active-licensed': Group.STATUS.active,
         'cancelled': Group.STATUS.inactive,
         'closed': Group.STATUS.inactive,
         'closed-merged': Group.STATUS.inactive,
@@ -149,8 +149,8 @@ def update_or_create_group_from_structure(structure):
         'expired-licensed': Group.STATUS.inactive,
         'lapsed': Group.STATUS.inactive,
         'not-approved': Group.STATUS.inactive,
-        'pending': Group.STATUS.pending,
-        'pending-voluntary': Group.STATUS.pending,
+        'pending': Group.STATUS.active,
+        'pending-voluntary': Group.STATUS.active,
         'suspended': Group.STATUS.inactive,
         'suspended-membership': Group.STATUS.inactive,
     }
@@ -168,7 +168,7 @@ def update_or_create_group_from_structure(structure):
             structure.chorus_name.strip(),
             structure.name.strip(),
         )
-    status = status_map[str(structure.status)]
+    status = STATUS[str(structure.status)]
     if kind == Group.KIND.chorus:
         code = structure.chapter_code
     else:
@@ -184,18 +184,91 @@ def update_or_create_group_from_structure(structure):
     else:
         phone = ''
     bhs_id = structure.bhs_id
-    aic_map = {
-        '304772': 'Musical Island Boys',
-        '1727': 'Side Street Ramblers',
-        '1871': 'Suntones',
-        '801492': 'O.C. Times',
-        '801497': 'Bluegrass Student Union',
-        '801494': 'Grandma\'s Boys',
-        '801501': 'Bartlesville Barflies',
+    mem_status = getattr(Group.MEM_STATUS, structure.status)
+    AIC = {
+        "501972": "Main Street",
+        "501329": "Forefront",
+        "500922": "Instant Classic",
+        "304772": "Musical Island Boys",
+        "500000": "Masterpiece",
+        "501150": "Ringmasters",
+        "317293": "Old School",
+        "286100": "Storm Front",
+        "500035": "Crossroads",
+        "297201": "OC Times",
+        "299233": "Max Q",
+        "302244": "Vocal Spectrum",
+        "299608": "Realtime",
+        "6158": "Gotcha!",
+        "2496": "Power Play",
+        "276016": "Four Voices",
+        "5619": "Michigan Jake",
+        "6738": "Platinum",
+        "3525": "FRED",
+        "5721": "Revival",
+        "2079": "Yesteryear",
+        "2163": "Nightlife",
+        "4745": "Marquis",
+        "3040": "Joker's Wild",
+        "1259": "Gas House Gang",
+        "2850": "Keepsake",
+        "1623": "The Ritz",
+        "3165": "Acoustix",
+        "1686": "Second Edition",
+        "492": "Chiefs of Staff",
+        "1596": "Interstate Rivals",
+        "1654": "Rural Route 4",
+        "406": "The New Tradition",
+        "1411": "Rapscallions",
+        "1727": "Side Street Ramblers",
+        "545": "Classic Collection",
+        "490": "Chicago News",
+        "329": "Boston Common",
+        "4034": "Grandma's Boys",
+        "318": "Bluegrass Student Union",
+        "362": "Most Happy Fellows",
+        "1590": "Innsiders",
+        "1440": "Happiness Emporium",
+        "1427": "Regents",
+        "627": "Dealer's Choice",
+        "1288": "Golden Staters",
+        "1275": "Gentlemen's Agreement",
+        "709": "Oriole Four",
+        "711": "Mark IV",
+        "2047": "Western Continentals",
+        "1110": "Four Statesmen",
+        "713": "Auto Towners",
+        "715": "Four Renegades",
+        "1729": "Sidewinders",
+        "718": "Town and Country 4",
+        "719": "Gala Lads",
+        "1871": "The Suntones",
+        "722": "Evans Quartet",
+        "724": "Four Pitchikers",
+        "801366": "Gaynotes",
+        "729": "Lads of Enchantment",
+        "731": "Confederates",
+        "732": "Four Hearsemen",
+        "736": "The Orphans",
+        "739": "Vikings",
+        "743": "Four Teens",
+        "746": "Schmitt Brothers",
+        "748": "Buffalo Bills",
+        "750": "Mid-States Four",
+        "753": "Pittsburghers",
+        "756": "Doctors of Harmony",
+        "759": "Garden State Quartet",
+        "761": "Misfits",
+        "764": "Harmony Halls",
+        "766": "Four Harmonizers",
+        "770": "Elastic Four",
+        "773": "Chord Busters",
+        "775": "Flat Foot Four",
+        "776": "Bartlesville Barflies",
     }
-    if str(bhs_id) in aic_map:
+    if str(bhs_id) in AIC:
         status = Group.STATUS.aic
-        name = aic_map[str(bhs_id)]
+        name = AIC[str(bhs_id)]
     defaults = {
         'name': name,
         'status': status,
@@ -205,6 +278,7 @@ def update_or_create_group_from_structure(structure):
         'email': email,
         'phone': phone,
         'bhs_id': bhs_id,
+        'mem_status': mem_status,
     }
     try:
         group, created = Group.objects.update_or_create(

@@ -2110,13 +2110,12 @@ class Group(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-20, 'barred', 'Barred',),
+        (-20, 'legacy', 'Legacy',),
         (-10, 'inactive', 'Inactive',),
         (-5, 'aic', 'AIC',),
         (0, 'new', 'New',),
-        (2, 'exempt', 'Exempt',),
-        (5, 'pending', 'Pending',),
         (10, 'active', 'Active',),
+        (20, 'exempt', 'Exempt',),
     )
 
     status = FSMIntegerField(
@@ -2225,6 +2224,32 @@ class Group(TimeStampedModel):
     notes = models.TextField(
         help_text="""
             Notes (for internal use only).""",
+        blank=True,
+    )
+
+    MEM_STATUS = Choices(
+        (10, 'active', 'Active',),
+        (20, 'active_internal', 'Active Internal',),
+        (30, 'active_licensed', 'Active Licensed',),
+        (40, 'cancelled', 'Cancelled',),
+        (50, 'closed', 'Closed',),
+        (60, 'closed_merged', 'Closed Merged',),
+        (70, 'closed_revoked', 'Closed Revoked',),
+        (80, 'closed_voluntary', 'Closed Voluntary',),
+        (90, 'expelled', 'Expelled',),
+        (100, 'expired', 'Expired',),
+        (105, 'expired_licensed', 'Expired Licensed',),
+        (110, 'lapsed', 'Lapsed',),
+        (120, 'not_approved', 'Not Approved',),
+        (130, 'pending', 'Pending',),
+        (140, 'pending_voluntary', 'Pending Voluntary',),
+        (150, 'suspended', 'Suspended',),
+        (160, 'suspended_membership', 'Suspended Membership',),
+    )
+
+    mem_status = models.IntegerField(
+        choices=MEM_STATUS,
+        null=True,
         blank=True,
     )
 
