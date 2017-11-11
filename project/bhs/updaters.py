@@ -184,7 +184,10 @@ def update_or_create_group_from_structure(structure):
     else:
         phone = ''
     bhs_id = structure.bhs_id
-    mem_status = getattr(Group.MEM_STATUS, structure.status)
+    mem_status = getattr(
+        Group.MEM_STATUS,
+        structure.status.name.replace("-", "_")
+    )
     AIC = {
         "501972": "Main Street",
         "501329": "Forefront",
@@ -381,38 +384,55 @@ def update_or_create_member_from_smjoin(smjoin):
         log.info("{0} {1}".format(person, current_through))
         return
     elif smjoin.structure.kind == 'chapter':
-        # Must abstract this because we can't trust updated_ts
-        smjoin = SMJoin.objects.filter(
-            structure=smjoin.structure,
-            subscription__human=smjoin.subscription.human,
-        ).order_by('established_date').last()
-        if smjoin.subscription.status == 'active':
-            status = 10
-        else:
-            status = -10
+        # Extract current Subscription from SMJoin
+        subscription = smjoin.subscription
+        membership = smjoin.membership
+        structure = smjoin.structure
+        human = smjoin.subscription.human
         try:
             group = Group.objects.get(
-                bhs_pk=smjoin.structure.id
+                bhs_pk=structure.id
             )
         except Group.DoesNotExist as e:
-            # Probably due to pending status
-            log.error("{0} {1}".format(e, smjoin))
+            # Generally due to race condition
+            log.error("{0} {1}".format(e, structure))
             return
         try:
             person = Person.objects.get(
-                bhs_pk=smjoin.subscription.human.id
+                bhs_pk=human.id
             )
         except Person.DoesNotExist as e:
-            # Generally an error
-            log.error("{0} {1}".format(e, smjoin))
+            # Generally due to race condition
+            log.error("{0} {1}".format(e, human))
             return
+        is_active = bool(subscription.status == 'active')
+        if is_active:
+            status = Member.STATUS.active
+        else:
+            status = Member.STATUS.inactive
+        sub_status = getattr(
+            Member.SUB_STATUS,
+            subscription.status,
+        )
+        mem_status = getattr(
+            Member.MEM_STATUS,
+            membership.status.name.replace("-", "_")
+        )
+        code = getattr(
+            Member.CODE,
+            membership.code,
+        )
         defaults = {
+            'person': person,
+            'group': group,
             'status': status,
+            'mem_status': mem_status,
+            'sub_status': sub_status,
+            'code': code,
         }
         try:
             member, created = Member.objects.update_or_create(
-                person=person,
-                group=group,
+                bhs_pk=smjoin.id,
                 defaults=defaults,
             )
             log.info("{0}; {1}".format(member, created))

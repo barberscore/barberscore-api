@@ -2373,10 +2373,11 @@ class Member(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'alum', 'Alum',),
+        (-20, 'legacy', 'Legacy',),
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
-        (5, 'provisional', 'Provisional',),
         (10, 'active', 'Active',),
+        (20, 'exempt', 'Exempt',),
     )
 
     status = FSMIntegerField(
@@ -2414,7 +2415,7 @@ class Member(TimeStampedModel):
         (10, 'active', 'Active',),
         (20, 'expired', 'Expired',),
         (30, 'pending', 'Pending',),
-        (40, 'lapsed_renew', 'Lapsed',),
+        (40, 'lapsedRenew', 'Lapsed',),
         (50, 'cancelled', 'Cancelled',),
         (60, 'swapped', 'Swapped',),
     )
@@ -2570,7 +2571,7 @@ class Member(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.alum)
+    @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
         """Deactivate the Member."""
         return
