@@ -689,7 +689,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         'bhs_pk',
         'sub_status',
         'mem_status',
-        'code',
+        'mem_code',
     ]
     list_display = [
         'status',
@@ -699,7 +699,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         'person',
         'sub_status',
         'mem_status',
-        'code',
+        'mem_code',
     ]
     raw_id_fields = [
         'person',
@@ -713,12 +713,12 @@ class EnrollmentAdmin(admin.ModelAdmin):
         'organization',
         'sub_status',
         'mem_status',
-        'code',
+        'mem_code',
     ]
     readonly_fields = [
         'sub_status',
         'mem_status',
-        'code',
+        'mem_code',
     ]
 
 

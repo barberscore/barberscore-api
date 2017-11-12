@@ -1611,7 +1611,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
     )
 
-    CODE = Choices(
+    MEM_CODE = Choices(
         (10, 'RG', 'RG Regular'),
         (20, 'R5', 'R5 Regular 50 Year'),
         (30, 'SN', 'SN Senior'),
@@ -1626,8 +1626,8 @@ class Enrollment(TimeStampedModel):
         (120, 'AS', 'AS Associate'),
     )
 
-    code = models.IntegerField(
-        choices=CODE,
+    mem_code = models.IntegerField(
+        choices=MEM_CODE,
         null=True,
         blank=True,
     )
