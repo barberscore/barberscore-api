@@ -257,10 +257,10 @@ class OrganizationManager(Manager):
         if created:
             # Set the default organization. Can be overridden in BS
             Organization = config.get_model('Organization')
-            organization = Organization.objects.get(
+            parent = Organization.objects.get(
                 bhs_pk=structure.parent.id,
             )
-            organization.parent = organization
+            organization.parent = parent
             organization.save()
         return organization, created
 
