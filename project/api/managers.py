@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 class GroupManager(Manager):
 
-    def update_or_create_group_from_structure(self, structure, **kwargs):
+    def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('chapter', 'chorus')
         kind = getattr(self.model.KIND, kind_clean)
@@ -193,8 +193,111 @@ class GroupManager(Manager):
         return group, created
 
 
+class OrganizationManager(Manager):
+
+    def update_or_create_from_structure(self, structure, **kwargs):
+        # Map structure kind to internal designation
+        kind_clean = structure.kind.replace('organization', 'international')
+        kind = getattr(self.model.KIND, kind_clean, None)
+        if not kind:
+            raise ValueError("Can only update organizations")
+        name = structure.name.strip()
+        # Map to the internal designation
+        STATUS = {
+            'active': 'active',
+            'active-internal': 'active',
+            'active-licensed': 'active',
+            'cancelled': 'inactive',
+            'closed': 'inactive',
+            'closed-merged': 'inactive',
+            'closed-revoked': 'inactive',
+            'closed-voluntary': 'inactive',
+            'expelled': 'inactive',
+            'expired': 'inactive',
+            'expired-licensed': 'inactive',
+            'lapsed': 'inactive',
+            'not-approved': 'inactive',
+            'pending': 'active',
+            'pending-voluntary': 'active',
+            'suspended': 'inactive',
+            'suspended-membership': 'inactive',
+        }
+        status_clean = STATUS[str(structure.status)]
+        status = getattr(self.model.STATUS, status_clean)
+        start_date = structure.established_date
+        try:
+            v = validate_email(structure.email)
+            email = v["email"].lower()
+        except EmailNotValidError:
+            email = ''
+        if structure.phone:
+            phone = structure.phone
+        else:
+            phone = ''
+        # And the chapter code
+        code = structure.chapter_code
+        bhs_id = structure.bhs_id
+        mem_clean = structure.status.name.replace("-", "_")
+        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
+        defaults = {
+            'name': name,
+            'status': status,
+            'kind': kind,
+            'code': code,
+            'start_date': start_date,
+            'email': email,
+            'phone': phone,
+            'bhs_id': bhs_id,
+            'mem_status': mem_status,
+        }
+        organization, created = self.update_or_create(
+            bhs_pk=structure.id,
+            defaults=defaults,
+        )
+        if created:
+            # Set the default organization. Can be overridden in BS
+            Organization = config.get_model('Organization')
+            organization = Organization.objects.get(
+                bhs_pk=structure.parent.id,
+            )
+            organization.parent = organization
+            organization.save()
+        return organization, created
+
+
 class PersonManager(Manager):
-    def update_or_create_person_from_human(self, human, **kwargs):
+
+        # # Check to see if BHS ID exists already.
+        # try:
+        #     # If it does, update the BHS PK
+        #     person = self.get(
+        #         bhs_pk=None,
+        #         bhs_id=bhs_id,
+        #     )
+        #     person.bhs_pk = human.id
+        #     person.save()
+        # except self.model.DoesNotExist:
+        #     # Otherwise, continue
+        #     pass
+        # # Check to see if the email exists
+        # if email:
+        #     try:
+        #         # If it does, match to PK
+        #         person = self.get(
+        #             bhs_pk=None,
+        #             email=email,
+        #         )
+        #         person.bhs_pk = human.id
+        #         person.save()
+        #     except self.model.DoesNotExist:
+        #         # Otherwise, continue
+        #         pass
+
+
+
+
+
+    def update_or_create_from_human(self, human, **kwargs):
         first_name = human.first_name.strip()
         middle_name = human.middle_name.strip()
         last_name = human.last_name.strip()
@@ -230,50 +333,6 @@ class PersonManager(Manager):
         except AttributeError:
             part_clean = ""
         part = getattr(self.model.PART, part_clean, None)
-        # Set the BHS Subscription
-        try:
-            subscription = human.subscriptions.get(
-                smjoins__structure__bhs_id=1,
-                smjoins__status=True,
-            )
-            is_active = bool(subscription.status == 'active')
-        except human.subscriptions.model.DoesNotExist:
-            is_active = False
-        except human.subscriptions.model.MultipleObjectsReturned:
-            log.error("Multiple Canonical Joins: {0}".format(human))
-            is_active = False
-        if is_active:
-            # If the subscription is active, make person active and set CT
-            status = self.model.STATUS.active
-            current_through = subscription.current_through
-        else:
-            status = self.model.STATUS.inactive
-            current_through = None
-        # Check to see if BHS ID exists already.
-        try:
-            # If it does, update the BHS PK
-            person = self.get(
-                bhs_pk=None,
-                bhs_id=bhs_id,
-            )
-            person.bhs_pk = human.id
-            person.save()
-        except self.model.DoesNotExist:
-            # Otherwise, continue
-            pass
-        # Check to see if the email exists
-        if email:
-            try:
-                # If it does, match to PK
-                person = self.get(
-                    bhs_pk=None,
-                    email=email,
-                )
-                person.bhs_pk = human.id
-                person.save()
-            except self.model.DoesNotExist:
-                # Otherwise, continue
-                pass
         defaults = {
             'first_name': first_name,
             'middle_name': middle_name,
@@ -287,6 +346,34 @@ class PersonManager(Manager):
             'bhs_id': bhs_id,
             'gender': gender,
             'part': part,
+        }
+        person, created = self.update_or_create(
+            bhs_pk=human.id,
+            defaults=defaults,
+        )
+        return person, created
+
+    def update_or_create_from_join(self, join, **kwargs):
+        # Set the BHS Subscription
+        if not join.status:
+            # Check to ensure it's the right record
+            raise ValueError("Must be canonical record.")
+        if join.structure.kind != 'organization':
+            # Only update organization records.
+            raise ValueError("Must be organization record.")
+        subscription = join.subscription
+        human = join.subscription.human
+        is_active = bool(subscription.status == 'active')
+        if is_active:
+            # If the subscription is active, make person active and set CT
+            status = self.model.STATUS.active
+            current_through = subscription.current_through
+        else:
+            # Otherwise, make inactive and set CT as None.
+            status = self.model.STATUS.inactive
+            current_through = None
+        # Check to see if BHS ID exists already.
+        defaults = {
             'status': status,
             'current_through': current_through,
         }
@@ -299,7 +386,7 @@ class PersonManager(Manager):
 
 class MemberManager(Manager):
 
-    def update_or_create_member_from_join(self, join, **kwargs):
+    def update_or_create_from_join(self, join, **kwargs):
         if not join.status:
             # Check to ensure it's the right record
             raise ValueError("Must be canonical record.")
@@ -327,7 +414,7 @@ class MemberManager(Manager):
         part = getattr(self.model.PART, part_clean, None)
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
-        code = getattr(self.model.CODE, membership.code)
+        mem_code = getattr(self.model.MEM_CODE, membership.mem_code)
         mem_clean = membership.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
         bhs_pk = join.id
@@ -337,7 +424,70 @@ class MemberManager(Manager):
             'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
-            'code': code,
+            'mem_code': mem_code,
+            'bhs_pk': bhs_pk,
+        }
+        member, created = self.update_or_create(
+            person=person,
+            group=group,
+            defaults=defaults,
+        )
+        if created:
+            # Set default admins
+            Role = bhs_config.get_model('Role')
+            roles = Role.objects.filter(
+                human=human,
+                structure=structure,
+            )
+            if roles:
+                member.is_admin = True
+            else:
+                member.is_admin = True
+            member.save()
+        return member, created
+
+
+class EnrollmentManager(Manager):
+
+    def update_or_create_from_join(self, join, **kwargs):
+        if not join.status:
+            # Check to ensure it's the right record
+            raise ValueError("Must be canonical record.")
+        if join.structure.kind not in ['organization', 'district', 'chapter']:
+            # Enrollments only correspond to is_editable=True.
+            raise ValueError("Must be is_editable subscription.")
+        # Flatten join objects
+        subscription = join.subscription
+        membership = join.membership
+        structure = join.structure
+        human = join.subscription.human
+        # Get group
+        Organization = config.get_model('Organization')
+        organization, created = Organization.objects.update_or_create_from_structure(structure)
+        # Get person
+        Person = config.get_model('Person')
+        person, created = Person.objects.update_or_create_person_from_human(human)
+        # This assumes that only 'active' matches exactly.
+        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
+        # TODO perhaps add chapter voice parts?
+        try:
+            part_clean = join.vocal_part.strip().casefold()
+        except AttributeError:
+            part_clean = ''
+        part = getattr(self.model.PART, part_clean, None)
+        # Set the internal BHS fields
+        sub_status = getattr(self.model.SUB_STATUS, subscription.status)
+        mem_code = getattr(self.model.MEM_CODE, membership.mem_code)
+        mem_clean = membership.status.name.replace("-", "_")
+        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
+        bhs_pk = join.id
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'part': part,
+            'mem_status': mem_status,
+            'sub_status': sub_status,
+            'mem_code': mem_code,
             'bhs_pk': bhs_pk,
         }
         member, created = self.update_or_create(

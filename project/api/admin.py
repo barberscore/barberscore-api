@@ -41,6 +41,7 @@ from .models import (
     Contest,
     Contestant,
     Convention,
+    Enrollment,
     Entry,
     Grantor,
     Group,
@@ -640,7 +641,7 @@ class MemberAdmin(admin.ModelAdmin):
         'is_admin',
         'sub_status',
         'mem_status',
-        'code',
+        'mem_code',
     ]
     list_display = [
         'status',
@@ -652,7 +653,7 @@ class MemberAdmin(admin.ModelAdmin):
         'is_admin',
         'sub_status',
         'mem_status',
-        'code',
+        'mem_code',
     ]
     raw_id_fields = [
         'person',
@@ -666,6 +667,50 @@ class MemberAdmin(admin.ModelAdmin):
         'part',
         'group__kind',
         'is_admin',
+        'sub_status',
+        'mem_status',
+        'mem_code',
+    ]
+    readonly_fields = [
+        'sub_status',
+        'mem_status',
+        'mem_code',
+    ]
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    fields = [
+        'status',
+        # 'start_date',
+        # 'end_date',
+        'organization',
+        'person',
+        'bhs_pk',
+        'sub_status',
+        'mem_status',
+        'code',
+    ]
+    list_display = [
+        'status',
+        # 'start_date',
+        # 'end_date',
+        'organization',
+        'person',
+        'sub_status',
+        'mem_status',
+        'code',
+    ]
+    raw_id_fields = [
+        'person',
+        'organization',
+    ]
+    search_fields = [
+        'nomen',
+    ]
+    list_filter = [
+        'status',
+        'organization',
         'sub_status',
         'mem_status',
         'code',
@@ -761,6 +806,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         'end_date',
         'short_name',
         'location',
+        'mem_status',
         'bhs_id',
         'bhs_pk',
         # 'spots',
@@ -777,6 +823,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'mem_status',
     ]
 
     search_fields = [
