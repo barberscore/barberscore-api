@@ -49,7 +49,13 @@ from django.utils.timezone import now
 
 # Local
 from .fields import PathAndRename
-from .managers import UserManager
+from .managers import (
+    UserManager,
+    PersonManager,
+    GroupManager,
+    MemberManager,
+)
+
 from .services import (
     create_pdf,
     # send_entry,
@@ -2284,6 +2290,8 @@ class Group(TimeStampedModel):
     )
 
     # Internals
+    objects = GroupManager()
+
     class Meta:
         verbose_name_plural = 'groups'
 
@@ -2496,6 +2504,8 @@ class Member(TimeStampedModel):
     )
 
     # Internals
+    objects = MemberManager()
+
     class Meta:
         unique_together = (
             ('group', 'person',),
@@ -3614,6 +3624,8 @@ class Person(TimeStampedModel):
         return "{0}, {1}".format(self.last_name, self.first_name)
 
     # Internals
+    objects = PersonManager()
+
     class JSONAPIMeta:
         resource_name = "person"
 

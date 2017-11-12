@@ -135,6 +135,7 @@ class ConventionFactory(DjangoModelFactory):
         model = Convention
 
 
+@mute_signals(post_save)
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_archived = False
@@ -259,6 +260,7 @@ class ParticipantFactory(DjangoModelFactory):
         model = Participant
 
 
+@mute_signals(post_save)
 class PersonFactory(DjangoModelFactory):
     # name = Faker('name_male')
     first_name = Faker('first_name_male')
