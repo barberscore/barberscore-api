@@ -330,18 +330,19 @@ class MemberManager(Manager):
         code = getattr(self.model.CODE, membership.code)
         mem_clean = membership.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
+        bhs_pk = join.id
         # Set defaults and update
         defaults = {
-            'person': person,
-            'group': group,
             'status': status,
             'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
             'code': code,
+            'bhs_pk': bhs_pk,
         }
         member, created = self.update_or_create(
-            bhs_pk=join.id,
+            person=person,
+            group=group,
             defaults=defaults,
         )
         if created:
