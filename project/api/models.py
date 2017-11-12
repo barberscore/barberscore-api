@@ -53,6 +53,7 @@ from .managers import (
     UserManager,
     PersonManager,
     EnrollmentManager,
+    OrganizationManager,
     GroupManager,
     MemberManager,
 )
@@ -3186,6 +3187,8 @@ class Organization(TimeStampedModel):
         db_index=True,
         on_delete=models.SET_NULL,
     )
+
+    objects = OrganizationManager()
 
     # Internals
     class Meta:
