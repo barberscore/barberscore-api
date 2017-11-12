@@ -427,7 +427,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         '-year',
         '-season',
         'organization__org_sort',
-        'organization__short_name',
+        # 'organization__short_name',
     )
 
     save_on_top = True
@@ -804,7 +804,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         'code',
         'start_date',
         'end_date',
-        'short_name',
+        # 'short_name',
         'location',
         'mem_status',
         'bhs_id',
@@ -828,7 +828,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
-        'short_name',
+        # 'short_name',
     ]
 
     list_display = [
@@ -837,7 +837,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         # 'start_date',
         # 'end_date',
         'code',
-        'short_name',
+        # 'short_name',
         'bhs_id',
         'status',
     ]
@@ -1261,7 +1261,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         '-convention__year',
         '-convention__season',
         'convention__organization__org_sort',
-        'convention__organization__short_name',
+        # 'convention__organization__short_name',
         'kind',
     )
 

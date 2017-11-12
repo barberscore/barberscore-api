@@ -220,7 +220,6 @@ class OrganizationFactory(DjangoModelFactory):
     name = Faker('company')
     status = Organization.STATUS.active
     kind = Organization.KIND.international
-    short_name = Faker('word')
     code = ''
     start_date = None
     end_date = None

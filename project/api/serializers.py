@@ -516,7 +516,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
-            'short_name',
             'code',
             'start_date',
             'end_date',

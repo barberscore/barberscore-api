@@ -3046,13 +3046,6 @@ class Organization(TimeStampedModel):
         choices=KIND,
     )
 
-    short_name = models.CharField(
-        help_text="""
-            A short-form name for the resource.""",
-        blank=True,
-        max_length=255,
-    )
-
     code = models.CharField(
         help_text="""
             The chapter code.""",
