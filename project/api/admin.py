@@ -762,6 +762,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         'short_name',
         'location',
         'bhs_id',
+        'bhs_pk',
         # 'spots',
         'website',
         'facebook',

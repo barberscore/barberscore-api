@@ -2972,6 +2972,13 @@ class Organization(TimeStampedModel):
         null=True,
     )
 
+    bhs_pk = models.UUIDField(
+        null=True,
+        blank=True,
+        unique=True,
+        db_index=True,
+    )
+
     org_sort = models.IntegerField(
         unique=True,
         blank=True,

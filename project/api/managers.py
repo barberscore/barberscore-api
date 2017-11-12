@@ -186,7 +186,7 @@ class GroupManager(Manager):
             # Set the default organization. Can be overridden in BS
             Organization = config.get_model('Organization')
             organization = Organization.objects.get(
-                bhs_id=0,
+                bhs_pk=structure.parent.id,
             )
             group.organization = organization
             group.save()
