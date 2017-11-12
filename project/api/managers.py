@@ -466,7 +466,7 @@ class EnrollmentManager(Manager):
         organization, created = Organization.objects.update_or_create_from_structure(structure)
         # Get person
         Person = config.get_model('Person')
-        person, created = Person.objects.update_or_create_person_from_human(human)
+        person, created = Person.objects.update_or_create_from_human(human)
         # This assumes that only 'active' matches exactly.
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
         # TODO perhaps add chapter voice parts?
