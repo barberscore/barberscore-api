@@ -1,3 +1,5 @@
+import logging
+
 # Django
 from django.contrib.auth.models import BaseUserManager
 
@@ -10,6 +12,8 @@ from django.db.models import Manager
 
 from django.apps import apps as api_apps
 config = api_apps.get_app_config('api')
+bhs_config = api_apps.get_app_config('bhs')
+log = logging.getLogger(__name__)
 
 
 class GroupManager(Manager):
@@ -182,15 +186,14 @@ class GroupManager(Manager):
             # Set the default organization. Can be overridden in BS
             Organization = config.get_model('Organization')
             organization = Organization.objects.get(
-                bhs_pk=structure.parent.id,
+                bhs_id=0,
             )
             group.organization = organization
-            group = group.save()
+            group.save()
         return group, created
 
 
 class PersonManager(Manager):
-
     def update_or_create_person_from_human(self, human, **kwargs):
         first_name = human.first_name.strip()
         middle_name = human.middle_name.strip()
@@ -228,11 +231,17 @@ class PersonManager(Manager):
             part_clean = ""
         part = getattr(self.model.PART, part_clean, None)
         # Set the BHS Subscription
-        subscription = human.subscriptions.get(
-            smjoins__structure__bhs_id=1,
-            smjoins__status=True,
-        )
-        is_active = bool(subscription.status == 'active')
+        try:
+            subscription = human.subscriptions.get(
+                smjoins__structure__bhs_id=1,
+                smjoins__status=True,
+            )
+            is_active = bool(subscription.status == 'active')
+        except human.subscriptions.model.DoesNotExist:
+            is_active = False
+        except human.subscriptions.model.MultipleObjectsReturned:
+            log.error("Multiple Canonical Joins: {0}".format(human))
+            is_active = False
         if is_active:
             # If the subscription is active, make person active and set CT
             status = self.model.STATUS.active
@@ -262,7 +271,7 @@ class PersonManager(Manager):
                 )
                 person.bhs_pk = human.id
                 person.save()
-            except self.DoesNotExist:
+            except self.model.DoesNotExist:
                 # Otherwise, continue
                 pass
         defaults = {
@@ -309,7 +318,7 @@ class MemberManager(Manager):
         Person = config.get_model('Person')
         person, created = Person.objects.update_or_create_person_from_human(human)
         # This assumes that only 'active' matches exactly.
-        status = getattr(self.model.STATUS, subscription.status, 'inactive')
+        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
         # TODO perhaps add chapter voice parts?
         try:
             part_clean = join.vocal_part.strip().casefold()
@@ -337,16 +346,16 @@ class MemberManager(Manager):
         )
         if created:
             # Set default admins
-            Role = config.get_model('Role')
-            try:
-                Role.objects.get(
-                    human=human,
-                    structure=structure,
-                )
+            Role = bhs_config.get_model('Role')
+            roles = Role.objects.filter(
+                human=human,
+                structure=structure,
+            )
+            if roles:
                 member.is_admin = True
-                member.save()
-            except Role.DoesNotExist:
-                pass
+            else:
+                member.is_admin = True
+            member.save()
         return member, created
 
 

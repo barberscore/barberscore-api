@@ -2531,14 +2531,14 @@ class Member(TimeStampedModel):
                 )
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.person,
-                    self.group,
-                ]
-            )
-        )
+        # self.nomen = " ".join(
+        #     map(
+        #         lambda x: smart_text(x), [
+        #             self.person,
+        #             self.group,
+        #         ]
+        #     )
+        # )
         super().save(*args, **kwargs)
 
     # Permissions

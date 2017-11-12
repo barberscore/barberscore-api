@@ -53,13 +53,14 @@ def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
             is_delta = any([
                 instance.full_name != user.name,
                 instance.email != user.email,
-                instance.is_active == user.is_active,
+                is_active == user.is_active,
             ])
         if created:
-            User.objects.create_user(
-                person=instance,
-                is_active=is_active,
-            )
+            if instance.email:
+                User.objects.create_user(
+                    person=instance,
+                    is_active=is_active,
+                )
         else:
             if instance.email:
                 if not user:
@@ -107,7 +108,10 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                         return
                     else:
                         raise(e)
-                instance.auth0_id = response['user_id']
+                try:
+                    instance.auth0_id = response['user_id']
+                except KeyError:
+                    return
                 instance.save()
             else:
                 token = get_auth0_token()
