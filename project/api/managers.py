@@ -477,7 +477,7 @@ class EnrollmentManager(Manager):
         # part = getattr(self.model.PART, part_clean, None)
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
-        mem_code = getattr(self.model.MEM_CODE, membership.mem_code)
+        mem_code = getattr(self.model.MEM_CODE, membership.code)
         mem_clean = membership.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
         bhs_pk = join.id
