@@ -470,11 +470,11 @@ class EnrollmentManager(Manager):
         # This assumes that only 'active' matches exactly.
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
         # TODO perhaps add chapter voice parts?
-        try:
-            part_clean = join.vocal_part.strip().casefold()
-        except AttributeError:
-            part_clean = ''
-        part = getattr(self.model.PART, part_clean, None)
+        # try:
+        #     part_clean = join.vocal_part.strip().casefold()
+        # except AttributeError:
+        #     part_clean = ''
+        # part = getattr(self.model.PART, part_clean, None)
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
         mem_code = getattr(self.model.MEM_CODE, membership.mem_code)
@@ -484,30 +484,29 @@ class EnrollmentManager(Manager):
         # Set defaults and update
         defaults = {
             'status': status,
-            'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
             'mem_code': mem_code,
             'bhs_pk': bhs_pk,
         }
-        member, created = self.update_or_create(
+        enrollment, created = self.update_or_create(
             person=person,
-            group=group,
+            organization=organization,
             defaults=defaults,
         )
-        if created:
-            # Set default admins
-            Role = bhs_config.get_model('Role')
-            roles = Role.objects.filter(
-                human=human,
-                structure=structure,
-            )
-            if roles:
-                member.is_admin = True
-            else:
-                member.is_admin = True
-            member.save()
-        return member, created
+        # if created:
+        #     # Set default admins
+        #     Role = bhs_config.get_model('Role')
+        #     roles = Role.objects.filter(
+        #         human=human,
+        #         structure=structure,
+        #     )
+        #     if roles:
+        #         member.is_admin = True
+        #     else:
+        #         member.is_admin = True
+        #     member.save()
+        return enrollment, created
 
 
 class UserManager(BaseUserManager):
