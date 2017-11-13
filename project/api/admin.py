@@ -21,7 +21,7 @@ from .inlines import (
     ConventionInline,
     EntryInline,
     GrantorInline,
-    GroupInline,
+    # GroupInline,
     MemberInline,
     OfficerInline,
     PanelistInline,
@@ -526,6 +526,7 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
         ('bhs_id', 'bhs_pk',),
         'organization',
+        ('international', 'district', 'division'),
         'code',
         'mem_status',
         # 'start_date',
@@ -547,6 +548,9 @@ class GroupAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'mem_status',
+        # 'international',
+        # 'district',
+        # 'division',
     ]
 
     search_fields = [
@@ -569,6 +573,9 @@ class GroupAdmin(admin.ModelAdmin):
     ]
     list_select_related = [
         'organization',
+        'international',
+        'district',
+        'division',
     ]
     inlines = [
         MemberInline,
@@ -592,6 +599,9 @@ class GroupAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
+        'international',
+        'district',
+        'division',
     ]
 
     # raw_id_fields = [
@@ -843,7 +853,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     inlines = [
         OfficerInline,
         AwardInline,
-        GroupInline,
+        # GroupInline,
         ConventionInline,
     ]
 

@@ -11,7 +11,7 @@ from .models import (
     Convention,
     Entry,
     Grantor,
-    Group,
+    # Group,
     Member,
     Officer,
     Panelist,
@@ -202,23 +202,23 @@ class GrantorInline(admin.TabularInline):
     ]
 
 
-class GroupInline(admin.TabularInline):
-    model = Group
-    fields = [
-        'name',
-        'organization',
-        'kind',
-        'bhs_id',
-        'status',
-    ]
-    ordering = [
-        'nomen',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
+# class GroupInline(admin.TabularInline):
+#     model = Group
+#     fields = [
+#         'name',
+#         'organization',
+#         'kind',
+#         'bhs_id',
+#         'status',
+#     ]
+#     ordering = [
+#         'nomen',
+#     ]
+#     show_change_link = True
+#     extra = 0
+#     classes = [
+#         'collapse',
+#     ]
 
 
 class MemberInline(admin.TabularInline):

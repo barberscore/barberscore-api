@@ -2459,6 +2459,35 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    # Group Denormalizations
+    international = models.ForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+        editable=False,
+        related_name='groups_int',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+    district = models.ForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+        editable=False,
+        related_name='groups_dis',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+    division = models.ForeignKey(
+        'Organization',
+        null=True,
+        blank=True,
+        editable=False,
+        related_name='groups_div',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     objects = GroupManager()
 
