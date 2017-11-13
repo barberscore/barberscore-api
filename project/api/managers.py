@@ -16,6 +16,50 @@ bhs_config = api_apps.get_app_config('bhs')
 log = logging.getLogger(__name__)
 
 
+class EnrollmentManager(Manager):
+
+    def update_or_create_from_join(self, join, **kwargs):
+        if not join.status:
+            # Check to ensure it's the right record
+            raise ValueError("Must be canonical record.")
+        if not join.subscription.items_editable:
+            # Enrollments only correspond to is_editable=True.
+            raise ValueError("Must be is_editable subscription.")
+        # Flatten join objects
+        subscription = join.subscription
+        membership = join.membership
+        structure = join.structure
+        human = join.subscription.human
+        # Get group
+        Organization = config.get_model('Organization')
+        organization, created = Organization.objects.update_or_create_from_structure(structure)
+        # Get person
+        Person = config.get_model('Person')
+        person, created = Person.objects.update_or_create_from_human(human)
+        # This assumes that only 'active' matches exactly.
+        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
+        # Set the internal BHS fields
+        sub_status = getattr(self.model.SUB_STATUS, subscription.status)
+        mem_code = getattr(self.model.MEM_CODE, membership.code)
+        mem_clean = membership.status.name.replace("-", "_")
+        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
+        bhs_pk = join.id
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'mem_status': mem_status,
+            'sub_status': sub_status,
+            'mem_code': mem_code,
+            'bhs_pk': bhs_pk,
+        }
+        enrollment, created = self.update_or_create(
+            person=person,
+            organization=organization,
+            defaults=defaults,
+        )
+        return enrollment, created
+
+
 class GroupManager(Manager):
 
     def update_or_create_from_structure(self, structure, **kwargs):
@@ -143,7 +187,7 @@ class GroupManager(Manager):
             "1871": "The Suntones",
             "722": "Evans Quartet",
             "724": "Four Pitchikers",
-            "801366": "Gaynotes",
+            "726": "Gaynotes",
             "729": "Lads of Enchantment",
             "731": "Confederates",
             "732": "Four Hearsemen",
@@ -445,68 +489,6 @@ class MemberManager(Manager):
                 member.is_admin = True
             member.save()
         return member, created
-
-
-class EnrollmentManager(Manager):
-
-    def update_or_create_from_join(self, join, **kwargs):
-        if not join.status:
-            # Check to ensure it's the right record
-            raise ValueError("Must be canonical record.")
-        if join.structure.kind not in ['organization', 'district', 'chapter']:
-            # Enrollments only correspond to is_editable=True.
-            raise ValueError("Must be is_editable subscription.")
-        # Flatten join objects
-        subscription = join.subscription
-        membership = join.membership
-        structure = join.structure
-        human = join.subscription.human
-        # Get group
-        Organization = config.get_model('Organization')
-        organization, created = Organization.objects.update_or_create_from_structure(structure)
-        # Get person
-        Person = config.get_model('Person')
-        person, created = Person.objects.update_or_create_from_human(human)
-        # This assumes that only 'active' matches exactly.
-        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
-        # TODO perhaps add chapter voice parts?
-        # try:
-        #     part_clean = join.vocal_part.strip().casefold()
-        # except AttributeError:
-        #     part_clean = ''
-        # part = getattr(self.model.PART, part_clean, None)
-        # Set the internal BHS fields
-        sub_status = getattr(self.model.SUB_STATUS, subscription.status)
-        mem_code = getattr(self.model.MEM_CODE, membership.code)
-        mem_clean = membership.status.name.replace("-", "_")
-        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
-        bhs_pk = join.id
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'mem_status': mem_status,
-            'sub_status': sub_status,
-            'mem_code': mem_code,
-            'bhs_pk': bhs_pk,
-        }
-        enrollment, created = self.update_or_create(
-            person=person,
-            organization=organization,
-            defaults=defaults,
-        )
-        # if created:
-        #     # Set default admins
-        #     Role = bhs_config.get_model('Role')
-        #     roles = Role.objects.filter(
-        #         human=human,
-        #         structure=structure,
-        #     )
-        #     if roles:
-        #         member.is_admin = True
-        #     else:
-        #         member.is_admin = True
-        #     member.save()
-        return enrollment, created
 
 
 class UserManager(BaseUserManager):
