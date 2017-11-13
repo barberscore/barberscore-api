@@ -9,9 +9,10 @@ from .models import (
     Contest,
     Contestant,
     Convention,
+    Enrollment,
     Entry,
     Grantor,
-    # Group,
+    Group,
     Member,
     Officer,
     Panelist,
@@ -157,6 +158,28 @@ class ConventionInline(admin.TabularInline):
     ]
 
 
+class EnrollmentInline(admin.TabularInline):
+    model = Enrollment
+    fields = [
+        'person',
+        'organization',
+        'status',
+    ]
+    raw_id_fields = [
+        'person',
+        'organization',
+    ]
+    ordering = (
+        'person__last_name',
+        'person__first_name',
+    )
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+
+
 class EntryInline(admin.TabularInline):
     model = Entry
     fields = [
@@ -202,23 +225,24 @@ class GrantorInline(admin.TabularInline):
     ]
 
 
-# class GroupInline(admin.TabularInline):
-#     model = Group
-#     fields = [
-#         'name',
-#         'organization',
-#         'kind',
-#         'bhs_id',
-#         'status',
-#     ]
-#     ordering = [
-#         'nomen',
-#     ]
-#     show_change_link = True
-#     extra = 0
-#     classes = [
-#         'collapse',
-#     ]
+class GroupInline(admin.TabularInline):
+    model = Group
+    fields = [
+        'name',
+        'organization',
+        'kind',
+        'bhs_id',
+        'status',
+    ]
+    fk_name = 'organization'
+    ordering = [
+        'nomen',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
 
 
 class MemberInline(admin.TabularInline):
