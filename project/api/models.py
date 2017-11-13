@@ -3078,7 +3078,7 @@ class Organization(TimeStampedModel):
 
     code = models.CharField(
         help_text="""
-            The chapter code.""",
+            The organization code.""",
         max_length=255,
         blank=True,
     )
@@ -3183,6 +3183,7 @@ class Organization(TimeStampedModel):
 
     mem_status = models.IntegerField(
         choices=MEM_STATUS,
+        editable=False,
         null=True,
         blank=True,
     )

@@ -527,11 +527,8 @@ class GroupAdmin(admin.ModelAdmin):
         ('bhs_id', 'bhs_pk',),
         'organization',
         ('international', 'district', 'division'),
-        'code',
-        'mem_status',
         # 'start_date',
         # 'end_date',
-        'short_name',
         'location',
         'email',
         'phone',
@@ -547,7 +544,6 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
-        'mem_status',
         # 'international',
         # 'district',
         # 'division',
@@ -555,7 +551,6 @@ class GroupAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
-        'short_name',
     ]
 
     list_display = [
@@ -804,17 +799,15 @@ class OrganizationAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'status',
-        'parent',
         'kind',
+        'parent',
         'code',
         'start_date',
         'end_date',
-        # 'short_name',
         'location',
         'mem_status',
         'bhs_id',
         'bhs_pk',
-        # 'spots',
         'website',
         'facebook',
         'twitter',
@@ -833,28 +826,37 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
-        # 'short_name',
     ]
 
     list_display = [
         'nomen',
         'kind',
-        # 'start_date',
-        # 'end_date',
         'code',
-        # 'short_name',
         'bhs_id',
+        'bhs_pk',
+        'mem_status',
         'status',
     ]
 
-    list_editable = [
-        'bhs_id',
+    readonly_fields = [
+        'nomen',
+        'mem_status',
     ]
+
+    raw_id_fields = [
+        'parent',
+    ]
+
+    ordering = (
+        'org_sort',
+        'name',
+    )
+
     inlines = [
         OfficerInline,
-        AwardInline,
+        # AwardInline,
         # GroupInline,
-        ConventionInline,
+        # ConventionInline,
     ]
 
     # quartet_inlines = [
@@ -871,19 +873,6 @@ class OrganizationAdmin(admin.ModelAdmin):
     #     # EntryInline,
     #     # MemberInline,
     # ]
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    raw_id_fields = [
-        'parent',
-    ]
-
-    ordering = (
-        'org_sort',
-        'name',
-    )
 
     # def get_inline_instances(self, request, obj=None):
     #     inline_instances = []

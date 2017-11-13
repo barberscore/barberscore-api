@@ -65,10 +65,6 @@
       "value": "barberscore-dev.auth0.com",
       "required": true
     },
-    "AUTH0_PUBLIC_KEY": {
-      "description": "Auth0 X509 Certificate for RS256 encryption.  Get from admin.",
-      "required": true
-    },
     "BUGSNAG_API_KEY": {
       "description": "Bugsnag notifier ID.",
       "value": "a4f3b6f91a9a694b0f81bee5baebf71d",
