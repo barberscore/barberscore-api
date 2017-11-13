@@ -547,7 +547,6 @@ class GroupAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'mem_status',
-        'organization',
     ]
 
     search_fields = [
@@ -568,16 +567,9 @@ class GroupAdmin(admin.ModelAdmin):
         'bhs_pk',
         'status',
     ]
-
-    list_editable = [
-        'bhs_id',
-        'bhs_pk',
+    list_select_related = [
         'organization',
-        'kind',
-        'location',
-        'status',
     ]
-
     inlines = [
         MemberInline,
         RepertoryInline,
@@ -681,6 +673,7 @@ class MemberAdmin(admin.ModelAdmin):
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
     fields = [
+        'id',
         'status',
         # 'start_date',
         # 'end_date',
@@ -692,7 +685,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         'mem_code',
     ]
     list_display = [
-        'status',
+        'nomen',
         # 'start_date',
         # 'end_date',
         'organization',
@@ -700,6 +693,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         'sub_status',
         'mem_status',
         'mem_code',
+        'status',
     ]
     raw_id_fields = [
         'person',
@@ -710,12 +704,13 @@ class EnrollmentAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'status',
-        'organization',
+        # 'organization',
         'sub_status',
         'mem_status',
         'mem_code',
     ]
     readonly_fields = [
+        'id',
         'sub_status',
         'mem_status',
         'mem_code',
