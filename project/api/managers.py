@@ -113,6 +113,7 @@ class GroupManager(Manager):
             email = ''
         phone = structure.phone.strip()
         bhs_id = structure.bhs_id
+        start_date = structure.established_date
         mem_clean = structure.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
         # Monkey-patch for the AIC
