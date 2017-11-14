@@ -61,7 +61,6 @@ class EnrollmentManager(Manager):
 
 
 class GroupManager(Manager):
-
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('chapter', 'chorus')
@@ -79,16 +78,9 @@ class GroupManager(Manager):
             else:
                 # Otherwise, call unknown.
                 name = 'UNKNOWN'
-            # Quartets do not have a code.
-            code = ''
         elif kind == self.model.KIND.chorus:
             # set up the chorus name
-            name = "{0} [{1}]".format(
-                structure.chorus_name.strip(),
-                structure.name.strip(),
-            )
-            # And the chapter code
-            code = structure.chapter_code
+            name = structure.chorus_name.strip(),
         else:
             raise ValueError("Can only update choruses and quartets")
         # Map to the internal designation
@@ -226,7 +218,16 @@ class GroupManager(Manager):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        if created:
+        # Set the default organization UNLESS there is a division
+        DISTPLUS = [
+            'EVG',
+            'FWD',
+            'LOL',
+            'MAD',
+            'NED',
+            'SWD',
+        ]
+        if created and structure.parent.chapter_code not in DISTPLUS:
             # Set the default organization. Can be overridden in BS
             Organization = config.get_model('Organization')
             organization = Organization.objects.get(
@@ -238,10 +239,10 @@ class GroupManager(Manager):
 
 
 class OrganizationManager(Manager):
-
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('organization', 'international')
+        # This will skip quartets
         kind = getattr(self.model.KIND, kind_clean, None)
         if not kind:
             raise ValueError("Can only update organizations")
@@ -298,8 +299,17 @@ class OrganizationManager(Manager):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        if created:
-            # Set the default organization. Can be overridden in BS
+        # Set the default organization UNLESS there is a division
+        DISTPLUS = [
+            'EVG',
+            'FWD',
+            'LOL',
+            'MAD',
+            'NED',
+            'SWD',
+        ]
+        if created and structure.parent.chapter_code not in DISTPLUS:
+            # Can be overridden in BS, so only set once.
             Organization = config.get_model('Organization')
             parent = Organization.objects.get(
                 bhs_pk=structure.parent.id,
