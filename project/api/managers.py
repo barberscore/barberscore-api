@@ -320,6 +320,44 @@ class OrganizationManager(Manager):
 
 
 class PersonManager(Manager):
+    def validate_bhs_id_from_human(self, human, **kwargs):
+        person = self.get(
+            bhs_pk=human.id,
+        )
+        bhs_id = human.bhs_id
+        if person.bhs_id == bhs_id:
+            return
+        else:
+            try:
+                duplicate = self.get(
+                    bhs_id=bhs_id,
+                )
+            except self.model.DoesNotExist:
+                duplicate = None
+            return person, duplicate
+
+    def validate_email_from_human(self, human, **kwargs):
+        email = human.email.strip()
+        try:
+            validate_email(email)
+        except ValidationError:
+            email = None
+        if not email:
+            raise ValueError("No valid email to check.")
+        person = self.get(
+            bhs_pk=human.id,
+        )
+        if person.email == email:
+            return
+        else:
+            try:
+                duplicate = self.get(
+                    email=email,
+                )
+            except self.model.DoesNotExist:
+                duplicate = None
+            return person, duplicate
+
     def update_bhs_pk_from_human(self, human, **kwargs):
         bhs_id = human.bhs_id
         email = human.email.strip()
