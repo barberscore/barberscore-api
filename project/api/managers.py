@@ -335,8 +335,8 @@ class PersonManager(Manager):
             email = None
         try:
             person = self.get(
-                Q(bhs_pk=None) &
-                (Q(bhs_id=bhs_id) | Q(email=email))
+                (Q(bhs_pk=None) & Q(bhs_id=bhs_id)) |
+                (Q(bhs_pk=None) & Q(email=email) & ~Q(email=None))
             )
         except self.model.DoesNotExist:
             return
