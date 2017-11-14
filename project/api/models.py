@@ -40,10 +40,7 @@ from django.core.validators import (
 from django.db import (
     models,
 )
-from email_validator import (
-    EmailNotValidError,
-    validate_email,
-)
+from django.core.validators import validate_email
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import get_template
 from django.utils.encoding import smart_text
@@ -3679,7 +3676,6 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         unique=True,
-        editable=False,
     )
 
     phone = models.CharField(
@@ -3870,10 +3866,7 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        try:
-            validate_email(self.email)
-        except EmailNotValidError as e:
-            raise ValidationError(e)
+        validate_email(self.email)
         if hasattr(self, 'user') and not self.email:
             raise ValidationError(
                 {'email': 'User account must have email.'}

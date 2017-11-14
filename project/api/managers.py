@@ -3,10 +3,8 @@ import logging
 # Django
 from django.contrib.auth.models import BaseUserManager
 
-from email_validator import (
-    EmailNotValidError,
-    validate_email,
-)
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from django.db.models import Manager
 
@@ -108,16 +106,12 @@ class GroupManager(Manager):
         }
         status_clean = STATUS[str(structure.status)]
         status = getattr(self.model.STATUS, status_clean)
-        start_date = structure.established_date
+        email = structure.email.strip()
         try:
-            v = validate_email(structure.email)
-            email = v["email"].lower()
-        except EmailNotValidError:
+            validate_email(email)
+        except ValidationError:
             email = ''
-        if structure.phone:
-            phone = structure.phone
-        else:
-            phone = ''
+        phone = structure.phone.strip()
         bhs_id = structure.bhs_id
         mem_clean = structure.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
@@ -278,15 +272,12 @@ class OrganizationManager(Manager):
         status_clean = STATUS[str(structure.status)]
         status = getattr(self.model.STATUS, status_clean)
         start_date = structure.established_date
+        email = structure.email.strip()
         try:
-            v = validate_email(structure.email)
-            email = v["email"].lower()
-        except EmailNotValidError:
+            validate_email(email)
+        except ValidationError:
             email = ''
-        if structure.phone:
-            phone = structure.phone
-        else:
-            phone = ''
+        phone = structure.phone.strip()
         # And the chapter code
         code = structure.chapter_code
         bhs_id = structure.bhs_id
@@ -330,10 +321,10 @@ class OrganizationManager(Manager):
 class PersonManager(Manager):
     def update_bhs_pk_from_human(self, human, **kwargs):
         bhs_id = human.bhs_id
+        email = human.email.strip()
         try:
-            v = validate_email(human.email.strip())
-            email = v["email"].lower()
-        except EmailNotValidError:
+            validate_email(email)
+        except ValidationError:
             email = None
         try:
             person = self.get(
@@ -360,10 +351,10 @@ class PersonManager(Manager):
         nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
         if nick_name == first_name:
             nick_name = ""
+        email = human.email.strip()
         try:
-            v = validate_email(human.email.strip())
-            email = v["email"].lower()
-        except EmailNotValidError:
+            validate_email(email)
+        except ValidationError:
             email = None
         birth_date = human.birth_date
         if human.phone:
