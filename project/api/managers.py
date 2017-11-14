@@ -10,6 +10,8 @@ from email_validator import (
 
 from django.db.models import Manager
 
+from django.db.models import Q
+
 from django.apps import apps as api_apps
 config = api_apps.get_app_config('api')
 bhs_config = api_apps.get_app_config('bhs')
@@ -207,7 +209,6 @@ class GroupManager(Manager):
             'name': name,
             'status': status,
             'kind': kind,
-            'code': code,
             'start_date': start_date,
             'email': email,
             'phone': phone,
@@ -320,36 +321,24 @@ class OrganizationManager(Manager):
 
 
 class PersonManager(Manager):
-
-        # # Check to see if BHS ID exists already.
-        # try:
-        #     # If it does, update the BHS PK
-        #     person = self.get(
-        #         bhs_pk=None,
-        #         bhs_id=bhs_id,
-        #     )
-        #     person.bhs_pk = human.id
-        #     person.save()
-        # except self.model.DoesNotExist:
-        #     # Otherwise, continue
-        #     pass
-        # # Check to see if the email exists
-        # if email:
-        #     try:
-        #         # If it does, match to PK
-        #         person = self.get(
-        #             bhs_pk=None,
-        #             email=email,
-        #         )
-        #         person.bhs_pk = human.id
-        #         person.save()
-        #     except self.model.DoesNotExist:
-        #         # Otherwise, continue
-        #         pass
-
-
-
-
+    def update_bhs_pk_from_human(self, human, **kwargs):
+        bhs_id = human.bhs_id
+        try:
+            v = validate_email(human.email.strip())
+            email = v["email"].lower()
+        except EmailNotValidError:
+            email = None
+        try:
+            person = self.get(
+                Q(bhs_pk=None),
+                Q(bhs_id=bhs_id) | Q(email=email),
+            )
+        except self.model.DoesNotExist:
+            return
+        # Check to see if the email exists
+        person.bhs_pk = human.id
+        person.save()
+        return person
 
     def update_or_create_from_human(self, human, **kwargs):
         first_name = human.first_name.strip()
@@ -407,7 +396,7 @@ class PersonManager(Manager):
         )
         return person, created
 
-    def update_or_create_from_join(self, join, **kwargs):
+    def update_from_join(self, join, **kwargs):
         # Set the BHS Subscription
         if not join.status:
             # Check to ensure it's the right record
@@ -415,8 +404,14 @@ class PersonManager(Manager):
         if join.structure.kind != 'organization':
             # Only update organization records.
             raise ValueError("Must be organization record.")
-        subscription = join.subscription
         human = join.subscription.human
+        try:
+            person = self.get(
+                bhs_pk=human.id,
+            )
+        except self.model.DoesNotExist:
+            raise ValueError("Can not match join to person.")
+        subscription = join.subscription
         is_active = bool(subscription.status == 'active')
         if is_active:
             # If the subscription is active, make person active and set CT
@@ -427,19 +422,13 @@ class PersonManager(Manager):
             status = self.model.STATUS.inactive
             current_through = None
         # Check to see if BHS ID exists already.
-        defaults = {
-            'status': status,
-            'current_through': current_through,
-        }
-        person, created = self.update_or_create(
-            bhs_pk=human.id,
-            defaults=defaults,
-        )
-        return person, created
+        person.status = status
+        person.current_through = current_through
+        person.save()
+        return person
 
 
 class MemberManager(Manager):
-
     def update_or_create_from_join(self, join, **kwargs):
         if not join.status:
             # Check to ensure it's the right record
@@ -494,8 +483,6 @@ class MemberManager(Manager):
                 structure=structure,
             )
             if roles:
-                member.is_admin = True
-            else:
                 member.is_admin = True
             member.save()
         return member, created
