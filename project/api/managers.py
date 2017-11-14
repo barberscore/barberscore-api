@@ -19,7 +19,6 @@ log = logging.getLogger(__name__)
 
 
 class EnrollmentManager(Manager):
-
     def update_or_create_from_join(self, join, **kwargs):
         if not join.status:
             # Check to ensure it's the right record
@@ -220,22 +219,28 @@ class GroupManager(Manager):
             defaults=defaults,
         )
         # Set the default organization UNLESS there is a division
-        DISTPLUS = [
-            'EVG',
-            'FWD',
-            'LOL',
-            'MAD',
-            'NED',
-            'SWD',
-        ]
-        if created and structure.parent.chapter_code not in DISTPLUS:
-            # Set the default organization. Can be overridden in BS
-            Organization = config.get_model('Organization')
+        Organization = config.get_model('Organization')
+        if structure.kind == 'chapter':
             organization = Organization.objects.get(
-                bhs_pk=structure.parent.id,
+                bhs_pk=structure.id,
+                kind=Organization.KIND.chapter,
             )
-            group.organization = organization
-            group.save()
+        else:
+            DISTPLUS = [
+                'EVG',
+                'FWD',
+                'LOL',
+                'MAD',
+                'NED',
+                'SWD',
+            ]
+            if created and structure.parent.chapter_code not in DISTPLUS:
+                # Set the default organization. Can be overridden in BS
+                organization = Organization.objects.get(
+                    bhs_pk=structure.parent.id,
+                )
+        group.organization = organization
+        group.save()
         return group, created
 
 
@@ -443,10 +448,10 @@ class MemberManager(Manager):
         human = join.subscription.human
         # Get group
         Group = config.get_model('Group')
-        group, created = Group.objects.update_or_create_group_from_structure(structure)
+        group, created = Group.objects.update_or_create_from_structure(structure)
         # Get person
         Person = config.get_model('Person')
-        person, created = Person.objects.update_or_create_person_from_human(human)
+        person, created = Person.objects.update_or_create_from_human(human)
         # This assumes that only 'active' matches exactly.
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
         # TODO perhaps add chapter voice parts?
