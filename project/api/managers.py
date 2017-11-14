@@ -348,6 +348,7 @@ class PersonManager(Manager):
             person.save()
         except IntegrityError:
             if email:
+                person.bhs_pk = None
                 person.email = None
                 person.save()
         return person
