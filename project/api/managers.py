@@ -215,14 +215,8 @@ class GroupManager(Manager):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        # Set the default organization UNLESS there is a division
-        Organization = config.get_model('Organization')
-        if structure.kind == 'chapter':
-            organization = Organization.objects.get(
-                bhs_pk=structure.id,
-                kind=Organization.KIND.chapter,
-            )
-        else:
+        # Set the default organization on create
+        if created:
             DISTPLUS = [
                 'EVG',
                 'FWD',
@@ -231,13 +225,19 @@ class GroupManager(Manager):
                 'NED',
                 'SWD',
             ]
-            if created and structure.parent.chapter_code not in DISTPLUS:
-                # Set the default organization. Can be overridden in BS
+            Organization = config.get_model('Organization')
+            if kind == self.model.KIND.chorus:
+                # Set chapter as parent organization
+                organization = Organization.objects.get(
+                    bhs_pk=structure.id,
+                )
+            elif structure.parent.chapter_code not in DISTPLUS:
+                # Set if quartet in district w/o divisions
                 organization = Organization.objects.get(
                     bhs_pk=structure.parent.id,
                 )
-        group.organization = organization
-        group.save()
+            group.organization = organization
+            group.save()
         return group, created
 
 
