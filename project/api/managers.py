@@ -12,6 +12,8 @@ from django.db.models import Manager
 
 from django.db.models import Q
 
+from django.db import IntegrityError
+
 from django.apps import apps as api_apps
 config = api_apps.get_app_config('api')
 bhs_config = api_apps.get_app_config('bhs')
@@ -342,7 +344,12 @@ class PersonManager(Manager):
             return
         # Check to see if the email exists
         person.bhs_pk = human.id
-        person.save()
+        try:
+            person.save()
+        except IntegrityError:
+            if email:
+                person.email = None
+                person.save()
         return person
 
     def update_or_create_from_human(self, human, **kwargs):
