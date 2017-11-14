@@ -228,15 +228,17 @@ class GroupManager(Manager):
             Organization = config.get_model('Organization')
             if kind == self.model.KIND.chorus:
                 # Set chapter as parent organization
-                organization = Organization.objects.get(
+                group.organization = Organization.objects.get(
                     bhs_pk=structure.id,
                 )
             elif structure.parent.chapter_code not in DISTPLUS:
                 # Set if quartet in district w/o divisions
-                organization = Organization.objects.get(
+                group.organization = Organization.objects.get(
                     bhs_pk=structure.parent.id,
                 )
-            group.organization = organization
+            else:
+                group.organization = None
+                group.status = getattr(self.model.STATUS, 'new')
             group.save()
         return group, created
 
@@ -308,13 +310,17 @@ class OrganizationManager(Manager):
             'NED',
             'SWD',
         ]
-        if created and structure.parent.chapter_code not in DISTPLUS:
-            # Can be overridden in BS, so only set once.
-            Organization = config.get_model('Organization')
-            parent = Organization.objects.get(
-                bhs_pk=structure.parent.id,
-            )
-            organization.parent = parent
+        if created:
+            if structure.parent.chapter_code not in DISTPLUS:
+                # Can be overridden in BS, so only set once.
+                Organization = config.get_model('Organization')
+                parent = Organization.objects.get(
+                    bhs_pk=structure.parent.id,
+                )
+                organization.parent = parent
+            else:
+                organization.parent = parent
+                organization.status = getattr(self.model.STATUS, 'new')
             organization.save()
         return organization, created
 
