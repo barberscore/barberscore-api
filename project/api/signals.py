@@ -44,39 +44,39 @@ def entry_post_save(sender, instance=None, created=False, raw=False, **kwargs):
                 )
 
 
-@receiver(post_save, sender=Person)
-def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    if not raw:
-        is_active = bool(instance.status > 0)
-        user = getattr(instance, 'user', None)
-        if user:
-            is_delta = any([
-                instance.full_name != user.name,
-                instance.email != user.email,
-                is_active == user.is_active,
-            ])
-        if created:
-            if instance.email:
-                User.objects.create_user(
-                    person=instance,
-                    is_active=is_active,
-                )
-        else:
-            if instance.email:
-                if not user:
-                    User.objects.create_user(
-                        person=instance,
-                        is_active=is_active,
-                    )
-                else:
-                    if is_delta:
-                        instance.user.name = instance.full_name
-                        instance.user.email = instance.email
-                        instance.user.is_active = is_active
-                        instance.user.save()
-            else:
-                if user:
-                    user.delete()
+# @receiver(post_save, sender=Person)
+# def person_post_save(sender, instance=None, created=False, raw=False, **kwargs):
+#     if not raw:
+#         is_active = bool(instance.status > 0)
+#         user = getattr(instance, 'user', None)
+#         if user:
+#             is_delta = any([
+#                 instance.full_name != user.name,
+#                 instance.email != user.email,
+#                 is_active == user.is_active,
+#             ])
+#         if created:
+#             if instance.email:
+#                 User.objects.create_user(
+#                     person=instance,
+#                     is_active=is_active,
+#                 )
+#         else:
+#             if instance.email:
+#                 if not user:
+#                     User.objects.create_user(
+#                         person=instance,
+#                         is_active=is_active,
+#                     )
+#                 else:
+#                     if is_delta:
+#                         instance.user.name = instance.full_name
+#                         instance.user.email = instance.email
+#                         instance.user.is_active = is_active
+#                         instance.user.save()
+#             else:
+#                 if user:
+#                     user.delete()
 
 
 @receiver(post_save, sender=User)
