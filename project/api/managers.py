@@ -110,7 +110,7 @@ class GroupManager(Manager):
         try:
             validate_email(email)
         except ValidationError:
-            email = ''
+            email = ""
         phone = structure.phone.strip()
         bhs_id = structure.bhs_id
         start_date = structure.established_date
@@ -279,7 +279,7 @@ class OrganizationManager(Manager):
         try:
             validate_email(email)
         except ValidationError:
-            email = ''
+            email = ""
         phone = structure.phone.strip()
         # And the chapter code
         code = structure.chapter_code
@@ -340,7 +340,12 @@ class PersonManager(Manager):
                 )
             except self.model.DoesNotExist:
                 duplicate = None
-            return person, duplicate
+            raise ValidationError(
+                "{0} Duplicate of: {1}".format(
+                    person,
+                    duplicate,
+                )
+            )
 
     def validate_email_from_human(self, human, **kwargs):
         email = human.email.strip()
@@ -349,7 +354,7 @@ class PersonManager(Manager):
         except ValidationError:
             email = None
         if not email:
-            raise ValueError("No valid email to check.")
+            raise ValueError("Email mismatch for {0}".format(human))
         person = self.get(
             bhs_pk=human.id,
         )
@@ -362,7 +367,12 @@ class PersonManager(Manager):
                 )
             except self.model.DoesNotExist:
                 duplicate = None
-            return person, duplicate
+            raise ValidationError(
+                "{0} Duplicate of: {1}".format(
+                    person,
+                    duplicate,
+                )
+            )
 
     def update_bhs_pk_from_human(self, human, **kwargs):
         bhs_id = human.bhs_id
@@ -396,11 +406,12 @@ class PersonManager(Manager):
         nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
         if nick_name == first_name:
             nick_name = ""
+        bhs_id = human.bhs_id
         email = human.email.strip()
         try:
             validate_email(email)
         except ValidationError:
-            email = None
+            email = "{0}".format(bhs_id)
         birth_date = human.birth_date
         if human.phone:
             phone = human.phone
@@ -414,7 +425,6 @@ class PersonManager(Manager):
             work_phone = human.work_phone
         else:
             work_phone = ''
-        bhs_id = human.bhs_id
         try:
             gender_clean = human.sex.casefold()
         except AttributeError:
