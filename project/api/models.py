@@ -62,7 +62,6 @@ from .services import (
     create_pdf,
     # send_entry,
     send_session,
-    create_or_update_auth0_account_from_user,
 )
 from .tasks import (
     # create_pdf,
