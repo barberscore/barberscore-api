@@ -62,6 +62,7 @@ from .services import (
     create_pdf,
     # send_entry,
     send_session,
+    create_or_update_auth0_account_from_user,
 )
 from .tasks import (
     # create_pdf,
@@ -5529,6 +5530,17 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
     name = models.CharField(
         max_length=255,
         editable=False,
@@ -5572,7 +5584,7 @@ class User(AbstractBaseUser):
     class JSONAPIMeta:
         resource_name = "user"
 
-    # Methods
+    # User Internals
     def __str__(self):
         return self.name
 
@@ -5631,3 +5643,17 @@ class User(AbstractBaseUser):
     @authenticated_users
     def has_object_write_permission(self, request):
         return self == request.user
+
+    # User Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        self.is_active = True
+        auth0_account, created = create_or_update_auth0_account_from_user(self)
+        self.auth0_id = auth0_account['user_id']
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        pass

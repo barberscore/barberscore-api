@@ -3,12 +3,14 @@ import logging
 
 # Third-Party
 import docraptor
+
 # Third-Party
+from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
 from auth0.v3.management.rest import Auth0Error
 
 from django.conf import settings
-from api.utils import get_auth0_token
+from django.core.cache import cache
 
 
 # Django
@@ -21,84 +23,50 @@ config = api_apps.get_app_config('api')
 
 
 def get_auth0():
-    token = get_auth0_token()
-    return Auth0(
-        settings.AUTH0_DOMAIN,
-        token,
-    )
-
-
-def get_auth0_users(auth0):
-    lst = []
-    more = True
-    i = 0
-    t = 0
-    while more:
-        results = auth0.users.list(
-            fields=[
-                'user_id',
-                'email',
-                'app_metadata',
-                'user_metadata',
-            ],
-            per_page=100,
-            page=i,
+    if cache['auth0_api_access_token']:
+        access_token = cache['auth0_api_access_token']
+    else:
+        client = GetToken(settings.AUTH0_DOMAIN)
+        token = client.client_credentials(
+            settings.AUTH0_API_ID,
+            settings.AUTH0_API_SECRET,
+            settings.AUTH0_AUDIENCE,
         )
-        try:
-            payload = [result for result in results['users']]
-        except KeyError:
-            t += 1
-            if t > 3:
-                break
-            else:
-                continue
-        lst.extend(payload)
-        more = bool(results['users'])
-        i += 1
-        t = 0
-    return lst
+        cache.set(
+            'auth0_api_access_token',
+            token['access_token'],
+            timeout=token['expires_in'],
+        )
+        access_token = token['access_token']
+    auth0 = Auth0(
+        settings.AUTH0_DOMAIN,
+        access_token,
+    )
+    return auth0
 
 
-def generate_payload(user):
-    if user.person.email != user.email:
-        user.email = user.person.email
-        user.save()
-    email = user.email
-
-    name = user.name
-    barberscore_id = str(user.id)
+def create_or_update_auth0_account_from_user(user):
+    auth0 = get_auth0()
+    # Build payload
     payload = {
         "connection": "email",
-        "email": email,
+        "email": user.email,
         "email_verified": True,
         "user_metadata": {
-            "name": name
+            "name": user.name
         },
         "app_metadata": {
-            "barberscore_id": barberscore_id,
+            "barberscore_id": str(user.id),
         }
     }
-    return payload
-
-
-def update_auth0_from_user(user):
-    user.email = user.person.email
-    user.name = user.person.nomen
-    user.save()
-    # Get the Auth0 instance
-    auth0 = get_auth0()
-    payload = {
-        'email': user.email,
-        'user_metadata': {
-            'name': user.name,
-        },
-        'app_metadata': {
-            'barberscore_id': str(user.id),
-        },
-    }
-    account = auth0.users.update(user.auth0_id, payload)
-    log.info("UPDATED: {0}".format(account['user_id']))
-    return
+    # Create or Update Auth0
+    if user.auth0_id:
+        response = auth0.users.update(payload)
+        created = False
+    else:
+        response = auth0.users.create(payload)
+        created = True
+    return response, created
 
 
 def create_pdf(payload):
