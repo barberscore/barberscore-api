@@ -1395,15 +1395,17 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'person',
         'is_active',
         'is_staff',
+        'status',
     ]
 
     list_filter = (
+        'status',
         'is_active',
         'is_staff',
     )
 
     fieldsets = (
-        (None, {'fields': ('name', 'email', 'auth0_id', 'is_active', 'is_staff', 'person', )}),
+        (None, {'fields': ('status', 'name', 'email', 'auth0_id', 'is_active', 'is_staff', 'person', )}),
     )
 
     add_fieldsets = (
