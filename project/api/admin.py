@@ -1383,10 +1383,12 @@ class VenueAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-
+    fsm_field = [
+        'status',
+    ]
     list_display = [
         'name',
         'email',
