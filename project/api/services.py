@@ -23,24 +23,23 @@ config = api_apps.get_app_config('api')
 
 
 def get_auth0():
-    if cache['auth0_api_access_token']:
-        access_token = cache['auth0_api_access_token']
-    else:
+    auth0_api_access_token = cache.get('auth0_api_access_token')
+    if not auth0_api_access_token:
         client = GetToken(settings.AUTH0_DOMAIN)
-        token = client.client_credentials(
+        response = client.client_credentials(
             settings.AUTH0_API_ID,
             settings.AUTH0_API_SECRET,
             settings.AUTH0_AUDIENCE,
         )
         cache.set(
             'auth0_api_access_token',
-            token['access_token'],
-            timeout=token['expires_in'],
+            response['access_token'],
+            timeout=response['expires_in'],
         )
-        access_token = token['access_token']
+        auth0_api_access_token = response['access_token']
     auth0 = Auth0(
         settings.AUTH0_DOMAIN,
-        access_token,
+        auth0_api_access_token,
     )
     return auth0
 
