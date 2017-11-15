@@ -117,14 +117,6 @@ class Human(models.Model):
         )
 
     class Meta:
-        # unique_together = (
-        #     (
-        #         'first_name',
-        #         'middle_name',
-        #         'last_name',
-        #         'birth_date',
-        #     )
-        # )
         db_table = 'vwMembers'
 
 
