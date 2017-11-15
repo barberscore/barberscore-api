@@ -68,6 +68,14 @@ def create_or_update_auth0_account_from_user(user):
     return response, created
 
 
+def delete_auth0_account_from_user(user):
+    auth0 = get_auth0()
+    # Delete Auth0
+    if user.auth0_id:
+        response = auth0.users.delete(user.auth0_id)
+    return response
+
+
 def create_pdf(payload):
     docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
     client = docraptor.DocApi()

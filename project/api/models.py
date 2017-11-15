@@ -5649,11 +5649,10 @@ class User(AbstractBaseUser):
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
         self.is_active = True
-        auth0_account, created = create_or_update_auth0_account_from_user(self)
-        self.auth0_id = auth0_account['user_id']
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
+        self.is_active = False
         pass
