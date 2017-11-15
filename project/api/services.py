@@ -44,7 +44,7 @@ def get_auth0():
     return auth0
 
 
-def create_or_update_auth0_account_from_user(user):
+def create_auth0_account_from_user(user):
     auth0 = get_auth0()
     # Build payload
     payload = {
@@ -58,14 +58,28 @@ def create_or_update_auth0_account_from_user(user):
             "barberscore_id": str(user.id),
         }
     }
-    # Create or Update Auth0
-    if user.auth0_id:
-        response = auth0.users.update(user.auth0_id, payload)
-        created = False
-    else:
-        response = auth0.users.create(payload)
-        created = True
-    return response, created
+    # Create Auth0 Account
+    response = auth0.users.create(payload)
+    return response
+
+
+def update_auth0_account_from_user(user):
+    auth0 = get_auth0()
+    # Build payload
+    payload = {
+        "connection": "email",
+        "email": user.email,
+        "email_verified": True,
+        "user_metadata": {
+            "name": user.name
+        },
+        "app_metadata": {
+            "barberscore_id": str(user.id),
+        }
+    }
+    # Update Auth0 Account
+    response = auth0.users.update(user.auth0_id, payload)
+    return response
 
 
 def delete_auth0_account_from_user(user):

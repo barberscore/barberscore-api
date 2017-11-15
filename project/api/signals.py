@@ -14,7 +14,8 @@ from .models import (
 )
 
 from .services import (
-    create_or_update_auth0_account_from_user,
+    create_auth0_account_from_user,
+    update_auth0_account_from_user,
     delete_auth0_account_from_user,
 )
 
@@ -85,10 +86,12 @@ def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
     if not raw:
         if instance.is_active:
             # Can bypass if not active.
-            response, new = create_or_update_auth0_account_from_user(instance)
             if created:
+                response = create_auth0_account_from_user(instance)
                 instance.auth0_id = response['user_id']
                 instance.save()
+            else:
+                update_auth0_account_from_user(instance)
     return
 
 
