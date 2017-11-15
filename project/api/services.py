@@ -60,7 +60,7 @@ def create_or_update_auth0_account_from_user(user):
     }
     # Create or Update Auth0
     if user.auth0_id:
-        response = auth0.users.update(payload)
+        response = auth0.users.update(user.auth0_id, payload)
         created = False
     else:
         response = auth0.users.create(payload)
