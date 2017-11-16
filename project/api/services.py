@@ -2,12 +2,10 @@
 import logging
 
 # Third-Party
-import docraptor
 
 # Third-Party
 from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
-from auth0.v3.management.rest import Auth0Error
 
 from django.conf import settings
 from django.core.cache import cache
@@ -15,8 +13,6 @@ from django.core.cache import cache
 
 # Django
 from django.apps import apps as api_apps
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
 
 log = logging.getLogger(__name__)
 config = api_apps.get_app_config('api')
@@ -90,66 +86,88 @@ def delete_auth0_account_from_user(user):
     return response
 
 
-def create_pdf(payload):
-    docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-    client = docraptor.DocApi()
-    return client.create_doc(payload)
+# def get_requests_token():
+#     url = 'https://barberscore-dev.auth0.com/oauth/token'
+#     data = {
+#         'grant_type': 'client_credentials',
+#         'client_id': settings.AUTH0_API_ID,
+#         'client_secret': settings.AUTH0_API_SECRET,
+#         'audience': settings.AUTH0_AUDIENCE,
+#     }
+#     response = requests.post(url, data=data)
+#     return response
 
 
-def send_session(session, template):
-    Group = config.get_model('Group')
-    groups = Group.objects.filter(
-        status=10,
-        organization__grantors__convention=session.convention,
-        kind=session.kind,
-    )
-    assignments = session.convention.assignments.filter(
-        category__lt=10,
-    ).exclude(person__email=None)
-    ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-    for group in groups:
-        try:
-            contacts = group.members.filter(
-                is_admin=True,
-            ).exclude(person__email=None)
-            if not contacts:
-                log.error(
-                    "No valid contacts for {0}".format(
-                        group,
-                    )
-                )
-                continue
+# def get_auth0_me(token):
+#     url = urljoin("https://{0}".format(settings.AUTH0_DOMAIN), 'userinfo')
+#     headers = {
+#         'Authorization': 'Bearer {0}'.format(token)
+#     }
+#     response = requests.get(url, headers=headers)
+#     return response
 
-            tos = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
-            ccs = ccs
-            rendered = render_to_string(template, {'session': session, 'group': group})
-            subject = "[Barberscore] {0}".format(
-                group.nomen,
-            )
-            email = EmailMessage(
-                subject=subject,
-                body=rendered,
-                from_email='Barberscore <admin@barberscore.com>',
-                to=tos,
-                cc=ccs,
-                bcc=[
-                    'admin@barberscore.com',
-                    'proclamation56@gmail.com',
-                ],
-            )
-            result = email.send()
-            if result == 1:
-                log.info(
-                    "{0}".format(
-                        group.nomen,
-                    )
-                )
-            else:
-                log.error(
-                    "{0}".format(
-                        group.nomen,
-                    )
-                )
-        except Exception as e:
-            log.error(e)
-            continue
+
+# def update_auth0_id(user):
+#     token = get_auth0_token()
+#     auth0 = Auth0(
+#         settings.AUTH0_DOMAIN,
+#         token,
+#     )
+#     result = auth0.users.list(
+#         search_engine='v2',
+#         q='email:"{0}"'.format(user.email),
+#     )
+#     if result['length'] != 1:
+#         return log.error("Error {0}".format(user))
+#     auth0_id = result['users'][0]['user_id']
+#     user.auth0_id = auth0_id
+#     user.save()
+#     return log.info("Updated {0}".format(user))
+
+
+# def impersonate(user):
+#     token = get_auth0_token()
+#     impersonator_id = 'email|599e62507cd3126297fa63bc'.partition('|')[2]
+#     url = "https://{0}/users/{1}/impersonate".format(
+#         settings.AUTH0_DOMAIN,
+#         user.auth0_id,
+#     )
+#     headers = {
+#         'Authorization': 'Bearer {0}'.format(token),
+#     }
+#     data = {
+#         'protocol': 'oauth2',
+#         'impersonator_id': impersonator_id,
+#         'client_id': settings.AUTH0_CLIENT_ID,
+#         'additionalParameters': {
+#             'response_type': 'code',
+#             'callback_url': 'http://localhost:4200/login',
+#             'scope': 'openid profile',
+#         },
+#     }
+#     response = requests.post(url, data=data, headers=headers)
+#     return response
+
+
+# def send_link(user):
+#     token = get_auth0_token()
+#     impersonator_id = 'email|599e62507cd3126297fa63bc'.partition('|')[2]
+#     url = "https://{0}/users/{1}/impersonate".format(
+#         settings.AUTH0_DOMAIN,
+#         user.auth0_id,
+#     )
+#     headers = {
+#         'Authorization': 'Bearer {0}'.format(token),
+#     }
+#     data = {
+#         'protocol': 'oauth2',
+#         'impersonator_id': impersonator_id,
+#         'client_id': settings.AUTH0_CLIENT_ID,
+#         'additionalParameters': {
+#             'response_type': 'code',
+#             'callback_url': 'http://localhost:4200/login',
+#             'scope': 'openid profile',
+#         },
+#     }
+#     response = requests.post(url, data=data, headers=headers)
+#     return response

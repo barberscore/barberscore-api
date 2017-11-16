@@ -5,14 +5,18 @@ from django.template.loader import render_to_string
 
 from django_rq import job
 
+import docraptor
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 config = api_apps.get_app_config('api')
 
 
 @job
-def echo_back(foo):
-    return foo
+def create_pdf(payload):
+    docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
+    client = docraptor.DocApi()
+    return client.create_doc(payload)
 
 
 @job

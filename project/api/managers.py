@@ -244,6 +244,22 @@ class GroupManager(Manager):
 
 
 class OrganizationManager(Manager):
+    def sort_tree(self, **kwargs):
+        root = self.get(kind=self.model.KIND.international)
+        i = 1
+        root.org_sort = i
+        root.save()
+        for child in root.children.order_by('kind', 'name'):
+            i += 1
+            child.org_sort = i
+            child.save()
+            for grandchild in child.children.filter(
+                kind=self.model.KIND.division,
+            ).order_by('kind', 'name'):
+                i += 1
+                grandchild.org_sort = i
+                grandchild.save()
+
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('organization', 'international')

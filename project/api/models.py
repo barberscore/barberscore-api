@@ -58,15 +58,10 @@ from .managers import (
     MemberManager,
 )
 
-from .services import (
-    create_pdf,
-    # send_entry,
-    send_session,
-)
 from .tasks import (
-    # create_pdf,
+    create_pdf,
     send_entry,
-    # send_session,
+    send_session,
 )
 from .utils import (
     create_admin_emails_excel,

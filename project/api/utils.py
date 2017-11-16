@@ -2,21 +2,13 @@
 import csv
 import logging
 import sys
-from urllib.parse import urljoin
 
 # Third-Party
-import requests
-from auth0.v3.authentication import GetToken
-from auth0.v3.management import Auth0
-from cloudinary.uploader import upload
+# from cloudinary.uploader import upload
 from openpyxl import Workbook
 
 # Django
 from django.apps import apps as api_apps
-from django.conf import settings
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-from django.utils import timezone
 
 # First-Party
 from bhs.models import Structure
@@ -24,228 +16,6 @@ from bhs.models import Structure
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
-
-
-def export_active_quartets():
-    with open('active_quartets.csv', 'w') as f:
-        output = []
-        fieldnames = [
-            'id',
-            'name',
-            'bhs_id',
-            'district',
-        ]
-        quartets = Structure.objects.filter(
-            kind='quartet',
-            status__name='active'
-        )
-        for quartet in quartets:
-            pk = str(quartet.id)
-            try:
-                name = quartet.name.strip()
-            except AttributeError:
-                name = '(UNKNOWN)'
-            bhs_id = quartet.bhs_id
-            district = str(quartet.parent)
-            row = {
-                'id': pk,
-                'name': name,
-                'bhs_id': bhs_id,
-                'district': district,
-            }
-            output.append(row)
-        writer = csv.DictWriter(
-            f, fieldnames=fieldnames, extrasaction='ignore')
-        writer.writeheader()
-        for row in output:
-            writer.writerow(row)
-
-
-def do_org_sort(root):
-    i = 1
-    root.org_sort = i
-    root.save()
-    for child in root.children.order_by('kind', 'name'):
-        i += 1
-        child.org_sort = i
-        child.save()
-        for grandchild in child.children.filter(kind=21).order_by('kind', 'name'):
-            i += 1
-            grandchild.org_sort = i
-            grandchild.save()
-
-
-def get_auth0_token():
-    client = GetToken(settings.AUTH0_DOMAIN)
-    token = client.client_credentials(
-        settings.AUTH0_API_ID,
-        settings.AUTH0_API_SECRET,
-        settings.AUTH0_AUDIENCE,
-    )
-    return token['access_token']
-
-
-def get_requests_token():
-    url = 'https://barberscore-dev.auth0.com/oauth/token'
-    data = {
-        'grant_type': 'client_credentials',
-        'client_id': settings.AUTH0_API_ID,
-        'client_secret': settings.AUTH0_API_SECRET,
-        'audience': settings.AUTH0_AUDIENCE,
-    }
-    response = requests.post(url, data=data)
-    return response
-
-
-def get_auth0_me(token):
-    url = urljoin("https://{0}".format(settings.AUTH0_DOMAIN), 'userinfo')
-    headers = {
-        'Authorization': 'Bearer {0}'.format(token)
-    }
-    response = requests.get(url, headers=headers)
-    return response
-
-
-def update_auth0_id(user):
-    token = get_auth0_token()
-    auth0 = Auth0(
-        settings.AUTH0_DOMAIN,
-        token,
-    )
-    result = auth0.users.list(
-        search_engine='v2',
-        q='email:"{0}"'.format(user.email),
-    )
-    if result['length'] != 1:
-        return log.error("Error {0}".format(user))
-    auth0_id = result['users'][0]['user_id']
-    user.auth0_id = auth0_id
-    user.save()
-    return log.info("Updated {0}".format(user))
-
-
-def impersonate(user):
-    token = get_auth0_token()
-    impersonator_id = 'email|599e62507cd3126297fa63bc'.partition('|')[2]
-    url = "https://{0}/users/{1}/impersonate".format(
-        settings.AUTH0_DOMAIN,
-        user.auth0_id,
-    )
-    headers = {
-        'Authorization': 'Bearer {0}'.format(token),
-    }
-    data = {
-        'protocol': 'oauth2',
-        'impersonator_id': impersonator_id,
-        'client_id': settings.AUTH0_CLIENT_ID,
-        'additionalParameters': {
-            'response_type': 'code',
-            'callback_url': 'http://localhost:4200/login',
-            'scope': 'openid profile',
-        },
-    }
-    response = requests.post(url, data=data, headers=headers)
-    return response
-
-
-def send_link(user):
-    token = get_auth0_token()
-    impersonator_id = 'email|599e62507cd3126297fa63bc'.partition('|')[2]
-    url = "https://{0}/users/{1}/impersonate".format(
-        settings.AUTH0_DOMAIN,
-        user.auth0_id,
-    )
-    headers = {
-        'Authorization': 'Bearer {0}'.format(token),
-    }
-    data = {
-        'protocol': 'oauth2',
-        'impersonator_id': impersonator_id,
-        'client_id': settings.AUTH0_CLIENT_ID,
-        'additionalParameters': {
-            'response_type': 'code',
-            'callback_url': 'http://localhost:4200/login',
-            'scope': 'openid profile',
-        },
-    }
-    response = requests.post(url, data=data, headers=headers)
-    return response
-# def create_account(person):
-#     if not person.email:
-#         raise RuntimeError("No email")
-#     user = User.objects.create_user(
-#         person.email,
-#     )
-#     password = User.objects.make_random_password()
-#     payload = {
-#         "connection": "Default",
-#         "email": person.email,
-#         "password": password,
-#         "user_metadata": {
-#             "name": person.full_name
-#         },
-#         "app_metadata": {
-#             "bhs_id": person.bhs_id,
-#             "person_id": str(person.id),
-#         }
-#     }
-#     auth0 = Auth0(
-#         settings.AUTH0_DOMAIN,
-#         settings.AUTH0_TOKEN,
-#     )
-#     response = auth0.users.create(payload)
-#     sub_id = response['user_id']
-#     payload2 = {
-#         "result_url": "http://localhost:4200",
-#         "user_id": sub_id,
-#     }
-#     response2 = auth0.tickets.create_pswd_change(payload2)
-#     return response2['ticket']
-
-
-# def export_bbscores(session):
-#     output = []
-#     fieldnames = [
-#         'oa',
-#         'contestant_id',
-#         'group_name',
-#         'group_type',
-#         'song_number',
-#         'song_title',
-#     ]
-#     entries = session.entries.order_by('entity__name')
-#     for entry in entries:
-#         try:
-#             oa = entry.appearances.get(round__num=1).num
-#         except Appearance.DoesNotExist:
-#             continue
-#         group_name = entry.entity.name
-#         group_type = entry.entity.get_kind_display()
-#         if group_type == 'Quartet':
-#             contestant_id = entry.entity.bhs_id
-#         elif group_type == 'Chorus':
-#             contestant_id = entry.entity.code
-#         else:
-#             raise RuntimeError("Improper Entity Type")
-#         i = 1
-#         for repertory in entry.entity.repertories.order_by('chart__title'):
-#             song_number = i
-#             song_title = repertory.chart.title
-#             i += 1
-#             row = {
-#                 'oa': oa,
-#                 'contestant_id': contestant_id,
-#                 'group_name': group_name,
-#                 'group_type': group_type,
-#                 'song_number': song_number,
-#                 'song_title': song_title,
-#             }
-#             output.append(row)
-#     writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, extrasaction='ignore')
-#     writer.writeheader()
-#     for row in output:
-#         writer.writerow(row)
-#     return
 
 
 def create_bbscores_excel(session):
@@ -450,6 +220,41 @@ def create_admin_emails_excel(session):
             ]
             ws.append(row)
     wb.save('admin_emails.xlsx')
+
+
+def export_active_quartets():
+    with open('active_quartets.csv', 'w') as f:
+        output = []
+        fieldnames = [
+            'id',
+            'name',
+            'bhs_id',
+            'district',
+        ]
+        quartets = Structure.objects.filter(
+            kind='quartet',
+            status__name='active'
+        )
+        for quartet in quartets:
+            pk = str(quartet.id)
+            try:
+                name = quartet.name.strip()
+            except AttributeError:
+                name = '(UNKNOWN)'
+            bhs_id = quartet.bhs_id
+            district = str(quartet.parent)
+            row = {
+                'id': pk,
+                'name': name,
+                'bhs_id': bhs_id,
+                'district': district,
+            }
+            output.append(row)
+        writer = csv.DictWriter(
+            f, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for row in output:
+            writer.writerow(row)
 
 
 def export_charts():
