@@ -635,11 +635,9 @@ class MemberManager(Manager):
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, person, is_active=True, **kwargs):
+    def create_user(self, email, is_active=True, **kwargs):
         user = self.model(
-            email=person.email,
-            name=person.full_name,
-            person=person,
+            email=email,
             is_active=is_active,
             **kwargs
         )
@@ -648,11 +646,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, person, password, **kwargs):
+    def create_superuser(self, email, password, **kwargs):
         user = self.model(
             email=email,
-            name=person.full_name,
-            person=person,
             is_staff=True,
             is_active=True,
             **kwargs

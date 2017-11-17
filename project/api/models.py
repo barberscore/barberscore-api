@@ -5350,13 +5350,13 @@ class User(AbstractBaseUser):
 
     name = models.CharField(
         max_length=255,
-        editable=False,
+        editable=True,
         blank=True,
     )
 
     email = models.EmailField(
         unique=True,
-        editable=False,
+        editable=True,
     )
 
     auth0_id = models.CharField(
