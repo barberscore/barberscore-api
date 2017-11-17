@@ -864,9 +864,7 @@ class VenueSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # included_serializers = {
-    #     'person': 'api.serializers.PersonSerializer',
-    # }
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = User
@@ -898,10 +896,6 @@ class UserSerializer(serializers.ModelSerializer):
             'is_judge_manager',
             'is_chart_manager',
         ]
-    # class JSONAPIMeta:
-    #     included_resources = [
-    #         'person',
-    #     ]
 
 
 class StateLogSerializer(serializers.ModelSerializer):
