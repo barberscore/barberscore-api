@@ -528,12 +528,9 @@ class GroupAdmin(admin.ModelAdmin):
         ('bhs_id', 'bhs_pk',),
         'organization',
         ('international', 'district', 'division'),
-        # 'start_date',
-        # 'end_date',
         'location',
         'email',
         'phone',
-        # 'spots',
         'website',
         'facebook',
         'twitter',
@@ -545,9 +542,6 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
-        # 'international',
-        # 'district',
-        # 'division',
     ]
 
     search_fields = [
@@ -556,10 +550,6 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        # 'start_date',
-        # 'end_date',
-        # 'code',
-        # 'short_name',
         'kind',
         'organization',
         'location',
@@ -578,21 +568,6 @@ class GroupAdmin(admin.ModelAdmin):
         RepertoryInline,
         EntryInline,
     ]
-    # quartet_inlines = [
-    #     # AwardInline,
-    #     RepertoryInline,
-    #     OfficerInline,
-    #     # EntryInline,
-    #     MemberInline,
-    # ]
-    # other_inlines = [
-    #     AwardInline,
-    #     RepertoryInline,
-    #     OfficerInline,
-    #     # EntryInline,
-    #     # MemberInline,
-    # ]
-
     readonly_fields = [
         'nomen',
         'international',
@@ -600,30 +575,13 @@ class GroupAdmin(admin.ModelAdmin):
         'division',
     ]
 
-    # raw_id_fields = [
-    #     'organization',
-    # ]
+    raw_id_fields = [
+        'organization',
+    ]
 
     ordering = [
         'name',
     ]
-
-    # def get_inline_instances(self, request, obj=None):
-    #     inline_instances = []
-    #
-    #     if obj.kind == obj.KIND.quartet:
-    #         inlines = self.quartet_inlines
-    #     else:
-    #         inlines = self.other_inlines
-    #
-    #     for inline_class in inlines:
-    #         inline = inline_class(self.model, self.admin_site)
-    #         inline_instances.append(inline)
-    #     return inline_instances
-    #
-    # def get_formsets(self, request, obj=None):
-    #     for inline in self.get_inline_instances(request, obj):
-    #         yield inline.get_formset(request, obj)
 
 
 @admin.register(Member)
