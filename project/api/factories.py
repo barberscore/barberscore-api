@@ -279,6 +279,7 @@ class PersonFactory(DjangoModelFactory):
     notes = ''
     current_through = '2018-12-31'
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
+    user2 = SubFactory('api.factories.UserFactory')
 
     class Meta:
         model = Person
@@ -370,7 +371,6 @@ class UserFactory(DjangoModelFactory):
     password = PostGenerationMethodCall('set_password', 'password')
     is_active = True
     is_staff = False
-    person = SubFactory('api.factories.PersonFactory')
 
     class Meta:
         model = User

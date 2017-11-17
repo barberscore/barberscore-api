@@ -23,6 +23,6 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
                 return queryset.all()
             # else:
             #     return queryset.filter(
-            #         song__appearance__entry__entity__officers__person__user=request.user,
+            #         song__appearance__entry__entity__officers__person__user2=request.user,
             #     )
         return queryset.none()

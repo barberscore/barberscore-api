@@ -349,14 +349,8 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            )
+            request.user.is_scoring_manager,
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -364,7 +358,7 @@ class Appearance(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.round.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=30,
                 status__gt=0,
                 kind=10,
@@ -505,14 +499,8 @@ class Assignment(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_judge_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            )
+            request.user.is_judge_manager,
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -520,7 +508,7 @@ class Assignment(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=20,
                 status__gt=0,
             )
@@ -779,7 +767,7 @@ class Award(TimeStampedModel):
         self.nomen = self.name
         super().save(*args, **kwargs)
 
-    # Permissions
+    # Award Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -794,21 +782,14 @@ class Award(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            )
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.organization.officers.filter(
-                person=request.user.person,
-                office__is_convention_manager=True,
-                status__gt=0,
-            )
+            False,
         ])
 
     # Transitions
@@ -924,24 +905,15 @@ class Chart(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_chart_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_chart_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.person.officers.filter(
-                office__is_chart_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_chart_manager,
         ])
 
     # Transitions
@@ -1021,7 +993,7 @@ class Contest(TimeStampedModel):
         ]))
         super().save(*args, **kwargs)
 
-    # Permissions
+    # Contest Permissions
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
@@ -1036,10 +1008,7 @@ class Contest(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            )
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1047,7 +1016,7 @@ class Contest(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lte=10,
                 kind=10,
             )
@@ -1297,14 +1266,8 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.members.filter(
-                is_admin=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1312,12 +1275,12 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.contest.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lte=10,
                 kind=10,
             ),
             self.entry.group.members.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -1481,10 +1444,7 @@ class Convention(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1492,7 +1452,7 @@ class Convention(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.organization.officers.filter(
-                person__user=request.user,
+                person__user2=request.user,
                 status__gt=0,
             ),
         ])
@@ -2031,14 +1991,8 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.members.filter(
-                status__gt=0,
-                is_admin=True,
-            ),
-            request.user.person.officers.filter(
-                status__gt=0,
-                office__is_session_manager=True,
-            ),
+            request.user.is_group_manager,
+            request.user.is_session_manager,
         ])
 
     @allow_staff_or_superuser
@@ -2046,13 +2000,13 @@ class Entry(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=10,
                 kind=10,
             ),
             all([
                 self.group.members.filter(
-                    person=request.user.person,
+                    person__user2=request.user,
                     status__gt=0,
                     is_admin=True,
                 ),
@@ -2246,10 +2200,7 @@ class Grantor(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -2257,7 +2208,7 @@ class Grantor(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.round.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -2526,14 +2477,8 @@ class Group(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.members.filter(
-                is_admin=True,
-                status__gt=0,
-            ),
+            request.user.is_group_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -2541,14 +2486,11 @@ class Group(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.members.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_group_manager,
         ])
 
     # Transitions
@@ -2753,10 +2695,7 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.members.filter(
-                is_admin=True,
-                status__gt=0,
-            ),
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -2764,7 +2703,7 @@ class Member(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.members.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -3253,20 +3192,14 @@ class Organization(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_organization_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_organization_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.person.officers.filter(
-                office__is_organization_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_organization_manager,
         ])
 
     # Transitions
@@ -3383,11 +3316,7 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            True,
-            request.user.person.officers.filter(
-                office__is_judge_manager=True,
-                status__gt=0,
-            )
+            request.user.is_judge_manager,
         ])
 
     @allow_staff_or_superuser
@@ -3395,10 +3324,7 @@ class Panelist(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             True,
-            request.user.person.officers.filter(
-                office__is_judge_manager=True,
-                status__gt=0,
-            )
+            request.user.is_judge_manager,
         ])
 
 
@@ -3498,14 +3424,8 @@ class Participant(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.members.filter(
-                is_admin=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -3513,12 +3433,12 @@ class Participant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.entry.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lte=10,
                 kind=10,
             ),
             self.entry.group.members.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -3766,68 +3686,6 @@ class Person(TimeStampedModel):
     )
 
     @cached_property
-    def is_convention_manager(self):
-        return bool(self.officers.filter(
-            office__is_convention_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_session_manager(self):
-        return bool(self.officers.filter(
-            office__is_session_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_scoring_manager(self):
-        return bool(self.officers.filter(
-            office__is_scoring_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_organization_manager(self):
-        return bool(self.officers.filter(
-            office__is_organization_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_group_manager(self):
-        return bool(self.members.filter(
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_person_manager(self):
-        return bool(self.officers.filter(
-            office__is_person_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_award_manager(self):
-        return bool(self.officers.filter(
-            office__is_award_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_judge_manager(self):
-        return bool(self.officers.filter(
-            office__is_judge_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
-    def is_chart_manager(self):
-        return bool(self.officers.filter(
-            office__is_chart_manager=True,
-            status__gt=0,
-        ))
-
-    @cached_property
     def full_name(self):
         if self.nick_name:
             nick = "({0})".format(self.nick_name)
@@ -3936,7 +3794,7 @@ class Person(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self == request.user.person,
+            self.user2 == request.user,
         ])
 
     # Person transitions
@@ -4030,18 +3888,9 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_read_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.members.filter(
-                is_admin=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
+            request.user.is_scoring_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4049,18 +3898,12 @@ class Repertory(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.group.members.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
+            request.user.is_scoring_manager,
         ])
 
     @staticmethod
@@ -4068,18 +3911,9 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.members.filter(
-                is_admin=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
+            request.user.is_scoring_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4087,18 +3921,12 @@ class Repertory(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.members.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
+            request.user.is_scoring_manager,
         ])
 
     # Transitions
@@ -4216,10 +4044,7 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_scoring_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4227,7 +4052,7 @@ class Round(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__in=[
                     10,
                     20,
@@ -4656,14 +4481,8 @@ class Score(TimeStampedModel):
     def has_read_permission(request):
         return any([
             True,
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
-            request.user.person.officers.filter(
-                office__is_group_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_group_manager,
+            request.user.is_scoring_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4671,7 +4490,7 @@ class Score(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             # self.song.appearance.entry.entity.officers.filter(
-            #     person=request.user.person,
+            #     person=request.user,
             #     office__is_group_manager=True,
             #     status__gt=0,
             # ),
@@ -4682,10 +4501,7 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_scoring_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4693,7 +4509,7 @@ class Score(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.song.appearance.round.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -4876,10 +4692,7 @@ class Session(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4887,7 +4700,7 @@ class Session(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -5171,10 +4984,7 @@ class Slot(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
@@ -5182,7 +4992,7 @@ class Slot(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.round.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -5398,11 +5208,7 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            True,
-            # request.user.person.officers.filter(
-            #     office__is_scoring_manager=True,
-            #     status__gt=0,
-            # ),
+            request.user.is_scoring_manager,
         ])
 
     @allow_staff_or_superuser
@@ -5410,7 +5216,7 @@ class Song(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.appearance.round.session.convention.assignments.filter(
-                person=request.user.person,
+                person__user2=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -5509,20 +5315,14 @@ class Venue(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ),
+            request.user.is_convention_manager,
         ])
 
 
@@ -5576,16 +5376,108 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
-    # FKs
-    person = models.OneToOneField(
-        'Person',
-        related_name='user',
-        on_delete=models.CASCADE,
-    )
-
     @property
     def is_superuser(self):
         return self.is_staff
+
+    @cached_property
+    def is_convention_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_session_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_session_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_scoring_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_scoring_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_organization_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_organization_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_group_manager(self):
+        try:
+            is_manager = bool(self.person2.members.filter(
+                is_admin=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_person_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_person_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_award_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_award_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_judge_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_judge_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
+
+    @cached_property
+    def is_chart_manager(self):
+        try:
+            is_manager = bool(self.person2.officers.filter(
+                office__is_chart_manager=True,
+                status__gt=0,
+            ))
+        except:
+            is_manager = False
+        return is_manager
 
     class JSONAPIMeta:
         resource_name = "user"

@@ -1350,7 +1350,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     list_display = [
         'name',
         'email',
-        'person',
         'is_active',
         'is_staff',
         'status',
@@ -1363,13 +1362,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('status', 'name', 'email', 'auth0_id', 'is_active', 'is_staff', 'person', )}),
-    )
-
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('person', )}),
+        (None, {'fields': ('status', 'name', 'email', 'auth0_id', 'is_active', 'is_staff', )}),
     )
 
     search_fields = [
@@ -1378,10 +1371,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
     ordering = ('email',)
     filter_horizontal = ()
-    raw_id_fields = [
-        'person',
-    ]
-
     readonly_fields = [
         'name',
         'email',

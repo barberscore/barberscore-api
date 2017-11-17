@@ -562,7 +562,7 @@ class ParticipantViewSet(
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        'user',
+        'user2',
     ).prefetch_related(
         'assignments',
         'members',
@@ -770,14 +770,7 @@ class VenueViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.select_related(
-        'person',
-    ).prefetch_related(
-        'person__assignments',
-        'person__members',
-        'person__officers',
-        'person__panelists',
-    ).order_by('id')
+    queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     filter_class = None
     filter_backends = [

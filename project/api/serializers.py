@@ -641,17 +641,8 @@ class PersonSerializer(serializers.ModelSerializer):
             'officers',
             'panelists',
             'participants',
-            'user',
+            'user2',
             'permissions',
-            'is_convention_manager',
-            'is_session_manager',
-            'is_scoring_manager',
-            'is_organization_manager',
-            'is_group_manager',
-            'is_person_manager',
-            'is_award_manager',
-            'is_judge_manager',
-            'is_chart_manager',
         )
         # fields = '__all__'
         read_only_fields = [
@@ -659,15 +650,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'full_name',
             'sort_name',
             'image',
-            'is_convention_manager',
-            'is_session_manager',
-            'is_scoring_manager',
-            'is_organization_manager',
-            'is_group_manager',
-            'is_person_manager',
-            'is_award_manager',
-            'is_judge_manager',
-            'is_chart_manager',
         ]
     # class JSONAPIMeta:
     #     included_resources = [
@@ -894,7 +876,27 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'is_active',
             'is_staff',
-            'person',
+            'person2',
+            'is_convention_manager',
+            'is_session_manager',
+            'is_scoring_manager',
+            'is_organization_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_judge_manager',
+            'is_chart_manager',
+        ]
+        read_only_fields = [
+            'is_convention_manager',
+            'is_session_manager',
+            'is_scoring_manager',
+            'is_organization_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_judge_manager',
+            'is_chart_manager',
         ]
     # class JSONAPIMeta:
     #     included_resources = [
