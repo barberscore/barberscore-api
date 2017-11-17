@@ -875,6 +875,7 @@ class UserSerializer(serializers.ModelSerializer):
             'is_active',
             'is_staff',
             'person',
+            'permissions',
             'is_convention_manager',
             'is_session_manager',
             'is_scoring_manager',
