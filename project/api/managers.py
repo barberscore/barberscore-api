@@ -16,6 +16,43 @@ from django.apps import apps as api_apps
 config = api_apps.get_app_config('api')
 bhs_config = api_apps.get_app_config('bhs')
 log = logging.getLogger(__name__)
+from openpyxl import Workbook
+from cloudinary.uploader import upload
+
+
+class ChartManager(Manager):
+    def export_charts(self, *args, **kwargs):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'id',
+            'title',
+            'arrangers',
+            'composers',
+            'lyricists',
+        ]
+        ws.append(fieldnames)
+        charts = self.all()
+        for chart in charts:
+            pk = str(chart.id)
+            title = chart.title
+            arrangers = chart.arrangers
+            composers = chart.composers
+            lyricists = chart.lyricists
+            row = [
+                pk,
+                title,
+                arrangers,
+                composers,
+                lyricists,
+            ]
+            ws.append(row)
+        wb.save('barberscore_charts.xlsx')
+        return upload(
+            'barberscore_charts.xlsx',
+            public_id='barberscore_charts.xlsx',
+            resource_type='raw',
+        )
 
 
 class EnrollmentManager(Manager):
@@ -241,6 +278,39 @@ class GroupManager(Manager):
                 group.status = getattr(self.model.STATUS, 'new')
             group.save()
         return group, created
+
+    def export_active_quartets(self, *args, **kwargs):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'id',
+            'name',
+            'bhs_id',
+            'district',
+        ]
+        ws.append(fieldnames)
+        quartets = self.filter(
+            kind=self.model.KIND.quartet,
+            status=self.model.STATUS.active,
+        )
+        for quartet in quartets:
+            pk = str(quartet.id)
+            name = quartet.name
+            bhs_id = quartet.bhs_id
+            district = str(quartet.parent)
+            row = [
+                pk,
+                name,
+                bhs_id,
+                district,
+            ]
+            ws.append(row)
+        wb.save('active_quartets.xlsx')
+        return upload(
+            'active_quartets.xlsx',
+            public_id='active_quartets.xlsx',
+            resource_type='raw',
+        )
 
 
 class OrganizationManager(Manager):

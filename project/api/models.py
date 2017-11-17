@@ -50,6 +50,7 @@ from django.utils.timezone import now
 # Local
 from .fields import PathAndRename
 from .managers import (
+    ChartManager,
     UserManager,
     PersonManager,
     EnrollmentManager,
@@ -886,6 +887,8 @@ class Chart(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    objects = ChartManager()
 
     # Internals
     class Meta:
