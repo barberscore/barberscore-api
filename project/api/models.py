@@ -3853,6 +3853,15 @@ class Person(TimeStampedModel):
     def sort_name(self):
         return "{0}, {1}".format(self.last_name, self.first_name)
 
+    # Person FKs
+    user2 = models.OneToOneField(
+        'User',
+        related_name='person2',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     objects = PersonManager()
 
