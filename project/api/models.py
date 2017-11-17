@@ -358,7 +358,7 @@ class Appearance(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.round.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=30,
                 status__gt=0,
                 kind=10,
@@ -508,7 +508,7 @@ class Assignment(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=20,
                 status__gt=0,
             )
@@ -1016,7 +1016,7 @@ class Contest(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lte=10,
                 kind=10,
             )
@@ -1275,12 +1275,12 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.contest.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lte=10,
                 kind=10,
             ),
             self.entry.group.members.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -1452,7 +1452,7 @@ class Convention(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.organization.officers.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 status__gt=0,
             ),
         ])
@@ -2000,13 +2000,13 @@ class Entry(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=10,
                 kind=10,
             ),
             all([
                 self.group.members.filter(
-                    person__user2=request.user,
+                    person__user=request.user,
                     status__gt=0,
                     is_admin=True,
                 ),
@@ -2208,7 +2208,7 @@ class Grantor(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.round.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -2486,7 +2486,7 @@ class Group(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.members.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -2703,7 +2703,7 @@ class Member(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.members.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -3433,12 +3433,12 @@ class Participant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.entry.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lte=10,
                 kind=10,
             ),
             self.entry.group.members.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -3712,9 +3712,9 @@ class Person(TimeStampedModel):
         return "{0}, {1}".format(self.last_name, self.first_name)
 
     # Person FKs
-    user2 = models.OneToOneField(
+    user = models.OneToOneField(
         'User',
-        related_name='person2',
+        related_name='person',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -3730,33 +3730,34 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        validate_email(self.email)
-        if hasattr(self, 'user') and not self.email:
-            raise ValidationError(
-                {'email': 'User account must have email.'}
-            )
-        if not hasattr(self, 'user') and self.email:
-            raise ValidationError(
-                {'email': 'Person with email should have User account.'}
-            )
-        if self.status == self.STATUS.exempt and (self.bhs_id or self.bhs_pk):
-            raise ValidationError(
-                {'status': 'Exempt users should not be in BHS or MC.'}
-            )
-        if self.current_through:
-            if self.status == self.STATUS.active and self.current_through < datetime.date.today():
-                raise ValidationError(
-                    {'status': 'Active user beyond current_through date.'}
-                )
-            if self.status == self.STATUS.inactive and self.current_through > datetime.date.today():
-                raise ValidationError(
-                    {'status': 'Inactive user within current_through date.'}
-                )
-        else:
-            if self.status == self.STATUS.active:
-                raise ValidationError(
-                    {'status': 'Active status without current_through date.'}
-                )
+        pass
+        # validate_email(self.email)
+        # if hasattr(self, 'user') and not self.email:
+        #     raise ValidationError(
+        #         {'email': 'User account must have email.'}
+        #     )
+        # if not hasattr(self, 'user') and self.email:
+        #     raise ValidationError(
+        #         {'email': 'Person with email should have User account.'}
+        #     )
+        # if self.status == self.STATUS.exempt and (self.bhs_id or self.bhs_pk):
+        #     raise ValidationError(
+        #         {'status': 'Exempt users should not be in BHS or MC.'}
+        #     )
+        # if self.current_through:
+        #     if self.status == self.STATUS.active and self.current_through < datetime.date.today():
+        #         raise ValidationError(
+        #             {'status': 'Active user beyond current_through date.'}
+        #         )
+        #     if self.status == self.STATUS.inactive and self.current_through > datetime.date.today():
+        #         raise ValidationError(
+        #             {'status': 'Inactive user within current_through date.'}
+        #         )
+        # else:
+        #     if self.status == self.STATUS.active:
+        #         raise ValidationError(
+        #             {'status': 'Active status without current_through date.'}
+        #         )
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
@@ -3794,7 +3795,7 @@ class Person(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.user2 == request.user,
+            self.user == request.user,
         ])
 
     # Person transitions
@@ -3898,7 +3899,7 @@ class Repertory(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.group.members.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -3921,7 +3922,7 @@ class Repertory(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.members.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 is_admin=True,
                 status__gt=0,
             ),
@@ -4052,7 +4053,7 @@ class Round(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__in=[
                     10,
                     20,
@@ -4509,7 +4510,7 @@ class Score(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.song.appearance.round.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -4700,7 +4701,7 @@ class Session(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -4992,7 +4993,7 @@ class Slot(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.round.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -5216,7 +5217,7 @@ class Song(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.appearance.round.session.convention.assignments.filter(
-                person__user2=request.user,
+                person__user=request.user,
                 category__lt=30,
                 kind=10,
             ),
@@ -5383,7 +5384,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_convention_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_convention_manager=True,
                 status__gt=0,
             ))
@@ -5394,7 +5395,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_session_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_session_manager=True,
                 status__gt=0,
             ))
@@ -5405,7 +5406,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_scoring_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_scoring_manager=True,
                 status__gt=0,
             ))
@@ -5416,7 +5417,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_organization_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_organization_manager=True,
                 status__gt=0,
             ))
@@ -5427,7 +5428,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_group_manager(self):
         try:
-            is_manager = bool(self.person2.members.filter(
+            is_manager = bool(self.person.members.filter(
                 is_admin=True,
                 status__gt=0,
             ))
@@ -5438,7 +5439,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_person_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_person_manager=True,
                 status__gt=0,
             ))
@@ -5449,7 +5450,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_award_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_award_manager=True,
                 status__gt=0,
             ))
@@ -5460,7 +5461,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_judge_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_judge_manager=True,
                 status__gt=0,
             ))
@@ -5471,7 +5472,7 @@ class User(AbstractBaseUser):
     @cached_property
     def is_chart_manager(self):
         try:
-            is_manager = bool(self.person2.officers.filter(
+            is_manager = bool(self.person.officers.filter(
                 office__is_chart_manager=True,
                 status__gt=0,
             ))
@@ -5487,22 +5488,23 @@ class User(AbstractBaseUser):
         return self.name
 
     def clean(self):
-        if self.email != self.person.email:
-            raise ValidationError(
-                {'email': 'Email does not match person'}
-            )
-        if self.name != self.person.full_name:
-            raise ValidationError(
-                {'name': 'Name does not match person'}
-            )
-        if self.is_active and self.person.status <= 0:
-            raise ValidationError(
-                {'name': 'Should not be active.'}
-            )
-        if not self.is_active and self.person.status > 0:
-            raise ValidationError(
-                {'is_active': 'Should be active.'}
-            )
+        pass
+        # if self.email != self.person.email:
+        #     raise ValidationError(
+        #         {'email': 'Email does not match person'}
+        #     )
+        # if self.name != self.person.full_name:
+        #     raise ValidationError(
+        #         {'name': 'Name does not match person'}
+        #     )
+        # if self.is_active and self.person.status <= 0:
+        #     raise ValidationError(
+        #         {'name': 'Should not be active.'}
+        #     )
+        # if not self.is_active and self.person.status > 0:
+        #     raise ValidationError(
+        #         {'is_active': 'Should be active.'}
+        #     )
 
     def save(self, *args, **kwargs):
         if self.email:

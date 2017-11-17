@@ -58,7 +58,7 @@ class AwardFilter(FilterSet):
             'organization__officers__office__short_name': [
                 'exact',
             ],
-            'organization__officers__person__user2': [
+            'organization__officers__person__user': [
                 'exact',
             ],
             'organization__officers__office__is_award_manager': [
@@ -109,10 +109,10 @@ class ConventionFilter(FilterSet):
             'year': [
                 'exact',
             ],
-            'assignments__person__user2': [
+            'assignments__person__user': [
                 'exact',
             ],
-            'organization__officers__person__user2': [
+            'organization__officers__person__user': [
                 'exact',
             ],
             'assignments__kind': [
@@ -169,7 +169,7 @@ class GroupFilter(FilterSet):
             'organization': [
                 'exact',
             ],
-            'members__person__user2': [
+            'members__person__user': [
                 'exact',
             ],
             'nomen': [
@@ -209,7 +209,7 @@ class MemberFilter(FilterSet):
             'group': [
                 'exact',
             ],
-            'person__user2': [
+            'person__user': [
                 'exact',
             ],
             'is_admin': [
@@ -276,7 +276,7 @@ class OrganizationFilter(FilterSet):
             'parent': [
                 'exact',
             ],
-            'officers__person__user2': [
+            'officers__person__user': [
                 'exact',
             ],
             'officers__office__is_award_manager': [
@@ -302,7 +302,7 @@ class PersonFilter(FilterSet):
             'status': [
                 'exact',
             ],
-            'user2': [
+            'user': [
                 'exact',
             ],
             'officers__office__kind': [
@@ -321,7 +321,7 @@ class RoundFilter(FilterSet):
             'session__convention__status': [
                 'exact',
             ],
-            'session__convention__assignments__person__user2': [
+            'session__convention__assignments__person__user': [
                 'exact',
             ],
             'session__convention__year': [
@@ -367,7 +367,7 @@ class SessionFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'convention__assignments__person__user2': [
+            'convention__assignments__person__user': [
                 'exact',
             ],
             'convention__assignments__kind': [

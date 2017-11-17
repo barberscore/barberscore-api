@@ -641,7 +641,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'officers',
             'panelists',
             'participants',
-            'user2',
+            'user',
             'permissions',
         )
         # fields = '__all__'
@@ -876,7 +876,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'is_active',
             'is_staff',
-            'person2',
+            'person',
             'is_convention_manager',
             'is_session_manager',
             'is_scoring_manager',

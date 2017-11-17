@@ -279,7 +279,7 @@ class PersonFactory(DjangoModelFactory):
     notes = ''
     current_through = '2018-12-31'
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
-    user2 = SubFactory('api.factories.UserFactory')
+    user = SubFactory('api.factories.UserFactory')
 
     class Meta:
         model = Person

@@ -562,7 +562,7 @@ class ParticipantViewSet(
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        'user2',
+        'user',
     ).prefetch_related(
         'assignments',
         'members',
