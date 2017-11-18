@@ -139,7 +139,7 @@ class ConventionFactory(DjangoModelFactory):
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_archived = False
-    image = None
+    img = None
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
@@ -172,7 +172,7 @@ class GroupFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    image = None
+    img = None
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: x)
@@ -229,7 +229,7 @@ class OrganizationFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    image = None
+    img = None
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: x)
@@ -274,7 +274,7 @@ class PersonFactory(DjangoModelFactory):
     twitter = ''
     email = LazyAttribute(lambda x: '{0}@barberscore.com'.format(x.bhs_id))
     phone = ''
-    image = None
+    img = None
     description = ''
     notes = ''
     current_through = '2018-12-31'

@@ -164,14 +164,14 @@ class ChartSerializer(serializers.ModelSerializer):
             'lyricists',
             'description',
             'notes',
-            'image',
+            'img',
             'holders',
             'repertories',
             'songs',
             'permissions',
         )
         read_only_fields = [
-            'image',
+            'img',
         ]
     # class JSONAPIMeta:
     #     included_resources = [
@@ -369,6 +369,7 @@ class GroupSerializer(serializers.ModelSerializer):
     #     'repertories': 'api.serializers.RepertorySerializer',
     # }
     img = serializers.ImageField(use_url=True)
+
     class Meta:
         model = Group
         fields = [
@@ -388,7 +389,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'image',
             'img',
             'description',
             'bhs_id',
@@ -401,7 +401,7 @@ class GroupSerializer(serializers.ModelSerializer):
         ]
 
         read_only_fields = [
-            'image',
+            'img',
         ]
     # class JSONAPIMeta:
     #     included_resources = [
@@ -526,7 +526,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'image',
+            'img',
             'description',
             'bhs_id',
             'org_sort',
@@ -540,7 +540,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         ]
 
         read_only_fields = [
-            'image',
+            'img',
         ]
     # class JSONAPIMeta:
     #     included_resources = [
@@ -630,7 +630,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'work_phone',
             'cell_phone',
             'airports',
-            'image',
+            'img',
             'description',
             'bhs_id',
             'current_through',
@@ -650,7 +650,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'common_name',
             'full_name',
             'sort_name',
-            'image',
+            'img',
         ]
     # class JSONAPIMeta:
     #     included_resources = [
