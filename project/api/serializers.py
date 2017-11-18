@@ -368,7 +368,7 @@ class GroupSerializer(serializers.ModelSerializer):
     #     'members': 'api.serializers.MemberSerializer',
     #     'repertories': 'api.serializers.RepertorySerializer',
     # }
-
+    img = serializers.ImageField(use_url=True)
     class Meta:
         model = Group
         fields = [
@@ -389,6 +389,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'img',
             'description',
             'bhs_id',
             'org_sort',

@@ -1,5 +1,3 @@
-import os
-
 # Third-Party
 import pytz
 import six
@@ -8,12 +6,14 @@ from rest_framework_json_api import serializers
 
 # Django
 from django.core.exceptions import (
-    ObjectDoesNotExist,
     ValidationError,
 )
-from django.db import models
+
+
 from django.utils.deconstruct import deconstructible
 from django.utils.text import slugify
+import os
+
 
 @deconstructible
 class PathAndRename(object):
@@ -36,9 +36,17 @@ class PathAndRename(object):
 
 
 class CloudinaryRenameField(CloudinaryField):
-
     def upload_options(self, model_instance):
-        return {'public_id': str(model_instance.id)}
+        folder = model_instance._meta.model_name
+        public_id = str(model_instance.id)
+        options = {
+            'public_id': public_id,
+            'overwrite': True,
+            'invalidate': True,
+            'folder': folder,
+            'format': 'png',
+        }
+        return options
 
 
 class TimezoneField(serializers.Field):

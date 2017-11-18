@@ -25,6 +25,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
+from cloudinary.uploader import upload_resource
 
 # Local
 from .backends import (
@@ -383,7 +384,6 @@ class GroupViewSet(
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
     def image(self, request, *args, **kwargs):
-        print(request.data)
         if 'file' in request.data:
             obj = self.get_object()
 
@@ -395,6 +395,30 @@ class GroupViewSet(
             return Response(
                 status=status.HTTP_201_CREATED,
                 data={'image': obj.image.url},
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    @parser_classes((FormParser, MultiPartParser,))
+    def img(self, request, *args, **kwargs):
+        if 'file' in request.data:
+            obj = self.get_object()
+            file = request.data['file']
+            public_id = str(obj.id)
+            folder = obj._meta.model_name
+            obj.img = upload_resource(
+                file,
+                public_id=public_id,
+                folder=folder,
+                overwrite=True,
+                invalidate=True,
+                format='png',
+            )
+            obj.save()
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data={'image': obj.img.url},
             )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

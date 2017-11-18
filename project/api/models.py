@@ -48,7 +48,11 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 # Local
-from .fields import PathAndRename
+from .fields import (
+    PathAndRename,
+    CloudinaryRenameField,
+)
+
 from .managers import (
     ChartManager,
     UserManager,
@@ -865,6 +869,12 @@ class Chart(TimeStampedModel):
     image = models.FileField(
         upload_to=PathAndRename(),
         max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    img = CloudinaryRenameField(
+        'image',
         null=True,
         blank=True,
     )
@@ -1711,6 +1721,12 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    img = CloudinaryRenameField(
+        'image',
+        null=True,
+        blank=True,
+    )
+
     is_evaluation = models.BooleanField(
         help_text="""
             Entry requests evaluation.""",
@@ -2335,6 +2351,12 @@ class Group(TimeStampedModel):
     image = models.ImageField(
         upload_to=PathAndRename(),
         max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    img = CloudinaryRenameField(
+        'image',
         null=True,
         blank=True,
     )
@@ -3085,6 +3107,12 @@ class Organization(TimeStampedModel):
         blank=True,
     )
 
+    img = CloudinaryRenameField(
+        'image',
+        null=True,
+        blank=True,
+    )
+
     description = models.TextField(
         help_text="""
             A description of the organization.  Max 1000 characters.""",
@@ -3647,6 +3675,12 @@ class Person(TimeStampedModel):
     image = models.ImageField(
         upload_to=PathAndRename(),
         max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    img = CloudinaryRenameField(
+        'image',
         null=True,
         blank=True,
     )
