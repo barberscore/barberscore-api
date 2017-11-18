@@ -1164,6 +1164,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'bbscores',
         'drcj_report',
         'admin_emails',
+        'admin_emailz',
     ]
 
     list_display = [

@@ -51,6 +51,7 @@ from django.utils.timezone import now
 from .fields import (
     PathAndRename,
     CloudinaryRenameField,
+    CloudinaryXLSXField,
 )
 
 from .managers import (
@@ -4656,6 +4657,12 @@ class Session(TimeStampedModel):
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
+    )
+
+    admin_emailz = CloudinaryXLSXField(
+        'raw',
+        null=True,
+        blank=True,
     )
 
     num_rounds = models.IntegerField(
