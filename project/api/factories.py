@@ -367,9 +367,10 @@ class VenueFactory(DjangoModelFactory):
 
 @mute_signals(post_save)
 class UserFactory(DjangoModelFactory):
+    name = Faker('name_male')
     email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     password = PostGenerationMethodCall('set_password', 'password')
-    is_active = True
+    is_active = False
     is_staff = False
 
     class Meta:

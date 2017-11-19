@@ -82,115 +82,128 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Create Admin
-        admin_person = PersonFactory(
-            name='Admin Person',
-            email='test@barberscore.com',
-            status=Person.STATUS.active,
-        )
-        UserFactory(
+        admin_user = UserFactory(
             name='Admin Person',
             email='test@barberscore.com',
             password='password',
             is_staff=True,
-            person=admin_person,
+            is_active=True,
         )
+        admin_person = PersonFactory(
+            first_name='Admin',
+            last_name='Person',
+            email='test@barberscore.com',
+            status=Person.STATUS.active,
+            user=admin_user,
+        )
+
         # Create Core Persons
-        scjc_person = PersonFactory(
-            name='SCJC Person',
-            email='scjc@barberscore.com',
-            status=Person.STATUS.active,
-        )
-        drcj_person = PersonFactory(
-            name='DRCJ Person',
-            email='drcj@barberscore.com',
-            status=Person.STATUS.active,
-        )
-        ca_person = PersonFactory(
-            name='CA Person',
-            email='ca@barberscore.com',
-            status=Person.STATUS.active,
-        )
-        quartet_person = PersonFactory(
-            name='Quartet Person',
-            email='quartet@barberscore.com',
-            status=Person.STATUS.active,
-        )
-        chorus_person = PersonFactory(
-            name='Chorus Person',
-            email='chorus@barberscore.com',
-            status=Person.STATUS.active,
-        )
         # Create Core Users
         scjc_user = UserFactory(
             name='SCJC Person',
-            email=scjc_person.email,
-            person=scjc_person,
+            email='scjs@barberscore.com',
+            is_active=True,
         )
         drcj_user = UserFactory(
             name='DRCJ Person',
-            email=drcj_person.email,
-            person=drcj_person,
+            email='drcj@barberscore.com',
+            is_active=True,
         )
         ca_user = UserFactory(
             name='CA Person',
-            email=ca_person.email,
-            person=ca_person,
+            email='ca@barberscore.com',
+            is_active=True,
         )
         quartet_user = UserFactory(
             name='Quartet Person',
-            email=quartet_person.email,
-            person=quartet_person,
+            email='quartet@barberscore.com',
+            is_active=True,
         )
         chorus_user = UserFactory(
             name='Chorus Person',
-            email=chorus_person.email,
-            person=chorus_person,
+            email='chorus@barberscore.com',
+            is_active=True,
+        )
+        scjc_person = PersonFactory(
+            first_name='SCJC',
+            last_name='Person',
+            email='scjc@barberscore.com',
+            status=Person.STATUS.active,
+            user=scjc_user,
+        )
+        drcj_person = PersonFactory(
+            first_name='DRCJ',
+            last_name='Person',
+            email='drcj@barberscore.com',
+            status=Person.STATUS.active,
+            user=drcj_user,
+        )
+        ca_person = PersonFactory(
+            first_name='CA',
+            last_name='Person',
+            email='ca@barberscore.com',
+            status=Person.STATUS.active,
+            user=ca_user,
+        )
+        quartet_person = PersonFactory(
+            first_name='Quartet',
+            last_name='Person',
+            email='quartet@barberscore.com',
+            status=Person.STATUS.active,
+            user=quartet_user,
+        )
+        chorus_person = PersonFactory(
+            first_name='Chorus',
+            last_name='Person',
+            email='chorus@barberscore.com',
+            status=Person.STATUS.active,
+            user=chorus_user,
         )
         # Create International and Districts
         international = OrganizationFactory(
             name='International Organization',
-            short_name='INT',
+            code='INT',
             kind=Organization.KIND.international,
         )
         district_alpha = OrganizationFactory(
             name='District Alpha',
-            short_name='ALF',
+            code='ALF',
             parent=international,
             kind=Organization.KIND.district,
         )
         district_beta = OrganizationFactory(
             name='District Beta',
-            short_name='BTA',
+            code='BTA',
             parent=international,
             kind=Organization.KIND.district,
         )
         district_beta_division_north = OrganizationFactory(
             name='Division Beta North',
-            short_name='BTA ND',
+            code='BTA ND',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
         district_beta_division_south = OrganizationFactory(
             name='Division Beta South',
-            short_name='BTA SD',
+            code='BTA SD',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
         district_beta_division_east = OrganizationFactory(
             name='Division Beta East',
-            short_name='BTA ED',
+            code='BTA ED',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
         district_beta_division_west = OrganizationFactory(
             name='Division Beta West',
-            short_name='BTA WD',
+            code='BTA WD',
             parent=district_beta,
             kind=Organization.KIND.division,
         )
         affiliate = OrganizationFactory(
             name='Affiliate Organization',
-            short_name='AFF',
+            code='AFF',
             parent=international,
             kind=Organization.KIND.affiliate,
         )
