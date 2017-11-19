@@ -31,7 +31,10 @@ def create_bbscores_report(session):
     ]
     ws.append(fieldnames)
     entries = session.entries.filter(
-        status=Entry.STATUS.approved,
+        status__in=[
+            Entry.STATUS.approved,
+            Entry.STATUS.final,
+        ]
     ).order_by('draw')
     for entry in entries:
         oa = entry.draw
@@ -101,7 +104,10 @@ def create_drcj_report(session):
     ]
     ws.append(fieldnames)
     entries = session.entries.filter(
-        status=Entry.STATUS.approved,
+        status__in=[
+            Entry.STATUS.approved,
+            Entry.STATUS.final,
+        ]
     ).order_by('draw')
     for entry in entries:
         oa = entry.draw
@@ -228,7 +234,10 @@ def create_admins_report(session):
     ]
     ws.append(fieldnames)
     entries = session.entries.filter(
-        status=Entry.STATUS.approved,
+        status__in=[
+            Entry.STATUS.approved,
+            Entry.STATUS.final,
+        ]
     ).order_by('draw')
     for entry in entries:
         admins = entry.group.members.filter(
