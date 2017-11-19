@@ -748,6 +748,9 @@ class SessionSerializer(serializers.ModelSerializer):
     #     'entries': 'api.serializers.EntrySerializer',
     #     'rounds': 'api.serializers.RoundSerializer',
     # }
+    bbscores_report = serializers.FileField(use_url=True)
+    drcj_report = serializers.FileField(use_url=True)
+    admins_report = serializers.FileField(use_url=True)
 
     class Meta:
         model = Session
