@@ -1161,9 +1161,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('open_date', 'close_date'),
         ('start_date', 'end_date'),
         'scoresheet',
-        'bbscores_report',
-        'drcj_report',
-        'admins_report',
+        # 'bbscores_report',
+        # 'drcj_report',
+        # 'admins_report',
     ]
 
     list_display = [
@@ -1198,6 +1198,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'close_date',
         'start_date',
         'end_date',
+        # 'bbscores_report',
+        # 'drcj_report',
+        # 'admins_report',
     ]
 
     inlines = [

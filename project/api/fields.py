@@ -48,19 +48,8 @@ class CloudinaryRenameField(CloudinaryField):
         }
         return options
 
-
 class CloudinaryXLSXField(CloudinaryField):
-    def upload_options(self, model_instance):
-        folder = model_instance._meta.model_name
-        public_id = str(model_instance.id)
-        options = {
-            'public_id': public_id,
-            'overwrite': True,
-            'invalidate': True,
-            'folder': folder,
-            'format': 'xlsx',
-        }
-        return options
+    pass
 
 
 class TimezoneField(serializers.Field):

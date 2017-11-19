@@ -46,6 +46,7 @@ from django.template.loader import get_template
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from cloudinary.models import CloudinaryField
 
 # Local
 from .fields import (
@@ -65,14 +66,12 @@ from .managers import (
 )
 
 from .tasks import (
+    create_bbscores_report,
+    create_drcj_report,
+    create_admins_report,
     create_pdf,
     send_entry,
     send_session,
-)
-from .utils import (
-    create_admin_emails_excel,
-    create_bbscores_excel,
-    create_drcj_report_excel,
 )
 
 config = api_apps.get_app_config('api')
@@ -4599,29 +4598,27 @@ class Session(TimeStampedModel):
         default=False,
     )
 
+    bbscores_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    drcj_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    admins_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     scoresheet = models.FileField(
         upload_to=PathAndRename(
             prefix='scoresheet',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
-    bbscores = models.FileField(
-        upload_to=PathAndRename(
-            prefix='bbscores',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
-    drcj_report = models.FileField(
-        upload_to=PathAndRename(
-            prefix='drcj_report',
         ),
         max_length=255,
         null=True,
@@ -4647,22 +4644,6 @@ class Session(TimeStampedModel):
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
-    )
-
-    admin_emails = models.FileField(
-        upload_to=PathAndRename(
-            prefix='admin',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
-    admin_emailz = CloudinaryXLSXField(
-        'raw',
-        null=True,
-        blank=True,
     )
 
     num_rounds = models.IntegerField(
@@ -4819,21 +4800,9 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        create_bbscores_excel(self)
-        self.bbscores.save(
-            'bbscores.xlsx',
-            File(open('bbscores.xlsx', 'rb')),
-        )
-        create_drcj_report_excel(self)
-        self.drcj_report.save(
-            'drcj_report.xlsx',
-            File(open('drcj_report.xlsx', 'rb')),
-        )
-        create_admin_emails_excel(self)
-        self.admin_emails.save(
-            'admin_emails.xlsx',
-            File(open('admin_emails.xlsx', 'rb')),
-        )
+        create_bbscores_report(self)
+        create_drcj_report(self)
+        create_admins_report(self)
         return
 
     @fsm_log_by
@@ -4846,21 +4815,9 @@ class Session(TimeStampedModel):
     def start(self, *args, **kwargs):
         """Create round, seat panel, copy draw."""
         #  Create the export files
-        create_bbscores_excel(self)
-        self.bbscores.save(
-            'bbscores.xlsx',
-            File(open('bbscores.xlsx', 'rb')),
-        )
-        create_drcj_report_excel(self)
-        self.drcj_report.save(
-            'drcj_report.xlsx',
-            File(open('drcj_report.xlsx', 'rb')),
-        )
-        create_admin_emails_excel(self)
-        self.admin_emails.save(
-            'admin_emails.xlsx',
-            File(open('admin_emails.xlsx', 'rb')),
-        )
+        create_bbscores_report(self)
+        create_drcj_report(self)
+        create_admins_report(self)
         # Build the rounds
         Assignment = config.get_model('Assignment')
         Slot = config.get_model('Slot')
