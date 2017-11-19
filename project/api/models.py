@@ -1696,13 +1696,6 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
-    image = models.ImageField(
-        upload_to=PathAndRename(),
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     img = CloudinaryRenameField(
         'image',
         null=True,
@@ -2318,13 +2311,6 @@ class Group(TimeStampedModel):
             The phone number of the resource.  Include country code.""",
         blank=True,
         max_length=25,
-    )
-
-    image = models.ImageField(
-        upload_to=PathAndRename(),
-        max_length=255,
-        null=True,
-        blank=True,
     )
 
     img = CloudinaryRenameField(
@@ -3072,13 +3058,6 @@ class Organization(TimeStampedModel):
         max_length=25,
     )
 
-    image = models.ImageField(
-        upload_to=PathAndRename(),
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     img = CloudinaryRenameField(
         'image',
         null=True,
@@ -3640,13 +3619,6 @@ class Person(TimeStampedModel):
             blank=True,
             max_length=3,
         ),
-        null=True,
-        blank=True,
-    )
-
-    image = models.ImageField(
-        upload_to=PathAndRename(),
-        max_length=255,
         null=True,
         blank=True,
     )
