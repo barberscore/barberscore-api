@@ -325,7 +325,6 @@ class SessionFactory(DjangoModelFactory):
     is_archived = False
     kind = Session.KIND.quartet
     is_invitational = False
-    scoresheet = None
     convention = SubFactory('api.factories.ConventionFactory')
 
     class Meta:

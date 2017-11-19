@@ -3,7 +3,6 @@ cloudinary==1.8.0
 coreapi==2.3.3
 cryptography==1.9
 dj-database-url==0.4.2
-django-cloudinary-storage==0.2.2
 django-cors-headers==2.1.0
 django-filter==1.1.0
 django-fsm==2.6.0

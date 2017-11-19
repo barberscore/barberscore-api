@@ -73,7 +73,6 @@ class AppearanceAdmin(admin.ModelAdmin):
         'actual_finish',
         'entry',
         'round',
-        'var_pdf',
         'num',
         'draw',
         'slot',
@@ -446,7 +445,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'group',
         'img',
-        'csa_pdf',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
         ('is_evaluation', 'is_private',),
@@ -1060,7 +1058,6 @@ class RoundAdmin(admin.ModelAdmin):
         # 'name',
         'status',
         ('session', 'kind', 'num'),
-        'ann_pdf',
 
     ]
 
@@ -1160,7 +1157,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_invitational',
         ('open_date', 'close_date'),
         ('start_date', 'end_date'),
-        'scoresheet',
         # 'bbscores_report',
         # 'drcj_report',
         # 'admins_report',

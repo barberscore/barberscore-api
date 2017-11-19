@@ -5,7 +5,6 @@ import random
 import uuid
 
 # Third-Party
-from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from django_fsm import (
     FSMIntegerField,
     transition,
@@ -134,16 +133,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    var_pdf = models.FileField(
-        upload_to=PathAndRename(
-            prefix='var',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
     # Privates
     rank = models.IntegerField(
         null=True,
@@ -229,38 +218,38 @@ class Appearance(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    def print_var(self):
-        appearance = self
-        song_one = appearance.songs.all().order_by('num').first()
-        song_two = appearance.songs.all().order_by('num').last()
-        scores_one = song_one.scores.all().order_by('panelist__num')
-        scores_two = song_two.scores.all().order_by('panelist__num')
-        scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
-        scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
-        tem = get_template('variance.html')
-        template = tem.render(context={
-            'appearance': appearance,
-            'song_one': song_one,
-            'song_two': song_two,
-            'scores_one': scores_one,
-            'scores_two': scores_two,
-            'scores_one_avg': scores_one_avg,
-            'scores_two_avg': scores_two_avg,
-        })
-        payload = {
-            "test": True,
-            "document_content": template,
-            "name": "var-{0}.pdf".format(id),
-            "document_type": "pdf",
-        }
-        response = create_pdf(payload)
-        f = ContentFile(response)
-        appearance.var_pdf.save(
-            "{0}.pdf".format(id),
-            f
-        )
-        appearance.save()
-        return "Complete"
+    # def print_var(self):
+    #     appearance = self
+    #     song_one = appearance.songs.all().order_by('num').first()
+    #     song_two = appearance.songs.all().order_by('num').last()
+    #     scores_one = song_one.scores.all().order_by('panelist__num')
+    #     scores_two = song_two.scores.all().order_by('panelist__num')
+    #     scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
+    #     scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
+    #     tem = get_template('variance.html')
+    #     template = tem.render(context={
+    #         'appearance': appearance,
+    #         'song_one': song_one,
+    #         'song_two': song_two,
+    #         'scores_one': scores_one,
+    #         'scores_two': scores_two,
+    #         'scores_one_avg': scores_one_avg,
+    #         'scores_two_avg': scores_two_avg,
+    #     })
+    #     payload = {
+    #         "test": True,
+    #         "document_content": template,
+    #         "name": "var-{0}.pdf".format(id),
+    #         "document_type": "pdf",
+    #     }
+    #     response = create_pdf(payload)
+    #     f = ContentFile(response)
+    #     appearance.var_pdf.save(
+    #         "{0}.pdf".format(id),
+    #         f
+    #     )
+    #     appearance.save()
+    #     return "Complete"
 
     def calculate(self, *args, **kwargs):
         self.rank = self.calculate_rank()
@@ -863,13 +852,6 @@ class Chart(TimeStampedModel):
     notes = models.TextField(
         help_text="""
             Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-    image = models.FileField(
-        upload_to=PathAndRename(),
-        max_length=255,
-        null=True,
         blank=True,
     )
 
@@ -1812,16 +1794,6 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    csa_pdf = models.FileField(
-        upload_to=PathAndRename(
-            prefix='csa',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -1888,40 +1860,40 @@ class Entry(TimeStampedModel):
         self.save()
         return
 
-    def print_csa(self):
-        entry = self
-        contestants = entry.contestants.filter(status__gt=0)
-        appearances = entry.appearances.order_by(
-            'round__kind',
-        )
-        assignments = entry.session.convention.assignments.filter(
-            category__gt=20,
-        ).order_by(
-            'category',
-            'kind',
-            'nomen',
-        )
-        tem = get_template('csa.html')
-        template = tem.render(context={
-            'entry': entry,
-            'appearances': appearances,
-            'assignments': assignments,
-            'contestants': contestants,
-        })
-        payload = {
-            "test": True,
-            "document_content": template,
-            "name": "csa-{0}.pdf".format(id),
-            "document_type": "pdf",
-        }
-        response = create_pdf(payload)
-        f = ContentFile(response)
-        entry.csa_pdf.save(
-            "{0}.pdf".format(id),
-            f
-        )
-        entry.save()
-        return "Complete"
+    # def print_csa(self):
+    #     entry = self
+    #     contestants = entry.contestants.filter(status__gt=0)
+    #     appearances = entry.appearances.order_by(
+    #         'round__kind',
+    #     )
+    #     assignments = entry.session.convention.assignments.filter(
+    #         category__gt=20,
+    #     ).order_by(
+    #         'category',
+    #         'kind',
+    #         'nomen',
+    #     )
+    #     tem = get_template('csa.html')
+    #     template = tem.render(context={
+    #         'entry': entry,
+    #         'appearances': appearances,
+    #         'assignments': assignments,
+    #         'contestants': contestants,
+    #     })
+    #     payload = {
+    #         "test": True,
+    #         "document_content": template,
+    #         "name": "csa-{0}.pdf".format(id),
+    #         "document_type": "pdf",
+    #     }
+    #     response = create_pdf(payload)
+    #     f = ContentFile(response)
+    #     entry.csa_pdf.save(
+    #         "{0}.pdf".format(id),
+    #         f
+    #     )
+    #     entry.save()
+    #     return "Complete"
 
     def calculate_rank(self):
         try:
@@ -4024,16 +3996,6 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    ann_pdf = models.FileField(
-        upload_to=PathAndRename(
-            prefix='ann',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -4107,40 +4069,40 @@ class Round(TimeStampedModel):
         rank = ranking.rank(point_total)
         return rank
 
-    def print_ann(self):
-        primary = self.session.contests.get(is_primary=True)
-        contests = self.session.contests.filter(is_primary=False)
-        winners = []
-        for contest in contests:
-            winner = contest.contestants.get(rank=1)
-            winners.append(winner)
-        medalists = []
-        contestants = primary.contestants.filter(
-            status__gt=0,
-        ).order_by('-rank')
-        for contestant in contestants:
-            medalists.append(contestant)
-        medalists = medalists[-5:]
-        tem = get_template('ann.html')
-        template = tem.render(context={
-            'primary': primary,
-            'contests': contests,
-            'winners': winners,
-            'medalists': medalists,
-        })
-        create_response = create_pdf({
-            "test": True,
-            "document_content": template,
-            "name": "announcements-{0}.pdf".format(id),
-            "document_type": "pdf",
-        })
-        f = ContentFile(create_response)
-        self.ann_pdf.save(
-            "{0}.pdf".format(id),
-            f
-        )
-        self.save()
-        return "Complete"
+    # def print_ann(self):
+    #     primary = self.session.contests.get(is_primary=True)
+    #     contests = self.session.contests.filter(is_primary=False)
+    #     winners = []
+    #     for contest in contests:
+    #         winner = contest.contestants.get(rank=1)
+    #         winners.append(winner)
+    #     medalists = []
+    #     contestants = primary.contestants.filter(
+    #         status__gt=0,
+    #     ).order_by('-rank')
+    #     for contestant in contestants:
+    #         medalists.append(contestant)
+    #     medalists = medalists[-5:]
+    #     tem = get_template('ann.html')
+    #     template = tem.render(context={
+    #         'primary': primary,
+    #         'contests': contests,
+    #         'winners': winners,
+    #         'medalists': medalists,
+    #     })
+    #     create_response = create_pdf({
+    #         "test": True,
+    #         "document_content": template,
+    #         "name": "announcements-{0}.pdf".format(id),
+    #         "document_type": "pdf",
+    #     })
+    #     f = ContentFile(create_response)
+    #     self.ann_pdf.save(
+    #         "{0}.pdf".format(id),
+    #         f
+    #     )
+    #     self.save()
+    #     return "Complete"
 
     # Transitions
     @fsm_log_by
@@ -4614,36 +4576,6 @@ class Session(TimeStampedModel):
         null=True,
         blank=True,
         editable=False,
-    )
-
-    scoresheet = models.FileField(
-        upload_to=PathAndRename(
-            prefix='scoresheet',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
-    oss_pdf = models.FileField(
-        upload_to=PathAndRename(
-            prefix='oss',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
-    )
-
-    ann_pdf = models.FileField(
-        upload_to=PathAndRename(
-            prefix='announcements',
-        ),
-        max_length=255,
-        null=True,
-        blank=True,
-        storage=RawMediaCloudinaryStorage(),
     )
 
     num_rounds = models.IntegerField(
