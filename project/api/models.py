@@ -49,9 +49,7 @@ from cloudinary.models import CloudinaryField
 
 # Local
 from .fields import (
-    PathAndRename,
     CloudinaryRenameField,
-    CloudinaryXLSXField,
 )
 
 from .managers import (

@@ -10,31 +10,6 @@ from django.core.exceptions import (
 )
 
 
-from django.utils.deconstruct import deconstructible
-from django.utils.text import slugify
-import os
-
-
-@deconstructible
-class PathAndRename(object):
-    def __init__(self, sub_path='', prefix=''):
-        self.path = sub_path
-        self.prefix = prefix
-
-    def __call__(self, instance, filename):
-        f, ext = os.path.splitext(filename)
-        if self.prefix:
-            deslashed = instance.nomen.replace("/", "-")
-            name = "-".join([
-                self.prefix,
-                slugify(deslashed),
-            ])
-        else:
-            name = instance.id
-        filename = '{0}{1}'.format(name, ext.lower())
-        return os.path.join(self.path, filename)
-
-
 class CloudinaryRenameField(CloudinaryField):
     def upload_options(self, model_instance):
         folder = model_instance._meta.model_name
@@ -47,9 +22,6 @@ class CloudinaryRenameField(CloudinaryField):
             'format': 'png',
         }
         return options
-
-class CloudinaryXLSXField(CloudinaryField):
-    pass
 
 
 class TimezoneField(serializers.Field):
