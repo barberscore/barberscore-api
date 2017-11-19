@@ -1161,10 +1161,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('open_date', 'close_date'),
         ('start_date', 'end_date'),
         'scoresheet',
-        'bbscores',
+        'bbscores_report',
         'drcj_report',
-        'admin_emails',
-        'admin_emailz',
+        'admins_report',
     ]
 
     list_display = [
