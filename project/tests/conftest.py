@@ -56,6 +56,7 @@ def disconnect_signals():
 def admin_client():
     admin = UserFactory(
         is_staff=True,
+        is_active=True,
     )
     client = Client()
     client.force_login(admin)
@@ -66,6 +67,7 @@ def admin_client():
 def api_client():
     admin = UserFactory(
         is_staff=True,
+        is_active=True,
     )
     client = APIClient()
     client.force_authenticate(user=admin)
