@@ -84,7 +84,7 @@
       "addons": [
         "heroku-postgresql:hobby-dev",
         "heroku-redis:hobby-dev",
-        "cloudinary:starter"
+        "cloudinary:starter-2"
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "settings.test",
