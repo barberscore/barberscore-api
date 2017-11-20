@@ -1,5 +1,6 @@
 # Django
 from django.db import models
+# from django.core.exceptions import ValidationError
 
 
 class Human(models.Model):
@@ -81,20 +82,22 @@ class Human(models.Model):
     # Properties
     @property
     def full_name(self):
-        if self.first_name.strip():
-            first_name = self.first_name
+        if self.first_name:
+            first_name = self.first_name.strip()
         else:
             first_name = None
-        if self.middle_name.strip():
-            middle_name = self.middle_name
+        if self.middle_name:
+            middle_name = self.middle_name.strip()
         else:
             middle_name = None
-        if self.last_name.strip():
-            last_name = self.last_name
+        if self.last_name:
+            last_name = self.last_name.strip()
         else:
             last_name = None
-        if self.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip():
-            format_nick = "({0})".format(self.nick_name)
+        if self.nick_name:
+            format_nick = "({0})".format(
+                self.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
+            )
         else:
             format_nick = None
         full_name = " ".join(
@@ -202,16 +205,17 @@ class Structure(models.Model):
     )
 
     def __str__(self):
-        if not self.name:
-            name = ""
-        else:
+        if self.name:
             name = self.name.strip()
+        else:
+            name = ""
         if self.kind.casefold() == 'chapter'.casefold():
-            nomen = "{0} [{1} {2}]".format(
-                self.chorus_name.strip(),
-                self.chapter_code,
-                name,
-            )
+            if self.chorus_name:
+                nomen = "{0} [{1} {2}]".format(
+                    self.chorus_name.strip(),
+                    self.chapter_code,
+                    name,
+                )
         else:
             nomen = name
         if not nomen:
