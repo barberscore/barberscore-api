@@ -63,7 +63,7 @@ def get_auth0_accounts():
             users = results['users']
         except KeyError:
             t += 1
-            if t < 3:
+            if t < 4:
                 time.sleep(t ** 2)
                 continue
             else:

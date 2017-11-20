@@ -26,7 +26,12 @@ class Command(BaseCommand):
         users = User.objects.filter(auth0_id__isnull=False)
         user_auth0s = users.values_list('auth0_id', flat=True).distinct()
         clean_accounts = []
+        i = 0
+        total = len(accounts)
         for account in accounts:
+            i += 1
+            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            self.stdout.flush()
             if account['auth0_id'] not in user_auth0s:
                 auth0.users.delete(account['auth0_id'])
                 self.stdout.write("DELETED: {0}".format(account['auth0_id']))
@@ -37,8 +42,13 @@ class Command(BaseCommand):
         users = User.objects.filter(auth0_id__isnull=False, is_active=True)
         # Update each Active User account
         self.stdout.write("Updating existing accounts...")
+        i = 0
+        total = users.count()
         for user in users:
             # Find user in accounts, or none
+            i += 1
+            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            self.stdout.flush()
             match = next((a for a in accounts if a['auth0_id'] == str(user.auth0_id)), None)
             if match:
                 user_dict = {
@@ -63,10 +73,14 @@ class Command(BaseCommand):
         # Create new Auth0 Accounts
         self.stdout.write("Creating new accounts...")
         users = User.objects.filter(auth0_id__isnull=True, is_active=True)
+        i = 0
+        total = users.count()
         for user in users:
+            i += 1
+            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            self.stdout.flush()
             account = create_auth0_account_from_user(user)
             user.auth0_id = account['user_id']
             user.save()
             self.stdout.write("CREATED: {0}".format(account['user_id']))
-
         self.stdout.write("Complete.")
