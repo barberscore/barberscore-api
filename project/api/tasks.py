@@ -58,7 +58,14 @@ def get_auth0_accounts():
             per_page=100,
             page=i,
         )
-        users = results['users']
+        try:
+            users = results['users']
+        except KeyError:
+            t += 1
+            if t < 3:
+                continue
+            else:
+                raise RuntimeError(results)
         for user in users:
             payload = {
                 'auth0_id': user['user_id'],
