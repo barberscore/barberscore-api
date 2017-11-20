@@ -414,9 +414,15 @@ class OrganizationManager(Manager):
 class PersonManager(Manager):
     def update_or_create_from_human(self, human, **kwargs):
         first_name = human.first_name.strip()
-        middle_name = human.middle_name.strip()
+        try:
+            middle_name = human.middle_name.strip()
+        except AttributeError:
+            middle_name = ""
         last_name = human.last_name.strip()
-        nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
+        try:
+            nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
+        except AttributeError:
+            nick_name = ""
         if nick_name == first_name:
             nick_name = ""
         bhs_id = human.bhs_id
