@@ -17,7 +17,7 @@
     }
   },
   "addons": [
-    "cloudinary:starter",
+    "cloudinary:starter-2",
     "docraptor:starter",
     "heroku-postgresql:hobby-dev"
   ],
