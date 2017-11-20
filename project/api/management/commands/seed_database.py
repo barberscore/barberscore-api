@@ -159,6 +159,10 @@ class Command(BaseCommand):
             status=Person.STATUS.active,
             user=chorus_user,
         )
+        # Only Primitives
+        if not options['breakpoint']:
+            return
+
         # Create International and Districts
         international = OrganizationFactory(
             name='International Organization',
@@ -699,10 +703,6 @@ class Command(BaseCommand):
         # )
         # international_youth_convention_quartet_session = international_youth_convention.sessions.create(kind=Session.KIND.quartet)
         # international_youth_convention_chorus_session = international_youth_convention.sessions.create(kind=Session.KIND.chorus)
-
-        # Only Primitives
-        if not options['breakpoint']:
-            return
 
         district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',

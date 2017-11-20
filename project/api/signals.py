@@ -13,7 +13,7 @@ from .models import (
     User,
 )
 
-from .services import (
+from .tasks import (
     create_auth0_account_from_user,
     update_auth0_account_from_user,
     delete_auth0_account_from_user,

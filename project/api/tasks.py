@@ -11,9 +11,115 @@ from django.utils.text import slugify
 from cloudinary.uploader import upload_resource
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl import Workbook
+from django.core.cache import cache
+from auth0.v3.authentication import GetToken
+from auth0.v3.management import Auth0
 
 log = logging.getLogger(__name__)
 config = api_apps.get_app_config('api')
+
+
+def get_auth0():
+    auth0_api_access_token = cache.get('auth0_api_access_token')
+    if not auth0_api_access_token:
+        client = GetToken(settings.AUTH0_DOMAIN)
+        response = client.client_credentials(
+            settings.AUTH0_API_ID,
+            settings.AUTH0_API_SECRET,
+            settings.AUTH0_AUDIENCE,
+        )
+        cache.set(
+            'auth0_api_access_token',
+            response['access_token'],
+            timeout=response['expires_in'],
+        )
+        auth0_api_access_token = response['access_token']
+    auth0 = Auth0(
+        settings.AUTH0_DOMAIN,
+        auth0_api_access_token,
+    )
+    return auth0
+
+
+def get_auth0_accounts():
+    auth0 = get_auth0()
+    output = []
+    more = True
+    i = 0
+    t = 0
+    while more:
+        results = auth0.users.list(
+            fields=[
+                'user_id',
+                'email',
+                'app_metadata',
+                'user_metadata',
+            ],
+            per_page=100,
+            page=i,
+        )
+        users = results['users']
+        for user in users:
+            payload = {
+                'auth0_id': user['user_id'],
+                'email': user['email'],
+                'name': user['user_metadata']['name'],
+                'barberscore_id': user['app_metadata']['barberscore_id'],
+            }
+            output.append(payload)
+        more = bool(results['users'])
+        i += 1
+        t = 0
+    return output
+
+
+@job
+def create_auth0_account_from_user(user):
+    auth0 = get_auth0()
+    # Build payload
+    payload = {
+        "connection": "email",
+        "email": user.email,
+        "email_verified": True,
+        "user_metadata": {
+            "name": user.name
+        },
+        "app_metadata": {
+            "barberscore_id": str(user.id),
+        }
+    }
+    # Create Auth0 Account
+    response = auth0.users.create(payload)
+    return response
+
+
+@job
+def update_auth0_account_from_user(user):
+    auth0 = get_auth0()
+    # Build payload
+    payload = {
+        "connection": "email",
+        "email": user.email,
+        "email_verified": True,
+        "user_metadata": {
+            "name": user.name
+        },
+        "app_metadata": {
+            "barberscore_id": str(user.id),
+        }
+    }
+    # Update Auth0 Account
+    response = auth0.users.update(user.auth0_id, payload)
+    return response
+
+
+@job
+def delete_auth0_account_from_user(user):
+    auth0 = get_auth0()
+    # Delete Auth0
+    if user.auth0_id:
+        response = auth0.users.delete(user.auth0_id)
+    return response
 
 
 @job

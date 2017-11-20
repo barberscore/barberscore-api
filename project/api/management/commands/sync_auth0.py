@@ -1,14 +1,14 @@
 # Django
 from django.core.management.base import BaseCommand
-from auth0.v3.management.rest import Auth0Error
 
 # First-Party
 from api.models import User
 
-from api.services import (
+from api.tasks import (
     get_auth0,
-    get_auth0_users,
-    generate_payload,
+    get_auth0_accounts,
+    update_auth0_account_from_user,
+    create_auth0_account_from_user,
 )
 
 
@@ -20,66 +20,53 @@ class Command(BaseCommand):
         auth0 = get_auth0()
         # Get the accounts
         self.stdout.write("Getting Auth0 accounts...")
-        accounts = get_auth0_users(auth0)
+        accounts = get_auth0_accounts()
         # Delete orphaned Auth0 accounts
         self.stdout.write("Deleting orphaned accounts...")
+        users = User.objects.filter(auth0_id__isnull=False)
+        user_auth0s = users.values_list('auth0_id', flat=True).distinct()
+        clean_accounts = []
         for account in accounts:
-            try:
-                user = User.objects.get(
-                    auth0_id=account['user_id'],
-                )
-            except User.DoesNotExist:
-                auth0.users.delete(account['user_id'])
-                self.stdout.write("DELETED: {0}".format(account['user_id']))
+            if account['auth0_id'] not in user_auth0s:
+                auth0.users.delete(account['auth0_id'])
+                self.stdout.write("DELETED: {0}".format(account['auth0_id']))
+            else:
+                clean_accounts.append(account)
+        accounts = clean_accounts
         # Get User Accounts with existing Auth0
-        users = User.objects.exclude(auth0_id=None)
-        # Update each User account
-        self.stdout.write("Updating Auth0 accounts...")
+        users = User.objects.filter(auth0_id__isnull=False, is_active=True)
+        # Update each Active User account
+        self.stdout.write("Updating existing accounts...")
         for user in users:
-            # First, check to see if the User account is in the Auth0 Account list
-            match = next(
-                (a for a in accounts if a['user_id'] == str(user.auth0_id)),
-                None,
-            )
+            # Find user in accounts, or none
+            match = next((a for a in accounts if a['auth0_id'] == str(user.auth0_id)), None)
             if match:
-                # If you find the account, check to see if it needs updating.
-                payload = {
+                user_dict = {
+                    'name': user.name,
                     'email': user.email,
-                    'user_metadata': {
-                        'name': user.name,
-                    },
-                    'user_id': user.auth0_id,
-                    'app_metadata': {
-                        'barberscore_id': str(user.id),
-                    },
+                    'auth0_id': user.auth0_id,
+                    'barberscore_id': str(user.id),
                 }
-                if payload != match:
-                    # Details need updating
-                    del payload['user_id']
-                    account = auth0.users.update(user.auth0_id, payload)
+                if user_dict == match:
+                    self.stdout.write("SKIPPED: {0}".format(user))
+                else:
+                    account = update_auth0_account_from_user(user)
+                    user.auth0_id = account['user_id']
+                    user.save()
                     self.stdout.write("UPDATED: {0}".format(account['user_id']))
             else:
-                # The User account thinks it has an Auth0, but doesn't.  Create (reset)
-                payload = generate_payload(user)
-                account = auth0.users.create(payload)
+                account = create_auth0_account_from_user(user)
                 user.auth0_id = account['user_id']
                 user.save()
                 self.stdout.write("RESET: {0}".format(account['user_id']))
-        # Create new accounts for Active users
-        users = User.objects.filter(
-            is_active=True,
-            auth0_id=None,
-        )
-        self.stdout.write("Creating Auth0 accounts...")
+        # Create new accounts for new Active users
+        # Create new Auth0 Accounts
+        self.stdout.write("Creating new accounts...")
+        users = User.objects.filter(auth0_id__isnull=True, is_active=True)
         for user in users:
-            payload = generate_payload(user)
-            # Create
-            try:
-                account = auth0.users.create(payload)
-            except Auth0Error as e:
-                self.stdout.write(e)
-                continue
+            account = create_auth0_account_from_user(user)
             user.auth0_id = account['user_id']
             user.save()
             self.stdout.write("CREATED: {0}".format(account['user_id']))
+
         self.stdout.write("Complete.")
