@@ -1,4 +1,5 @@
 import logging
+import time
 from django.apps import apps as api_apps
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -63,6 +64,7 @@ def get_auth0_accounts():
         except KeyError:
             t += 1
             if t < 3:
+                time.sleep(t ** 2)
                 continue
             else:
                 raise RuntimeError(results)
