@@ -8,10 +8,6 @@ from django.core.exceptions import ValidationError
 
 from django.db.models import Manager
 
-from django.db.models import Q
-
-from django.db import IntegrityError
-
 from django.apps import apps as api_apps
 config = api_apps.get_app_config('api')
 bhs_config = api_apps.get_app_config('bhs')
