@@ -135,16 +135,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Redis
-RQ_QUEUES = {
-    'default': {
-        'URL': get_env_variable("REDIS_URL"),
-        'DEFAULT_TIMEOUT': 360,
-        'ASYNC': True,
-    },
-}
-RQ_SHOW_ADMIN_LINK = True
-
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
