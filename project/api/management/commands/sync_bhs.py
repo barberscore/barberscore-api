@@ -139,7 +139,10 @@ class Command(BaseCommand):
         self.stdout.write("Updating memberships...")
         js = SMJoin.objects.filter(
             status=True,
-            subscription__items_editable=True,
+            structure__kind__in=[
+                'chapter',
+                'quartet',
+            ],
             updated_ts__gt=cursor,
         ).order_by('updated_ts')
         i = 0
