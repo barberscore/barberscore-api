@@ -2,18 +2,24 @@
 import datetime
 
 # Django
-from django.core.management.base import BaseCommand
+from django.core.management.base import (
+    BaseCommand,
+    CommandError,
+)
 from django.utils import timezone
+
+from api.models import (
+    Person,
+    Group,
+    Enrollment,
+    Member,
+    Organization,
+)
 
 from bhs.models import (
     Human,
     SMJoin,
     Structure,
-)
-from bhs.updaters import (
-    update_or_create_group_from_structure,
-    update_or_create_member_from_smjoin,
-    update_or_create_person_from_human,
 )
 
 
@@ -22,16 +28,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-a',
-            '--all',
-            action='store_true',
-            dest='all',
-            default=False,
-            help='Update all groups.',
-        )
-
-        parser.add_argument(
-            '-d',
             '--days',
             type=int,
             dest='days',
@@ -49,112 +45,125 @@ class Command(BaseCommand):
             help='Number of hours to update.',
         )
 
+        parser.add_argument(
+            '--minutes',
+            type=int,
+            dest='minutes',
+            nargs='?',
+            const=1,
+            help='Number of hours to update.',
+        )
+
     def handle(self, *args, **options):
-        # sync persons
-        self.stdout.write("Updating persons...")
-        if options['all']:
-            hs = Human.objects.all()
+        # Set Cursor
+        if options['days']:
+            cursor = timezone.now() - datetime.timedelta(days=options['days'], hours=1)
         elif options['hours']:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(hours=options['hours'], minutes=5)
-            hs = Human.objects.filter(
-                updated_ts__gt=cursor,
-            )
+            cursor = timezone.now() - datetime.timedelta(hours=options['hours'], minutes=5)
+        elif options['minutes']:
+            cursor = timezone.now() - datetime.timedelta(minutes=options['minutes'], seconds=5)
         else:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(days=options['days'], hours=1)
-            hs = Human.objects.filter(
-                updated_ts__gt=cursor,
-            )
-        total = hs.count()
+            raise CommandError('No argument specified.')
+
+        # Sync Persons
+        self.stdout.write("Updating persons...")
+        hs = Human.objects.filter(
+            updated_ts__gt=cursor,
+        ).exclude(id__in=[
+            '8e44efc7-ea7a-4075-9e35-529d4e458f89',  # Duplicate to strip
+        ])
         i = 0
+        t = hs.count()
         for h in hs:
-            h.full_clean()
             i += 1
-            update_or_create_person_from_human(h)
-            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            Person.objects.update_or_create_from_human(h)
+            self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
-        self.stdout.write("Updated {0} persons.".format(total))
+        self.stdout.write("Updated {0} persons.".format(t))
+
+        # Sync BHS Status and Current Through
+        self.stdout.write("Updating BHS status...")
+        js = SMJoin.objects.filter(
+            status=True,
+            structure__kind='organization',
+            subscription__items_editable=True,
+        ).order_by('updated_ts')
+        i = 0
+        t = js.count()
+        for j in js:
+            i += 1
+            Person.objects.update_from_join(j)
+            self.stdout.write("{0}/{1}".format(i, t), ending='\r')
+            self.stdout.flush()
+        self.stdout.write("Updated {0} statuses.".format(t))
+
+        # Sync Organizations
+        self.stdout.write("Updating organizations...")
+        ss = Structure.objects.filter(
+            kind__in=[
+                'organization',
+                'district',
+                'chapter',
+            ],
+            updated_ts__gt=cursor,
+        )
+        i = 0
+        t = ss.count()
+        for s in ss:
+            i += 1
+            Organization.objects.update_or_create_organization_from_structure(s)
+            self.stdout.write("{0}/{1}".format(i, t), ending='\r')
+            self.stdout.flush()
+        self.stdout.write("Updated {0} organizations.".format(t))
+
         # Sync Groups
         self.stdout.write("Updating groups...")
-        if options['all']:
-            ss = Structure.objects.filter(
-                kind__in=[
-                    'quartet',
-                    'chapter',
-                ]
-            )
-        elif options['hours']:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(hours=options['hours'], minutes=5)
-            ss = Structure.objects.filter(
-                kind__in=[
-                    'quartet',
-                    'chapter',
-                ],
-                updated_ts__gt=cursor,
-            )
-        else:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(days=options['days'], hours=1)
-            ss = Structure.objects.filter(
-                kind__in=[
-                    'quartet',
-                    'chapter',
-                ],
-                updated_ts__gt=cursor,
-            )
-        total = ss.count()
+        ss = Structure.objects.filter(
+            kind__in=[
+                'quartet',
+                'chapter',
+            ],
+            updated_ts__gt=cursor,
+        )
         i = 0
+        t = ss.count()
         for s in ss:
-            s.full_clean()
             i += 1
-            update_or_create_group_from_structure(s)
-            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            Group.objects.update_or_create_group_from_structure(s)
+            self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
-        self.stdout.write("Updated {0} groups.".format(total))
+        self.stdout.write("Updated {0} groups.".format(t))
 
         # Sync Members
-        self.stdout.write("Updating members...")
-        if options['all']:
-            js = SMJoin.objects.exclude(
-                updated_ts=None,
-            ).filter(
-                structure__kind__in=[
-                    'organization',
-                    'quartet',
-                    'chapter',
-                ],
-            ).order_by('updated_ts')
-        elif options['hours']:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(hours=options['hours'], minutes=5)
-            js = SMJoin.objects.filter(
-                structure__kind__in=[
-                    'organization',
-                    'quartet',
-                    'chapter',
-                ],
-                updated_ts__gt=cursor,
-            ).order_by('updated_ts')
-        else:
-            now = timezone.now()
-            cursor = now - datetime.timedelta(days=options['days'])
-            js = SMJoin.objects.filter(
-                structure__kind__in=[
-                    'organization',
-                    'quartet',
-                    'chapter',
-                ],
-                updated_ts__gt=cursor,
-            ).order_by('updated_ts')
+        self.stdout.write("Updating memberships...")
+        js = SMJoin.objects.filter(
+            status=True,
+            subscription__items_editable=True,
+            updated_ts__gt=cursor,
+        ).order_by('updated_ts')
         i = 0
-        total = js.count()
+        t = js.count()
         for j in js:
-            j.full_clean()
             i += 1
-            update_or_create_member_from_smjoin(j)
-            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
+            Member.objects.update_or_create_from_join(j)
+            self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
-        self.stdout.write("Updated {0} members.".format(total))
-        self.stdout.write("Complete")
+        self.stdout.write("Updated {0} memberships.".format(t))
+
+        # Sync Enrollments - Very Slow!
+        self.stdout.write("Updating enrollments...")
+        js = SMJoin.objects.filter(
+            status=True,
+            subscription__items_editable=True,
+            updated_ts__gt=cursor,
+        ).order_by('updated_ts')
+        i = 0
+        t = js.count()
+        for s in ss:
+            i += 1
+            Enrollment.objects.update_or_create_from_join(j)
+            self.stdout.write("{0}/{1}".format(i, t), ending='\r')
+            self.stdout.flush()
+        self.stdout.write("Updated {0} enrollments.".format(t))
+
+        self.stdout.write("Complete.")
