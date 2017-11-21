@@ -112,7 +112,7 @@ class Command(BaseCommand):
         t = ss.count()
         for s in ss:
             i += 1
-            Organization.objects.update_or_create_organization_from_structure(s)
+            Organization.objects.update_or_create_from_structure(s)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} organizations.".format(t))
@@ -130,7 +130,7 @@ class Command(BaseCommand):
         t = ss.count()
         for s in ss:
             i += 1
-            Group.objects.update_or_create_group_from_structure(s)
+            Group.objects.update_or_create_from_structure(s)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} groups.".format(t))
