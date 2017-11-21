@@ -82,8 +82,7 @@
   "environments": {
     "test": {
       "addons": [
-        "heroku-postgresql:hobby-dev",
-        "heroku-redis:hobby-dev"
+        "heroku-postgresql:hobby-dev"
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "settings.test",
