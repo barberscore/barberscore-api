@@ -46,9 +46,6 @@ JWT_AUTH = {
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-#  Docraptor
-DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
-
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 

@@ -64,9 +64,6 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
-#  Docraptor
-DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
-
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 

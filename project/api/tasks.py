@@ -6,7 +6,8 @@ from django.template.loader import render_to_string
 
 from django_rq import job
 
-import docraptor
+import pydf
+
 from django.conf import settings
 from django.utils.text import slugify
 from cloudinary.uploader import upload_resource
@@ -387,10 +388,10 @@ def create_admins_report(session):
 
 
 @job
-def create_pdf(payload):
-    docraptor.configuration.username = settings.DOCRAPTOR_API_KEY
-    client = docraptor.DocApi()
-    return client.create_doc(payload)
+def create_pdf(template, context):
+    rendered = render_to_string(template, context)
+    pdf = pydf.generate_pdf(rendered)
+    return pdf
 
 
 @job

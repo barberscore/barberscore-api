@@ -15,7 +15,6 @@ djangorestframework-csv==2.0.0
 djangorestframework-jsonapi==2.2.0
 djangorestframework-jwt==1.11.0
 djangorestframework==3.7.3
-docraptor==1.2.0
 drf-fsm-transitions==0.2.0
 dry-rest-permissions==0.1.9
 factory-boy==2.9.2
@@ -27,6 +26,7 @@ openpyxl==2.4.9
 Pillow==4.3.0
 psycopg2==2.7.3.1
 python-dateutil==2.6.1
+python-pdf==0.36
 pytz==2017.2
 ranking==0.3.1
 requests==2.18.4

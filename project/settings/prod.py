@@ -63,9 +63,6 @@ EMAIL_SUBJECT_PREFIX = "[Barberscore] "
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 
-#  Docraptor
-DOCRAPTOR_API_KEY = get_env_variable("DOCRAPTOR_API_KEY")
-
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
