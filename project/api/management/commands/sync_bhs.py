@@ -163,7 +163,7 @@ class Command(BaseCommand):
         ).order_by('updated_ts')
         i = 0
         t = js.count()
-        for s in ss:
+        for j in js:
             i += 1
             Enrollment.objects.update_or_create_from_join(j)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
