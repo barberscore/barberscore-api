@@ -87,6 +87,7 @@ class Command(BaseCommand):
             status=True,
             structure__kind='organization',
             subscription__items_editable=True,
+            updated_ts__gt=cursor,
         ).order_by('updated_ts')
         i = 0
         t = js.count()
