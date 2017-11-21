@@ -19,6 +19,7 @@
   "addons": [
     "cloudinary:starter-2",
     "docraptor:starter",
+    "heroku-redis:hobby-dev",
     "heroku-postgresql:hobby-dev"
   ],
   "env": {
