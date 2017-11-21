@@ -2020,7 +2020,7 @@ class Entry(TimeStampedModel):
     )
     def invite(self, *args, **kwargs):
         context = {'entry': self}
-        send_entry.delay(context, 'entry_invite.txt')
+        send_entry.delay('entry_invite.txt', context)
         return
 
     @fsm_log_by
@@ -2042,7 +2042,7 @@ class Entry(TimeStampedModel):
         for contestant in contestants:
             contestant.delete()
         context = {'entry': self}
-        send_entry.delay(context, 'entry_withdraw.txt')
+        send_entry.delay('entry_withdraw.txt', context)
         return
 
     @fsm_log_by
@@ -2054,7 +2054,7 @@ class Entry(TimeStampedModel):
     )
     def submit(self, *args, **kwargs):
         context = {'entry': self}
-        send_entry.delay(context, 'entry_submit.txt')
+        send_entry.delay('entry_submit.txt', context)
         return
 
     @fsm_log_by
@@ -2066,7 +2066,7 @@ class Entry(TimeStampedModel):
     )
     def approve(self, *args, **kwargs):
         context = {'entry': self}
-        send_entry.delay(context, 'entry_approve.txt')
+        send_entry.delay('entry_approve.txt', context)
         return
 
     @fsm_log_by
@@ -2087,7 +2087,7 @@ class Entry(TimeStampedModel):
         for contestant in self.contestants.filter(status__gt=0):
             contestant.delete()
         context = {'entry': self}
-        send_entry.delay(context, 'entry_scratch.txt')
+        send_entry.delay('entry_scratch.txt', context)
         return
 
     @fsm_log_by
@@ -2100,7 +2100,7 @@ class Entry(TimeStampedModel):
     def finalize(self, *args, **kwargs):
         # Finalize the Entry (locks to further edits)
         context = {'entry': self}
-        send_entry.delay(context, 'entry_finalize.txt')
+        send_entry.delay('entry_finalize.txt', context)
         return
 
 

@@ -395,7 +395,7 @@ def create_pdf(template, context):
 
 
 @job
-def send_entry(context, template):
+def send_entry(template, context):
     entry = context['entry']
     contacts = entry.group.members.filter(
         is_admin=True,
