@@ -483,12 +483,8 @@ class PersonManager(Manager):
             # Only update organization records.
             raise ValueError("Must be organization record.")
         human = join.subscription.human
-        try:
-            person = self.get(
-                bhs_pk=human.id,
-            )
-        except self.model.DoesNotExist:
-            raise ValueError("Can not match join to person.")
+        Person = config.get_model('Person')
+        person, created = Person.objects.update_or_create_from_human(human)
         subscription = join.subscription
         is_active = bool(subscription.status == 'active')
         if is_active:
@@ -499,7 +495,6 @@ class PersonManager(Manager):
             # Otherwise, make inactive and set CT as None.
             status = self.model.STATUS.inactive
             current_through = None
-        # Check to see if BHS ID exists already.
         person.status = status
         person.current_through = current_through
         person.save()
