@@ -58,6 +58,12 @@ def test_convention_admin_list(admin_client, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_competitor_admin_list(admin_client, competitor):
+    path = reverse('admin:api_competitor_changelist')
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_entry_admin_list(admin_client, entry):
     path = reverse('admin:api_entry_changelist')
     response = admin_client.get(path)
@@ -204,6 +210,12 @@ def test_contestant_admin_detail(admin_client, contestant):
 
 def test_convention_admin_detail(admin_client, convention):
     path = reverse('admin:api_convention_change', args=(str(convention.id),))
+    response = admin_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_competitor_admin_detail(admin_client, competitor):
+    path = reverse('admin:api_competitor_change', args=(str(competitor.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

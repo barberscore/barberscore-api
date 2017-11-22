@@ -24,6 +24,7 @@ from api.models import (
     Contest,
     Contestant,
     Convention,
+    Competitor,
     Entry,
     Grantor,
     Group,
@@ -51,6 +52,7 @@ class AppearanceFactory(DjangoModelFactory):
     actual_start = None
     actual_finish = None
     round = SubFactory('api.factories.RoundFactory')
+    competitor = SubFactory('api.factories.CompetitorFactory')
     entry = SubFactory('api.factories.EntryFactory')
     slot = None
 
@@ -133,6 +135,17 @@ class ConventionFactory(DjangoModelFactory):
 
     class Meta:
         model = Convention
+
+
+class CompetitorFactory(DjangoModelFactory):
+    status = Competitor.STATUS.new
+    is_archived = False
+    img = None
+    session = SubFactory('api.factories.SessionFactory')
+    group = SubFactory('api.factories.GroupFactory')
+
+    class Meta:
+        model = Competitor
 
 
 @mute_signals(post_save)

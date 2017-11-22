@@ -10,6 +10,7 @@ from .models import (
     Chart,
     Contestant,
     Convention,
+    Competitor,
     Entry,
     Grantor,
     Group,
@@ -119,6 +120,19 @@ class ConventionFilter(FilterSet):
                 'exact',
             ],
             'assignments__category': [
+                'exact',
+            ],
+        }
+
+
+class CompetitorFilter(FilterSet):
+    class Meta:
+        model = Competitor
+        fields = {
+            'nomen': [
+                'icontains',
+            ],
+            'is_archived': [
                 'exact',
             ],
         }

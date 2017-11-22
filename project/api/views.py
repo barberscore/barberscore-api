@@ -36,6 +36,7 @@ from .filters import (
     ChartFilter,
     ContestantFilter,
     ConventionFilter,
+    CompetitorFilter,
     EntryFilter,
     GrantorFilter,
     GroupFilter,
@@ -59,6 +60,7 @@ from .models import (
     Contest,
     Contestant,
     Convention,
+    Competitor,
     Entry,
     Grantor,
     Group,
@@ -86,6 +88,7 @@ from .serializers import (
     ContestantSerializer,
     ContestSerializer,
     ConventionSerializer,
+    CompetitorSerializer,
     EntrySerializer,
     GrantorSerializer,
     GroupSerializer,
@@ -117,7 +120,7 @@ class AppearanceViewSet(
 ):
     queryset = Appearance.objects.select_related(
         'round',
-        'entry',
+        'competitor',
         'slot',
     ).prefetch_related(
         'songs',
@@ -245,7 +248,6 @@ class ChartViewSet(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class ContestViewSet(
     get_viewset_transition_action_mixin(Contest),
     viewsets.ModelViewSet,
@@ -318,6 +320,31 @@ class ConventionViewSet(
     resource_name = "convention"
 
 
+class CompetitorViewSet(
+    get_viewset_transition_action_mixin(Competitor),
+    viewsets.ModelViewSet
+):
+    queryset = Competitor.objects.select_related(
+        'session',
+        'group',
+    ).prefetch_related(
+        'appearances',
+        'appearances__songs',
+        'appearances__round',
+        'appearances__slot',
+    ).order_by('nomen')
+    serializer_class = CompetitorSerializer
+    filter_class = CompetitorFilter
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "competitor"
+
+
 class EntryViewSet(
     get_viewset_transition_action_mixin(Entry),
     viewsets.ModelViewSet
@@ -326,10 +353,6 @@ class EntryViewSet(
         'session',
         'group',
     ).prefetch_related(
-        'appearances',
-        'appearances__songs',
-        'appearances__round',
-        'appearances__slot',
         'contestants',
         'contestants__contest',
         'participants',
@@ -688,7 +711,6 @@ class PersonViewSet(viewsets.ModelViewSet):
             )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class RepertoryViewSet(

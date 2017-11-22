@@ -14,6 +14,7 @@ from .models import (
     Contest,
     Contestant,
     Convention,
+    Competitor,
     Entry,
     Grantor,
     Group,
@@ -273,6 +274,41 @@ class ConventionSerializer(serializers.ModelSerializer):
     #     ]
 
 
+class CompetitorSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+    # logs = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Competitor
+        fields = (
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'is_archived',
+            'rank',
+            'mus_points',
+            'per_points',
+            'sng_points',
+            'tot_points',
+            'mus_score',
+            'per_score',
+            'sng_score',
+            'tot_score',
+            'session',
+            'group',
+            'appearances',
+            'permissions',
+        )
+
+    # class JSONAPIMeta:
+    #     included_resources = [
+    #         'appearances',
+    #         'contestants',
+    #         'participants',
+    #     ]
+
+
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     # included_serializers = {
@@ -294,19 +330,9 @@ class EntrySerializer(serializers.ModelSerializer):
             'draw',
             'seed',
             'prelim',
-            'rank',
             'directors',
-            'mus_points',
-            'per_points',
-            'sng_points',
-            'tot_points',
-            'mus_score',
-            'per_score',
-            'sng_score',
-            'tot_score',
             'session',
             'group',
-            'appearances',
             'contestants',
             'participants',
             'permissions',

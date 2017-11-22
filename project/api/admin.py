@@ -19,6 +19,7 @@ from .inlines import (
     ContestantInline,
     ContestInline,
     ConventionInline,
+    CompetitorInline,
     EnrollmentInline,
     EntryInline,
     GrantorInline,
@@ -42,6 +43,7 @@ from .models import (
     Contest,
     Contestant,
     Convention,
+    Competitor,
     Enrollment,
     Entry,
     Grantor,
@@ -433,8 +435,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Entry)
-class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+@admin.register(Competitor)
+class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -447,6 +449,59 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'img',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
+    )
+
+    list_display = (
+        'nomen',
+        'status',
+    )
+
+    list_filter = [
+        'is_archived',
+        'status',
+        'session__kind',
+        'session__convention__season',
+        'session__convention__year',
+    ]
+
+    inlines = [
+        AppearanceInline,
+        # ContestantInline,
+        # ParticipantInline,
+    ]
+
+    search_fields = (
+        'nomen',
+    )
+
+    raw_id_fields = (
+        'session',
+        'group',
+    )
+
+    readonly_fields = (
+        'nomen',
+    )
+
+    save_on_top = True
+
+    ordering = (
+        'nomen',
+    )
+
+
+@admin.register(Entry)
+class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = (
+        'status',
+        'is_archived',
+        'session',
+        'group',
+        'img',
         ('is_evaluation', 'is_private',),
         'draw',
         'prelim',
@@ -468,7 +523,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        AppearanceInline,
+        # AppearanceInline,
         ContestantInline,
         ParticipantInline,
     ]
@@ -565,6 +620,7 @@ class GroupAdmin(admin.ModelAdmin):
         MemberInline,
         RepertoryInline,
         EntryInline,
+        CompetitorInline,
     ]
     readonly_fields = [
         'nomen',
@@ -1202,6 +1258,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         ContestInline,
         EntryInline,
+        CompetitorInline,
         RoundInline,
     ]
 

@@ -9,6 +9,7 @@ from .models import (
     Contest,
     Contestant,
     Convention,
+    Competitor,
     Enrollment,
     Entry,
     Grantor,
@@ -150,6 +151,32 @@ class ConventionInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'organization',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+
+
+class CompetitorInline(admin.TabularInline):
+    model = Competitor
+    fields = [
+        'nomen',
+        'session',
+        'group',
+        'tot_score',
+    ]
+    readonly_fields = [
+        'nomen',
+        # 'seed',
+    ]
+    raw_id_fields = [
+        'session',
+        'group',
+    ]
+    ordering = [
+        'group__nomen',
     ]
     show_change_link = True
     extra = 0
