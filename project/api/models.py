@@ -190,6 +190,14 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    competitor = models.ForeignKey(
+        'Competitor',
+        related_name='appearances',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     slot = models.OneToOneField(
         'Slot',
         null=True,
@@ -1491,6 +1499,286 @@ class Convention(TimeStampedModel):
                         award=award,
                     )
         return
+
+
+class Competitor(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    is_archived = models.BooleanField(
+        default=False,
+    )
+
+    img = CloudinaryRenameField(
+        'image',
+        null=True,
+        blank=True,
+    )
+
+    rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    per_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    mus_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    per_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    sng_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    tot_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    session = models.ForeignKey(
+        'Session',
+        related_name='competitors',
+        on_delete=models.CASCADE,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        related_name='competitors',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    class Meta:
+        verbose_name_plural = 'competitors'
+        unique_together = (
+            ('group', 'session',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "competitor"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def clean(self):
+        pass
+
+    def save(self, *args, **kwargs):
+        self.nomen = "; ".join(
+            map(
+                lambda x: smart_text(x), [
+                    self.group,
+                    self.session,
+                ]
+            )
+        )
+        super().save(*args, **kwargs)
+
+    # Methods
+    def calculate(self, *args, **kwargs):
+        self.mus_points = self.calculate_mus_points()
+        self.per_points = self.calculate_per_points()
+        self.sng_points = self.calculate_sng_points()
+        self.tot_points = self.calculate_tot_points()
+        self.mus_score = self.calculate_mus_score()
+        self.per_score = self.calculate_per_score()
+        self.sng_score = self.calculate_sng_score()
+        self.tot_score = self.calculate_tot_score()
+        self.rank = self.calculate_rank()
+
+    def calculate_pdf(self):
+        for appearance in self.appearances.all():
+            for song in appearance.songs.all():
+                song.calculate()
+                song.save()
+            appearance.calculate()
+            appearance.save()
+        self.calculate()
+        self.save()
+        return
+
+    # def print_csa(self):
+    #     entry = self
+    #     contestants = entry.contestants.filter(status__gt=0)
+    #     appearances = entry.appearances.order_by(
+    #         'round__kind',
+    #     )
+    #     assignments = entry.session.convention.assignments.filter(
+    #         category__gt=20,
+    #     ).order_by(
+    #         'category',
+    #         'kind',
+    #         'nomen',
+    #     )
+    #     tem = get_template('csa.html')
+    #     template = tem.render(context={
+    #         'entry': entry,
+    #         'appearances': appearances,
+    #         'assignments': assignments,
+    #         'contestants': contestants,
+    #     })
+    #     payload = {
+    #         "test": True,
+    #         "document_content": template,
+    #         "name": "csa-{0}.pdf".format(id),
+    #         "document_type": "pdf",
+    #     }
+    #     response = create_pdf(payload)
+    #     f = ContentFile(response)
+    #     entry.csa_pdf.save(
+    #         "{0}.pdf".format(id),
+    #         f
+    #     )
+    #     entry.save()
+    #     return "Complete"
+
+    def calculate_rank(self):
+        try:
+            primary = self.session.contests.first()
+            return self.contestants.get(contest=primary).calculate_rank()
+        except self.contestants.model.DoesNotExist:
+            return None
+
+    def calculate_mus_points(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=30,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_per_points(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=40,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_points(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=50,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_tot_points(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+
+    def calculate_mus_score(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=30,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_per_score(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=40,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_sng_score(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=50,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def calculate_tot_score(self):
+        return self.appearances.filter(
+            songs__scores__kind=10,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_group_manager,
+            request.user.is_session_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            self.session.convention.assignments.filter(
+                person__user=request.user,
+                category__lt=10,
+                kind=10,
+            ),
+        ])
+
+    # Competitor Methods
+
+    # Competitor Transition Conditions
+
+    # Competitor Transitions
 
 
 class Enrollment(TimeStampedModel):
