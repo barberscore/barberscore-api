@@ -5,6 +5,8 @@ from factory import (
     LazyAttribute,
     Sequence,
     SubFactory,
+    Iterator,
+    post_generation,
 )
 from factory.django import (
     DjangoModelFactory,
@@ -136,6 +138,31 @@ class ConventionFactory(DjangoModelFactory):
     class Meta:
         model = Convention
 
+    @post_generation
+    def create_assignments(self, create, extracted, **kwargs):
+        if create:
+            AssignmentFactory(
+                convention=self,
+                category=Assignment.CATEGORY.drcj,
+            )
+            AssignmentFactory(
+                convention=self,
+                category=Assignment.CATEGORY.admin,
+            )
+            for i in range(self.panel):
+                AssignmentFactory(
+                    convention=self,
+                    category=Assignment.CATEGORY.music,
+                )
+                AssignmentFactory(
+                    convention=self,
+                    category=Assignment.CATEGORY.performance,
+                )
+                AssignmentFactory(
+                    convention=self,
+                    category=Assignment.CATEGORY.singing,
+                )
+
 
 class CompetitorFactory(DjangoModelFactory):
     status = Competitor.STATUS.new
@@ -194,10 +221,31 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
+    @post_generation
+    def create_members(self, create, extracted, **kwargs):
+        if create:
+            if self.kind == self.KIND.quartet:
+                size = 4
+            else:
+                size = 20
+            for i in range(size):
+                MemberFactory.create(group=self)
+
+    @post_generation
+    def create_repertories(self, create, extracted, **kwargs):
+        if create:
+            for i in range(6):
+                RepertoryFactory.create(group=self)
+
 
 class MemberFactory(DjangoModelFactory):
     status = Member.STATUS.new
-    part = None
+    part = Iterator([
+        Member.PART.tenor,
+        Member.PART.lead,
+        Member.PART.baritone,
+        Member.PART.bass,
+    ])
     start_date = None
     end_date = None
     group = SubFactory('api.factories.GroupFactory')
@@ -338,10 +386,34 @@ class SessionFactory(DjangoModelFactory):
     is_archived = False
     kind = Session.KIND.quartet
     is_invitational = False
+    num_rounds = 2
     convention = SubFactory('api.factories.ConventionFactory')
 
     class Meta:
         model = Session
+
+    @post_generation
+    def create_contests(self, create, extracted, **kwargs):
+        if create:
+            for grantor in self.convention.grantors.all():
+                for award in grantor.organization.awards.all():
+                    ContestFactory(
+                        session=self,
+                        award=award,
+                        status=Contest.STATUS.included,
+                    )
+
+    @post_generation
+    def create_rounds(self, create, extracted, **kwargs):
+        if create:
+            for i in range(self.num_rounds):
+                num = i + 1
+                kind = self.num_rounds - i + 1
+                RoundFactory(
+                    session=self,
+                    num=num,
+                    kind=kind,
+                )
 
 
 class SlotFactory(DjangoModelFactory):
