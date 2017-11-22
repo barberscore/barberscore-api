@@ -4837,8 +4837,6 @@ class Session(TimeStampedModel):
     )
 
     num_rounds = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     # FKs
@@ -5003,23 +5001,19 @@ class Session(TimeStampedModel):
         conditions=[],
     )
     def start(self, *args, **kwargs):
-        """Create round, seat panel, copy draw."""
+        """Get round, seat panel, copy draw."""
         #  Create the export files
         create_bbscores_report(self)
         create_drcj_report(self)
         create_admins_report(self)
-        # Build the rounds
+        # Get models for constants
         Assignment = config.get_model('Assignment')
         Slot = config.get_model('Slot')
         Entry = config.get_model('Entry')
         Appearance = config.get_model('Appearance')
-        max = self.contests.filter(status__gt=0).aggregate(
-            max=models.Max('award__rounds')
-        )['max']
-        i = 1
-        round = self.rounds.create(
-            num=i,
-            kind=max,
+        # Get the first round.
+        round = self.rounds.get(
+            num=1,
         )
         for entry in self.entries.filter(status=Entry.STATUS.approved):
             slot = Slot.objects.create(
@@ -5056,18 +5050,6 @@ class Session(TimeStampedModel):
         conditions=[],
     )
     def finish(self, *args, **kwargs):
-        session = self
-        for entry in session.entries.filter(
-            status=session.entries.model.STATUS.final
-        ):
-            for appearance in entry.appearances.all():
-                for song in appearance.songs.all():
-                    song.calculate()
-                    song.save()
-                appearance.calculate()
-                appearance.save()
-            entry.calculate()
-            entry.save()
         return
 
 

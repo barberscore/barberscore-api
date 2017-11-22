@@ -1210,6 +1210,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'convention',
         'kind',
+        'num_rounds',
         'is_invitational',
         ('open_date', 'close_date'),
         ('start_date', 'end_date'),
@@ -1226,6 +1227,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'end_date',
         'status',
         'kind',
+        'num_rounds',
         'is_invitational',
         'status',
     ]
@@ -1234,6 +1236,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'status',
         'kind',
+        'num_rounds',
         'is_invitational',
         'convention__organization',
         'convention__season',

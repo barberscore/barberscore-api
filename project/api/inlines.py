@@ -30,13 +30,13 @@ from .models import (
 class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
-        'entry',
+        'competitor',
         'status',
         'num',
         'draw',
     ]
     readonly_fields = [
-        'entry',
+        'competitor',
     ]
     ordering = (
         'num',
@@ -436,6 +436,7 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
+        'num_rounds',
     ]
     raw_id_fields = [
         'convention',
