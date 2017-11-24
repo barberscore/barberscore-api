@@ -10,12 +10,8 @@ from factory import (
 )
 from factory.django import (
     DjangoModelFactory,
-    mute_signals,
 )
 from factory.fuzzy import FuzzyInteger
-
-# Django
-from django.db.models.signals import post_save
 
 # First-Party
 from api.models import (
@@ -138,30 +134,30 @@ class ConventionFactory(DjangoModelFactory):
     class Meta:
         model = Convention
 
-    @post_generation
-    def create_assignments(self, create, extracted, **kwargs):
-        if create:
-            AssignmentFactory(
-                convention=self,
-                category=Assignment.CATEGORY.drcj,
-            )
-            AssignmentFactory(
-                convention=self,
-                category=Assignment.CATEGORY.admin,
-            )
-            for i in range(self.panel):
-                AssignmentFactory(
-                    convention=self,
-                    category=Assignment.CATEGORY.music,
-                )
-                AssignmentFactory(
-                    convention=self,
-                    category=Assignment.CATEGORY.performance,
-                )
-                AssignmentFactory(
-                    convention=self,
-                    category=Assignment.CATEGORY.singing,
-                )
+    # @post_generation
+    # def create_assignments(self, create, extracted, **kwargs):
+    #     if create:
+    #         AssignmentFactory(
+    #             convention=self,
+    #             category=Assignment.CATEGORY.drcj,
+    #         )
+    #         AssignmentFactory(
+    #             convention=self,
+    #             category=Assignment.CATEGORY.admin,
+    #         )
+    #         for i in range(self.panel):
+    #             AssignmentFactory(
+    #                 convention=self,
+    #                 category=Assignment.CATEGORY.music,
+    #             )
+    #             AssignmentFactory(
+    #                 convention=self,
+    #                 category=Assignment.CATEGORY.performance,
+    #             )
+    #             AssignmentFactory(
+    #                 convention=self,
+    #                 category=Assignment.CATEGORY.singing,
+    #             )
 
 
 class CompetitorFactory(DjangoModelFactory):
@@ -175,7 +171,6 @@ class CompetitorFactory(DjangoModelFactory):
         model = Competitor
 
 
-@mute_signals(post_save)
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_archived = False
@@ -221,21 +216,21 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
-    @post_generation
-    def create_members(self, create, extracted, **kwargs):
-        if create:
-            if self.kind == self.KIND.quartet:
-                size = 4
-            else:
-                size = 20
-            for i in range(size):
-                MemberFactory.create(group=self)
+    # @post_generation
+    # def create_members(self, create, extracted, **kwargs):
+    #     if create:
+    #         if self.kind == self.KIND.quartet:
+    #             size = 4
+    #         else:
+    #             size = 20
+    #         for i in range(size):
+    #             MemberFactory.create(group=self)
 
-    @post_generation
-    def create_repertories(self, create, extracted, **kwargs):
-        if create:
-            for i in range(6):
-                RepertoryFactory.create(group=self)
+    # @post_generation
+    # def create_repertories(self, create, extracted, **kwargs):
+    #     if create:
+    #         for i in range(6):
+    #             RepertoryFactory.create(group=self)
 
 
 class MemberFactory(DjangoModelFactory):
@@ -320,7 +315,6 @@ class ParticipantFactory(DjangoModelFactory):
         model = Participant
 
 
-@mute_signals(post_save)
 class PersonFactory(DjangoModelFactory):
     # name = Faker('name_male')
     first_name = Faker('first_name_male')
@@ -392,28 +386,28 @@ class SessionFactory(DjangoModelFactory):
     class Meta:
         model = Session
 
-    @post_generation
-    def create_contests(self, create, extracted, **kwargs):
-        if create:
-            for grantor in self.convention.grantors.all():
-                for award in grantor.organization.awards.all():
-                    ContestFactory(
-                        session=self,
-                        award=award,
-                        status=Contest.STATUS.included,
-                    )
+    # @post_generation
+    # def create_contests(self, create, extracted, **kwargs):
+    #     if create:
+    #         for grantor in self.convention.grantors.all():
+    #             for award in grantor.organization.awards.all():
+    #                 ContestFactory(
+    #                     session=self,
+    #                     award=award,
+    #                     status=Contest.STATUS.included,
+    #                 )
 
-    @post_generation
-    def create_rounds(self, create, extracted, **kwargs):
-        if create:
-            for i in range(self.num_rounds):
-                num = i + 1
-                kind = self.num_rounds - i + 1
-                RoundFactory(
-                    session=self,
-                    num=num,
-                    kind=kind,
-                )
+    # @post_generation
+    # def create_rounds(self, create, extracted, **kwargs):
+    #     if create:
+    #         for i in range(self.num_rounds):
+    #             num = i + 1
+    #             kind = self.num_rounds - i
+    #             RoundFactory(
+    #                 session=self,
+    #                 num=num,
+    #                 kind=kind,
+    #             )
 
 
 class SlotFactory(DjangoModelFactory):
@@ -449,7 +443,6 @@ class VenueFactory(DjangoModelFactory):
         model = Venue
 
 
-@mute_signals(post_save)
 class UserFactory(DjangoModelFactory):
     name = Faker('name_male')
     email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
