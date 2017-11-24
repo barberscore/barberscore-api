@@ -35,23 +35,6 @@ from api.factories import (
     VenueFactory,
 )
 
-from api.models import (
-    User,
-)
-
-from api.signals import (
-    user_post_save,
-)
-
-from django.db.models.signals import (
-    post_save,
-)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def disconnect_signals():
-    post_save.disconnect(user_post_save, sender=User)
-
 
 @pytest.fixture
 def admin_client():
