@@ -122,10 +122,11 @@ class Command(BaseCommand):
         ss = Structure.objects.filter(
             kind__in=[
                 'quartet',
-                'chapter',
             ],
             updated_ts__gt=cursor,
-        )
+        ).exclude(id__in=[
+            '0207656d-64ff-443d-862f-bc4fec6ea2be'
+        ])
         i = 0
         t = ss.count()
         for s in ss:
@@ -140,7 +141,6 @@ class Command(BaseCommand):
         js = SMJoin.objects.filter(
             status=True,
             structure__kind__in=[
-                'chapter',
                 'quartet',
             ],
             updated_ts__gt=cursor,
