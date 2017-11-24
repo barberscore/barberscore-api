@@ -132,8 +132,8 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
 
 # Cloudinary
-MEDIA_URL = '/'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = None
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Applications
 INSTALLED_APPS = [
@@ -146,8 +146,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.humanize',
     'corsheaders',
-    'cloudinary_storage',
-    'cloudinary',
     'django_fsm',
     'django_fsm_log',
     'fsm_admin',
