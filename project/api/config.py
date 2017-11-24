@@ -9,6 +9,5 @@ class ApiConfig(AppConfig):
 
     def ready(self):
         from .signals import (
-            user_post_save,
             user_pre_delete,
         )

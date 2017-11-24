@@ -14,8 +14,8 @@ from .models import (
 )
 
 from .tasks import (
-    create_auth0_account_from_user,
-    update_auth0_account_from_user,
+    # create_auth0_account_from_user,
+    # update_auth0_account_from_user,
     delete_auth0_account_from_user,
 )
 
@@ -78,21 +78,6 @@ def entry_post_save(sender, instance=None, created=False, raw=False, **kwargs):
 #             else:
 #                 if user:
 #                     user.delete()
-
-
-@receiver(post_save, sender=User)
-def user_post_save(sender, instance=None, created=False, raw=False, **kwargs):
-    """Create/Update Auth0 from User."""
-    if not raw:
-        if instance.is_active:
-            # Can bypass if not active.
-            if created:
-                response = create_auth0_account_from_user(instance)
-                instance.auth0_id = response['user_id']
-                instance.save()
-            else:
-                update_auth0_account_from_user(instance)
-    return
 
 
 @receiver(pre_delete, sender=User)
