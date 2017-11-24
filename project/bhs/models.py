@@ -205,22 +205,10 @@ class Structure(models.Model):
     )
 
     def __str__(self):
-        if self.name:
-            name = self.name.strip()
-        else:
-            name = ""
-        if self.kind.casefold() == 'chapter'.casefold():
-            if self.chorus_name:
-                nomen = "{0} [{1} {2}]".format(
-                    self.chorus_name.strip(),
-                    self.chapter_code,
-                    name,
-                )
-        else:
-            nomen = name
-        if not nomen:
-            nomen = '(UNKNOWN)'
-        return nomen
+        return "{0} [{1}]".format(
+            self.full_name,
+            self.bhs_id,
+        )
 
     class Meta:
         db_table = 'vwStructures'
