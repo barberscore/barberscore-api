@@ -5,8 +5,8 @@ from django.core.management.base import BaseCommand
 from api.models import User
 
 from api.tasks import (
-    get_auth0,
     get_auth0_accounts,
+    delete_auth0_account_orphan,
     update_auth0_account_from_user,
     create_auth0_account_from_user,
 )
@@ -16,8 +16,6 @@ class Command(BaseCommand):
     help = "Command to sync database with Auth0."
 
     def handle(self, *args, **options):
-        # Get the Auth0 instance
-        auth0 = get_auth0()
         # Get the accounts
         self.stdout.write("Getting Auth0 accounts...")
         accounts = get_auth0_accounts()
@@ -33,8 +31,8 @@ class Command(BaseCommand):
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
             if account['auth0_id'] not in user_auth0s:
-                auth0.users.delete(account['auth0_id'])
-                self.stdout.write("DELETED: {0}".format(account['auth0_id']))
+                response = delete_auth0_account_orphan(account['auth0_id'])
+                self.stdout.write("DELETED: {0}".format(response))
             else:
                 clean_accounts.append(account)
         accounts = clean_accounts
@@ -57,18 +55,12 @@ class Command(BaseCommand):
                     'auth0_id': user.auth0_id,
                     'barberscore_id': str(user.id),
                 }
-                if user_dict == match:
-                    self.stdout.write("SKIPPED: {0}".format(user))
-                else:
-                    account = update_auth0_account_from_user(user)
-                    user.auth0_id = account['user_id']
-                    user.save()
-                    self.stdout.write("UPDATED: {0}".format(account['user_id']))
+                if user_dict != match:
+                    user = update_auth0_account_from_user.delay(user)
+                    self.stdout.write("UPDATED: {0}".format(user))
             else:
-                account = create_auth0_account_from_user(user)
-                user.auth0_id = account['user_id']
-                user.save()
-                self.stdout.write("RESET: {0}".format(account['user_id']))
+                user = create_auth0_account_from_user.delay(user)
+                self.stdout.write("RESET: {0}".format(user))
         # Create new accounts for new Active users
         # Create new Auth0 Accounts
         self.stdout.write("Creating new accounts...")
@@ -79,8 +71,6 @@ class Command(BaseCommand):
             i += 1
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
-            account = create_auth0_account_from_user(user)
-            user.auth0_id = account['user_id']
-            user.save()
-            self.stdout.write("CREATED: {0}".format(account['user_id']))
+            user = create_auth0_account_from_user.delay(user)
+            self.stdout.write("CREATED: {0}".format(user))
         self.stdout.write("Complete.")

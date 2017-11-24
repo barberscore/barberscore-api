@@ -84,6 +84,14 @@ def get_auth0_accounts():
 
 
 @job
+def delete_auth0_account_orphan(auth0_id):
+    auth0 = get_auth0()
+    # Delete Auth0
+    auth0.users.delete(auth0_id)
+    return auth0_id
+
+
+@job
 def create_auth0_account_from_user(user):
     auth0 = get_auth0()
     # Build payload
@@ -100,7 +108,9 @@ def create_auth0_account_from_user(user):
     }
     # Create Auth0 Account
     response = auth0.users.create(payload)
-    return response
+    user.auth0_id = response['user_id']
+    user.save()
+    return
 
 
 @job
@@ -120,7 +130,9 @@ def update_auth0_account_from_user(user):
     }
     # Update Auth0 Account
     response = auth0.users.update(user.auth0_id, payload)
-    return response
+    user.auth0_id = response['user_id']
+    user.save()
+    return user
 
 
 @job
@@ -128,8 +140,8 @@ def delete_auth0_account_from_user(user):
     auth0 = get_auth0()
     # Delete Auth0
     if user.auth0_id:
-        response = auth0.users.delete(user.auth0_id)
-    return response
+        auth0.users.delete(user.auth0_id)
+    return
 
 
 @job
