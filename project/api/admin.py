@@ -194,17 +194,6 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
     ]
 
-    list_editable = [
-        'name',
-        'organization',
-        'kind',
-        'level',
-        'season',
-        'rounds',
-        'is_primary', 'is_invitational', 'is_manual',
-        'status',
-    ]
-
     list_filter = [
         'status',
         'kind',
@@ -220,6 +209,10 @@ class AwardAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
+    ]
+
+    raw_id_fields = [
+        'organization',
     ]
 
     ordering = (
