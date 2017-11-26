@@ -2674,33 +2674,33 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # Group Denormalizations
-    international = models.ForeignKey(
-        'Organization',
-        null=True,
+    # Denormalizations
+    international = models.TextField(
+        help_text="""
+            The denormalized international organization.""",
         blank=True,
-        editable=False,
-        related_name='groups_int',
-        db_index=True,
-        on_delete=models.SET_NULL,
+        max_length=255,
     )
-    district = models.ForeignKey(
-        'Organization',
-        null=True,
+
+    district = models.TextField(
+        help_text="""
+            The denormalized district organization.""",
         blank=True,
-        editable=False,
-        related_name='groups_dis',
-        db_index=True,
-        on_delete=models.SET_NULL,
+        max_length=255,
     )
-    division = models.ForeignKey(
-        'Organization',
-        null=True,
+
+    division = models.TextField(
+        help_text="""
+            The denormalized division organization.""",
         blank=True,
-        editable=False,
-        related_name='groups_div',
-        db_index=True,
-        on_delete=models.SET_NULL,
+        max_length=255,
+    )
+
+    chapter = models.TextField(
+        help_text="""
+            The denormalized chapter organization.""",
+        blank=True,
+        max_length=255,
     )
 
     # Internals

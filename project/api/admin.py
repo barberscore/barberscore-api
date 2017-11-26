@@ -573,7 +573,7 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
         ('bhs_id', 'bhs_pk',),
         'organization',
-        ('international', 'district', 'division'),
+        ('international', 'district', 'division', 'chapter',),
         'location',
         'email',
         'phone',
@@ -605,9 +605,6 @@ class GroupAdmin(admin.ModelAdmin):
     ]
     list_select_related = [
         'organization',
-        'international',
-        'district',
-        'division',
     ]
     inlines = [
         MemberInline,
@@ -620,6 +617,7 @@ class GroupAdmin(admin.ModelAdmin):
         'international',
         'district',
         'division',
+        'chapter',
     ]
 
     raw_id_fields = [
