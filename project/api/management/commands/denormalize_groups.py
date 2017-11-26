@@ -28,42 +28,38 @@ class Command(BaseCommand):
             except Organization.DoesNotExist:
                 organization = None
             if not organization:
-                international = ""
-                district = ""
-                division = ""
-                chapter = ""
+                g.international = ""
+                g.district = ""
+                g.division = ""
+                g.chapter = ""
             else:
-                try:
-                    international = Organization.objects.get(
-                        children=organization,
-                        kind=Organization.KIND.international,
-                    ).code
-                except Organization.DoesNotExist:
-                    international = ""
-                try:
-                    district = Organization.objects.get(
-                        children=organization,
-                        kind=Organization.KIND.district,
-                    ).code
-                except Organization.DoesNotExist:
-                    district = ""
-                try:
-                    division = Organization.objects.get(
-                        children=organization,
-                        kind=Organization.KIND.division,
-                    ).name
-                except Organization.DoesNotExist:
-                    division = ""
-                try:
-                    chapter = Organization.objects.get(
-                        children=organization,
-                        kind=Organization.KIND.chapter,
-                    ).name
-                except Organization.DoesNotExist:
-                    chapter = ""
-            g.international = international
-            g.district = district
-            g.division = division
-            g.chapter = chapter
+                international = organization
+                if international <= Organization.KIND.international:
+                    while international.kind != Organization.KIND.international:
+                        international = international.parent
+                    g.international = international.code
+                else:
+                    g.international = ""
+                district = organization
+                if district <= Organization.KIND.district:
+                    while district.kind != Organization.KIND.district:
+                        district = district.parent
+                    g.district = district.code
+                else:
+                    g.district = ""
+                division = organization
+                if division <= Organization.KIND.division:
+                    while division.kind != Organization.KIND.division:
+                        division = division.parent
+                    g.division = division.code
+                else:
+                    g.division = ""
+                chapter = organization
+                if chapter <= Organization.KIND.chapter:
+                    while chapter.kind != Organization.KIND.chapter:
+                        chapter = chapter.parent
+                    g.chapter = chapter.code
+                else:
+                    g.chapter = ""
             g.save()
         self.stdout.write("Updated {0} groups.".format(t))
