@@ -1,7 +1,6 @@
 # Django
 from django.core.management.base import (
     BaseCommand,
-    CommandError,
 )
 
 from api.models import (
@@ -38,28 +37,28 @@ class Command(BaseCommand):
                     international = Organization.objects.get(
                         children=organization,
                         kind=Organization.KIND.international,
-                    )
+                    ).code
                 except Organization.DoesNotExist:
                     international = ""
                 try:
                     district = Organization.objects.get(
                         children=organization,
                         kind=Organization.KIND.district,
-                    )
+                    ).code
                 except Organization.DoesNotExist:
                     district = ""
                 try:
                     division = Organization.objects.get(
                         children=organization,
                         kind=Organization.KIND.division,
-                    )
+                    ).name
                 except Organization.DoesNotExist:
                     division = ""
                 try:
                     chapter = Organization.objects.get(
                         children=organization,
                         kind=Organization.KIND.chapter,
-                    )
+                    ).name
                 except Organization.DoesNotExist:
                     chapter = ""
             g.international = international
