@@ -1421,7 +1421,10 @@ class Convention(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        pass
+        if self.organization.kind < self.organization.KIND.district:
+            raise ValidationError(
+                {'organization': 'Owning organization must be at least district'}
+            )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name

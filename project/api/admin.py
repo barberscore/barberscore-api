@@ -391,7 +391,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'status',
         'season',
-        'organization',
         'year',
     )
 
