@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 g.chapter = ""
             else:
                 international = organization
-                if international.kind <= Organization.KIND.international:
+                if international.kind >= Organization.KIND.international:
                     try:
                         while international.kind != Organization.KIND.international:
                             international = international.parent
@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 else:
                     g.international = ""
                 district = organization
-                if district.kind <= Organization.KIND.district:
+                if district.kind >= Organization.KIND.district:
                     try:
                         while district.kind != Organization.KIND.district:
                             district = district.parent
@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 else:
                     g.district = ""
                 division = organization
-                if division.kind <= Organization.KIND.division:
+                if division.kind >= Organization.KIND.division:
                     try:
                         while division.kind != Organization.KIND.division:
                             division = division.parent
@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 else:
                     g.division = ""
                 chapter = organization
-                if chapter.kind <= Organization.KIND.chapter:
+                if chapter.kind >= Organization.KIND.chapter:
                     try:
                         while chapter.kind != Organization.KIND.chapter:
                             chapter = chapter.parent
