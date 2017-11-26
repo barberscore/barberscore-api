@@ -34,31 +34,31 @@ class Command(BaseCommand):
                 g.chapter = ""
             else:
                 international = organization
-                if international <= Organization.KIND.international:
+                if international.kind <= Organization.KIND.international:
                     while international.kind != Organization.KIND.international:
                         international = international.parent
                     g.international = international.code
                 else:
                     g.international = ""
                 district = organization
-                if district <= Organization.KIND.district:
+                if district.kind <= Organization.KIND.district:
                     while district.kind != Organization.KIND.district:
                         district = district.parent
                     g.district = district.code
                 else:
                     g.district = ""
                 division = organization
-                if division <= Organization.KIND.division:
+                if division.kind <= Organization.KIND.division:
                     while division.kind != Organization.KIND.division:
                         division = division.parent
-                    g.division = division.code
+                    g.division = division.name
                 else:
                     g.division = ""
                 chapter = organization
-                if chapter <= Organization.KIND.chapter:
+                if chapter.kind <= Organization.KIND.chapter:
                     while chapter.kind != Organization.KIND.chapter:
                         chapter = chapter.parent
-                    g.chapter = chapter.code
+                    g.chapter = chapter.name
                 else:
                     g.chapter = ""
             g.save()
