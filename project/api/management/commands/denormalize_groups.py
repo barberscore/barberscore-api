@@ -35,30 +35,42 @@ class Command(BaseCommand):
             else:
                 international = organization
                 if international.kind <= Organization.KIND.international:
-                    while international.kind != Organization.KIND.international:
-                        international = international.parent
-                    g.international = international.code
+                    try:
+                        while international.kind != Organization.KIND.international:
+                            international = international.parent
+                        g.international = international.code
+                    except AttributeError:
+                        g.international = ""
                 else:
                     g.international = ""
                 district = organization
                 if district.kind <= Organization.KIND.district:
-                    while district.kind != Organization.KIND.district:
-                        district = district.parent
-                    g.district = district.code
+                    try:
+                        while district.kind != Organization.KIND.district:
+                            district = district.parent
+                        g.district = district.code
+                    except AttributeError:
+                        g.district = ""
                 else:
                     g.district = ""
                 division = organization
                 if division.kind <= Organization.KIND.division:
-                    while division.kind != Organization.KIND.division:
-                        division = division.parent
-                    g.division = division.name
+                    try:
+                        while division.kind != Organization.KIND.division:
+                            division = division.parent
+                        g.division = division.name
+                    except AttributeError:
+                        g.division = ""
                 else:
                     g.division = ""
                 chapter = organization
                 if chapter.kind <= Organization.KIND.chapter:
-                    while chapter.kind != Organization.KIND.chapter:
-                        chapter = chapter.parent
-                    g.chapter = chapter.name
+                    try:
+                        while chapter.kind != Organization.KIND.chapter:
+                            chapter = chapter.parent
+                        g.chapter = chapter.name
+                    except AttributeError:
+                        g.chapter = ""
                 else:
                     g.chapter = ""
             g.save()
