@@ -65,6 +65,10 @@ from .models import (
     Venue,
 )
 
+from .filters import (
+    OrganizationListFilter,
+)
+
 
 @admin.register(Appearance)
 class AppearanceAdmin(admin.ModelAdmin):
@@ -589,6 +593,7 @@ class GroupAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'gender',
+        OrganizationListFilter,
     ]
 
     search_fields = [
@@ -886,7 +891,10 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     def get_inline_instances(self, request, obj=None):
         inline_instances = []
-        inlines = self.INLINES[obj.KIND[obj.kind]]
+        try:
+            inlines = self.INLINES[obj.KIND[obj.kind]]
+        except AttributeError:
+            return inline_instances
 
         for inline_class in inlines:
             inline = inline_class(self.model, self.admin_site)

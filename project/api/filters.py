@@ -4,6 +4,8 @@ from django_filters.rest_framework import (
     OrderingFilter,
 )
 
+from django.contrib import admin
+
 # Local
 from .models import (
     Award,
@@ -26,6 +28,23 @@ from .models import (
     Session,
     Venue,
 )
+
+
+class OrganizationListFilter(admin.SimpleListFilter):
+    title = ('organization')
+    parameter_name = 'org'
+
+    def lookups(self, request, model_admin):
+        orgs = Organization.objects.filter(
+            kind__lt=Organization.KIND.chapter,
+        ).values_list('kind', 'name')
+        return tuple(orgs)
+
+    def queryset(self, request, queryset):
+        org = request.GET.get('org')
+        if org:
+            return queryset.filter(organization__kind=org)
+        return queryset
 
 
 class AwardFilter(FilterSet):
