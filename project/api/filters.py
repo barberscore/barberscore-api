@@ -37,13 +37,13 @@ class OrganizationListFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         orgs = Organization.objects.filter(
             kind__lt=Organization.KIND.chapter,
-        ).values_list('kind', 'name')
+        ).values_list('id', 'code')
         return tuple(orgs)
 
     def queryset(self, request, queryset):
         org = request.GET.get('org')
         if org:
-            return queryset.filter(organization__kind=org)
+            return queryset.filter(organization=org)
         return queryset
 
 
