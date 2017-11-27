@@ -36,7 +36,7 @@ class OrganizationListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         orgs = Organization.objects.filter(
-            kind__lt=Organization.KIND.chapter,
+            kind__lte=Organization.KIND.division,
         ).values_list('id', 'code')
         return tuple(orgs)
 
@@ -53,7 +53,7 @@ class ParentOrganizationListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         orgs = Organization.objects.filter(
-            kind__lt=Organization.KIND.chapter,
+            kind__lte=Organization.KIND.division,
         ).values_list('id', 'code')
         return tuple(orgs)
 
@@ -61,6 +61,40 @@ class ParentOrganizationListFilter(admin.SimpleListFilter):
         org = request.GET.get('org')
         if org:
             return queryset.filter(parent=org)
+        return queryset
+
+
+class ConventionOrganizationListFilter(admin.SimpleListFilter):
+    title = ('organization')
+    parameter_name = 'org'
+
+    def lookups(self, request, model_admin):
+        orgs = Organization.objects.filter(
+            kind__lte=Organization.KIND.district,
+        ).values_list('id', 'code')
+        return tuple(orgs)
+
+    def queryset(self, request, queryset):
+        org = request.GET.get('org')
+        if org:
+            return queryset.filter(organization=org)
+        return queryset
+
+
+class SessionOrganizationListFilter(admin.SimpleListFilter):
+    title = ('organization')
+    parameter_name = 'org'
+
+    def lookups(self, request, model_admin):
+        orgs = Organization.objects.filter(
+            kind__lte=Organization.KIND.district,
+        ).values_list('id', 'code')
+        return tuple(orgs)
+
+    def queryset(self, request, queryset):
+        org = request.GET.get('org')
+        if org:
+            return queryset.filter(convention__organization=org)
         return queryset
 
 

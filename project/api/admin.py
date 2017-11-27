@@ -67,6 +67,8 @@ from .models import (
 from .filters import (
     OrganizationListFilter,
     ParentOrganizationListFilter,
+    SessionOrganizationListFilter,
+    ConventionOrganizationListFilter,
 )
 
 
@@ -395,6 +397,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'status',
         'season',
+        ConventionOrganizationListFilter,
         'year',
     )
 
@@ -1247,7 +1250,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
-        'convention__organization',
+        SessionOrganizationListFilter,
         'convention__season',
         'convention__year',
     )
