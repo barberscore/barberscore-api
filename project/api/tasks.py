@@ -110,7 +110,7 @@ def create_auth0_account_from_user(user):
     response = auth0.users.create(payload)
     user.auth0_id = response['user_id']
     user.save()
-    return
+    return user
 
 
 @job

@@ -29,8 +29,6 @@ from django.contrib.postgres.fields import (  # CIEmailField,
     IntegerRangeField,
 )
 from django.core.exceptions import ValidationError
-from django.core.files import File
-from django.core.files.base import ContentFile
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -39,9 +37,7 @@ from django.core.validators import (
 from django.db import (
     models,
 )
-from django.core.validators import validate_email
 from django.core.exceptions import ObjectDoesNotExist
-from django.template.loader import get_template
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -66,7 +62,6 @@ from .tasks import (
     create_bbscores_report,
     create_drcj_report,
     create_admins_report,
-    create_pdf,
     send_entry,
     send_session,
 )
@@ -4252,23 +4247,18 @@ class Round(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (2, 'listed', 'Listed',),
-        (4, 'opened', 'Opened',),
-        (8, 'closed', 'Closed',),
-        (10, 'verified', 'Verified',),
-        (15, 'prepared', 'Prepared',),
         (20, 'started', 'Started',),
-        # (25, 'ranked', 'Ranked',),
+        (25, 'reviewed', 'Reviewed',),
         (30, 'finished', 'Finished',),
-        # (40, 'drafted', 'Drafted',),
-        (50, 'announced', 'Announced',),
-        # (50, 'final', 'Final',),
-        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    is_archived = models.BooleanField(
+        default=False,
     )
 
     KIND = Choices(
@@ -4392,28 +4382,23 @@ class Round(TimeStampedModel):
     #     self.save()
     #     return "Complete"
 
-    # Transitions
+    # Round Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
-    def verify(self, *args, **kwargs):
-        """Confirm panel and appearances."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.prepared)
-    def prepare(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.started)
+    @transition(field=status, source=[STATUS.new], target=STATUS.started)
     def start(self, *args, **kwargs):
+        # Lock down and possibly send notification
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
+    @transition(field=status, source=[STATUS.started, STATUS.reviewed], target=STATUS.reviewed)
+    def review(self, *args, **kwargs):
+        # This should run all calculations and rankings.
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.reviewed], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        """Separate advancers and finishers."""
-        # TODO This probably should not be hard-coded.
+        # This should make it "final"
         if self.kind == self.KIND.finals:
             for appearance in self.appearances.all():
                 appearance.draw = -1
@@ -4526,35 +4511,36 @@ class Round(TimeStampedModel):
         #     i += 1
         return
 
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.announced)
-    def announce(self, *args, **kwargs):
-        if self.kind != self.KIND.finals:
-            round = self.session.rounds.create(
-                num=self.num + 1,
-                kind=self.kind - 1,
-            )
-            for appearance in self.appearances.filter(draw__gt=0):
-                round.appearances.create(
-                    entry=appearance.entry,
-                    num=appearance.draw,
-                    status=appearance.STATUS.published,
-                )
-            for appearance in self.appearances.filter(draw__lte=0):
-                e = appearance.entry
-                e.complete()
-                e.save()
-            for assignment in self.session.convention.assignments.filter(
-                status=Assignment.STATUS.active,
-            ):
-                round.panelists.create(
-                    kind=assignment.kind,
-                    category=assignment.category,
-                    person=assignment.person,
-                )
-            round.verify()
-            round.save()
-            return
+    # @fsm_log_by
+    # @transition(field=status, source='*', target=STATUS.announced)
+    # def announce(self, *args, **kwargs):
+
+    #     if self.kind != self.KIND.finals:
+    #         round = self.session.rounds.create(
+    #             num=self.num + 1,
+    #             kind=self.kind - 1,
+    #         )
+    #         for appearance in self.appearances.filter(draw__gt=0):
+    #             round.appearances.create(
+    #                 entry=appearance.entry,
+    #                 num=appearance.draw,
+    #                 status=appearance.STATUS.published,
+    #             )
+    #         for appearance in self.appearances.filter(draw__lte=0):
+    #             e = appearance.entry
+    #             e.complete()
+    #             e.save()
+    #         for assignment in self.session.convention.assignments.filter(
+    #             status=Assignment.STATUS.active,
+    #         ):
+    #             round.panelists.create(
+    #                 kind=assignment.kind,
+    #                 category=assignment.category,
+    #                 person=assignment.person,
+    #             )
+    #         round.verify()
+    #         round.save()
+    #         return
 
 
 class Score(TimeStampedModel):
@@ -4822,13 +4808,13 @@ class Session(TimeStampedModel):
         (30, 'finished', 'Finished',),
     )
 
-    is_archived = models.BooleanField(
-        default=False,
-    )
-
     status = FSMIntegerField(
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    is_archived = models.BooleanField(
+        default=False,
     )
 
     KIND = Choices(

@@ -1126,6 +1126,7 @@ class RoundAdmin(admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
+        'is_archived',
         ('session', 'kind', 'num'),
 
     ]
@@ -1136,6 +1137,7 @@ class RoundAdmin(admin.ModelAdmin):
     ]
 
     list_filter = [
+        'is_archived',
         'status',
         'session__kind',
         'session__convention__season',
