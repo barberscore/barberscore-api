@@ -47,6 +47,23 @@ class OrganizationListFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ParentOrganizationListFilter(admin.SimpleListFilter):
+    title = ('parent')
+    parameter_name = 'org'
+
+    def lookups(self, request, model_admin):
+        orgs = Organization.objects.filter(
+            kind__lt=Organization.KIND.chapter,
+        ).values_list('id', 'code')
+        return tuple(orgs)
+
+    def queryset(self, request, queryset):
+        org = request.GET.get('org')
+        if org:
+            return queryset.filter(parent=org)
+        return queryset
+
+
 class AwardFilter(FilterSet):
     class Meta:
         model = Award

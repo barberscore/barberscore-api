@@ -64,9 +64,9 @@ from .models import (
     User,
     Venue,
 )
-
 from .filters import (
     OrganizationListFilter,
+    ParentOrganizationListFilter,
 )
 
 
@@ -836,6 +836,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'mem_status',
+        ParentOrganizationListFilter,
     ]
 
     search_fields = [
