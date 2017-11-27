@@ -4840,7 +4840,8 @@ class Session(TimeStampedModel):
             The gender of session.
         """,
         choices=GENDER,
-        default=GENDER.male,
+        null=True,
+        blank=True,
     )
 
     is_invitational = models.BooleanField(
