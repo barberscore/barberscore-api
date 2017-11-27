@@ -571,6 +571,7 @@ class GrantorAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
+        'id',
         'name',
         'status',
         'kind',
@@ -620,6 +621,7 @@ class GroupAdmin(admin.ModelAdmin):
         CompetitorInline,
     ]
     readonly_fields = [
+        'id',
         'nomen',
         'international',
         'district',
@@ -808,6 +810,7 @@ class OfficerAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     fields = [
+        'id',
         'name',
         'status',
         'kind',
@@ -850,6 +853,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
+        'id',
         'nomen',
         'mem_status',
     ]
