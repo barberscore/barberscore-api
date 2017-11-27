@@ -110,6 +110,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
+            'gender',
             'level',
             'season',
             'is_primary',

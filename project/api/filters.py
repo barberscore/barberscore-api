@@ -108,6 +108,9 @@ class AwardFilter(FilterSet):
             'kind': [
                 'exact',
             ],
+            'gender': [
+                'exact',
+            ],
             'season': [
                 'exact',
             ],

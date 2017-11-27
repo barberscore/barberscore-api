@@ -177,6 +177,7 @@ class AwardAdmin(admin.ModelAdmin):
         'status',
         'organization',
         'kind',
+        'gender',
         'level',
         'season',
         'rounds',
@@ -193,6 +194,7 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'organization',
         'kind',
+        'gender',
         'level',
         'season',
         'rounds',
@@ -203,6 +205,7 @@ class AwardAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'gender',
         'level',
         'season',
         'is_primary', 'is_invitational', 'is_manual',
@@ -224,6 +227,7 @@ class AwardAdmin(admin.ModelAdmin):
     ordering = (
         'organization__org_sort',
         'kind',
+        'gender',
         'level',
     )
 
