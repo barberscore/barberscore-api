@@ -180,6 +180,9 @@ class GroupFilter(FilterSet):
                 'in',
                 'lte',
             ],
+            'gender': [
+                'exact',
+            ],
             'organization': [
                 'exact',
             ],
@@ -367,6 +370,12 @@ class SessionFilter(FilterSet):
                 'lt',
             ],
             'is_archived': [
+                'exact',
+            ],
+            'kind': [
+                'exact',
+            ],
+            'gender': [
                 'exact',
             ],
             'convention': [

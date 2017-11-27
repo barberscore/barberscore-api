@@ -570,6 +570,7 @@ class GroupAdmin(admin.ModelAdmin):
         'name',
         'status',
         'kind',
+        'gender',
         ('bhs_id', 'bhs_pk',),
         'organization',
         ('international', 'district', 'division', 'chapter',),
@@ -587,6 +588,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        'gender',
     ]
 
     search_fields = [
@@ -596,6 +598,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'kind',
+        'gender',
         'organization',
         'location',
         'bhs_id',
@@ -1200,6 +1203,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'convention',
         'kind',
+        'gender',
         'num_rounds',
         'is_invitational',
         ('open_date', 'close_date'),
@@ -1217,6 +1221,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'end_date',
         'status',
         'kind',
+        'gender',
         'num_rounds',
         'is_invitational',
         'status',
@@ -1226,6 +1231,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'status',
         'kind',
+        'gender',
         'num_rounds',
         'is_invitational',
         'convention__organization',

@@ -2529,6 +2529,20 @@ class Group(TimeStampedModel):
         choices=KIND,
     )
 
+    GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        help_text="""
+            The gender of group.
+        """,
+        choices=GENDER,
+        default=GENDER.male,
+    )
+
     short_name = models.CharField(
         help_text="""
             A short-form name for the resource.""",
@@ -4813,6 +4827,20 @@ class Session(TimeStampedModel):
             The kind of session.  Generally this will be either quartet or chorus.
         """,
         choices=KIND,
+    )
+
+    GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        help_text="""
+            The gender of session.
+        """,
+        choices=GENDER,
+        default=GENDER.male,
     )
 
     is_invitational = models.BooleanField(

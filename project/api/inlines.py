@@ -258,6 +258,7 @@ class GroupInline(admin.TabularInline):
         'name',
         'organization',
         'kind',
+        'gender',
         'bhs_id',
         'status',
     ]
@@ -436,6 +437,7 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
+        'gender',
         'num_rounds',
     ]
     raw_id_fields = [
