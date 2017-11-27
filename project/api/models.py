@@ -4904,9 +4904,11 @@ class Session(TimeStampedModel):
         gender = self.gender
         if gender == self.GENDER.male:
             gender = None
+        else:
+            gender = self.get_gender_display()
         self.nomen = " ".join(
             filter(None, [
-                self.convention,
+                str(self.convention),
                 gender,
                 self.get_kind_display(),
                 'Session',
