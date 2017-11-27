@@ -4901,14 +4901,16 @@ class Session(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
+        gender = self.gender
+        if gender == self.GENDER.male:
+            gender = None
         self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.convention,
-                    self.get_kind_display(),
-                    'Session',
-                ]
-            )
+            filter(None, [
+                self.convention,
+                gender,
+                self.get_kind_display(),
+                'Session',
+            ])
         )
         super().save(*args, **kwargs)
 
