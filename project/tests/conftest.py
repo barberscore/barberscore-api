@@ -29,7 +29,6 @@ from api.factories import (
     RoundFactory,
     ScoreFactory,
     SessionFactory,
-    SlotFactory,
     SongFactory,
     UserFactory,
     VenueFactory,
@@ -190,11 +189,6 @@ def score():
 @pytest.fixture
 def session():
     return SessionFactory()
-
-
-@pytest.fixture
-def slot():
-    return SlotFactory()
 
 
 @pytest.fixture

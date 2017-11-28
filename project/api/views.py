@@ -75,7 +75,6 @@ from .models import (
     Round,
     Score,
     Session,
-    Slot,
     Song,
     User,
     Venue,
@@ -104,7 +103,6 @@ from .serializers import (
     RoundSerializer,
     ScoreSerializer,
     SessionSerializer,
-    SlotSerializer,
     SongSerializer,
     StateLogSerializer,
     UserSerializer,
@@ -121,7 +119,6 @@ class AppearanceViewSet(
     queryset = Appearance.objects.select_related(
         'round',
         'competitor',
-        'slot',
     ).prefetch_related(
         'songs',
     ).order_by('nomen')
@@ -363,6 +360,7 @@ class GroupViewSet(
     queryset = Group.objects.select_related(
         'organization',
     ).prefetch_related(
+        'members',
         'entries',
         'repertories',
     ).order_by(
@@ -647,7 +645,6 @@ class RoundViewSet(
         'session',
     ).prefetch_related(
         'appearances',
-        'slots',
         'panelists',
     ).order_by('nomen')
     serializer_class = RoundSerializer
@@ -698,6 +695,7 @@ class SessionViewSet(
     ).prefetch_related(
         'contests',
         'entries',
+        'rounds',
     ).order_by('nomen')
     serializer_class = SessionSerializer
     filter_class = SessionFilter
@@ -709,24 +707,6 @@ class SessionViewSet(
         DRYPermissions,
     ]
     resource_name = "session"
-
-
-class SlotViewSet(viewsets.ModelViewSet):
-    queryset = Slot.objects.select_related(
-        'round',
-        'appearance',
-    ).prefetch_related(
-    ).order_by('nomen')
-    serializer_class = SlotSerializer
-    filter_class = None
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "slot"
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -766,7 +746,10 @@ class VenueViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by('id')
+    queryset = User.objects.select_related(
+        'person',
+    ).prefetch_related(
+    ).order_by('id')
     serializer_class = UserSerializer
     filter_class = None
     filter_backends = [

@@ -148,12 +148,6 @@ def test_session_admin_list(admin_client, session):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_slot_admin_list(admin_client, slot):
-    path = reverse('admin:api_slot_changelist')
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_song_admin_list(admin_client, song):
     path = reverse('admin:api_song_changelist')
     response = admin_client.get(path)
@@ -300,12 +294,6 @@ def test_score_admin_detail(admin_client, score):
 
 def test_session_admin_detail(admin_client, session):
     path = reverse('admin:api_session_change', args=(str(session.id),))
-    response = admin_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_slot_admin_detail(admin_client, slot):
-    path = reverse('admin:api_slot_change', args=(str(slot.id),))
     response = admin_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

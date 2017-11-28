@@ -23,7 +23,6 @@ from .models import (
     Round,
     Score,
     Session,
-    Slot,
     Song,
 )
 
@@ -469,26 +468,6 @@ class SessionInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
-    classes = [
-        'collapse',
-    ]
-
-
-class SlotInline(admin.TabularInline):
-    model = Slot
-    fields = [
-        'num',
-        'onstage',
-        'round',
-    ]
-    raw_id_fields = [
-        'round',
-    ]
-    show_change_link = True
-    extra = 0
-    ordering = [
-        'num',
-    ]
     classes = [
         'collapse',
     ]

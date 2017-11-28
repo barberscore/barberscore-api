@@ -146,12 +146,6 @@ def test_session_endpoint_list(api_client, session):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_slot_endpoint_list(api_client, slot):
-    path = reverse('slot-list')
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_song_endpoint_list(api_client, song):
     path = reverse('song-list')
     response = api_client.get(path)
@@ -300,12 +294,6 @@ def test_score_endpoint_detail(api_client, score):
 
 def test_session_endpoint_detail(api_client, session):
     path = reverse('session-detail', args=(str(session.id),))
-    response = api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_slot_endpoint_detail(api_client, slot):
-    path = reverse('slot-detail', args=(str(slot.id),))
     response = api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

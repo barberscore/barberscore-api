@@ -33,7 +33,6 @@ from .inlines import (
     RoundInline,
     ScoreInline,
     SessionInline,
-    SlotInline,
     SongInline,
 )
 from .models import (
@@ -61,7 +60,6 @@ from .models import (
     Round,
     Score,
     Session,
-    Slot,
     Song,
     User,
     Venue,
@@ -85,7 +83,6 @@ class AppearanceAdmin(admin.ModelAdmin):
         'round',
         'num',
         'draw',
-        'slot',
     ]
     list_display = [
         'nomen',
@@ -1199,7 +1196,6 @@ class RoundAdmin(admin.ModelAdmin):
     inlines = [
         AppearanceInline,
         PanelistInline,
-        SlotInline,
         GridInline,
     ]
 
@@ -1334,42 +1330,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'nomen',
-    ]
-
-
-@admin.register(Slot)
-class SlotAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        # 'name',
-        'status',
-        'num',
-        'onstage',
-        'round',
-    ]
-    list_display = [
-        'nomen',
-        'status',
-        'onstage',
-    ]
-
-    # list_editable = [
-    #     'onstage',
-    # ]
-
-    list_filter = (
-        'status',
-    )
-
-    readonly_fields = [
-        'nomen',
-    ]
-    raw_id_fields = [
-        'round',
-    ]
-
-    ordering = [
-        'num',
     ]
 
 

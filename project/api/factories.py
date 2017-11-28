@@ -37,7 +37,6 @@ from api.models import (
     Round,
     Score,
     Session,
-    Slot,
     Song,
     User,
     Venue,
@@ -51,7 +50,6 @@ class AppearanceFactory(DjangoModelFactory):
     actual_finish = None
     round = SubFactory('api.factories.RoundFactory')
     competitor = SubFactory('api.factories.CompetitorFactory')
-    slot = None
 
     class Meta:
         model = Appearance
@@ -407,16 +405,6 @@ class SessionFactory(DjangoModelFactory):
     #                 num=num,
     #                 kind=kind,
     #             )
-
-
-class SlotFactory(DjangoModelFactory):
-    status = Slot.STATUS.new
-    num = 1
-    location = ''
-    round = SubFactory('api.factories.RoundFactory')
-
-    class Meta:
-        model = Slot
 
 
 class SongFactory(DjangoModelFactory):

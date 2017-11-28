@@ -25,7 +25,6 @@ from .views import (
     RoundViewSet,
     ScoreViewSet,
     SessionViewSet,
-    SlotViewSet,
     SongViewSet,
     StateLogViewSet,
     UserViewSet,
@@ -58,7 +57,6 @@ router.register(r'repertory', RepertoryViewSet)
 router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)
-router.register(r'slot', SlotViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'venue', VenueViewSet)

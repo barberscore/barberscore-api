@@ -146,12 +146,6 @@ def test_session_endpoint_list(bhs_member, session):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_slot_endpoint_list(bhs_member, slot):
-    path = reverse('slot-list')
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_song_endpoint_list(bhs_member, song):
     path = reverse('song-list')
     response = bhs_member.get(path)
@@ -300,12 +294,6 @@ def test_score_endpoint_detail(bhs_member, score):
 
 def test_session_endpoint_detail(bhs_member, session):
     path = reverse('session-detail', args=(str(session.id),))
-    response = bhs_member.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_slot_endpoint_detail(bhs_member, slot):
-    path = reverse('slot-detail', args=(str(slot.id),))
     response = bhs_member.get(path)
     assert response.status_code == status.HTTP_200_OK
 
