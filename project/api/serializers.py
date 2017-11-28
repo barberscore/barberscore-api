@@ -64,7 +64,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'sng_score',
             'tot_score',
             'round',
-            'entry',
+            'competitor',
             'slot',
             'songs',
             'permissions',

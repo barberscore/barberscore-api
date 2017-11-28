@@ -51,7 +51,6 @@ class AppearanceFactory(DjangoModelFactory):
     actual_finish = None
     round = SubFactory('api.factories.RoundFactory')
     competitor = SubFactory('api.factories.CompetitorFactory')
-    entry = SubFactory('api.factories.EntryFactory')
     slot = None
 
     class Meta:

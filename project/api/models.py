@@ -172,15 +172,9 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    # FKs
+    # Appearance FKs
     round = models.ForeignKey(
         'Round',
-        related_name='appearances',
-        on_delete=models.CASCADE,
-    )
-
-    entry = models.ForeignKey(
-        'Entry',
         related_name='appearances',
         on_delete=models.CASCADE,
     )
@@ -200,7 +194,7 @@ class Appearance(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # Internals
+    # Appearance Internals
     class JSONAPIMeta:
         resource_name = "appearance"
 
@@ -208,13 +202,9 @@ class Appearance(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.round,
-                    self.entry,
-                ]
-            )
+        self.nomen = "{0} {1}".format(
+            self.round,
+            self.competitor,
         )
         super().save(*args, **kwargs)
 
@@ -2454,6 +2444,129 @@ class Grantor(TimeStampedModel):
                 lambda x: smart_text(x), [
                     self.convention,
                     self.organization,
+                ]
+            )
+        )
+        super().save(*args, **kwargs)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return any([
+            True,
+        ])
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return any([
+            True,
+        ])
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_convention_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            self.round.session.convention.assignments.filter(
+                person__user=request.user,
+                category__lt=30,
+                kind=10,
+            ),
+        ])
+
+
+class Grid(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+    )
+
+    status = FSMIntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    num = models.IntegerField(
+    )
+
+    location = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    photo = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    arrive = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    depart = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    backstage = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    onstage = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='grids',
+        on_delete=models.CASCADE,
+    )
+
+    entry = models.ForeignKey(
+        'Entry',
+        related_name='grids',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        unique_together = (
+            ('round', 'entry',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "grid"
+
+    def __str__(self):
+        return self.nomen if self.nomen else str(self.pk)
+
+    def save(self, *args, **kwargs):
+        self.nomen = " ".join(
+            map(
+                lambda x: smart_text(x), [
+                    self.round,
+                    self.entry,
                 ]
             )
         )

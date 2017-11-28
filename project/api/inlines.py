@@ -13,6 +13,7 @@ from .models import (
     Enrollment,
     Entry,
     Grantor,
+    Grid,
     Group,
     Member,
     Officer,
@@ -248,6 +249,28 @@ class GrantorInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
+    classes = [
+        'collapse',
+    ]
+
+
+class GridInline(admin.TabularInline):
+    model = Grid
+    fields = [
+        'num',
+        'onstage',
+        'round',
+        'entry',
+    ]
+    raw_id_fields = [
+        'round',
+        'entry',
+    ]
+    show_change_link = True
+    extra = 0
+    ordering = [
+        'num',
+    ]
     classes = [
         'collapse',
     ]

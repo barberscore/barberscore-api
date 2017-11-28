@@ -124,8 +124,6 @@ class AppearanceViewSet(
         'slot',
     ).prefetch_related(
         'songs',
-        'songs__scores',
-        'songs__chart',
     ).order_by('nomen')
     serializer_class = AppearanceSerializer
     filter_class = None
@@ -203,26 +201,6 @@ class ChartViewSet(
     ]
     resource_name = "chart"
 
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def image(self, request, *args, **kwargs):
-    #     print(request.data)
-    #     if 'file' in request.data:
-    #         obj = self.get_object()
-
-    #         upload = request.data['file']
-    #         obj.image.save(
-    #             'foo.pdf',
-    #             upload,
-    #         )
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': obj.image.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
     def img(self, request, *args, **kwargs):
@@ -257,7 +235,6 @@ class ContestViewSet(
         'award',
     ).prefetch_related(
         'contestants',
-        'contestants__entry',
     ).order_by('nomen')
     serializer_class = ContestSerializer
     filter_class = None
@@ -301,11 +278,7 @@ class ConventionViewSet(
         'organization',
     ).prefetch_related(
         'sessions',
-        'sessions__rounds',
-        'sessions__contests',
-        'sessions__entries',
         'assignments',
-        'assignments__person',
         'grantors',
     ).order_by('nomen')
     serializer_class = ConventionSerializer
@@ -329,9 +302,6 @@ class CompetitorViewSet(
         'group',
     ).prefetch_related(
         'appearances',
-        'appearances__songs',
-        'appearances__round',
-        'appearances__slot',
     ).order_by('nomen')
     serializer_class = CompetitorSerializer
     filter_class = CompetitorFilter
@@ -354,9 +324,7 @@ class EntryViewSet(
         'group',
     ).prefetch_related(
         'contestants',
-        'contestants__contest',
         'participants',
-        'participants__person',
     ).order_by('nomen')
     serializer_class = EntrySerializer
     filter_class = EntryFilter
@@ -396,13 +364,7 @@ class GroupViewSet(
         'organization',
     ).prefetch_related(
         'entries',
-        'entries__appearances',
-        'entries__contestants',
-        'entries__session',
-        'entries__participants',
-        'members__person',
         'repertories',
-        'repertories__chart',
     ).order_by(
         'nomen',
     )
@@ -484,8 +446,6 @@ class OfficeViewSet(viewsets.ModelViewSet):
     queryset = Office.objects.select_related(
     ).prefetch_related(
         'officers',
-        'officers__organization',
-        'officers__person',
     ).order_by('nomen')
     serializer_class = OfficeSerializer
     filter_class = OfficeFilter
@@ -529,22 +489,10 @@ class OrganizationViewSet(
         'parent',
     ).prefetch_related(
         'awards',
-        'awards__contests',
-        'awards__parent',
-        'awards__children',
         'conventions',
-        'conventions__sessions',
-        'conventions__assignments',
-        'conventions__venue',
         'groups',
         'officers',
-        'officers__person',
-        'officers__office',
         'children',
-        'children__awards',
-        'children__conventions',
-        'children__officers',
-        'children__children',
     ).order_by(
         'nomen',
     )
@@ -558,26 +506,6 @@ class OrganizationViewSet(
         DRYPermissions,
     ]
     resource_name = "organization"
-
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def image(self, request, *args, **kwargs):
-    #     print(request.data)
-    #     if 'file' in request.data:
-    #         obj = self.get_object()
-
-    #         upload = request.data['file']
-    #         obj.image.save(
-    #             'foo.jpg',
-    #             upload,
-    #         )
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': obj.image.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
@@ -604,14 +532,12 @@ class OrganizationViewSet(
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
         'round',
         'person',
     ).prefetch_related(
         'scores',
-        'scores__song',
     ).order_by('nomen')
     serializer_class = PanelistSerializer
     filter_class = PanelistFilter
@@ -653,7 +579,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'assignments',
         'members',
         'officers',
-        'officers__office',
         'panelists',
         'participants',
     ).order_by('nomen')
@@ -667,26 +592,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "person"
-
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def image(self, request, *args, **kwargs):
-    #     print(request.data)
-    #     if 'file' in request.data:
-    #         person = self.get_object()
-
-    #         upload = request.data['file']
-    #         person.image.save(
-    #             'foo.jpg',
-    #             upload,
-    #         )
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': person.image.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
     @detail_route(methods=['POST'], permission_classes=[AllowAny])
     @parser_classes((FormParser, MultiPartParser,))
@@ -742,15 +647,8 @@ class RoundViewSet(
         'session',
     ).prefetch_related(
         'appearances',
-        'appearances__songs',
-        'appearances__entry',
-        'appearances__slot',
         'slots',
-        'slots__round',
-        'slots__appearance',
         'panelists',
-        'panelists__person',
-        'panelists__scores',
     ).order_by('nomen')
     serializer_class = RoundSerializer
     filter_class = RoundFilter
@@ -799,16 +697,7 @@ class SessionViewSet(
         'convention',
     ).prefetch_related(
         'contests',
-        'contests__contestants',
-        'contests__award',
         'entries',
-        'entries__participants',
-        'entries__contestants',
-        'entries__appearances',
-        'entries__group',
-        'rounds__appearances',
-        'rounds__slots',
-        'rounds__panelists',
     ).order_by('nomen')
     serializer_class = SessionSerializer
     filter_class = SessionFilter
@@ -846,7 +735,6 @@ class SongViewSet(viewsets.ModelViewSet):
         'chart',
     ).prefetch_related(
         'scores',
-        'scores__panelist',
     ).order_by('nomen')
     serializer_class = SongSerializer
     filter_class = None
@@ -864,9 +752,6 @@ class VenueViewSet(viewsets.ModelViewSet):
     queryset = Venue.objects.select_related(
     ).prefetch_related(
         'conventions',
-        'conventions__sessions',
-        'conventions__assignments',
-        'conventions__organization',
     ).order_by('nomen')
     serializer_class = VenueSerializer
     filter_class = VenueFilter

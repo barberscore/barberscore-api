@@ -23,6 +23,7 @@ from .inlines import (
     EnrollmentInline,
     EntryInline,
     GrantorInline,
+    GridInline,
     GroupInline,
     MemberInline,
     OfficerInline,
@@ -47,6 +48,7 @@ from .models import (
     Enrollment,
     Entry,
     Grantor,
+    Grid,
     Group,
     Member,
     Office,
@@ -75,50 +77,43 @@ from .filters import (
 @admin.register(Appearance)
 class AppearanceAdmin(admin.ModelAdmin):
     fields = [
-        # 'name',
+        'id',
         'status',
         'actual_start',
         'actual_finish',
-        'entry',
+        'competitor',
         'round',
         'num',
         'draw',
         'slot',
     ]
-
     list_display = [
         'nomen',
         'num',
         'draw',
         'status',
     ]
-
     list_filter = [
         'status',
         'round__session__kind',
         'round__session__convention__season',
         'round__session__convention__year',
     ]
-
     fsm_field = [
         'status',
     ]
-
     save_on_top = True
-
     readonly_fields = [
+        'id',
         'nomen',
     ]
-
     raw_id_fields = (
-        'entry',
+        'competitor',
         'round',
     )
-
     search_fields = (
         'nomen',
     )
-
     inlines = [
         SongInline,
     ]
@@ -529,6 +524,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # AppearanceInline,
         ContestantInline,
         ParticipantInline,
+        GridInline,
     ]
 
     search_fields = (
@@ -571,6 +567,42 @@ class GrantorAdmin(admin.ModelAdmin):
     raw_id_fields = [
         'organization',
         'convention',
+    ]
+
+
+@admin.register(Grid)
+class GridAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        # 'name',
+        'status',
+        'num',
+        'onstage',
+        'round',
+        'entry',
+    ]
+    list_display = [
+        'nomen',
+        'status',
+        'onstage',
+    ]
+    # list_editable = [
+    #     'onstage',
+    # ]
+
+    list_filter = (
+        'status',
+    )
+    readonly_fields = [
+        'nomen',
+    ]
+    raw_id_fields = [
+        'round',
+        'entry',
+    ]
+
+    ordering = [
+        'num',
     ]
 
 
@@ -1067,6 +1099,10 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'email',
     )
 
+    raw_id_fields = [
+        'user',
+    ]
+
     save_on_top = True
 
     inlines = [
@@ -1164,6 +1200,7 @@ class RoundAdmin(admin.ModelAdmin):
         AppearanceInline,
         PanelistInline,
         SlotInline,
+        GridInline,
     ]
 
     search_fields = [
