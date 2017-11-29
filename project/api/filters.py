@@ -4,6 +4,13 @@ from django_filters.rest_framework import (
     OrderingFilter,
 )
 
+from django_filters import (
+    UUIDFilter,
+    NumberFilter,
+    CharFilter,
+)
+
+
 from django.contrib import admin
 
 # Local
@@ -435,44 +442,58 @@ class ScoreFilter(FilterSet):
 
 
 class SessionFilter(FilterSet):
+    convention__assignments__person__user = UUIDFilter(
+        name='convention__assignments__person__user',
+        lookup_expr='exact',
+        distinct=True,
+    )
+
+    convention__assignments__kind = NumberFilter(
+        name='convention__assignments__kind',
+        lookup_expr='exact',
+        distinct=True,
+    )
+
+    convention__assignments__category = NumberFilter(
+        name='convention__assignments__category',
+        lookup_expr='exact',
+        distinct=True,
+    )
+
+    status__lt = NumberFilter(
+        name='status',
+        lookup_expr='lt',
+        distinct=True,
+    )
+
+    status = NumberFilter(
+        name='status',
+        lookup_expr='exact',
+        distinct=True,
+    )
+
+    nomen__icontains = CharFilter(
+        name='status',
+        lookup_expr='icontains',
+        distinct=True,
+    )
+
     class Meta:
         model = Session
-        fields = {
-            'status': [
-                'exact',
-                'lt',
-            ],
-            'is_archived': [
-                'exact',
-            ],
-            'kind': [
-                'exact',
-            ],
-            'gender': [
-                'exact',
-            ],
-            'convention': [
-                'exact',
-            ],
-            'is_invitational': [
-                'exact',
-            ],
-            'convention__status': [
-                'exact',
-            ],
-            'nomen': [
-                'icontains',
-            ],
-            'convention__assignments__person__user': [
-                'exact',
-            ],
-            'convention__assignments__kind': [
-                'exact',
-            ],
-            'convention__assignments__category': [
-                'exact',
-            ],
-        }
+        fields = [
+            'status',
+            'status__lt',
+            'is_archived',
+            'kind',
+            'gender',
+            'convention',
+            'is_invitational',
+            'convention__status',
+            'nomen__icontains',
+            'convention__assignments__person__user',
+            'convention__assignments__kind',
+            'convention__assignments__category',
+        ]
 
 
 class VenueFilter(FilterSet):
