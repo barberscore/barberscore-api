@@ -338,6 +338,7 @@ class GridSerializer(serializers.ModelSerializer):
             'depart',
             'backstage',
             'onstage',
+            'start',
             'renditions',
             'round',
             'entry',

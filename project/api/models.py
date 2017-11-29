@@ -72,6 +72,12 @@ log = logging.getLogger(__name__)
 
 
 class Appearance(TimeStampedModel):
+    """
+    An appearance of a competitor on stage.
+
+    The Appearance is meant to be a private resource.
+    """
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -183,8 +189,6 @@ class Appearance(TimeStampedModel):
         'Competitor',
         related_name='appearances',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     slot = models.OneToOneField(
@@ -2380,6 +2384,13 @@ class Grid(TimeStampedModel):
     )
 
     onstage = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    start = models.DateTimeField(
+        help_text="""
+            The actual start time.""",
         null=True,
         blank=True,
     )

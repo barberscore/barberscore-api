@@ -575,6 +575,7 @@ class GridAdmin(admin.ModelAdmin):
         'status',
         'num',
         'onstage',
+        'start',
         'round',
         'entry',
         'renditions',
@@ -583,6 +584,7 @@ class GridAdmin(admin.ModelAdmin):
         'nomen',
         'status',
         'onstage',
+        'start',
     ]
     list_filter = (
         'status',
