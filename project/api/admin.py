@@ -1,6 +1,7 @@
 # Django
 # Third-Party
 from django_fsm_log.models import StateLog
+from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 
 from django.contrib import admin
@@ -522,6 +523,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ContestantInline,
         ParticipantInline,
         GridInline,
+        StateLogInline,
     ]
 
     search_fields = (
@@ -1312,6 +1314,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         EntryInline,
         CompetitorInline,
         RoundInline,
+        StateLogInline,
     ]
 
     list_select_related = [
