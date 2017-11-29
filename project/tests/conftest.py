@@ -17,6 +17,7 @@ from api.factories import (
     CompetitorFactory,
     EntryFactory,
     GrantorFactory,
+    GridFactory,
     GroupFactory,
     MemberFactory,
     OfficeFactory,
@@ -36,7 +37,7 @@ from api.factories import (
 
 
 @pytest.fixture
-def admin_client():
+def admin_django_client():
     admin = UserFactory(
         is_staff=True,
         is_active=True,
@@ -47,7 +48,7 @@ def admin_client():
 
 
 @pytest.fixture
-def api_client():
+def admin_api_client():
     admin = UserFactory(
         is_staff=True,
         is_active=True,
@@ -58,26 +59,19 @@ def api_client():
 
 
 @pytest.fixture
-def user_client():
-    user = UserFactory()
-    client = Client()
-    client.force_login(user)
-    return client
-
-
-@pytest.fixture
-def api_user_client():
-    user = UserFactory()
+def user_api_client():
+    user = UserFactory(
+        is_staff=False,
+        is_active=True,
+    )
     client = APIClient()
     client.force_authenticate(user=user)
     return client
 
 
 @pytest.fixture
-def bhs_member():
-    user = UserFactory()
+def anon_api_client():
     client = APIClient()
-    client.force_authenticate(user=user)
     return client
 
 
@@ -129,6 +123,11 @@ def entry():
 @pytest.fixture
 def grantor():
     return GrantorFactory()
+
+
+@pytest.fixture
+def grid():
+    return GridFactory()
 
 
 @pytest.fixture

@@ -17,6 +17,7 @@ from .models import (
     Competitor,
     Entry,
     Grantor,
+    Grid,
     Group,
     Member,
     Office,
@@ -318,6 +319,30 @@ class GrantorSerializer(serializers.ModelSerializer):
             'convention',
             'permissions',
         )
+
+
+class GridSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Grid
+        fields = [
+            'id',
+            'url',
+            'nomen',
+            'status',
+            'num',
+            'location',
+            'photo',
+            'arrive',
+            'depart',
+            'backstage',
+            'onstage',
+            'renditions',
+            'round',
+            'entry',
+            'permissions',
+        ]
 
 
 class GroupSerializer(serializers.ModelSerializer):

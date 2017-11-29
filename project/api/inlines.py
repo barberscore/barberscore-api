@@ -136,6 +136,7 @@ class ContestantInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'contest',
+        'entry',
     ]
     show_change_link = True
     extra = 0

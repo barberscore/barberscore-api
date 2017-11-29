@@ -322,32 +322,22 @@ class Appearance(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return True
+        return False
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return True
+        return False
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.is_scoring_manager,
-            request.user.is_convention_manager,
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=30,
-                status__gt=0,
-                kind=10,
-            )
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -1609,17 +1599,34 @@ class Competitor(TimeStampedModel):
         pass
 
     def save(self, *args, **kwargs):
-        self.nomen = "; ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.group,
-                    self.session,
-                ]
-            )
+        self.nomen = "{0}; {1}".format(
+            self.group,
+            self.session,
         )
         super().save(*args, **kwargs)
 
-    # Methods
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_read_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_read_permission(self, request):
+        return False
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return False
+
+    # Competitor Methods
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.per_points = self.calculate_per_points()
@@ -1745,38 +1752,6 @@ class Competitor(TimeStampedModel):
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return any([
-            request.user.is_group_manager,
-            request.user.is_session_manager,
-        ])
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            self.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=10,
-                kind=10,
-            ),
-        ])
-
-    # Competitor Methods
 
     # Competitor Transition Conditions
 
@@ -2107,142 +2082,13 @@ class Entry(TimeStampedModel):
             )
 
     def save(self, *args, **kwargs):
-        self.nomen = "; ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.group,
-                    self.session,
-                ]
-            )
+        self.nomen = "{0}; {1}".format(
+            self.group,
+            self.session,
         )
         super().save(*args, **kwargs)
 
     # Methods
-    def calculate(self, *args, **kwargs):
-        self.mus_points = self.calculate_mus_points()
-        self.per_points = self.calculate_per_points()
-        self.sng_points = self.calculate_sng_points()
-        self.tot_points = self.calculate_tot_points()
-        self.mus_score = self.calculate_mus_score()
-        self.per_score = self.calculate_per_score()
-        self.sng_score = self.calculate_sng_score()
-        self.tot_score = self.calculate_tot_score()
-        self.rank = self.calculate_rank()
-
-    def calculate_pdf(self):
-        for appearance in self.appearances.all():
-            for song in appearance.songs.all():
-                song.calculate()
-                song.save()
-            appearance.calculate()
-            appearance.save()
-        self.calculate()
-        self.save()
-        return
-
-    # def print_csa(self):
-    #     entry = self
-    #     contestants = entry.contestants.filter(status__gt=0)
-    #     appearances = entry.appearances.order_by(
-    #         'round__kind',
-    #     )
-    #     assignments = entry.session.convention.assignments.filter(
-    #         category__gt=20,
-    #     ).order_by(
-    #         'category',
-    #         'kind',
-    #         'nomen',
-    #     )
-    #     tem = get_template('csa.html')
-    #     template = tem.render(context={
-    #         'entry': entry,
-    #         'appearances': appearances,
-    #         'assignments': assignments,
-    #         'contestants': contestants,
-    #     })
-    #     payload = {
-    #         "test": True,
-    #         "document_content": template,
-    #         "name": "csa-{0}.pdf".format(id),
-    #         "document_type": "pdf",
-    #     }
-    #     response = create_pdf(payload)
-    #     f = ContentFile(response)
-    #     entry.csa_pdf.save(
-    #         "{0}.pdf".format(id),
-    #         f
-    #     )
-    #     entry.save()
-    #     return "Complete"
-
-    def calculate_rank(self):
-        try:
-            primary = self.session.contests.first()
-            return self.contestants.get(contest=primary).calculate_rank()
-        except self.contestants.model.DoesNotExist:
-            return None
-
-    def calculate_mus_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_per_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_tot_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_per_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_tot_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
 
     # Permissions
     @staticmethod
@@ -2327,9 +2173,10 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
-        contestants = self.contestants.filter(status__gt=0)
+        contestants = self.contestants.filter(status__gte=0)
         for contestant in contestants:
-            contestant.delete()
+            contestant.exclude()
+            contestant.save()
         context = {'entry': self}
         send_entry.delay('entry_withdraw.txt', context)
         return
@@ -2537,6 +2384,15 @@ class Grid(TimeStampedModel):
         blank=True,
     )
 
+    renditions = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=100,
+        ),
+        null=True,
+        blank=True,
+    )
+
     # FKs
     round = models.ForeignKey(
         'Round',
@@ -2562,13 +2418,9 @@ class Grid(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.round,
-                    self.entry,
-                ]
-            )
+        self.nomen = "{0} {1}".format(
+            self.round,
+            self.entry,
         )
         super().save(*args, **kwargs)
 
@@ -4863,41 +4715,23 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return any([
-            True,
-            request.user.is_group_manager,
-            request.user.is_scoring_manager,
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            # self.song.appearance.entry.entity.officers.filter(
-            #     person=request.user,
-            #     office__is_group_manager=True,
-            #     status__gt=0,
-            # ),
-        ])
+        return False
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.is_scoring_manager,
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self.song.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=30,
-                kind=10,
-            ),
-        ])
+        return False
 
 
 class Session(TimeStampedModel):
@@ -5512,34 +5346,22 @@ class Song(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return any([
-            True,
-        ])
+        return False
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return any([
-            True,
-        ])
+        return False
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.is_scoring_manager,
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=30,
-                kind=10,
-            ),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -5860,7 +5682,7 @@ class User(AbstractBaseUser):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return self == request.user
+        return False
 
     # User Transitions
     @fsm_log_by

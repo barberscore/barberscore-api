@@ -25,6 +25,7 @@ from api.models import (
     Competitor,
     Entry,
     Grantor,
+    Grid,
     Group,
     Member,
     Office,
@@ -188,6 +189,16 @@ class GrantorFactory(DjangoModelFactory):
 
     class Meta:
         model = Grantor
+
+
+class GridFactory(DjangoModelFactory):
+    status = Grid.STATUS.new
+    num = Sequence(lambda x: x)
+    entry = SubFactory('api.factories.EntryFactory')
+    round = SubFactory('api.factories.RoundFactory')
+
+    class Meta:
+        model = Grid
 
 
 class GroupFactory(DjangoModelFactory):

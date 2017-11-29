@@ -63,6 +63,7 @@ from .models import (
     Competitor,
     Entry,
     Grantor,
+    Grid,
     Group,
     Member,
     Office,
@@ -90,6 +91,7 @@ from .serializers import (
     CompetitorSerializer,
     EntrySerializer,
     GrantorSerializer,
+    GridSerializer,
     GroupSerializer,
     MemberSerializer,
     OfficeCSVSerializer,
@@ -333,6 +335,23 @@ class EntryViewSet(
         DRYPermissions,
     ]
     resource_name = "entry"
+
+
+class GridViewSet(viewsets.ModelViewSet):
+    queryset = Grid.objects.select_related(
+        'round',
+        'entry',
+    ).prefetch_related(
+    ).order_by('nomen')
+    serializer_class = GridSerializer
+    filter_backends = [
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "grid"
 
 
 class GrantorViewSet(viewsets.ModelViewSet):

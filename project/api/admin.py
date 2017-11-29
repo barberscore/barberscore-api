@@ -577,16 +577,13 @@ class GridAdmin(admin.ModelAdmin):
         'onstage',
         'round',
         'entry',
+        'renditions',
     ]
     list_display = [
         'nomen',
         'status',
         'onstage',
     ]
-    # list_editable = [
-    #     'onstage',
-    # ]
-
     list_filter = (
         'status',
     )
@@ -597,7 +594,6 @@ class GridAdmin(admin.ModelAdmin):
         'round',
         'entry',
     ]
-
     ordering = [
         'num',
     ]
