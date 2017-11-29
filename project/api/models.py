@@ -1962,12 +1962,6 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
-    img = CloudinaryRenameField(
-        'image',
-        null=True,
-        blank=True,
-    )
-
     is_evaluation = models.BooleanField(
         help_text="""
             Entry requests evaluation.""",
@@ -2007,7 +2001,7 @@ class Entry(TimeStampedModel):
         default='',
     )
 
-    # Privates
+    # Entry Results
     rank = models.IntegerField(
         null=True,
         blank=True,
@@ -2613,6 +2607,12 @@ class Group(TimeStampedModel):
         max_length=1000,
     )
 
+    bhs_id = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
     notes = models.TextField(
         help_text="""
             Notes (for internal use only).""",
@@ -2645,24 +2645,11 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    bhs_id = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-    )
-
     bhs_pk = models.UUIDField(
         null=True,
         blank=True,
         unique=True,
         db_index=True,
-    )
-
-    org_sort = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-        editable=False,
     )
 
     # FKs
@@ -4802,6 +4789,9 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    num_rounds = models.IntegerField(
+    )
+
     is_invitational = models.BooleanField(
         help_text="""Invite-only (v. Open).""",
         default=False,
@@ -4825,9 +4815,6 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
-    num_rounds = models.IntegerField(
-    )
-
     # FKs
     convention = models.ForeignKey(
         'Convention',
@@ -4836,19 +4823,19 @@ class Session(TimeStampedModel):
     )
 
     # Session Properties
-    @property
+    @cached_property
     def open_date(self):
         return self.convention.open_date
 
-    @property
+    @cached_property
     def close_date(self):
         return self.convention.close_date
 
-    @property
+    @cached_property
     def start_date(self):
         return self.convention.start_date
 
-    @property
+    @cached_property
     def end_date(self):
         return self.convention.end_date
 
@@ -4936,7 +4923,7 @@ class Session(TimeStampedModel):
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         if not self.is_invitational:
-            context = {'session': self,}
+            context = {'session': self}
             send_session('session_open.txt', context)
         return
 
