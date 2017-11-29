@@ -38,6 +38,12 @@ def test_chart_endpoint_list(admin_api_client, chart):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_competitor_endpoint_list(admin_api_client, competitor):
+    path = reverse('competitor-list')
+    response = admin_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_contest_endpoint_list(admin_api_client, contest):
     path = reverse('contest-list')
     response = admin_api_client.get(path)
@@ -56,12 +62,6 @@ def test_convention_endpoint_list(admin_api_client, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_competitor_endpoint_list(admin_api_client, competitor):
-    path = reverse('competitor-list')
-    response = admin_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_entry_endpoint_list(admin_api_client, entry):
     path = reverse('entry-list')
     response = admin_api_client.get(path)
@@ -74,14 +74,14 @@ def test_grantor_endpoint_list(admin_api_client, grantor):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_group_endpoint_list(admin_api_client, group):
-    path = reverse('group-list')
+def test_grid_endpoint_list(admin_api_client, grid):
+    path = reverse('grid-list')
     response = admin_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_endpoint_list(admin_api_client, grid):
-    path = reverse('grid-list')
+def test_group_endpoint_list(admin_api_client, group):
+    path = reverse('group-list')
     response = admin_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -128,14 +128,14 @@ def test_person_endpoint_list(admin_api_client, person):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_round_endpoint_list(admin_api_client, round):
-    path = reverse('round-list')
+def test_repertory_endpoint_list(admin_api_client, repertory):
+    path = reverse('repertory-list')
     response = admin_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_repertory_endpoint_list(admin_api_client, repertory):
-    path = reverse('repertory-list')
+def test_round_endpoint_list(admin_api_client, round):
+    path = reverse('round-list')
     response = admin_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -196,6 +196,12 @@ def test_chart_endpoint_detail(admin_api_client, chart):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_competitor_endpoint_detail(admin_api_client, competitor):
+    path = reverse('competitor-detail', args=(str(competitor.id),))
+    response = admin_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_contest_endpoint_detail(admin_api_client, contest):
     path = reverse('contest-detail', args=(str(contest.id),))
     response = admin_api_client.get(path)
@@ -210,12 +216,6 @@ def test_contestant_endpoint_detail(admin_api_client, contestant):
 
 def test_convention_endpoint_detail(admin_api_client, convention):
     path = reverse('convention-detail', args=(str(convention.id),))
-    response = admin_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_competitor_endpoint_detail(admin_api_client, competitor):
-    path = reverse('competitor-detail', args=(str(competitor.id),))
     response = admin_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

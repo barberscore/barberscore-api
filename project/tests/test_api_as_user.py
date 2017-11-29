@@ -38,6 +38,12 @@ def test_chart_endpoint_list(user_api_client, chart):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_competitor_endpoint_list(user_api_client, competitor):
+    path = reverse('competitor-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
 def test_contest_endpoint_list(user_api_client, contest):
     path = reverse('contest-list')
     response = user_api_client.get(path)
@@ -60,12 +66,6 @@ def test_entry_endpoint_list(user_api_client, entry):
     path = reverse('entry-list')
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-
-
-def test_competitor_endpoint_list(user_api_client, competitor):
-    path = reverse('competitor-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_grantor_endpoint_list(user_api_client, grantor):
@@ -128,16 +128,16 @@ def test_person_endpoint_list(user_api_client, person):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_round_endpoint_list(user_api_client, round):
-    path = reverse('round-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_repertory_endpoint_list(user_api_client, repertory):
     path = reverse('repertory-list')
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_round_endpoint_list(user_api_client, round):
+    path = reverse('round-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_score_endpoint_list(user_api_client, score):
@@ -196,6 +196,12 @@ def test_chart_endpoint_detail(user_api_client, chart):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_competitor_endpoint_detail(user_api_client, competitor):
+    path = reverse('competitor-detail', args=(str(competitor.id),))
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
 def test_contest_endpoint_detail(user_api_client, contest):
     path = reverse('contest-detail', args=(str(contest.id),))
     response = user_api_client.get(path)
@@ -214,12 +220,6 @@ def test_convention_endpoint_detail(user_api_client, convention):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_competitor_endpoint_detail(user_api_client, competitor):
-    path = reverse('competitor-detail', args=(str(competitor.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
 def test_entry_endpoint_detail(user_api_client, entry):
     path = reverse('entry-detail', args=(str(entry.id),))
     response = user_api_client.get(path)
@@ -232,14 +232,14 @@ def test_grantor_endpoint_detail(user_api_client, grantor):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_group_endpoint_detail(user_api_client, group):
-    path = reverse('group-detail', args=(str(group.id),))
+def test_grid_endpoint_detail(user_api_client, grid):
+    path = reverse('grid-detail', args=(str(grid.id),))
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_endpoint_detail(user_api_client, grid):
-    path = reverse('grid-detail', args=(str(grid.id),))
+def test_group_endpoint_detail(user_api_client, group):
+    path = reverse('group-detail', args=(str(group.id),))
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
