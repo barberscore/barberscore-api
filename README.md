@@ -42,3 +42,4 @@ You may also wish to seed the database with sample data using:
   - `django-admin seed_database`
 
 If you have any questions let us know at admin@barberscore.com!
+
