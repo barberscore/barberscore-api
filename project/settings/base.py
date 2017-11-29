@@ -96,7 +96,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 40,
+    'PAGE_SIZE': 100,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework_json_api.pagination.PageNumberPagination',
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
