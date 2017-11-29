@@ -502,6 +502,9 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'prelim',
         'seed',
         'directors',
+        'rank',
+        ('mus_points', 'per_points', 'sng_points', 'tot_points',),
+        ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     )
 
     list_display = (
