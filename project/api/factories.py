@@ -172,7 +172,6 @@ class CompetitorFactory(DjangoModelFactory):
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_archived = False
-    img = None
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')

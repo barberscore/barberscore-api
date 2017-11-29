@@ -492,11 +492,11 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     fields = (
+        'id',
         'status',
         'is_archived',
         'session',
         'group',
-        'img',
         ('is_evaluation', 'is_private',),
         'draw',
         'prelim',
@@ -538,6 +538,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     readonly_fields = (
+        'id',
         'nomen',
     )
 
