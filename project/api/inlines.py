@@ -259,8 +259,10 @@ class GridInline(admin.TabularInline):
     fields = [
         'num',
         'onstage',
+        'start',
         'round',
         'entry',
+        'renditions',
     ]
     raw_id_fields = [
         'round',
