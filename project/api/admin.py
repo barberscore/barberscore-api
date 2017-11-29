@@ -1,6 +1,5 @@
 # Django
 # Third-Party
-from django_fsm_log.models import StateLog
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 
@@ -1463,31 +1462,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         # 'name',
         # 'email',
         'auth0_id',
-    ]
-
-
-@admin.register(StateLog)
-class StateLogAdmin(admin.ModelAdmin):
-    list_display = [
-        '__str__',
-        'by',
-    ]
-    fields = [
-        'timestamp',
-        'content_type',
-        'content_object',
-        'transition',
-        'by',
-        'object_id',
-    ]
-    readonly_fields = [
-        'content_object',
-        'timestamp',
-        'by',
-        'state',
-        'transition',
-        'content_type',
-        'object_id',
     ]
 
 
