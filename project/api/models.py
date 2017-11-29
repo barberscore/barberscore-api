@@ -4936,7 +4936,8 @@ class Session(TimeStampedModel):
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         if not self.is_invitational:
-            send_session(self, 'session_open.txt')
+            context = {'session': self,}
+            send_session('session_open.txt', context)
         return
 
     @fsm_log_by

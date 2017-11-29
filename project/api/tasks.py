@@ -445,7 +445,7 @@ def send_entry(template, context):
 
 
 @job
-def send_session(context, template):
+def send_session(template, context):
     session = context['session']
     Group = config.get_model('Group')
     Member = config.get_model('Member')
