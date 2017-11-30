@@ -50,6 +50,7 @@ from .fields import (
 
 from .managers import (
     ChartManager,
+    ConventionManager,
     UserManager,
     PersonManager,
     EnrollmentManager,
@@ -64,6 +65,7 @@ from .tasks import (
     create_admins_report,
     send_entry,
     send_session,
+    send_session_reports,
 )
 
 config = api_apps.get_app_config('api')
@@ -1414,6 +1416,8 @@ class Convention(TimeStampedModel):
     )
 
     # Internals
+    objects = ConventionManager()
+
     class JSONAPIMeta:
         resource_name = "convention"
 
@@ -1489,18 +1493,6 @@ class Convention(TimeStampedModel):
     )
     def publish(self, *args, **kwargs):
         """Publish convention and related sessions."""
-        grantors = self.grantors.all()
-        sessions = self.sessions.all()
-        for session in sessions:
-            for grantor in grantors:
-                awards = grantor.organization.awards.filter(
-                    status=grantor.organization.awards.model.STATUS.active,
-                    kind=session.kind,
-                )
-                for award in awards:
-                    session.contests.create(
-                        award=award,
-                    )
         return
 
 
@@ -2362,6 +2354,8 @@ class Grid(TimeStampedModel):
     )
 
     num = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     location = models.CharField(
@@ -2426,6 +2420,7 @@ class Grid(TimeStampedModel):
     class Meta:
         unique_together = (
             ('round', 'entry',),
+            # ('round', 'entry', 'num',),
         )
 
     class JSONAPIMeta:
@@ -4914,7 +4909,7 @@ class Session(TimeStampedModel):
     def can_close_session(self):
         Entry = config.get_model('Entry')
         return all([
-            self.close_date < datetime.date.today(),
+            self.convention.close_date < datetime.date.today(),
             self.entries.filter(status=Entry.STATUS.submitted).count() == 0,
         ])
 
@@ -4930,7 +4925,7 @@ class Session(TimeStampedModel):
         """Make session available for entry."""
         if not self.is_invitational:
             context = {'session': self}
-            send_session('session_open.txt', context)
+            send_session.delay('session_open.txt', context)
         return
 
     @fsm_log_by
@@ -4958,12 +4953,15 @@ class Session(TimeStampedModel):
         # Set initial draw for all Approved entries.
         entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,
-        )
+        ).order_by('?')
         i = 1
         for entry in entries:
             entry.draw = i
             entry.save()
             i += 1
+        if not self.is_invitational:
+            context = {'session': self}
+            send_session.delay('session_close.txt', context)
         return
 
     @fsm_log_by
@@ -4975,9 +4973,21 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        create_bbscores_report(self)
-        create_drcj_report(self)
-        create_admins_report(self)
+        bbscores_report = create_bbscores_report(self)
+        drcj_report = create_drcj_report(self)
+        admins_report = create_admins_report(self)
+        context = {
+            'session': self,
+            'bbscores_report': bbscores_report,
+            'drcj_report': drcj_report,
+            'admins_report': admins_report,
+        }
+        send_session_reports.delay('session_reports.txt', context)
+        approved_entries = self.entries.filter(
+            status=self.entries.model.STATUS.approved,
+        ).order_by('draw')
+        context = {'session': self, 'approved_entries': approved_entries}
+        send_session.delay('session_verify.txt', context)
         return
 
     @fsm_log_by
@@ -4989,10 +4999,17 @@ class Session(TimeStampedModel):
     )
     def start(self, *args, **kwargs):
         """Get round, seat panel, copy draw."""
-        #  Create the export files
-        create_bbscores_report(self)
-        create_drcj_report(self)
-        create_admins_report(self)
+        #  Create and send the reports
+        bbscores_report = create_bbscores_report(self)
+        drcj_report = create_drcj_report(self)
+        admins_report = create_admins_report(self)
+        context = {
+            'session': self,
+            'bbscores_report': bbscores_report,
+            'drcj_report': drcj_report,
+            'admins_report': admins_report,
+        }
+        send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
         Assignment = config.get_model('Assignment')
         Slot = config.get_model('Slot')
