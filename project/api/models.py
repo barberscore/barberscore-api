@@ -104,6 +104,7 @@ class Appearance(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -401,6 +402,7 @@ class Assignment(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -536,6 +538,7 @@ class Award(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -817,6 +820,7 @@ class Chart(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -940,6 +944,7 @@ class Contest(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1071,6 +1076,7 @@ class Contestant(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1313,6 +1319,7 @@ class Convention(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1514,6 +1521,7 @@ class Competitor(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1783,6 +1791,7 @@ class Enrollment(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -1954,6 +1963,7 @@ class Entry(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -2255,6 +2265,7 @@ class Grantor(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -2345,6 +2356,7 @@ class Grid(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -2492,6 +2504,7 @@ class Group(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -2782,6 +2795,7 @@ class Member(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -3000,6 +3014,7 @@ class Office(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -3125,6 +3140,7 @@ class Officer(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.active,
     )
@@ -3239,6 +3255,7 @@ class Organization(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -3600,6 +3617,7 @@ class Participant(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -3758,6 +3776,7 @@ class Person(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -4094,6 +4113,7 @@ class Repertory(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -4216,6 +4236,7 @@ class Round(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -4530,6 +4551,7 @@ class Score(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -4754,6 +4776,7 @@ class Session(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -5034,6 +5057,7 @@ class Slot(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -5160,6 +5184,7 @@ class Song(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -5377,6 +5402,7 @@ class Venue(TimeStampedModel):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
@@ -5466,6 +5492,7 @@ class User(AbstractBaseUser):
     )
 
     status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
     )
