@@ -1,0 +1,19 @@
+We're writing to let you know that the draw has been made for the {{session|safe}}.
+Please note that this may not be the final draw; additions, scratches, and
+other adjustments may occur up to the session start date.
+
+{% for entry in approved_entries %}
+{{entry.draw}} - {{entry.group.name}}
+{% endfor %}
+
+
+Break a leg!
+
+If you have any other questions please don't hesitate to reach out to
+customerservice@barbershop.org and we'll respond ASAP.
+
+Thanks!
+
+NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
+email for an inactive quartet, or you are no longer the administrator for your chapter, we
+can fix that. Just send your request to be removed to: customerservice@barbershop.org

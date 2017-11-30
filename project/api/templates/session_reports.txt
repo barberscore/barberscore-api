@@ -1,0 +1,17 @@
+Below are the reports for the {{session|safe}}.
+
+{{bbscores_report}}
+
+{{drcj_report}}
+
+{{admins_report}}
+
+
+The reports may change up to the start of the sesion.  To regenerate reports,
+re-verify the session.  If you have any other questions ask David Mills.
+
+Thanks!
+
+NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
+email for an inactive quartet, or you are no longer the administrator for your chapter, we
+can fix that. Just send your request to be removed to: customerservice@barbershop.org

@@ -193,15 +193,16 @@ def create_bbscores_report(session):
         session.id,
         slugify(session.nomen),
     )
-    session.bbscores_report = upload_resource(
+    bbscores_report = upload_resource(
         file,
         resource_type='raw',
         public_id=public_id,
         overwrite=True,
         invalidate=True,
     )
+    session.bbscores_report = bbscores_report
     session.save()
-    return
+    return bbscores_report
 
 
 @job
@@ -338,15 +339,16 @@ def create_drcj_report(session):
         session.id,
         slugify(session.nomen),
     )
-    session.drcj_report = upload_resource(
+    drcj_report = upload_resource(
         file,
         resource_type='raw',
         public_id=public_id,
         overwrite=True,
         invalidate=True,
     )
+    session.drcj_report = drcj_report
     session.save()
-    return
+    return drcj_report
 
 
 @job
@@ -388,15 +390,16 @@ def create_admins_report(session):
         session.id,
         slugify(session.nomen),
     )
-    session.admins_report = upload_resource(
+    admins_report = upload_resource(
         file,
         resource_type='raw',
         public_id=public_id,
         overwrite=True,
         invalidate=True,
     )
+    session.admins_report = admins_report
     session.save()
-    return
+    return admins_report
 
 
 @job
@@ -469,6 +472,32 @@ def send_session(template, context):
     ])
     rendered = render_to_string(template, context)
     subject = "[Barberscore] {0}".format(session.nomen)
+    email = EmailMessage(
+        subject=subject,
+        body=rendered,
+        from_email='Barberscore <admin@barberscore.com>',
+        to=to,
+        bcc=bcc,
+    )
+    return email.send()
+
+
+@job
+def send_session_reports(template, context):
+    session = context['session']
+    Assignment = config.get_model('Assignment')
+    assignments = Assignment.objects.filter(
+        convention=session.convention,
+        category__lte=Assignment.CATEGORY.ca,
+        status=Assignment.STATUS.active,
+    ).exclude(person__email=None)
+    to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+    bcc = [
+        'Barberscore Admin <admin@barberscore.com>',
+        'David Mills <proclamation56@gmail.com>',
+    ]
+    rendered = render_to_string(template, context)
+    subject = "[Barberscore] {0} Reports".format(session.nomen)
     email = EmailMessage(
         subject=subject,
         body=rendered,
