@@ -165,6 +165,7 @@ class AssignmentAdmin(admin.ModelAdmin):
 class AwardAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
+        'id',
         'name',
         'status',
         'organization',
@@ -201,10 +202,11 @@ class AwardAdmin(admin.ModelAdmin):
         'level',
         'season',
         'is_primary', 'is_invitational', 'is_manual',
-        'organization',
+        OrganizationListFilter,
     ]
 
     readonly_fields = [
+        'id',
         'nomen',
     ]
 
@@ -372,10 +374,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'panel',
         'venue',
-        'open_date',
-        'close_date',
-        'start_date',
-        'end_date',
+        ('open_date', 'close_date',),
+        ('start_date', 'end_date',),
         'description',
     )
 
