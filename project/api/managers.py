@@ -51,6 +51,12 @@ class ChartManager(Manager):
         )
 
 
+class ConventionManager(Manager):
+    def populate_from_last_year(self, *args, **kwargs):
+        # Copy conventions, sessions, rounds, etc. from last year.
+        return
+
+
 class EnrollmentManager(Manager):
     def update_or_create_from_join(self, join, **kwargs):
         if not join.status:
