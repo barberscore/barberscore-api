@@ -5,6 +5,18 @@ from rest_framework.test import APIClient
 # Django
 from django.test.client import Client
 
+from django.db.models.signals import (
+    post_save,
+)
+from api.signals import (
+    entry_post_save,
+    session_post_save,
+)
+from api.models import (
+    Entry,
+    Session,
+)
+
 # First-Party
 from api.factories import (
     AppearanceFactory,
@@ -34,6 +46,12 @@ from api.factories import (
     UserFactory,
     VenueFactory,
 )
+
+
+@pytest.fixture(scope='session', autouse=True)
+def disconnect_signals():
+    post_save.disconnect(entry_post_save, sender=Entry)
+    post_save.disconnect(session_post_save, sender=Session)
 
 
 @pytest.fixture
