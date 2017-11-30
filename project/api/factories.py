@@ -6,7 +6,7 @@ from factory import (
     Sequence,
     SubFactory,
     Iterator,
-    post_generation,
+    # post_generation,
 )
 from factory.django import (
     DjangoModelFactory,
@@ -192,7 +192,6 @@ class GrantorFactory(DjangoModelFactory):
 
 class GridFactory(DjangoModelFactory):
     status = Grid.STATUS.new
-    num = Sequence(lambda x: x)
     entry = SubFactory('api.factories.EntryFactory')
     round = SubFactory('api.factories.RoundFactory')
 
