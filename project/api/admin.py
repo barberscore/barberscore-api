@@ -69,6 +69,8 @@ from .filters import (
     ParentOrganizationListFilter,
     SessionOrganizationListFilter,
     ConventionOrganizationListFilter,
+    DistrictListFilter,
+    DivisionListFilter,
 )
 
 
@@ -633,7 +635,8 @@ class GroupAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'gender',
-        OrganizationListFilter,
+        DistrictListFilter,
+        DivisionListFilter,
     ]
 
     search_fields = [

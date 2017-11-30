@@ -37,6 +37,40 @@ from .models import (
 )
 
 
+class DistrictListFilter(admin.SimpleListFilter):
+    title = 'district'
+    parameter_name = 'district'
+
+    def lookups(self, request, model_admin):
+        districts = Group.objects.order_by(
+            'district',
+        ).values_list('district', 'district').distinct()
+        return tuple(districts)
+
+    def queryset(self, request, queryset):
+        district = request.GET.get('district')
+        if district:
+            return queryset.filter(district=district)
+        return queryset
+
+
+class DivisionListFilter(admin.SimpleListFilter):
+    title = 'division'
+    parameter_name = 'division'
+
+    def lookups(self, request, model_admin):
+        divisions = Group.objects.order_by(
+            'division',
+        ).values_list('division', 'division').distinct()
+        return tuple(divisions)
+
+    def queryset(self, request, queryset):
+        division = request.GET.get('division')
+        if division:
+            return queryset.filter(division=division)
+        return queryset
+
+
 class OrganizationListFilter(admin.SimpleListFilter):
     title = ('organization')
     parameter_name = 'org'

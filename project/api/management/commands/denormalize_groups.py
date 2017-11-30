@@ -14,7 +14,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         gs = Group.objects.filter(
-            status=Group.STATUS.active,
+            status__in=[
+                Group.STATUS.active,
+                Group.STATUS.exempt,
+            ],
         )
         i = 0
         t = gs.count()
@@ -46,7 +49,11 @@ class Command(BaseCommand):
                 district = organization
                 if district.kind >= Organization.KIND.district:
                     try:
-                        while district.kind != Organization.KIND.district:
+                        while district.kind not in [
+                            Organization.KIND.district,
+                            Organization.KIND.noncomp,
+                            Organization.KIND.affiliate,
+                        ]:
                             district = district.parent
                         g.district = district.code
                     except AttributeError:
