@@ -1264,8 +1264,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
-        ('open_date', 'close_date'),
-        ('start_date', 'end_date'),
         # 'bbscores_report',
         # 'drcj_report',
         # 'admins_report',
@@ -1273,10 +1271,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'open_date',
-        'close_date',
-        'start_date',
-        'end_date',
         'status',
         'kind',
         'gender',
@@ -1303,10 +1297,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'open_date',
-        'close_date',
-        'start_date',
-        'end_date',
         # 'bbscores_report',
         # 'drcj_report',
         # 'admins_report',
