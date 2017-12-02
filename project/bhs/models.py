@@ -1,6 +1,6 @@
 # Django
 from django.db import models
-# from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 
 class Human(models.Model):
@@ -129,7 +129,7 @@ class Structure(models.Model):
     ORGANIZATION = 'organization'
     QUARTET = 'quartet'
 
-    KIND_CHOICES = [
+    KIND = [
         (ORGANIZATION, 'Organization'),
         (DISTRICT, 'District'),
         (CHAPTER, 'Chapter'),
@@ -148,7 +148,7 @@ class Structure(models.Model):
     kind = models.CharField(
         max_length=255,
         editable=False,
-        choices=KIND_CHOICES,
+        choices=KIND,
         db_column='object_type',
     )
     bhs_id = models.IntegerField(
@@ -206,9 +206,21 @@ class Structure(models.Model):
 
     def __str__(self):
         return "{0} [{1}]".format(
-            self.name,
+            self.name.strip(),
             self.bhs_id,
         )
+
+    def clean(self):
+        if not self.kind == 'quartet' or not self.status.name == 'active':
+            return
+        members = self.memberships.filter(
+            smjoins__status=True,
+        )
+        count = members.count()
+        if count != 4:
+            raise ValidationError(
+                {'status': 'Quartet member count is incorrect {0}'.format(count)}
+            )
 
     class Meta:
         db_table = 'vwStructures'
