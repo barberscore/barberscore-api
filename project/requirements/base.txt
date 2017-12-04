@@ -1,5 +1,5 @@
 auth0-python==3.1.4
-cloudinary==1.8.0
+cloudinary==1.9.0
 coreapi==2.3.3
 cryptography==2.1.4
 dj-database-url==0.4.2
@@ -12,7 +12,7 @@ django-rq==1.0.0
 django-timezone-field==2.0
 django==1.11.7
 djangorestframework-csv==2.0.0
-djangorestframework-jsonapi==2.2.0
+djangorestframework-jsonapi==2.3.1
 djangorestframework-jwt==1.11.0
 djangorestframework==3.7.3
 drf-fsm-transitions==0.2.0
