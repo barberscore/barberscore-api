@@ -141,7 +141,7 @@ class ConventionFactory(DjangoModelFactory):
     #         )
     #         AssignmentFactory(
     #             convention=self,
-    #             category=Assignment.CATEGORY.admin,
+    #             category=Assignment.CATEGORY.ca,
     #         )
     #         for i in range(self.panel):
     #             AssignmentFactory(

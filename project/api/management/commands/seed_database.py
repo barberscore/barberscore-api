@@ -825,7 +825,7 @@ class Command(BaseCommand):
             for j in js:
                 convention.assignments.create(
                     status=Assignment.STATUS.active,
-                    category=Assignment.CATEGORY.admin,
+                    category=Assignment.CATEGORY.ca,
                     kind=Assignment.KIND.official,
                     person=j.person,
                 )
