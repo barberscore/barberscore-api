@@ -205,8 +205,12 @@ class Structure(models.Model):
     )
 
     def __str__(self):
+        if self.name:
+            name = self.name.strip()
+        else:
+            name = 'UNKNOWN'
         return "{0} [{1}]".format(
-            self.name.strip(),
+            name,
             self.bhs_id,
         )
 
