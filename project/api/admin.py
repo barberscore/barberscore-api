@@ -1260,6 +1260,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     save_on_top = True
     fields = [
+        'id',
         'status',
         'is_archived',
         'convention',
@@ -1299,6 +1300,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     readonly_fields = [
+        'id',
         'nomen',
         # 'bbscores_report',
         # 'drcj_report',
