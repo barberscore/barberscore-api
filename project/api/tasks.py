@@ -208,7 +208,7 @@ def create_bbscores_report(session):
 @job
 def create_drcj_report(session):
     Entry = config.get_model('Entry')
-    Group = config.get_model('Group')
+    Organization = config.get_model('Organization')
     Participant = config.get_model('Participant')
     wb = Workbook()
     ws = wb.active
@@ -219,7 +219,7 @@ def create_drcj_report(session):
         'evaluation',
         'private',
         'bhs_id',
-        'group_exp_date',
+        'group_status',
         'repertory_count',
         'particpant_count',
         'expiring_count',
@@ -241,14 +241,24 @@ def create_drcj_report(session):
     for entry in entries:
         oa = entry.draw
         group_name = entry.group.name
-        representing = entry.group.organization.name
+        if entry.session.convention.organization.code in [
+            'EVG',
+            'FWD',
+            'LOL',
+            'MAD',
+            'NED',
+            'SWD',
+        ]:
+            representing = entry.group.division
+        else:
+            representing = entry.group.district
         evaluation = entry.is_evaluation
         private = entry.is_private
         bhs_id = entry.group.bhs_id
         repertory_count = entry.group.repertories.filter(
             status__gt=0,
         ).count()
-        group_exp_date = None
+        group_status = entry.group.get_status_display()
         repertory_count = entry.group.repertories.filter(
             status__gt=0,
         ).count()
@@ -295,25 +305,23 @@ def create_drcj_report(session):
             participant_detail = "\n".join(filter(None, participant_list))
             parts[part] = participant_detail
             part += 1
-        chapters_list = []
         if entry.group.kind == entry.group.KIND.quartet:
-            participants = entry.participants.filter(status__gt=0)
-            for participant in participants:
-                person_chapter_list = []
-                for member in participant.person.members.filter(
-                    status=10,
-                    group__kind=Group.KIND.chorus,
-                ).distinct('group'):
-                    person_chapter_list.append(
-                        member.group.name,
-                    )
-                chapters_list.extend(
-                    person_chapter_list
-                )
-            dedupe = list(set(chapters_list))
-            chapters = "\n".join(filter(None, dedupe))
-        else:
-            chapters = None
+            persons = entry.participants.filter(
+                status__gt=0,
+            ).values_list('person', flat=True)
+            cs = Organization.objects.filter(
+                enrollments__person__in=persons,
+                enrollments__status__gt=0,
+                kind=Organization.KIND.chapter,
+            ).distinct(
+            ).order_by(
+                'org_sort',
+                'nomen',
+            ).values_list(
+                'nomen',
+                flat=True
+            )
+            chapters = "\n".join(cs)
         row = [
             oa,
             group_name,
@@ -321,7 +329,7 @@ def create_drcj_report(session):
             evaluation,
             private,
             bhs_id,
-            group_exp_date,
+            group_status,
             repertory_count,
             participant_count,
             expiring_count,
@@ -368,7 +376,7 @@ def create_admins_report(session):
             Entry.STATUS.approved,
             Entry.STATUS.final,
         ]
-    ).order_by('draw')
+    ).order_by('group__nomen')
     for entry in entries:
         admins = entry.group.members.filter(
             is_admin=True,
@@ -453,12 +461,20 @@ def send_session(template, context):
     Group = config.get_model('Group')
     Member = config.get_model('Member')
     Assignment = config.get_model('Assignment')
-    contacts = Member.objects.filter(
-        is_admin=True,
-        group__status=Group.STATUS.active,
-        group__organization__grantors__convention=session.convention,
-        group__kind=session.kind,
-    ).exclude(person__email=None)
+    if session.is_invitational:
+        # only send to existing entries
+        contacts = Member.objects.filter(
+            is_admin=True,
+            group__entries__session=session,
+        ).exclude(person__email=None)
+    else:
+        # send to all active groups in the district
+        contacts = Member.objects.filter(
+            is_admin=True,
+            group__status=Group.STATUS.active,
+            group__organization__grantors__convention=session.convention,
+            group__kind=session.kind,
+        ).exclude(person__email=None)
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,

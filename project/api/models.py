@@ -2201,7 +2201,15 @@ class Entry(TimeStampedModel):
         conditions=[],
     )
     def approve(self, *args, **kwargs):
-        context = {'entry': self}
+        repertories = self.group.repertories.order_by('chart__title')
+        contestants = self.contestants.all()
+        participants = self.participants.all()
+        context = {
+            'entry': self,
+            'repertories': repertories,
+            'contestants': contestants,
+            'participants': participants,
+        }
         send_entry.delay('entry_approve.txt', context)
         return
 
@@ -2220,8 +2228,10 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
-        for contestant in self.contestants.filter(status__gt=0):
-            contestant.delete()
+        contestants = self.contestants.filter(status__gte=0)
+        for contestant in contestants:
+            contestant.exclude()
+            contestant.save()
         context = {'entry': self}
         send_entry.delay('entry_scratch.txt', context)
         return
@@ -4978,9 +4988,9 @@ class Session(TimeStampedModel):
         admins_report = create_admins_report(self)
         context = {
             'session': self,
-            'bbscores_report': bbscores_report,
-            'drcj_report': drcj_report,
-            'admins_report': admins_report,
+            'bbscores_report': bbscores_report.url,
+            'drcj_report': drcj_report.url,
+            'admins_report': admins_report.url,
         }
         send_session_reports.delay('session_reports.txt', context)
         approved_entries = self.entries.filter(
@@ -5012,7 +5022,7 @@ class Session(TimeStampedModel):
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
         Assignment = config.get_model('Assignment')
-        Slot = config.get_model('Slot')
+        Competitor = config.get_model('Competitor')
         Entry = config.get_model('Entry')
         Appearance = config.get_model('Appearance')
         # Get the first round.
@@ -5020,16 +5030,19 @@ class Session(TimeStampedModel):
             num=1,
         )
         for entry in self.entries.filter(status=Entry.STATUS.approved):
-            slot = Slot.objects.create(
-                num=entry.draw,
-                round=round,
+            # set the grid
+            grid = entry.grids.get(
+                round__num=1,
             )
+            grid.num = entry.draw
+            grid.save()
+            # create the appearances
             round.appearances.create(
                 entry=entry,
-                slot=slot,
                 num=entry.draw,
                 status=Appearance.STATUS.published,
             )
+            # think we want to remove this
             entry.finalize()
             entry.save()
         for entry in self.entries.filter(status=Entry.STATUS.new):

@@ -4,7 +4,7 @@ You are officially entered for the {{entry.session.nomen|safe}}.
 IMPORTANT: Prior to competing it is your responsibility to ensure your songs are
 in your Repertory. As of now, your Repertory contains the following songs:
 
-{% for repertory in entry.group.repertories.all %}
+{% for repertory in repertories %}
     - {{repertory.chart.nomen|safe}}
 {% empty %}
   No Songs in Your Repertory
@@ -21,17 +21,17 @@ Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 Keep Scores Private: {{entry.is_private|yesno|title}}
 
 Contests Selected:
-{% for contestant in entry.contestants.all %}
+{% for contestant in contestants %}
     - {{contestant.contest.award.name}}
 {% empty %}
     Not competing for any awards.
 {% endfor %}
 
-{% if entry.group.kind == 32 %}
+{% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|default:"(No Director Specified)"}}
 
 Participants on Stage:
-{% for participant in entry.participants.all %}
+{% for participant in participants %}
     - {{participant.person.nomen|safe}}
 {% empty %}
     No Participants currently selected.
