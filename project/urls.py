@@ -5,9 +5,9 @@ from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
 from django.conf import settings
-from django.conf.urls import (
+from django.urls import (
     include,
-    url,
+    path,
 )
 from django.contrib import admin
 from django.http import (
@@ -20,19 +20,19 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    url(r'^$', lambda r: HttpResponseRedirect('admin/')),
-    url(r'^admin/', admin.site.urls),
-    url(r'^api/', include('api.urls')),
+    path('', lambda r: HttpResponseRedirect('admin/')),
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
     # url(r'^bhs/', include('bhs.urls')),
-    url(r'^rq/', include('django_rq.urls')),
-    url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'^schema/', schema_view),
-    url(r'^docs/', include_docs_urls(title='Foobar', description='foo to the bar')),
-    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
+    path('rq/', include('django_rq.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('schema/', schema_view),
+    path('docs/', include_docs_urls(title='Foobar', description='foo to the bar')),
+    path('robots.txt', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        path('__debug__/', include(debug_toolbar.urls)),
     ]
