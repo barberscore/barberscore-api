@@ -194,6 +194,7 @@ class Structure(models.Model):
         'Status',
         related_name='structures',
         editable=False,
+        on_delete=models.CASCADE,
     )
 
     parent = models.ForeignKey(
@@ -202,6 +203,7 @@ class Structure(models.Model):
         blank=True,
         related_name='children',
         db_column='parent_id',
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):
@@ -276,11 +278,13 @@ class Membership(models.Model):
         related_name='memberships',
         editable=False,
         db_column='object_id',
+        on_delete=models.CASCADE,
     )
     status = models.ForeignKey(
         'Status',
         related_name='memberships',
         editable=False,
+        on_delete=models.CASCADE,
     )
 
     # Internals
@@ -328,6 +332,7 @@ class Subscription(models.Model):
         related_name='subscriptions',
         editable=False,
         db_column='members_id',
+        on_delete=models.CASCADE,
     )
 
     # Internals
@@ -362,12 +367,14 @@ class Role(models.Model):
         related_name='roles',
         editable=False,
         db_column='member_id',
+        on_delete=models.CASCADE,
     )
     structure = models.ForeignKey(
         'Structure',
         related_name='roles',
         editable=False,
         db_column='object_id',
+        on_delete=models.CASCADE,
     )
 
     # Internals
@@ -421,17 +428,20 @@ class SMJoin(models.Model):
         'Subscription',
         editable=False,
         related_name='smjoins',
+        on_delete=models.CASCADE,
     )
     membership = models.ForeignKey(
         'Membership',
         editable=False,
         related_name='smjoins',
+        on_delete=models.CASCADE,
     )
 
     structure = models.ForeignKey(
         'Structure',
         editable=False,
         db_column='reference_structure_id',
+        on_delete=models.CASCADE,
     )
 
     # Internals
