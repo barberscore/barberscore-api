@@ -14,3 +14,5 @@ ipython==6.2.1
 isort==4.2.15
 graphviz==0.8.1
 
+git+https://github.com/mapeveri/django-rest-framework-json-api.git@develop
+git+https://github.com/ttill/dry-rest-permissions.git

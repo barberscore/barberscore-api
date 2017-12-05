@@ -477,37 +477,37 @@ class ScoreFilter(FilterSet):
 
 class SessionFilter(FilterSet):
     convention__assignments__person__user = UUIDFilter(
-        field_name='convention__assignments__person__user',
+        name='convention__assignments__person__user',
         lookup_expr='exact',
         distinct=True,
     )
 
     convention__assignments__kind = NumberFilter(
-        field_name='convention__assignments__kind',
+        name='convention__assignments__kind',
         lookup_expr='exact',
         distinct=True,
     )
 
     convention__assignments__category = NumberFilter(
-        field_name='convention__assignments__category',
+        name='convention__assignments__category',
         lookup_expr='exact',
         distinct=True,
     )
 
     status__lt = NumberFilter(
-        field_name='status',
+        name='status',
         lookup_expr='lt',
         distinct=True,
     )
 
     status = NumberFilter(
-        field_name='status',
+        name='status',
         lookup_expr='exact',
         distinct=True,
     )
 
     nomen__icontains = CharFilter(
-        field_name='status',
+        name='status',
         lookup_expr='icontains',
         distinct=True,
     )

@@ -35,8 +35,7 @@ AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 # JWT Settings
-with open('barberscore.pem', 'rb') as file:
-    pem_data = file.read()
+pem_data = open('barberscore.pem', 'rb').read()
 cert = x509.load_pem_x509_certificate(pem_data, default_backend())
 jwt_public_key = cert.public_key()
 
