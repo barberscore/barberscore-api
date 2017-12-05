@@ -4993,11 +4993,11 @@ class Session(TimeStampedModel):
             'admins_report': admins_report.url,
         }
         send_session_reports.delay('session_reports.txt', context)
-        approved_entries = self.entries.filter(
-            status=self.entries.model.STATUS.approved,
-        ).order_by('draw')
-        context = {'session': self, 'approved_entries': approved_entries}
-        send_session.delay('session_verify.txt', context)
+        # approved_entries = self.entries.filter(
+        #     status=self.entries.model.STATUS.approved,
+        # ).order_by('draw')
+        # context = {'session': self, 'approved_entries': approved_entries}
+        # send_session.delay('session_verify.txt', context)
         return
 
     @fsm_log_by
