@@ -656,12 +656,6 @@ class GroupAdmin(admin.ModelAdmin):
     list_select_related = [
         'organization',
     ]
-    inlines = [
-        MemberInline,
-        RepertoryInline,
-        EntryInline,
-        CompetitorInline,
-    ]
     readonly_fields = [
         'id',
         'nomen',
@@ -678,6 +672,36 @@ class GroupAdmin(admin.ModelAdmin):
     ordering = [
         'name',
     ]
+
+    INLINES = {
+        'Quartet': [
+            MemberInline,
+            RepertoryInline,
+            EntryInline,
+            CompetitorInline,
+        ],
+        'Chapter': [
+            RepertoryInline,
+            EntryInline,
+            CompetitorInline,
+        ],
+    }
+
+    def get_inline_instances(self, request, obj=None):
+        inline_instances = []
+        try:
+            inlines = self.INLINES[obj.KIND[obj.kind]]
+        except AttributeError:
+            return inline_instances
+
+        for inline_class in inlines:
+            inline = inline_class(self.model, self.admin_site)
+            inline_instances.append(inline)
+        return inline_instances
+
+    def get_formsets(self, request, obj=None):
+        for inline in self.get_inline_instances(request, obj):
+            yield inline.get_formset(request, obj)
 
 
 @admin.register(Member)
@@ -910,12 +934,6 @@ class OrganizationAdmin(admin.ModelAdmin):
         'name',
     )
 
-    # inlines = [
-    #     OfficerInline,
-    #     # AwardInline,
-    #     # GroupInline,
-    #     # ConventionInline,
-    # ]
     INLINES = {
         'International': [
             AwardInline,
