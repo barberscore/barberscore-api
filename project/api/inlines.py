@@ -229,6 +229,7 @@ class EntryInline(admin.TabularInline):
     ]
     ordering = [
         'group__nomen',
+        'session__convention__year',
     ]
     show_change_link = True
     extra = 0
