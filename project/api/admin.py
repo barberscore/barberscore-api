@@ -680,7 +680,7 @@ class GroupAdmin(admin.ModelAdmin):
             EntryInline,
             CompetitorInline,
         ],
-        'Chapter': [
+        'Chorus': [
             RepertoryInline,
             EntryInline,
             CompetitorInline,
