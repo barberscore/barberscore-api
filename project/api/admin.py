@@ -1445,7 +1445,12 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'is_active',
         'is_staff',
         'status',
+        'auth0_id',
     ]
+
+    # list_editable = [
+    #     'auth0_id',
+    # ]
 
     list_filter = (
         'status',
