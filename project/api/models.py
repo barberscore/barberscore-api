@@ -401,6 +401,13 @@ class Assignment(TimeStampedModel):
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
+        (10, 'active', 'Active',),
     )
 
     status = FSMIntegerField(
@@ -412,7 +419,7 @@ class Assignment(TimeStampedModel):
     KIND = Choices(
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
+        (30, 'observer', 'Observer'),
     )
 
     kind = models.IntegerField(
@@ -5022,7 +5029,7 @@ class Session(TimeStampedModel):
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
         Assignment = config.get_model('Assignment')
-        Competitor = config.get_model('Competitor')
+        # Competitor = config.get_model('Competitor')
         Entry = config.get_model('Entry')
         Appearance = config.get_model('Appearance')
         # Get the first round.
