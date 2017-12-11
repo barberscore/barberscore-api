@@ -23,6 +23,7 @@ from api.models import (
     Contestant,
     Convention,
     Competitor,
+    Enrollment,
     Entry,
     Grantor,
     Grid,
@@ -57,9 +58,8 @@ class AppearanceFactory(DjangoModelFactory):
 
 
 class AssignmentFactory(DjangoModelFactory):
-    status = Assignment.STATUS.active
+    status = Assignment.STATUS.confirmed
     kind = Assignment.KIND.official
-    category = Assignment.CATEGORY.drcj
     convention = SubFactory('api.factories.ConventionFactory')
     person = SubFactory('api.factories.PersonFactory')
 
@@ -87,7 +87,7 @@ class AwardFactory(DjangoModelFactory):
 
 
 class ChartFactory(DjangoModelFactory):
-    status = Chart.STATUS.new
+    status = Chart.STATUS.active
     title = Faker('word')
     arrangers = Faker('name_male')
     composers = Faker('name_male')
@@ -169,6 +169,15 @@ class CompetitorFactory(DjangoModelFactory):
         model = Competitor
 
 
+class EnrollmentFactory(DjangoModelFactory):
+    status = Enrollment.STATUS.active
+    organization = SubFactory('api.factories.OrganizationFactory')
+    person = SubFactory('api.factories.PersonFactory')
+
+    class Meta:
+        model = Enrollment
+
+
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_archived = False
@@ -240,7 +249,7 @@ class GroupFactory(DjangoModelFactory):
 
 
 class MemberFactory(DjangoModelFactory):
-    status = Member.STATUS.new
+    status = Member.STATUS.active
     part = Iterator([
         Member.PART.tenor,
         Member.PART.lead,
@@ -327,7 +336,7 @@ class PersonFactory(DjangoModelFactory):
     middle_name = ''
     last_name = Faker('last_name_male')
     nick_name = ''
-    status = Person.STATUS.inactive
+    status = Person.STATUS.active
     birth_date = None
     location = ''
     website = ''
@@ -340,14 +349,13 @@ class PersonFactory(DjangoModelFactory):
     notes = ''
     current_through = '2018-12-31'
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
-    user = SubFactory('api.factories.UserFactory')
 
     class Meta:
         model = Person
 
 
 class RepertoryFactory(DjangoModelFactory):
-    status = Repertory.STATUS.new
+    status = Repertory.STATUS.active
     group = SubFactory('api.factories.GroupFactory')
     chart = SubFactory('api.factories.ChartFactory')
 
@@ -429,11 +437,11 @@ class SongFactory(DjangoModelFactory):
 class VenueFactory(DjangoModelFactory):
     name = 'Test Convention Center'
     status = Venue.STATUS.active
-    location = ''
-    city = '',
-    state = ''
-    airport = ''
-    timezone = ''
+    location = 'Nashville, TN'
+    city = 'Nashville'
+    state = 'TN'
+    airport = 'NTA'
+    timezone = 'US/Central'
 
     class Meta:
         model = Venue
@@ -441,6 +449,7 @@ class VenueFactory(DjangoModelFactory):
 
 class UserFactory(DjangoModelFactory):
     name = Faker('name_male')
+    status = User.STATUS.active
     email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     password = PostGenerationMethodCall('set_password', 'password')
     is_active = False
