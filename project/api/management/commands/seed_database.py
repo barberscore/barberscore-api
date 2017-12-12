@@ -815,7 +815,7 @@ class Command(BaseCommand):
         conventions = Convention.objects.all()
         for convention in conventions:
             convention.assignments.create(
-                status=Assignment.STATUS.active,
+                status=Assignment.STATUS.confirmed,
                 category=Assignment.CATEGORY.drcj,
                 kind=Assignment.KIND.official,
                 person=drcj_person,
@@ -824,7 +824,7 @@ class Command(BaseCommand):
                 office__short_name='CA').order_by('?')[:2]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.active,
+                    status=Assignment.STATUS.confirmed,
                     category=Assignment.CATEGORY.ca,
                     kind=Assignment.KIND.official,
                     person=j.person,
@@ -833,7 +833,7 @@ class Command(BaseCommand):
                 :convention.panel]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.active,
+                    status=Assignment.STATUS.confirmed,
                     category=Assignment.CATEGORY.music,
                     kind=Assignment.KIND.official,
                     person=j.person,
@@ -842,7 +842,7 @@ class Command(BaseCommand):
                 :convention.panel]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.active,
+                    status=Assignment.STATUS.confirmed,
                     category=Assignment.CATEGORY.performance,
                     kind=Assignment.KIND.official,
                     person=j.person,
@@ -851,7 +851,7 @@ class Command(BaseCommand):
                 :convention.panel]
             for j in js:
                 convention.assignments.create(
-                    status=Assignment.STATUS.active,
+                    status=Assignment.STATUS.confirmed,
                     category=Assignment.CATEGORY.singing,
                     kind=Assignment.KIND.official,
                     person=j.person,

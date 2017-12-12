@@ -2003,6 +2003,12 @@ class Entry(TimeStampedModel):
         default='',
     )
 
+    representing = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     # Entry Results
     rank = models.IntegerField(
         null=True,
@@ -4520,7 +4526,7 @@ class Round(TimeStampedModel):
     #             e.complete()
     #             e.save()
     #         for assignment in self.session.convention.assignments.filter(
-    #             status=Assignment.STATUS.active,
+    #             status=Assignment.STATUS.confirmed,
     #         ):
     #             round.panelists.create(
     #                 kind=assignment.kind,
@@ -5048,7 +5054,7 @@ class Session(TimeStampedModel):
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
         for assignment in self.convention.assignments.filter(
-            status=Assignment.STATUS.active,
+            status=Assignment.STATUS.confirmed,
         ):
             round.panelists.create(
                 kind=assignment.kind,
@@ -5573,13 +5579,10 @@ class User(AbstractBaseUser):
 
     @cached_property
     def is_session_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_session_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
+        is_manager = bool(self.person.officers.filter(
+            office__is_session_manager=True,
+            status=self.person.officers.model.STATUS.active,
+        ))
         return is_manager
 
     @cached_property

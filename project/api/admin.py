@@ -487,6 +487,53 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
 
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'status',
+        # 'start_date',
+        # 'end_date',
+        'organization',
+        'person',
+        'bhs_pk',
+        'sub_status',
+        'mem_status',
+        'mem_code',
+    ]
+    list_display = [
+        'nomen',
+        # 'start_date',
+        # 'end_date',
+        'organization',
+        'person',
+        'sub_status',
+        'mem_status',
+        'mem_code',
+        'status',
+    ]
+    raw_id_fields = [
+        'person',
+        'organization',
+    ]
+    search_fields = [
+        'nomen',
+    ]
+    list_filter = [
+        'status',
+        # 'organization',
+        'sub_status',
+        'mem_status',
+        'mem_code',
+    ]
+    readonly_fields = [
+        'id',
+        'sub_status',
+        'mem_status',
+        'mem_code',
+    ]
+
+
 @admin.register(Entry)
 class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
@@ -499,6 +546,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'session',
         'group',
+        'representing',
         ('is_evaluation', 'is_private',),
         'draw',
         'prelim',
@@ -748,53 +796,6 @@ class MemberAdmin(admin.ModelAdmin):
         'mem_code',
     ]
     readonly_fields = [
-        'sub_status',
-        'mem_status',
-        'mem_code',
-    ]
-
-
-@admin.register(Enrollment)
-class EnrollmentAdmin(admin.ModelAdmin):
-    fields = [
-        'id',
-        'status',
-        # 'start_date',
-        # 'end_date',
-        'organization',
-        'person',
-        'bhs_pk',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-    ]
-    list_display = [
-        'nomen',
-        # 'start_date',
-        # 'end_date',
-        'organization',
-        'person',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-        'status',
-    ]
-    raw_id_fields = [
-        'person',
-        'organization',
-    ]
-    search_fields = [
-        'nomen',
-    ]
-    list_filter = [
-        'status',
-        # 'organization',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-    ]
-    readonly_fields = [
-        'id',
         'sub_status',
         'mem_status',
         'mem_code',
@@ -1442,6 +1443,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     list_display = [
         'email',
         'name',
+        'person',
         'is_active',
         'is_staff',
         'status',
@@ -1452,6 +1454,10 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     #     'auth0_id',
     # ]
 
+    list_display_links = [
+        'person',
+    ]
+
     list_filter = (
         'status',
         'is_active',
@@ -1459,7 +1465,19 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('status', 'name', 'email', 'auth0_id', 'is_active', 'is_staff', )}),
+        (None, {
+            'fields': (
+                'status',
+                'name',
+                'email',
+                'auth0_id',
+                'is_active',
+                'is_staff',
+                'is_group_manager',
+                'is_session_manager',
+                'is_scoring_manager',
+            )
+        }),
     )
     add_fieldsets = (
         (None, {
@@ -1483,7 +1501,10 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     readonly_fields = [
         # 'name',
         # 'email',
-        'auth0_id',
+        # 'auth0_id',
+        'is_group_manager',
+        'is_session_manager',
+        'is_scoring_manager',
     ]
 
 

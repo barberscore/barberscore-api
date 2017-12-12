@@ -241,17 +241,7 @@ def create_drcj_report(session):
     for entry in entries:
         oa = entry.draw
         group_name = entry.group.name
-        if entry.session.convention.organization.code in [
-            'EVG',
-            'FWD',
-            'LOL',
-            'MAD',
-            'NED',
-            'SWD',
-        ]:
-            representing = entry.group.division
-        else:
-            representing = entry.group.district
+        representing = entry.representing
         evaluation = entry.is_evaluation
         private = entry.is_private
         bhs_id = entry.group.bhs_id
@@ -478,7 +468,7 @@ def send_session(template, context):
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,
-        status=Assignment.STATUS.active,
+        status=Assignment.STATUS.confirmed,
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     bcc = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
@@ -505,7 +495,7 @@ def send_session_reports(template, context):
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category__lte=Assignment.CATEGORY.ca,
-        status=Assignment.STATUS.active,
+        status=Assignment.STATUS.confirmed,
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     bcc = [

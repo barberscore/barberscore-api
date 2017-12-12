@@ -273,19 +273,13 @@ class Command(BaseCommand):
         # Create Groups
         quartet_one = GroupFactory(
             name='Quartet One',
-            kind=Group.KIND.quartet,
             organization=district_alpha,
-            international=international.code,
-            district=district_alpha.code,
         )
         # Create chorus
         chorus_one = GroupFactory(
             name='Chorus One',
-            kind=Group.KIND.chorus,
             organization=chapter_one,
-            international=international.code,
-            district=district_alpha.code,
-            chapter=chapter_one.name,
+            kind=Group.KIND.chorus,
         )
         # Create enrollments
         enrollment_chorus_admin = EnrollmentFactory(
@@ -442,29 +436,16 @@ class Command(BaseCommand):
             person=singing_judge_person,
         )
         district_alpha_fall_convention_quartet_session = SessionFactory(
-            status=Session.STATUS.started,
             convention=district_alpha_fall_convention,
             kind=Session.KIND.quartet,
             num_rounds=2,
         )
         district_alpha_fall_convention_chorus_session = SessionFactory(
-            status=Session.STATUS.started,
             convention=district_alpha_fall_convention,
             kind=Session.KIND.chorus,
             num_rounds=1,
         )
         # Contests created via signal.
-        # Get right to the finalized session.
-        quartet_entry = EntryFactory(
-            status=Entry.STATUS.approved,
-            session=district_alpha_fall_convention_quartet_session,
-            group=quartet_one,
-            draw=1,
-        )
-        chorus_entry = EntryFactory(
-            status=Entry.STATUS.approved,
-            session=district_alpha_fall_convention_chorus_session,
-            group=chorus_one,
-            draw=1,
-        )
+        district_alpha_fall_convention_quartet_session.open()
+        district_alpha_fall_convention_chorus_session.open()
 

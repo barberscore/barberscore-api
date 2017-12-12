@@ -65,7 +65,6 @@ class Command(BaseCommand):
         t = ps.count()
         for p in ps:
             i += 1
-            print("{0}/{1} {2}".format(i, t, p.id))
             h = Human.objects.get(
                 bhs_id=p.bhs_id,
             )

@@ -45,6 +45,17 @@ def entry_post_save(sender, instance, created, raw=False, **kwargs):
                 status=entry.participants.model.STATUS.included,
                 part=member.part,
             )
+        has_divisions = bool(
+            entry.session.convention.organization.children.filter(
+                kind=entry.session.convention.organization.KIND.division,
+                status=entry.session.convention.organization.STATUS.active,
+            )
+        )
+        if has_divisions:
+            entry.representing = entry.group.division
+        else:
+            entry.representing = entry.group.district
+        entry.save()
     return
 
 

@@ -98,7 +98,7 @@ class ChartFactory(DjangoModelFactory):
 
 
 class ContestFactory(DjangoModelFactory):
-    status = Contest.STATUS.new
+    status = Contest.STATUS.included
     session = SubFactory('api.factories.SessionFactory')
     award = SubFactory('api.factories.AwardFactory')
 
