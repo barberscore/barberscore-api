@@ -5579,10 +5579,13 @@ class User(AbstractBaseUser):
 
     @cached_property
     def is_session_manager(self):
-        is_manager = bool(self.person.officers.filter(
-            office__is_session_manager=True,
-            status=self.person.officers.model.STATUS.active,
-        ))
+        try:
+            is_manager = bool(self.person.officers.filter(
+                office__is_session_manager=True,
+                status=self.person.officers.model.STATUS.active,
+            ))
+        except:
+            is_manager = False
         return is_manager
 
     @cached_property
