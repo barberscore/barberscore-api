@@ -2454,7 +2454,7 @@ class Grid(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.nomen = "{0} {1}".format(
             self.round,
-            self.entry,
+            self.competitor,
         )
         super().save(*args, **kwargs)
 
@@ -5059,7 +5059,7 @@ class Session(TimeStampedModel):
             entry.delete()
         for assignment in self.convention.assignments.filter(
             status=self.convention.assignments.model.STATUS.confirmed,
-            category__gt=self.convention.assignments.model.category.ca,
+            category__gt=self.convention.assignments.model.CATEGORY.ca,
         ):
             first_round.panelists.create(
                 kind=assignment.kind,

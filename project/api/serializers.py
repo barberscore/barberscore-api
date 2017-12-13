@@ -352,7 +352,7 @@ class GridSerializer(serializers.ModelSerializer):
             'start',
             'renditions',
             'round',
-            'entry',
+            'competitor',
             'permissions',
         ]
 

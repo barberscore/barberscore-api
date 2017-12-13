@@ -202,7 +202,7 @@ class GrantorFactory(DjangoModelFactory):
 
 class GridFactory(DjangoModelFactory):
     status = Grid.STATUS.new
-    entry = SubFactory('api.factories.EntryFactory')
+    competitor = SubFactory('api.factories.CompetitorFactory')
     round = SubFactory('api.factories.RoundFactory')
 
     class Meta:

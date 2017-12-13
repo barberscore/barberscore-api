@@ -340,7 +340,7 @@ class EntryViewSet(
 class GridViewSet(viewsets.ModelViewSet):
     queryset = Grid.objects.select_related(
         'round',
-        'entry',
+        'competitor',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = GridSerializer
