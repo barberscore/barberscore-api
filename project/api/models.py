@@ -328,12 +328,17 @@ class Appearance(TimeStampedModel):
     # Appearance Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
-        return True
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
-        return True
+        return self.competitor.session.convention.filter(
+            assignments__person__user=request.user,
+            assignments__status__gt=0,
+        )
 
     @staticmethod
     @allow_staff_or_superuser
@@ -1609,13 +1614,15 @@ class Competitor(TimeStampedModel):
         )
         super().save(*args, **kwargs)
 
-    # Permissions
+    # Competitor Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
-        return True
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
         return True
 
@@ -2764,7 +2771,6 @@ class Group(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_group_manager,
-            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -2776,7 +2782,6 @@ class Group(TimeStampedModel):
                 is_admin=True,
                 status__gt=0,
             ),
-            request.user.is_group_manager,
         ])
 
     # Transitions
