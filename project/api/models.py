@@ -2434,12 +2434,6 @@ class Grid(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    entry = models.ForeignKey(
-        'Entry',
-        related_name='grids',
-        on_delete=models.CASCADE,
-    )
-
     competitor = models.ForeignKey(
         'Competitor',
         related_name='grids',
