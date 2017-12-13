@@ -690,6 +690,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'convention',
             'contests',
             'entries',
+            'competitors',
             'rounds',
             'permissions',
         )

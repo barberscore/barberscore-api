@@ -714,6 +714,7 @@ class SessionViewSet(
     ).prefetch_related(
         'contests',
         'entries',
+        'competitors',
         'rounds',
     ).order_by('nomen')
     serializer_class = SessionSerializer
