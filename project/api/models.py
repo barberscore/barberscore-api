@@ -5027,26 +5027,27 @@ class Session(TimeStampedModel):
         }
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
-        Assignment = config.get_model('Assignment')
-        # Competitor = config.get_model('Competitor')
-        Entry = config.get_model('Entry')
-        Appearance = config.get_model('Appearance')
+        Competitor = config.get_model('Competitor')
         # Get the first round.
-        round = self.rounds.get(
+        first_round = self.rounds.get(
             num=1,
         )
         for entry in self.entries.filter(status=Entry.STATUS.approved):
+            # Create competitors
+            competitor = Competitor.objects.create(
+                session=self,
+                group=entry.group,
+            )
             # set the grid
             grid = entry.grids.get(
-                round__num=1,
+                round=first_round,
             )
             grid.num = entry.draw
             grid.save()
             # create the appearances
-            round.appearances.create(
-                entry=entry,
+            first_round.appearances.create(
+                competitor=competitor,
                 num=entry.draw,
-                status=Appearance.STATUS.published,
             )
             # think we want to remove this
             entry.finalize()
@@ -5054,15 +5055,15 @@ class Session(TimeStampedModel):
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
         for assignment in self.convention.assignments.filter(
-            status=Assignment.STATUS.confirmed,
+            status=self.convention.assignments.model.STATUS.confirmed,
+            category__gt=self.convention.assignments.model.category.ca,
         ):
-            round.panelists.create(
+            first_round.panelists.create(
                 kind=assignment.kind,
                 category=assignment.category,
                 person=assignment.person,
             )
-        round.verify()
-        round.save()
+        first_round.save()
         return
 
     @fsm_log_by
