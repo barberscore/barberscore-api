@@ -403,10 +403,6 @@ class Command(BaseCommand):
         # Create conventions
         district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',
-            open_date='2017-09-01',
-            close_date='2017-09-30',
-            start_date='2017-10-01',
-            end_date='2017-10-02',
             organization=district_alpha,
             panel=3,
             season=Convention.SEASON.fall,
@@ -442,29 +438,50 @@ class Command(BaseCommand):
             person=singing_judge_person,
         )
         district_alpha_fall_convention_quartet_session = SessionFactory(
-            status=Session.STATUS.started,
             convention=district_alpha_fall_convention,
             kind=Session.KIND.quartet,
             num_rounds=2,
         )
         district_alpha_fall_convention_chorus_session = SessionFactory(
-            status=Session.STATUS.started,
             convention=district_alpha_fall_convention,
             kind=Session.KIND.chorus,
             num_rounds=1,
         )
         # Contests created via signal.
-        # Get right to the finalized session.
+        district_alpha_fall_convention.publish()
+        district_alpha_fall_convention.save()
+
+        # Open sessions
+        district_alpha_fall_convention_quartet_session.open()
+        district_alpha_fall_convention_quartet_session.save()
+        district_alpha_fall_convention_chorus_session.open()
+        district_alpha_fall_convention_chorus_session.save()
+        # Add entries
         quartet_entry = EntryFactory(
-            status=Entry.STATUS.approved,
             session=district_alpha_fall_convention_quartet_session,
             group=quartet_one,
-            draw=1,
         )
         chorus_entry = EntryFactory(
-            status=Entry.STATUS.approved,
             session=district_alpha_fall_convention_chorus_session,
             group=chorus_one,
-            draw=1,
         )
-
+        # Approve entries
+        quartet_entry.approve()
+        quartet_entry.save()
+        chorus_entry.approve()
+        chorus_entry.save()
+        # Close sessions
+        district_alpha_fall_convention_quartet_session.close()
+        district_alpha_fall_convention_quartet_session.save()
+        district_alpha_fall_convention_chorus_session.close()
+        district_alpha_fall_convention_chorus_session.save()
+        # Verify sessions
+        district_alpha_fall_convention_quartet_session.verify()
+        district_alpha_fall_convention_quartet_session.save()
+        district_alpha_fall_convention_chorus_session.verify()
+        district_alpha_fall_convention_chorus_session.save()
+        # Start sessions
+        district_alpha_fall_convention_quartet_session.start()
+        district_alpha_fall_convention_quartet_session.save()
+        district_alpha_fall_convention_chorus_session.start()
+        district_alpha_fall_convention_chorus_session.save()

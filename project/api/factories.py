@@ -1,4 +1,5 @@
 # Third-Party
+import datetime
 from factory import (
     Faker,
     PostGenerationMethodCall,
@@ -121,10 +122,10 @@ class ConventionFactory(DjangoModelFactory):
     season = Convention.SEASON.summer
     panel = Convention.PANEL.quintiple
     year = 2017
-    open_date = '2017-06-01'
-    close_date = '2017-06-30'
-    start_date = '2017-07-01'
-    end_date = '2017-07-08'
+    open_date = datetime.date(2017, 6, 1)
+    close_date = datetime.date(2017, 6, 30)
+    start_date = datetime.date(2017, 7, 1)
+    end_date = datetime.date(2017, 7, 8)
     location = Faker('city')
     venue = SubFactory('api.factories.VenueFactory')
     organization = SubFactory('api.factories.OrganizationFactory')
