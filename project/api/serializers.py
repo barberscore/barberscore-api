@@ -61,6 +61,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'tot_score',
             'round',
             'competitor',
+            'grid',
             'songs',
             'permissions',
         )
@@ -250,6 +251,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'tot_score',
             'session',
             'group',
+            'entry',
             'appearances',
             'permissions',
         )
@@ -285,6 +287,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'tot_score',
             'session',
             'group',
+            'competitor',
             'contestants',
             'participants',
             'permissions',
@@ -352,6 +355,7 @@ class GridSerializer(serializers.ModelSerializer):
             'start',
             'renditions',
             'round',
+            'appearance',
             'competitor',
             'permissions',
         ]

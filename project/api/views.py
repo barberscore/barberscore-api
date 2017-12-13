@@ -299,6 +299,7 @@ class CompetitorViewSet(
     queryset = Competitor.objects.select_related(
         'session',
         'group',
+        'entry',
     ).prefetch_related(
         'appearances',
     ).order_by('nomen')
@@ -341,6 +342,7 @@ class GridViewSet(viewsets.ModelViewSet):
     queryset = Grid.objects.select_related(
         'round',
         'competitor',
+        'appearance',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = GridSerializer

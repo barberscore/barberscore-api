@@ -194,13 +194,6 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    slot = models.OneToOneField(
-        'Slot',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Appearance Internals
     class JSONAPIMeta:
         resource_name = "appearance"
@@ -335,29 +328,32 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return self.competitor.session.convention.filter(
-            assignments__person__user=request.user,
-            assignments__status__gt=0,
-        )
+        assi = bool(self.competitor.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        assi = bool(self.competitor.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
     # Transitions
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        panelists = self.round.panelists.filter(
-            category__gt=20,
-        )
+        panelists = self.round.panelists.all()
         i = 1
         while i <= 2:  # Number songs constant
             song = self.songs.create(
@@ -1591,6 +1587,13 @@ class Competitor(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    entry = models.OneToOneField(
+        'Entry',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Internals
     class Meta:
         verbose_name_plural = 'competitors'
@@ -2438,6 +2441,13 @@ class Grid(TimeStampedModel):
         'Competitor',
         related_name='grids',
         on_delete=models.CASCADE,
+    )
+
+    appearance = models.OneToOneField(
+        'Appearance',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
@@ -4750,23 +4760,31 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return False
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return False
+        assi = bool(self.song.appearance.competitor.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        assi = bool(self.song.appearance.competitor.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
 
 class Session(TimeStampedModel):
@@ -5041,16 +5059,18 @@ class Session(TimeStampedModel):
             competitor = Competitor.objects.create(
                 session=self,
                 group=entry.group,
+                entry=entry,
+            )
+            # create the appearances
+            appearance = first_round.appearances.create(
+                competitor=competitor,
+                num=entry.draw,
             )
             # set the grid
             competitor.grids.create(
                 round=first_round,
                 num=entry.draw,
-            )
-            # create the appearances
-            first_round.appearances.create(
-                competitor=competitor,
-                num=entry.draw,
+                appearance=appearance,
             )
             # think we want to remove this
             entry.finalize()
@@ -5078,124 +5098,6 @@ class Session(TimeStampedModel):
     )
     def finish(self, *args, **kwargs):
         return
-
-
-class Slot(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (0, 'new', 'New',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    num = models.IntegerField(
-    )
-
-    location = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    photo = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    arrive = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    depart = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    backstage = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    onstage = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    # FKs
-    round = models.ForeignKey(
-        'Round',
-        related_name='slots',
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
-        unique_together = (
-            ('round', 'num',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "slot"
-
-    def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.round,
-                    self.num,
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    def has_read_permission(request):
-        return any([
-            True,
-        ])
-
-    @allow_staff_or_superuser
-    def has_object_read_permission(self, request):
-        return any([
-            True,
-        ])
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return any([
-            request.user.is_convention_manager,
-        ])
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=30,
-                kind=10,
-            ),
-        ])
 
 
 class Song(TimeStampedModel):
@@ -5392,23 +5294,33 @@ class Song(TimeStampedModel):
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
-        return False
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
-        return False
+        assi = bool(self.appearance.competitor.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return request.user.is_scoring_manager
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        assi = bool(self.appearance.competitor.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
     # Transitions
     @fsm_log_by

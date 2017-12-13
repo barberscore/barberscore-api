@@ -34,7 +34,6 @@ class Command(BaseCommand):
             'Session',
             'Participant',
             'Panelist',
-            'Slot',
             'Song',
         ]
 
