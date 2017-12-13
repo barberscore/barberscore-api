@@ -329,11 +329,11 @@ class Appearance(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return False
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
@@ -1613,11 +1613,11 @@ class Competitor(TimeStampedModel):
     @staticmethod
     @allow_staff_or_superuser
     def has_read_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
-        return False
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
