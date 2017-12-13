@@ -2433,6 +2433,14 @@ class Grid(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    competitor = models.ForeignKey(
+        'Competitor',
+        related_name='grids',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         unique_together = (
             ('round', 'entry',),
