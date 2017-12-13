@@ -312,6 +312,8 @@ def create_drcj_report(session):
                 flat=True
             )
             chapters = "\n".join(cs)
+        else:
+            chapters = None
         row = [
             oa,
             group_name,
