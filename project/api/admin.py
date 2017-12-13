@@ -463,6 +463,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         AppearanceInline,
+        GridInline,
         # ContestantInline,
         # ParticipantInline,
     ]
@@ -574,7 +575,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # AppearanceInline,
         ContestantInline,
         ParticipantInline,
-        GridInline,
         StateLogInline,
     ]
 
@@ -632,7 +632,7 @@ class GridAdmin(admin.ModelAdmin):
         'onstage',
         'start',
         'round',
-        'entry',
+        'competitor',
         'renditions',
     ]
     list_display = [
@@ -649,7 +649,7 @@ class GridAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = [
         'round',
-        'entry',
+        'competitor',
     ]
     ordering = [
         'num',

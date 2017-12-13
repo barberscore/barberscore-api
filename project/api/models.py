@@ -2444,15 +2444,13 @@ class Grid(TimeStampedModel):
         'Competitor',
         related_name='grids',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
-    class Meta:
-        unique_together = (
-            ('round', 'entry',),
-            # ('round', 'entry', 'num',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('round', 'entry',),
+    #         # ('round', 'entry', 'num',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "grid"
@@ -5052,11 +5050,10 @@ class Session(TimeStampedModel):
                 group=entry.group,
             )
             # set the grid
-            grid = entry.grids.get(
+            competitor.grids.create(
                 round=first_round,
+                num=entry.draw,
             )
-            grid.num = entry.draw
-            grid.save()
             # create the appearances
             first_round.appearances.create(
                 competitor=competitor,

@@ -262,12 +262,12 @@ class GridInline(admin.TabularInline):
         'onstage',
         'start',
         'round',
-        'entry',
+        'competitor',
         'renditions',
     ]
     raw_id_fields = [
         'round',
-        'entry',
+        'competitor',
     ]
     show_change_link = True
     extra = 0

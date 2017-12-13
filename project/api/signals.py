@@ -31,10 +31,6 @@ def entry_post_save(sender, instance, created, raw=False, **kwargs):
                 status=entry.contestants.model.STATUS.included,
                 contest=contest,
             )
-        round = entry.session.rounds.get(num=1)
-        entry.grids.create(
-            round=round,
-        )
         members = entry.group.members.filter(
             status__gt=0,
         )
