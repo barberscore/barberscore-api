@@ -2440,11 +2440,10 @@ class Grid(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # class Meta:
-    #     unique_together = (
-    #         ('round', 'entry',),
-    #         # ('round', 'entry', 'num',),
-    #     )
+    class Meta:
+        unique_together = (
+            ('round', 'competitor',),
+        )
 
     class JSONAPIMeta:
         resource_name = "grid"
