@@ -122,6 +122,7 @@ class Command(BaseCommand):
         ss = Structure.objects.filter(
             kind__in=[
                 'quartet',
+                'chapter',
             ],
             updated_ts__gt=cursor,
         ).exclude(id__in=[
