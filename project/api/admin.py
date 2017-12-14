@@ -908,6 +908,8 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
+        'bhs_id',
+        'code',
     ]
 
     list_display = [
