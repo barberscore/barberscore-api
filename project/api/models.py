@@ -3466,10 +3466,13 @@ class Organization(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        self.nomen = "{0} [{1}]".format(
-            self.name,
-            self.code,
-        )
+        if self.code:
+            self.nomen = "{0} [{1}]".format(
+                self.name,
+                self.code,
+            )
+        else:
+            self.nomen = self.name
         super().save(*args, **kwargs)
 
     # Permissions
