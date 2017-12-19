@@ -2486,20 +2486,22 @@ class Grid(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.is_convention_manager,
-        ])
+        return True
+        # return any([
+        #     request.user.is_convention_manager,
+        # ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=30,
-                kind=10,
-            ),
-        ])
+        return True
+        # return any([
+        #     self.round.session.convention.assignments.filter(
+        #         person__user=request.user,
+        #         category__lt=30,
+        #         kind=10,
+        #     ),
+        # ])
 
 
 class Group(TimeStampedModel):
@@ -4926,6 +4928,7 @@ class Session(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_convention_manager,
+            request.user.is_session_manager,
         ])
 
     @allow_staff_or_superuser
