@@ -1008,6 +1008,7 @@ class Contest(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_convention_manager,
+            request.user.is_session_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1018,6 +1019,7 @@ class Contest(TimeStampedModel):
                 person__user=request.user,
                 category__lte=10,
                 kind=10,
+                status=10,
             )
         ])
 
