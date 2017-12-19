@@ -3895,8 +3895,8 @@ class Person(TimeStampedModel):
     email = models.EmailField(
         help_text="""
             The contact email of the resource.""",
-        blank=False,
-        unique=True,
+        blank=True,
+        unique=False,
     )
 
     phone = models.CharField(
