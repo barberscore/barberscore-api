@@ -5383,7 +5383,7 @@ class Venue(TimeStampedModel):
     )
 
     airport = models.CharField(
-        max_length=3,
+        max_length=30,
         blank=True,
     )
 
