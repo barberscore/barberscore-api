@@ -2748,13 +2748,14 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.kind == self.KIND.quartet:
-            if self.members.filter(
-                status=self.members.model.STATUS.active,
-            ).count() > 4:
-                raise ValidationError(
-                    {'kind': 'Quartets can not have more than four current members.'}
-                )
+        return
+        # if self.kind == self.KIND.quartet:
+        #     if self.members.filter(
+        #         status=self.members.model.STATUS.active,
+        #     ).count() > 4:
+        #         raise ValidationError(
+        #             {'kind': 'Quartets can not have more than four current members.'}
+        #         )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
