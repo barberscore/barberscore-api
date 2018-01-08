@@ -677,6 +677,7 @@ class GroupAdmin(admin.ModelAdmin):
         'img',
         'description',
         'notes',
+        ('created', 'modified',),
     ]
 
     list_filter = [
@@ -700,6 +701,8 @@ class GroupAdmin(admin.ModelAdmin):
         'bhs_id',
         'bhs_pk',
         'status',
+        'created',
+        'modified',
     ]
     list_select_related = [
         'organization',
@@ -711,6 +714,8 @@ class GroupAdmin(admin.ModelAdmin):
         'district',
         'division',
         'chapter',
+        'created',
+        'modified',
     ]
 
     raw_id_fields = [
@@ -1088,6 +1093,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'img',
         'description',
         'notes',
+        ('created', 'modified',),
     ]
 
     list_display = [
@@ -1099,6 +1105,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'part',
         'gender',
         'status',
+        'created',
+        'modified',
     ]
 
     list_filter = [
@@ -1112,6 +1120,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'nomen',
         'current_through',
+        'created',
+        'modified',
     ]
 
     fsm_field = [
