@@ -477,6 +477,8 @@ class PersonManager(Manager):
                 defaults=defaults,
             )
         except IntegrityError:
+            defaults['bhs_pk'] = human.id
+            defaults.pop('bhs_id', None)
             person, created = self.update_or_create(
                 bhs_id=human.bhs_id,
                 defaults=defaults,
