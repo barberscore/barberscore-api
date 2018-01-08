@@ -61,7 +61,7 @@ JWT_AUTH = {
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = "[Barberscore] "
-EMAIL_BACKEND = "sgbackend.SendGridBackend"
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 
 # Cloudinary
