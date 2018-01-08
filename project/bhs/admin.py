@@ -183,7 +183,7 @@ class StructureAdmin(ReadOnlyAdmin):
         MembershipInline,
     ]
     ordering = (
-        'name',
+        '-created_ts',
     )
 
 
