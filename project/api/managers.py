@@ -478,7 +478,7 @@ class PersonManager(Manager):
             )
         except IntegrityError:
             person, created = self.update_or_create(
-                bhs_id=h.bhs_id,
+                bhs_id=human.bhs_id,
                 defaults=defaults,
             )
         return person, created
