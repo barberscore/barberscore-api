@@ -7,6 +7,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
 from django.db.models import Manager
+from django.db import IntegrityError
 
 from django.apps import apps as api_apps
 config = api_apps.get_app_config('api')
@@ -470,10 +471,16 @@ class PersonManager(Manager):
             'gender': gender,
             'part': part,
         }
-        person, created = self.update_or_create(
-            bhs_pk=human.id,
-            defaults=defaults,
-        )
+        try:
+            person, created = self.update_or_create(
+                bhs_pk=human.id,
+                defaults=defaults,
+            )
+        except IntegrityError:
+            person, created = self.update_or_create(
+                bhs_id=h.bhs_id,
+                defaults=defaults,
+            )
         return person, created
 
     def update_from_join(self, join, **kwargs):
