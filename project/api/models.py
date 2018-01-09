@@ -5399,7 +5399,11 @@ class Venue(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        self.nomen = self.name
+        self.nomen = "{0} - {1}, {2}".format(
+            self.name,
+            self.city,
+            self.state,
+        )
         super().save(*args, **kwargs)
 
     # Internals
