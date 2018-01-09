@@ -260,6 +260,11 @@ class CompetitorSerializer(serializers.ModelSerializer):
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     logs = serializers.SerializerMethodField()
+    competitor = serializers.PrimaryKeyRelatedField(
+        queryset=Competitor.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Entry
