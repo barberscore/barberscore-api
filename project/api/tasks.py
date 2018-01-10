@@ -416,7 +416,7 @@ def create_actives_report(session):
             person__email=None
         ).order_by(
             'group__nomen',
-            'person__name',
+            'person__nomen',
         )
     else:
         members = Member.objects.filter(
@@ -428,7 +428,7 @@ def create_actives_report(session):
             person__email=None
         ).order_by(
             'group__nomen',
-            'person__name',
+            'person__nomen',
         )
     wb = Workbook()
     ws = wb.active
