@@ -412,14 +412,24 @@ def create_actives_report(session):
             group__status=Group.STATUS.active,
             group__organization__parent__grantors__convention=session.convention,
             group__kind=session.kind,
-        ).exclude(person__email=None)
+        ).exclude(
+            person__email=None
+        ).order_by(
+            'group__nomen',
+            'person__name',
+        )
     else:
         members = Member.objects.filter(
             is_admin=True,
             group__status=Group.STATUS.active,
             group__organization__grantors__convention=session.convention,
             group__kind=session.kind,
-        ).exclude(person__email=None)
+        ).exclude(
+            person__email=None
+        ).order_by(
+            'group__nomen',
+            'person__name',
+        )
     wb = Workbook()
     ws = wb.active
     fieldnames = [
