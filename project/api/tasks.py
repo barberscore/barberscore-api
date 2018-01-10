@@ -403,6 +403,58 @@ def create_admins_report(session):
 
 
 @job
+def create_actives_report(session):
+    Member = config.get_model('Member')
+    Group = config.get_model('Group')
+    members = Member.objects.filter(
+        is_admin=True,
+        group__status=Group.STATUS.active,
+        group__organization__grantors__convention=session.convention,
+        group__kind=session.kind,
+    ).exclude(
+        person__email=None
+    ).order_by(
+        'group__nomen',
+    )
+    wb = Workbook()
+    ws = wb.active
+    fieldnames = [
+        'group',
+        'admin',
+        'email',
+        'cell',
+    ]
+    ws.append(fieldnames)
+    for member in members:
+        group = member.group.nomen.encode('utf-8').strip()
+        person = member.person.nomen.encode('utf-8').strip()
+        email = member.person.email.encode('utf-8').strip()
+        cell = member.person.cell_phone
+        row = [
+            group,
+            person,
+            email,
+            cell,
+        ]
+        ws.append(row)
+    file = save_virtual_workbook(wb)
+    public_id = "session/{0}/{1}-actives_report.xlsx".format(
+        session.id,
+        slugify(session.nomen),
+    )
+    actives_report = upload_resource(
+        file,
+        resource_type='raw',
+        public_id=public_id,
+        overwrite=True,
+        invalidate=True,
+    )
+    session.actives_report = actives_report
+    session.save()
+    return actives_report
+
+
+@job
 def create_pdf(template, context):
     rendered = render_to_string(template, context)
     pdf = pydf.generate_pdf(rendered)
