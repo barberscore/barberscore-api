@@ -406,16 +406,20 @@ def create_admins_report(session):
 def create_actives_report(session):
     Member = config.get_model('Member')
     Group = config.get_model('Group')
-    members = Member.objects.filter(
-        is_admin=True,
-        group__status=Group.STATUS.active,
-        group__organization__grantors__convention=session.convention,
-        group__kind=session.kind,
-    ).exclude(
-        person__email=None
-    ).order_by(
-        'group__nomen',
-    )
+    if session.kind == session.KIND.chorus:
+        members = Member.objects.filter(
+            is_admin=True,
+            group__status=Group.STATUS.active,
+            group__organization__parent__grantors__convention=session.convention,
+            group__kind=session.kind,
+        ).exclude(person__email=None)
+    else:
+        members = Member.objects.filter(
+            is_admin=True,
+            group__status=Group.STATUS.active,
+            group__organization__grantors__convention=session.convention,
+            group__kind=session.kind,
+        ).exclude(person__email=None)
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -513,12 +517,20 @@ def send_session(template, context):
         ).exclude(person__email=None)
     else:
         # send to all active groups in the district
-        contacts = Member.objects.filter(
-            is_admin=True,
-            group__status=Group.STATUS.active,
-            group__organization__grantors__convention=session.convention,
-            group__kind=session.kind,
-        ).exclude(person__email=None)
+        if session.kind == session.KIND.chorus:
+            contacts = Member.objects.filter(
+                is_admin=True,
+                group__status=Group.STATUS.active,
+                group__organization__parent__grantors__convention=session.convention,
+                group__kind=session.kind,
+            ).exclude(person__email=None)
+        else:
+            contacts = Member.objects.filter(
+                is_admin=True,
+                group__status=Group.STATUS.active,
+                group__organization__grantors__convention=session.convention,
+                group__kind=session.kind,
+            ).exclude(person__email=None)
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,
