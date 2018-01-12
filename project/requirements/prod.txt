@@ -1,4 +1,0 @@
--r base.txt
-
-waitress==1.1.0
-bugsnag==3.3.0
