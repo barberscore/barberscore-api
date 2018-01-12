@@ -41,9 +41,6 @@ whitenoise = "==3.3.1"
 django-fsm-log = {git = "git://github.com/barberscore/django-fsm-log.git"}
 waitress = "==1.1.0"
 bugsnag = "==3.3.0"
-
-
-[dev-packages]
 pytest = "==3.3.2"
 pytest-django = "==3.1.2"
 pylint = "==1.8.1"
@@ -56,6 +53,9 @@ django-debug-toolbar = "==1.9.1"
 ipython = "==6.2.1"
 isort = "==4.2.15"
 graphviz = "==0.8.2"
+
+
+[dev-packages]
 
 
 
