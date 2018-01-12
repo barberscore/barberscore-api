@@ -93,6 +93,7 @@
         }
       },
       "scripts": {
+        "test-setup": "pipenv install --dev",
         "test": "pytest --no-migrations --reuse-db"
       }
     }
