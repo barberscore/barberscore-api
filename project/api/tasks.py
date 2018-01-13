@@ -406,34 +406,44 @@ def create_admins_report(session):
 def create_actives_report(session):
     Member = config.get_model('Member')
     Group = config.get_model('Group')
-    if session.kind == session.KIND.chorus:
-        members = Member.objects.filter(
-            is_admin=True,
-            group__status=Group.STATUS.active,
-            group__organization__parent__grantors__convention=session.convention,
-            group__kind=session.kind,
-        ).exclude(
-            person__email=None
-        ).order_by(
-            'group__nomen',
-            'person__nomen',
+    Organization = config.get_model('Organization')
+    organizations = Organization.objects.filter(
+        awards__contests__in=session.contests.filter(
+            status__gt=0,
         )
-    else:
-        members = Member.objects.filter(
-            is_admin=True,
-            group__status=Group.STATUS.active,
-            group__organization__grantors__convention=session.convention,
-            group__kind=session.kind,
-        ).exclude(
-            person__email=None
-        ).order_by(
-            'group__nomen',
-            'person__nomen',
-        )
+    ).distinct()
+    # Get active Groups in those Organizations
+    # This is really hacky.  Probably a better way available.
+    groups = []
+    for organization in organizations:
+        if organization.kind == Organization.KIND.district:
+            dist_groups = Group.objects.filter(
+                district=organization.code,
+                status__gt=0,
+                kind=session.kind,
+            )
+            [groups.append(x) for x in dist_groups]
+        elif organization.kind == Organization.KIND.division:
+            div_groups = Group.objects.filter(
+                division=organization.name,
+                status__gt=0,
+                kind=session.kind,
+            )
+            [groups.append(x) for x in div_groups]
+    members = Member.objects.filter(
+        is_admin=True,
+        group__in=groups,
+    ).exclude(person__email=None).order_by(
+        'group__nomen',
+        'person__nomen',
+    )
     wb = Workbook()
     ws = wb.active
     fieldnames = [
         'group',
+        'chapter',
+        'district',
+        'division',
         'admin',
         'email',
         'cell',
@@ -441,11 +451,17 @@ def create_actives_report(session):
     ws.append(fieldnames)
     for member in members:
         group = member.group.nomen.encode('utf-8').strip()
+        chapter = member.group.chapter
+        district = member.group.district
+        division = member.group.division
         person = member.person.nomen.encode('utf-8').strip()
         email = member.person.email.encode('utf-8').strip()
         cell = member.person.cell_phone
         row = [
             group,
+            chapter,
+            district,
+            division,
             person,
             email,
             cell,
@@ -508,7 +524,7 @@ def send_entry(template, context):
         log.error("{0} {1}".format(e, entry))
         raise(e)
     if result != 1:
-        log.error("{0} {1}".format(e, entry))
+        log.error("{0}".format(entry))
         raise RuntimeError("Email unsuccessful {0}".format(entry))
     return
 
@@ -519,6 +535,7 @@ def send_session(template, context):
     Group = config.get_model('Group')
     Member = config.get_model('Member')
     Assignment = config.get_model('Assignment')
+    Organization = config.get_model('Organization')
     if session.is_invitational:
         # only send to existing entries
         contacts = Member.objects.filter(
@@ -527,20 +544,34 @@ def send_session(template, context):
         ).exclude(person__email=None)
     else:
         # send to all active groups in the district
-        if session.kind == session.KIND.chorus:
-            contacts = Member.objects.filter(
-                is_admin=True,
-                group__status=Group.STATUS.active,
-                group__organization__parent__grantors__convention=session.convention,
-                group__kind=session.kind,
-            ).exclude(person__email=None)
-        else:
-            contacts = Member.objects.filter(
-                is_admin=True,
-                group__status=Group.STATUS.active,
-                group__organization__grantors__convention=session.convention,
-                group__kind=session.kind,
-            ).exclude(person__email=None)
+        # Get relevant Organizations
+        organizations = Organization.objects.filter(
+            awards__contests__in=session.contests.filter(
+                status__gt=0,
+            )
+        ).distinct()
+        # Get active Groups in those Organizations
+        # This is really hacky.  Probably a better way available.
+        groups = []
+        for organization in organizations:
+            if organization.kind == Organization.KIND.district:
+                dist_groups = Group.objects.filter(
+                    district=organization.code,
+                    status__gt=0,
+                    kind=session.kind,
+                )
+                [groups.append(x) for x in dist_groups]
+            elif organization.kind == Organization.KIND.division:
+                div_groups = Group.objects.filter(
+                    division=organization.name,
+                    status__gt=0,
+                    kind=session.kind,
+                )
+                [groups.append(x) for x in div_groups]
+        contacts = Member.objects.filter(
+            is_admin=True,
+            group__in=groups,
+        ).exclude(person__email=None)
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,
