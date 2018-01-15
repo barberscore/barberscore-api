@@ -1299,6 +1299,8 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
+        'description',
+        'notes',
         # 'bbscores_report',
         # 'drcj_report',
         # 'admins_report',

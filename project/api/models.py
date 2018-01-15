@@ -4862,6 +4862,19 @@ class Session(TimeStampedModel):
         default=False,
     )
 
+    description = models.TextField(
+        help_text="""
+            The Public Description.  Will be sent in all email communications.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).  Will not be sent.""",
+        blank=True,
+    )
+
     bbscores_report = CloudinaryField(
         null=True,
         blank=True,
