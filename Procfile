@@ -1,3 +1,3 @@
-web: waitress-serve --port=$PORT project.wsgi:application
+web: gunicorn project.wsgi
 release: django-admin migrate api --noinput
 worker: django-admin rqworker default

@@ -143,6 +143,7 @@ class Command(BaseCommand):
             status=True,
             structure__kind__in=[
                 'quartet',
+                'chapter',
             ],
             updated_ts__gt=cursor,
         ).order_by('updated_ts')

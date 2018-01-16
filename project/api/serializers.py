@@ -693,6 +693,8 @@ class SessionSerializer(serializers.ModelSerializer):
             'kind',
             'gender',
             'is_invitational',
+            'description',
+            'notes',
             'bbscores_report',
             'drcj_report',
             'admins_report',
