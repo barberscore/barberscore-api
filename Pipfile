@@ -40,6 +40,12 @@ rq = "*"
 whitenoise = "*"
 django-fsm-log = {git = "git://github.com/barberscore/django-fsm-log.git"}
 bugsnag = "*"
+gunicorn = "*"
+ipython = "*"
+
+
+[dev-packages]
+
 pytest = "*"
 pytest-django = "*"
 pylint = "*"
@@ -49,14 +55,8 @@ pydocstyle = "*"
 factory-boy = "*"
 faker = "*"
 django-debug-toolbar = "*"
-ipython = "*"
 isort = "*"
 graphviz = "*"
-gunicorn = "*"
-
-
-[dev-packages]
-
 
 
 [requires]
