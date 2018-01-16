@@ -26,8 +26,27 @@ AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 # JWT Settings
-with open('barberscore-staging.pem', 'rb') as f:
-    pem_data = f.read()
+pem_data = b"""
+-----BEGIN CERTIFICATE-----
+MIIDFTCCAf2gAwIBAgIJP0AZhh3zdMQyMA0GCSqGSIb3DQEBCwUAMCgxJjAkBgNV
+BAMTHWJhcmJlcnNjb3JlLXN0YWdpbmcuYXV0aDAuY29tMB4XDTE3MDUwOTIyMTIz
+OFoXDTMxMDExNjIyMTIzOFowKDEmMCQGA1UEAxMdYmFyYmVyc2NvcmUtc3RhZ2lu
+Zy5hdXRoMC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/8aYp
+FPDifYndcdQ0Cpq7CXQMNCF9KsPfLlw3tDlb8614ssq5qPSIx+w/0UMe8ACjjclQ
+5Fc4zwJzPMjOHBxDDWdVS6fgfBYG1v3ixQLQhIfnSBpf3q+hntYvpDJ3gp2BwPO+
+2EKmDcCNOqAadoGDb4soJqLj3Qv0JFam7B9BruBcAqFDlW8n7ahEA0awBUmeVJdJ
+sWo4eJ2bCqxcwbcxVHjXbtxvuyy81RUZmFjuzrgf2fBMdvEbpgpzBmg4lAXw6Q+Q
+OKfz34RuHFb7Ky7rJ27heJKNpwKhsQS0WWiKog5TILav44PtiS0BXIxO3jVDuAgv
+HBErCq0P6/bI2ZetAgMBAAGjQjBAMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYE
+FDUR2C1OdJ/0S/An4U1/XWw90k7LMA4GA1UdDwEB/wQEAwIChDANBgkqhkiG9w0B
+AQsFAAOCAQEAsBmk5CQ0XJ7Vu1+ssUSLm4bfEvlAeF9Almfyjmw/3QoVQ8KkEtW/
+ogIoV3nep+l4Btp3g5WfwzXam84En6K9IdgqUuuBv8bvJclN3om9JePkY9/RRbqQ
+/N1L1OoLEJDfUSfV+x0vj2+nqETENbh2UxUbNJQjVBFZW1xYFe6O/db4FgrtVAwz
+buyER6G1UeOf/ZU/KyXqTZGTm06AbzPkmDz9XGjpLP1zHIyxQK5/PKykJHGCIIjW
+itR73fixB4kEPBRziDeVC/bwvi//JxT1AZJ+MVyrfrFqpE+5Oe0gOQtf025e0uJm
+A8U0cA+HFirdAYvKXb1JCFCfubvjHa/ixA==
+-----END CERTIFICATE-----
+""".strip()
 cert = x509.load_pem_x509_certificate(pem_data, default_backend())
 jwt_public_key = cert.public_key()
 
