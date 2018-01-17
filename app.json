@@ -68,6 +68,10 @@
       "description": "Auth0 Client endpoint.",
       "required": true
     },
+    "BHS_DATABASE_URL": {
+      "description": "BHS Database credentials.",
+      "required": true
+    },
     "HEROKU_APP_NAME": {
       "description": "Will be populated by Heroku in Review App.",
       "required": false
