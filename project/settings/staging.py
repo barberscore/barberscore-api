@@ -79,9 +79,6 @@ RQ_QUEUES = {
 }
 RQ_SHOW_ADMIN_LINK = True
 
-# Bugsnag
-BUGSNAG['release_stage'] = 'staging'
-
 # Logging
 LOGGING = {
     'version': 1,
