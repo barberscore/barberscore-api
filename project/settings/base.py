@@ -134,7 +134,7 @@ STATIC_URL = '/static/'
 
 # Bugsnag
 BUGSNAG = {
-    'api_key': 'a4f3b6f91a9a694b0f81bee5baebf71d',
+    'api_key': get_env_variable("BUGSNAG_API_KEY"),
     'notify_release_stages': [
         'production',
     ],
