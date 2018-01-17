@@ -70,10 +70,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
-# Bugsnag
-BUGSNAG_API_KEY = get_env_variable("BUGSNAG_API_KEY")
-MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
-
 # Redis
 RQ_QUEUES = {
     'default': {
@@ -83,6 +79,9 @@ RQ_QUEUES = {
     },
 }
 RQ_SHOW_ADMIN_LINK = True
+
+# Bugsnag
+BUGSNAG['release_stage'] = 'staging'
 
 # Logging
 LOGGING = {

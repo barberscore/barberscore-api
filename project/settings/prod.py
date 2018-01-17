@@ -87,10 +87,6 @@ EMAIL_USE_TLS = True
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
-# Bugsnag
-BUGSNAG_API_KEY = get_env_variable("BUGSNAG_API_KEY")
-MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
-
 # Redis
 RQ_QUEUES = {
     'default': {
