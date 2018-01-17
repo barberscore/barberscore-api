@@ -13,17 +13,24 @@
   "formation": {
     "web": {
       "quantity": "1",
+      "size": "standard-2X"
+    },
+    "worker": {
+      "quantity": "1",
       "size": "standard-1X"
     }
   },
   "addons": [
-    "cloudinary:starter-2",
+    "cloudinary:starter",
+    "deployhooks:http",
+    "papertrail:choklad",
+    "sendgrid:starter",
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-dev"
+    "heroku-postgresql:standard-0"
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": {
-      "description": "Configures which settings to use.  Do not edit.",
+      "description": "Configures which settings to use. (staging|dev)",
       "value": "settings.staging",
       "required": true
     },
@@ -38,31 +45,27 @@
       "required": true
     },
     "AUTH0_API_ID": {
-      "description": "Auth0 Management app id.",
-      "value": "SUFlInihKYP3Dt7FNVRMFnyZE5aujqym",
+      "description": "Auth0 API id.",
       "required": true
     },
     "AUTH0_API_SECRET": {
-      "description": "Auth0 Management secret.  Get from admin.",
+      "description": "Auth0 API secret.",
       "required": true
     },
     "AUTH0_AUDIENCE": {
-      "description": "Auth0 Management endpoint.",
-      "value": "https://barberscore-dev.auth0.com/api/v2/",
+      "description": "Auth0 API endpoint.",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
-      "description": "Auth0 Authentication app id.",
-      "value": "C68OwqrFDjUa6lv8t4jZQPDksWmrtvoF",
+      "description": "Auth0 Client id.",
       "required": true
     },
     "AUTH0_CLIENT_SECRET": {
-      "description": "Auth0 Authentication secret.  Get from admin.",
+      "description": "Auth0 Client secret.",
       "required": true
     },
     "AUTH0_DOMAIN": {
-      "description": "Auth0 Authentication endpoint.",
-      "value": "barberscore-dev.auth0.com",
+      "description": "Auth0 Client endpoint.",
       "required": true
     },
     "BUGSNAG_API_KEY": {
@@ -82,8 +85,8 @@
   "environments": {
     "test": {
       "addons": [
-        "heroku-redis:hobby-dev",
         "heroku-postgresql:hobby-dev"
+        "heroku-redis:hobby-dev"
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "settings.test",
