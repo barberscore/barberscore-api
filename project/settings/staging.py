@@ -7,7 +7,6 @@ from cryptography.hazmat.backends import default_backend
 
 # Local
 from .base import *
-DEBUG = True
 
 # Heroku
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
