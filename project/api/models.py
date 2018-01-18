@@ -2221,8 +2221,16 @@ class Entry(TimeStampedModel):
     )
     def approve(self, *args, **kwargs):
         repertories = self.group.repertories.order_by('chart__title')
-        contestants = self.contestants.all()
-        participants = self.participants.all()
+        contestants = self.contestants.filter_by(
+            status__gt=0,
+        ).order_by(
+            'nomen',
+        )
+        participants = self.participants.filter_by(
+            status__gt=0,
+        ).order_by(
+            'nomen',
+        )
         context = {
             'entry': self,
             'repertories': repertories,
