@@ -536,11 +536,13 @@ def send_session(template, context):
     Member = config.get_model('Member')
     Assignment = config.get_model('Assignment')
     Organization = config.get_model('Organization')
-    if session.is_invitational:
+    Entry = config.get_model('Entry')
+    if session.status > session.STATUS.closed:
         # only send to existing entries
         contacts = Member.objects.filter(
             is_admin=True,
             group__entries__session=session,
+            group__entries__status=Entry.STATUS.approved,
         ).exclude(person__email=None)
     else:
         # send to all active groups in the district

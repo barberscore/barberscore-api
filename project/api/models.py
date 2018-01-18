@@ -2131,21 +2131,28 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=10,
-                kind=10,
-            ),
-            all([
-                self.group.members.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    is_admin=True,
-                ),
-                self.status <= self.STATUS.approved,
-            ]),
-        ])
+        result = any(
+            [
+                # For Judges
+                all([
+                    self.session.convention.assignments.filter(
+                        person__user=request.user,
+                        category__lt=10,
+                        kind=10,
+                    ),
+                ]),
+                # For Groups
+                all([
+                    self.group.members.filter(
+                        person__user=request.user,
+                        status__gt=0,
+                        is_admin=True,
+                    ),
+                    self.status <= self.STATUS.approved,
+                ]),
+            ]
+        )
+        return result
 
     # Methods
 
@@ -2261,19 +2268,6 @@ class Entry(TimeStampedModel):
             contestant.save()
         context = {'entry': self}
         send_entry.delay('entry_scratch.txt', context)
-        return
-
-    @fsm_log_by
-    @transition(
-        field=status,
-        source=[STATUS.approved],
-        target=STATUS.final,
-        conditions=[],
-    )
-    def finalize(self, *args, **kwargs):
-        # Finalize the Entry (locks to further edits)
-        context = {'entry': self}
-        send_entry.delay('entry_finalize.txt', context)
         return
 
 
@@ -5109,11 +5103,7 @@ class Session(TimeStampedModel):
                 num=entry.draw,
                 appearance=appearance,
             )
-            # think we want to remove this
-            entry.finalize()
-            entry.save()
-        for entry in self.entries.filter(status=Entry.STATUS.new):
-            entry.delete()
+        # set the panel
         for assignment in self.convention.assignments.filter(
             status=self.convention.assignments.model.STATUS.confirmed,
             category__gt=self.convention.assignments.model.CATEGORY.ca,
@@ -5123,6 +5113,12 @@ class Session(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
+        # delete orphans
+        for entry in self.entries.filter(status=Entry.STATUS.new):
+            entry.delete()
+        # notify entrants
+        context = {'session': self}
+        send_session.delay('session_start.txt', context)
         first_round.save()
         return
 

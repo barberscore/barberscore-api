@@ -159,6 +159,18 @@ class Command(BaseCommand):
             email='quartet_admin@barberscore.com',
             user=quartet_admin_user,
         )
+        quartet_tenor_person = PersonFactory(
+            first_name='Quartet',
+            last_name='Tenor',
+        )
+        quartet_baritone_person = PersonFactory(
+            first_name='Quartet',
+            last_name='Baritone',
+        )
+        quartet_bass_person = PersonFactory(
+            first_name='Quartet',
+            last_name='Bass',
+        )
         chorus_admin_person = PersonFactory(
             first_name='Chorus',
             last_name='Admin',
@@ -206,34 +218,31 @@ class Command(BaseCommand):
 
         # create Chart
         chart_one = ChartFactory(
-            title='Chart One',
+            title='Chart 1',
         )
         chart_two = ChartFactory(
-            title='Chart Two',
+            title='Chart 2',
         )
         chart_three = ChartFactory(
-            title='Chart Three',
+            title='Chart 3',
         )
         chart_four = ChartFactory(
-            title='Chart Four',
+            title='Chart 4',
         )
         chart_five = ChartFactory(
-            title='Chart Five',
+            title='Chart 5',
         )
         chart_six = ChartFactory(
-            title='Chart Six',
+            title='Chart 6',
         )
         chart_seven = ChartFactory(
-            title='Chart Seven',
+            title='Chart 7',
         )
         chart_eight = ChartFactory(
-            title='Chart Eight',
+            title='Chart 8',
         )
         chart_nine = ChartFactory(
-            title='Chart Nine',
-        )
-        chart_ten = ChartFactory(
-            title='Chart Ten',
+            title='Chart 9',
         )
 
         # Create Offices
@@ -307,6 +316,24 @@ class Command(BaseCommand):
             is_admin=True,
             group=quartet_one,
             person=quartet_admin_person,
+        )
+        member_quartet_tenor = MemberFactory(
+            part=Member.PART.tenor,
+            is_admin=False,
+            group=quartet_one,
+            person=quartet_tenor_person,
+        )
+        member_quartet_baritone = MemberFactory(
+            part=Member.PART.baritone,
+            is_admin=False,
+            group=quartet_one,
+            person=quartet_baritone_person,
+        )
+        member_quartet_bass = MemberFactory(
+            part=Member.PART.bass,
+            is_admin=False,
+            group=quartet_one,
+            person=quartet_bass_person,
         )
         member_chorus_admin = MemberFactory(
             part=Member.PART.lead,
@@ -517,6 +544,7 @@ class Command(BaseCommand):
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.open()
         district_alpha_fall_convention_chorus_session.save()
+
         # Add entries
         senior_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
@@ -530,6 +558,7 @@ class Command(BaseCommand):
             session=district_alpha_fall_convention_chorus_session,
             group=chorus_one,
         )
+
         # Approve entries
         senior_entry.approve()
         senior_entry.save()
@@ -537,6 +566,7 @@ class Command(BaseCommand):
         quartet_entry.save()
         chorus_entry.approve()
         chorus_entry.save()
+
         # Close sessions
         international_midwinter_convention_quartet_session.close()
         international_midwinter_convention_quartet_session.save()
@@ -544,6 +574,7 @@ class Command(BaseCommand):
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.close()
         district_alpha_fall_convention_chorus_session.save()
+
         # Verify sessions
         international_midwinter_convention_quartet_session.verify()
         international_midwinter_convention_quartet_session.save()
@@ -551,6 +582,7 @@ class Command(BaseCommand):
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.verify()
         district_alpha_fall_convention_chorus_session.save()
+
         # Start sessions
         international_midwinter_convention_quartet_session.start()
         international_midwinter_convention_quartet_session.save()
