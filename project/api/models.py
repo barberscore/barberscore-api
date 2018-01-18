@@ -2221,12 +2221,12 @@ class Entry(TimeStampedModel):
     )
     def approve(self, *args, **kwargs):
         repertories = self.group.repertories.order_by('chart__title')
-        contestants = self.contestants.filter_by(
+        contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
             'nomen',
         )
-        participants = self.participants.filter_by(
+        participants = self.participants.filter(
             status__gt=0,
         ).order_by(
             'nomen',
