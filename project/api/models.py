@@ -4998,12 +4998,6 @@ class Session(TimeStampedModel):
     )
     def open(self, *args, **kwargs):
         """Make session available for entry."""
-        # actives_report = create_actives_report(self)
-        # context = {
-        #     'session': self,
-        #     'actives_report': actives_report,
-        # }
-        # send_session_reports.delay('session_open_reports.txt', context)
         if not self.is_invitational:
             context = {'session': self}
             send_session.delay('session_open.txt', context)
