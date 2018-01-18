@@ -58,7 +58,6 @@ LOGOUT_REDIRECT_URL = 'admin:login'
 
 # Middleware
 MIDDLEWARE = [
-    'bugsnag.django.middleware.BugsnagMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -131,14 +130,6 @@ APPEND_TRAILING_SLASH = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
-
-# Bugsnag
-BUGSNAG = {
-    'api_key': 'a4f3b6f91a9a694b0f81bee5baebf71d',
-    'notify_release_stages': [
-        'production',
-    ],
-}
 
 # Cloudinary
 MEDIA_URL = None

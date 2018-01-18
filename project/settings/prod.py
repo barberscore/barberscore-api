@@ -84,6 +84,16 @@ EMAIL_USE_TLS = True
 # EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 # SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 
+# Bugsnag
+BUGSNAG = {
+    'api_key': get_env_variable("BUGSNAG_API_KEY"),
+    'notify_release_stages': [
+        'production',
+    ],
+    'release_stage': 'production',
+}
+MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
+
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 

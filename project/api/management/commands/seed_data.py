@@ -408,8 +408,25 @@ class Command(BaseCommand):
             season=Award.SEASON.fall,
             kind=Award.KIND.chorus,
         )
+        international_senior_quartet_championship = AwardFactory(
+            name='International Senior Quartet Championship',
+            organization=international,
+            rounds=1,
+            level=Award.LEVEL.championship,
+            kind=Award.KIND.quartet,
+        )
 
         # Create conventions
+        international_midwinter_convention = ConventionFactory(
+            name='International Midwinter Convention',
+            organization=international,
+            panel=3,
+            season=Convention.SEASON.midwinter,
+        )
+        GrantorFactory(
+            organization=international,
+            convention=international_midwinter_convention,
+        )
         district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',
             organization=district_alpha,
@@ -446,6 +463,37 @@ class Command(BaseCommand):
             convention=district_alpha_fall_convention,
             person=singing_judge_person,
         )
+        AssignmentFactory(
+            category=Assignment.CATEGORY.drcj,
+            convention=international_midwinter_convention,
+            person=drcj_person,
+        )
+        AssignmentFactory(
+            category=Assignment.CATEGORY.ca,
+            convention=international_midwinter_convention,
+            person=ca_person,
+        )
+        AssignmentFactory(
+            category=Assignment.CATEGORY.music,
+            convention=international_midwinter_convention,
+            person=music_judge_person,
+        )
+        AssignmentFactory(
+            category=Assignment.CATEGORY.performance,
+            convention=international_midwinter_convention,
+            person=performance_judge_person,
+        )
+        AssignmentFactory(
+            category=Assignment.CATEGORY.singing,
+            convention=international_midwinter_convention,
+            person=singing_judge_person,
+        )
+        international_midwinter_convention_quartet_session = SessionFactory(
+            convention=international_midwinter_convention,
+            kind=Session.KIND.quartet,
+            num_rounds=1,
+            is_invitational=True,
+        )
         district_alpha_fall_convention_quartet_session = SessionFactory(
             convention=district_alpha_fall_convention,
             kind=Session.KIND.quartet,
@@ -457,16 +505,23 @@ class Command(BaseCommand):
             num_rounds=1,
         )
         # Contests created via signal.
+        international_midwinter_convention.publish()
+        international_midwinter_convention.save()
         district_alpha_fall_convention.publish()
         district_alpha_fall_convention.save()
 
         # Open sessions
+        international_midwinter_convention_quartet_session.open()
+        international_midwinter_convention_quartet_session.save()
         district_alpha_fall_convention_quartet_session.open()
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.open()
         district_alpha_fall_convention_chorus_session.save()
-        return
         # Add entries
+        senior_entry = EntryFactory(
+            session=international_midwinter_convention_quartet_session,
+            group=quartet_one,
+        )
         quartet_entry = EntryFactory(
             session=district_alpha_fall_convention_quartet_session,
             group=quartet_one,
@@ -476,21 +531,29 @@ class Command(BaseCommand):
             group=chorus_one,
         )
         # Approve entries
+        senior_entry.approve()
+        senior_entry.save()
         quartet_entry.approve()
         quartet_entry.save()
         chorus_entry.approve()
         chorus_entry.save()
         # Close sessions
+        international_midwinter_convention_quartet_session.close()
+        international_midwinter_convention_quartet_session.save()
         district_alpha_fall_convention_quartet_session.close()
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.close()
         district_alpha_fall_convention_chorus_session.save()
         # Verify sessions
+        international_midwinter_convention_quartet_session.verify()
+        international_midwinter_convention_quartet_session.save()
         district_alpha_fall_convention_quartet_session.verify()
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.verify()
         district_alpha_fall_convention_chorus_session.save()
         # Start sessions
+        international_midwinter_convention_quartet_session.start()
+        international_midwinter_convention_quartet_session.save()
         district_alpha_fall_convention_quartet_session.start()
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.start()

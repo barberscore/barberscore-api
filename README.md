@@ -11,7 +11,6 @@ Clone the repo.
 Install the core dependencies:
   - Python 3.6.x
   - PostgreSQL 10.x
-  - MySQL 5.7.x
   - Redis 4.0.x
   - Pipenv 9.0.x
 
@@ -29,15 +28,14 @@ PYTHONPATH=project
 SECRET_KEY=(your secret here)
 
 DATABASE_URL=(your credentials here)
-BHS_DATABASE_URL=(your credentials here)
-REDIS_URL=redis://localhost:6379
+REDIS_URL=(your credentials here)
 
-AUTH0_CLIENT_ID=C68OwqrFDjUa6lv8t4jZQPDksWmrtvoF
+AUTH0_CLIENT_ID=(your credentials here)
 AUTH0_CLIENT_SECRET=(your credentials here)
-AUTH0_DOMAIN=barberscore-dev.auth0.com
-AUTH0_API_ID=SUFlInihKYP3Dt7FNVRMFnyZE5aujqym
+AUTH0_DOMAIN=(your credentials here)
+AUTH0_API_ID=(your credentials here)
 AUTH0_API_SECRET=(your credentials here)
-AUTH0_AUDIENCE=https://barberscore-dev.auth0.com/api/v2/
+AUTH0_AUDIENCE=(your credentials here)
 
 CLOUDINARY_URL=(your credentials here)
 ```

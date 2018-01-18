@@ -22,6 +22,3 @@ RQ_SHOW_ADMIN_LINK = True
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Bugsnag
-BUGSNAG['release_stage'] = 'test'
