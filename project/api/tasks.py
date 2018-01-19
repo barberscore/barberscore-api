@@ -161,7 +161,6 @@ def create_bbscores_report(session):
     entries = session.entries.filter(
         status__in=[
             Entry.STATUS.approved,
-            Entry.STATUS.final,
         ]
     ).order_by('draw')
     for entry in entries:
@@ -235,7 +234,6 @@ def create_drcj_report(session):
     entries = session.entries.filter(
         status__in=[
             Entry.STATUS.approved,
-            Entry.STATUS.final,
         ]
     ).order_by('draw')
     for entry in entries:
@@ -366,7 +364,6 @@ def create_admins_report(session):
     entries = session.entries.filter(
         status__in=[
             Entry.STATUS.approved,
-            Entry.STATUS.final,
         ]
     ).order_by('group__nomen')
     for entry in entries:
