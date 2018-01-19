@@ -1964,7 +1964,6 @@ class Entry(TimeStampedModel):
         (20, 'approved', 'Approved',),
         (52, 'scratched', 'Scratched',),
         (55, 'disqualified', 'Disqualified',),
-        (57, 'final', 'Final',),
     )
 
     status = FSMIntegerField(
