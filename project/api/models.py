@@ -3552,7 +3552,7 @@ class Panelist(TimeStampedModel):
     KIND = Choices(
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
+        (30, 'observer', 'Observer'),
     )
 
     kind = models.IntegerField(
