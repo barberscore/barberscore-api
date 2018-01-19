@@ -288,92 +288,6 @@ class Command(BaseCommand):
             short_name='SNG',
             is_judge_manager=True,
         )
-        # Create Groups
-        quartet_one = GroupFactory(
-            name='Quartet One',
-            kind=Group.KIND.quartet,
-            organization=district_alpha,
-            international=international.code,
-            district=district_alpha.code,
-        )
-        # Create chorus
-        chorus_one = GroupFactory(
-            name='Chorus One',
-            kind=Group.KIND.chorus,
-            organization=chapter_one,
-            international=international.code,
-            district=district_alpha.code,
-            chapter=chapter_one.name,
-        )
-        # Create enrollments
-        enrollment_chorus_admin = EnrollmentFactory(
-            organization=chapter_one,
-            person=chorus_admin_person,
-        )
-        # Create members
-        member_quartet_admin = MemberFactory(
-            part=Member.PART.lead,
-            is_admin=True,
-            group=quartet_one,
-            person=quartet_admin_person,
-        )
-        member_quartet_tenor = MemberFactory(
-            part=Member.PART.tenor,
-            is_admin=False,
-            group=quartet_one,
-            person=quartet_tenor_person,
-        )
-        member_quartet_baritone = MemberFactory(
-            part=Member.PART.baritone,
-            is_admin=False,
-            group=quartet_one,
-            person=quartet_baritone_person,
-        )
-        member_quartet_bass = MemberFactory(
-            part=Member.PART.bass,
-            is_admin=False,
-            group=quartet_one,
-            person=quartet_bass_person,
-        )
-        member_chorus_admin = MemberFactory(
-            part=Member.PART.lead,
-            is_admin=True,
-            group=chorus_one,
-            person=chorus_admin_person,
-        )
-        # Create repertories
-        RepertoryFactory(
-            group=quartet_one,
-            chart=chart_one,
-        )
-        RepertoryFactory(
-            group=quartet_one,
-            chart=chart_two,
-        )
-        RepertoryFactory(
-            group=quartet_one,
-            chart=chart_three,
-        )
-        RepertoryFactory(
-            group=quartet_one,
-            chart=chart_four,
-        )
-        RepertoryFactory(
-            group=quartet_one,
-            chart=chart_five,
-        )
-        RepertoryFactory(
-            group=quartet_one,
-            chart=chart_six,
-        )
-        RepertoryFactory(
-            group=chorus_one,
-            chart=chart_one,
-        )
-        RepertoryFactory(
-            group=chorus_one,
-            chart=chart_two,
-        )
         # Create Core Officers
         scjc_officer = OfficerFactory(
             office=scjc_office,
@@ -531,6 +445,204 @@ class Command(BaseCommand):
             kind=Session.KIND.chorus,
             num_rounds=1,
         )
+        # Create Groups
+        quartet_one = GroupFactory(
+            name='Quartet 1',
+            kind=Group.KIND.quartet,
+            organization=district_alpha,
+            international=international.code,
+            district=district_alpha.code,
+        )
+        quartet_two = GroupFactory(
+            name='Quartet 2',
+            kind=Group.KIND.quartet,
+            organization=district_alpha,
+            international=international.code,
+            district=district_alpha.code,
+        )
+        quartet_3 = GroupFactory(
+            name='Quartet 3',
+            kind=Group.KIND.quartet,
+            organization=district_alpha,
+            international=international.code,
+            district=district_alpha.code,
+        )
+        # Create chorus
+        chorus_one = GroupFactory(
+            name='Chorus One',
+            kind=Group.KIND.chorus,
+            organization=chapter_one,
+            international=international.code,
+            district=district_alpha.code,
+            chapter=chapter_one.name,
+        )
+        # Create enrollments
+        enrollment_chorus_admin = EnrollmentFactory(
+            organization=chapter_one,
+            person=chorus_admin_person,
+        )
+        # Create members
+        member_quartet_admin = MemberFactory(
+            part=Member.PART.lead,
+            is_admin=True,
+            group=quartet_one,
+            person=quartet_admin_person,
+        )
+        member_quartet_tenor = MemberFactory(
+            part=Member.PART.tenor,
+            is_admin=False,
+            group=quartet_one,
+            person=quartet_tenor_person,
+        )
+        member_quartet_baritone = MemberFactory(
+            part=Member.PART.baritone,
+            is_admin=False,
+            group=quartet_one,
+            person=quartet_baritone_person,
+        )
+        member_quartet_bass = MemberFactory(
+            part=Member.PART.bass,
+            is_admin=False,
+            group=quartet_one,
+            person=quartet_bass_person,
+        )
+        member_chorus_admin = MemberFactory(
+            part=Member.PART.lead,
+            is_admin=True,
+            group=chorus_one,
+            person=chorus_admin_person,
+        )
+        member_quartet_2_admin = MemberFactory(
+            part=Member.PART.lead,
+            is_admin=True,
+            group=quartet_two,
+            person=quartet_admin_person,
+        )
+        member_quartet_2_tenor = MemberFactory(
+            part=Member.PART.tenor,
+            is_admin=False,
+            group=quartet_two,
+            person=quartet_tenor_person,
+        )
+        member_quartet_2_baritone = MemberFactory(
+            part=Member.PART.baritone,
+            is_admin=False,
+            group=quartet_two,
+            person=quartet_baritone_person,
+        )
+        member_quartet_2_bass = MemberFactory(
+            part=Member.PART.bass,
+            is_admin=False,
+            group=quartet_two,
+            person=quartet_bass_person,
+        )
+        member_quartet_3_admin = MemberFactory(
+            part=Member.PART.lead,
+            is_admin=True,
+            group=quartet_3,
+            person=quartet_admin_person,
+        )
+        member_quartet_3_tenor = MemberFactory(
+            part=Member.PART.tenor,
+            is_admin=False,
+            group=quartet_3,
+            person=quartet_tenor_person,
+        )
+        member_quartet_3_baritone = MemberFactory(
+            part=Member.PART.baritone,
+            is_admin=False,
+            group=quartet_3,
+            person=quartet_baritone_person,
+        )
+        member_quartet_3_bass = MemberFactory(
+            part=Member.PART.bass,
+            is_admin=False,
+            group=quartet_3,
+            person=quartet_bass_person,
+        )
+        # Create repertories
+        RepertoryFactory(
+            group=quartet_one,
+            chart=chart_one,
+        )
+        RepertoryFactory(
+            group=quartet_one,
+            chart=chart_two,
+        )
+        RepertoryFactory(
+            group=quartet_one,
+            chart=chart_three,
+        )
+        RepertoryFactory(
+            group=quartet_one,
+            chart=chart_four,
+        )
+        RepertoryFactory(
+            group=quartet_one,
+            chart=chart_five,
+        )
+        RepertoryFactory(
+            group=quartet_one,
+            chart=chart_six,
+        )
+        RepertoryFactory(
+            group=chorus_one,
+            chart=chart_one,
+        )
+        RepertoryFactory(
+            group=chorus_one,
+            chart=chart_two,
+        )
+        RepertoryFactory(
+            group=quartet_two,
+            chart=chart_one,
+        )
+        RepertoryFactory(
+            group=quartet_two,
+            chart=chart_two,
+        )
+        RepertoryFactory(
+            group=quartet_two,
+            chart=chart_three,
+        )
+        RepertoryFactory(
+            group=quartet_two,
+            chart=chart_four,
+        )
+        RepertoryFactory(
+            group=quartet_two,
+            chart=chart_five,
+        )
+        RepertoryFactory(
+            group=quartet_two,
+            chart=chart_six,
+        )
+
+        RepertoryFactory(
+            group=quartet_3,
+            chart=chart_one,
+        )
+        RepertoryFactory(
+            group=quartet_3,
+            chart=chart_two,
+        )
+        RepertoryFactory(
+            group=quartet_3,
+            chart=chart_three,
+        )
+        RepertoryFactory(
+            group=quartet_3,
+            chart=chart_four,
+        )
+        RepertoryFactory(
+            group=quartet_3,
+            chart=chart_five,
+        )
+        RepertoryFactory(
+            group=quartet_3,
+            chart=chart_six,
+        )
+
         # Contests created via signal.
         international_midwinter_convention.publish()
         international_midwinter_convention.save()
@@ -550,6 +662,14 @@ class Command(BaseCommand):
             session=international_midwinter_convention_quartet_session,
             group=quartet_one,
         )
+        senior_2_entry = EntryFactory(
+            session=international_midwinter_convention_quartet_session,
+            group=quartet_two,
+        )
+        senior_3_entry = EntryFactory(
+            session=international_midwinter_convention_quartet_session,
+            group=quartet_3,
+        )
         quartet_entry = EntryFactory(
             session=district_alpha_fall_convention_quartet_session,
             group=quartet_one,
@@ -562,6 +682,10 @@ class Command(BaseCommand):
         # Approve entries
         senior_entry.approve()
         senior_entry.save()
+        senior_2_entry.approve()
+        senior_2_entry.save()
+        senior_3_entry.approve()
+        senior_3_entry.save()
         quartet_entry.approve()
         quartet_entry.save()
         chorus_entry.approve()
