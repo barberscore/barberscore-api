@@ -5097,21 +5097,21 @@ class Session(TimeStampedModel):
                 num=entry.draw,
             )
             # set the grid
-            competitor.grids.create(
-                round=first_round,
-                num=entry.draw,
-                appearance=appearance,
-            )
-        # set the panel
-        for assignment in self.convention.assignments.filter(
-            status=self.convention.assignments.model.STATUS.confirmed,
-            category__gt=self.convention.assignments.model.CATEGORY.ca,
-        ):
-            first_round.panelists.create(
-                kind=assignment.kind,
-                category=assignment.category,
-                person=assignment.person,
-            )
+            # competitor.grids.create(
+            #     round=first_round,
+            #     num=entry.draw,
+            #     appearance=appearance,
+            # )
+        # # set the panel
+        # for assignment in self.convention.assignments.filter(
+        #     status=self.convention.assignments.model.STATUS.confirmed,
+        #     category__gt=self.convention.assignments.model.CATEGORY.ca,
+        # ):
+        #     first_round.panelists.create(
+        #         kind=assignment.kind,
+        #         category=assignment.category,
+        #         person=assignment.person,
+        #     )
         # delete orphans
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
