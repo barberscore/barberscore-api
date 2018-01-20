@@ -354,19 +354,19 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        panelists = self.round.panelists.all()
-        i = 1
-        while i <= 2:  # Number songs constant
-            song = self.songs.create(
-                num=i
-            )
-            for panelist in panelists:
-                song.scores.create(
-                    category=panelist.category,
-                    kind=panelist.kind,
-                    panelist=panelist,
-                )
-            i += 1
+        # panelists = self.round.panelists.all()
+        # i = 1
+        # while i <= 2:  # Number songs constant
+        #     song = self.songs.create(
+        #         num=i
+        #     )
+        #     for panelist in panelists:
+        #         song.scores.create(
+        #             category=panelist.category,
+        #             kind=panelist.kind,
+        #             panelist=panelist,
+        #         )
+        #     i += 1
         self.actual_start = now()
         return
 
@@ -5102,16 +5102,16 @@ class Session(TimeStampedModel):
             #     num=entry.draw,
             #     appearance=appearance,
             # )
-        # # set the panel
-        # for assignment in self.convention.assignments.filter(
-        #     status=self.convention.assignments.model.STATUS.confirmed,
-        #     category__gt=self.convention.assignments.model.CATEGORY.ca,
-        # ):
-        #     first_round.panelists.create(
-        #         kind=assignment.kind,
-        #         category=assignment.category,
-        #         person=assignment.person,
-        #     )
+        # set the panel
+        for assignment in self.convention.assignments.filter(
+            status=self.convention.assignments.model.STATUS.confirmed,
+            category__gt=self.convention.assignments.model.CATEGORY.ca,
+        ):
+            first_round.panelists.create(
+                kind=assignment.kind,
+                category=assignment.category,
+                person=assignment.person,
+            )
         # delete orphans
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
