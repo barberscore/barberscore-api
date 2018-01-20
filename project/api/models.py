@@ -63,6 +63,7 @@ from .tasks import (
     create_bbscores_report,
     create_drcj_report,
     create_admins_report,
+    create_variance_report,
     create_pdf,
     # create_actives_report,
     send_entry,
@@ -217,26 +218,26 @@ class Appearance(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    def print_var(self):
-        appearance = self
-        song_one = appearance.songs.all().order_by('num').first()
-        song_two = appearance.songs.all().order_by('num').last()
-        scores_one = song_one.scores.all().order_by('panelist__num')
-        scores_two = song_two.scores.all().order_by('panelist__num')
-        scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
-        scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
-        context = {
-            'appearance': appearance,
-            'song_one': song_one,
-            'song_two': song_two,
-            'scores_one': scores_one,
-            'scores_two': scores_two,
-            'scores_one_avg': scores_one_avg,
-            'scores_two_avg': scores_two_avg,
-        }
-        response = create_pdf('variance.html', context)
-        file = ContentFile(response)
-        return "Complete"
+    # def print_var(self):
+    #     appearance = self
+    #     song_one = appearance.songs.all().order_by('num').first()
+    #     song_two = appearance.songs.all().order_by('num').last()
+    #     scores_one = song_one.scores.all().order_by('panelist__num')
+    #     scores_two = song_two.scores.all().order_by('panelist__num')
+    #     scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
+    #     scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
+    #     context = {
+    #         'appearance': appearance,
+    #         'song_one': song_one,
+    #         'song_two': song_two,
+    #         'scores_one': scores_one,
+    #         'scores_two': scores_two,
+    #         'scores_one_avg': scores_one_avg,
+    #         'scores_two_avg': scores_two_avg,
+    #     }
+    #     response = create_pdf('variance.html', context)
+    #     file = ContentFile(response)
+    #     return "Complete"
 
     def calculate(self, *args, **kwargs):
         self.rank = self.calculate_rank()
@@ -361,6 +362,12 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
+        for song in self.songs.all():
+            variance = song.check_variance()
+            if variance:
+                create_variance_report(self)
+                return
+        self.variance_report = None
         return
 
     @fsm_log_by
@@ -5247,6 +5254,48 @@ class Song(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def check_variance(self):
+        mus_scores = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.music,
+        )
+        mus_avg = mus_scores.aggregate(avg=models.Avg('points'))['avg']
+        for score in mus_scores:
+            if abs(score.points - mus_avg) > 5:
+                return True
+        per_scores = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.performance,
+        )
+        per_avg = per_scores.aggregate(avg=models.Avg('points'))['avg']
+        for score in per_scores:
+            if abs(score.points - per_avg) > 5:
+                return True
+        sng_scores = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+            category=self.scores.model.CATEGORY.singing,
+        )
+        sng_avg = sng_scores.aggregate(avg=models.Avg('points'))['avg']
+        for score in sng_scores:
+            if abs(score.points - sng_avg) > 5:
+                return True
+
+        ordered_asc = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).order_by('points')
+        ultimate = ordered_asc[0].points
+        penultimate = ordered_asc[1].points
+        if penultimate - ultimate > 5:
+            return True
+        ordered_dsc = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).order_by('-points')
+        ultimate = ordered_dsc[0].points
+        penultimate = ordered_dsc[1].points
+        if ultimate - penultimate > 5:
+            return True
+        return False
+
     def calculate(self, *args, **kwargs):
         self.mus_points = self.calculate_mus_points()
         self.per_points = self.calculate_per_points()
