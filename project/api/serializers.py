@@ -38,6 +38,7 @@ from .models import (
 
 class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    variance_report = serializers.FileField(use_url=True)
 
     class Meta:
         model = Appearance
@@ -50,6 +51,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'draw',
             'actual_start',
             'actual_finish',
+            'variance_report',
             'rank',
             'mus_points',
             'per_points',

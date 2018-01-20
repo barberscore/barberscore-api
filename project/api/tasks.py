@@ -3,7 +3,7 @@ import time
 from django.apps import apps as api_apps
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-
+from django.db.models import Avg
 from django_rq import job
 
 import pydf
@@ -347,6 +347,42 @@ def create_drcj_report(session):
     session.drcj_report = drcj_report
     session.save()
     return drcj_report
+
+
+@job
+def create_variance_report(appearance):
+    song_one = appearance.songs.all().order_by('num').first()
+    song_two = appearance.songs.all().order_by('num').last()
+    scores_one = song_one.scores.all().order_by('panelist__num')
+    scores_two = song_two.scores.all().order_by('panelist__num')
+    scores_one_avg = scores_one.aggregate(a=Avg('points'))['a']
+    scores_two_avg = scores_two.aggregate(a=Avg('points'))['a']
+    context = {
+        'appearance': appearance,
+        'song_one': song_one,
+        'song_two': song_two,
+        'scores_one': scores_one,
+        'scores_two': scores_two,
+        'scores_one_avg': scores_one_avg,
+        'scores_two_avg': scores_two_avg,
+    }
+    rendered = render_to_string('variance.html', context)
+    file = pydf.generate_pdf(rendered)
+
+    public_id = "appearance/{0}/{1}-variance_report.pdf".format(
+        appearance.id,
+        slugify(appearance.nomen),
+    )
+    variance_report = upload_resource(
+        file,
+        resource_type='raw',
+        public_id=public_id,
+        overwrite=True,
+        invalidate=True,
+    )
+    appearance.variance_report = variance_report
+    appearance.save()
+    return variance_report
 
 
 @job

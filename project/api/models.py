@@ -63,6 +63,7 @@ from .tasks import (
     create_bbscores_report,
     create_drcj_report,
     create_admins_report,
+    create_pdf,
     # create_actives_report,
     send_entry,
     send_session,
@@ -134,6 +135,12 @@ class Appearance(TimeStampedModel):
             The actual appearance window.""",
         null=True,
         blank=True,
+    )
+
+    variance_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
     )
 
     # Privates
@@ -210,38 +217,26 @@ class Appearance(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    # def print_var(self):
-    #     appearance = self
-    #     song_one = appearance.songs.all().order_by('num').first()
-    #     song_two = appearance.songs.all().order_by('num').last()
-    #     scores_one = song_one.scores.all().order_by('panelist__num')
-    #     scores_two = song_two.scores.all().order_by('panelist__num')
-    #     scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
-    #     scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
-    #     tem = get_template('variance.html')
-    #     template = tem.render(context={
-    #         'appearance': appearance,
-    #         'song_one': song_one,
-    #         'song_two': song_two,
-    #         'scores_one': scores_one,
-    #         'scores_two': scores_two,
-    #         'scores_one_avg': scores_one_avg,
-    #         'scores_two_avg': scores_two_avg,
-    #     })
-    #     payload = {
-    #         "test": True,
-    #         "document_content": template,
-    #         "name": "var-{0}.pdf".format(id),
-    #         "document_type": "pdf",
-    #     }
-    #     response = create_pdf(payload)
-    #     f = ContentFile(response)
-    #     appearance.var_pdf.save(
-    #         "{0}.pdf".format(id),
-    #         f
-    #     )
-    #     appearance.save()
-    #     return "Complete"
+    def print_var(self):
+        appearance = self
+        song_one = appearance.songs.all().order_by('num').first()
+        song_two = appearance.songs.all().order_by('num').last()
+        scores_one = song_one.scores.all().order_by('panelist__num')
+        scores_two = song_two.scores.all().order_by('panelist__num')
+        scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
+        scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
+        context = {
+            'appearance': appearance,
+            'song_one': song_one,
+            'song_two': song_two,
+            'scores_one': scores_one,
+            'scores_two': scores_two,
+            'scores_one_avg': scores_one_avg,
+            'scores_two_avg': scores_two_avg,
+        }
+        response = create_pdf('variance.html', context)
+        file = ContentFile(response)
+        return "Complete"
 
     def calculate(self, *args, **kwargs):
         self.rank = self.calculate_rank()
@@ -354,19 +349,6 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.started)
     def start(self, *args, **kwargs):
-        # panelists = self.round.panelists.all()
-        # i = 1
-        # while i <= 2:  # Number songs constant
-        #     song = self.songs.create(
-        #         num=i
-        #     )
-        #     for panelist in panelists:
-        #         song.scores.create(
-        #             category=panelist.category,
-        #             kind=panelist.kind,
-        #             panelist=panelist,
-        #         )
-        #     i += 1
         self.actual_start = now()
         return
 
@@ -4405,7 +4387,21 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.new], target=STATUS.started)
     def start(self, *args, **kwargs):
-        # Lock down and possibly send notification
+        panelists = self.panelists.all()
+        appearances = self.appearances.all()
+        for appearance in appearances:
+            i = 1
+            while i <= 2:  # Number songs constant
+                song = appearance.songs.create(
+                    num=i
+                )
+                for panelist in panelists:
+                    song.scores.create(
+                        category=panelist.category,
+                        kind=panelist.kind,
+                        panelist=panelist,
+                    )
+                i += 1
         return
 
     @fsm_log_by
