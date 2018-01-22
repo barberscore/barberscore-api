@@ -321,8 +321,8 @@ class EntrySerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Check that the start is before the stop."""
-        if data['is_private'] and data['contestants']:
-            raise serializers.ValidationError("Can not be private and compete for an award.")
+        # if data['is_private'] and data['contestants']:
+        #     raise serializers.ValidationError("Can not be private and compete for an award.")
         return data
 
 
