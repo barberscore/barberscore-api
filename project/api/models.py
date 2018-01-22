@@ -2083,7 +2083,7 @@ class Entry(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.is_private and self.contestants.exists():
+        if self.is_private and self.contestants.filter(status__gt=0):
             raise ValidationError(
                 {'is_private': 'You may not compete for an award and remain private.'}
             )
