@@ -665,6 +665,7 @@ class GroupAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'gender',
+        'is_senior',
         ('bhs_id', 'bhs_pk',),
         'organization',
         ('international', 'district', 'division', 'chapter',),

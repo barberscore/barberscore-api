@@ -2726,6 +2726,11 @@ class Group(TimeStampedModel):
         max_length=255,
     )
 
+    is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  This is set once, at creation.  If the group 'ages' into Senior status that needs to be edited manually here.""",
+        default=False,
+    )
+
     # Internals
     objects = GroupManager()
 
