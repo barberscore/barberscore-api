@@ -362,12 +362,12 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
-        # for song in self.songs.all():
-        #     variance = song.check_variance()
-        #     if variance:
-        #         create_variance_report(self)
-        #         return
-        # self.variance_report = None
+        for song in self.songs.all():
+            variance = song.check_variance()
+            if variance:
+                create_variance_report(self)
+                return
+        self.variance_report = None
         return
 
     @fsm_log_by
