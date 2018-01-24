@@ -1,5 +1,6 @@
 # Standard Libary
 import datetime
+import logging
 
 # Django
 from django.core.management.base import (
@@ -21,6 +22,8 @@ from bhs.models import (
     SMJoin,
     Structure,
 )
+
+log = logging.getLogger('updater')
 
 
 class Command(BaseCommand):
@@ -76,7 +79,10 @@ class Command(BaseCommand):
         t = hs.count()
         for h in hs:
             i += 1
-            Person.objects.update_or_create_from_human(h)
+            try:
+                Person.objects.update_or_create_from_human(h)
+            except Exception as e:
+                log.error(e)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} persons.".format(t))
@@ -93,7 +99,10 @@ class Command(BaseCommand):
         t = js.count()
         for j in js:
             i += 1
-            Person.objects.update_from_join(j)
+            try:
+                Person.objects.update_from_join(j)
+            except Exception as e:
+                log.error(e)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} statuses.".format(t))
@@ -112,7 +121,10 @@ class Command(BaseCommand):
         t = ss.count()
         for s in ss:
             i += 1
-            Organization.objects.update_or_create_from_structure(s)
+            try:
+                Organization.objects.update_or_create_from_structure(s)
+            except Exception as e:
+                log.error(e)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} organizations.".format(t))
@@ -132,7 +144,10 @@ class Command(BaseCommand):
         t = ss.count()
         for s in ss:
             i += 1
-            Group.objects.update_or_create_from_structure(s)
+            try:
+                Group.objects.update_or_create_from_structure(s)
+            except Exception as e:
+                log.error(e)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} groups.".format(t))
@@ -151,7 +166,10 @@ class Command(BaseCommand):
         t = js.count()
         for j in js:
             i += 1
-            Member.objects.update_or_create_from_join(j)
+            try:
+                Member.objects.update_or_create_from_join(j)
+            except Exception as e:
+                log.error(e)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} memberships.".format(t))
@@ -167,9 +185,13 @@ class Command(BaseCommand):
         t = js.count()
         for j in js:
             i += 1
-            Enrollment.objects.update_or_create_from_join(j)
+            try:
+                Enrollment.objects.update_or_create_from_join(j)
+            except Exception as e:
+                log.error(e)
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
         self.stdout.write("Updated {0} enrollments.".format(t))
-
         self.stdout.write("Complete.")
+
+        log.info("Successful for {cursor}".format(cursor))
