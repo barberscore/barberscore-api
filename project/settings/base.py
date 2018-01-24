@@ -154,7 +154,6 @@ INSTALLED_APPS = [
     'django_filters',
     'dry_rest_permissions',
     'django_rq',
-    'scheduler',
     'api',
     'bhs',
 ]

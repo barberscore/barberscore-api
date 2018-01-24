@@ -42,8 +42,6 @@ django-fsm-log = {git = "git://github.com/barberscore/django-fsm-log.git"}
 bugsnag = "*"
 gunicorn = "*"
 ipython = "*"
-rq-scheduler = "*"
-django-rq-scheduler = "*"
 
 
 [dev-packages]
