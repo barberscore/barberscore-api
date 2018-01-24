@@ -194,4 +194,4 @@ class Command(BaseCommand):
         self.stdout.write("Updated {0} enrollments.".format(t))
         self.stdout.write("Complete.")
 
-        log.info("Successful for {cursor}".format(cursor))
+        log.info("Successful from {0}.".format(cursor))
