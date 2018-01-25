@@ -75,7 +75,7 @@ from .filters import (
 
 
 @admin.register(Appearance)
-class AppearanceAdmin(admin.ModelAdmin):
+class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
@@ -85,6 +85,9 @@ class AppearanceAdmin(admin.ModelAdmin):
         'round',
         'num',
         'draw',
+        'variance_report_link',
+        ('mus_points', 'per_points', 'sng_points', 'tot_points',),
+        ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
     list_display = [
         'nomen',
@@ -105,6 +108,7 @@ class AppearanceAdmin(admin.ModelAdmin):
     readonly_fields = [
         'id',
         'nomen',
+        'variance_report_link',
     ]
     raw_id_fields = (
         'competitor',

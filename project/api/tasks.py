@@ -171,6 +171,20 @@ def update_is_senior(group):
 
 
 @job
+def update_appearance_calculations(appearance):
+    appearance.mus_points = appearance.calculate_mus_points()
+    appearance.per_points = appearance.calculate_per_points()
+    appearance.sng_points = appearance.calculate_sng_points()
+    appearance.tot_points = appearance.calculate_tot_points()
+    appearance.mus_score = appearance.calculate_mus_score()
+    appearance.per_score = appearance.calculate_per_score()
+    appearance.sng_score = appearance.calculate_sng_score()
+    appearance.tot_score = appearance.calculate_tot_score()
+    appearance.save()
+    return appearance
+
+
+@job
 def update_group_from_bhs(group):
     Group = config.get_model('Group')
     Member = config.get_model('Member')

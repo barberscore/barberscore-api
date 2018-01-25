@@ -42,6 +42,7 @@ from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from cloudinary.models import CloudinaryField
+from django.utils.html import format_html
 
 # Local
 from .fields import (
@@ -64,7 +65,8 @@ from .tasks import (
     create_drcj_report,
     create_admins_report,
     create_variance_report,
-    create_pdf,
+    # create_pdf,
+    update_appearance_calculations,
     # create_actives_report,
     send_entry,
     send_session,
@@ -217,6 +219,15 @@ class Appearance(TimeStampedModel):
         )
         super().save(*args, **kwargs)
 
+    def variance_report_link(self):
+        if self.variance_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.variance_report.url,
+            )
+        else:
+            return None
+
     # Methods
     # def print_var(self):
     #     appearance = self
@@ -368,6 +379,7 @@ class Appearance(TimeStampedModel):
                 create_variance_report(self)
                 return
         self.variance_report = None
+        update_appearance_calculations(self)
         return
 
     @fsm_log_by
@@ -5100,7 +5112,7 @@ class Session(TimeStampedModel):
                 entry=entry,
             )
             # create the appearances
-            appearance = first_round.appearances.create(
+            first_round.appearances.create(
                 competitor=competitor,
                 num=entry.draw,
             )
