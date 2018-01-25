@@ -21,6 +21,7 @@ from auth0.v3.management import Auth0
 
 log = logging.getLogger(__name__)
 config = api_apps.get_app_config('api')
+bhs = api_apps.get_app_config('bhs')
 
 
 def get_auth0():
@@ -167,6 +168,25 @@ def update_is_senior(group):
         group.is_senior = False
     group.save()
     return group.is_senior
+
+
+@job
+def update_group_from_bhs(group):
+    Group = config.get_model('Group')
+    Member = config.get_model('Member')
+    Structure = bhs.get_model('Structure')
+    SMJoin = bhs.get_model('SMJoin')
+    if not group.bhs_pk:
+        raise RuntimeError("No BHS link")
+    structure = Structure.objects.get(id=group.bhs_pk)
+    group, created = Group.objects.update_or_create_from_structure(structure)
+    js = SMJoin.objects.filter(
+        status=True,
+        membership__structure=structure,
+    )
+    for j in js:
+        Member.objects.update_or_create_from_join(j)
+    return 'Updated {0}'.format(group)
 
 
 @job
