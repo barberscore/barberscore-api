@@ -1,6 +1,5 @@
 # Django
 # Third-Party
-# Third-Party
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
@@ -27,7 +26,7 @@ urlpatterns = [
     url(r'^rq/', include('django_rq.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^schema/', schema_view),
-    url(r'^docs/', include_docs_urls(title='Foobar', description='foo to the bar')),
+    url(r'^docs/', include_docs_urls(title='Documentation', description='API Documentation')),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
 ]
 
