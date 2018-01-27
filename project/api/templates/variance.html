@@ -8,9 +8,7 @@
     <meta charset="utf-8">
     <meta name="description" content="Variance Report">
     <meta name="author" content="Barberscore">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
       /* setup the page */
       @page {
@@ -20,14 +18,10 @@
       /* layout */
       @font-face {
         /*font-family: 'Open Sans';*/
-        font-size: 36pt;
+        font-size: 64pt;
         font-style: normal;
         /*font-weight: 300;*/
         /*src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');*/
-      }
-      html td {
-          /*font-family: 'Open Sans', sans-serif;*/
-          font-size: 24pt;
       }
       html h1 {
         font-size: 80pt;
@@ -38,20 +32,33 @@
       html h4 {
         font-size: 30pt;
       }
-      th {
-        font-size: 30pt;
+      html ul li {
+        padding-left: 100px;
+        font-size: 50pt;
+      }
+      html th {
+          font-size: 30pt;
+      }
+      html td {
+        padding: 40px;
+        font-size: 36pt;
       }
       html input {
         padding: 10px;
-        font-size: 50pt;
-        width: 120px;
+        font-size: 80pt;
+        width: 200px;
+      }
+      html section {
+        margin: 50px;
       }
       #breakit { page-break-before: always }
 
+      .points {
+        font-size: 60pt;
+      }
+
       /* colors */
       .black { color: black }
-
-
     </style>
   </head>
   <body>
@@ -59,106 +66,78 @@
       <h1>
         Variance Report
       </h1>
-      <h4>
-        OA: {{appearance.num}}
-      </h4>
-      <h4>
-        Appearance: {{appearance}}
-      </h4>
+      <h1>
+        {{appearance.competitor.group.name}}
+      </h1>
+      <h3>
+        OA: {{appearance.num}}, {{appearance.round}}
+      </h3>
     </section>
+    <br><br><br>
+      <ul class='list-unstyled'>
+        {% for song in songs %}
+          <li><strong>Song #{{song.num}}:</strong>&nbsp;{{song.chart.title}}&nbsp;&nbsp;<strong>Average:</strong> {{song.tot_score|floatformat:1}}</li>
+        {% endfor %}
+      </ul>
+    <br><br><br>
     <section>
-      <div class='row'>
-        <div class='col-xs-6'>
-          <table class='table'>
-            <thead>
-              <tr>
-                <th class='text-right' colspan=5>
-                Song1
-              </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class='text-right' colspan=5>
-                  <h3>{{song_one.chart.title}}</h3>
-                </td>
-              </tr>
-              {% for score in scores_one %}
-                <tr>
-                  <td class='text-right' >
-                    {{score.panelist.get_category_display}}
-                  </td>
-                  <td class='text-right' >
-                    {{score.panelist.person.common_name}}
-                  </td>
-                  <!-- <td class='text-right' >
-                    {{score.panelist.num}}
-                  </td> -->
-                  <td class='text-right' >
-                    <input>
-                  </td>
-                  <td class='text-right' >
-                    <h3>{{score.points}}</h3>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td class='text-right' colspan=5>
-                  <h4>{{song_one.tot_score|floatformat:1}}</h4>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <div class='col-xs-6'>
-          <table class='table'>
-            <thead>
-              <tr>
-              <th colspan=5>
-                Song2
-              </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan=5>
-                  <h3>{{song_two.chart.title}}</h3>
-                </td>
-              </tr>
-              {% for score in scores_two %}
-                <tr>
-                  <td>
-                    <h3>{{score.points}}</h3>
-                  </td>
-                  <td>
-                    <input type='text'>
-                  </td>
-                  <!-- <td>
-                    {{score.panelist.num}}
-                  </td> -->
-                  <td>
-                    {{score.panelist.person.common_name}}
-                  </td>
-                  <td>
-                    {{score.panelist.get_category_display}}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td>
-                  <h4>{{song_two.tot_score|floatformat:1}}</h4>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+      <table class='table'>
+        <thead>
+          <tr>
+            <th class='col-md-2'>
+              Category
+            </th>
+            <th class='col-md-3'>
+              Panelist
+            </th>
+            <th class='col-md-1'>
+              Num
+            </th>
+            <th class='col-md-1'>
+              Points
+            </th>
+            <th class='col-md-1'>
+              Revised
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for score in scores %}
+            {% if score.get_category_display == 'Music' %}<tr class='warning'>{% endif %}
+            {% if score.get_category_display == 'Performance' %}<tr class='success'>{% endif %}
+            {% if score.get_category_display == 'Singing' %}<tr class='info'>{% endif %}
+              <td>
+                {% if score.song.num == 1 %}{{score.get_category_display}}{% endif %}
+              </td>
+              <td>
+                {% if score.song.num == 1 %}{{score.panelist.person.common_name}}{% endif %}
+              </td>
+              <td>
+                {{score.song.num}}
+              </td>
+              <td class='points'>
+                {{score.points}}
+              </td>
+              <td>
+                <input>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <!-- <tfoot>
+          {% for song in songs %}
+            <tr>
+                <td>{% if song.num == 1 %}Average{% endif %}</td>
+                <td>{% if song.num == 1 %}All Categories{% endif %}</td>
+                <td>{{song.num}}</td>
+                <td class='points'>{{song.tot_score|floatformat:1}}</td>
+                <td></td>
+            </tr>
+          {% endfor %}
+        </tfoot> -->
+      </table>
     </section>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>

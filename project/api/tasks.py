@@ -424,26 +424,30 @@ def create_drcj_report(session):
 
 @job
 def create_variance_report(appearance):
-    song_one = appearance.songs.all().order_by('num').first()
-    song_two = appearance.songs.all().order_by('num').last()
-    scores_one = song_one.scores.filter(
-        kind=song_one.scores.model.KIND.official,
+    Score = config.get_model('Score')
+    Panelist = config.get_model('Panelist')
+    songs = appearance.songs.order_by('num')
+    scores = Score.objects.filter(
+        kind=Score.KIND.official,
+        song__in=songs,
     ).order_by(
         'category',
         'panelist',
+        'song__num',
     )
-    scores_two = song_two.scores.filter(
-        kind=song_one.scores.model.KIND.official,
+    panelists = Panelist.objects.filter(
+        kind=Panelist.KIND.official,
+        scores__song__appearance=appearance,
     ).order_by(
         'category',
-        'panelist',
+        'person__last_name',
+        'scores__song__num',
     )
     context = {
         'appearance': appearance,
-        'song_one': song_one,
-        'song_two': song_two,
-        'scores_one': scores_one,
-        'scores_two': scores_two,
+        'songs': songs,
+        'scores': scores,
+        'panelists': panelists,
     }
     rendered = render_to_string('variance.html', context)
     file = pydf.generate_pdf(rendered)
