@@ -67,6 +67,7 @@ from .tasks import (
     create_variance_report,
     # create_pdf,
     update_appearance_calculations,
+    update_song_calculations,
     # create_actives_report,
     send_entry,
     send_session,
@@ -215,7 +216,7 @@ class Appearance(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.nomen = "{0} {1}".format(
             self.round,
-            self.competitor,
+            self.competitor.group.nomen,
         )
         super().save(*args, **kwargs)
 
@@ -374,6 +375,7 @@ class Appearance(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
         for song in self.songs.all():
+            update_song_calculations(song)
             variance = song.check_variance()
             if variance:
                 create_variance_report(self)

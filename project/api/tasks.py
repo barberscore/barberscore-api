@@ -185,6 +185,20 @@ def update_appearance_calculations(appearance):
 
 
 @job
+def update_song_calculations(song):
+    song.mus_points = song.calculate_mus_points()
+    song.per_points = song.calculate_per_points()
+    song.sng_points = song.calculate_sng_points()
+    song.tot_points = song.calculate_tot_points()
+    song.mus_score = song.calculate_mus_score()
+    song.per_score = song.calculate_per_score()
+    song.sng_score = song.calculate_sng_score()
+    song.tot_score = song.calculate_tot_score()
+    song.save()
+    return song
+
+
+@job
 def update_group_from_bhs(group):
     Group = config.get_model('Group')
     Member = config.get_model('Member')
@@ -412,18 +426,24 @@ def create_drcj_report(session):
 def create_variance_report(appearance):
     song_one = appearance.songs.all().order_by('num').first()
     song_two = appearance.songs.all().order_by('num').last()
-    scores_one = song_one.scores.all().order_by('panelist__num')
-    scores_two = song_two.scores.all().order_by('panelist__num')
-    scores_one_avg = scores_one.aggregate(a=Avg('points'))['a']
-    scores_two_avg = scores_two.aggregate(a=Avg('points'))['a']
+    scores_one = song_one.scores.filter(
+        kind=song_one.scores.model.KIND.official,
+    ).order_by(
+        'category',
+        'panelist',
+    )
+    scores_two = song_two.scores.filter(
+        kind=song_one.scores.model.KIND.official,
+    ).order_by(
+        'category',
+        'panelist',
+    )
     context = {
         'appearance': appearance,
         'song_one': song_one,
         'song_two': song_two,
         'scores_one': scores_one,
         'scores_two': scores_two,
-        'scores_one_avg': scores_one_avg,
-        'scores_two_avg': scores_two_avg,
     }
     rendered = render_to_string('variance.html', context)
     file = pydf.generate_pdf(rendered)
