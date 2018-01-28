@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -12,25 +11,18 @@
       }
       /* layout */
       @font-face {
-        /*font-family: 'Open Sans';*/
         font-size: 12pt;
-        src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');
-      }
-      html td {
-          /*font-family: 'Open Sans', sans-serif;*/
-          font-weight: 300;
-          font-size: 9pt;
-          font-style: normal;
       }
       #breakit { page-break-before: always }
-      /*Condensed override*/
+      .black { color: black }
+      html td {
+          font-weight: 300;
+          font-size: 24pt;
+          font-style: normal;
+      }
       .totals {
         font-weight: 300;
       }
-      /* colors */
-      .black { color: black }
-
-      #main { margin: 0 30px; }
       .shortp {
         line-height: 10px;
       }
@@ -69,11 +61,11 @@
               <td>
                 {% for appearance in competitor.appearances.all %}
                   {% for song in appearance.songs.all %}
-                    {{song.submission.title|truncatechars:25}}<br>
+                    {{song.chart.title|truncatechars:25}}<br>
                   {% endfor %}
-                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>
-                  {% endif %}
+                  {% endif %} -->
                 {% endfor %}
                 <strong>Total</strong>
               </td>
@@ -82,9 +74,9 @@
                   {% for song in appearance.songs.all %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
-                  {% endif %}
+                  {% endif %} -->
                 {% endfor %}
                 <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong>
               </td>
@@ -93,9 +85,9 @@
                   {% for song in appearance.songs.all %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                   <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
-                  {% endif %}
+                  {% endif %} -->
                 {% endfor %}
                 <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong>
               </td>
@@ -104,9 +96,9 @@
                   {% for song in appearance.songs.all %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                   <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
-                  {% endif %}
+                  {% endif %} -->
                 {% endfor %}
                 <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong>
               </td>
@@ -115,9 +107,9 @@
                   {% for song in appearance.songs.all %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
-                  {% endif %}
+                  {% endif %} -->
                 {% endfor %}
                 <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong>
               </td>
@@ -142,6 +134,3 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>
-
-
-{# {% if not forloop.first %},{% endif %} #}
