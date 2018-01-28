@@ -448,6 +448,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'group',
         'img',
+        'rank',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
     )

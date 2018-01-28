@@ -171,48 +171,6 @@ def update_is_senior(group):
 
 
 @job
-def update_competitor_calculations(competitor):
-    competitor.mus_points = competitor.calculate_mus_points()
-    competitor.per_points = competitor.calculate_per_points()
-    competitor.sng_points = competitor.calculate_sng_points()
-    competitor.tot_points = competitor.calculate_tot_points()
-    competitor.mus_score = competitor.calculate_mus_score()
-    competitor.per_score = competitor.calculate_per_score()
-    competitor.sng_score = competitor.calculate_sng_score()
-    competitor.tot_score = competitor.calculate_tot_score()
-    competitor.save()
-    return competitor
-
-
-@job
-def update_appearance_calculations(appearance):
-    appearance.mus_points = appearance.calculate_mus_points()
-    appearance.per_points = appearance.calculate_per_points()
-    appearance.sng_points = appearance.calculate_sng_points()
-    appearance.tot_points = appearance.calculate_tot_points()
-    appearance.mus_score = appearance.calculate_mus_score()
-    appearance.per_score = appearance.calculate_per_score()
-    appearance.sng_score = appearance.calculate_sng_score()
-    appearance.tot_score = appearance.calculate_tot_score()
-    appearance.save()
-    return appearance
-
-
-@job
-def update_song_calculations(song):
-    song.mus_points = song.calculate_mus_points()
-    song.per_points = song.calculate_per_points()
-    song.sng_points = song.calculate_sng_points()
-    song.tot_points = song.calculate_tot_points()
-    song.mus_score = song.calculate_mus_score()
-    song.per_score = song.calculate_per_score()
-    song.sng_score = song.calculate_sng_score()
-    song.tot_score = song.calculate_tot_score()
-    song.save()
-    return song
-
-
-@job
 def update_group_from_bhs(group):
     Group = config.get_model('Group')
     Member = config.get_model('Member')
@@ -484,7 +442,10 @@ def create_variance_report(appearance):
 
 @job
 def create_ors_report(round):
-    competitors = round.session.competitors.order_by('rank')
+    competitors = round.session.competitors.order_by(
+        'rank',
+        'tot_points'
+    )
     context = {
         'round': round,
         'competitors': competitors,

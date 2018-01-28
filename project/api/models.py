@@ -67,9 +67,6 @@ from .tasks import (
     create_variance_report,
     create_ors_report,
     # create_pdf,
-    update_competitor_calculations,
-    update_appearance_calculations,
-    update_song_calculations,
     # create_actives_report,
     send_entry,
     send_session,
@@ -232,98 +229,50 @@ class Appearance(TimeStampedModel):
             return None
 
     # Methods
-    # def print_var(self):
-    #     appearance = self
-    #     song_one = appearance.songs.all().order_by('num').first()
-    #     song_two = appearance.songs.all().order_by('num').last()
-    #     scores_one = song_one.scores.all().order_by('panelist__num')
-    #     scores_two = song_two.scores.all().order_by('panelist__num')
-    #     scores_one_avg = scores_one.aggregate(a=models.Avg('points'))['a']
-    #     scores_two_avg = scores_two.aggregate(a=models.Avg('points'))['a']
-    #     context = {
-    #         'appearance': appearance,
-    #         'song_one': song_one,
-    #         'song_two': song_two,
-    #         'scores_one': scores_one,
-    #         'scores_two': scores_two,
-    #         'scores_one_avg': scores_one_avg,
-    #         'scores_two_avg': scores_two_avg,
-    #     }
-    #     response = create_pdf('variance.html', context)
-    #     file = ContentFile(response)
-    #     return "Complete"
-
-    def calculate(self, *args, **kwargs):
-        self.rank = self.calculate_rank()
-        self.mus_points = self.calculate_mus_points()
-        self.per_points = self.calculate_per_points()
-        self.sng_points = self.calculate_sng_points()
-        self.tot_points = self.calculate_tot_points()
-        self.mus_score = self.calculate_mus_score()
-        self.per_score = self.calculate_per_score()
-        self.sng_score = self.calculate_sng_score()
-        self.tot_score = self.calculate_tot_score()
-
-    def calculate_rank(self):
-        return self.round.ranking(self.calculate_tot_points())
-
-    def calculate_mus_points(self):
-        return self.songs.filter(
+    def calculate(self):
+        self.mus_points = self.songs.filter(
             scores__kind=10,
             scores__category=30,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
-
-    def calculate_per_points(self):
-        return self.songs.filter(
+        self.per_points = self.songs.filter(
             scores__kind=10,
             scores__category=40,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
-
-    def calculate_sng_points(self):
-        return self.songs.filter(
+        self.sng_points = self.songs.filter(
             scores__kind=10,
             scores__category=50,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
 
-    def calculate_tot_points(self):
-        return self.songs.filter(
+        self.tot_points = self.songs.filter(
             scores__kind=10,
         ).aggregate(
             tot=models.Sum('scores__points')
         )['tot']
-
-    def calculate_mus_score(self):
-        return self.songs.filter(
+        self.mus_score = self.songs.filter(
             scores__kind=10,
             scores__category=30,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
-
-    def calculate_per_score(self):
-        return self.songs.filter(
+        self.per_score = self.songs.filter(
             scores__kind=10,
             scores__category=40,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
-
-    def calculate_sng_score(self):
-        return self.songs.filter(
+        self.sng_score = self.songs.filter(
             scores__kind=10,
             scores__category=50,
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
-
-    def calculate_tot_score(self):
-        return self.songs.filter(
+        self.tot_score = self.songs.filter(
             scores__kind=10,
         ).aggregate(
             tot=models.Avg('scores__points')
@@ -377,13 +326,13 @@ class Appearance(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
         for song in self.songs.all():
-            update_song_calculations(song)
+            song.calculate()
             variance = song.check_variance()
             if variance:
                 create_variance_report(self)
                 return
         self.variance_report = None
-        update_appearance_calculations(self)
+        self.calculate()
         return
 
     @fsm_log_by
@@ -1186,8 +1135,8 @@ class Contestant(TimeStampedModel):
         self.tot_score = self.calculate_tot_score()
         self.rank = self.calculate_rank()
 
-    def calculate_rank(self):
-        return self.contest.ranking(self.calculate_tot_points())
+    # def calculate_rank(self):
+    #     return self.contest.ranking(self.calculate_tot_points())
 
     def calculate_mus_points(self):
         return self.entry.appearances.filter(
@@ -1537,6 +1486,10 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
+    is_ranked = models.BooleanField(
+        default=False,
+    )
+
     rank = models.IntegerField(
         null=True,
         blank=True,
@@ -1649,131 +1602,66 @@ class Competitor(TimeStampedModel):
         return False
 
     # Competitor Methods
-    def calculate(self, *args, **kwargs):
-        self.mus_points = self.calculate_mus_points()
-        self.per_points = self.calculate_per_points()
-        self.sng_points = self.calculate_sng_points()
-        self.tot_points = self.calculate_tot_points()
-        self.mus_score = self.calculate_mus_score()
-        self.per_score = self.calculate_per_score()
-        self.sng_score = self.calculate_sng_score()
-        self.tot_score = self.calculate_tot_score()
-        self.rank = self.calculate_rank()
+    def calculate(self):
+        self.mus_points = self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=30,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+        self.per_points = self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=40,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+        self.sng_points = self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=50,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
 
-    def calculate_pdf(self):
-        for appearance in self.appearances.all():
-            for song in appearance.songs.all():
-                song.calculate()
-                song.save()
-            appearance.calculate()
-            appearance.save()
-        self.calculate()
-        self.save()
+        self.tot_points = self.appearances.filter(
+            songs__scores__kind=10,
+        ).aggregate(
+            tot=models.Sum('songs__scores__points')
+        )['tot']
+        self.mus_score = self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=30,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+        self.per_score = self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=40,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+        self.sng_score = self.appearances.filter(
+            songs__scores__kind=10,
+            songs__scores__category=50,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+        self.tot_score = self.appearances.filter(
+            songs__scores__kind=10,
+        ).aggregate(
+            tot=models.Avg('songs__scores__points')
+        )['tot']
+
+    def ranking(self):
+        points = list(self.session.competitors.filter(
+            is_ranked=True,
+        ).order_by('-tot_points').values_list('tot_points', flat=True))
+        if self.is_ranked:
+            ranked = Ranking(points, start=1)
+            rank = ranked.rank(self.tot_points)
+            self.rank = rank
+        else:
+            self.rank = None
         return
-
-    # def print_csa(self):
-    #     entry = self
-    #     contestants = entry.contestants.filter(status__gt=0)
-    #     appearances = entry.appearances.order_by(
-    #         'round__kind',
-    #     )
-    #     assignments = entry.session.convention.assignments.filter(
-    #         category__gt=20,
-    #     ).order_by(
-    #         'category',
-    #         'kind',
-    #         'nomen',
-    #     )
-    #     tem = get_template('csa.html')
-    #     template = tem.render(context={
-    #         'entry': entry,
-    #         'appearances': appearances,
-    #         'assignments': assignments,
-    #         'contestants': contestants,
-    #     })
-    #     payload = {
-    #         "test": True,
-    #         "document_content": template,
-    #         "name": "csa-{0}.pdf".format(id),
-    #         "document_type": "pdf",
-    #     }
-    #     response = create_pdf(payload)
-    #     f = ContentFile(response)
-    #     entry.csa_pdf.save(
-    #         "{0}.pdf".format(id),
-    #         f
-    #     )
-    #     entry.save()
-    #     return "Complete"
-
-    def calculate_rank(self):
-        try:
-            primary = self.session.contests.first()
-            return self.contestants.get(contest=primary).calculate_rank()
-        except self.contestants.model.DoesNotExist:
-            return None
-
-    def calculate_mus_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_per_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_tot_points(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_per_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_tot_score(self):
-        return self.appearances.filter(
-            songs__scores__kind=10,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
 
     # Competitor Transition Conditions
 
@@ -4381,51 +4269,6 @@ class Round(TimeStampedModel):
         else:
             return None
 
-    def ranking(self, point_total):
-        if not point_total:
-            return None
-        appearances = self.appearances.all()
-        points = [appearance.calculate_tot_points() for appearance in appearances]
-        points = sorted(points, reverse=True)
-        ranking = Ranking(points, start=1)
-        rank = ranking.rank(point_total)
-        return rank
-
-    # def print_ann(self):
-    #     primary = self.session.contests.get(is_primary=True)
-    #     contests = self.session.contests.filter(is_primary=False)
-    #     winners = []
-    #     for contest in contests:
-    #         winner = contest.contestants.get(rank=1)
-    #         winners.append(winner)
-    #     medalists = []
-    #     contestants = primary.contestants.filter(
-    #         status__gt=0,
-    #     ).order_by('-rank')
-    #     for contestant in contestants:
-    #         medalists.append(contestant)
-    #     medalists = medalists[-5:]
-    #     tem = get_template('ann.html')
-    #     template = tem.render(context={
-    #         'primary': primary,
-    #         'contests': contests,
-    #         'winners': winners,
-    #         'medalists': medalists,
-    #     })
-    #     create_response = create_pdf({
-    #         "test": True,
-    #         "document_content": template,
-    #         "name": "announcements-{0}.pdf".format(id),
-    #         "document_type": "pdf",
-    #     })
-    #     f = ContentFile(create_response)
-    #     self.ann_pdf.save(
-    #         "{0}.pdf".format(id),
-    #         f
-    #     )
-    #     self.save()
-    #     return "Complete"
-
     # Round Transitions
     @fsm_log_by
     @transition(field=status, source=[STATUS.new], target=STATUS.started)
@@ -4452,7 +4295,17 @@ class Round(TimeStampedModel):
     def review(self, *args, **kwargs):
         # This should run all calculations and rankings.
         for competitor in self.session.competitors.all():
-            update_competitor_calculations(competitor)
+            for appearance in competitor.appearances.all():
+                for song in appearance.songs.all():
+                    song.calculate()
+                    song.save()
+                appearance.calculate()
+                appearance.save()
+            competitor.calculate()
+            competitor.save()
+        for competitor in self.session.competitors.all():
+            competitor.ranking()
+            competitor.save()
         create_ors_report(self)
         return
 
@@ -5128,10 +4981,17 @@ class Session(TimeStampedModel):
         )
         for entry in self.entries.filter(status=Entry.STATUS.approved):
             # Create competitors
+            # Set is_ranked = True if they are competing for the primary award.
+            primary = self.contests.get(award__is_primary=True)
+            is_ranked = bool(entry.contestants.filter(
+                contest=primary,
+                status__gt=0,
+            ))
             competitor = Competitor.objects.create(
                 session=self,
                 group=entry.group,
                 entry=entry,
+                is_ranked=is_ranked,
             )
             # create the appearances
             first_round.appearances.create(
@@ -5293,6 +5153,55 @@ class Song(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def calculate(self):
+        self.mus_points = self.scores.filter(
+            kind=10,
+            category=30,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+        self.per_points = self.scores.filter(
+            kind=10,
+            category=40,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+        self.sng_points = self.scores.filter(
+            kind=10,
+            category=50,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+
+        self.tot_points = self.scores.filter(
+            kind=10,
+        ).aggregate(
+            tot=models.Sum('points')
+        )['tot']
+        self.mus_score = self.scores.filter(
+            kind=10,
+            category=30,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+        self.per_score = self.scores.filter(
+            kind=10,
+            category=40,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+        self.sng_score = self.scores.filter(
+            kind=10,
+            category=50,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+        self.tot_score = self.scores.filter(
+            kind=10,
+        ).aggregate(
+            tot=models.Avg('points')
+        )['tot']
+
     def check_variance(self):
         mus_scores = self.scores.filter(
             kind=self.scores.model.KIND.official,
@@ -5334,78 +5243,6 @@ class Song(TimeStampedModel):
         if ultimate - penultimate > 5:
             return True
         return False
-
-    def calculate(self, *args, **kwargs):
-        self.mus_points = self.calculate_mus_points()
-        self.per_points = self.calculate_per_points()
-        self.sng_points = self.calculate_sng_points()
-        self.tot_points = self.calculate_tot_points()
-        self.mus_score = self.calculate_mus_score()
-        self.per_score = self.calculate_per_score()
-        self.sng_score = self.calculate_sng_score()
-        self.tot_score = self.calculate_tot_score()
-
-    def calculate_mus_points(self):
-        return self.scores.filter(
-            kind=10,
-            category=30,
-        ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-
-    def calculate_per_points(self):
-        return self.scores.filter(
-            kind=10,
-            category=40,
-        ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.scores.filter(
-            kind=10,
-            category=50,
-        ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-
-    def calculate_tot_points(self):
-        return self.scores.filter(
-            kind=10,
-        ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.scores.filter(
-            kind=10,
-            category=30,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
-
-    def calculate_per_score(self):
-        return self.scores.filter(
-            kind=10,
-            category=40,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.scores.filter(
-            kind=10,
-            category=50,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
-
-    def calculate_tot_score(self):
-        return self.scores.filter(
-            kind=10,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
 
     # Permissions
     @staticmethod
