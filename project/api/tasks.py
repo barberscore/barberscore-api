@@ -171,6 +171,20 @@ def update_is_senior(group):
 
 
 @job
+def update_competitor_calculations(competitor):
+    competitor.mus_points = competitor.calculate_mus_points()
+    competitor.per_points = competitor.calculate_per_points()
+    competitor.sng_points = competitor.calculate_sng_points()
+    competitor.tot_points = competitor.calculate_tot_points()
+    competitor.mus_score = competitor.calculate_mus_score()
+    competitor.per_score = competitor.calculate_per_score()
+    competitor.sng_score = competitor.calculate_sng_score()
+    competitor.tot_score = competitor.calculate_tot_score()
+    competitor.save()
+    return competitor
+
+
+@job
 def update_appearance_calculations(appearance):
     appearance.mus_points = appearance.calculate_mus_points()
     appearance.per_points = appearance.calculate_per_points()
@@ -466,6 +480,32 @@ def create_variance_report(appearance):
     appearance.variance_report = variance_report
     appearance.save()
     return variance_report
+
+
+@job
+def create_ors_report(round):
+    competitors = round.session.competitors.order_by('rank')
+    context = {
+        'round': round,
+        'competitors': competitors,
+    }
+    rendered = render_to_string('oss.html', context)
+    file = pydf.generate_pdf(rendered)
+
+    public_id = "round/{0}/{1}-oss_report.pdf".format(
+        round.id,
+        slugify(round.nomen),
+    )
+    oss_report = upload_resource(
+        file,
+        resource_type='raw',
+        public_id=public_id,
+        overwrite=True,
+        invalidate=True,
+    )
+    round.oss_report = oss_report
+    round.save()
+    return oss_report
 
 
 @job

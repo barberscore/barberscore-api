@@ -1,16 +1,8 @@
-{% load staticfiles %}
-
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Official Scoring Summary</title>
-    <meta charset="utf-8">
-    <meta name="description" content="Official Scoring Summary">
-    <meta name="author" content="David E. Binetti">
-    <meta name="copyright" content="&copy; 2016, David Binetti">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
       /* setup the page */
       @page {
@@ -32,16 +24,11 @@
       }
       #breakit { page-break-before: always }
       /*Condensed override*/
-      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
-          padding: 2px;
-      }
       .totals {
         font-weight: 300;
       }
       /* colors */
       .black { color: black }
-
-      /* stylin */
 
       #main { margin: 0 30px; }
       .shortp {
@@ -54,7 +41,7 @@
     <section>
       <ul class='list-inline'>
         <li><strong>Official Scoring Summary</strong></li>
-        <li><small>{{session.nomen}}</small></li>
+        <li><small>{{round.nomen}}</small></li>
         <li><small>July 6, 2017</small></li>
       </ul>
     </section>
@@ -72,67 +59,67 @@
           </tr>
         </thead>
         <tbody>
-          {% for entry in entries %}
+          {% for competitor in competitors %}
             <tr>
-              <td>{{entry.rank}}</td>
+              <td>{{competitor.rank}}</td>
               <td>
-                <strong>{{entry.group.name}}</strong> ({{entry.representing.short_name}})<br>
-                {% if entry.group.chapter %}{{entry.group.chapter.name}}{% endif %}
+                <strong>{{competitor.group.name}}</strong> ({{competitor.representing.short_name}})<br>
+                {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
               </td>
               <td>
-                {% for appearance in entry.appearances.all %}
+                {% for appearance in competitor.appearances.all %}
                   {% for song in appearance.songs.all %}
                     {{song.submission.title|truncatechars:25}}<br>
                   {% endfor %}
-                  {% if entry.session.num_rounds > 1 and entry.rank < 21 %}
+                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>
                   {% endif %}
                 {% endfor %}
                 <strong>Total</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in entry.appearances.all %}
+                {% for appearance in competitor.appearances.all %}
                   {% for song in appearance.songs.all %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if entry.session.num_rounds > 1 and entry.rank < 21 %}
+                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
                   {% endif %}
                 {% endfor %}
-                <strong>{{entry.mus_points}} ({{entry.mus_score|floatformat:1}})</strong>
+                <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in entry.appearances.all %}
+                {% for appearance in competitor.appearances.all %}
                   {% for song in appearance.songs.all %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if entry.session.num_rounds > 1 and entry.rank < 21 %}
+                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                   <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                   {% endif %}
                 {% endfor %}
-                <strong>{{entry.per_points}} ({{entry.per_score|floatformat:1}})</strong>
+                <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in entry.appearances.all %}
+                {% for appearance in competitor.appearances.all %}
                   {% for song in appearance.songs.all %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if entry.session.num_rounds > 1 and entry.rank < 21 %}
+                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                   <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
                   {% endif %}
                 {% endfor %}
-                <strong>{{entry.sng_points}} ({{entry.sng_score|floatformat:1}})</strong>
+                <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in entry.appearances.all %}
+                {% for appearance in competitor.appearances.all %}
                   {% for song in appearance.songs.all %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
-                  {% if entry.session.num_rounds > 1 and entry.rank < 21 %}
+                  {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
                   {% endif %}
                 {% endfor %}
-                <strong>{{entry.tot_points}} ({{entry.tot_score|floatformat:1}})</strong>
+                <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong>
               </td>
             </tr>
           {% endfor %}
@@ -152,9 +139,7 @@
         {% endfor %}
       </ul>
     </section>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    {# <script src="{% static 'js/bs.js' %}"></script> #}
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>
 

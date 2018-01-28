@@ -65,7 +65,9 @@ from .tasks import (
     create_drcj_report,
     create_admins_report,
     create_variance_report,
+    create_ors_report,
     # create_pdf,
+    update_competitor_calculations,
     update_appearance_calculations,
     update_song_calculations,
     # create_actives_report,
@@ -4301,6 +4303,12 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
+    oss_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -4364,6 +4372,15 @@ class Round(TimeStampedModel):
         ])
 
     # Methods
+    def oss_report_link(self):
+        if self.oss_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.oss_report.url,
+            )
+        else:
+            return None
+
     def ranking(self, point_total):
         if not point_total:
             return None
@@ -4434,6 +4451,9 @@ class Round(TimeStampedModel):
     @transition(field=status, source=[STATUS.started, STATUS.reviewed], target=STATUS.reviewed)
     def review(self, *args, **kwargs):
         # This should run all calculations and rankings.
+        for competitor in self.session.competitors.all():
+            update_competitor_calculations(competitor)
+        create_ors_report(self)
         return
 
     @fsm_log_by

@@ -1197,12 +1197,13 @@ class RepertoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Round)
-class RoundAdmin(admin.ModelAdmin):
+class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
         'is_archived',
         ('session', 'kind', 'num'),
+        'oss_report_link',
 
     ]
 
@@ -1227,6 +1228,7 @@ class RoundAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
+        'oss_report_link',
         # 'session',
         # 'kind',
     ]
