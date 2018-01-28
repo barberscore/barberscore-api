@@ -643,6 +643,8 @@ class Command(BaseCommand):
             chart=chart_six,
         )
 
+        # SCJC BREAKPOINT
+
         # Contests created via signal.
         international_midwinter_convention.publish()
         international_midwinter_convention.save()
@@ -714,3 +716,37 @@ class Command(BaseCommand):
         district_alpha_fall_convention_quartet_session.save()
         district_alpha_fall_convention_chorus_session.start()
         district_alpha_fall_convention_chorus_session.save()
+
+        # DRCJ BREAKPOINT
+
+        # Start First Round
+        international_midwinter_convention_quartet_session_round_one = international_midwinter_convention_quartet_session.rounds.order_by('num').first()
+        district_alpha_fall_convention_quartet_session_round_one = district_alpha_fall_convention_quartet_session.rounds.order_by('num').first()
+        district_alpha_fall_convention_chorus_session_round_one = district_alpha_fall_convention_chorus_session.rounds.order_by('num').first()
+
+        international_midwinter_convention_quartet_session_round_one.start()
+        international_midwinter_convention_quartet_session_round_one.save()
+        district_alpha_fall_convention_quartet_session_round_one.start()
+        district_alpha_fall_convention_quartet_session_round_one.save()
+        district_alpha_fall_convention_chorus_session_round_one.start()
+        district_alpha_fall_convention_chorus_session_round_one.save()
+
+        s = 70
+        for appearance in international_midwinter_convention_quartet_session_round_one.appearances.order_by('num'):
+            appearance.start()
+            appearance.save()
+            song_one = appearance.songs.first()
+            song_two = appearance.songs.last()
+            song_one.chart = Chart.objects.get(title='Chart 1')
+            song_two.chart = Chart.objects.get(title='Chart 2')
+            song_one.save()
+            song_two.save()
+            appearance.finish()
+            appearance.save()
+            s += 5
+            for song in appearance.songs.all():
+                for score in song.scores.all():
+                    score.points = s
+                    score.save()
+            appearance.confirm()
+            appearance.save()
