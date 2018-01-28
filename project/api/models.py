@@ -979,31 +979,20 @@ class Contest(TimeStampedModel):
         ])
 
     # Methods
-    def ranking(self, point_total):
-        if not point_total:
-            return None
-        contestants = self.contestants.filter(status__gt=0)
-        points = [contestant.calculate_tot_points() for contestant in contestants]
-        points = sorted(points, reverse=True)
-        ranking = Ranking(points, start=1)
-        rank = ranking.rank(point_total)
-        return rank
-
     def calculate(self, *args, **kwargs):
-        if self.contest.is_qualifier:
+        if self.award.level == self.award.LEVEL.qualifier:
             champion = None
         else:
-            try:
-                champion = self.contest.contestants.get(rank=1).entry
-            except self.contest.contestants.model.DoesNotExist:
-                champion = None
-            except self.contest.contestants.model.MultipleObjectsReturned:
-                champion = self.contest.contestants.filter(rank=1).order_by(
-                    '-sng_points',
-                    '-mus_points',
-                    '-per_points',
-                ).first().entry
+            champion = self.contestants.filter(
+                status__gt=0,
+            ).order_by(
+                '-entry__competitor__tot_points',
+                '-entry__competitor__sng_points',
+                '-entry__competitor__mus_points',
+                '-entry__competitor__per_points',
+            ).first().entry
         self.champion = champion
+        return
 
     # Transitions
     @fsm_log_by
@@ -4306,6 +4295,10 @@ class Round(TimeStampedModel):
         for competitor in self.session.competitors.all():
             competitor.ranking()
             competitor.save()
+        for contest in self.session.contests.filter(status__gt=0):
+            contest.calculate()
+            contest.save()
+
         create_ors_report(self)
         return
 

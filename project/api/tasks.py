@@ -446,9 +446,22 @@ def create_ors_report(round):
         'rank',
         'tot_points'
     )
+    panelists = round.panelists.filter(
+        kind=round.panelists.model.KIND.official,
+    ).order_by(
+        'category',
+    )
+    contests = round.session.contests.filter(
+        status__gt=0,
+    ).order_by(
+        '-award__is_primary',
+        'award__name',
+    )
     context = {
         'round': round,
         'competitors': competitors,
+        'panelists': panelists,
+        'contests': contests,
     }
     rendered = render_to_string('oss.html', context)
     file = pydf.generate_pdf(rendered)

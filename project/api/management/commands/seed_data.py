@@ -750,3 +750,5 @@ class Command(BaseCommand):
                     score.save()
             appearance.confirm()
             appearance.save()
+
+        international_midwinter_convention_quartet_session_round_one.review()

@@ -15,10 +15,20 @@
       }
       #breakit { page-break-before: always }
       .black { color: black }
-      html td {
-          font-weight: 300;
+      html h3 {
+          font-size: 48pt;
+      }
+      html h4 {
+          font-size: 36pt;
+      }
+      html th {
           font-size: 24pt;
-          font-style: normal;
+      }
+      html td {
+          font-size: 24pt;
+      }
+      html ul li {
+          font-size: 18pt;
       }
       .totals {
         font-weight: 300;
@@ -31,11 +41,15 @@
   </head>
   <body>
     <section>
-      <ul class='list-inline'>
-        <li><strong>Official Scoring Summary</strong></li>
-        <li><small>{{round.nomen}}</small></li>
-        <li><small>July 6, 2017</small></li>
-      </ul>
+      <h3>
+        Official Scoring Summary
+      </h3>
+      <h4>
+        {{round.nomen}}; {{round.session.convention.start_date}} - {{round.session.convention.end_date}}
+      </h4>
+      <h4>
+        {{round.session.convention.venue.nomen}}
+      </h4>
     </section>
     <section>
       <table class='table'>
@@ -55,7 +69,7 @@
             <tr>
               <td>{{competitor.rank}}</td>
               <td>
-                <strong>{{competitor.group.name}}</strong> ({{competitor.representing.short_name}})<br>
+                <strong>{{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
                 {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
               </td>
               <td>
@@ -119,13 +133,21 @@
       </table>
     </section>
     <section>
-      <h4>Assignments</h4>
-      {% regroup assignments by get_category_display as assignment_list %}
+      <h4>Awards</h4>
         <ul class='list-unstyled'>
-        {% for category in assignment_list %}
+        {% for contest in contests %}
+          <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.champion.group.name}}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    <section>
+      <h4>Panelists</h4>
+      {% regroup panelists by get_category_display as panelist_list %}
+        <ul class='list-unstyled'>
+        {% for category in panelist_list %}
           <li class='smallj'><strong>{{category.grouper}}:</strong>
-            {% for assignment in category.list %}
-              {{assignment.judge.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+            {% for panelist in category.list %}
+              {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
             {% endfor %}
           </li>
         {% endfor %}

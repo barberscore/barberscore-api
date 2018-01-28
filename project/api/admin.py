@@ -298,6 +298,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
+        'champion',
     ]
 
     list_display = (
