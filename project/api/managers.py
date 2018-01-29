@@ -557,12 +557,12 @@ class PersonManager(Manager):
 
 class MemberManager(Manager):
     def update_or_create_from_join(self, join, **kwargs):
-        if not join.status:
-            # Check to ensure it's the right record
-            raise ValueError("Must be canonical record.")
         if join.structure.kind not in ['quartet', 'chapter']:
             # Members can only be chapter or quartet.
             raise ValueError("Must be quartet or chapter record.")
+        if join.structure.kind == 'quartet' and not join.status:
+            # Check to ensure it's the right record
+            raise ValueError("Must be canonical record.")
         # Flatten join objects
         subscription = join.subscription
         membership = join.membership
