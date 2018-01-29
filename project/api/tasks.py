@@ -180,9 +180,17 @@ def update_group_from_bhs(group):
         raise RuntimeError("No BHS link")
     structure = Structure.objects.get(id=group.bhs_pk)
     group, created = Group.objects.update_or_create_from_structure(structure)
-    js = SMJoin.objects.filter(
-        membership__structure=structure,
-    )
+    if group.kind == Group.KIND.quartet:
+        js = SMJoin.objects.filter(
+            status=True,
+            membership__structure=structure,
+        )
+    elif group.kind == Group.KIND.chorus:
+        js = SMJoin.objects.filter(
+            membership__structure=structure,
+        )
+    else:
+        raise RuntimeError("Group must be quartet or chorus.")
     for j in js:
         Member.objects.update_or_create_from_join(j)
     return 'Updated {0}'.format(group)
