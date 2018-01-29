@@ -165,6 +165,7 @@ class CompetitorInline(admin.TabularInline):
     model = Competitor
     fields = [
         'nomen',
+        'status',
         'session',
         'group',
         'tot_score',

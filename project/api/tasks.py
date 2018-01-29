@@ -491,7 +491,7 @@ def create_oss_report(session):
     )
     rounds = session.rounds.all()
     panelists = Panelist.objects.filter(
-        kind=round.panelists.model.KIND.official,
+        kind=Panelist.KIND.official,
         round__in=rounds,
     ).order_by(
         'category',

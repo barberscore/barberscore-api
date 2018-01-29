@@ -4306,7 +4306,8 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.started, STATUS.reviewed], target=STATUS.reviewed)
     def review(self, *args, **kwargs):
-        # This should run all calculations and rankings.
+        Competitor = config.get_model('Competitor')
+        # First, calculate all denormalized scores.
         for competitor in self.session.competitors.all():
             for appearance in competitor.appearances.all():
                 for song in appearance.songs.all():
@@ -4316,15 +4317,120 @@ class Round(TimeStampedModel):
                 appearance.save()
             competitor.calculate()
             competitor.save()
+        # Next run the competitor ranking.
         for competitor in self.session.competitors.all():
             competitor.ranking()
             competitor.save()
-        for contest in self.session.contests.filter(status__gt=0):
-            contest.calculate()
-            contest.save()
 
-        create_ors_report(self)
+        # Switch based on round
+        if self.kind == self.KIND.finals:
+            # All remaining competitors are "missed" in the sense
+            # that they didn't make the (non-existent) cut.
+            competitors = self.session.competitors.filter(
+                status=Competitor.STATUS.started,
+            )
+            for competitor in competitors:
+                competitor.miss()
+                competitor.save()
+            # Determine all the awards.
+            for contest in self.session.contests.filter(status__gt=0):
+                contest.calculate()
+                contest.save()
+            create_ors_report(self)
+            return
+        elif self.kind == self.KIND.quarters:
+            spots = 20
+        elif self.kind == self.KIND.semis:
+            spots = 2
+        else:
+            raise RuntimeError("No Rounds Remaining")
+
+        # Build list of advancing competitors to number of spots available
+        competitors = self.session.competitors.filter(
+            status=Competitor.STATUS.started,
+        ).order_by('-tot_points')
+        # Check for tie at cutoff
+        if spots:
+            cutoff = competitors[spots - 1:spots][0].tot_points
+            plus_one = competitors[spots:spots + 1][0].tot_points
+            while cutoff == plus_one:
+                spots += 1
+                cutoff = competitors[spots - 1:spots][0].tot_points
+                plus_one = competitors[spots:spots + 1][0].tot_points
+
+        # Get Advancers and finishers
+        advancers = list(competitors[:spots])
+        finishers = list(competitors[spots:])
+        # Randomize the list
+        random.shuffle(advancers)
+
+        # Set Draw
+        i = 1
+        for competitor in advancers:
+            competitor.draw = i
+            competitor.make()
+            competitor.save()
+            i += 1
+
+        # Set draw on finishers to negative one.
+        for competitor in finishers:
+            competitor.miss()
+            competitor.save()
+
+        # TODO Bypassing all this in favor of International-only
+
+        # # Create appearances accordingly
+        # # Instantiate the advancing list
+        # advancing = []
+        # # Only address multi-round contests; single-round awards do not proceed.
+        # for contest in self.session.contests.filter(award__rounds__gt=1):
+        #     # Qualifiers have an absolute score cutoff
+        #     if not contest.award.parent:
+        #         # Uses absolute cutoff.
+        #         contestants = contest.contestants.filter(
+        #             tot_score__gte=contest.award.advance,
+        #         )
+        #         for contestant in contestants:
+        #             advancing.append(contestant.entry)
+        #     # Championships are relative.
+        #     else:
+        #         # Get the top scorer
+        #         top = contest.contestants.filter(
+        #             rank=1,
+        #         ).first()
+        #         # Derive the approve threshold from that top score.
+        #         approve = top.calculate_tot_score() - 4.0
+        #         contestants = contest.contestants.filter(
+        #             tot_score__gte=approve,
+        #         )
+        #         for contestant in contestants:
+        #             advancing.append(contestant.entry)
+        # # Remove duplicates
+        # advancing = list(set(advancing))
+        # # Append up to spots available.
+        # diff = spots - len(advancing)
+        # if diff > 0:
+        #     adds = self.appearances.filter(
+        #         entry__contestants__contest__award__rounds__gt=1,
+        #     ).exclude(
+        #         entry__in=advancing,
+        #     ).order_by(
+        #         '-tot_points',
+        #     )[:diff]
+        #     for a in adds:
+        #         advancing.append(a.entry)
+        # random.shuffle(advancing)
+        # i = 1
+        # for entry in advancing:
+        #     next_round.appearances.get_or_create(
+        #         entry=entry,
+        #         num=i,
+        #     )
+        #     i += 1
         return
+
+
+
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.reviewed], target=STATUS.finished)
