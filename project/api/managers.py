@@ -3,18 +3,33 @@ import logging
 # Django
 from django.contrib.auth.models import BaseUserManager
 
-from django.core.validators import validate_email
+from django.core.validators import (
+    validate_email,
+    URLValidator,
+    RegexValidator,
+)
 from django.core.exceptions import ValidationError
 
 from django.db.models import Manager
 from django.db import IntegrityError
 
 from django.apps import apps as api_apps
+from openpyxl import Workbook
+from cloudinary.uploader import upload
+
 config = api_apps.get_app_config('api')
 bhs_config = api_apps.get_app_config('bhs')
 log = logging.getLogger(__name__)
-from openpyxl import Workbook
-from cloudinary.uploader import upload
+
+validate_url = URLValidator()
+
+validate_twitter = RegexValidator(
+    regex=r'@([A-Za-z0-9_]+)',
+    message="""
+        Must be a single Twitter handle
+        in the form `@twitter_handle`.
+    """,
+),
 
 
 class ChartManager(Manager):
@@ -152,6 +167,31 @@ class GroupManager(Manager):
         except ValidationError:
             email = ""
         phone = structure.phone.strip()
+        website = structure.website.strip()
+        try:
+            validate_url(website)
+        except ValidationError:
+            website = ""
+        facebook = structure.facebook.strip()
+        try:
+            validate_url(facebook)
+        except ValidationError:
+            facebook = ""
+        twitter = structure.twitter.strip()
+        if '@' in twitter:
+            if '/' in twitter:
+                twitter = twitter.partition("/")[2]
+            else:
+                twitter = twitter
+        else:
+            if '/' in twitter:
+                twitter = twitter.partition('/')[2]
+            else:
+                twitter = "@{0}".format(twitter)
+        try:
+            validate_twitter(twitter)
+        except ValidationError:
+            twitter = ""
         bhs_id = structure.bhs_id
         start_date = structure.established_date
         mem_clean = structure.status.name.replace("-", "_")
@@ -248,6 +288,9 @@ class GroupManager(Manager):
             'start_date': start_date,
             'email': email,
             'phone': phone,
+            'website': website,
+            'facebook': facebook,
+            'twitter': twitter,
             'bhs_id': bhs_id,
             'mem_status': mem_status,
         }

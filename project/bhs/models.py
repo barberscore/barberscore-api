@@ -178,6 +178,18 @@ class Structure(models.Model):
         max_length=255,
         editable=False,
     )
+    website = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    facebook = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    twitter = models.CharField(
+        max_length=255,
+        editable=False,
+    )
     established_date = models.DateField(
         editable=False,
     )
