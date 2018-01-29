@@ -180,12 +180,12 @@ class GroupManager(Manager):
         twitter = structure.twitter.strip()
         if '@' in twitter:
             if '/' in twitter:
-                twitter = twitter.partition("/")[2]
+                twitter = twitter.rpartition("/")[2]
             else:
                 twitter = twitter
         else:
             if '/' in twitter:
-                twitter = twitter.partition('/')[2]
+                twitter = twitter.rpartition('/')[2]
             else:
                 twitter = "@{0}".format(twitter)
         try:
