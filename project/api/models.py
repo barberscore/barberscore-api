@@ -66,6 +66,7 @@ from .tasks import (
     create_admins_report,
     create_variance_report,
     create_ors_report,
+    create_oss_report,
     # create_pdf,
     # create_actives_report,
     send_entry,
@@ -311,19 +312,19 @@ class Appearance(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.started)
+    @transition(field=status, source=[STATUS.new], target=STATUS.started)
     def start(self, *args, **kwargs):
         self.actual_start = now()
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
+    @transition(field=status, source=[STATUS.started], target=STATUS.finished)
     def finish(self, *args, **kwargs):
         self.actual_finish = now()
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.confirmed)
+    @transition(field=status, source=[STATUS.finished, STATUS.confirmed], target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
         for song in self.songs.all():
             song.calculate()
@@ -335,10 +336,10 @@ class Appearance(TimeStampedModel):
         self.calculate()
         return
 
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.announced)
-    def announce(self, *args, **kwargs):
-        return
+    # @fsm_log_by
+    # @transition(field=status, source=[STATUS.], target=STATUS.announced)
+    # def announce(self, *args, **kwargs):
+    #     return
 
 
 class Assignment(TimeStampedModel):
@@ -1456,7 +1457,11 @@ class Competitor(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-20, 'finished', 'Finished',),
+        (-10, 'missed', 'Missed',),
         (0, 'new', 'New',),
+        (10, 'made', 'Made',),
+        (20, 'started', 'Started',),
     )
 
     status = FSMIntegerField(
@@ -1655,6 +1660,25 @@ class Competitor(TimeStampedModel):
     # Competitor Transition Conditions
 
     # Competitor Transitions
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.started, STATUS.missed], target=STATUS.made)
+    def make(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.started, STATUS.made], target=STATUS.missed)
+    def miss(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.new, STATUS.missed, STATUS.made], target=STATUS.started)
+    def start(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed], target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        return
 
 
 class Enrollment(TimeStampedModel):
@@ -4180,7 +4204,7 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    oss_report = CloudinaryField(
+    ors_report = CloudinaryField(
         null=True,
         blank=True,
         editable=False,
@@ -4249,11 +4273,11 @@ class Round(TimeStampedModel):
         ])
 
     # Methods
-    def oss_report_link(self):
-        if self.oss_report:
+    def ors_report_link(self):
+        if self.ors_report:
             return format_html(
                 '<a href="{0}">File Link</a>',
-                self.oss_report.url,
+                self.ors_report.url,
             )
         else:
             return None

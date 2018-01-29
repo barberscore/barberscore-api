@@ -463,12 +463,57 @@ def create_ors_report(round):
         'panelists': panelists,
         'contests': contests,
     }
+    rendered = render_to_string('ors.html', context)
+    file = pydf.generate_pdf(rendered)
+
+    public_id = "round/{0}/{1}-ors_report.pdf".format(
+        round.id,
+        slugify(round.nomen),
+    )
+    ors_report = upload_resource(
+        file,
+        resource_type='raw',
+        public_id=public_id,
+        overwrite=True,
+        invalidate=True,
+    )
+    round.ors_report = ors_report
+    round.save()
+    return ors_report
+
+
+@job
+def create_oss_report(session):
+    Panelist = config.get_model('Panelist')
+    competitors = session.competitors.order_by(
+        'rank',
+        'tot_points'
+    )
+    rounds = session.rounds.all()
+    panelists = Panelist.objects.filter(
+        kind=round.panelists.model.KIND.official,
+        round__in=rounds,
+    ).order_by(
+        'category',
+    )
+    contests = session.contests.filter(
+        status__gt=0,
+    ).order_by(
+        '-award__is_primary',
+        'award__name',
+    )
+    context = {
+        'session': session,
+        'competitors': competitors,
+        'panelists': panelists,
+        'contests': contests,
+    }
     rendered = render_to_string('oss.html', context)
     file = pydf.generate_pdf(rendered)
 
-    public_id = "round/{0}/{1}-oss_report.pdf".format(
-        round.id,
-        slugify(round.nomen),
+    public_id = "session/{0}/{1}-oss_report.pdf".format(
+        session.id,
+        slugify(session.nomen),
     )
     oss_report = upload_resource(
         file,
@@ -477,8 +522,8 @@ def create_ors_report(round):
         overwrite=True,
         invalidate=True,
     )
-    round.oss_report = oss_report
-    round.save()
+    session.oss_report = oss_report
+    session.save()
     return oss_report
 
 

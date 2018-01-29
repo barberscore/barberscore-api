@@ -446,14 +446,14 @@ class Command(BaseCommand):
             num_rounds=1,
         )
         # Create Groups
-        quartet_one = GroupFactory(
+        quartet_1 = GroupFactory(
             name='Quartet 1',
             kind=Group.KIND.quartet,
             organization=district_alpha,
             international=international.code,
             district=district_alpha.code,
         )
-        quartet_two = GroupFactory(
+        quartet_2 = GroupFactory(
             name='Quartet 2',
             kind=Group.KIND.quartet,
             organization=district_alpha,
@@ -485,25 +485,25 @@ class Command(BaseCommand):
         member_quartet_admin = MemberFactory(
             part=Member.PART.lead,
             is_admin=True,
-            group=quartet_one,
+            group=quartet_1,
             person=quartet_admin_person,
         )
         member_quartet_tenor = MemberFactory(
             part=Member.PART.tenor,
             is_admin=False,
-            group=quartet_one,
+            group=quartet_1,
             person=quartet_tenor_person,
         )
         member_quartet_baritone = MemberFactory(
             part=Member.PART.baritone,
             is_admin=False,
-            group=quartet_one,
+            group=quartet_1,
             person=quartet_baritone_person,
         )
         member_quartet_bass = MemberFactory(
             part=Member.PART.bass,
             is_admin=False,
-            group=quartet_one,
+            group=quartet_1,
             person=quartet_bass_person,
         )
         member_chorus_admin = MemberFactory(
@@ -515,25 +515,25 @@ class Command(BaseCommand):
         member_quartet_2_admin = MemberFactory(
             part=Member.PART.lead,
             is_admin=True,
-            group=quartet_two,
+            group=quartet_2,
             person=quartet_admin_person,
         )
         member_quartet_2_tenor = MemberFactory(
             part=Member.PART.tenor,
             is_admin=False,
-            group=quartet_two,
+            group=quartet_2,
             person=quartet_tenor_person,
         )
         member_quartet_2_baritone = MemberFactory(
             part=Member.PART.baritone,
             is_admin=False,
-            group=quartet_two,
+            group=quartet_2,
             person=quartet_baritone_person,
         )
         member_quartet_2_bass = MemberFactory(
             part=Member.PART.bass,
             is_admin=False,
-            group=quartet_two,
+            group=quartet_2,
             person=quartet_bass_person,
         )
         member_quartet_3_admin = MemberFactory(
@@ -562,27 +562,27 @@ class Command(BaseCommand):
         )
         # Create repertories
         RepertoryFactory(
-            group=quartet_one,
+            group=quartet_1,
             chart=chart_one,
         )
         RepertoryFactory(
-            group=quartet_one,
+            group=quartet_1,
             chart=chart_two,
         )
         RepertoryFactory(
-            group=quartet_one,
+            group=quartet_1,
             chart=chart_three,
         )
         RepertoryFactory(
-            group=quartet_one,
+            group=quartet_1,
             chart=chart_four,
         )
         RepertoryFactory(
-            group=quartet_one,
+            group=quartet_1,
             chart=chart_five,
         )
         RepertoryFactory(
-            group=quartet_one,
+            group=quartet_1,
             chart=chart_six,
         )
         RepertoryFactory(
@@ -594,27 +594,27 @@ class Command(BaseCommand):
             chart=chart_two,
         )
         RepertoryFactory(
-            group=quartet_two,
+            group=quartet_2,
             chart=chart_one,
         )
         RepertoryFactory(
-            group=quartet_two,
+            group=quartet_2,
             chart=chart_two,
         )
         RepertoryFactory(
-            group=quartet_two,
+            group=quartet_2,
             chart=chart_three,
         )
         RepertoryFactory(
-            group=quartet_two,
+            group=quartet_2,
             chart=chart_four,
         )
         RepertoryFactory(
-            group=quartet_two,
+            group=quartet_2,
             chart=chart_five,
         )
         RepertoryFactory(
-            group=quartet_two,
+            group=quartet_2,
             chart=chart_six,
         )
 
@@ -662,11 +662,11 @@ class Command(BaseCommand):
         # Add entries
         senior_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
-            group=quartet_one,
+            group=quartet_1,
         )
         senior_2_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
-            group=quartet_two,
+            group=quartet_2,
         )
         senior_3_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
@@ -674,7 +674,15 @@ class Command(BaseCommand):
         )
         quartet_entry = EntryFactory(
             session=district_alpha_fall_convention_quartet_session,
-            group=quartet_one,
+            group=quartet_1,
+        )
+        quartet_2_entry = EntryFactory(
+            session=district_alpha_fall_convention_quartet_session,
+            group=quartet_2,
+        )
+        quartet_3_entry = EntryFactory(
+            session=district_alpha_fall_convention_quartet_session,
+            group=quartet_3,
         )
         chorus_entry = EntryFactory(
             session=district_alpha_fall_convention_chorus_session,
@@ -690,6 +698,10 @@ class Command(BaseCommand):
         senior_3_entry.save()
         quartet_entry.approve()
         quartet_entry.save()
+        quartet_2_entry.approve()
+        quartet_2_entry.save()
+        quartet_3_entry.approve()
+        quartet_3_entry.save()
         chorus_entry.approve()
         chorus_entry.save()
 
@@ -735,8 +747,28 @@ class Command(BaseCommand):
         for appearance in international_midwinter_convention_quartet_session_round_one.appearances.order_by('num'):
             appearance.start()
             appearance.save()
-            song_one = appearance.songs.first()
-            song_two = appearance.songs.last()
+            song_one = appearance.songs.order_by('num').first()
+            song_two = appearance.songs.order_by('num').last()
+            song_one.chart = Chart.objects.get(title='Chart 1')
+            song_two.chart = Chart.objects.get(title='Chart 2')
+            song_one.save()
+            song_two.save()
+            appearance.finish()
+            appearance.save()
+            s += 5
+            for song in appearance.songs.all():
+                for score in song.scores.all():
+                    score.points = s
+                    score.save()
+            appearance.confirm()
+            appearance.save()
+
+        s = 70
+        for appearance in district_alpha_fall_convention_quartet_session_round_one.appearances.order_by('num'):
+            appearance.start()
+            appearance.save()
+            song_one = appearance.songs.order_by('num').first()
+            song_two = appearance.songs.order_by('num').last()
             song_one.chart = Chart.objects.get(title='Chart 1')
             song_two.chart = Chart.objects.get(title='Chart 2')
             song_one.save()
@@ -752,3 +784,6 @@ class Command(BaseCommand):
             appearance.save()
 
         international_midwinter_convention_quartet_session_round_one.review()
+        international_midwinter_convention_quartet_session_round_one.save()
+        district_alpha_fall_convention_quartet_session_round_one.review()
+        district_alpha_fall_convention_quartet_session_round_one.save()

@@ -1205,7 +1205,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'is_archived',
         ('session', 'kind', 'num'),
-        'oss_report_link',
+        'ors_report_link',
 
     ]
 
@@ -1230,7 +1230,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'oss_report_link',
+        'ors_report_link',
         # 'session',
         # 'kind',
     ]
