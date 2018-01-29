@@ -64,6 +64,7 @@ def session_post_save(sender, instance, created, raw=False, **kwargs):
             awards = grantor.organization.awards.filter(
                 status=grantor.organization.awards.model.STATUS.active,
                 kind=session.kind,
+                season=session.convention.season,
             )
             for award in awards:
                 # Could also do some logic here for more precision

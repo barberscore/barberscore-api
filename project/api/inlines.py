@@ -100,11 +100,18 @@ class AwardInline(admin.TabularInline):
 
 
 class ContestInline(admin.TabularInline):
+    def primary(self, obj):
+        return obj.award.is_primary
+
     model = Contest
     fields = [
         'status',
         'award',
+        'primary',
         'session',
+    ]
+    readonly_fields = [
+        'primary',
     ]
     raw_id_fields = [
         'award',
