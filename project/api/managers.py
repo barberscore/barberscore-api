@@ -575,11 +575,18 @@ class MemberManager(Manager):
         Person = config.get_model('Person')
         person, created = Person.objects.update_or_create_from_human(human)
         # This assumes that only 'active' matches exactly.
-        status = getattr(
-            self.model.STATUS,
-            subscription.status,
-            self.model.STATUS.inactive
-        )
+        if structure.kind == 'quartet':
+            status = getattr(
+                self.model.STATUS,
+                subscription.status,
+                self.model.STATUS.inactive
+            )
+        # Multiple chapter in subscriptions.
+        if structure.kind == 'chapter':
+            if join.status:
+                status = self.model.STATUS.active
+            else:
+                status = self.model.STATUS.inactive
         # TODO perhaps add chapter voice parts?
         try:
             part_clean = join.vocal_part.strip().casefold()
