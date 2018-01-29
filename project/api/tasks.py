@@ -535,6 +535,50 @@ def create_oss_report(session):
 
 
 @job
+def create_csa_report(competitor):
+    Panelist = config.get_model('Panelist')
+    panelists = Panelist.objects.filter(
+        kind=Panelist.KIND.official,
+        scores__song__appearance__competitor=competitor,
+    ).distinct(
+    ).order_by(
+        'category',
+        'person__last_name',
+    )
+    appearances = competitor.appearances.order_by(
+        'round__num',
+    )
+    # contests = session.contests.filter(
+    #     status__gt=0,
+    # ).order_by(
+    #     '-award__is_primary',
+    #     'award__name',
+    # )
+    context = {
+        'competitor': competitor,
+        'panelists': panelists,
+        'appearances': appearances,
+    }
+    rendered = render_to_string('csa.html', context)
+    file = pydf.generate_pdf(rendered)
+
+    public_id = "competitor/{0}/{1}-csa_report.pdf".format(
+        competitor.id,
+        slugify(competitor.nomen),
+    )
+    csa_report = upload_resource(
+        file,
+        resource_type='raw',
+        public_id=public_id,
+        overwrite=True,
+        invalidate=True,
+    )
+    competitor.csa_report = csa_report
+    competitor.save()
+    return csa_report
+
+
+@job
 def create_admins_report(session):
     Entry = config.get_model('Entry')
     wb = Workbook()

@@ -450,6 +450,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'img',
         'rank',
+        'csa_report_link',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
     )
@@ -485,6 +486,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'nomen',
+        'csa_report_link',
     )
 
     save_on_top = True

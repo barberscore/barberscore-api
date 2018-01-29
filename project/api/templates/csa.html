@@ -1,47 +1,37 @@
-{% load staticfiles %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <title>Contestant Scoring Analysis</title>
-    <meta charset="utf-8">
-    <meta name="description" content="Official Scoring Summary">
-    <meta name="author" content="David E. Binetti">
-    <meta name="copyright" content="&copy; 2016, David Binetti">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bs.css' %}"> #}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
-      /* setup the page */
       @page {
           margin: 30px;
           background: #ffffff;
       }
-      /* layout */
       @font-face {
-        /*font-family: 'Open Sans';*/
         font-size: 12pt;
         font-style: normal;
-        /*font-weight: 300;*/
-        /*src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff) format('woff');*/
       }
-      html td {
-          /*font-family: 'Open Sans', sans-serif;*/
-          font-size: 10pt;
+      h3 {
+        font-size: 80pt;
+      }
+      h4 {
+        font-size: 60pt;
+      }
+      p {
+        font-size: 36pt;
+      }
+      th {
+          font-size: 24pt;
+      }
+      td {
+          font-size: 24pt;
       }
       li {
-          /*font-family: 'Open Sans', sans-serif;*/
-          font-size: 8pt;
+          font-size: 24pt;
       }
-
-      .shortp {
-        line-height: 10px;
-      }
-
       .smallj {
         font-size: 10px;
       }
-
       section {
         margin-left: 20px;
         margin-right: 20px;
@@ -49,82 +39,41 @@
         margin-bottom: 40px;
       }
       #breakit { page-break-before: always }
-      /*Condensed override*/
-      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
-          padding: 1px;
-      }
-      /* colors */
-      .black { color: black }
-
-      /* stylin */
-      #main { margin: 0 30px; }
-
     </style>
   </head>
   <body>
     <section>
-    <img class='pull-right' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+      <img class='pull-right' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
       <h4>
-        Contestant Scoring Analysis
+        Competitor Scoring Analysis
       </h4>
-      {% comment %}
-      <ul class='list-unstyled'>
-        <li>{{entry.session.convention.name}}</li>
-        <li>International {{entry.session.get_kind_display}} Contest</li>
-        <li>July 6 - 9, 2016</li>
-      </ul>
-      {% endcomment %}
-      {# <ul class='list-unstyled'> #}
-      <div class='shortp'>
-        <p><small>{{entry.session.convention.name}}</small></p>
-        <p><small>International {{entry.session.get_kind_display}} Contest</small></p>
-        <p><small>July 6 - 9, 2016</small></p>
+      <div>
+        <p>
+          {{competitor.session.convention.nomen}}
+        </p>
+        <p>
+          {{competitor.session.convention.start_date}} - {{competitor.session.convention.end_date}}
+        </p>
       </div>
-      {# </ul> #}
-      {# {% if entry.picture %} #}
-        {# <img src="{{entry.picture.url}}" height="100"> #}
-      {# {% endif %} #}
-      </section>
-      <section>
-    <img class='pull-right' src="{{entry.picture.url}}">
+    </section>
+    <section>
       <h3>
-        {{entry.group.name}}
+        {{competitor.group.name}}
       </h3>
-      {# <h4> #}
-        {# {{entry.session.convention.date.upper|date:'%B %d, %Y'}} #}
-      {# </h4> #}
-      <h4>
-        Overall Rank: {{entry.rank|default_if_none:""}}
-      </h4>
-      <div class='shortp'>
-        <p><small>Representing: {{entry.representing.long_name}}&nbsp;District</small></p>
-        <p><small>Members: {{entry.tenor.person.full_name}}, {{entry.lead.person.full_name}}, {{entry.baritone.person.full_name}} {{entry.bass.person.full_name}}</small></p>
-      </div>
-      {% comment %}
-
-        <ul class='list-unstyled'>
-          {% for appearance in appearances %}
-            <li>{{appearance.round.get_kind_display}} Rank: {{appearance.rank}}</li>
+      <h3>
+        Overall Rank: {{competitor.rank|default_if_none:"(Rank Not Applicable)"}}
+      </h3>
+      <div>
+        <p>
+          <small>Representing: {{competitor.entry.representing}}</small>
+        </p>
+        <ul class='list-inline'>
+          {% for member in members %}
+            <li>{{member.person.common_name}}</li>
           {% endfor %}
         </ul>
-      {% endcomment %}
-
-      {% comment %}
-      <div class='shortp'>
-        <p><small>Representing: {{entry.representing.long_name}}</small></p>
-        <p><small>Directed By: {{entry.director}}&nbsp;{{entry.codirector|default_if_none:""}}</small></p>
-        <p><small>Men on Stage: {{entry.men}}</small></p>
-        <p><small>Order of Appearance: {{appearances.first.num}}</small></p>
       </div>
-      {% endcomment %}
     </section>
-    {% comment %}
-    <section>
-      {% for contestant in contestants %}
-        <p>{{contestant.contest.award.name}}: {{contestant.rank}}</p>
-      {% endfor %}
-    </section>
-    {% endcomment %}
     <section>
       <div class='table-responsive'>
         <table class='table'>
@@ -132,7 +81,7 @@
             <tr>
               <th>Songs</th>
               <th class='text-right'>MUS</th>
-              <th class='text-right'>per</th>
+              <th class='text-right'>PER</th>
               <th class='text-right'>SNG</th>
               <th class='text-right'>Total</th>
             </tr>
@@ -142,9 +91,9 @@
               <td>
                 {% for appearance in appearances %}
                   {% for song in appearance.songs.all %}
-                    {{song.submission.title|truncatewords_html:10}}<br>
+                    {{song.chart.title|truncatewords_html:10}}<br>
                   {% endfor %}
-                  <em>{{appearance.round.get_kind_display}} (OA: {{appearance.num}}, Rank: {{appearance.rank}})</em><br>
+                  <em>{{appearance.round.get_kind_display}}</em><br>
                 {% endfor %}
                 <strong>Total</strong>
               </td>
@@ -195,8 +144,8 @@
           <thead>
             <tr>
               <th>Songs</th>
-              {% for assignment in assignments %}
-                <th class='text-right'>{{assignment.designation}}</th>
+              {% for panelist in panelists %}
+                <th class='text-right'>{{panelist.person.common_name}}</th>
               {% endfor %}
             </tr>
           </thead>
@@ -205,16 +154,16 @@
               <td>
                 {% for appearance in appearances %}
                   {% for song in appearance.songs.all %}
-                    {{song.submission.title|truncatewords_html:4}}<br>
+                    {{song.chart.title|truncatewords_html:4}}<br>
                   {% endfor %}
                 {% endfor %}
               </td>
-              {% for assignment in assignments %}
+              {% for panelist in panelists %}
                 <td class='text-right'>
                   {% for appearance in appearances %}
                     {% for song in appearance.songs.all %}
                       {% for score in song.scores.all %}
-                        {% if score.assignment == assignment %}{{score.points}}<br>{% endif %}
+                        {% if score.panelist == panelist %}{{score.points}}<br>{% endif %}
                       {% endfor %}
                     {% endfor %}
                   {% endfor %}
@@ -236,15 +185,15 @@
     </section>
     {% endcomment %}
     <section>
-      {% regroup assignments by get_category_display as assignment_list %}
+      {% regroup panelists by get_category_display as panelist_list %}
       <table class='table'>
-        {% for category in assignment_list %}
+        {% for category in panelist_list %}
         <tbody>
             <div>
             <tr>
             <td class='smallj'><strong>{{category.grouper}}</strong></td>
-            {% for assignment in category.list %}
-              <td class='smallj'>{{assignment.designation}}: {{assignment.judge.person.common_name}}</td>
+            {% for panelist in category.list %}
+              <td class='smallj'>{{panelist.person.common_name}}</td>
             {% endfor %}
           </tr>
           </div>
@@ -252,15 +201,7 @@
         </tbody>
       </table>
     </section>
-    <section>
-      <small>
-      <strong>IMPORTANT:</strong> <em>These CSAs are <strong>NOT OFFICIAL</strong>
-      and are not to be shared outside your group.  They are for beta testing purposes only.</em>
-      </small>
-    </section>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    {# <script src="{% static 'js/bs.js' %}"></script> #}
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>
 

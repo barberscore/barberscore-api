@@ -67,6 +67,7 @@ from .tasks import (
     create_variance_report,
     create_ors_report,
     create_oss_report,
+    create_csa_report,
     # create_pdf,
     # create_actives_report,
     send_entry,
@@ -1529,6 +1530,12 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
+    csa_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -1558,6 +1565,15 @@ class Competitor(TimeStampedModel):
 
     class JSONAPIMeta:
         resource_name = "competitor"
+
+    def csa_report_link(self):
+        if self.csa_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.csa_report.url,
+            )
+        else:
+            return None
 
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
@@ -1676,8 +1692,9 @@ class Competitor(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed], target=STATUS.finished)
+    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed, STATUS.finished], target=STATUS.finished)
     def finish(self, *args, **kwargs):
+        create_csa_report(self)
         return
 
 
@@ -5095,6 +5112,8 @@ class Session(TimeStampedModel):
                 entry=entry,
                 is_ranked=is_ranked,
             )
+            competitor.start()
+            competitor.save()
             # create the appearances
             first_round.appearances.create(
                 competitor=competitor,
