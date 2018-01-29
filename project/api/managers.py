@@ -29,7 +29,7 @@ validate_twitter = RegexValidator(
         Must be a single Twitter handle
         in the form `@twitter_handle`.
     """,
-),
+)
 
 
 class ChartManager(Manager):
