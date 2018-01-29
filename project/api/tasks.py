@@ -181,7 +181,6 @@ def update_group_from_bhs(group):
     structure = Structure.objects.get(id=group.bhs_pk)
     group, created = Group.objects.update_or_create_from_structure(structure)
     js = SMJoin.objects.filter(
-        status=True,
         membership__structure=structure,
     )
     for j in js:
