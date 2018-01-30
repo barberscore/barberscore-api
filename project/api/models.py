@@ -4374,8 +4374,9 @@ class Round(TimeStampedModel):
             competitors = self.session.competitors.filter(
                 status=Competitor.STATUS.started,
             )
+            # All remaining 'miss' the next round.
             for competitor in competitors:
-                competitor.finish()
+                competitor.miss()
                 competitor.save()
             # Determine all the awards.
             for contest in self.session.contests.filter(status__gt=0):
@@ -4402,7 +4403,7 @@ class Round(TimeStampedModel):
                     entry__competitor__tot_score__gte=contest.award.advance,
                 )
                 for contestant in contestants:
-                    advancers.append(contestant.competitor)
+                    advancers.append(contestant.entry.competitor)
             # Championships are relative.
             elif contest.award.level == contest.award.LEVEL.championship:
                 # Get the top scorer
@@ -4450,6 +4451,7 @@ class Round(TimeStampedModel):
             status=Competitor.STATUS.started,
         )
         for competitor in finishers:
+            competitor.draw = None
             competitor.miss()
             competitor.save()
         return
@@ -4459,22 +4461,18 @@ class Round(TimeStampedModel):
     def finish(self, *args, **kwargs):
         # Switch based on rounds
         Competitor = config.get_model('Competitor')
-        if self.kind == self.KIND.finals:
-            self.session.finish()
-            return
-        else:
-            misses = self.session.competitors.filter(
-                status=Competitor.STATUS.missed,
-            )
-            for miss in misses:
-                miss.finish()
-                miss.save()
-            mades = self.session.competitors.filter(
-                status=Competitor.STATUS.made,
-            )
-            for made in mades:
-                made.start()
-                made.save()
+        misses = self.session.competitors.filter(
+            status=Competitor.STATUS.missed,
+        )
+        for miss in misses:
+            miss.finish()
+            miss.save()
+        mades = self.session.competitors.filter(
+            status=Competitor.STATUS.made,
+        )
+        for made in mades:
+            made.start()
+            made.save()
         return
 
     # @fsm_log_by
