@@ -68,6 +68,7 @@ from .tasks import (
     create_ors_report,
     create_oss_report,
     create_csa_report,
+    create_sa_report,
     # create_pdf,
     # create_actives_report,
     send_entry,
@@ -4914,6 +4915,18 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
+    oss_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    sa_report = CloudinaryField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     # FKs
     convention = models.ForeignKey(
         'Convention',
@@ -4945,6 +4958,23 @@ class Session(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def oss_report_link(self):
+        if self.oss_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.oss_report.url,
+            )
+        else:
+            return None
+
+    def sa_report_link(self):
+        if self.sa_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.sa_report.url,
+            )
+        else:
+            return None
 
     # Session Permissions
     @staticmethod
@@ -5147,11 +5177,12 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=STATUS.started,
+        source=[STATUS.started, STATUS.finished],
         target=STATUS.finished,
         conditions=[],
     )
     def finish(self, *args, **kwargs):
+        create_sa_report(self)
         return
 
 

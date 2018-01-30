@@ -5,7 +5,6 @@ import datetime
 from django.apps import apps as api_apps
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.db.models import Avg
 from django_rq import job
 
 import pydf
@@ -576,6 +575,42 @@ def create_csa_report(competitor):
     competitor.csa_report = csa_report
     competitor.save()
     return csa_report
+
+
+@job
+def create_sa_report(session):
+    Panelist = config.get_model('Panelist')
+    panelists = Panelist.objects.filter(
+        kind=Panelist.KIND.official,
+        round__session=session,
+    ).distinct(
+    ).order_by(
+        'category',
+        'person__last_name',
+    )
+    competitors = session.competitors.order_by('rank')
+    context = {
+        'session': session,
+        'panelists': panelists,
+        'competitors': competitors,
+    }
+    rendered = render_to_string('sa.html', context)
+    file = pydf.generate_pdf(rendered)
+
+    public_id = "session/{0}/{1}-sa_report.pdf".format(
+        session.id,
+        slugify(session.nomen),
+    )
+    sa_report = upload_resource(
+        file,
+        resource_type='raw',
+        public_id=public_id,
+        overwrite=True,
+        invalidate=True,
+    )
+    session.sa_report = sa_report
+    session.save()
+    return sa_report
 
 
 @job

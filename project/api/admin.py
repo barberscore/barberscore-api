@@ -1310,6 +1310,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
+        'sa_report_link',
         'description',
         'notes',
         # 'bbscores_report',
@@ -1346,6 +1347,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'nomen',
+        'sa_report_link',
         # 'bbscores_report',
         # 'drcj_report',
         # 'admins_report',
