@@ -450,6 +450,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'img',
         'rank',
+        ('is_ranked', 'is_multi',),
         'csa_report_link',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),

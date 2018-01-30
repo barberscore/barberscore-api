@@ -1483,7 +1483,18 @@ class Competitor(TimeStampedModel):
     )
 
     is_ranked = models.BooleanField(
+        help_text="""If the competitor will be ranked in OSS.""",
         default=False,
+    )
+
+    is_multi = models.BooleanField(
+        help_text="""If the competitor is contesting a multi-round award.""",
+        default=False,
+    )
+
+    draw = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     rank = models.IntegerField(
@@ -4370,51 +4381,49 @@ class Round(TimeStampedModel):
         else:
             raise RuntimeError("No Rounds Remaining")
 
-        # Create appearances accordingly
         # Instantiate the advancing list
-        advancing = []
-        # Only address multi-round contests; single-round contestants do not proceed.
+        advancers = []
+
         for contest in self.session.contests.filter(award__rounds__gt=1):
             # Qualifiers have an absolute score cutoff
-            if not contest.award.parent:
+            if contest.award.level == contest.award.LEVEL.qualifier:
                 # Uses absolute cutoff.
                 contestants = contest.contestants.filter(
-                    tot_score__gte=contest.award.advance,
+                    status__gt=0,
+                    entry__competitor__tot_score__gte=contest.award.advance,
                 )
                 for contestant in contestants:
-                    advancing.append(contestant.competitor)
+                    advancers.append(contestant.competitor)
             # Championships are relative.
-            else:
+            elif contest.award.level == contest.award.LEVEL.championship:
                 # Get the top scorer
-                top = contest.contestants.order_by(
-                    '-tot_points',
+                top = contest.contestants.filter(
+                    status__gt=0,
+                ).order_by(
+                    '-entry__competitor__tot_points',
                 ).first()
                 # Derive the approve threshold from that top score.
-                approve = top.tot_score - 4.0
+                approve = top.entry.competitor.tot_score - 4.0
                 contestants = contest.contestants.filter(
+                    status__gt=0,
                     tot_score__gte=approve,
                 )
                 for contestant in contestants:
-                    advancing.append(contestant.competitor)
+                    advancers.append(contestant.competitor)
         # Remove duplicates
-        advancing = list(set(advancing))
+        advancers = list(set(advancers))
         # Append up to spots available.
-        diff = spots - len(advancing)
+        diff = spots - len(advancers)
         if diff > 0:
             adds = self.session.competitors.filter(
-                contestants__contest__award__rounds__gt=1,
-            ).exclude(
-                competitor__in=advancing,
+                entry__contestants__contest__award__rounds__gt=1,
             ).distinct(
             ).order_by(
                 '-tot_points',
             )[:diff]
-            for a in adds:
-                advancing.append(a.competitor)
-
-        count = len(advancing)
-        # Get Advancers and finishers
-        advancers = list(competitors[count])
+            for add in adds:
+                if add not in advancers:
+                    advancers.append(add)
 
         # Randomize the list
         random.shuffle(advancers)
@@ -5137,17 +5146,24 @@ class Session(TimeStampedModel):
         )
         for entry in self.entries.filter(status=Entry.STATUS.approved):
             # Create competitors
-            # Set is_ranked = True if they are competing for the primary award.
+            # Set is_ranked=True if they are competing for the primary award.
             primary = self.contests.get(award__is_primary=True)
             is_ranked = bool(entry.contestants.filter(
                 contest=primary,
                 status__gt=0,
             ))
+            # Set is_multi=True if they are competiting for at least
+            # one multi-round award.
+            is_multi = bool(entry.contestants.filter(
+                contest__award__rounds__gt=1
+            ))
+
             competitor = Competitor.objects.create(
                 session=self,
                 group=entry.group,
                 entry=entry,
                 is_ranked=is_ranked,
+                is_multi=is_multi,
             )
             competitor.start()
             competitor.save()
@@ -5189,6 +5205,7 @@ class Session(TimeStampedModel):
         conditions=[],
     )
     def finish(self, *args, **kwargs):
+        create_oss_report(self)
         create_sa_report(self)
         return
 
