@@ -1701,6 +1701,15 @@ class Competitor(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.new, STATUS.missed, STATUS.made], target=STATUS.started)
     def start(self, *args, **kwargs):
+        next_round = self.session.rounds.filter(
+            status=0,
+        ).order_by(
+            'num',
+        ).first()
+        self.appearances.create(
+            round=next_round,
+            num=self.draw,
+        )
         return
 
     @fsm_log_by
@@ -4366,7 +4375,7 @@ class Round(TimeStampedModel):
                 status=Competitor.STATUS.started,
             )
             for competitor in competitors:
-                competitor.miss()
+                competitor.finish()
                 competitor.save()
             # Determine all the awards.
             for contest in self.session.contests.filter(status__gt=0):
@@ -4448,117 +4457,24 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.reviewed], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        # This should make it "final"
+        # Switch based on rounds
+        Competitor = config.get_model('Competitor')
         if self.kind == self.KIND.finals:
-            for appearance in self.appearances.all():
-                appearance.draw = -1
-                appearance.save()
-            entries = self.session.entries.exclude(
-                status=self.session.entries.model.STATUS.scratched,
-            )
-            for entry in entries:
-                entry.calculate_pdf()
-                entry.save()
-            contests = self.session.contests.filter(status__gt=0)
-            for contest in contests:
-                for contestant in contest.contestants.filter(status__gt=0):
-                    contestant.calculate()
-                    contestant.save()
-            self.print_ann()
+            self.session.finish()
             return
-        if self.kind == self.KIND.quarters:
-            spots = 20
-        elif self.kind == self.KIND.semis:
-            spots = 10
         else:
-            raise RuntimeError('No round kind.')
-        # Build list of advancing appearances to number of spots available
-        ordered_entries = self.session.entries.annotate(
-            tot=models.Sum('appearances__songs__scores__points')
-        ).order_by('-tot')
-        # Check for tie at cutoff
-        if spots:
-            cutoff = ordered_entries[spots - 1:spots][0].tot
-            plus_one = ordered_entries[spots:spots + 1][0].tot
-            while cutoff == plus_one:
-                spots += 1
-                cutoff = ordered_entries[spots - 1:spots][0].tot
-                plus_one = ordered_entries[spots:spots + 1][0].tot
-
-        # Get Advancers and finishers
-        advancers = list(ordered_entries[:spots])
-        cutdown = ordered_entries.filter(
-            appearances__round=self,
-        )
-        finishers = list(cutdown[spots:])
-
-        # Randomize Advancers
-        random.shuffle(list(advancers))
-
-        # Set Draw
-        i = 1
-        for entry in advancers:
-            appearance = self.appearances.get(entry=entry)
-            appearance.draw = i
-            appearance.save()
-            i += 1
-
-        # Set draw on finishers to negative one.
-        for entry in finishers:
-            appearance = self.appearances.get(entry=entry)
-            appearance.draw = -1
-            appearance.save()
-
-        # TODO Bypassing all this in favor of International-only
-
-        # # Create appearances accordingly
-        # # Instantiate the advancing list
-        # advancing = []
-        # # Only address multi-round contests; single-round awards do not proceed.
-        # for contest in self.session.contests.filter(award__rounds__gt=1):
-        #     # Qualifiers have an absolute score cutoff
-        #     if not contest.award.parent:
-        #         # Uses absolute cutoff.
-        #         contestants = contest.contestants.filter(
-        #             tot_score__gte=contest.award.advance,
-        #         )
-        #         for contestant in contestants:
-        #             advancing.append(contestant.entry)
-        #     # Championships are relative.
-        #     else:
-        #         # Get the top scorer
-        #         top = contest.contestants.filter(
-        #             rank=1,
-        #         ).first()
-        #         # Derive the approve threshold from that top score.
-        #         approve = top.calculate_tot_score() - 4.0
-        #         contestants = contest.contestants.filter(
-        #             tot_score__gte=approve,
-        #         )
-        #         for contestant in contestants:
-        #             advancing.append(contestant.entry)
-        # # Remove duplicates
-        # advancing = list(set(advancing))
-        # # Append up to spots available.
-        # diff = spots - len(advancing)
-        # if diff > 0:
-        #     adds = self.appearances.filter(
-        #         entry__contestants__contest__award__rounds__gt=1,
-        #     ).exclude(
-        #         entry__in=advancing,
-        #     ).order_by(
-        #         '-tot_points',
-        #     )[:diff]
-        #     for a in adds:
-        #         advancing.append(a.entry)
-        # random.shuffle(advancing)
-        # i = 1
-        # for entry in advancing:
-        #     next_round.appearances.get_or_create(
-        #         entry=entry,
-        #         num=i,
-        #     )
-        #     i += 1
+            misses = self.session.competitors.filter(
+                status=Competitor.STATUS.missed,
+            )
+            for miss in misses:
+                miss.finish()
+                miss.save()
+            mades = self.session.competitors.filter(
+                status=Competitor.STATUS.made,
+            )
+            for made in mades:
+                made.start()
+                made.save()
         return
 
     # @fsm_log_by
@@ -5140,10 +5056,6 @@ class Session(TimeStampedModel):
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
         Competitor = config.get_model('Competitor')
-        # Get the first round.
-        first_round = self.rounds.get(
-            num=1,
-        )
         for entry in self.entries.filter(status=Entry.STATUS.approved):
             # Create competitors
             # Set is_ranked=True if they are competing for the primary award.
@@ -5162,16 +5074,12 @@ class Session(TimeStampedModel):
                 session=self,
                 group=entry.group,
                 entry=entry,
+                draw=entry.draw,
                 is_ranked=is_ranked,
                 is_multi=is_multi,
             )
             competitor.start()
             competitor.save()
-            # create the appearances
-            first_round.appearances.create(
-                competitor=competitor,
-                num=entry.draw,
-            )
             # set the grid
             # competitor.grids.create(
             #     round=first_round,
@@ -5183,18 +5091,18 @@ class Session(TimeStampedModel):
             status=self.convention.assignments.model.STATUS.confirmed,
             category__gt=self.convention.assignments.model.CATEGORY.ca,
         ):
-            first_round.panelists.create(
-                kind=assignment.kind,
-                category=assignment.category,
-                person=assignment.person,
-            )
+            for round in self.rounds.all():
+                round.panelists.create(
+                    kind=assignment.kind,
+                    category=assignment.category,
+                    person=assignment.person,
+                )
         # delete orphans
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
         # notify entrants
         context = {'session': self}
         send_session.delay('session_start.txt', context)
-        first_round.save()
         return
 
     @fsm_log_by
