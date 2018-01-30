@@ -579,19 +579,20 @@ def create_csa_report(competitor):
 
 @job
 def create_sa_report(session):
-    Panelist = config.get_model('Panelist')
-    panelists = Panelist.objects.filter(
-        kind=Panelist.KIND.official,
-        round__session=session,
+    Person = config.get_model('Person')
+    persons = Person.objects.filter(
+        panelists__round__session=session,
     ).distinct(
     ).order_by(
-        'category',
-        'person__last_name',
+        'panelists__category',
+        'panelists__kind',
+        'last_name',
+        'first_name',
     )
     competitors = session.competitors.order_by('rank')
     context = {
         'session': session,
-        'panelists': panelists,
+        'persons': persons,
         'competitors': competitors,
     }
     rendered = render_to_string('sa.html', context)

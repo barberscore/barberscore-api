@@ -3946,6 +3946,13 @@ class Person(TimeStampedModel):
     def sort_name(self):
         return "{0}, {1}".format(self.last_name, self.first_name)
 
+    @cached_property
+    def initials(self):
+        return "{0}{1}".format(
+            self.last_name[0].upper(),
+            self.first_name[0].upper(),
+        )
+
     # Person FKs
     user = models.OneToOneField(
         'User',

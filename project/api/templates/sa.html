@@ -66,8 +66,8 @@
             <th>PER</th>
             <th>SNG</th>
             <th>TOT</th>
-            {% for panelist in panelists %}
-              <th>{{panelist.person.common_name|truncatechars:2}}</th>
+            {% for person in persons %}
+              <th>{{person.initials}}</th>
             {% endfor %}
           </tr>
         </thead>
@@ -122,12 +122,12 @@
                 {% endfor %}
                 {{competitor.tot_points}}<br>
               </td>
-              {% for panelist in panelists %}
+              {% for person in persons %}
                 <td>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {% for score in song.scores.all %}
-                        {%if score.panelist == panelist %}
+                        {%if score.panelist.person == person %}
                           {{score.points}}<br>
                         {% endif %}
                       {% endfor %}
@@ -137,23 +137,6 @@
               {% endfor %}
             </tr>
           {% endfor %}
-        </tbody>
-      </table>
-    </section>
-    <section>
-      {% regroup panelists by get_category_display as panelist_list %}
-      <table class='table'>
-        {% for category in panelist_list %}
-        <tbody>
-            <div>
-            <tr>
-            <td><strong>{{category.grouper}}</strong></td>
-            {% for panelist in category.list %}
-              <td>{{panelist.person.common_name}}</td>
-            {% endfor %}
-          </tr>
-          </div>
-        {% endfor %}
         </tbody>
       </table>
     </section>
