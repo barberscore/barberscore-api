@@ -80,8 +80,8 @@
   "environments": {
     "test": {
       "addons": [
-        "heroku-postgresql:hobby-dev",
-        "heroku-redis:hobby-dev"
+        "heroku-postgresql:in-dyno",
+        "heroku-redis:in-dyno"
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "settings.test",
@@ -91,7 +91,7 @@
         }
       },
       "scripts": {
-        "test": "pytest --no-migrations --reuse-db"
+        "test": "pytest"
       }
     }
   }
