@@ -153,6 +153,17 @@ def delete_auth0_account_from_user(user):
 
 
 @job
+def update_user_from_person(person):
+    User = config.get_model('User')
+    defaults = {
+        'name': person.full_name,
+        'email': person.email,
+    }
+    user, created = User.objects.update_or_create(defaults)
+    return
+
+
+@job
 def update_person_status_from_subscription(subscription):
     Person = config.get_model('Person')
     person = Person.objects.get(bhs_pk=subscription.human.id)
