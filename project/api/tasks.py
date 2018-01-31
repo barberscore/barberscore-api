@@ -155,11 +155,18 @@ def delete_auth0_account_from_user(user):
 @job
 def update_user_from_person(person):
     User = config.get_model('User')
-    defaults = {
-        'name': person.full_name,
-        'email': person.email,
-    }
-    user, created = User.objects.update_or_create(defaults)
+    user = getattr(person, 'user', None)
+    if not user:
+        user = User.objects.create(
+            email=person.email,
+            name=person.full_name,
+        )
+        person.user = user
+        person.save()
+        return
+    user.name = person.full_name
+    user.email = person.email
+    user.save()
     return
 
 
