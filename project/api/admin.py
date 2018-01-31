@@ -1462,7 +1462,7 @@ class VenueAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
+class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     fsm_field = [
@@ -1474,7 +1474,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'person',
         'is_active',
         'is_staff',
-        'status',
         'auth0_id',
     ]
 
@@ -1487,7 +1486,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     list_filter = (
-        'status',
         'is_active',
         'is_staff',
     )
@@ -1495,7 +1493,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'status',
                 'name',
                 'email',
                 'auth0_id',
@@ -1511,7 +1508,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'status',
                 'name',
                 'email',
                 'auth0_id',

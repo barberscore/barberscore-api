@@ -5685,14 +5685,14 @@ class User(AbstractBaseUser):
         return False
 
     # User Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        self.is_active = True
-        return
+    # @fsm_log_by
+    # @transition(field=status, source='*', target=STATUS.active)
+    # def activate(self, *args, **kwargs):
+    #     self.is_active = True
+    #     return
 
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        self.is_active = False
-        pass
+    # @fsm_log_by
+    # @transition(field=status, source='*', target=STATUS.inactive)
+    # def deactivate(self, *args, **kwargs):
+    #     self.is_active = False
+    #     pass
