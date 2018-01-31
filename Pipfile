@@ -42,7 +42,6 @@ gunicorn = "*"
 ipython = "*"
 cloudinary = {git = "git://github.com/barberscore/pycloudinary.git"}
 
-
 [dev-packages]
 
 pytest = "*"
