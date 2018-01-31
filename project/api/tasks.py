@@ -17,6 +17,7 @@ from openpyxl import Workbook
 from django.core.cache import cache
 from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
+from auth0.v3.exceptions import Auth0Error
 
 log = logging.getLogger(__name__)
 config = api_apps.get_app_config('api')
@@ -109,7 +110,12 @@ def create_auth0_account_from_user(user):
         }
     }
     # Create Auth0 Account
-    response = auth0.users.create(payload)
+    try:
+        response = auth0.users.create(payload)
+    except Auth0Error as e:
+        log.error(e)
+        user.delete()
+        return
     user.auth0_id = response['user_id']
     user.save()
     return user
