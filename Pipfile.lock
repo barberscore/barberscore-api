@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "eef4cbbcc83b3c4145e6e4eec3f10956b73c453935a5c3a75a00703d7b47d7ae"
+            "sha256": "862ff3980002d0bf762e1cc8f00c7fa92595c393bcde825085440f9a384bdec1"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -113,10 +113,7 @@
             "version": "==6.7"
         },
         "cloudinary": {
-            "hashes": [
-                "sha256:fd878eb8505857bcda5434eb6cf3254f50d019361e2dac5640e8d16dd90b0e3f"
-            ],
-            "version": "==1.10.0"
+            "git": "git://github.com/barberscore/pycloudinary.git"
         },
         "coreapi": {
             "hashes": [
@@ -326,13 +323,6 @@
             ],
             "version": "==1.0"
         },
-        "mock": {
-            "hashes": [
-                "sha256:5ce3c71c5545b472da17b72268978914d0252980348636840bd34a00b5cc96c1",
-                "sha256:b158b6df76edd239b8208d481dc46b6afd45a846b7812ff0ce58971cf5bc8bba"
-            ],
-            "version": "==2.0.0"
-        },
         "mysqlclient": {
             "hashes": [
                 "sha256:b3b1a7e4468180afb79289b54069d9499242946a4cedf3928cbf6b2a13800016",
@@ -355,13 +345,6 @@
                 "sha256:5815f3fe254e5665f3c5d6f54f086c2502035cb631a91341591b5a564203cffb"
             ],
             "version": "==0.1.1"
-        },
-        "pbr": {
-            "hashes": [
-                "sha256:60c25b7dfd054ef9bb0ae327af949dd4676aa09ac3a9471cdc871d8a9213f9ac",
-                "sha256:05f61c71aaefc02d8e37c0a3eeb9815ff526ea28b3b76324769e6158d7f95be1"
-            ],
-            "version": "==3.1.1"
         },
         "pexpect": {
             "hashes": [
