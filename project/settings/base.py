@@ -45,6 +45,16 @@ DATABASES = {
     'default': dj_database_url.config(conn_max_age=600),
 }
 
+# Redis
+RQ_QUEUES = {
+    'default': {
+        'URL': get_env_variable("REDIS_URL"),
+        'DEFAULT_TIMEOUT': 360,
+        'ASYNC': True,
+    },
+}
+RQ_SHOW_ADMIN_LINK = True
+
 # Authentication
 AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = [

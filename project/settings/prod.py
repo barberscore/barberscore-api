@@ -97,16 +97,6 @@ MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
-# Redis
-RQ_QUEUES = {
-    'default': {
-        'URL': get_env_variable("REDIS_URL"),
-        'DEFAULT_TIMEOUT': 360,
-        'ASYNC': True,
-    },
-}
-RQ_SHOW_ADMIN_LINK = True
-
 # Logging
 LOGGING = {
     'version': 1,
