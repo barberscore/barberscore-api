@@ -473,11 +473,12 @@ class PersonManager(Manager):
             nick_name = ""
         bhs_id = human.bhs_id
         email = human.email.strip()
-        try:
-            validate_email(email)
-        except ValidationError:
-            log.error("Email Invalid: {0}".format(human))
-            email = ""
+        if email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                log.error("Email Invalid: {0}".format(human))
+                email = ""
         birth_date = human.birth_date
         if human.phone:
             phone = human.phone
