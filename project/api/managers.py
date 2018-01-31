@@ -473,7 +473,7 @@ class PersonManager(Manager):
             nick_name = ""
         bhs_id = human.bhs_id
         email = human.email.strip()
-        if email:
+        if email and not email.isdigit():
             try:
                 validate_email(email)
             except ValidationError:
