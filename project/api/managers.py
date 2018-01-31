@@ -476,7 +476,8 @@ class PersonManager(Manager):
         try:
             validate_email(email)
         except ValidationError:
-            email = "{0}".format(bhs_id)
+            log.error("Email Invalid: {0}".format(human))
+            email = ""
         birth_date = human.birth_date
         if human.phone:
             phone = human.phone

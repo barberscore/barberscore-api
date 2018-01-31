@@ -192,7 +192,28 @@ def update_group_from_bhs(group):
         raise RuntimeError("Group must be quartet or chorus.")
     for j in js:
         Member.objects.update_or_create_from_join(j)
-    return 'Updated {0}'.format(group)
+    return group
+
+
+@job
+def update_person_from_bhs(person):
+    Person = config.get_model('Person')
+    Human = bhs.get_model('Human')
+    if not person.bhs_pk:
+        raise RuntimeError("No BHS link")
+    human = Human.objects.get(id=person.bhs_pk)
+    person, created = Person.objects.update_or_create_from_human(human)
+    subscription = person.subscriptions.get(
+        items_editable=True,
+    )
+    is_active = bool(subscription.status == 'active')
+    if is_active:
+        status = Person.STATUS.active
+    else:
+        status = Person.STATUS.inactive
+    person.status = status
+    person.current_through = subscription.current_through
+    return person
 
 
 @job
