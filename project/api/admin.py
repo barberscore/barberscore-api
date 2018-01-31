@@ -110,10 +110,10 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
         'variance_report_link',
     ]
-    raw_id_fields = (
+    autocomplete_fields = [
         'competitor',
         'round',
-    )
+    ]
     search_fields = (
         'nomen',
     )
@@ -157,10 +157,10 @@ class AssignmentAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'convention',
         'person',
-    )
+    ]
 
     readonly_fields = [
         'nomen',
@@ -220,7 +220,7 @@ class AwardAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'organization',
     ]
 
@@ -326,7 +326,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'award',
         'session',
     ]
@@ -356,7 +356,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'entry',
         'contest',
     ]
@@ -422,7 +422,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
     )
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'organization',
         'venue',
     ]
@@ -480,10 +480,10 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
     )
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'session',
         'group',
-    )
+    ]
 
     readonly_fields = (
         'nomen',
@@ -522,7 +522,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         'mem_code',
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'person',
         'organization',
     ]
@@ -591,11 +591,10 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
     )
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'session',
         'group',
-    )
-
+    ]
     readonly_fields = (
         'id',
         'nomen',
@@ -625,7 +624,7 @@ class GrantorAdmin(admin.ModelAdmin):
     readonly_fields = [
         'nomen',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'organization',
         'convention',
     ]
@@ -656,7 +655,7 @@ class GridAdmin(admin.ModelAdmin):
     readonly_fields = [
         'nomen',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'round',
         'competitor',
     ]
@@ -728,7 +727,7 @@ class GroupAdmin(admin.ModelAdmin):
         'modified',
     ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'organization',
     ]
 
@@ -794,7 +793,7 @@ class MemberAdmin(admin.ModelAdmin):
         'mem_status',
         'mem_code',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'person',
         'group',
     ]
@@ -882,7 +881,7 @@ class OfficerAdmin(admin.ModelAdmin):
     search_fields = [
         'nomen',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'office',
         'person',
         'organization',
@@ -943,7 +942,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         'mem_status',
     ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'parent',
     ]
 
@@ -1026,10 +1025,10 @@ class PanelistAdmin(admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'round',
         'person',
-    )
+    ]
 
     readonly_fields = [
         'nomen',
@@ -1062,7 +1061,7 @@ class ParticipantAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
     ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'entry',
         'person',
     ]
@@ -1143,7 +1142,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'email',
     )
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'user',
     ]
 
@@ -1187,10 +1186,10 @@ class RepertoryAdmin(admin.ModelAdmin):
         # 'kind',
     ]
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'group',
         'chart',
-    )
+    ]
 
     # inlines = [
     #     AppearanceInline,
@@ -1238,9 +1237,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'kind',
     ]
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'session',
-    )
+    ]
 
     inlines = [
         AppearanceInline,
@@ -1284,7 +1283,7 @@ class ScoreAdmin(admin.ModelAdmin):
     #     'status',
     # ]
 
-    raw_id_fields = [
+    autocomplete_fields = [
         'song',
         'panelist',
     ]
@@ -1341,9 +1340,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention__year',
     )
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'convention',
-    )
+    ]
 
     readonly_fields = [
         'id',
@@ -1417,10 +1416,10 @@ class SongAdmin(admin.ModelAdmin):
         'nomen',
     )
 
-    raw_id_fields = (
+    autocomplete_fields = [
         'appearance',
         'chart',
-    )
+    ]
 
     ordering = (
         'nomen',

@@ -821,10 +821,10 @@ class Command(BaseCommand):
         # DRCJ BREAKPOINT
 
         # Start First Round
-        international_midwinter_convention_quartet_session_round_one = international_midwinter_convention_quartet_session.rounds.order_by('num').first()
-        district_alpha_fall_convention_quartet_session_round_one = district_alpha_fall_convention_quartet_session.rounds.order_by('num').first()
-        district_alpha_spring_convention_quartet_session_round_one = district_alpha_spring_convention_quartet_session.rounds.order_by('num').first()
-        district_alpha_fall_convention_chorus_session_round_one = district_alpha_fall_convention_chorus_session.rounds.order_by('num').first()
+        international_midwinter_convention_quartet_session_round_one = international_midwinter_convention_quartet_session.rounds.earliest()
+        district_alpha_fall_convention_quartet_session_round_one = district_alpha_fall_convention_quartet_session.rounds.earliest()
+        district_alpha_spring_convention_quartet_session_round_one = district_alpha_spring_convention_quartet_session.rounds.earliest()
+        district_alpha_fall_convention_chorus_session_round_one = district_alpha_fall_convention_chorus_session.rounds.earliest()
 
         international_midwinter_convention_quartet_session_round_one.start()
         international_midwinter_convention_quartet_session_round_one.save()
@@ -839,8 +839,8 @@ class Command(BaseCommand):
         for appearance in international_midwinter_convention_quartet_session_round_one.appearances.order_by('num'):
             appearance.start()
             appearance.save()
-            song_one = appearance.songs.order_by('num').first()
-            song_two = appearance.songs.order_by('num').last()
+            song_one = appearance.songs.earliest()
+            song_two = appearance.songs.latest()
             song_one.chart = Chart.objects.get(title='Chart 1')
             song_two.chart = Chart.objects.get(title='Chart 2')
             song_one.save()
@@ -859,8 +859,8 @@ class Command(BaseCommand):
         for appearance in district_alpha_fall_convention_quartet_session_round_one.appearances.order_by('num'):
             appearance.start()
             appearance.save()
-            song_one = appearance.songs.order_by('num').first()
-            song_two = appearance.songs.order_by('num').last()
+            song_one = appearance.songs.earliest()
+            song_two = appearance.songs.lastest()
             song_one.chart = Chart.objects.get(title='Chart 1')
             song_two.chart = Chart.objects.get(title='Chart 2')
             song_one.save()
@@ -879,8 +879,8 @@ class Command(BaseCommand):
         for appearance in district_alpha_spring_convention_quartet_session_round_one.appearances.order_by('num'):
             appearance.start()
             appearance.save()
-            song_one = appearance.songs.order_by('num').first()
-            song_two = appearance.songs.order_by('num').last()
+            song_one = appearance.songs.earliest()
+            song_two = appearance.songs.latests()
             song_one.chart = Chart.objects.get(title='Chart 1')
             song_two.chart = Chart.objects.get(title='Chart 2')
             song_one.save()

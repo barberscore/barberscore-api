@@ -1703,9 +1703,7 @@ class Competitor(TimeStampedModel):
     def start(self, *args, **kwargs):
         next_round = self.session.rounds.filter(
             status=0,
-        ).order_by(
-            'num',
-        ).first()
+        ).earlist()
         self.appearances.create(
             round=next_round,
             num=self.draw,
@@ -4267,6 +4265,9 @@ class Round(TimeStampedModel):
         unique_together = (
             ('session', 'kind',),
         )
+        get_latest_by = [
+            'num',
+        ]
 
     class JSONAPIMeta:
         resource_name = "round"
@@ -5216,6 +5217,7 @@ class Song(TimeStampedModel):
         unique_together = (
             ('appearance', 'num',),
         )
+        get_latest_by = ['num']
 
     class JSONAPIMeta:
         resource_name = "song"
@@ -5650,12 +5652,6 @@ class User(AbstractBaseUser):
         if self.email:
             self.email = self.email.lower()
         super().save(*args, **kwargs)
-
-    def get_full_name(self):
-        return self.name
-
-    def get_short_name(self):
-        return self.email
 
     def has_perm(self, perm, obj=None):
         return self.is_staff
