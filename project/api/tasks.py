@@ -153,6 +153,20 @@ def delete_auth0_account_from_user(user):
 
 
 @job
+def update_person_status_from_subscription(subscription):
+    Person = config.get_model('Person')
+    person = Person.objects.get(bhs_pk=subscription.human.id)
+    person.status = getattr(
+        Person.STATUS,
+        subscription.status,
+        Person.STATUS.inactive
+    )
+    person.current_through = subscription.current_through
+    person.save()
+    return
+
+
+@job
 def update_is_senior(group):
     Person = config.get_model('Person')
     midwinter = datetime.date(2019, 1, 26)
