@@ -199,20 +199,30 @@ def update_group_from_bhs(group):
 def update_person_from_bhs(person):
     Person = config.get_model('Person')
     Human = bhs.get_model('Human')
+    Subscription = bhs.get_model('Subscription')
     if not person.bhs_pk:
         raise RuntimeError("No BHS link")
     human = Human.objects.get(id=person.bhs_pk)
     person, created = Person.objects.update_or_create_from_human(human)
-    subscription = human.subscriptions.get(
-        items_editable=True,
-    )
-    is_active = bool(subscription.status == 'active')
-    if is_active:
-        status = Person.STATUS.active
+    try:
+        subscription = human.subscriptions.get(
+            items_editable=True,
+        )
+    except Subscription.DoesNotExist:
+        subscription = None
+    if subscription:
+        status = getattr(
+            Person.STATUS,
+            subscription.status,
+            Person.STATUS.inactive
+        )
+        current_through = subscription.current_through
     else:
-        status = Person.STATUS.inactive
+        status = Person.STATUS.new
+        current_through = None
     person.status = status
-    person.current_through = subscription.current_through
+    person.current_through = current_through
+    person.save()
     return person
 
 
