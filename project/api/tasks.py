@@ -203,7 +203,7 @@ def update_person_from_bhs(person):
         raise RuntimeError("No BHS link")
     human = Human.objects.get(id=person.bhs_pk)
     person, created = Person.objects.update_or_create_from_human(human)
-    subscription = person.subscriptions.get(
+    subscription = human.subscriptions.get(
         items_editable=True,
     )
     is_active = bool(subscription.status == 'active')
