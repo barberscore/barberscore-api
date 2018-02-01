@@ -166,7 +166,10 @@ def update_user_from_person(person):
 @job
 def update_person_status_from_subscription(subscription):
     Person = config.get_model('Person')
-    person = Person.objects.get(bhs_pk=subscription.human.id)
+    try:
+        person = Person.objects.get(bhs_pk=subscription.human.id)
+    except Person.DoesNotExist:
+        return
     person.status = getattr(
         Person.STATUS,
         subscription.status,
@@ -207,7 +210,7 @@ def update_group_from_bhs(group):
     Structure = bhs.get_model('Structure')
     SMJoin = bhs.get_model('SMJoin')
     if not group.bhs_pk:
-        raise RuntimeError("No BHS link")
+        return
     structure = Structure.objects.get(id=group.bhs_pk)
     group, created = Group.objects.update_or_create_from_structure(structure)
     if group.kind == Group.KIND.quartet:
@@ -233,7 +236,11 @@ def update_person_from_bhs(person):
     Subscription = bhs.get_model('Subscription')
     if not person.bhs_pk:
         raise RuntimeError("No BHS link")
-    human = Human.objects.get(id=person.bhs_pk)
+    try:
+        human = Human.objects.get(id=person.bhs_pk)
+    except Human.DoesNotExist:
+        person.delete()
+        return
     person, created = Person.objects.update_or_create_from_human(human)
     try:
         subscription = human.subscriptions.get(
