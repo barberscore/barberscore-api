@@ -4166,6 +4166,7 @@ class Repertory(TimeStampedModel):
             ),
             request.user.is_convention_manager,
             request.user.is_scoring_manager,
+            request.user.is_session_manager,
         ])
 
     @staticmethod
