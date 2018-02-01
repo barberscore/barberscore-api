@@ -1217,6 +1217,7 @@ class Contestant(TimeStampedModel):
         return any([
             request.user.is_convention_manager,
             request.user.is_group_manager,
+            request.user.is_session_manager,
         ])
 
     @allow_staff_or_superuser
