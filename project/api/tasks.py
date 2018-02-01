@@ -155,11 +155,18 @@ def delete_auth0_account_from_user(user):
 @job
 def update_user_from_person(person):
     User = config.get_model('User')
-    defaults = {
-        'name': person.full_name,
-        'email': person.email,
-    }
-    user, created = User.objects.update_or_create(defaults)
+    user = getattr(person, 'user', None)
+    if not user:
+        user = User.objects.create(
+            email=person.email,
+            name=person.full_name,
+        )
+        person.user = user
+        person.save()
+        return
+    user.name = person.full_name
+    user.email = person.email
+    user.save()
     return
 
 
@@ -233,7 +240,6 @@ def update_group_from_bhs(group):
 def update_person_from_bhs(person):
     Person = config.get_model('Person')
     Human = bhs.get_model('Human')
-    Subscription = bhs.get_model('Subscription')
     if not person.bhs_pk:
         raise RuntimeError("No BHS link")
     try:
@@ -242,12 +248,9 @@ def update_person_from_bhs(person):
         person.delete()
         return
     person, created = Person.objects.update_or_create_from_human(human)
-    try:
-        subscription = human.subscriptions.get(
-            items_editable=True,
-        )
-    except Subscription.DoesNotExist:
-        subscription = None
+    subscription = human.subscriptions.filter(
+        items_editable=True,
+    ).latest('created_ts')
     if subscription:
         status = getattr(
             Person.STATUS,

@@ -1703,7 +1703,7 @@ class Competitor(TimeStampedModel):
     def start(self, *args, **kwargs):
         next_round = self.session.rounds.filter(
             status=0,
-        ).earlist()
+        ).earliest()
         self.appearances.create(
             round=next_round,
             num=self.draw,
