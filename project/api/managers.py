@@ -134,11 +134,8 @@ class GroupManager(Manager):
             else:
                 # Otherwise, call unknown.
                 name = 'UNKNOWN'
-        elif kind == self.model.KIND.chorus:
-            # set up the chorus name
-            name = structure.chorus_name.strip()
         else:
-            raise ValueError("Can only update choruses and quartets")
+            raise ValueError("Can only update quartets")
         # Map to the internal designation
         STATUS = {
             'active': 'active',

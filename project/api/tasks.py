@@ -93,6 +93,12 @@ def update_or_create_person_from_human(human):
 
 
 @job
+def update_or_create_group_from_structure(structure):
+    Group = api.get_model('Group')
+    return Group.objects.update_or_create_from_structure(structure)
+
+
+@job
 def delete_auth0_account_orphan(auth0_id):
     auth0 = get_auth0()
     # Delete Auth0
