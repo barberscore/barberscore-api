@@ -87,6 +87,12 @@ def get_auth0_accounts():
 
 
 @job
+def update_or_create_person_from_human(human):
+    Person = api.get_model('Person')
+    return Person.objects.update_or_create_from_human(human)
+
+
+@job
 def delete_auth0_account_orphan(auth0_id):
     auth0 = get_auth0()
     # Delete Auth0
