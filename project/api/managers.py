@@ -17,8 +17,8 @@ from django.apps import apps as api_apps
 from openpyxl import Workbook
 from cloudinary.uploader import upload
 
-config = api_apps.get_app_config('api')
-bhs_config = api_apps.get_app_config('bhs')
+api = api_apps.get_app_config('api')
+bhs = api_apps.get_app_config('bhs')
 log = logging.getLogger(__name__)
 
 validate_url = URLValidator()
@@ -87,10 +87,10 @@ class EnrollmentManager(Manager):
         structure = join.structure
         human = join.subscription.human
         # Get group
-        Organization = config.get_model('Organization')
+        Organization = api.get_model('Organization')
         organization, created = Organization.objects.update_or_create_from_structure(structure)
         # Get person
-        Person = config.get_model('Person')
+        Person = api.get_model('Person')
         person, created = Person.objects.update_or_create_from_human(human)
         # This assumes that only 'active' matches exactly.
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
@@ -305,7 +305,7 @@ class GroupManager(Manager):
                 'NED',
                 'SWD',
             ]
-            Organization = config.get_model('Organization')
+            Organization = api.get_model('Organization')
             if kind == self.model.KIND.chorus:
                 # Set chapter as parent organization
                 group.organization = Organization.objects.get(
@@ -442,7 +442,7 @@ class OrganizationManager(Manager):
         if created:
             if structure.parent.chapter_code not in DISTPLUS:
                 # Can be overridden in BS, so only set once.
-                Organization = config.get_model('Organization')
+                Organization = api.get_model('Organization')
                 parent = Organization.objects.get(
                     bhs_pk=structure.parent.id,
                 )
@@ -535,7 +535,7 @@ class PersonManager(Manager):
             # Only update organization records.
             raise ValueError("Must be organization record.")
         human = join.subscription.human
-        Person = config.get_model('Person')
+        Person = api.get_model('Person')
         person, created = Person.objects.update_or_create_from_human(human)
         subscription = join.subscription
         is_active = bool(subscription.status == 'active')
@@ -567,10 +567,10 @@ class MemberManager(Manager):
         structure = join.structure
         human = join.subscription.human
         # Get group
-        Group = config.get_model('Group')
+        Group = api.get_model('Group')
         group, created = Group.objects.update_or_create_from_structure(structure)
         # Get person
-        Person = config.get_model('Person')
+        Person = api.get_model('Person')
         person, created = Person.objects.update_or_create_from_human(human)
         # This assumes that only 'active' matches exactly.
         if structure.kind == 'quartet':
@@ -613,7 +613,7 @@ class MemberManager(Manager):
         )
         if created:
             # Set default admins
-            Role = bhs_config.get_model('Role')
+            Role = bhs.get_model('Role')
             roles = Role.objects.filter(
                 human=human,
                 structure=structure,
