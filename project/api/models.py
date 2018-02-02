@@ -2944,6 +2944,7 @@ class Member(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_group_manager,
+            request.user.is_session_manager,
         ])
 
     @allow_staff_or_superuser
@@ -2955,6 +2956,7 @@ class Member(TimeStampedModel):
                 is_admin=True,
                 status__gt=0,
             ),
+            request.user.is_session_manager,
         ])
 
     # Transitions
