@@ -121,21 +121,20 @@ class GroupManager(Manager):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('chapter', 'chorus')
         kind = getattr(self.model.KIND, kind_clean)
-        if kind == self.model.KIND.quartet:
-            # Check for quartets
-            if structure.name:
-                # If the name has been assigned, use that.
-                name = structure.name.strip()
-            elif structure.preferred_name:
-                # If not yet assigned, use preferred and mark as pending.
-                name = "{0} (NAME APPROVAL PENDING)".format(
-                    structure.preferred_name.strip()
-                )
-            else:
-                # Otherwise, call unknown.
-                name = 'UNKNOWN'
-        else:
+        if kind != self.model.KIND.quartet:
             raise ValueError("Can only update quartets")
+            # Check for quartets
+        if structure.name:
+            # If the name has been assigned, use that.
+            name = structure.name.strip()
+        elif structure.preferred_name:
+            # If not yet assigned, use preferred and mark as pending.
+            name = "{0} (NAME APPROVAL PENDING)".format(
+                structure.preferred_name.strip()
+            )
+        else:
+            # Otherwise, call unknown.
+            name = 'UNKNOWN'
         # Map to the internal designation
         STATUS = {
             'active': 'active',
@@ -306,19 +305,14 @@ class GroupManager(Manager):
                 'SWD',
             ]
             Organization = api.get_model('Organization')
-            if kind == self.model.KIND.chorus:
-                # Set chapter as parent organization
-                group.organization = Organization.objects.get(
-                    bhs_pk=structure.id,
-                )
-            elif structure.parent.chapter_code not in DISTPLUS:
+            if structure.parent.chapter_code not in DISTPLUS:
                 # Set if quartet in district w/o divisions
                 group.organization = Organization.objects.get(
                     bhs_pk=structure.parent.id,
                 )
+                group.status = self.model.STATUS.active
             else:
                 group.organization = None
-                group.status = getattr(self.model.STATUS, 'new')
             group.save()
         return group, created
 

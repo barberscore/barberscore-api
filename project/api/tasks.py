@@ -93,6 +93,17 @@ def update_or_create_person_from_human(human):
 
 
 @job
+def update_chorus(chorus):
+    chorus.email = chorus.organization.email
+    chorus.phone = chorus.organization.phone
+    chorus.website = chorus.organization.website
+    chorus.facebook = chorus.organization.facebook
+    chorus.twitter = chorus.organization.twitter
+    chorus.save()
+    return
+
+
+@job
 def update_or_create_group_from_structure(structure):
     Group = api.get_model('Group')
     return Group.objects.update_or_create_from_structure(structure)
