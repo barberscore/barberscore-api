@@ -452,6 +452,7 @@ class SMJoin(models.Model):
     structure = models.ForeignKey(
         'Structure',
         editable=False,
+        related_name='smjoins',
         db_column='reference_structure_id',
         on_delete=models.CASCADE,
     )

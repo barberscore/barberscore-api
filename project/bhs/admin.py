@@ -186,7 +186,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'chorus_name',
     ]
     inlines = [
-        MembershipInline,
+        # MembershipInline,
+        SMJoinInline,
     ]
     ordering = (
         '-created_ts',

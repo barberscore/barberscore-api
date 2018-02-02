@@ -40,6 +40,7 @@ class SMJoinInline(admin.TabularInline):
     model = SMJoin
     fields = [
         '__str__',
+        'subscription',
         'membership',
         'structure',
         # 'human',
@@ -48,6 +49,7 @@ class SMJoinInline(admin.TabularInline):
     ]
     readonly_fields = [
         '__str__',
+        'subscription',
         'membership',
         'structure',
         # 'human',
