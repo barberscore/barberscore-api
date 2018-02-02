@@ -3430,6 +3430,17 @@ class Organization(TimeStampedModel):
             self.nomen = self.name
         super().save(*args, **kwargs)
 
+    def clean(self):
+        if self.kind == self.KIND.chapter:
+            count = self.groups.filter(
+                kind=self.groups.model.KIND.chorus,
+                status__gt=0,
+            ).count()
+            if count > 1:
+                raise ValidationError(
+                    {'status': 'Chapters may not have more than one active chorus.'}
+                )
+
     # Permissions
     @staticmethod
     @allow_staff_or_superuser

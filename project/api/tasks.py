@@ -99,6 +99,12 @@ def update_or_create_group_from_structure(structure):
 
 
 @job
+def update_or_create_organization_from_structure(structure):
+    Organization = api.get_model('Organization')
+    return Organization.objects.update_or_create_from_structure(structure)
+
+
+@job
 def delete_auth0_account_orphan(auth0_id):
     auth0 = get_auth0()
     # Delete Auth0
