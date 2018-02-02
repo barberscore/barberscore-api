@@ -1,19 +1,11 @@
 
 # Django
-from django.core.management.base import (
-    BaseCommand,
-)
+from django.core.management.base import BaseCommand
 
-from api.models import (
-    Person,
-)
-
-from bhs.models import (
-    Human
-)
-from api.tasks import (
-    update_or_create_person_from_human,
-)
+# First-Party
+from api.models import Person
+from api.tasks import update_or_create_person_from_human
+from bhs.models import Human
 
 
 class Command(BaseCommand):

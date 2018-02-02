@@ -1,17 +1,11 @@
 
 # Django
-from django.core.management.base import (
-    BaseCommand,
-)
+from django.core.management.base import BaseCommand
 
-from api.models import (
-    Group,
-    Organization
-)
-
-from api.tasks import (
-    update_chorus,
-)
+# First-Party
+from api.models import Group
+from api.models import Organization
+from api.tasks import update_chorus
 
 
 class Command(BaseCommand):

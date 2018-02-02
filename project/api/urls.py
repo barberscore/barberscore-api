@@ -2,35 +2,33 @@
 from rest_framework import routers
 
 # Local
-from .views import (
-    AppearanceViewSet,
-    AssignmentViewSet,
-    AwardViewSet,
-    ChartViewSet,
-    ContestantViewSet,
-    ContestViewSet,
-    ConventionViewSet,
-    CompetitorViewSet,
-    EntryViewSet,
-    GrantorViewSet,
-    GridViewSet,
-    GroupViewSet,
-    MemberViewSet,
-    OfficerViewSet,
-    OfficeViewSet,
-    OrganizationViewSet,
-    PanelistViewSet,
-    ParticipantViewSet,
-    PersonViewSet,
-    RepertoryViewSet,
-    RoundViewSet,
-    ScoreViewSet,
-    SessionViewSet,
-    SongViewSet,
-    StateLogViewSet,
-    UserViewSet,
-    VenueViewSet,
-)
+from .views import AppearanceViewSet
+from .views import AssignmentViewSet
+from .views import AwardViewSet
+from .views import ChartViewSet
+from .views import CompetitorViewSet
+from .views import ContestantViewSet
+from .views import ContestViewSet
+from .views import ConventionViewSet
+from .views import EntryViewSet
+from .views import GrantorViewSet
+from .views import GridViewSet
+from .views import GroupViewSet
+from .views import MemberViewSet
+from .views import OfficerViewSet
+from .views import OfficeViewSet
+from .views import OrganizationViewSet
+from .views import PanelistViewSet
+from .views import ParticipantViewSet
+from .views import PersonViewSet
+from .views import RepertoryViewSet
+from .views import RoundViewSet
+from .views import ScoreViewSet
+from .views import SessionViewSet
+from .views import SongViewSet
+from .views import StateLogViewSet
+from .views import UserViewSet
+from .views import VenueViewSet
 
 router = routers.DefaultRouter(
     trailing_slash=False,

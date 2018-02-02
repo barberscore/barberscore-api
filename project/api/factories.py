@@ -1,49 +1,44 @@
 # Third-Party
+# Standard Libary
 import datetime
-from factory import (
-    Faker,
-    PostGenerationMethodCall,
-    LazyAttribute,
-    Sequence,
-    SubFactory,
-    Iterator,
-    # post_generation,
-)
-from factory.django import (
-    DjangoModelFactory,
-)
+
+from factory import Faker  # post_generation,
+from factory import Iterator
+from factory import LazyAttribute
+from factory import PostGenerationMethodCall
+from factory import Sequence
+from factory import SubFactory
+from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyInteger
 
 # First-Party
-from api.models import (
-    Appearance,
-    Assignment,
-    Award,
-    Chart,
-    Contest,
-    Contestant,
-    Convention,
-    Competitor,
-    Enrollment,
-    Entry,
-    Grantor,
-    Grid,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Organization,
-    Panelist,
-    Participant,
-    Person,
-    Repertory,
-    Round,
-    Score,
-    Session,
-    Song,
-    User,
-    Venue,
-)
+from api.models import Appearance
+from api.models import Assignment
+from api.models import Award
+from api.models import Chart
+from api.models import Competitor
+from api.models import Contest
+from api.models import Contestant
+from api.models import Convention
+from api.models import Enrollment
+from api.models import Entry
+from api.models import Grantor
+from api.models import Grid
+from api.models import Group
+from api.models import Member
+from api.models import Office
+from api.models import Officer
+from api.models import Organization
+from api.models import Panelist
+from api.models import Participant
+from api.models import Person
+from api.models import Repertory
+from api.models import Round
+from api.models import Score
+from api.models import Session
+from api.models import Song
+from api.models import User
+from api.models import Venue
 
 
 class AppearanceFactory(DjangoModelFactory):

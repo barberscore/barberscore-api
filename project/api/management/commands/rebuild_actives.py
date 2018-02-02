@@ -1,12 +1,9 @@
 # Django
 from django.core.management.base import BaseCommand
 
-from api.models import (
-    Session,
-)
-from api.tasks import (
-    create_actives_report,
-)
+# First-Party
+from api.models import Session
+from api.tasks import create_actives_report
 
 
 class Command(BaseCommand):

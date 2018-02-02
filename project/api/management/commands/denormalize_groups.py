@@ -1,12 +1,9 @@
 # Django
-from django.core.management.base import (
-    BaseCommand,
-)
+from django.core.management.base import BaseCommand
 
-from api.models import (
-    Group,
-    Organization,
-)
+# First-Party
+from api.models import Group
+from api.models import Organization
 
 
 class Command(BaseCommand):

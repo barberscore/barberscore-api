@@ -1,16 +1,10 @@
 
 # Django
-from django.core.management.base import (
-    BaseCommand,
-)
+from django.core.management.base import BaseCommand
 
-from api.models import (
-    Group,
-)
-
-from api.tasks import (
-    update_group_from_bhs,
-)
+# First-Party
+from api.models import Group
+from api.tasks import update_group_from_bhs
 
 
 class Command(BaseCommand):

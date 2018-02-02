@@ -6,34 +6,32 @@ from rest_framework_json_api import serializers
 
 # Local
 from .fields import TimezoneField
-from .models import (
-    Appearance,
-    Assignment,
-    Award,
-    Chart,
-    Contest,
-    Contestant,
-    Convention,
-    Competitor,
-    Entry,
-    Grantor,
-    Grid,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Organization,
-    Panelist,
-    Participant,
-    Person,
-    Repertory,
-    Round,
-    Score,
-    Session,
-    Song,
-    User,
-    Venue,
-)
+from .models import Appearance
+from .models import Assignment
+from .models import Award
+from .models import Chart
+from .models import Competitor
+from .models import Contest
+from .models import Contestant
+from .models import Convention
+from .models import Entry
+from .models import Grantor
+from .models import Grid
+from .models import Group
+from .models import Member
+from .models import Office
+from .models import Officer
+from .models import Organization
+from .models import Panelist
+from .models import Participant
+from .models import Person
+from .models import Repertory
+from .models import Round
+from .models import Score
+from .models import Session
+from .models import Song
+from .models import User
+from .models import Venue
 
 
 class AppearanceSerializer(serializers.ModelSerializer):

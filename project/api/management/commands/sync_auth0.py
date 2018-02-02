@@ -3,13 +3,10 @@ from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import User
-
-from api.tasks import (
-    get_auth0_accounts,
-    delete_auth0_account_orphan,
-    update_auth0_account_from_user,
-    create_auth0_account_from_user,
-)
+from api.tasks import create_auth0_account_from_user
+from api.tasks import delete_auth0_account_orphan
+from api.tasks import get_auth0_accounts
+from api.tasks import update_auth0_account_from_user
 
 
 class Command(BaseCommand):

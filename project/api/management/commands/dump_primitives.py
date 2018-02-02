@@ -1,5 +1,6 @@
 # Django
 # Standard Libary
+# Standard Libary
 import json
 from itertools import chain
 
@@ -8,11 +9,9 @@ from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 
 # First-Party
-from api.models import (
-    Award,
-    Entity,
-    Office,
-)
+from api.models import Award
+from api.models import Entity
+from api.models import Office
 
 
 class Command(BaseCommand):

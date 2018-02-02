@@ -1,61 +1,59 @@
+# Django
 from django.core.management.base import BaseCommand
+
 # First-Party
-from api.factories import (
-    AppearanceFactory,
-    AssignmentFactory,
-    AwardFactory,
-    ChartFactory,
-    ContestantFactory,
-    ContestFactory,
-    ConventionFactory,
-    CompetitorFactory,
-    EnrollmentFactory,
-    EntryFactory,
-    GrantorFactory,
-    GroupFactory,
-    MemberFactory,
-    OfficeFactory,
-    OfficerFactory,
-    OrganizationFactory,
-    PanelistFactory,
-    ParticipantFactory,
-    PersonFactory,
-    RepertoryFactory,
-    RoundFactory,
-    ScoreFactory,
-    SessionFactory,
-    SongFactory,
-    UserFactory,
-    VenueFactory,
-)
-from api.models import (
-    Appearance,
-    Assignment,
-    Award,
-    Chart,
-    Contest,
-    Contestant,
-    Convention,
-    Competitor,
-    Enrollment,
-    Entry,
-    Grantor,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Organization,
-    Panelist,
-    Participant,
-    Person,
-    Repertory,
-    Round,
-    Score,
-    Session,
-    Song,
-    User,
-    Venue,
-)
+from api.factories import AppearanceFactory
+from api.factories import AssignmentFactory
+from api.factories import AwardFactory
+from api.factories import ChartFactory
+from api.factories import CompetitorFactory
+from api.factories import ContestantFactory
+from api.factories import ContestFactory
+from api.factories import ConventionFactory
+from api.factories import EnrollmentFactory
+from api.factories import EntryFactory
+from api.factories import GrantorFactory
+from api.factories import GroupFactory
+from api.factories import MemberFactory
+from api.factories import OfficeFactory
+from api.factories import OfficerFactory
+from api.factories import OrganizationFactory
+from api.factories import PanelistFactory
+from api.factories import ParticipantFactory
+from api.factories import PersonFactory
+from api.factories import RepertoryFactory
+from api.factories import RoundFactory
+from api.factories import ScoreFactory
+from api.factories import SessionFactory
+from api.factories import SongFactory
+from api.factories import UserFactory
+from api.factories import VenueFactory
+from api.models import Appearance
+from api.models import Assignment
+from api.models import Award
+from api.models import Chart
+from api.models import Competitor
+from api.models import Contest
+from api.models import Contestant
+from api.models import Convention
+from api.models import Enrollment
+from api.models import Entry
+from api.models import Grantor
+from api.models import Group
+from api.models import Member
+from api.models import Office
+from api.models import Officer
+from api.models import Organization
+from api.models import Panelist
+from api.models import Participant
+from api.models import Person
+from api.models import Repertory
+from api.models import Round
+from api.models import Score
+from api.models import Session
+from api.models import Song
+from api.models import User
+from api.models import Venue
 
 
 class Command(BaseCommand):

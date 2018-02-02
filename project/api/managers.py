@@ -1,21 +1,19 @@
+# Standard Libary
 import logging
 
-# Django
-from django.contrib.auth.models import BaseUserManager
-
-from django.core.validators import (
-    validate_email,
-    URLValidator,
-    RegexValidator,
-)
-from django.core.exceptions import ValidationError
-
-from django.db.models import Manager
-from django.db import IntegrityError
-
-from django.apps import apps as api_apps
-from openpyxl import Workbook
+# Third-Party
 from cloudinary.uploader import upload
+from openpyxl import Workbook
+
+# Django
+from django.apps import apps as api_apps
+from django.contrib.auth.models import BaseUserManager
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.core.validators import URLValidator
+from django.core.validators import validate_email
+from django.db import IntegrityError
+from django.db.models import Manager
 
 api = api_apps.get_app_config('api')
 bhs = api_apps.get_app_config('bhs')

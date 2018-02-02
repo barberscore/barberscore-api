@@ -2,29 +2,27 @@
 from django.contrib import admin
 
 # Local
-from .models import (
-    Appearance,
-    Assignment,
-    Award,
-    Contest,
-    Contestant,
-    Convention,
-    Competitor,
-    Enrollment,
-    Entry,
-    Grantor,
-    Grid,
-    Group,
-    Member,
-    Officer,
-    Panelist,
-    Participant,
-    Repertory,
-    Round,
-    Score,
-    Session,
-    Song,
-)
+from .models import Appearance
+from .models import Assignment
+from .models import Award
+from .models import Competitor
+from .models import Contest
+from .models import Contestant
+from .models import Convention
+from .models import Enrollment
+from .models import Entry
+from .models import Grantor
+from .models import Grid
+from .models import Group
+from .models import Member
+from .models import Officer
+from .models import Panelist
+from .models import Participant
+from .models import Repertory
+from .models import Round
+from .models import Score
+from .models import Session
+from .models import Song
 
 
 class AppearanceInline(admin.TabularInline):

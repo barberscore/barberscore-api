@@ -2,114 +2,97 @@
 import logging
 
 # Third-Party
+from cloudinary.uploader import upload_resource
 from django_filters.rest_framework import DjangoFilterBackend
 from django_fsm_log.models import StateLog
-from drf_fsm_transitions.viewset_mixins import (
-    get_viewset_transition_action_mixin,
-)
+from drf_fsm_transitions.viewset_mixins import \
+    get_viewset_transition_action_mixin
 from dry_rest_permissions.generics import DRYPermissions
-from rest_framework import (
-    status,
-    viewsets,
-)
-from rest_framework.decorators import (
-    detail_route,
-    parser_classes,
-)
-from rest_framework.parsers import (
-    FormParser,
-    MultiPartParser,
-)
-from rest_framework.permissions import (
-    AllowAny,
-)
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import FormParser
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
-from cloudinary.uploader import upload_resource
 
 # Local
-from .backends import (
-    CoalesceFilterBackend,
-)
-from .filters import (
-    AwardFilter,
-    ChartFilter,
-    ContestantFilter,
-    ConventionFilter,
-    CompetitorFilter,
-    EntryFilter,
-    GrantorFilter,
-    GroupFilter,
-    MemberFilter,
-    OfficeFilter,
-    OfficerFilter,
-    OrganizationFilter,
-    PanelistFilter,
-    ParticipantFilter,
-    PersonFilter,
-    RoundFilter,
-    ScoreFilter,
-    SessionFilter,
-    VenueFilter,
-)
-from .models import (
-    Appearance,
-    Assignment,
-    Award,
-    Chart,
-    Contest,
-    Contestant,
-    Convention,
-    Competitor,
-    Entry,
-    Grantor,
-    Grid,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Organization,
-    Panelist,
-    Participant,
-    Person,
-    Repertory,
-    Round,
-    Score,
-    Session,
-    Song,
-    User,
-    Venue,
-)
-from .serializers import (
-    AppearanceSerializer,
-    AssignmentSerializer,
-    AwardSerializer,
-    ChartSerializer,
-    ContestantSerializer,
-    ContestSerializer,
-    ConventionSerializer,
-    CompetitorSerializer,
-    EntrySerializer,
-    GrantorSerializer,
-    GridSerializer,
-    GroupSerializer,
-    MemberSerializer,
-    OfficeCSVSerializer,
-    OfficerSerializer,
-    OfficeSerializer,
-    OrganizationSerializer,
-    PanelistSerializer,
-    ParticipantSerializer,
-    PersonSerializer,
-    RepertorySerializer,
-    RoundSerializer,
-    ScoreSerializer,
-    SessionSerializer,
-    SongSerializer,
-    StateLogSerializer,
-    UserSerializer,
-    VenueSerializer,
-)
+from .backends import CoalesceFilterBackend
+from .filters import AwardFilter
+from .filters import ChartFilter
+from .filters import CompetitorFilter
+from .filters import ContestantFilter
+from .filters import ConventionFilter
+from .filters import EntryFilter
+from .filters import GrantorFilter
+from .filters import GroupFilter
+from .filters import MemberFilter
+from .filters import OfficeFilter
+from .filters import OfficerFilter
+from .filters import OrganizationFilter
+from .filters import PanelistFilter
+from .filters import ParticipantFilter
+from .filters import PersonFilter
+from .filters import RoundFilter
+from .filters import ScoreFilter
+from .filters import SessionFilter
+from .filters import VenueFilter
+from .models import Appearance
+from .models import Assignment
+from .models import Award
+from .models import Chart
+from .models import Competitor
+from .models import Contest
+from .models import Contestant
+from .models import Convention
+from .models import Entry
+from .models import Grantor
+from .models import Grid
+from .models import Group
+from .models import Member
+from .models import Office
+from .models import Officer
+from .models import Organization
+from .models import Panelist
+from .models import Participant
+from .models import Person
+from .models import Repertory
+from .models import Round
+from .models import Score
+from .models import Session
+from .models import Song
+from .models import User
+from .models import Venue
+from .serializers import AppearanceSerializer
+from .serializers import AssignmentSerializer
+from .serializers import AwardSerializer
+from .serializers import ChartSerializer
+from .serializers import CompetitorSerializer
+from .serializers import ContestantSerializer
+from .serializers import ContestSerializer
+from .serializers import ConventionSerializer
+from .serializers import EntrySerializer
+from .serializers import GrantorSerializer
+from .serializers import GridSerializer
+from .serializers import GroupSerializer
+from .serializers import MemberSerializer
+from .serializers import OfficeCSVSerializer
+from .serializers import OfficerSerializer
+from .serializers import OfficeSerializer
+from .serializers import OrganizationSerializer
+from .serializers import PanelistSerializer
+from .serializers import ParticipantSerializer
+from .serializers import PersonSerializer
+from .serializers import RepertorySerializer
+from .serializers import RoundSerializer
+from .serializers import ScoreSerializer
+from .serializers import SessionSerializer
+from .serializers import SongSerializer
+from .serializers import StateLogSerializer
+from .serializers import UserSerializer
+from .serializers import VenueSerializer
 
 log = logging.getLogger(__name__)
 

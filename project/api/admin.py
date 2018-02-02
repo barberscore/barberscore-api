@@ -1,5 +1,6 @@
 # Django
 # Third-Party
+# Third-Party
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 
@@ -8,70 +9,62 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
-from .forms import (
-    UserChangeForm,
-    UserCreationForm,
-)
-from .inlines import (
-    AppearanceInline,
-    AssignmentInline,
-    AwardInline,
-    ContestantInline,
-    ContestInline,
-    ConventionInline,
-    CompetitorInline,
-    EnrollmentInline,
-    EntryInline,
-    GrantorInline,
-    GridInline,
-    GroupInline,
-    MemberInline,
-    OfficerInline,
-    PanelistInline,
-    ParticipantInline,
-    RepertoryInline,
-    RoundInline,
-    ScoreInline,
-    SessionInline,
-    SongInline,
-)
-from .models import (
-    Appearance,
-    Assignment,
-    Award,
-    Chart,
-    Contest,
-    Contestant,
-    Convention,
-    Competitor,
-    Enrollment,
-    Entry,
-    Grantor,
-    Grid,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Organization,
-    Panelist,
-    Participant,
-    Person,
-    Repertory,
-    Round,
-    Score,
-    Session,
-    Song,
-    User,
-    Venue,
-)
-from .filters import (
-    OrganizationListFilter,
-    ParentOrganizationListFilter,
-    SessionOrganizationListFilter,
-    ConventionOrganizationListFilter,
-    DistrictListFilter,
-    DivisionListFilter,
-)
+from .filters import ConventionOrganizationListFilter
+from .filters import DistrictListFilter
+from .filters import DivisionListFilter
+from .filters import OrganizationListFilter
+from .filters import ParentOrganizationListFilter
+from .filters import SessionOrganizationListFilter
+from .forms import UserChangeForm
+from .forms import UserCreationForm
+from .inlines import AppearanceInline
+from .inlines import AssignmentInline
+from .inlines import AwardInline
+from .inlines import CompetitorInline
+from .inlines import ContestantInline
+from .inlines import ContestInline
+from .inlines import ConventionInline
+from .inlines import EnrollmentInline
+from .inlines import EntryInline
+from .inlines import GrantorInline
+from .inlines import GridInline
+from .inlines import GroupInline
+from .inlines import MemberInline
+from .inlines import OfficerInline
+from .inlines import PanelistInline
+from .inlines import ParticipantInline
+from .inlines import RepertoryInline
+from .inlines import RoundInline
+from .inlines import ScoreInline
+from .inlines import SessionInline
+from .inlines import SongInline
+from .models import Appearance
+from .models import Assignment
+from .models import Award
+from .models import Chart
+from .models import Competitor
+from .models import Contest
+from .models import Contestant
+from .models import Convention
+from .models import Enrollment
+from .models import Entry
+from .models import Grantor
+from .models import Grid
+from .models import Group
+from .models import Member
+from .models import Office
+from .models import Officer
+from .models import Organization
+from .models import Panelist
+from .models import Participant
+from .models import Person
+from .models import Repertory
+from .models import Round
+from .models import Score
+from .models import Session
+from .models import Song
+from .models import User
+from .models import Venue
 
 
 @admin.register(Appearance)

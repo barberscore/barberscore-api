@@ -1,23 +1,25 @@
+# Standard Libary
+import datetime
 import logging
 import time
-import datetime
 
+# Third-Party
+import pydf
+from auth0.v3.authentication import GetToken
+from auth0.v3.exceptions import Auth0Error
+from auth0.v3.management import Auth0
+from cloudinary.uploader import upload_resource
+from django_rq import job
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+
+# Django
 from django.apps import apps as api_apps
+from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django_rq import job
-
-import pydf
-
-from django.conf import settings
 from django.utils.text import slugify
-from cloudinary.uploader import upload_resource
-from openpyxl.writer.excel import save_virtual_workbook
-from openpyxl import Workbook
-from django.core.cache import cache
-from auth0.v3.authentication import GetToken
-from auth0.v3.management import Auth0
-from auth0.v3.exceptions import Auth0Error
 
 log = logging.getLogger(__name__)
 api = api_apps.get_app_config('api')

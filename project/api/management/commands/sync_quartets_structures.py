@@ -1,19 +1,11 @@
 
 # Django
-from django.core.management.base import (
-    BaseCommand,
-)
+from django.core.management.base import BaseCommand
 
-from api.models import (
-    Group,
-)
-
-from bhs.models import (
-    Structure,
-)
-from api.tasks import (
-    update_or_create_group_from_structure,
-)
+# First-Party
+from api.models import Group
+from api.tasks import update_or_create_group_from_structure
+from bhs.models import Structure
 
 
 class Command(BaseCommand):

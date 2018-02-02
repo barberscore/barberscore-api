@@ -3,25 +3,19 @@ import datetime
 import logging
 
 # Django
-from django.core.management.base import (
-    BaseCommand,
-    CommandError,
-)
+from django.core.management.base import BaseCommand
+from django.core.management.base import CommandError
 from django.utils import timezone
 
-from api.models import (
-    Person,
-    Group,
-    Enrollment,
-    Member,
-    Organization,
-)
-
-from bhs.models import (
-    Human,
-    SMJoin,
-    Structure,
-)
+# First-Party
+from api.models import Enrollment
+from api.models import Group
+from api.models import Member
+from api.models import Organization
+from api.models import Person
+from bhs.models import Human
+from bhs.models import SMJoin
+from bhs.models import Structure
 
 log = logging.getLogger('updater')
 

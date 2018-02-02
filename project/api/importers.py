@@ -7,30 +7,24 @@ from datetime import datetime
 import requests
 
 # Django
-from django.db import (
-    IntegrityError,
-    transaction,
-)
-from django.utils import (
-    dateparse,
-    encoding,
-)
+from django.db import IntegrityError
+from django.db import transaction
+from django.utils import dateparse
+from django.utils import encoding
 
 # Local
-from .models import (
-    Chart,
-    Contestant,
-    Entry,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Participant,
-    Person,
-    Repertory,
-    Session,
-    User,
-)
+from .models import Chart
+from .models import Contestant
+from .models import Entry
+from .models import Group
+from .models import Member
+from .models import Office
+from .models import Officer
+from .models import Participant
+from .models import Person
+from .models import Repertory
+from .models import Session
+from .models import User
 
 log = logging.getLogger('importer')
 

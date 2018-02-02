@@ -1,40 +1,33 @@
 # Third-Party
-from django_filters.rest_framework import (
-    FilterSet,
-    OrderingFilter,
-)
+from django_filters import CharFilter
+from django_filters import NumberFilter
+from django_filters import UUIDFilter
+from django_filters.rest_framework import FilterSet
+from django_filters.rest_framework import OrderingFilter
 
-from django_filters import (
-    UUIDFilter,
-    NumberFilter,
-    CharFilter,
-)
-
-
+# Django
 from django.contrib import admin
 
 # Local
-from .models import (
-    Award,
-    Chart,
-    Contestant,
-    Convention,
-    Competitor,
-    Entry,
-    Grantor,
-    Group,
-    Member,
-    Office,
-    Officer,
-    Organization,
-    Panelist,
-    Participant,
-    Person,
-    Round,
-    Score,
-    Session,
-    Venue,
-)
+from .models import Award
+from .models import Chart
+from .models import Competitor
+from .models import Contestant
+from .models import Convention
+from .models import Entry
+from .models import Grantor
+from .models import Group
+from .models import Member
+from .models import Office
+from .models import Officer
+from .models import Organization
+from .models import Panelist
+from .models import Participant
+from .models import Person
+from .models import Round
+from .models import Score
+from .models import Session
+from .models import Venue
 
 
 class DistrictListFilter(admin.SimpleListFilter):

@@ -5,9 +5,7 @@ from cloudinary.models import CloudinaryField
 from rest_framework_json_api import serializers
 
 # Django
-from django.core.exceptions import (
-    ValidationError,
-)
+from django.core.exceptions import ValidationError
 
 
 class CloudinaryRenameField(CloudinaryField):
