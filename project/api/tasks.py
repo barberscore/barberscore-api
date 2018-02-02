@@ -20,7 +20,7 @@ from auth0.v3.management import Auth0
 from auth0.v3.exceptions import Auth0Error
 
 log = logging.getLogger(__name__)
-config = api_apps.get_app_config('api')
+api = api_apps.get_app_config('api')
 bhs = api_apps.get_app_config('bhs')
 
 
@@ -154,7 +154,7 @@ def delete_auth0_account_from_user(user):
 
 @job
 def update_user_from_person(person):
-    User = config.get_model('User')
+    User = api.get_model('User')
     user = getattr(person, 'user', None)
     if not user:
         user = User.objects.create(
@@ -172,7 +172,7 @@ def update_user_from_person(person):
 
 @job
 def update_person_status_from_subscription(subscription):
-    Person = config.get_model('Person')
+    Person = api.get_model('Person')
     try:
         person = Person.objects.get(bhs_pk=subscription.human.id)
     except Person.DoesNotExist:
@@ -189,7 +189,7 @@ def update_person_status_from_subscription(subscription):
 
 @job
 def update_is_senior(group):
-    Person = config.get_model('Person')
+    Person = api.get_model('Person')
     midwinter = datetime.date(2019, 1, 26)
     persons = Person.objects.filter(
         members__group=group,
@@ -212,8 +212,8 @@ def update_is_senior(group):
 
 @job
 def update_group_from_bhs(group):
-    Group = config.get_model('Group')
-    Member = config.get_model('Member')
+    Group = api.get_model('Group')
+    Member = api.get_model('Member')
     Structure = bhs.get_model('Structure')
     SMJoin = bhs.get_model('SMJoin')
     if not group.bhs_pk:
@@ -238,7 +238,7 @@ def update_group_from_bhs(group):
 
 @job
 def update_person_from_bhs(person):
-    Person = config.get_model('Person')
+    Person = api.get_model('Person')
     Human = bhs.get_model('Human')
     if not person.bhs_pk:
         raise RuntimeError("No BHS link")
@@ -269,7 +269,7 @@ def update_person_from_bhs(person):
 
 @job
 def create_bbscores_report(session):
-    Entry = config.get_model('Entry')
+    Entry = api.get_model('Entry')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -329,9 +329,9 @@ def create_bbscores_report(session):
 
 @job
 def create_drcj_report(session):
-    Entry = config.get_model('Entry')
-    Organization = config.get_model('Organization')
-    Participant = config.get_model('Participant')
+    Entry = api.get_model('Entry')
+    Organization = api.get_model('Organization')
+    Participant = api.get_model('Participant')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -474,8 +474,8 @@ def create_drcj_report(session):
 
 @job
 def create_variance_report(appearance):
-    Score = config.get_model('Score')
-    Panelist = config.get_model('Panelist')
+    Score = api.get_model('Score')
+    Panelist = api.get_model('Panelist')
     songs = appearance.songs.order_by('num')
     scores = Score.objects.filter(
         kind=Score.KIND.official,
@@ -562,7 +562,7 @@ def create_ors_report(round):
 
 @job
 def create_oss_report(session):
-    Panelist = config.get_model('Panelist')
+    Panelist = api.get_model('Panelist')
     competitors = session.competitors.order_by(
         'rank',
         'tot_points'
@@ -607,7 +607,7 @@ def create_oss_report(session):
 
 @job
 def create_csa_report(competitor):
-    Panelist = config.get_model('Panelist')
+    Panelist = api.get_model('Panelist')
     panelists = Panelist.objects.filter(
         kind=Panelist.KIND.official,
         scores__song__appearance__competitor=competitor,
@@ -651,7 +651,7 @@ def create_csa_report(competitor):
 
 @job
 def create_sa_report(session):
-    Person = config.get_model('Person')
+    Person = api.get_model('Person')
     persons = Person.objects.filter(
         panelists__round__session=session,
     ).distinct(
@@ -688,7 +688,7 @@ def create_sa_report(session):
 
 @job
 def create_admins_report(session):
-    Entry = config.get_model('Entry')
+    Entry = api.get_model('Entry')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -738,9 +738,9 @@ def create_admins_report(session):
 
 @job
 def create_actives_report(session):
-    Member = config.get_model('Member')
-    Group = config.get_model('Group')
-    Organization = config.get_model('Organization')
+    Member = api.get_model('Member')
+    Group = api.get_model('Group')
+    Organization = api.get_model('Organization')
     organizations = Organization.objects.filter(
         awards__contests__in=session.contests.filter(
             status__gt=0,
@@ -866,11 +866,11 @@ def send_entry(template, context):
 @job
 def send_session(template, context):
     session = context['session']
-    Group = config.get_model('Group')
-    Member = config.get_model('Member')
-    Assignment = config.get_model('Assignment')
-    Organization = config.get_model('Organization')
-    Entry = config.get_model('Entry')
+    Group = api.get_model('Group')
+    Member = api.get_model('Member')
+    Assignment = api.get_model('Assignment')
+    Organization = api.get_model('Organization')
+    Entry = api.get_model('Entry')
     if session.status > session.STATUS.closed:
         # only send to existing entries
         contacts = Member.objects.filter(
@@ -934,7 +934,7 @@ def send_session(template, context):
 @job
 def send_session_reports(template, context):
     session = context['session']
-    Assignment = config.get_model('Assignment')
+    Assignment = api.get_model('Assignment')
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category__lte=Assignment.CATEGORY.ca,
