@@ -1,18 +1,21 @@
+import logging
 
 # Django
 from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import Group
-from api.tasks import update_or_create_group_from_structure
+from api.tasks import update_or_create_quartet_from_structure
 from bhs.models import Structure
+
+log = logging.getLogger('updater')
 
 
 class Command(BaseCommand):
-    help = "Command to sync groups and structures."
+    help = "Command to sync quartets and structures."
 
     def handle(self, *args, **options):
-        self.stdout.write("Updating groups and structures...")
+        self.stdout.write("Updating quartets and structures...")
 
         # Build list of structures
         structures = Structure.objects.filter(
@@ -29,9 +32,10 @@ class Command(BaseCommand):
             bhs_pk__in=structure_pks,
         )
         for orphan in orphans:
-            orphan.delete()
+            log.error("Delete orphan: {0}".format(orphan))
+            return
         # Creating/Update Groups
         self.stdout.write("Queuing group updates...")
         for structure in structures:
-            update_or_create_group_from_structure.delay(structure)
+            update_or_create_quartet_from_structure.delay(structure)
         self.stdout.write("Complete")

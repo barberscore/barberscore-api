@@ -142,7 +142,7 @@ def update_chorus_from_chapter(chorus):
 
 
 @job
-def update_members_from_enrollments(enrollment):
+def update_or_create_members_from_enrollments(enrollment):
     Member = api.get_model('Member')
     return Member.objects.update_or_create_from_enrollment(enrollment)
 

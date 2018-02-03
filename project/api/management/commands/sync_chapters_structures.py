@@ -1,11 +1,14 @@
+import logging
 
 # Django
 from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import Organization
-from api.tasks import update_or_create_organization_from_structure
+from api.tasks import update_or_create_chapter_from_structure
 from bhs.models import Structure
+
+log = logging.getLogger('updater')
 
 
 class Command(BaseCommand):
@@ -29,9 +32,10 @@ class Command(BaseCommand):
             bhs_pk__in=structure_pks,
         )
         for orphan in orphans:
-            orphan.delete()
+            log.error("Delete orphan: {0}".format(orphan))
+            return
         # Creating/Update Organizations
         self.stdout.write("Queuing organization updates...")
         for structure in structures:
-            update_or_create_organization_from_structure.delay(structure)
+            update_or_create_chapter_from_structure.delay(structure)
         self.stdout.write("Complete")
