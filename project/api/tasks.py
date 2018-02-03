@@ -112,22 +112,41 @@ def update_quartet_memberships(quartet):
     return quartet.update_memberships()
 
 
+@job
+def update_or_create_quartet_membership_from_join(join):
+    Member = api.get_model('Member')
+    return Member.objects.update_or_create_from_join(join)
+
+
 # Chapter/Chorus Updaters
 @job
-def update_or_create_organization_from_structure(structure):
+def update_or_create_chapter_from_structure(structure):
     Organization = api.get_model('Organization')
     return Organization.objects.update_or_create_from_structure(structure)
 
 
 @job
-def update_chorus(chorus):
-    chorus.email = chorus.organization.email
-    chorus.phone = chorus.organization.phone
-    chorus.website = chorus.organization.website
-    chorus.facebook = chorus.organization.facebook
-    chorus.twitter = chorus.organization.twitter
-    chorus.save()
-    return
+def update_chapter_enrollments(chapter):
+    return chapter.update_enrollments()
+
+
+@job
+def update_or_create_chapter_enrollment_from_join(join):
+    Enrollment = api.get_model('Enrollment')
+    return Enrollment.objects.update_or_create_from_join(join)
+
+
+@job
+def update_chorus_from_chapter(chorus):
+    return chorus.update_from_chapter()
+
+
+@job
+def update_members_from_enrollments(enrollment):
+    Member = api.get_model('Member')
+    return Member.objects.update_or_create_from_enrollment(enrollment)
+
+###
 
 
 @job

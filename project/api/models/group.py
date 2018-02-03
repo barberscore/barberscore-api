@@ -287,12 +287,32 @@ class Group(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def update_from_chapter(self):
+        if self.kind != self.KIND.chorus:
+            raise ValueError("Can only update choruses")
+        if self.status != self.STATUS.active:
+            raise ValueError("Can only update active choruses")
+        # Copy from chapter.
+        chapter = self.organization
+        if chapter.kind != self.KIND.chapter:
+            raise ValueError("Must have chapter as parent")
+        self.email = chapter.email
+        self.phone = chapter.phone
+        self.website = chapter.website
+        self.facebook = chapter.facebook
+        self.twitter = chapter.twitter
+        self.bhs_id = None
+        if chapter.status < 0:
+            self.status = self.STATUS.inactive
+        self.save()
+        return
+
     def update_memberships(self):
         if self.kind != self.KIND.quartet:
             raise RuntimeError("Can only update quartets")
         if not self.bhs_pk:
             raise RuntimeError("No BHS Link.")
-        Member = bhs.get_model('Member')
+        Member = api.get_model('Member')
         Structure = bhs.get_model('Structure')
         structure = Structure.objects.get(id=self.bhs_pk)
         js = structure.smjoins.values(

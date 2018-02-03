@@ -1,11 +1,8 @@
 # Standard Libary
-import datetime
 import logging
-import random
 import uuid
 
 # Third-Party
-from cloudinary.models import CloudinaryField
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -13,50 +10,19 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from ranking import Ranking
-from timezone_field import TimeZoneField
 
 # Django
 from django.apps import apps as api_apps
-from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.postgres.fields import ArrayField  # CIEmailField,
-from django.contrib.postgres.fields import FloatRangeField
-from django.contrib.postgres.fields import IntegerRangeField
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinValueValidator
 from django.core.validators import RegexValidator
 from django.db import models
-from django.utils.encoding import smart_text
-from django.utils.functional import cached_property
-from django.utils.html import format_html
-from django.utils.timezone import now
 
 # First-Party
 from api.fields import CloudinaryRenameField
-from api.managers import ChartManager
-from api.managers import ConventionManager
-from api.managers import EnrollmentManager
-from api.managers import GroupManager
-from api.managers import MemberManager
 from api.managers import OrganizationManager
-from api.managers import PersonManager
-from api.managers import UserManager
-from api.tasks import create_admins_report
-from api.tasks import create_bbscores_report
-from api.tasks import create_csa_report
-from api.tasks import create_drcj_report
-from api.tasks import create_ors_report
-from api.tasks import create_oss_report
-from api.tasks import create_sa_report
-from api.tasks import create_variance_report
-from api.tasks import send_entry
-from api.tasks import send_session
-from api.tasks import send_session_reports
 
-config = api_apps.get_app_config('api')
+api = api_apps.get_app_config('api')
+bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
 
@@ -295,6 +261,28 @@ class Organization(TimeStampedModel):
                 raise ValidationError(
                     {'status': 'Chapters may not have more than one active chorus.'}
                 )
+
+    # Methods
+    def update_enrollments(self):
+        if self.kind != self.KIND.chapter:
+            raise RuntimeError("Can only update chapters")
+        if not self.bhs_pk:
+            raise RuntimeError("No BHS Link.")
+        Enrollment = api.get_model('Enrollment')
+        Structure = bhs.get_model('Structure')
+        structure = Structure.objects.get(id=self.bhs_pk)
+        js = structure.smjoins.values(
+            'subscription__human',
+            'structure',
+        ).distinct()
+
+        for j in js:
+            m = structure.smjoins.filter(
+                subscription__human__id=j['subscription__human'],
+                structure__id=j['structure'],
+            ).latest('established_date', 'updated_ts')
+            Enrollment.objects.update_or_create_from_join(m)
+        return
 
     # Permissions
     @staticmethod

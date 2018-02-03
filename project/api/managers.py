@@ -73,25 +73,29 @@ class ConventionManager(Manager):
 
 class EnrollmentManager(Manager):
     def update_or_create_from_join(self, join, **kwargs):
-        if not join.status:
-            # Check to ensure it's the right record
-            raise ValueError("Must be canonical record.")
-        if not join.subscription.items_editable:
-            # Enrollments only correspond to is_editable=True.
-            raise ValueError("Must be is_editable subscription.")
+        if join.structure.kind not in ['chapter', ]:
+            raise ValueError("Must be chapter record.")
         # Flatten join objects
         subscription = join.subscription
         membership = join.membership
         structure = join.structure
         human = join.subscription.human
         # Get group
-        Organization = api.get_model('Organization')
-        organization, created = Organization.objects.update_or_create_from_structure(structure)
+        Group = api.get_model('Group')
+        group, created = Group.objects.get(bhs_pk=structure.id)
         # Get person
         Person = api.get_model('Person')
-        person, created = Person.objects.update_or_create_from_human(human)
-        # This assumes that only 'active' matches exactly.
-        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
+        person, created = Person.objects.get(bhs_pk=human.id)
+        status = getattr(
+            self.model.STATUS,
+            subscription.status,
+            self.model.STATUS.inactive
+        )
+        try:
+            part_clean = join.vocal_part.strip().casefold()
+        except AttributeError:
+            part_clean = ''
+        part = getattr(self.model.PART, part_clean, None)
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
         mem_code = getattr(self.model.MEM_CODE, membership.code)
@@ -101,6 +105,7 @@ class EnrollmentManager(Manager):
         # Set defaults and update
         defaults = {
             'status': status,
+            'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
             'mem_code': mem_code,
@@ -108,7 +113,7 @@ class EnrollmentManager(Manager):
         }
         enrollment, created = self.update_or_create(
             person=person,
-            organization=organization,
+            group=group,
             defaults=defaults,
         )
         return enrollment, created
@@ -358,10 +363,9 @@ class OrganizationManager(Manager):
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('organization', 'international')
-        # This will skip quartets
         kind = getattr(self.model.KIND, kind_clean, None)
-        if not kind:
-            raise ValueError("Can only update organizations")
+        if kind != self.model.KIND.chapter:
+            raise ValueError("Can only update chapters.")
         name = structure.name.strip()
         # Map to the internal designation
         STATUS = {
@@ -413,32 +417,13 @@ class OrganizationManager(Manager):
             defaults=defaults,
         )
         if created:
-            # Set the default organization UNLESS there is a division
+            # Set the default organization on create only.
             Organization = api.get_model('Organization')
             parent = Organization.objects.get(
                 bhs_pk=structure.parent.id,
             )
             organization.parent = parent
             organization.status = getattr(self.model.STATUS, 'active')
-            # organization.save()
-            # DISTPLUS = [
-            #     'EVG',
-            #     'FWD',
-            #     'LOL',
-            #     'MAD',
-            #     'NED',
-            #     'SWD',
-            # ]
-            # if structure.parent.chapter_code not in DISTPLUS:
-            #     # Can be overridden in BS, so only set once.
-            #     Organization = api.get_model('Organization')
-            #     parent = Organization.objects.get(
-            #         bhs_pk=structure.parent.id,
-            #     )
-            #     organization.parent = parent
-            # else:
-            #     organization.parent = parent
-            #     organization.status = getattr(self.model.STATUS, 'new')
             organization.save()
         return organization, created
 
@@ -518,12 +503,8 @@ class PersonManager(Manager):
 
 class MemberManager(Manager):
     def update_or_create_from_join(self, join, **kwargs):
-        if join.structure.kind not in ['quartet', 'chapter']:
-            # Members can only be chapter or quartet.
-            raise ValueError("Must be quartet or chapter record.")
-        # if join.structure.kind == 'quartet' and not join.status:
-        #     # Check to ensure it's the right record
-        #     raise ValueError("Must be canonical record.")
+        if join.structure.kind not in ['quartet', ]:
+            raise ValueError("Must be quartet record.")
         # Flatten join objects
         subscription = join.subscription
         membership = join.membership
@@ -531,29 +512,15 @@ class MemberManager(Manager):
         human = join.subscription.human
         # Get group
         Group = api.get_model('Group')
-        group, created = Group.objects.update_or_create_from_structure(structure)
+        group = Group.objects.get(bhs_pk=structure.id)
         # Get person
         Person = api.get_model('Person')
-        person, created = Person.objects.update_or_create_from_human(human)
+        person = Person.objects.get(bhs_pk=human.id)
         status = getattr(
             self.model.STATUS,
             subscription.status,
             self.model.STATUS.inactive
         )
-        # # This assumes that only 'active' matches exactly.
-        # if structure.kind == 'quartet':
-        #     status = getattr(
-        #         self.model.STATUS,
-        #         subscription.status,
-        #         self.model.STATUS.inactive
-        #     )
-        # # Multiple chapter in subscriptions.
-        # if structure.kind == 'chapter':
-        #     if join.status:
-        #         status = self.model.STATUS.active
-        #     else:
-        #         status = self.model.STATUS.inactive
-        # TODO perhaps add chapter voice parts?
         try:
             part_clean = join.vocal_part.strip().casefold()
         except AttributeError:
@@ -589,6 +556,35 @@ class MemberManager(Manager):
             if roles:
                 member.is_admin = True
                 member.save()
+        return member, created
+
+    def update_or_create_from_enrollment(self, enrollment, **kwargs):
+        # Get group
+        Group = api.get_model('Group')
+        group = enrollment.organization.groups.get(status=Group.STATUS.active)
+        # Get person
+        person = enrollment.person
+        # Get fields
+        status = enrollment.status
+        part = enrollment.part
+        sub_status = enrollment.sub_status
+        mem_code = enrollment.mem_code
+        mem_status = enrollment.mem_status
+        bhs_pk = enrollment.bhs_pk
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'part': part,
+            'mem_status': mem_status,
+            'sub_status': sub_status,
+            'mem_code': mem_code,
+            'bhs_pk': bhs_pk,
+        }
+        member, created = self.update_or_create(
+            person=person,
+            group=group,
+            defaults=defaults,
+        )
         return member, created
 
 
