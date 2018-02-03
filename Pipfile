@@ -42,6 +42,7 @@ gunicorn = "*"
 ipython = "*"
 cloudinary = {git = "git://github.com/barberscore/pycloudinary.git"}
 
+
 [dev-packages]
 
 pytest = "*"
@@ -55,6 +56,7 @@ faker = "*"
 django-debug-toolbar = "*"
 isort = "*"
 graphviz = "*"
+legit = "*"
 
 
 [requires]
