@@ -294,23 +294,31 @@ class GroupManager(Manager):
         )
         # Set the default organization on create
         if created:
-            DISTPLUS = [
-                'EVG',
-                'FWD',
-                'LOL',
-                'MAD',
-                'NED',
-                'SWD',
-            ]
             Organization = api.get_model('Organization')
-            if structure.parent.chapter_code not in DISTPLUS:
-                # Set if quartet in district w/o divisions
-                group.organization = Organization.objects.get(
-                    bhs_pk=structure.parent.id,
-                )
-                group.status = self.model.STATUS.active
-            else:
-                group.organization = None
+            group.organization = Organization.objects.get(
+                bhs_pk=structure.parent.id,
+            )
+            group.status = self.model.STATUS.active
+            # DISTPLUS = [
+            #     'EVG',
+            #     'FWD',
+            #     'LOL',
+            #     'MAD',
+            #     'NED',
+            #     'SWD',
+            # ]
+            # Organization = api.get_model('Organization')
+            # if structure.parent.chapter_code not in DISTPLUS:
+            #     # Set if quartet in district w/o divisions
+            #     group.organization = Organization.objects.get(
+            #         bhs_pk=structure.parent.id,
+            #     )
+            #     group.status = self.model.STATUS.active
+            # else:
+            #     group.organization = Organization.objects.get(
+            #         bhs_pk=structure.parent.id,
+            #     )
+            #     group.status = self.model.STATUS.active
             group.save()
         return group, created
 
@@ -422,26 +430,33 @@ class OrganizationManager(Manager):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        # Set the default organization UNLESS there is a division
-        DISTPLUS = [
-            'EVG',
-            'FWD',
-            'LOL',
-            'MAD',
-            'NED',
-            'SWD',
-        ]
         if created:
-            if structure.parent.chapter_code not in DISTPLUS:
-                # Can be overridden in BS, so only set once.
-                Organization = api.get_model('Organization')
-                parent = Organization.objects.get(
-                    bhs_pk=structure.parent.id,
-                )
-                organization.parent = parent
-            else:
-                organization.parent = parent
-                organization.status = getattr(self.model.STATUS, 'new')
+            # Set the default organization UNLESS there is a division
+            Organization = api.get_model('Organization')
+            parent = Organization.objects.get(
+                bhs_pk=structure.parent.id,
+            )
+            organization.parent = parent
+            organization.status = getattr(self.model.STATUS, 'active')
+            # organization.save()
+            # DISTPLUS = [
+            #     'EVG',
+            #     'FWD',
+            #     'LOL',
+            #     'MAD',
+            #     'NED',
+            #     'SWD',
+            # ]
+            # if structure.parent.chapter_code not in DISTPLUS:
+            #     # Can be overridden in BS, so only set once.
+            #     Organization = api.get_model('Organization')
+            #     parent = Organization.objects.get(
+            #         bhs_pk=structure.parent.id,
+            #     )
+            #     organization.parent = parent
+            # else:
+            #     organization.parent = parent
+            #     organization.status = getattr(self.model.STATUS, 'new')
             organization.save()
         return organization, created
 
