@@ -246,24 +246,23 @@ def update_group_from_bhs(group):
     Group = api.get_model('Group')
     Member = api.get_model('Member')
     Structure = bhs.get_model('Structure')
-    SMJoin = bhs.get_model('SMJoin')
     if not group.bhs_pk:
         return
     structure = Structure.objects.get(id=group.bhs_pk)
     group, created = Group.objects.update_or_create_from_structure(structure)
-    if group.kind == Group.KIND.quartet:
-        js = SMJoin.objects.filter(
-            status=True,
-            membership__structure=structure,
-        )
-    elif group.kind == Group.KIND.chorus:
-        js = SMJoin.objects.filter(
-            membership__structure=structure,
-        )
-    else:
-        raise RuntimeError("Group must be quartet or chorus.")
+
+    js = structure.smjoins.all(
+    ).values(
+        'subscription__human',
+        'structure',
+    ).distinct()
+
     for j in js:
-        Member.objects.update_or_create_from_join(j)
+        m = structure.smjoins.filter(
+            subscription__human__id=j['subscription__human'],
+            structure__id=j['structure'],
+        ).latest('established_date', 'updated_ts')
+        Member.objects.update_or_create_from_join(m)
     return group
 
 
