@@ -88,35 +88,10 @@ def get_auth0_accounts():
     return output
 
 
-# Person Updaters
 @job
 def update_or_create_person_from_human(human):
     Person = api.get_model('Person')
     return Person.objects.update_or_create_from_human(human)
-
-
-@job
-def update_bhs_subscription_from_person(person):
-    return person.update_bhs_subscription()
-
-
-# Quartet Updaters
-@job
-def update_or_create_quartet_from_structure(structure):
-    Group = api.get_model('Group')
-    return Group.objects.update_or_create_from_structure(structure)
-
-
-@job
-def update_quartet_memberships(quartet):
-    return quartet.update_memberships()
-
-
-# Chapter/Chorus Updaters
-@job
-def update_or_create_organization_from_structure(structure):
-    Organization = api.get_model('Organization')
-    return Organization.objects.update_or_create_from_structure(structure)
 
 
 @job
@@ -128,6 +103,18 @@ def update_chorus(chorus):
     chorus.twitter = chorus.organization.twitter
     chorus.save()
     return
+
+
+@job
+def update_or_create_group_from_structure(structure):
+    Group = api.get_model('Group')
+    return Group.objects.update_or_create_from_structure(structure)
+
+
+@job
+def update_or_create_organization_from_structure(structure):
+    Organization = api.get_model('Organization')
+    return Organization.objects.update_or_create_from_structure(structure)
 
 
 @job

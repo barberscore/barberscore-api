@@ -56,7 +56,7 @@ from api.tasks import send_entry
 from api.tasks import send_session
 from api.tasks import send_session_reports
 
-config = api_apps.get_app_config('api')
+bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
 
@@ -386,6 +386,33 @@ class Person(TimeStampedModel):
         if self.email:
             self.email = self.email.lower()
         super().save(*args, **kwargs)
+
+    # Methods
+    def update_bhs_subscription(self):
+        Human = bhs.get_model('Human')
+        if not self.bhs_pk:
+            raise RuntimeError("No BHS PK")
+        try:
+            human = Human.objects.get(id=self.bhs_pk)
+        except Human.DoesNotExist:
+            raise RuntimeError("No Human in BHS")
+        subscription = human.subscriptions.filter(
+            items_editable=True,
+        ).latest('created_ts')
+        if subscription:
+            status = getattr(
+                self.STATUS,
+                subscription.status,
+                self.STATUS.inactive
+            )
+            current_through = subscription.current_through
+        else:
+            status = self.STATUS.new
+            current_through = None
+        self.status = status
+        self.current_through = current_through
+        self.save()
+        return status, current_through
 
     # Permissions
     @staticmethod

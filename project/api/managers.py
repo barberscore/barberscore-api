@@ -119,9 +119,9 @@ class GroupManager(Manager):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('chapter', 'chorus')
         kind = getattr(self.model.KIND, kind_clean)
+        # Check for quartets
         if kind != self.model.KIND.quartet:
             raise ValueError("Can only update quartets")
-            # Check for quartets
         if structure.name:
             # If the name has been assigned, use that.
             name = structure.name.strip()
@@ -154,7 +154,9 @@ class GroupManager(Manager):
             'suspended-membership': 'inactive',
         }
         status_clean = STATUS[str(structure.status)]
+        # And set the status accordingly.
         status = getattr(self.model.STATUS, status_clean)
+        # Clean the raw inputs.
         email = structure.email.strip()
         try:
             validate_email(email)
@@ -299,26 +301,6 @@ class GroupManager(Manager):
                 bhs_pk=structure.parent.id,
             )
             group.status = self.model.STATUS.active
-            # DISTPLUS = [
-            #     'EVG',
-            #     'FWD',
-            #     'LOL',
-            #     'MAD',
-            #     'NED',
-            #     'SWD',
-            # ]
-            # Organization = api.get_model('Organization')
-            # if structure.parent.chapter_code not in DISTPLUS:
-            #     # Set if quartet in district w/o divisions
-            #     group.organization = Organization.objects.get(
-            #         bhs_pk=structure.parent.id,
-            #     )
-            #     group.status = self.model.STATUS.active
-            # else:
-            #     group.organization = Organization.objects.get(
-            #         bhs_pk=structure.parent.id,
-            #     )
-            #     group.status = self.model.STATUS.active
             group.save()
         return group, created
 
@@ -532,32 +514,6 @@ class PersonManager(Manager):
                 defaults=defaults,
             )
         return person, created
-
-    def update_from_join(self, join, **kwargs):
-        # Set the BHS Subscription
-        if not join.status:
-            # Check to ensure it's the right record
-            raise ValueError("Must be canonical record.")
-        if join.structure.kind != 'organization':
-            # Only update organization records.
-            raise ValueError("Must be organization record.")
-        human = join.subscription.human
-        Person = api.get_model('Person')
-        person, created = Person.objects.update_or_create_from_human(human)
-        subscription = join.subscription
-        is_active = bool(subscription.status == 'active')
-        if is_active:
-            # If the subscription is active, make person active and set CT
-            status = self.model.STATUS.active
-            current_through = subscription.current_through
-        else:
-            # Otherwise, make inactive and set CT as None.
-            status = self.model.STATUS.inactive
-            current_through = None
-        person.status = status
-        person.current_through = current_through
-        person.save()
-        return person
 
 
 class MemberManager(Manager):

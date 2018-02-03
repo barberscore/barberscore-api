@@ -20,7 +20,8 @@ from django.db import models
 from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
 
-config = api_apps.get_app_config('api')
+api = api_apps.get_app_config('api')
+bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
 
@@ -284,6 +285,28 @@ class Group(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.nomen = self.name
         super().save(*args, **kwargs)
+
+    # Methods
+    def update_memberships(self):
+        if self.kind != self.KIND.quartet:
+            raise RuntimeError("Can only update quartets")
+        if not self.bhs_pk:
+            raise RuntimeError("No BHS Link.")
+        Member = bhs.get_model('Member')
+        Structure = bhs.get_model('Structure')
+        structure = Structure.objects.get(id=self.bhs_pk)
+        js = structure.smjoins.values(
+            'subscription__human',
+            'structure',
+        ).distinct()
+
+        for j in js:
+            m = structure.smjoins.filter(
+                subscription__human__id=j['subscription__human'],
+                structure__id=j['structure'],
+            ).latest('established_date', 'updated_ts')
+            Member.objects.update_or_create_from_join(m)
+        return
 
     # Permissions
     @staticmethod
