@@ -91,11 +91,6 @@ class EnrollmentManager(Manager):
             subscription.status,
             self.model.STATUS.inactive
         )
-        try:
-            part_clean = join.vocal_part.strip().casefold()
-        except AttributeError:
-            part_clean = ''
-        part = getattr(self.model.PART, part_clean, None)
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
         mem_code = getattr(self.model.MEM_CODE, membership.code)
@@ -105,7 +100,6 @@ class EnrollmentManager(Manager):
         # Set defaults and update
         defaults = {
             'status': status,
-            'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
             'mem_code': mem_code,
