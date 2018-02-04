@@ -294,7 +294,7 @@ class Group(TimeStampedModel):
             raise ValueError("Can only update active choruses")
         # Copy from chapter.
         chapter = self.organization
-        if chapter.kind != self.KIND.chapter:
+        if chapter.kind != chapter.KIND.chapter:
             raise ValueError("Must have chapter as parent")
         self.email = chapter.email
         self.phone = chapter.phone

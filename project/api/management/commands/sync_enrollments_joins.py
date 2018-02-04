@@ -4,7 +4,6 @@ import logging
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.models import Organization
 from api.tasks import update_or_create_chapter_enrollment_from_join
 from bhs.models import Structure
 
@@ -18,17 +17,13 @@ class Command(BaseCommand):
         self.stdout.write("Updating chapter enrollments...")
 
         # Build list of structures
-        chapters = Organization.objects.filter(
+        structures = Structure.objects.filter(
             kind='Chapter',
-            bhs_pk__isnull=False,
         )
         # Delete Orphans
         # Creating/Update Groups
         self.stdout.write("Queuing enrollment updates...")
-        for chapter in chapters:
-
-            structure = Structure.objects.get(id=chapter.bhs_pk)
-
+        for structure in structures:
             js = structure.smjoins.values(
                 'subscription__human',
                 'structure',

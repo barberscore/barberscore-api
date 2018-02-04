@@ -81,11 +81,11 @@ class EnrollmentManager(Manager):
         structure = join.structure
         human = join.subscription.human
         # Get group
-        Group = api.get_model('Group')
-        group, created = Group.objects.get(bhs_pk=structure.id)
+        Organization = api.get_model('Organization')
+        organization = Organization.objects.get(bhs_pk=structure.id)
         # Get person
         Person = api.get_model('Person')
-        person, created = Person.objects.get(bhs_pk=human.id)
+        person = Person.objects.get(bhs_pk=human.id)
         status = getattr(
             self.model.STATUS,
             subscription.status,
@@ -113,7 +113,7 @@ class EnrollmentManager(Manager):
         }
         enrollment, created = self.update_or_create(
             person=person,
-            group=group,
+            organization=organization,
             defaults=defaults,
         )
         return enrollment, created
@@ -566,7 +566,6 @@ class MemberManager(Manager):
         person = enrollment.person
         # Get fields
         status = enrollment.status
-        part = enrollment.part
         sub_status = enrollment.sub_status
         mem_code = enrollment.mem_code
         mem_status = enrollment.mem_status
@@ -574,7 +573,6 @@ class MemberManager(Manager):
         # Set defaults and update
         defaults = {
             'status': status,
-            'part': part,
             'mem_status': mem_status,
             'sub_status': sub_status,
             'mem_code': mem_code,

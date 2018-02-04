@@ -4,7 +4,6 @@ import logging
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.models import Group
 from api.tasks import update_or_create_quartet_membership_from_join
 from bhs.models import Structure
 
@@ -18,17 +17,13 @@ class Command(BaseCommand):
         self.stdout.write("Updating quartet memberships...")
 
         # Build list of structures
-        quartets = Group.objects.filter(
+        structures = Structure.objects.filter(
             kind='Quartet',
-            bhs_pk__isnull=False,
         )
         # Delete Orphans
         # Creating/Update Groups
         self.stdout.write("Queuing membership updates...")
-        for quartet in quartets:
-
-            structure = Structure.objects.get(id=quartet.bhs_pk)
-
+        for structure in structures:
             js = structure.smjoins.values(
                 'subscription__human',
                 'structure',
