@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.stdout.write("Queuing chorus member updates...")
         for enrollment in enrollments:
             django_rq.enqueue(
-                Member.objects.update_or_create_from_enrollments,
+                Member.objects.update_or_create_from_enrollment,
                 enrollment,
             )
         self.stdout.write("Complete")
