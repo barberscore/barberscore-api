@@ -301,7 +301,7 @@ class Group(TimeStampedModel):
         self.website = chapter.website
         self.facebook = chapter.facebook
         self.twitter = chapter.twitter
-        self.bhs_id = None
+        self.bhs_id = chapter.bhs_id
         if chapter.status < 0:
             self.status = self.STATUS.inactive
         self.save()
