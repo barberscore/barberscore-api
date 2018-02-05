@@ -1,3 +1,4 @@
+import django_rq
 import logging
 
 # Django
@@ -5,7 +6,6 @@ from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import Group
-from api.tasks import update_or_create_quartet_from_structure
 from bhs.models import Structure
 
 log = logging.getLogger('updater')
@@ -37,5 +37,8 @@ class Command(BaseCommand):
         # Creating/Update Groups
         self.stdout.write("Queuing group updates...")
         for structure in structures:
-            update_or_create_quartet_from_structure.delay(structure)
+            django_rq.enqueue(
+                Group.objects.update_or_create_from_structure,
+                structure,
+            )
         self.stdout.write("Complete")

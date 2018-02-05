@@ -1,3 +1,4 @@
+import django_rq
 import logging
 
 # Django
@@ -5,7 +6,6 @@ from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import Organization
-from api.tasks import update_or_create_chapter_from_structure
 from bhs.models import Structure
 
 log = logging.getLogger('updater')
@@ -37,5 +37,8 @@ class Command(BaseCommand):
         # Creating/Update Organizations
         self.stdout.write("Queuing organization updates...")
         for structure in structures:
-            update_or_create_chapter_from_structure.delay(structure)
+            django_rq.enqueue(
+                Organization.objects.update_or_create_from_structure,
+                structure,
+            )
         self.stdout.write("Complete")

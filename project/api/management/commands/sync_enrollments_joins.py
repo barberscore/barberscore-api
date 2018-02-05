@@ -1,11 +1,11 @@
 import logging
-
+import django_rq
 # Django
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.tasks import update_or_create_chapter_enrollment_from_join
-from bhs.models import Structure
+from api.models import Enrollment
+from bhs.models import SMJoin
 
 log = logging.getLogger('updater')
 
@@ -16,23 +16,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Updating chapter enrollments...")
 
-        # Build list of structures
-        structures = Structure.objects.filter(
-            kind='Chapter',
-        )
-        # Delete Orphans
+        # Get unique active joins for Chapters
+        joins = SMJoin.objects.filter(
+            inactive_date=None,
+            structure__kind='Chapter',
+        ).values(
+            'id',
+            'subscription__human',
+            'structure',
+        ).distinct()
         # Creating/Update Groups
         self.stdout.write("Queuing enrollment updates...")
-        for structure in structures:
-            js = structure.smjoins.values(
-                'subscription__human',
-                'structure',
-            ).distinct()
-
-            for j in js:
-                m = structure.smjoins.filter(
-                    subscription__human__id=j['subscription__human'],
-                    structure__id=j['structure'],
-                ).latest('established_date', 'updated_ts')
-                update_or_create_chapter_enrollment_from_join.delay(m)
+        for join in joins:
+            django_rq.enqueue(
+                Enrollment.objects.update_or_create_from_join,
+                join,
+            )
         self.stdout.write("Complete")

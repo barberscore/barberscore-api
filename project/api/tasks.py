@@ -90,61 +90,26 @@ def get_auth0_accounts():
 
 # Person Updaters
 @job
-def update_or_create_person_from_human(human):
-    Person = api.get_model('Person')
-    return Person.objects.update_or_create_from_human(human)
-
-
-@job
 def update_bhs_subscription_from_person(person):
     return person.update_bhs_subscription()
 
 
 # Quartet Updaters
 @job
-def update_or_create_quartet_from_structure(structure):
-    Group = api.get_model('Group')
-    return Group.objects.update_or_create_from_structure(structure)
-
-
-@job
 def update_quartet_memberships(quartet):
     return quartet.update_memberships()
 
 
-@job
-def update_or_create_quartet_membership_from_join(join):
-    Member = api.get_model('Member')
-    return Member.objects.update_or_create_from_join(join)
-
-
 # Chapter/Chorus Updaters
-@job
-def update_or_create_chapter_from_structure(structure):
-    Organization = api.get_model('Organization')
-    return Organization.objects.update_or_create_from_structure(structure)
-
-
 @job
 def update_chapter_enrollments(chapter):
     return chapter.update_enrollments()
 
 
 @job
-def update_or_create_chapter_enrollment_from_join(join):
-    Enrollment = api.get_model('Enrollment')
-    return Enrollment.objects.update_or_create_from_join(join)
-
-
 @job
 def update_chorus_from_chapter(chorus):
     return chorus.update_from_chapter()
-
-
-@job
-def update_or_create_members_from_enrollments(enrollment):
-    Member = api.get_model('Member')
-    return Member.objects.update_or_create_from_enrollment(enrollment)
 
 ###
 

@@ -86,11 +86,12 @@ class EnrollmentManager(Manager):
         # Get person
         Person = api.get_model('Person')
         person = Person.objects.get(bhs_pk=human.id)
-        status = getattr(
-            self.model.STATUS,
-            subscription.status,
-            self.model.STATUS.inactive
-        )
+        # status = getattr(
+        #     self.model.STATUS,
+        #     subscription.status,
+        #     self.model.STATUS.inactive
+        # )
+        status = getattr(self.model.STATUS, 'active')
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
         mem_code = getattr(self.model.MEM_CODE, membership.code)
@@ -510,11 +511,12 @@ class MemberManager(Manager):
         # Get person
         Person = api.get_model('Person')
         person = Person.objects.get(bhs_pk=human.id)
-        status = getattr(
-            self.model.STATUS,
-            subscription.status,
-            self.model.STATUS.inactive
-        )
+        # status = getattr(
+        #     self.model.STATUS,
+        #     subscription.status,
+        #     self.model.STATUS.inactive
+        # )
+        status = getattr(self.model.STATUS, 'active')
         try:
             part_clean = join.vocal_part.strip().casefold()
         except AttributeError:

@@ -1,10 +1,10 @@
+import django_rq
 
 # Django
 from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import Person
-from api.tasks import update_or_create_person_from_human
 from bhs.models import Human
 
 
@@ -28,5 +28,8 @@ class Command(BaseCommand):
         # Creating/Update Persons
         self.stdout.write("Queuing person updates...")
         for human in humans:
-            update_or_create_person_from_human.delay(human)
+            django_rq.enqueue(
+                Person.objects.update_or_create_from_human,
+                human,
+            )
         self.stdout.write("Complete")
