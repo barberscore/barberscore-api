@@ -17,7 +17,7 @@ class Command(BaseCommand):
         self.stdout.write("Updating chapter enrollments...")
 
         # Get unique active joins for Chapters
-        joins = SMJoin.objects.filter(
+        dicts = SMJoin.objects.filter(
             inactive_date=None,
             structure__kind='Chapter',
         ).values(
@@ -25,6 +25,10 @@ class Command(BaseCommand):
             'subscription__human',
             'structure',
         ).distinct()
+        ids_list = [a['id'] for a in dicts]
+        joins = SMJoin.objects.filter(
+            id__in=ids_list,
+        )
         # Creating/Update Groups
         self.stdout.write("Queuing enrollment updates...")
         for join in joins:
