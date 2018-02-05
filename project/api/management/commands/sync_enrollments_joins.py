@@ -20,20 +20,16 @@ class Command(BaseCommand):
         dicts = SMJoin.objects.filter(
             inactive_date=None,
             structure__kind='Chapter',
-        ).values(
+        ).values_list(
             'id',
             'subscription__human',
             'structure',
-        ).distinct()
-        ids_list = [a['id'] for a in dicts]
-        joins = SMJoin.objects.filter(
-            id__in=ids_list,
         )
         # Creating/Update Groups
         self.stdout.write("Queuing enrollment updates...")
-        for join in joins:
+        for d in dicts:
             django_rq.enqueue(
-                Enrollment.objects.update_or_create_from_join,
-                join,
+                Enrollment.objects.update_or_create_from_join_pks,
+                d,
             )
         self.stdout.write("Complete")
