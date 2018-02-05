@@ -524,6 +524,33 @@ class PersonManager(Manager):
 
 
 class MemberManager(Manager):
+    def update_or_create_from_join_pks(self, join_pks, **kwargs):
+        # Get group
+        join__bhs_pk = join_pks[0]
+        person__bhs_pk = join_pks[1]
+        group__bhs_pk = join_pks[2]
+        Group = api.get_model('Group')
+        group = Group.objects.get(
+            bhs_pk=group__bhs_pk,
+            kind=Group.KIND.quartet,
+        )
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(
+            bhs_pk=person__bhs_pk,
+        )
+        # Set defaults and update
+        defaults = {
+            'status': 10,
+            'bhs_pk': join__bhs_pk,
+        }
+        member, created = self.update_or_create(
+            person=person,
+            group=group,
+            defaults=defaults,
+        )
+        return member, created
+
     def update_or_create_from_join(self, join, **kwargs):
         if join.structure.kind not in ['quartet', ]:
             raise ValueError("Must be quartet record.")
