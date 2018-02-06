@@ -30,6 +30,7 @@ Contests Selected:
 {% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|default:"(No Director Specified)"}}
 
+{% comment %}
 Participants on Stage:
 {% for participant in participants %}
     - {{participant.person.nomen|safe}}
@@ -41,6 +42,7 @@ NOTE: Choruses may make changes to your Participants (the list of those
 singing on stage) at any time from now until the convention.  Please note that
 every person on stage must have a current BHS membership and convention registration
 or you risk disqualification.
+{% endcomment %}
 
 {% endif %}
 If you need to scratch, please go to your Entry and click the red "Scratch" button
