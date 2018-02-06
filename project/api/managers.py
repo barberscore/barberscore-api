@@ -365,6 +365,35 @@ class GroupManager(Manager):
         )
 
 
+class OfficerManager(Manager):
+    def update_or_create_from_role(self, role, **kwargs):
+        # Flatten join objects
+        structure = role.structure
+        human = role.human
+        # Get organization
+        Organization = api.get_model('Organization')
+        organization = Organization.objects.get(bhs_pk=structure.id)
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(bhs_pk=human.id)
+
+        status = self.model.STATUS.active
+
+        # Set the internal BHS fields
+        bhs_pk = role.id
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'bhs_pk': bhs_pk,
+        }
+        officer, created = self.update_or_create(
+            person=person,
+            organization=organization,
+            defaults=defaults,
+        )
+        return officer, created
+
+
 class OrganizationManager(Manager):
     def sort_tree(self, **kwargs):
         root = self.get(kind=self.model.KIND.international)

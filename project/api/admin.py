@@ -858,6 +858,7 @@ class OfficerAdmin(admin.ModelAdmin):
         'organization',
         'start_date',
         'end_date',
+        'bhs_pk'
     ]
 
     list_display = [

@@ -15,6 +15,8 @@ from model_utils.models import TimeStampedModel
 from django.db import models
 from django.utils.encoding import smart_text
 
+from api.managers import OfficerManager
+
 log = logging.getLogger(__name__)
 
 
@@ -52,6 +54,13 @@ class Officer(TimeStampedModel):
         blank=True,
     )
 
+    bhs_pk = models.UUIDField(
+        null=True,
+        blank=True,
+        unique=True,
+        db_index=True,
+    )
+
     # FKs
     office = models.ForeignKey(
         'Office',
@@ -70,6 +79,8 @@ class Officer(TimeStampedModel):
         related_name='officers',
         on_delete=models.CASCADE,
     )
+
+    objects = OfficerManager()
 
     # Internals
     class JSONAPIMeta:
