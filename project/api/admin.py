@@ -32,7 +32,6 @@ from .inlines import GroupInline
 from .inlines import MemberInline
 from .inlines import OfficerInline
 from .inlines import PanelistInline
-from .inlines import ParticipantInline
 from .inlines import RepertoryInline
 from .inlines import RoundInline
 from .inlines import ScoreInline
@@ -56,7 +55,6 @@ from .models import Office
 from .models import Officer
 from .models import Organization
 from .models import Panelist
-from .models import Participant
 from .models import Person
 from .models import Repertory
 from .models import Round
@@ -466,7 +464,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         AppearanceInline,
         GridInline,
         # ContestantInline,
-        # ParticipantInline,
     ]
 
     search_fields = (
@@ -578,7 +575,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         # AppearanceInline,
         ContestantInline,
-        ParticipantInline,
         StateLogInline,
     ]
 
@@ -1031,49 +1027,6 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Participant)
-class ParticipantAdmin(FSMTransitionMixin, admin.ModelAdmin):
-
-    fields = [
-        'status',
-        'entry',
-        'person',
-        'part',
-    ]
-
-    list_display = [
-        'status',
-        'entry',
-        'person',
-        'part',
-    ]
-
-    list_filter = (
-        'status',
-        'part',
-    )
-
-    readonly_fields = [
-        'nomen',
-    ]
-
-    autocomplete_fields = [
-        'entry',
-        'person',
-    ]
-
-    fsm_field = [
-        'status',
-    ]
-    search_fields = [
-        'nomen',
-    ]
-
-    ordering = (
-        'nomen',
-    )
-
-
 @admin.register(Person)
 class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
@@ -1306,12 +1259,12 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
-        'sa_report_link',
         'description',
         'notes',
-        # 'bbscores_report',
-        # 'drcj_report',
-        # 'admins_report',
+        'bbscores_report_link',
+        'drcj_report_link',
+        'admins_report_link',
+        'sa_report_link',
     ]
 
     list_display = [
@@ -1344,9 +1297,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'nomen',
         'sa_report_link',
-        # 'bbscores_report',
-        # 'drcj_report',
-        # 'admins_report',
+        'bbscores_report_link',
+        'drcj_report_link',
+        'admins_report_link',
     ]
 
     inlines = [

@@ -333,7 +333,7 @@ class Entry(TimeStampedModel):
         ).order_by(
             'nomen',
         )
-        participants = self.participants.filter(
+        members = self.group.members.filter(
             status__gt=0,
         ).order_by(
             'nomen',
@@ -342,7 +342,7 @@ class Entry(TimeStampedModel):
             'entry': self,
             'repertories': repertories,
             'contestants': contestants,
-            'participants': participants,
+            'members': members,
         }
         send_entry.delay('entry_approve.txt', context)
         return

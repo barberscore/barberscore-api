@@ -196,6 +196,33 @@ class Session(TimeStampedModel):
         else:
             return None
 
+    def bbscores_report_link(self):
+        if self.bbscores_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.bbscores_report.url,
+            )
+        else:
+            return None
+
+    def drcj_report_link(self):
+        if self.drcj_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.drcj_report.url,
+            )
+        else:
+            return None
+
+    def admins_report_link(self):
+        if self.admins_report:
+            return format_html(
+                '<a href="{0}">File Link</a>',
+                self.admins_report.url,
+            )
+        else:
+            return None
+
     # Session Permissions
     @staticmethod
     @allow_staff_or_superuser

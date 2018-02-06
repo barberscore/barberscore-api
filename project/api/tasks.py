@@ -358,7 +358,7 @@ def create_bbscores_report(session):
 def create_drcj_report(session):
     Entry = api.get_model('Entry')
     Organization = api.get_model('Organization')
-    Participant = api.get_model('Participant')
+    Member = api.get_model('Member')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -400,11 +400,11 @@ def create_drcj_report(session):
         repertory_count = entry.group.repertories.filter(
             status__gt=0,
         ).count()
-        participants = entry.participants.filter(
+        members = entry.group.members.filter(
             status__gt=0,
         )
-        participant_count = participants.count()
-        expiring_count = participants.filter(
+        member_count = members.count()
+        expiring_count = members.filter(
             person__current_through__lte=session.convention.close_date,
         ).count()
         directors = entry.directors
@@ -419,32 +419,32 @@ def create_drcj_report(session):
         part = 1
         while part <= 4:
             try:
-                participant = entry.participants.get(
+                member = entry.group.members.get(
                     part=part,
                 )
-            except Participant.DoesNotExist:
+            except Member.DoesNotExist:
                 parts[part] = None
                 part += 1
                 continue
-            except Participant.MultipleObjectsReturned:
+            except Member.MultipleObjectsReturned:
                 parts[part] = None
                 part += 1
                 continue
-            participant_list = []
-            participant_list.append(
-                participant.person.nomen,
+            member_list = []
+            member_list.append(
+                member.person.nomen,
             )
-            participant_list.append(
-                participant.person.email,
+            member_list.append(
+                member.person.email,
             )
-            participant_list.append(
-                participant.person.phone,
+            member_list.append(
+                member.person.phone,
             )
-            participant_detail = "\n".join(filter(None, participant_list))
-            parts[part] = participant_detail
+            member_detail = "\n".join(filter(None, member_list))
+            parts[part] = member_detail
             part += 1
         if entry.group.kind == entry.group.KIND.quartet:
-            persons = entry.participants.filter(
+            persons = entry.group.members.filter(
                 status__gt=0,
             ).values_list('person', flat=True)
             cs = Organization.objects.filter(
@@ -471,7 +471,7 @@ def create_drcj_report(session):
             bhs_id,
             group_status,
             repertory_count,
-            participant_count,
+            member_count,
             expiring_count,
             parts[1],
             parts[2],

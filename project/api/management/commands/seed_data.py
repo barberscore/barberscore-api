@@ -19,7 +19,6 @@ from api.factories import OfficeFactory
 from api.factories import OfficerFactory
 from api.factories import OrganizationFactory
 from api.factories import PanelistFactory
-from api.factories import ParticipantFactory
 from api.factories import PersonFactory
 from api.factories import RepertoryFactory
 from api.factories import RoundFactory
@@ -45,7 +44,6 @@ from api.models import Office
 from api.models import Officer
 from api.models import Organization
 from api.models import Panelist
-from api.models import Participant
 from api.models import Person
 from api.models import Repertory
 from api.models import Round

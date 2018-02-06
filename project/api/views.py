@@ -33,7 +33,6 @@ from .filters import OfficeFilter
 from .filters import OfficerFilter
 from .filters import OrganizationFilter
 from .filters import PanelistFilter
-from .filters import ParticipantFilter
 from .filters import PersonFilter
 from .filters import RoundFilter
 from .filters import ScoreFilter
@@ -56,7 +55,6 @@ from .models import Office
 from .models import Officer
 from .models import Organization
 from .models import Panelist
-from .models import Participant
 from .models import Person
 from .models import Repertory
 from .models import Round
@@ -83,7 +81,6 @@ from .serializers import OfficerSerializer
 from .serializers import OfficeSerializer
 from .serializers import OrganizationSerializer
 from .serializers import PanelistSerializer
-from .serializers import ParticipantSerializer
 from .serializers import PersonSerializer
 from .serializers import RepertorySerializer
 from .serializers import RoundSerializer
@@ -307,7 +304,6 @@ class EntryViewSet(
         'group',
     ).prefetch_related(
         'contestants',
-        'participants',
     ).order_by('nomen')
     serializer_class = EntrySerializer
     filter_class = EntryFilter
@@ -553,27 +549,6 @@ class PanelistViewSet(viewsets.ModelViewSet):
     resource_name = "panelist"
 
 
-class ParticipantViewSet(
-    get_viewset_transition_action_mixin(Participant),
-    viewsets.ModelViewSet
-):
-    queryset = Participant.objects.select_related(
-        'entry',
-        'person'
-    ).prefetch_related(
-    ).order_by('nomen')
-    serializer_class = ParticipantSerializer
-    filter_class = ParticipantFilter
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "participant"
-
-
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         'user',
@@ -582,7 +557,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'members',
         'officers',
         'panelists',
-        'participants',
     ).order_by('nomen')
     serializer_class = PersonSerializer
     filter_class = PersonFilter

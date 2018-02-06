@@ -22,7 +22,6 @@ from .models import Office
 from .models import Officer
 from .models import Organization
 from .models import Panelist
-from .models import Participant
 from .models import Person
 from .models import Round
 from .models import Score
@@ -309,16 +308,6 @@ class GroupFilter(FilterSet):
 class PanelistFilter(FilterSet):
     class Meta:
         model = Panelist
-        fields = {
-            'nomen': [
-                'icontains',
-            ],
-        }
-
-
-class ParticipantFilter(FilterSet):
-    class Meta:
-        model = Participant
         fields = {
             'nomen': [
                 'icontains',

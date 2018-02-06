@@ -116,12 +116,6 @@ def test_panelist_endpoint_list(admin_api_client, panelist):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_participant_endpoint_list(admin_api_client, participant):
-    path = reverse('participant-list')
-    response = admin_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_person_endpoint_list(admin_api_client, person):
     path = reverse('person-list')
     response = admin_api_client.get(path)
@@ -270,12 +264,6 @@ def test_organization_endpoint_detail(admin_api_client, organization):
 
 def test_panelist_endpoint_detail(admin_api_client, panelist):
     path = reverse('panelist-detail', args=(str(panelist.id),))
-    response = admin_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_participant_endpoint_detail(admin_api_client, participant):
-    path = reverse('participant-detail', args=(str(participant.id),))
     response = admin_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

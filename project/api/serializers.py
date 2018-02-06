@@ -23,7 +23,6 @@ from .models import Office
 from .models import Officer
 from .models import Organization
 from .models import Panelist
-from .models import Participant
 from .models import Person
 from .models import Repertory
 from .models import Round
@@ -296,7 +295,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'group',
             'competitor',
             'contestants',
-            'participants',
             'permissions',
             'logs',
         )
@@ -545,23 +543,6 @@ class PanelistSerializer(serializers.ModelSerializer):
         )
 
 
-class ParticipantSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Participant
-        fields = (
-            'id',
-            'url',
-            'nomen',
-            'status',
-            'part',
-            'entry',
-            'person',
-            'permissions',
-        )
-
-
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -600,7 +581,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'members',
             'officers',
             'panelists',
-            'participants',
             'user',
             'permissions',
         )

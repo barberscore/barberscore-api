@@ -19,7 +19,6 @@ from .views import OfficerViewSet
 from .views import OfficeViewSet
 from .views import OrganizationViewSet
 from .views import PanelistViewSet
-from .views import ParticipantViewSet
 from .views import PersonViewSet
 from .views import RepertoryViewSet
 from .views import RoundViewSet
@@ -51,7 +50,6 @@ router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'panelist', PanelistViewSet)
-router.register(r'participant', ParticipantViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'repertory', RepertoryViewSet)
 router.register(r'round', RoundViewSet)
