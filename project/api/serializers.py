@@ -279,6 +279,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'seed',
             'prelim',
             'directors',
+            'mos',
             'representing',
             'rank',
             'description',

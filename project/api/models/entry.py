@@ -95,6 +95,12 @@ class Entry(TimeStampedModel):
         default='',
     )
 
+    mos = models.IntegerField(
+        help_text='Estimated Men-on-Stage',
+        null=True,
+        blank=True,
+    )
+
     representing = models.CharField(
         max_length=255,
         blank=True,
