@@ -961,6 +961,8 @@ class OrganizationAdmin(admin.ModelAdmin):
         ],
         'Chapter': [
             GroupInline,
+        ],
+        'Group': [
             EnrollmentInline,
         ],
     }
@@ -971,6 +973,9 @@ class OrganizationAdmin(admin.ModelAdmin):
             inlines = self.INLINES[obj.KIND[obj.kind]]
         except AttributeError:
             return inline_instances
+        except KeyError:
+            # Defaults to Group
+            inlines = self.INLINES['Group']
 
         for inline_class in inlines:
             inline = inline_class(self.model, self.admin_site)

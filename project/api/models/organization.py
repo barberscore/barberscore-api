@@ -76,6 +76,10 @@ class Organization(TimeStampedModel):
         ('Chapter', [
             (30, 'chapter', "Chapter"),
         ]),
+        ('Group', [
+            (32, 'chorus', "Chorus"),
+            (41, 'quartet', "Quartet"),
+        ]),
     )
 
     kind = models.IntegerField(

@@ -211,6 +211,17 @@ class Command(BaseCommand):
             parent=district_alpha,
             kind=Organization.KIND.chapter,
         )
+        chorus_won = OrganizationFactory(
+            name='Chapter Won',
+            parent=chapter_one,
+            kind=Organization.KIND.chorus,
+        )
+        quartet_won = OrganizationFactory(
+            name='Quartet One Org',
+            parent=district_alpha,
+            kind=Organization.KIND.quartet,
+        )
+        return
         # create Venue
         venue = VenueFactory()
 
