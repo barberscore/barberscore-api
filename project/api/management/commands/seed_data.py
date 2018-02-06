@@ -726,6 +726,7 @@ class Command(BaseCommand):
         senior_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
             group=quartet_1,
+            description='We would like to sing last',
         )
         senior_2_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
@@ -765,6 +766,7 @@ class Command(BaseCommand):
         )
 
         # Approve entries
+        senior_entry.submit()
         senior_entry.approve()
         senior_entry.save()
         senior_2_entry.approve()

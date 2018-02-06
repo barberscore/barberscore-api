@@ -282,6 +282,8 @@ class EntrySerializer(serializers.ModelSerializer):
             'directors',
             'representing',
             'rank',
+            'description',
+            'notes',
             'mus_points',
             'per_points',
             'sng_points',

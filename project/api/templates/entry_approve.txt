@@ -26,7 +26,6 @@ Contests Selected:
 {% empty %}
     Not competing for any awards.
 {% endfor %}
-
 {% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|default:"(No Director Specified)"}}
 
@@ -45,6 +44,10 @@ or you risk disqualification.
 {% endcomment %}
 
 {% endif %}
+Additional Notes/Requests:
+{{entry.description|safe|default:"(No additional notes/requests)"}}
+
+
 If you need to scratch, please go to your Entry and click the red "Scratch" button
 on the bottom of the page.  Please note that if you scratch and then wish to re-enter
 you'll need to speak directly with the DRCJ for approval (cc'd on this message.)

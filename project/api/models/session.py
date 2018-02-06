@@ -344,6 +344,7 @@ class Session(TimeStampedModel):
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
         Competitor = config.get_model('Competitor')
+        Entry = config.get_model('Entry')
         for entry in self.entries.filter(status=Entry.STATUS.approved):
             # Create competitors
             # Set is_ranked=True if they are competing for the primary award.
