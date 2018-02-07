@@ -221,7 +221,7 @@ class GroupFactory(DjangoModelFactory):
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: x)
-    organization = None
+    organization = SubFactory('api.factories.OrganizationFactory')
 
     class Meta:
         model = Group
