@@ -767,7 +767,6 @@ class MemberAdmin(admin.ModelAdmin):
         'person',
         'part',
         'bhs_pk',
-        'is_admin',
         'sub_status',
         'mem_status',
         'mem_code',
@@ -781,7 +780,6 @@ class MemberAdmin(admin.ModelAdmin):
         'group',
         'person',
         'part',
-        'is_admin',
         'sub_status',
         'mem_status',
         'mem_code',
@@ -799,7 +797,6 @@ class MemberAdmin(admin.ModelAdmin):
         'status',
         'part',
         'group__kind',
-        'is_admin',
         'sub_status',
         'mem_status',
         'mem_code',
@@ -875,7 +872,6 @@ class OfficerAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'office',
-        'organization',
     ]
     search_fields = [
         'nomen',
@@ -969,6 +965,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         ],
         'Group': [
             EnrollmentInline,
+            OfficerInline,
         ],
     }
 

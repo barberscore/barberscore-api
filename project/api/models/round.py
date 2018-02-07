@@ -230,11 +230,15 @@ class Round(TimeStampedModel):
             # Championships are relative.
             elif contest.award.level == contest.award.LEVEL.championship:
                 # Get the top scorer
-                top = contest.contestants.filter(
+                contestants = contest.contestants.filter(
                     status__gt=0,
                 ).order_by(
                     '-entry__competitor__tot_points',
-                ).first()
+                )
+                if contestants:
+                    top = contestants.first()
+                else:
+                    continue
                 # Derive the approve threshold from that top score.
                 approve = top.entry.competitor.tot_score - 4.0
                 contestants = contest.contestants.filter(

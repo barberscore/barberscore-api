@@ -119,15 +119,18 @@ class Contest(TimeStampedModel):
     def calculate(self, *args, **kwargs):
         if self.award.level == self.award.LEVEL.qualifier:
             champion = None
+        contestants = self.contestants.filter(
+            status__gt=0,
+        ).order_by(
+            '-entry__competitor__tot_points',
+            '-entry__competitor__sng_points',
+            '-entry__competitor__mus_points',
+            '-entry__competitor__per_points',
+        )
+        if contestants:
+            champion = contestants.first().entry
         else:
-            champion = self.contestants.filter(
-                status__gt=0,
-            ).order_by(
-                '-entry__competitor__tot_points',
-                '-entry__competitor__sng_points',
-                '-entry__competitor__mus_points',
-                '-entry__competitor__per_points',
-            ).first().entry
+            champion = None
         self.champion = champion
         return
 

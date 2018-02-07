@@ -25,3 +25,4 @@ dump.json
 .venv/*
 *.backup
 config/database.yml
+.pytest_cache/*

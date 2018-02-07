@@ -426,7 +426,6 @@ class MemberSerializer(serializers.ModelSerializer):
             'end_date',
             'group',
             'person',
-            'is_admin',
             'permissions',
         ]
 

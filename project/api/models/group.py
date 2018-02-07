@@ -219,11 +219,9 @@ class Group(TimeStampedModel):
     # FKs
     organization = models.ForeignKey(
         'Organization',
-        null=True,
-        blank=True,
         related_name='groups',
         db_index=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     # Denormalizations
@@ -351,9 +349,8 @@ class Group(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.members.filter(
+            self.organization.officers.filter(
                 person__user=request.user,
-                is_admin=True,
                 status__gt=0,
             ),
         ])

@@ -171,9 +171,8 @@ class Participant(TimeStampedModel):
                 category__lte=10,
                 kind=10,
             ),
-            self.entry.group.members.filter(
+            self.entry.group.organization.officers.filter(
                 person__user=request.user,
-                is_admin=True,
                 status__gt=0,
             ),
         ])

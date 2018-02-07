@@ -731,8 +731,8 @@ def create_admins_report(session):
         ]
     ).order_by('group__nomen')
     for entry in entries:
-        admins = entry.group.members.filter(
-            is_admin=True,
+        admins = entry.group.organization.officers.filter(
+            status__gt=0,
         )
         for admin in admins:
             group = entry.group.nomen.encode('utf-8').strip()
@@ -766,6 +766,7 @@ def create_admins_report(session):
 @job
 def create_actives_report(session):
     Member = api.get_model('Member')
+    Officer = api.get_model('Officer')
     Group = api.get_model('Group')
     Organization = api.get_model('Organization')
     organizations = Organization.objects.filter(
@@ -791,11 +792,14 @@ def create_actives_report(session):
                 kind=session.kind,
             )
             [groups.append(x) for x in div_groups]
-    members = Member.objects.filter(
-        is_admin=True,
-        group__in=groups,
-    ).exclude(person__email=None).order_by(
-        'group__nomen',
+    # Filter admins per kind
+    admins = Officer.objects.filter(
+        status__gt=0,
+        organization__in=organizations,
+        person__email__isnull=False,
+    ).order_by(
+        'organization__nomen',
+        'office',
         'person__nomen',
     )
     wb = Workbook()
@@ -810,14 +814,14 @@ def create_actives_report(session):
         'cell',
     ]
     ws.append(fieldnames)
-    for member in members:
-        group = member.group.nomen.encode('utf-8').strip()
-        chapter = member.group.chapter
-        district = member.group.district
-        division = member.group.division
-        person = member.person.nomen.encode('utf-8').strip()
-        email = member.person.email.encode('utf-8').strip()
-        cell = member.person.cell_phone
+    for admin in admins:
+        group = admin.organization.groups.first().nomen.encode('utf-8').strip()
+        chapter = admin.organization.groups.first().chapter
+        district = admin.organization.groups.first().district
+        division = admin.organization.groups.first().division
+        person = admin.person.nomen.encode('utf-8').strip()
+        email = admin.person.email.encode('utf-8').strip()
+        cell = admin.person.cell_phone
         row = [
             group,
             chapter,
@@ -855,9 +859,10 @@ def create_pdf(template, context):
 @job
 def send_entry(template, context):
     entry = context['entry']
-    contacts = entry.group.members.filter(
-        is_admin=True,
-    ).exclude(person__email=None)
+    contacts = entry.group.organization.officers.filter(
+        status__gt=0,
+        person__email__isnull=False,
+    )
     if not contacts:
         log.error("No valid contacts for {0}".format(entry))
         return
@@ -895,46 +900,66 @@ def send_session(template, context):
     session = context['session']
     Group = api.get_model('Group')
     Member = api.get_model('Member')
+    Officer = api.get_model('Officer')
     Assignment = api.get_model('Assignment')
     Organization = api.get_model('Organization')
     Entry = api.get_model('Entry')
     if session.status > session.STATUS.closed:
         # only send to existing entries
-        contacts = Member.objects.filter(
-            is_admin=True,
-            group__entries__session=session,
-            group__entries__status=Entry.STATUS.approved,
-        ).exclude(person__email=None)
+        # TODO Hack city
+        entries = session.entries.filter(
+            status=Entry.STATUS.approved,
+        )
+        contacts = Officer.objects.filter(
+            status__gt=0,
+            organization__groups__entries__in=entries,
+            person__email__isnull=False,
+        ).distinct()
     else:
         # send to all active groups in the district
         # Get relevant Organizations
+        contests = session.contests.filter(
+            status__gt=0,
+        )
         organizations = Organization.objects.filter(
-            awards__contests__in=session.contests.filter(
-                status__gt=0,
-            )
+            awards__contests__in=contests,
         ).distinct()
         # Get active Groups in those Organizations
         # This is really hacky.  Probably a better way available.
-        groups = []
-        for organization in organizations:
-            if organization.kind == Organization.KIND.district:
-                dist_groups = Group.objects.filter(
-                    district=organization.code,
-                    status__gt=0,
-                    kind=session.kind,
-                )
-                [groups.append(x) for x in dist_groups]
-            elif organization.kind == Organization.KIND.division:
-                div_groups = Group.objects.filter(
-                    division=organization.name,
-                    status__gt=0,
-                    kind=session.kind,
-                )
-                [groups.append(x) for x in div_groups]
-        contacts = Member.objects.filter(
-            is_admin=True,
-            group__in=groups,
-        ).exclude(person__email=None)
+        contacts = Officer.objects.filter(
+            status__gt=0,
+            organization__parent__in=organizations,
+            person__email__isnull=False,
+        ).distinct()
+        # groups = []
+
+        # for organization in organizations:
+        #     if organization.kind == Organization.KIND.district:
+        #         dist_groups = Group.objects.filter(
+        #             district=organization.code,
+        #             status__gt=0,
+        #             kind=session.kind,
+        #         )
+        #         [groups.append(x) for x in dist_groups]
+        #     elif organization.kind == Organization.KIND.division:
+        #         div_groups = Group.objects.filter(
+        #             division=organization.name,
+        #             status__gt=0,
+        #             kind=session.kind,
+        #         )
+        #         [groups.append(x) for x in div_groups]
+        # if session.kind == session.KIND.chorus:
+        #     contacts = Officer.objects.filter(
+        #         status__gt=0,
+        #         organization__in=organizations,
+        #         person__email__isnull=False,
+        #     )
+        # else:
+        #     contacts = Member.objects.filter(
+        #         status__gt=0,
+        #         group__in=groups,
+        #         person__email__isnull=False,
+        #     )
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,

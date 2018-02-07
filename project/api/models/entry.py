@@ -96,7 +96,7 @@ class Entry(TimeStampedModel):
     )
 
     mos = models.IntegerField(
-        help_text='Estimated Men-on-Stage',
+        help_text='Estimated Participants-on-Stage',
         null=True,
         blank=True,
     )
@@ -241,10 +241,9 @@ class Entry(TimeStampedModel):
                 ]),
                 # For Groups
                 all([
-                    self.group.members.filter(
+                    self.group.organization.officers.filter(
                         person__user=request.user,
                         status__gt=0,
-                        is_admin=True,
                     ),
                     self.status <= self.STATUS.approved,
                 ]),
@@ -257,7 +256,7 @@ class Entry(TimeStampedModel):
     # Entry Transition Conditions
     def can_invite_entry(self):
         return all([
-            self.group.members.filter(is_admin=True),
+            self.group.organization.officers.filter(status__gt=0),
             self.group.status == self.group.STATUS.active,
         ])
 

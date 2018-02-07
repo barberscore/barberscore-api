@@ -325,9 +325,6 @@ class MemberFilter(FilterSet):
             'person__user': [
                 'exact',
             ],
-            'is_admin': [
-                'exact',
-            ],
             'status': [
                 'gte',
                 'exact',

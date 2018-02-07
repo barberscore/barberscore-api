@@ -187,17 +187,18 @@ class Member(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.is_admin:
-            try:
-                is_active = self.person.user.is_active
-            except ObjectDoesNotExist:
-                raise ValidationError(
-                    {'is_admin': 'Admin must User account.'}
-                )
-            if not is_active:
-                raise ValidationError(
-                    {'is_admin': 'Admin User account must be active.'}
-                )
+        pass
+        # if self.is_admin:
+        #     try:
+        #         is_active = self.person.user.is_active
+        #     except ObjectDoesNotExist:
+        #         raise ValidationError(
+        #             {'is_admin': 'Admin must User account.'}
+        #         )
+        #     if not is_active:
+        #         raise ValidationError(
+        #             {'is_admin': 'Admin User account must be active.'}
+        #         )
 
     def save(self, *args, **kwargs):
         # self.nomen = " ".join(
@@ -233,9 +234,8 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.group.members.filter(
+            self.group.organization.officers.filter(
                 person__user=request.user,
-                is_admin=True,
                 status__gt=0,
             ),
             request.user.is_session_manager,

@@ -370,12 +370,16 @@ class OfficerManager(Manager):
         # Flatten join objects
         structure = role.structure
         human = role.human
+        name = role.name
         # Get organization
         Organization = api.get_model('Organization')
         organization = Organization.objects.get(bhs_pk=structure.id)
         # Get person
         Person = api.get_model('Person')
         person = Person.objects.get(bhs_pk=human.id)
+        # Get office
+        Office = api.get_model('Office')
+        office = Office.objects.get(name=name)
 
         status = self.model.STATUS.active
 
@@ -389,6 +393,7 @@ class OfficerManager(Manager):
         officer, created = self.update_or_create(
             person=person,
             organization=organization,
+            office=office,
             defaults=defaults,
         )
         return officer, created
@@ -625,16 +630,6 @@ class MemberManager(Manager):
             group=group,
             defaults=defaults,
         )
-        if created:
-            # Set default admins
-            Role = bhs.get_model('Role')
-            roles = Role.objects.filter(
-                human=human,
-                structure=structure,
-            )
-            if roles:
-                member.is_admin = True
-                member.save()
         return member, created
 
     def update_or_create_from_enrollment(self, enrollment, **kwargs):

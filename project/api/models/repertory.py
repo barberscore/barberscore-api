@@ -138,9 +138,8 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            self.group.members.filter(
+            self.group.organization.officers.filter(
                 person__user=request.user,
-                is_admin=True,
                 status__gt=0,
             ),
             request.user.is_convention_manager,
@@ -162,9 +161,8 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.group.members.filter(
+            self.group.organization.officers.filter(
                 person__user=request.user,
-                is_admin=True,
                 status__gt=0,
             ),
             request.user.is_convention_manager,

@@ -203,53 +203,48 @@ class Command(BaseCommand):
             parent=international,
             kind=Organization.KIND.district,
         )
-        chapter_one = OrganizationFactory(
+        chapter_1 = OrganizationFactory(
             name='Chapter One',
             code='A-001',
             parent=district_alpha,
             kind=Organization.KIND.chapter,
         )
-        chorus_won = OrganizationFactory(
-            name='Chapter Won',
-            parent=chapter_one,
-            kind=Organization.KIND.chorus,
-        )
-        quartet_won = OrganizationFactory(
-            name='Quartet One Org',
+        chaptet_1 = OrganizationFactory(
+            name='Chaptet One',
             parent=district_alpha,
             kind=Organization.KIND.quartet,
         )
-        return
+        chaptet_2 = OrganizationFactory(
+            name='Chaptet Two',
+            parent=district_alpha,
+            kind=Organization.KIND.quartet,
+        )
+        chaptet_3 = OrganizationFactory(
+            name='Chaptet Three',
+            parent=district_alpha,
+            kind=Organization.KIND.quartet,
+        )
         # create Venue
         venue = VenueFactory()
 
         # create Chart
-        chart_one = ChartFactory(
+        chart_1 = ChartFactory(
             title='Chart 1',
         )
-        chart_two = ChartFactory(
+        chart_2 = ChartFactory(
             title='Chart 2',
         )
-        chart_three = ChartFactory(
+        chart_3 = ChartFactory(
             title='Chart 3',
         )
-        chart_four = ChartFactory(
+        chart_4 = ChartFactory(
             title='Chart 4',
         )
-        chart_five = ChartFactory(
+        chart_5 = ChartFactory(
             title='Chart 5',
         )
-        chart_six = ChartFactory(
+        chart_6 = ChartFactory(
             title='Chart 6',
-        )
-        chart_seven = ChartFactory(
-            title='Chart 7',
-        )
-        chart_eight = ChartFactory(
-            title='Chart 8',
-        )
-        chart_nine = ChartFactory(
-            title='Chart 9',
         )
 
         # Create Offices
@@ -295,6 +290,14 @@ class Command(BaseCommand):
             short_name='SNG',
             is_judge_manager=True,
         )
+        chorus_manager = OfficeFactory(
+            name='Chorus Manager',
+            is_group_manager=True,
+        )
+        quartet_1_manager = OfficeFactory(
+            name='Quartet Manager',
+            is_group_manager=True,
+        )
         # Create Core Officers
         scjc_officer = OfficerFactory(
             office=scjc_office,
@@ -330,6 +333,18 @@ class Command(BaseCommand):
             office=sng_office,
             person=singing_judge_person,
             organization=international,
+            status=Officer.STATUS.active,
+        )
+        chapter_president = OfficerFactory(
+            office=chorus_manager,
+            person=chorus_admin_person,
+            organization=chapter_1,
+            status=Officer.STATUS.active,
+        )
+        quartet_one_manager = OfficerFactory(
+            office=quartet_1_manager,
+            person=quartet_admin_person,
+            organization=chaptet_1,
             status=Officer.STATUS.active,
         )
         # Create Awards
@@ -517,21 +532,21 @@ class Command(BaseCommand):
         quartet_1 = GroupFactory(
             name='Quartet 1',
             kind=Group.KIND.quartet,
-            organization=district_alpha,
+            organization=chaptet_1,
             international=international.code,
             district=district_alpha.code,
         )
         quartet_2 = GroupFactory(
             name='Quartet 2',
             kind=Group.KIND.quartet,
-            organization=district_alpha,
+            organization=chaptet_2,
             international=international.code,
             district=district_alpha.code,
         )
         quartet_3 = GroupFactory(
             name='Quartet 3',
             kind=Group.KIND.quartet,
-            organization=district_alpha,
+            organization=chaptet_3,
             international=international.code,
             district=district_alpha.code,
         )
@@ -539,176 +554,163 @@ class Command(BaseCommand):
         chorus_one = GroupFactory(
             name='Chorus One',
             kind=Group.KIND.chorus,
-            organization=chapter_one,
+            organization=chapter_1,
             international=international.code,
             district=district_alpha.code,
-            chapter=chapter_one.name,
+            chapter=chapter_1.name,
         )
         # Create enrollments
         enrollment_chorus_admin = EnrollmentFactory(
-            organization=chapter_one,
+            organization=chapter_1,
             person=chorus_admin_person,
         )
         # Create members
         member_quartet_admin = MemberFactory(
             part=Member.PART.lead,
-            is_admin=True,
             group=quartet_1,
             person=quartet_admin_person,
         )
         member_quartet_tenor = MemberFactory(
             part=Member.PART.tenor,
-            is_admin=False,
             group=quartet_1,
             person=quartet_tenor_person,
         )
         member_quartet_baritone = MemberFactory(
             part=Member.PART.baritone,
-            is_admin=False,
             group=quartet_1,
             person=quartet_baritone_person,
         )
         member_quartet_bass = MemberFactory(
             part=Member.PART.bass,
-            is_admin=False,
             group=quartet_1,
             person=quartet_bass_person,
         )
         member_chorus_admin = MemberFactory(
             part=Member.PART.lead,
-            is_admin=True,
             group=chorus_one,
             person=chorus_admin_person,
         )
         member_quartet_2_admin = MemberFactory(
             part=Member.PART.lead,
-            is_admin=True,
             group=quartet_2,
             person=quartet_admin_person,
         )
         member_quartet_2_tenor = MemberFactory(
             part=Member.PART.tenor,
-            is_admin=False,
             group=quartet_2,
             person=quartet_tenor_person,
         )
         member_quartet_2_baritone = MemberFactory(
             part=Member.PART.baritone,
-            is_admin=False,
             group=quartet_2,
             person=quartet_baritone_person,
         )
         member_quartet_2_bass = MemberFactory(
             part=Member.PART.bass,
-            is_admin=False,
             group=quartet_2,
             person=quartet_bass_person,
         )
         member_quartet_3_admin = MemberFactory(
             part=Member.PART.lead,
-            is_admin=True,
             group=quartet_3,
             person=quartet_admin_person,
         )
         member_quartet_3_tenor = MemberFactory(
             part=Member.PART.tenor,
-            is_admin=False,
             group=quartet_3,
             person=quartet_tenor_person,
         )
         member_quartet_3_baritone = MemberFactory(
             part=Member.PART.baritone,
-            is_admin=False,
             group=quartet_3,
             person=quartet_baritone_person,
         )
         member_quartet_3_bass = MemberFactory(
             part=Member.PART.bass,
-            is_admin=False,
             group=quartet_3,
             person=quartet_bass_person,
         )
         # Create repertories
         RepertoryFactory(
             group=quartet_1,
-            chart=chart_one,
+            chart=chart_1,
         )
         RepertoryFactory(
             group=quartet_1,
-            chart=chart_two,
+            chart=chart_2,
         )
         RepertoryFactory(
             group=quartet_1,
-            chart=chart_three,
+            chart=chart_3,
         )
         RepertoryFactory(
             group=quartet_1,
-            chart=chart_four,
+            chart=chart_4,
         )
         RepertoryFactory(
             group=quartet_1,
-            chart=chart_five,
+            chart=chart_5,
         )
         RepertoryFactory(
             group=quartet_1,
-            chart=chart_six,
+            chart=chart_6,
         )
         RepertoryFactory(
             group=chorus_one,
-            chart=chart_one,
+            chart=chart_1,
         )
         RepertoryFactory(
             group=chorus_one,
-            chart=chart_two,
+            chart=chart_2,
         )
         RepertoryFactory(
             group=quartet_2,
-            chart=chart_one,
+            chart=chart_1,
         )
         RepertoryFactory(
             group=quartet_2,
-            chart=chart_two,
+            chart=chart_2,
         )
         RepertoryFactory(
             group=quartet_2,
-            chart=chart_three,
+            chart=chart_3,
         )
         RepertoryFactory(
             group=quartet_2,
-            chart=chart_four,
+            chart=chart_4,
         )
         RepertoryFactory(
             group=quartet_2,
-            chart=chart_five,
+            chart=chart_5,
         )
         RepertoryFactory(
             group=quartet_2,
-            chart=chart_six,
+            chart=chart_6,
         )
 
         RepertoryFactory(
             group=quartet_3,
-            chart=chart_one,
+            chart=chart_1,
         )
         RepertoryFactory(
             group=quartet_3,
-            chart=chart_two,
+            chart=chart_2,
         )
         RepertoryFactory(
             group=quartet_3,
-            chart=chart_three,
+            chart=chart_3,
         )
         RepertoryFactory(
             group=quartet_3,
-            chart=chart_four,
+            chart=chart_4,
         )
         RepertoryFactory(
             group=quartet_3,
-            chart=chart_five,
+            chart=chart_5,
         )
         RepertoryFactory(
             group=quartet_3,
-            chart=chart_six,
+            chart=chart_6,
         )
 
         # SCJC BREAKPOINT
@@ -904,7 +906,6 @@ class Command(BaseCommand):
             appearance.confirm()
             appearance.save()
 
-        return
         international_midwinter_convention_quartet_session_round_one.review()
         international_midwinter_convention_quartet_session_round_one.save()
         district_alpha_fall_convention_quartet_session_round_one.review()
