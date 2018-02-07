@@ -88,7 +88,7 @@ EMAIL_USE_TLS = True
 BUGSNAG = {
     'api_key': get_env_variable("BUGSNAG_API_KEY"),
     'notify_release_stages': [
-        'production',
+        'production', 'staging',
     ],
     'release_stage': 'production',
 }

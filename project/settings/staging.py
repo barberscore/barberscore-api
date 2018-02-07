@@ -66,6 +66,14 @@ JWT_AUTH = {
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Bugsnag
+BUGSNAG = {
+    'api_key': get_env_variable("BUGSNAG_API_KEY"),
+    'notify_release_stages': [
+        'production', 'staging',
+    ],
+    'release_stage': 'staging',
+}
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 
@@ -77,33 +85,34 @@ LOGGING = {
         'api': {
             'handlers': [
                 'console',
+                'bugsnag',
             ],
             'level': 'INFO',
         },
         'importer': {
             'handlers': [
                 'console',
+                'bugsnag',
             ],
             'level': 'INFO',
         },
         'updater': {
             'handlers': [
                 'console',
+                'bugsnag',
             ],
             'level': 'INFO',
         },
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
-            'formatter': 'simple'
         },
-    },
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(message)s',
+        'bugsnag': {
+            'level': 'ERROR',
+            'class': 'bugsnag.handlers.BugsnagHandler',
         },
     },
 }
