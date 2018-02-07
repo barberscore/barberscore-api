@@ -21,7 +21,7 @@ def entry_post_save(sender, instance, created, raw=False, **kwargs):
         for contest in contests:
             # Could also do some logic here.
             entry.contestants.create(
-                status=entry.contestants.model.STATUS.included,
+                status=entry.contestants.model.STATUS.excluded,
                 contest=contest,
             )
         has_divisions = bool(
