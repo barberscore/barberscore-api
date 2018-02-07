@@ -116,12 +116,6 @@ def test_panelist_admin_list(admin_django_client, panelist):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_participant_admin_list(admin_django_client, participant):
-    path = reverse('admin:api_participant_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_person_admin_list(admin_django_client, person):
     path = reverse('admin:api_person_changelist')
     response = admin_django_client.get(path)
@@ -268,12 +262,6 @@ def test_organization_admin_detail(admin_django_client, organization):
 
 def test_panelist_admin_detail(admin_django_client, panelist):
     path = reverse('admin:api_panelist_change', args=(str(panelist.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_participant_admin_detail(admin_django_client, participant):
-    path = reverse('admin:api_participant_change', args=(str(participant.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

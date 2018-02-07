@@ -121,6 +121,17 @@ class Member(TimeStampedModel):
         (4, 'bass', 'Bass'),
     )
 
+    inactive_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    inactive_reason = models.CharField(
+        max_length=255,
+        editable=False,
+        blank=True,
+    )
+
     part = models.IntegerField(
         choices=PART,
         null=True,

@@ -19,7 +19,6 @@ from api.factories import OfficeFactory
 from api.factories import OfficerFactory
 from api.factories import OrganizationFactory
 from api.factories import PanelistFactory
-from api.factories import ParticipantFactory
 from api.factories import PersonFactory
 from api.factories import RepertoryFactory
 from api.factories import RoundFactory
@@ -45,7 +44,6 @@ from api.models import Office
 from api.models import Officer
 from api.models import Organization
 from api.models import Panelist
-from api.models import Participant
 from api.models import Person
 from api.models import Repertory
 from api.models import Round
@@ -737,6 +735,7 @@ class Command(BaseCommand):
         senior_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
             group=quartet_1,
+            description='We would like to sing last',
         )
         senior_2_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
@@ -776,6 +775,7 @@ class Command(BaseCommand):
         )
 
         # Approve entries
+        senior_entry.submit()
         senior_entry.approve()
         senior_entry.save()
         senior_2_entry.approve()

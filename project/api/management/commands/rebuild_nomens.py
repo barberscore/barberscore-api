@@ -32,7 +32,6 @@ class Command(BaseCommand):
             'Round',
             'Score',
             'Session',
-            'Participant',
             'Panelist',
             'Song',
         ]

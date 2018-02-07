@@ -30,7 +30,6 @@ from api.models import Office
 from api.models import Officer
 from api.models import Organization
 from api.models import Panelist
-from api.models import Participant
 from api.models import Person
 from api.models import Repertory
 from api.models import Round
@@ -315,15 +314,6 @@ class PanelistFactory(DjangoModelFactory):
 
     class Meta:
         model = Panelist
-
-
-class ParticipantFactory(DjangoModelFactory):
-    status = Contestant.STATUS.new
-    entry = SubFactory('api.factories.EntryFactory')
-    person = SubFactory('api.factories.PersonFactory')
-
-    class Meta:
-        model = Participant
 
 
 class PersonFactory(DjangoModelFactory):

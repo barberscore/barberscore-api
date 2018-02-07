@@ -17,7 +17,6 @@ from .models import Group
 from .models import Member
 from .models import Officer
 from .models import Panelist
-from .models import Participant
 from .models import Repertory
 from .models import Round
 from .models import Score
@@ -379,25 +378,6 @@ class PanelistInline(admin.TabularInline):
     )
     extra = 0
     show_change_link = True
-    classes = [
-        'collapse',
-    ]
-
-
-class ParticipantInline(admin.TabularInline):
-    model = Participant
-    fields = [
-        'person',
-        'entry',
-        'status',
-        'part',
-    ]
-    raw_id_fields = [
-        'person',
-        'entry',
-    ]
-    show_change_link = True
-    extra = 0
     classes = [
         'collapse',
     ]

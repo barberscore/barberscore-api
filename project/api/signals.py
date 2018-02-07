@@ -21,18 +21,8 @@ def entry_post_save(sender, instance, created, raw=False, **kwargs):
         for contest in contests:
             # Could also do some logic here.
             entry.contestants.create(
-                status=entry.contestants.model.STATUS.included,
+                status=entry.contestants.model.STATUS.excluded,
                 contest=contest,
-            )
-        members = entry.group.members.filter(
-            status__gt=0,
-        )
-        for member in members:
-            # Again, we might want to add currying logic.
-            entry.participants.create(
-                person=member.person,
-                status=entry.participants.model.STATUS.included,
-                part=member.part,
             )
         has_divisions = bool(
             entry.session.convention.organization.children.filter(

@@ -95,10 +95,29 @@ class Entry(TimeStampedModel):
         default='',
     )
 
+    mos = models.IntegerField(
+        help_text='Estimated Men-on-Stage',
+        null=True,
+        blank=True,
+    )
+
     representing = models.CharField(
         max_length=255,
         blank=True,
         default='',
+    )
+
+    description = models.TextField(
+        help_text="""
+            Public Notes (usually from competitor).""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
     )
 
     # Entry Results
@@ -294,7 +313,15 @@ class Entry(TimeStampedModel):
         conditions=[can_submit_entry],
     )
     def submit(self, *args, **kwargs):
-        context = {'entry': self}
+        contestants = self.contestants.filter(
+            status__gt=0,
+        ).order_by(
+            'nomen',
+        )
+        context = {
+            'entry': self,
+            'contestants': contestants,
+        }
         send_entry.delay('entry_submit.txt', context)
         return
 
@@ -312,7 +339,7 @@ class Entry(TimeStampedModel):
         ).order_by(
             'nomen',
         )
-        participants = self.participants.filter(
+        members = self.group.members.filter(
             status__gt=0,
         ).order_by(
             'nomen',
@@ -321,7 +348,7 @@ class Entry(TimeStampedModel):
             'entry': self,
             'repertories': repertories,
             'contestants': contestants,
-            'participants': participants,
+            'members': members,
         }
         send_entry.delay('entry_approve.txt', context)
         return

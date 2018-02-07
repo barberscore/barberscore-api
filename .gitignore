@@ -23,3 +23,5 @@ dump.json
 *.xlsx
 .env
 .venv/*
+*.backup
+config/database.yml

@@ -20,7 +20,6 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
-from .models import Participant
 from .models import Person
 from .models import Repertory
 from .models import Session

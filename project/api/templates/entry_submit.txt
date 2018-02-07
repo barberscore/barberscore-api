@@ -1,7 +1,33 @@
 Thank you!  Your submission is complete.  We'll review and follow up soon with next steps.
 
-{{entry.nomen|safe}}, BHS ID #{{entry.group.bhs_id}}
+If you have questions, please contact the DRCJ(s) of the contest directly
+(cc'd on this email) or contact support at customerservice@barbershop.org.
+
+Break a leg!
+
+ENTRY DETAILS
+Group: {{entry.group.name|safe}}
+
+Session: {{entry.session.nomen|safe}}
+
+Requested Evaluation: {{entry.is_evaluation|yesno|title}}
+
+Keep Scores Private: {{entry.is_private|yesno|title}}
+
+Contests Selected:
+{% for contestant in contestants %}
+    - {{contestant.contest.award.name}}
+{% empty %}
+    Not competing for any awards.
+{% endfor %}
+{% if entry.group.kind == entry.group.KIND.chorus %}
+Director(s): {{entry.directors|default:"(No Director Specified)"}}
+
+{% endif %}
+Additional Notes/Requests:
+{{entry.description|safe|default:"(No additional notes/requests)"}}
+
 
 NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
 email for an inactive quartet, or you are no longer the administrator for your chapter, we
-can fix that. Just send your request to be removed to: customerservice@barbershop.org
+can fix that. Just send your request to be removed to: customerservice@barbershop.org.
