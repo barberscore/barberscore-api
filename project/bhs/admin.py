@@ -5,7 +5,7 @@ from django.contrib import admin
 # Local
 from .inlines import (
     MembershipInline,
-    # RoleInline,
+    RoleInline,
     SMJoinInline,
     SubscriptionInline,
 )
@@ -109,6 +109,7 @@ class HumanAdmin(ReadOnlyAdmin):
     ]
 
     inlines = [
+        RoleInline,
         SubscriptionInline,
     ]
 
@@ -185,13 +186,45 @@ class StructureAdmin(ReadOnlyAdmin):
         'chapter_code',
         'chorus_name',
     ]
-    inlines = [
-        # MembershipInline,
-        SMJoinInline,
-    ]
     ordering = (
         '-created_ts',
     )
+
+    INLINES = {
+        'organization': [
+            RoleInline,
+        ],
+        'district': [
+            RoleInline,
+        ],
+        'chapter': [
+            RoleInline,
+        ],
+        'quartet': [
+            RoleInline,
+            SMJoinInline,
+        ],
+    }
+
+    def get_inline_instances(self, request, obj=None):
+        inline_instances = []
+        inlines = self.INLINES[obj.kind]
+        # try:
+        #     inlines = self.INLINES[obj.kind]
+        # except AttributeError:
+        #     return inline_instances
+        # except KeyError:
+        #     # Defaults to Group
+        #     inlines = self.INLINES['Group']
+
+        for inline_class in inlines:
+            inline = inline_class(self.model, self.admin_site)
+            inline_instances.append(inline)
+        return inline_instances
+
+    def get_formsets(self, request, obj=None):
+        for inline in self.get_inline_instances(request, obj):
+            yield inline.get_formset(request, obj)
 
 
 @admin.register(Membership)
@@ -238,22 +271,22 @@ class MembershipAdmin(ReadOnlyAdmin):
     ]
 
 
-@admin.register(Status)
-class StatusAdmin(ReadOnlyAdmin):
-    fields = [
-        'id',
-        'name',
-    ]
+# @admin.register(Status)
+# class StatusAdmin(ReadOnlyAdmin):
+#     fields = [
+#         'id',
+#         'name',
+#     ]
 
-    list_display = [
-        'id',
-        'name',
-    ]
+#     list_display = [
+#         'id',
+#         'name',
+#     ]
 
-    readonly_fields = [
-        'id',
-        'name',
-    ]
+#     readonly_fields = [
+#         'id',
+#         'name',
+#     ]
 
 
 @admin.register(Subscription)
