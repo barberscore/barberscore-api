@@ -420,8 +420,6 @@ class OrganizationManager(Manager):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('organization', 'international')
         kind = getattr(self.model.KIND, kind_clean, None)
-        if kind != self.model.KIND.chapter:
-            raise ValueError("Can only update chapters.")
         name = structure.name.strip()
         # Map to the internal designation
         STATUS = {
@@ -563,7 +561,7 @@ class PersonManager(Manager):
         person = self.get(
             bhs_pk=human.id,
         )
-        status = getattr(self.model.STATUS, subscription.status, 'inactive')
+        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
         current_through = subscription.current_through
         person.status = status
         person.current_through = current_through
