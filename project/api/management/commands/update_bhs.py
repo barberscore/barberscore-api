@@ -76,8 +76,8 @@ class Command(BaseCommand):
                 Person.objects.update_or_create_from_human,
                 human,
             )
-            self.stdout.write("Queuing {0}/{1} persons...".format(i, t), ending='\r')
             self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} persons...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} persons.".format(t))
 
         # Sync BHS Status and Current Through
@@ -93,8 +93,8 @@ class Command(BaseCommand):
                 Person.objects.update_status_from_subscription,
                 subscription,
             )
-            self.stdout.write("Queuing {0}/{1} subscriptions...".format(i, t), ending='\r')
             self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} subscriptions...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} subscriptions.".format(t))
 
         # Sync Organizations
@@ -110,8 +110,8 @@ class Command(BaseCommand):
                 Organization.objects.update_or_create_from_structure,
                 structure,
             )
-            self.stdout.write("Queuing {0}/{1} structures...".format(i, t), ending='\r')
             self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} structures...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} structures.".format(t))
 
         # Sync Groups
@@ -173,7 +173,7 @@ class Command(BaseCommand):
                 Enrollment.objects.update_or_create_from_join,
                 join,
             )
-            self.stdout.write("Queuing {0}/{1} enrollments...".format(i, t), ending='\r')
             self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} enrollments...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} enrollments.".format(t))
         self.stdout.write("Complete.")
