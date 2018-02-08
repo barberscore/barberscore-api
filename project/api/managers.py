@@ -175,8 +175,8 @@ class GroupManager(Manager):
             'expired-licensed': 'inactive',
             'lapsed': 'inactive',
             'not-approved': 'inactive',
-            'pending': 'active',
-            'pending-voluntary': 'active',
+            'pending': 'inactive',
+            'pending-voluntary': 'inactive',
             'suspended': 'inactive',
             'suspended-membership': 'inactive',
         }
