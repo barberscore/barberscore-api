@@ -100,8 +100,8 @@ class EnrollmentManager(Manager):
         return enrollment, created
 
     def update_or_create_from_join(self, join, **kwargs):
-        if join.structure.kind not in ['chapter', ]:
-            raise ValueError("Must be chapter record.")
+        if join.structure.kind not in ['chapter', 'quartet', ]:
+            raise ValueError("Must be chapter or quartet record.")
         # Flatten join objects
         subscription = join.subscription
         membership = join.membership
