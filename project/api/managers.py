@@ -556,6 +556,19 @@ class PersonManager(Manager):
             )
         return person, created
 
+    def update_status_from_subscription(self, subscription, **kwargs):
+        if not subscription.items_editable:
+            raise ValueError("Not canonical record.")
+        human = subscription.human
+        person = self.get(
+            bhs_pk=human.id,
+        )
+        status = getattr(self.model.STATUS, subscription.status, 'inactive')
+        current_through = subscription.current_through
+        person.status = status
+        person.current_through = current_through
+        person.save()
+
 
 class MemberManager(Manager):
     def update_or_create_from_join_pks(self, join_pks, **kwargs):
