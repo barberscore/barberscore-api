@@ -65,30 +65,36 @@ class Command(BaseCommand):
             raise CommandError('No argument specified.')
 
         # Sync Persons
-        self.stdout.write("Updating persons...")
         humans = Human.objects.filter(
             updated_ts__gt=cursor,
         )
+        i = 0
         t = humans.count()
         for human in humans:
+            i += 1
             django_rq.enqueue(
                 Person.objects.update_or_create_from_human,
                 human,
             )
+            self.stdout.write("Queuing {0}/{1} persons...".format(i, t), ending='\r')
+            self.stdout.flush()
         self.stdout.write("Queued {0} persons.".format(t))
 
         # Sync BHS Status and Current Through
-        self.stdout.write("Updating BHS status...")
         subscriptions = Subscription.objects.filter(
             items_editable=True,
             updated_ts__gt=cursor,
         )
+        i = 0
         t = subscriptions.count()
         for subscription in subscriptions:
+            i += 1
             django_rq.enqueue(
                 Person.objects.update_status_from_subscription,
                 subscription,
             )
+            self.stdout.write("Queuing {0}/{1} subscriptions...".format(i, t), ending='\r')
+            self.stdout.flush()
         self.stdout.write("Queued {0} subscriptions.".format(t))
 
         # Sync Organizations
@@ -96,12 +102,16 @@ class Command(BaseCommand):
         structures = Structure.objects.filter(
             updated_ts__gt=cursor,
         )
+        i = 0
         t = structures.count()
         for structure in structures:
+            i += 1
             django_rq.enqueue(
                 Organization.objects.update_or_create_from_structure,
                 structure,
             )
+            self.stdout.write("Queuing {0}/{1} structures...".format(i, t), ending='\r')
+            self.stdout.flush()
         self.stdout.write("Queued {0} structures.".format(t))
 
         # Sync Groups
@@ -155,11 +165,15 @@ class Command(BaseCommand):
             structure__kind__in=['chapter', 'quartet', ],
             updated_ts__gt=cursor,
         )
+        i = 0
         t = joins.count()
         for join in joins:
+            i += 1
             django_rq.enqueue(
                 Enrollment.objects.update_or_create_from_join,
                 join,
             )
+            self.stdout.write("Queuing {0}/{1} enrollments...".format(i, t), ending='\r')
+            self.stdout.flush()
         self.stdout.write("Queued {0} enrollments.".format(t))
         self.stdout.write("Complete.")
