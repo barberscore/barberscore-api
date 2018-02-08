@@ -21,6 +21,8 @@ class Command(BaseCommand):
         roles = Role.objects.filter(
             Q(end_date=None) |
             Q(end_date__gt=today)
+        ).exclude(
+            name='Quartet Admin',
         ).values(
             'human',
             'structure',
