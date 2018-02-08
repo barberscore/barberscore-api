@@ -23,8 +23,8 @@
   "addons": [
     "cloudinary:starter",
     "deployhooks:http",
-    "heroku-redis:premium-0",
-    "heroku-postgresql:standard-0"
+    "heroku-redis:hobby-dev",
+    "heroku-postgresql:hobby-dev"
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": {
