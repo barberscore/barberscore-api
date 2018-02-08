@@ -105,7 +105,7 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} structures.".format(t))
 
         # Sync Groups
-        self.stdout.write("Updating groups...")
+        # self.stdout.write("Updating groups...")
         # ss = Structure.objects.filter(
         #     kind__in=[
         #         'quartet',
@@ -152,6 +152,7 @@ class Command(BaseCommand):
         # Sync Enrollments - Very Slow!
         self.stdout.write("Updating enrollments...")
         joins = SMJoin.objects.filter(
+            structure__kind__in=['chapter', 'quartet', ],
             updated_ts__gt=cursor,
         )
         t = joins.count()
