@@ -98,7 +98,6 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} subscriptions.".format(t))
 
         # Sync Organizations
-        self.stdout.write("Updating organizations...")
         structures = Structure.objects.filter(
             updated_ts__gt=cursor,
         )
@@ -160,7 +159,6 @@ class Command(BaseCommand):
         # self.stdout.write("Updated {0} memberships.".format(t))
 
         # Sync Enrollments - Very Slow!
-        self.stdout.write("Updating enrollments...")
         joins = SMJoin.objects.filter(
             structure__kind__in=['chapter', 'quartet', ],
             updated_ts__gt=cursor,

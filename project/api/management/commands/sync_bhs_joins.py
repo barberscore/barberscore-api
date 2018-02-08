@@ -14,22 +14,27 @@ class Command(BaseCommand):
     help = "Command to sync quartets and structures."
 
     def handle(self, *args, **options):
-        self.stdout.write("Updating chapter enrollments...")
-
         # Get unique active joins for Chapters
-        dicts = SMJoin.objects.filter(
+        join_pks = SMJoin.objects.filter(
             inactive_date=None,
-            structure__kind='Chapter',
+            structure__kind__in=[
+                'Chapter',
+                'Quartet',
+            ],
         ).values_list(
             'id',
             'subscription__human',
             'structure',
         )
         # Creating/Update Groups
-        self.stdout.write("Queuing enrollment updates...")
-        for d in dicts:
+        i = 0
+        t = len(join_pks)
+        for join_pk in join_pks:
+            i += 1
             django_rq.enqueue(
                 Enrollment.objects.update_or_create_from_join_pks,
-                d,
+                join_pk,
             )
-        self.stdout.write("Complete")
+            self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} enrollments...".format(i, t), ending='\r')
+        self.stdout.write("Queued {0} enrollments.".format(t))
