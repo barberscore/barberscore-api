@@ -461,7 +461,7 @@ class OrganizationManager(Manager):
             email = ""
         phone = structure.phone.strip()
         # And the chapter code
-        code = getattr(structure, 'chapter_code', None)
+        code = getattr(structure, 'chapter_code', '')
         bhs_id = structure.bhs_id
         mem_clean = structure.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
