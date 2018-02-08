@@ -23,15 +23,13 @@
   "addons": [
     "cloudinary:starter",
     "deployhooks:http",
-    "papertrail:choklad",
-    "sendgrid:starter",
-    "heroku-redis:hobby-dev",
+    "heroku-redis:premium-0",
     "heroku-postgresql:standard-0"
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures which settings to use. (staging|dev)",
-      "value": "settings.staging",
+      "value": "settings.dev",
       "required": true
     },
     "PYTHONPATH": {
