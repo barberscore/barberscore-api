@@ -420,7 +420,17 @@ class OrganizationManager(Manager):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('organization', 'international')
         kind = getattr(self.model.KIND, kind_clean, None)
-        name = structure.name.strip()
+        if structure.name:
+            # If the name has been assigned, use that.
+            name = structure.name.strip()
+        elif structure.preferred_name:
+            # If not yet assigned, use preferred and mark as pending.
+            name = "{0} (NAME APPROVAL PENDING)".format(
+                structure.preferred_name.strip()
+            )
+        else:
+            # Otherwise, call unknown.
+            name = 'UNKNOWN'
         # Map to the internal designation
         STATUS = {
             'active': 'active',
@@ -436,8 +446,8 @@ class OrganizationManager(Manager):
             'expired-licensed': 'inactive',
             'lapsed': 'inactive',
             'not-approved': 'inactive',
-            'pending': 'active',
-            'pending-voluntary': 'active',
+            'pending': 'inactive',
+            'pending-voluntary': 'inactive',
             'suspended': 'inactive',
             'suspended-membership': 'inactive',
         }
@@ -451,7 +461,7 @@ class OrganizationManager(Manager):
             email = ""
         phone = structure.phone.strip()
         # And the chapter code
-        code = structure.chapter_code
+        code = getattr(structure, 'chapter_code', None)
         bhs_id = structure.bhs_id
         mem_clean = structure.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
