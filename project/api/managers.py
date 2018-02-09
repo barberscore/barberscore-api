@@ -376,11 +376,28 @@ class OfficerManager(Manager):
         else:
             status = self.model.STATUS.active
 
+        # Flatten join objects
+        structure = role.structure
+        human = role.human
+        name = role.name
+        # Get organization
+        Organization = api.get_model('Organization')
+        organization = Organization.objects.get(bhs_pk=structure.id)
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(bhs_pk=human.id)
+        # Get office
+        Office = api.get_model('Office')
+        office = Office.objects.get(name=name)
+
         # Set the internal BHS fields
         bhs_pk = role.id
         # Set defaults and update
         defaults = {
             'status': status,
+            'organization': organization,
+            'person': person,
+            'office': office,
         }
         officer, created = self.update_or_create(
             bhs_pk=bhs_pk,
