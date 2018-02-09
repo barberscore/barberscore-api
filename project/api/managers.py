@@ -80,7 +80,6 @@ class EnrollmentManager(Manager):
         Organization = api.get_model('Organization')
         organization = Organization.objects.get(
             bhs_pk=organization__bhs_pk,
-            kind=Organization.KIND.chapter,
         )
         # Get person
         Person = api.get_model('Person')
@@ -415,6 +414,20 @@ class OrganizationManager(Manager):
                 i += 1
                 grandchild.org_sort = i
                 grandchild.save()
+        orgs = self.filter(
+            kind__in=[
+                self.model.KIND.chapter,
+                self.model.KIND.chorus,
+                self.model.KIND.quartet,
+            ]
+        ).order_by(
+            'kind',
+            'name',
+        )
+        for org in orgs:
+            i += 1
+            org.org_sort = i
+            org.save()
 
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
