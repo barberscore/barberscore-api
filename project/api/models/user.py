@@ -64,15 +64,19 @@ class User(AbstractBaseUser):
         blank=True,
     )
 
-    is_active = models.BooleanField(
-        default=True,
-    )
-
     is_staff = models.BooleanField(
         default=False,
     )
 
     objects = UserManager()
+
+    @property
+    def is_active(self):
+        """Proxy status."""
+        if self.status == self.STATUS.active:
+            return True
+        else:
+            return False
 
     @property
     def is_superuser(self):
