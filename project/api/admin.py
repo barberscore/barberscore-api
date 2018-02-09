@@ -962,6 +962,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         ],
         'Chapter': [
             GroupInline,
+            OfficerInline,
         ],
         'Group': [
             EnrollmentInline,
