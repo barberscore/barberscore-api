@@ -368,7 +368,7 @@ class GroupManager(Manager):
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role, **kwargs):
         today = now()
-        if not role.end_date:
+        if role.end_date:
             if role.end_date < today:
                 status = self.model.STATUS.inactive
             else:
