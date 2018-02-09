@@ -30,6 +30,7 @@ class Command(BaseCommand):
             name='Quartet Manager',
         )
         for enrollment in enrollments:
+            i += 1
             defaults = {
                 'status': enrollment.status,
             }
