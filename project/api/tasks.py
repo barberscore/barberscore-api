@@ -123,6 +123,50 @@ def delete_auth0_account_orphan(auth0_id):
 
 
 @job
+def update_or_create_account_from_user(user):
+    # Get the auth0 client
+    auth0 = get_auth0()
+    # Instantiate the created variable
+    created = True
+    # Try to get existing
+    if user.auth0_id:
+        try:
+            # Flip the bit if you can find an account
+            account = auth0.users.get(user.auth0_id)
+            created = False
+        except Auth0Error as e:
+            # If you can't find the account legit then proceed
+            if not e.status_code == 404:
+                # If there's a standard error, raise it.
+                raise(e)
+    # Build payload
+    payload = {
+        "connection": "email",
+        "email": user.email,
+        "email_verified": True,
+        "user_metadata": {
+            "name": user.name
+        },
+        "app_metadata": {
+            "barberscore_id": str(user.id),
+        }
+    }
+    if created:
+        account = auth0.users.create(payload)
+        user.auth0_id = account['user_id']
+        user.save()
+    else:
+        dirty = any([
+            account['email'] != user.email,
+            account['user_metadata']['name'] != user.name,
+            account['app_metadata']['barberscore_id'] != str(user.id),
+        ])
+        if dirty:
+            account = auth0.users.update(user.auth0_id, payload)
+    return account, created
+
+
+@job
 def create_auth0_account_from_user(user):
     auth0 = get_auth0()
     # Build payload
