@@ -277,7 +277,7 @@ class Group(TimeStampedModel):
                     {'kind': 'Quartets kind must match organization kind.'}
                 )
         else:
-            if self.organizaiton.kind != self.organization.KIND.chapter:
+            if self.organization.kind != self.organization.KIND.chapter:
                 raise ValidationError(
                     {'kind': 'Choruses kind must match organization kind.'}
                 )
