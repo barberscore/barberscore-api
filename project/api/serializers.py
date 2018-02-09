@@ -751,7 +751,6 @@ class UserSerializer(serializers.ModelSerializer):
             'url',
             'email',
             'name',
-            'is_active',
             'is_staff',
             'person',
             'permissions',

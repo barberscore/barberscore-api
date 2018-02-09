@@ -707,10 +707,9 @@ class MemberManager(Manager):
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, is_active=True, **kwargs):
+    def create_user(self, email, **kwargs):
         user = self.model(
             email=email,
-            is_active=is_active,
             **kwargs
         )
         user.set_unusable_password()
@@ -722,7 +721,6 @@ class UserManager(BaseUserManager):
         user = self.model(
             email=email,
             is_staff=True,
-            is_active=True,
             **kwargs
         )
         user.set_password(password)

@@ -1430,7 +1430,6 @@ class UserAdmin(BaseUserAdmin):
         'email',
         'name',
         'person',
-        'is_active',
         'is_staff',
         'auth0_id',
     ]
@@ -1440,11 +1439,11 @@ class UserAdmin(BaseUserAdmin):
     # ]
 
     list_display_links = [
+        'email',
         'person',
     ]
 
     list_filter = (
-        'is_active',
         'is_staff',
     )
 
@@ -1454,7 +1453,6 @@ class UserAdmin(BaseUserAdmin):
                 'name',
                 'email',
                 'auth0_id',
-                'is_active',
                 'is_staff',
                 'is_group_manager',
                 'is_session_manager',
@@ -1469,7 +1467,6 @@ class UserAdmin(BaseUserAdmin):
                 'name',
                 'email',
                 'auth0_id',
-                'is_active',
                 'is_staff',
             )
         }),
