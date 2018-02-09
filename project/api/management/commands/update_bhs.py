@@ -10,8 +10,10 @@ from django.utils import timezone
 
 # First-Party
 from api.models import Enrollment
-from api.models import Group
-from api.models import Member
+# from api.models import Role
+# from api.models import Group
+# from api.models import Member
+# from api.models import Officer
 from api.models import Organization
 from api.models import Person
 from bhs.models import Human
@@ -80,7 +82,7 @@ class Command(BaseCommand):
             self.stdout.write("Queuing {0}/{1} persons...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} persons.".format(t))
 
-        # Sync BHS Status and Current Through
+        # Sync Subsciptions
         subscriptions = Subscription.objects.filter(
             items_editable=True,
             updated_ts__gt=cursor,
@@ -113,52 +115,22 @@ class Command(BaseCommand):
             self.stdout.write("Queuing {0}/{1} structures...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} structures.".format(t))
 
-        # Sync Groups
-        # self.stdout.write("Updating groups...")
-        # ss = Structure.objects.filter(
-        #     kind__in=[
-        #         'quartet',
-        #         'chapter',
-        #     ],
+        # Sync Roles
+        # roles = Role.objects.filter(
         #     updated_ts__gt=cursor,
-        # ).exclude(id__in=[
-        #     '0207656d-64ff-443d-862f-bc4fec6ea2be'
-        # ])
-        # i = 0
-        # t = ss.count()
-        # for s in ss:
-        #     i += 1
-        #     try:
-        #         Group.objects.update_or_create_from_structure(s)
-        #     except Exception as e:
-        #         log.error(e)
-        #     self.stdout.write("{0}/{1}".format(i, t), ending='\r')
-        #     self.stdout.flush()
-        # self.stdout.write("Updated {0} groups.".format(t))
+        # ).exclude(
+        #     name='Quartet Admin',
+        # )
+        # # Creating/Update Groups
+        # self.stdout.write("Queuing enrollment updates...")
+        # for role in roles:
+        #     django_rq.enqueue(
+        #         Officer.objects.update_or_create_from_role,
+        #         role,
+        #     )
+        # self.stdout.write("Complete")
 
-        # Sync Members
-        # self.stdout.write("Updating memberships...")
-        # js = SMJoin.objects.filter(
-        #     status=True,
-        #     structure__kind__in=[
-        #         'quartet',
-        #         'chapter',
-        #     ],
-        #     updated_ts__gt=cursor,
-        # ).order_by('updated_ts')
-        # i = 0
-        # t = js.count()
-        # for j in js:
-        #     i += 1
-        #     try:
-        #         Member.objects.update_or_create_from_join(j)
-        #     except Exception as e:
-        #         log.error(e)
-        #     self.stdout.write("{0}/{1}".format(i, t), ending='\r')
-        #     self.stdout.flush()
-        # self.stdout.write("Updated {0} memberships.".format(t))
-
-        # Sync Enrollments - Very Slow!
+        # Sync Enrollments
         joins = SMJoin.objects.filter(
             structure__kind__in=['chapter', 'quartet', ],
             updated_ts__gt=cursor,
