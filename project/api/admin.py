@@ -1432,6 +1432,7 @@ class UserAdmin(BaseUserAdmin):
         'person',
         'is_staff',
         'auth0_id',
+        'status',
     ]
 
     # list_editable = [
@@ -1444,13 +1445,16 @@ class UserAdmin(BaseUserAdmin):
     ]
 
     list_filter = (
+        'status',
         'is_staff',
     )
 
     fieldsets = (
         (None, {
             'fields': (
+                'id',
                 'name',
+                'status',
                 'email',
                 'auth0_id',
                 'is_staff',
@@ -1465,6 +1469,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': (
                 'name',
+                'status',
                 'email',
                 'auth0_id',
                 'is_staff',
@@ -1478,7 +1483,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
     readonly_fields = [
-        # 'name',
+        'id',
         # 'email',
         # 'auth0_id',
         'is_group_manager',
