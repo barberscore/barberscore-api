@@ -596,6 +596,11 @@ class PersonManager(Manager):
             bhs_pk=human.id,
         )
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
+        # Override -- A person can not be acitve without valid email
+        try:
+            validate_email(person)
+        except ValidationError:
+            status = self.model.STATUS.inactive
         current_through = subscription.current_through
         person.status = status
         person.current_through = current_through
