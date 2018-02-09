@@ -12,8 +12,9 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.apps import apps as api_apps
-from django.contrib.postgres.fields import ArrayField  # CIEmailField,
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import RegexValidator
+from django.core.validators import validate_email
 from django.db import models
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
@@ -306,34 +307,8 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        pass
-        # validate_email(self.email)
-        # if hasattr(self, 'user') and not self.email:
-        #     raise ValidationError(
-        #         {'email': 'User account must have email.'}
-        #     )
-        # if not hasattr(self, 'user') and self.email:
-        #     raise ValidationError(
-        #         {'email': 'Person with email should have User account.'}
-        #     )
-        # if self.status == self.STATUS.exempt and (self.bhs_id or self.bhs_pk):
-        #     raise ValidationError(
-        #         {'status': 'Exempt users should not be in BHS or MC.'}
-        #     )
-        # if self.current_through:
-        #     if self.status == self.STATUS.active and self.current_through < datetime.date.today():
-        #         raise ValidationError(
-        #             {'status': 'Active user beyond current_through date.'}
-        #         )
-        #     if self.status == self.STATUS.inactive and self.current_through > datetime.date.today():
-        #         raise ValidationError(
-        #             {'status': 'Inactive user within current_through date.'}
-        #         )
-        # else:
-        #     if self.status == self.STATUS.active:
-        #         raise ValidationError(
-        #             {'status': 'Active status without current_through date.'}
-        #         )
+        if self.status == self.STATUS.active:
+            validate_email(self.email)
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(
