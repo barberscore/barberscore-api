@@ -68,11 +68,9 @@ class Person(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-20, 'legacy', 'Legacy',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
-        (20, 'exempt', 'Exempt',),
     )
 
     status = FSMIntegerField(
