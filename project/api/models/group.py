@@ -271,22 +271,18 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        ok = all([
-            self.kind == self.KIND.quartet,
-            self.organization.kind != self.organization.KIND.quartet,
-        ])
-        if not ok:
-            raise ValidationError(
-                {'kind': 'Quartet groups must have a quartet organization.'}
-            )
-        ok = all([
-            self.kind == self.KIND.chorus,
-            self.organization.kind != self.organization.KIND.chapter,
-        ])
-        if not ok:
-            raise ValidationError(
-                {'kind': 'Chorus groups must have a chapter organization.'}
-            )
+        if self.kind == self.KIND.quartet:
+            if self.organization.kind != self.organization.KIND.quartet:
+                raise ValidationError(
+                    {'kind': 'Quartet groups must have a quartet organization.'}
+                )
+        elif self.kind == self.KIND.chorus:
+            if self.organization.kind != self.organization.KIND.chapter:
+                raise ValidationError(
+                    {'kind': 'Chorus groups must have a chapter organization.'}
+                )
+        else:
+            raise RuntimeError('WAT')
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
