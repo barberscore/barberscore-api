@@ -15,7 +15,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.core.validators import RegexValidator
 from django.db import models
-
+from django.core.exceptions import ValidationError
 # First-Party
 from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
@@ -271,14 +271,22 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        return
-        # if self.kind == self.KIND.quartet:
-        #     if self.members.filter(
-        #         status=self.members.model.STATUS.active,
-        #     ).count() > 4:
-        #         raise ValidationError(
-        #             {'kind': 'Quartets can not have more than four current members.'}
-        #         )
+        ok = all([
+            self.kind == self.KIND.quartet,
+            self.organization.kind != self.organization.KIND.quartet,
+        ])
+        if not ok:
+            raise ValidationError(
+                {'kind': 'Quartet groups must have a quartet organization.'}
+            )
+        ok = all([
+            self.kind == self.KIND.chorus,
+            self.organization.kind != self.organization.KIND.chapter,
+        ])
+        if not ok:
+            raise ValidationError(
+                {'kind': 'Chorus groups must have a chapter organization.'}
+            )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
