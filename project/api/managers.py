@@ -14,6 +14,7 @@ from django.core.validators import URLValidator
 from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import Manager
+from django.utils.timezone import now
 
 api = api_apps.get_app_config('api')
 bhs = api_apps.get_app_config('bhs')
@@ -366,33 +367,23 @@ class GroupManager(Manager):
 
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role, **kwargs):
-        # Flatten join objects
-        structure = role.structure
-        human = role.human
-        name = role.name
-        # Get organization
-        Organization = api.get_model('Organization')
-        organization = Organization.objects.get(bhs_pk=structure.id)
-        # Get person
-        Person = api.get_model('Person')
-        person = Person.objects.get(bhs_pk=human.id)
-        # Get office
-        Office = api.get_model('Office')
-        office = Office.objects.get(name=name)
-
-        status = self.model.STATUS.active
+        today = now()
+        if not role.end_date:
+            if role.end_date < today:
+                status = self.model.STATUS.inactive
+            else:
+                status = self.model.STATUS.active
+        else:
+            status = self.model.STATUS.active
 
         # Set the internal BHS fields
         bhs_pk = role.id
         # Set defaults and update
         defaults = {
             'status': status,
-            'bhs_pk': bhs_pk,
         }
         officer, created = self.update_or_create(
-            person=person,
-            organization=organization,
-            office=office,
+            bhs_pk=bhs_pk,
             defaults=defaults,
         )
         return officer, created

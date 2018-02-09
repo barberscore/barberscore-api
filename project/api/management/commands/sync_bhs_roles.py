@@ -23,9 +23,6 @@ class Command(BaseCommand):
             Q(end_date__gt=today)
         ).exclude(
             name='Quartet Admin',
-        ).values(
-            'human',
-            'structure',
         )
         # Creating/Update Groups
         self.stdout.write("Queuing enrollment updates...")
