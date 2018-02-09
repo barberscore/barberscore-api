@@ -271,10 +271,16 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.kind != self.organization.kind:
-            raise ValidationError(
-                {'kind': 'Group kind must match organization kind.'}
-            )
+        if self.kind == self.KIND.quartet:
+            if self.organization.kind != self.organization.KIND.quartet:
+                raise ValidationError(
+                    {'kind': 'Quartets kind must match organization kind.'}
+                )
+        else:
+            if self.organizaiton.kind != self.organization.KIND.chapter:
+                raise ValidationError(
+                    {'kind': 'Choruses kind must match organization kind.'}
+                )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
