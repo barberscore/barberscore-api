@@ -65,63 +65,54 @@ class Command(BaseCommand):
             email='admin@barberscore.com',
             password='password',
             is_staff=True,
-            is_active=True,
             auth0_id='email|5a18277f7cd31262971cddfc',
         )
         scjc_user = UserFactory(
             id='a3be3d43-c5d3-4aec-973a-d42c00c72256',
             name='SCJC Person',
             email='scjc@barberscore.com',
-            is_active=True,
             auth0_id='email|5a1827707cd31262971cddf8',
         )
         drcj_user = UserFactory(
             id='55ef12a3-576d-496b-a70b-c3126f62caa2',
             name='DRCJ Person',
             email='drcj@barberscore.com',
-            is_active=True,
             auth0_id='email|5a12f3607cd31262971bca22',
         )
         ca_user = UserFactory(
             id='7cfdac82-ca9f-46dc-9c7b-c9054908cb7c',
             name='CA Person',
             email='ca@barberscore.com',
-            is_active=True,
             auth0_id='email|5a1827777cd31262971cddf9',
         )
         quartet_admin_user = UserFactory(
             id='afa2d19b-1099-4a77-bc8c-04b06a6896a0',
             name='Quartet Person',
             email='quartet_admin@barberscore.com',
-            is_active=True,
             auth0_id='email|5a12f3627cd31262971bca24',
         )
         chorus_admin_user = UserFactory(
             id='bd32c1e6-4c61-4f7f-bee5-e843d80bb9ad',
             name='Chorus Person',
             email='chorus_admin@barberscore.com',
-            is_active=True,
             auth0_id='email|5a12f3637cd31262971bca25',
         )
         music_judge_user = UserFactory(
             id='55204faf-d4c6-4b88-9bed-3721db42ccf3',
             name='Music Person',
             email='music_judge@barberscore.com',
-            is_active=True,
             auth0_id='email|5a2ef1717cd312629752490b',
         )
         performance_judge_user = UserFactory(
             id='8e326a1a-5bb9-4a29-98f9-c7f704870f43',
             name='Performance Person',
             email='performance_judge@barberscore.com',
-            is_active=True,
             auth0_id='email|5a2ef1717cd312629752490a',
         )
         singing_judge_user = UserFactory(
             id='fb6bb161-69f0-49ff-ba51-3a4721220566',
             name='Singing Person',
             email='singing_judge@barberscore.com',
-            is_active=True,
             auth0_id='email|5a2ef1707cd3126297524909',
         )
         # Create Persons
