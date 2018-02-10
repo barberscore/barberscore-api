@@ -7,7 +7,7 @@ name = "pypi"
 
 [packages]
 
-auth0-python = "*"
+"auth0-python" = "*"
 coreapi = "*"
 cryptography = "*"
 dj-database-url = "*"
@@ -29,7 +29,6 @@ markdown = "*"
 mysqlclient = "*"
 openpyxl = "*"
 pillow = "*"
-psycopg2 = "*"
 python-dateutil = "*"
 python-pdf = "*"
 ranking = "*"
@@ -41,6 +40,7 @@ bugsnag = "*"
 gunicorn = "*"
 ipython = "*"
 cloudinary = {git = "git://github.com/barberscore/pycloudinary.git"}
+"psycopg2-binary" = "*"
 
 
 [dev-packages]
@@ -50,7 +50,7 @@ pytest-django = "*"
 pylint = "*"
 pycodestyle = "*"
 pydocstyle = "*"
-autopep8 = "*"
+"autopep8" = "*"
 factory-boy = "*"
 faker = "*"
 django-debug-toolbar = "*"
