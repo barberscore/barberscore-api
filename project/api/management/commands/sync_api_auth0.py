@@ -3,10 +3,9 @@ from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import User
-from api.tasks import create_auth0_account_from_user
-from api.tasks import delete_auth0_account_orphan
 from api.tasks import get_auth0_accounts
-from api.tasks import update_auth0_account_from_user
+from api.tasks import update_or_create_account_from_user
+from api.tasks import delete_auth0_account_orphan
 
 
 class Command(BaseCommand):
@@ -33,19 +32,23 @@ class Command(BaseCommand):
             else:
                 clean_accounts.append(account)
         accounts = clean_accounts
-        # Get User Accounts with existing Auth0
-        users = User.objects.filter(auth0_id__isnull=False, is_active=True)
+        # Get active User Accounts with existing Auth0
+        users = User.objects.filter(
+            status=User.STATUS.active,
+        )
         # Update each Active User account
         self.stdout.write("Updating existing accounts...")
         i = 0
         total = users.count()
         for user in users:
-            # Find user in accounts, or none
             i += 1
             self.stdout.write("{0}/{1}".format(i, total), ending='\r')
             self.stdout.flush()
+            # Find user in accounts, or none
             match = next((a for a in accounts if a['auth0_id'] == str(user.auth0_id)), None)
             if match:
+                # If user is in accounts
+                # Check to see if the data matches
                 user_dict = {
                     'name': user.name,
                     'email': user.email,
@@ -53,21 +56,12 @@ class Command(BaseCommand):
                     'barberscore_id': str(user.id),
                 }
                 if user_dict != match:
-                    user = update_auth0_account_from_user.delay(user)
+                    # If it doesn't, update it
+                    update_or_create_account_from_user.delay(user)
                     self.stdout.write("UPDATED: {0}".format(user))
+                # Otherwise skip
             else:
-                user = create_auth0_account_from_user.delay(user)
-                self.stdout.write("RESET: {0}".format(user))
-        # Create new accounts for new Active users
-        # Create new Auth0 Accounts
-        self.stdout.write("Creating new accounts...")
-        users = User.objects.filter(auth0_id__isnull=True, is_active=True)
-        i = 0
-        total = users.count()
-        for user in users:
-            i += 1
-            self.stdout.write("{0}/{1}".format(i, total), ending='\r')
-            self.stdout.flush()
-            user = create_auth0_account_from_user.delay(user)
-            self.stdout.write("CREATED: {0}".format(user))
+                # If user isn't in accounts, create.
+                update_or_create_account_from_user.delay(user)
+                self.stdout.write("CREATED: {0}".format(user))
         self.stdout.write("Complete.")
