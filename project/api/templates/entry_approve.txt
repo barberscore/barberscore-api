@@ -16,6 +16,10 @@ system prior to your performance or you risk disqualification.
 
 ENTRY DETAILS
 
+Group: {{entry.group.name|safe}} {{entry.group.bhs_id}}
+
+Session: {{entry.session.nomen|safe}}
+
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 
 Keep Scores Private: {{entry.is_private|yesno|title}}

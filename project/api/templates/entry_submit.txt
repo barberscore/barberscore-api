@@ -6,7 +6,8 @@ If you have questions, please contact the DRCJ(s) of the contest directly
 Break a leg!
 
 ENTRY DETAILS
-Group: {{entry.group.name|safe}}
+
+Group: {{entry.group.name|safe}} {{entry.group.bhs_id}}
 
 Session: {{entry.session.nomen|safe}}
 
