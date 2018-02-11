@@ -14,9 +14,6 @@ from django.apps import apps as api_apps
 from django.db import models
 from django.utils.encoding import smart_text
 
-# First-Party
-from api.managers import EnrollmentManager
-
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
@@ -139,8 +136,6 @@ class Enrollment(TimeStampedModel):
     )
 
     # Internals
-    objects = EnrollmentManager()
-
     class Meta:
         default_related_name = 'enrollments'
         unique_together = (

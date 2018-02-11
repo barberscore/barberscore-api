@@ -100,17 +100,6 @@ def update_quartet_memberships(quartet):
     return quartet.update_memberships()
 
 
-# Chapter/Chorus Updaters
-@job
-def update_chapter_enrollments(chapter):
-    return chapter.update_enrollments()
-
-
-@job
-@job
-def update_chorus_from_chapter(chorus):
-    return chorus.update_from_chapter()
-
 ###
 
 
@@ -492,8 +481,8 @@ def create_drcj_report(session):
                 status__gt=0,
             ).values_list('person', flat=True)
             cs = Organization.objects.filter(
-                enrollments__person__in=persons,
-                enrollments__status__gt=0,
+                members__person__in=persons,
+                members__status__gt=0,
                 kind=Organization.KIND.chapter,
             ).distinct(
             ).order_by(

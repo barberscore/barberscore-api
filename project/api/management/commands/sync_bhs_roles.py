@@ -12,7 +12,7 @@ log = logging.getLogger('updater')
 
 
 class Command(BaseCommand):
-    help = "Command to sync quartets and structures."
+    help = "Command to sync bhs roles with officers."
 
     def handle(self, *args, **options):
         self.stdout.write("Updating officers...")
@@ -25,7 +25,7 @@ class Command(BaseCommand):
             name='Quartet Admin',
         )
         # Creating/Update Groups
-        self.stdout.write("Queuing enrollment updates...")
+        self.stdout.write("Queuing officer updates...")
         for role in roles:
             django_rq.enqueue(
                 Officer.objects.update_or_create_from_role,

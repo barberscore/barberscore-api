@@ -267,12 +267,10 @@ class Organization(TimeStampedModel):
                 )
 
     # Methods
-    def update_enrollments(self):
-        if self.kind != self.KIND.chapter:
-            raise RuntimeError("Can only update chapters")
+    def update_members(self):
         if not self.bhs_pk:
             raise RuntimeError("No BHS Link.")
-        Enrollment = api.get_model('Enrollment')
+        Member = api.get_model('Member')
         Structure = bhs.get_model('Structure')
         structure = Structure.objects.get(id=self.bhs_pk)
         js = structure.smjoins.values(
@@ -285,7 +283,7 @@ class Organization(TimeStampedModel):
                 subscription__human__id=j['subscription__human'],
                 structure__id=j['structure'],
             ).latest('established_date', 'updated_ts')
-            Enrollment.objects.update_or_create_from_join(m)
+            Member.objects.update_or_create_from_join(m)
         return
 
     # Permissions
