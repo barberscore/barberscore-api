@@ -15,7 +15,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.core.validators import RegexValidator
 from django.db import models
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 # First-Party
 from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
@@ -188,7 +188,7 @@ class Group(TimeStampedModel):
     )
 
     bhs_id = models.IntegerField(
-        unique=True,
+        # unique=True,
         blank=True,
         null=True,
     )
@@ -228,7 +228,7 @@ class Group(TimeStampedModel):
     bhs_pk = models.UUIDField(
         null=True,
         blank=True,
-        unique=True,
+        # unique=True,
         db_index=True,
     )
 
