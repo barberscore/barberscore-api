@@ -696,9 +696,10 @@ class GroupAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
+        'name',
         'kind',
         'gender',
+        'parent',
         'organization',
         'location',
         'bhs_id',
