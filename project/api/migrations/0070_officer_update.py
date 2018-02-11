@@ -9,7 +9,9 @@ log = logging.getLogger('importer')
 def data_migration(apps, schema_editor):
     Officer = apps.get_model('api', 'Officer')
     Group = apps.get_model('api', 'Group')
-    officers = Officer.objects.all()
+    officers = Officer.objects.exclude(
+        group__kind=Group.KIND.quartet,
+    )
     for officer in officers:
         try:
             officer.group = officer.organization.groups.get(status__gt=0)
@@ -19,6 +21,12 @@ def data_migration(apps, schema_editor):
         except Group.MultipleObjectsReturned as e:
             log.error("{} {}".format(e, officer.organization))
             officer.group = None
+        officer.save()
+    officers = Officer.objects.filter(
+        group__kind=Group.KIND.quartet,
+    )
+    for officer in officers:
+        officer.group = officer.organization.groups.first()
         officer.save()
     return
 
