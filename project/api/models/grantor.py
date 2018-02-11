@@ -64,10 +64,10 @@ class Grantor(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    class Meta:
-        unique_together = (
-            ('convention', 'organization',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('convention', 'organization',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "grantor"
