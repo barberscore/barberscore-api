@@ -33,7 +33,6 @@ from api.models import Competitor
 from api.models import Contest
 from api.models import Contestant
 from api.models import Convention
-from api.models import Enrollment
 from api.models import Entry
 from api.models import Grantor
 from api.models import Group

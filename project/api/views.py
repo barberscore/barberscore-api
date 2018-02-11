@@ -31,7 +31,6 @@ from .filters import GroupFilter
 from .filters import MemberFilter
 from .filters import OfficeFilter
 from .filters import OfficerFilter
-from .filters import OrganizationFilter
 from .filters import PanelistFilter
 from .filters import PersonFilter
 from .filters import RoundFilter
@@ -497,7 +496,6 @@ class OrganizationViewSet(
         'nomen',
     )
     serializer_class = OrganizationSerializer
-    filter_class = OrganizationFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

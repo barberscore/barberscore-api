@@ -20,7 +20,6 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
-from .models import Organization
 from .models import Panelist
 from .models import Person
 from .models import Round
@@ -63,30 +62,30 @@ class DivisionListFilter(admin.SimpleListFilter):
         return queryset
 
 
-class OrganizationListFilter(admin.SimpleListFilter):
-    title = ('organization')
-    parameter_name = 'org'
+class GroupListFilter(admin.SimpleListFilter):
+    title = ('group')
+    parameter_name = 'group'
 
     def lookups(self, request, model_admin):
-        orgs = Organization.objects.filter(
-            kind__lte=Organization.KIND.division,
+        orgs = Group.objects.filter(
+            kind__lte=Group.KIND.division,
         ).values_list('id', 'code')
         return tuple(orgs)
 
     def queryset(self, request, queryset):
-        org = request.GET.get('org')
-        if org:
-            return queryset.filter(organization=org)
+        group = request.GET.get('group')
+        if group:
+            return queryset.filter(group=group)
         return queryset
 
 
-class ParentOrganizationListFilter(admin.SimpleListFilter):
+class ParentGroupListFilter(admin.SimpleListFilter):
     title = ('parent')
     parameter_name = 'org'
 
     def lookups(self, request, model_admin):
-        orgs = Organization.objects.filter(
-            kind__lte=Organization.KIND.division,
+        orgs = Group.objects.filter(
+            kind__lte=Group.KIND.division,
         ).values_list('id', 'code')
         return tuple(orgs)
 
@@ -97,13 +96,13 @@ class ParentOrganizationListFilter(admin.SimpleListFilter):
         return queryset
 
 
-class ConventionOrganizationListFilter(admin.SimpleListFilter):
+class ConventionGroupListFilter(admin.SimpleListFilter):
     title = ('organization')
     parameter_name = 'org'
 
     def lookups(self, request, model_admin):
-        orgs = Organization.objects.filter(
-            kind__lte=Organization.KIND.district,
+        orgs = Group.objects.filter(
+            kind__lte=Group.KIND.district,
         ).values_list('id', 'code')
         return tuple(orgs)
 
@@ -114,13 +113,13 @@ class ConventionOrganizationListFilter(admin.SimpleListFilter):
         return queryset
 
 
-class SessionOrganizationListFilter(admin.SimpleListFilter):
+class SessionGroupListFilter(admin.SimpleListFilter):
     title = ('organization')
     parameter_name = 'org'
 
     def lookups(self, request, model_admin):
-        orgs = Organization.objects.filter(
-            kind__lte=Organization.KIND.district,
+        orgs = Group.objects.filter(
+            kind__lte=Group.KIND.district,
         ).values_list('id', 'code')
         return tuple(orgs)
 
@@ -366,38 +365,6 @@ class OfficerFilter(FilterSet):
             ],
             'office__kind': [
                 'exact',
-            ],
-        }
-
-
-class OrganizationFilter(FilterSet):
-    class Meta:
-        model = Organization
-        fields = {
-            'id': [
-                'exact',
-            ],
-            'kind': [
-                'exact',
-                'lt',
-                'in',
-                'lte',
-            ],
-            'parent': [
-                'exact',
-            ],
-            'officers__person__user': [
-                'exact',
-            ],
-            'officers__office__is_award_manager': [
-                'exact',
-            ],
-            'nomen': [
-                'icontains',
-            ],
-            'status': [
-                'exact',
-                'gt',
             ],
         }
 

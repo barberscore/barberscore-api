@@ -9,12 +9,12 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
-from .filters import ConventionOrganizationListFilter
+from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
-from .filters import OrganizationListFilter
-from .filters import ParentOrganizationListFilter
-from .filters import SessionOrganizationListFilter
+from .filters import GroupListFilter
+from .filters import ParentGroupListFilter
+from .filters import SessionGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
 from .inlines import AppearanceInline
@@ -203,7 +203,7 @@ class AwardAdmin(admin.ModelAdmin):
         'level',
         'season',
         'is_primary', 'is_invitational', 'is_manual',
-        OrganizationListFilter,
+        GroupListFilter,
     ]
 
     readonly_fields = [
@@ -398,7 +398,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'status',
         'season',
-        ConventionOrganizationListFilter,
+        ConventionGroupListFilter,
         'year',
     )
 
@@ -944,7 +944,6 @@ class OrganizationAdmin(admin.ModelAdmin):
         'status',
         'kind',
         'mem_status',
-        ParentOrganizationListFilter,
     ]
 
     search_fields = [
@@ -1326,7 +1325,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
-        SessionOrganizationListFilter,
+        SessionGroupListFilter,
         'convention__season',
         'convention__year',
     )
