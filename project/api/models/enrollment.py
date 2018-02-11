@@ -138,9 +138,6 @@ class Enrollment(TimeStampedModel):
     # Internals
     class Meta:
         default_related_name = 'enrollments'
-        unique_together = (
-            ('organization', 'person',),
-        )
 
     class JSONAPIMeta:
         resource_name = "enrollment"
@@ -152,14 +149,7 @@ class Enrollment(TimeStampedModel):
         pass
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.organization,
-                    self.person,
-                ]
-            )
-        )
+        self.nomen = str(self.id)
         super().save(*args, **kwargs)
 
     # Enrollment Permissions

@@ -261,28 +261,28 @@ class Group(TimeStampedModel):
 
     international = models.TextField(
         help_text="""
-            The denormalized international organization.""",
+            The denormalized international group.""",
         blank=True,
         max_length=255,
     )
 
     district = models.TextField(
         help_text="""
-            The denormalized district organization.""",
+            The denormalized district group.""",
         blank=True,
         max_length=255,
     )
 
     division = models.TextField(
         help_text="""
-            The denormalized division organization.""",
+            The denormalized division group.""",
         blank=True,
         max_length=255,
     )
 
     chapter = models.TextField(
         help_text="""
-            The denormalized chapter organization.""",
+            The denormalized chapter group.""",
         blank=True,
         max_length=255,
     )
@@ -306,43 +306,12 @@ class Group(TimeStampedModel):
 
     def clean(self):
         pass
-        # if self.kind == self.KIND.quartet:
-        #     if self.organization.kind != self.organization.KIND.quartet:
-        #         raise ValidationError(
-        #             {'kind': 'Quartets kind must match organization kind.'}
-        #         )
-        # else:
-        #     if self.organization.kind != self.organization.KIND.chapter:
-        #         raise ValidationError(
-        #             {'kind': 'Choruses kind must match organization kind.'}
-        #         )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
         super().save(*args, **kwargs)
 
     # Methods
-    def update_from_chapter(self):
-        if self.kind != self.KIND.chorus:
-            raise ValueError("Can only update choruses")
-        if self.status != self.STATUS.active:
-            raise ValueError("Can only update active choruses")
-        # Copy from chapter.
-        chapter = self.organization
-        if chapter.kind != chapter.KIND.chapter:
-            raise ValueError("Must have chapter as parent")
-        self.email = chapter.email
-        self.phone = chapter.phone
-        self.website = chapter.website
-        self.facebook = chapter.facebook
-        self.twitter = chapter.twitter
-        self.bhs_id = chapter.bhs_id
-        self.bhs_pk = chapter.bhs_pk
-        if chapter.status < 0:
-            self.status = self.STATUS.inactive
-        self.save()
-        return
-
     def update_memberships(self):
         if self.kind != self.KIND.quartet:
             raise RuntimeError("Can only update quartets")

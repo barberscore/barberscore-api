@@ -234,7 +234,7 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.group.organization.officers.filter(
+            self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
             ),

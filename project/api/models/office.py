@@ -88,10 +88,6 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_organization_manager = models.BooleanField(
-        default=False,
-    )
-
     is_group_manager = models.BooleanField(
         default=False,
     )
