@@ -524,12 +524,14 @@ class Command(BaseCommand):
             name='Quartet 1',
             kind=Group.KIND.quartet,
             organization=chaptet_1,
+            bhs_id=10,
             international=international.code,
             district=district_alpha.code,
         )
         quartet_2 = GroupFactory(
             name='Quartet 2',
             kind=Group.KIND.quartet,
+            bhs_id=20,
             organization=chaptet_2,
             international=international.code,
             district=district_alpha.code,
@@ -537,6 +539,7 @@ class Command(BaseCommand):
         quartet_3 = GroupFactory(
             name='Quartet 3',
             kind=Group.KIND.quartet,
+            bhs_id=30,
             organization=chaptet_3,
             international=international.code,
             district=district_alpha.code,
@@ -546,10 +549,12 @@ class Command(BaseCommand):
             name='Chorus One',
             kind=Group.KIND.chorus,
             organization=chapter_1,
+            bhs_id=40,
             international=international.code,
             district=district_alpha.code,
             chapter=chapter_1.name,
         )
+        return
         # Create enrollments
         enrollment_chorus_admin = EnrollmentFactory(
             organization=chapter_1,

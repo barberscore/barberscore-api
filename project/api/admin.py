@@ -64,6 +64,8 @@ from .models import Song
 from .models import User
 from .models import Venue
 
+admin.site.site_header = 'Barberscore Admin Backend'
+
 
 @admin.register(Appearance)
 class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):

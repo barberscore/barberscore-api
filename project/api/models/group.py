@@ -61,8 +61,24 @@ class Group(TimeStampedModel):
     )
 
     KIND = Choices(
-        (32, 'chorus', "Chorus"),
-        (41, 'quartet', "Quartet"),
+        ('International', [
+            (1, 'international', "International"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Division', [
+            (21, 'division', "Division"),
+        ]),
+        ('Chapter', [
+            (30, 'chapter', "Chapter"),
+        ]),
+        ('Group', [
+            (32, 'chorus', "Chorus"),
+            (41, 'quartet', "Quartet"),
+        ]),
     )
 
     kind = models.IntegerField(
@@ -280,16 +296,17 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.kind == self.KIND.quartet:
-            if self.organization.kind != self.organization.KIND.quartet:
-                raise ValidationError(
-                    {'kind': 'Quartets kind must match organization kind.'}
-                )
-        else:
-            if self.organization.kind != self.organization.KIND.chapter:
-                raise ValidationError(
-                    {'kind': 'Choruses kind must match organization kind.'}
-                )
+        pass
+        # if self.kind == self.KIND.quartet:
+        #     if self.organization.kind != self.organization.KIND.quartet:
+        #         raise ValidationError(
+        #             {'kind': 'Quartets kind must match organization kind.'}
+        #         )
+        # else:
+        #     if self.organization.kind != self.organization.KIND.chapter:
+        #         raise ValidationError(
+        #             {'kind': 'Choruses kind must match organization kind.'}
+        #         )
 
     def save(self, *args, **kwargs):
         self.nomen = self.name

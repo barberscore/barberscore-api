@@ -400,6 +400,8 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
             'organization',
+            'parent',
+            'children',
             'entries',
             'members',
             'repertories',
