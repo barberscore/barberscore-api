@@ -25,9 +25,9 @@ def entry_post_save(sender, instance, created, raw=False, **kwargs):
                 contest=contest,
             )
         has_divisions = bool(
-            entry.session.convention.organization.children.filter(
-                kind=entry.session.convention.organization.KIND.division,
-                status=entry.session.convention.organization.STATUS.active,
+            entry.session.convention.group.children.filter(
+                kind=entry.session.convention.group.KIND.division,
+                status=entry.session.convention.group.STATUS.active,
             )
         )
         if has_divisions:
@@ -44,8 +44,8 @@ def session_post_save(sender, instance, created, raw=False, **kwargs):
     if created and not raw:
         grantors = session.convention.grantors.all()
         for grantor in grantors:
-            awards = grantor.organization.awards.filter(
-                status=grantor.organization.awards.model.STATUS.active,
+            awards = grantor.group.awards.filter(
+                status=grantor.group.awards.model.STATUS.active,
                 kind=session.kind,
                 season=session.convention.season,
             )

@@ -250,10 +250,20 @@ class Award(TimeStampedModel):
     )
 
     # FKs
+    group = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        related_name='awards',
+        on_delete=models.SET_NULL,
+    )
+
     organization = models.ForeignKey(
         'Organization',
         related_name='awards',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     parent = models.ForeignKey(

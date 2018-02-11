@@ -20,7 +20,6 @@ from api.models import Competitor
 from api.models import Contest
 from api.models import Contestant
 from api.models import Convention
-from api.models import Enrollment
 from api.models import Entry
 from api.models import Grantor
 from api.models import Grid
@@ -28,7 +27,6 @@ from api.models import Group
 from api.models import Member
 from api.models import Office
 from api.models import Officer
-from api.models import Organization
 from api.models import Panelist
 from api.models import Person
 from api.models import Repertory
@@ -75,7 +73,7 @@ class AwardFactory(DjangoModelFactory):
     threshold = None
     minimum = None
     advance = None
-    organization = SubFactory('api.factories.OrganizationFactory')
+    group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
         model = Award
@@ -122,7 +120,7 @@ class ConventionFactory(DjangoModelFactory):
     end_date = datetime.date(2017, 7, 8)
     location = Faker('city')
     venue = SubFactory('api.factories.VenueFactory')
-    organization = SubFactory('api.factories.OrganizationFactory')
+    group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
         model = Convention
@@ -164,15 +162,6 @@ class CompetitorFactory(DjangoModelFactory):
         model = Competitor
 
 
-class EnrollmentFactory(DjangoModelFactory):
-    status = Enrollment.STATUS.active
-    organization = SubFactory('api.factories.OrganizationFactory')
-    person = SubFactory('api.factories.PersonFactory')
-
-    class Meta:
-        model = Enrollment
-
-
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_archived = False
@@ -188,7 +177,7 @@ class EntryFactory(DjangoModelFactory):
 class GrantorFactory(DjangoModelFactory):
     status = Grantor.STATUS.new
     convention = SubFactory('api.factories.ConventionFactory')
-    organization = SubFactory('api.factories.OrganizationFactory')
+    group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
         model = Grantor
@@ -221,7 +210,7 @@ class GroupFactory(DjangoModelFactory):
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: x)
-    organization = SubFactory('api.factories.OrganizationFactory')
+    parent = None
 
     class Meta:
         model = Group
@@ -276,33 +265,10 @@ class OfficerFactory(DjangoModelFactory):
     end_date = None
     office = SubFactory('api.factories.OfficeFactory')
     person = SubFactory('api.factories.PersonFactory')
-    organization = SubFactory('api.factories.OrganizationFactory')
+    group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
         model = Officer
-
-
-class OrganizationFactory(DjangoModelFactory):
-    name = Faker('company')
-    status = Organization.STATUS.active
-    kind = Organization.KIND.international
-    code = ''
-    start_date = None
-    end_date = None
-    email = Faker('email')
-    phone = Faker('phone_number')
-    location = ''
-    website = ''
-    facebook = ''
-    twitter = ''
-    img = None
-    description = ''
-    notes = ''
-    bhs_id = Sequence(lambda x: x)
-    parent = None
-
-    class Meta:
-        model = Organization
 
 
 class PanelistFactory(DjangoModelFactory):

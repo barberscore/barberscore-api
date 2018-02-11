@@ -118,6 +118,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'scope',
             'scope_range',
             'organization',
+            'group',
             'parent',
             'children',
             'contests',
@@ -218,6 +219,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'description',
             'venue',
             'organization',
+            'group',
             'assignments',
             'sessions',
             'grantors',
@@ -336,6 +338,7 @@ class GrantorSerializer(serializers.ModelSerializer):
             'nomen',
             'status',
             'organization',
+            'group',
             'convention',
             'permissions',
         )
@@ -474,6 +477,7 @@ class OfficerSerializer(serializers.ModelSerializer):
             'office',
             'person',
             'organization',
+            'group',
             'permissions',
         ]
 

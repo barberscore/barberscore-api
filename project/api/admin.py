@@ -168,6 +168,7 @@ class AwardAdmin(admin.ModelAdmin):
         'name',
         'status',
         'organization',
+        'group',
         'kind',
         'gender',
         'level',
@@ -185,6 +186,7 @@ class AwardAdmin(admin.ModelAdmin):
         'nomen',
         'name',
         'organization',
+        'group',
         'kind',
         'gender',
         'level',
@@ -215,6 +217,7 @@ class AwardAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'organization',
+        'group',
     ]
 
     ordering = (
@@ -370,6 +373,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'is_archived',
         'organization',
+        'group',
         'year',
         'season',
         'panel',
@@ -382,6 +386,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'nomen',
         'organization',
+        'group',
         'start_date',
         'end_date',
         'year',
@@ -417,6 +422,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'organization',
+        'group',
         'venue',
     ]
 
@@ -606,11 +612,13 @@ class GrantorAdmin(admin.ModelAdmin):
     fields = [
         'status',
         'organization',
+        'group',
         'convention',
     ]
     list_display = [
         'nomen',
         'organization',
+        'group',
         'convention',
     ]
 
@@ -619,6 +627,7 @@ class GrantorAdmin(admin.ModelAdmin):
     ]
     autocomplete_fields = [
         'organization',
+        'group',
         'convention',
     ]
 
@@ -669,7 +678,6 @@ class GroupAdmin(admin.ModelAdmin):
         'gender',
         'is_senior',
         ('bhs_id', 'bhs_pk',),
-        'organization',
         ('international', 'district', 'division', 'chapter',),
         'location',
         'email',
@@ -880,6 +888,7 @@ class OfficerAdmin(admin.ModelAdmin):
         'person',
         'office',
         'organization',
+        'group',
         'start_date',
         'end_date',
         'bhs_pk'
@@ -902,6 +911,7 @@ class OfficerAdmin(admin.ModelAdmin):
         'office',
         'person',
         'organization',
+        'group',
     ]
 
 

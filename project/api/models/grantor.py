@@ -51,7 +51,17 @@ class Grantor(TimeStampedModel):
     organization = models.ForeignKey(
         'Organization',
         related_name='grantors',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        related_name='grantors',
+        on_delete=models.SET_NULL,
     )
 
     class Meta:

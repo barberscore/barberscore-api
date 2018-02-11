@@ -34,7 +34,6 @@ from api.factories import (
     MemberFactory,
     OfficeFactory,
     OfficerFactory,
-    OrganizationFactory,
     PanelistFactory,
     PersonFactory,
     RepertoryFactory,
@@ -162,11 +161,6 @@ def office():
 @pytest.fixture
 def officer():
     return OfficerFactory()
-
-
-@pytest.fixture
-def organization():
-    return OrganizationFactory()
 
 
 @pytest.fixture

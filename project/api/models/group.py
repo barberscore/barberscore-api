@@ -245,8 +245,10 @@ class Group(TimeStampedModel):
     organization = models.ForeignKey(
         'Organization',
         related_name='groups',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         db_index=True,
-        on_delete=models.CASCADE,
     )
 
     # Denormalizations

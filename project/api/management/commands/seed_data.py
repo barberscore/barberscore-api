@@ -10,14 +10,12 @@ from api.factories import CompetitorFactory
 from api.factories import ContestantFactory
 from api.factories import ContestFactory
 from api.factories import ConventionFactory
-from api.factories import EnrollmentFactory
 from api.factories import EntryFactory
 from api.factories import GrantorFactory
 from api.factories import GroupFactory
 from api.factories import MemberFactory
 from api.factories import OfficeFactory
 from api.factories import OfficerFactory
-from api.factories import OrganizationFactory
 from api.factories import PanelistFactory
 from api.factories import PersonFactory
 from api.factories import RepertoryFactory
@@ -42,7 +40,6 @@ from api.models import Group
 from api.models import Member
 from api.models import Office
 from api.models import Officer
-from api.models import Organization
 from api.models import Panelist
 from api.models import Person
 from api.models import Repertory
@@ -182,38 +179,56 @@ class Command(BaseCommand):
             email='singing_judge@barberscore.com',
             user=singing_judge_user,
         )
-        # Create Organizations
-        international = OrganizationFactory(
-            name='International Organization',
+        # Create Groups
+        international = GroupFactory(
+            name='International Group',
             code='INT',
-            kind=Organization.KIND.international,
+            kind=Group.KIND.international,
         )
-        district_alpha = OrganizationFactory(
+        district_alpha = GroupFactory(
             name='District Alpha',
             code='ALF',
             parent=international,
-            kind=Organization.KIND.district,
+            kind=Group.KIND.district,
         )
-        chapter_1 = OrganizationFactory(
+        chapter_1 = GroupFactory(
             name='Chapter One',
             code='A-001',
             parent=district_alpha,
-            kind=Organization.KIND.chapter,
+            kind=Group.KIND.chapter,
         )
-        chaptet_1 = OrganizationFactory(
-            name='Chaptet One',
-            parent=district_alpha,
-            kind=Organization.KIND.quartet,
+        chorus_one = GroupFactory(
+            name='Chorus One',
+            kind=Group.KIND.chorus,
+            parent=chapter_1,
+            bhs_id=40,
+            international=international.code,
+            district=district_alpha.code,
+            chapter=chapter_1.name,
         )
-        chaptet_2 = OrganizationFactory(
-            name='Chaptet Two',
+        quartet_1 = GroupFactory(
+            name='Quartet 1',
+            kind=Group.KIND.quartet,
             parent=district_alpha,
-            kind=Organization.KIND.quartet,
+            bhs_id=10,
+            international=international.code,
+            district=district_alpha.code,
         )
-        chaptet_3 = OrganizationFactory(
-            name='Chaptet Three',
+        quartet_2 = GroupFactory(
+            name='Quartet 2',
+            kind=Group.KIND.quartet,
+            bhs_id=20,
             parent=district_alpha,
-            kind=Organization.KIND.quartet,
+            international=international.code,
+            district=district_alpha.code,
+        )
+        quartet_3 = GroupFactory(
+            name='Quartet 3',
+            kind=Group.KIND.quartet,
+            bhs_id=30,
+            parent=district_alpha,
+            international=international.code,
+            district=district_alpha.code,
         )
         # create Venue
         venue = VenueFactory()
@@ -293,55 +308,55 @@ class Command(BaseCommand):
         scjc_officer = OfficerFactory(
             office=scjc_office,
             person=scjc_person,
-            organization=international,
+            group=international,
             status=Officer.STATUS.active,
         )
         drcj_alpha_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
-            organization=district_alpha,
+            group=district_alpha,
             status=Officer.STATUS.active,
         )
         ca_officer = OfficerFactory(
             office=ca_office,
             person=ca_person,
-            organization=international,
+            group=international,
             status=Officer.STATUS.active,
         )
         mus_judge = OfficerFactory(
             office=mus_office,
             person=music_judge_person,
-            organization=international,
+            group=international,
             status=Officer.STATUS.active,
         )
         per_judge = OfficerFactory(
             office=per_office,
             person=performance_judge_person,
-            organization=international,
+            group=international,
             status=Officer.STATUS.active,
         )
         sng_judge = OfficerFactory(
             office=sng_office,
             person=singing_judge_person,
-            organization=international,
+            group=international,
             status=Officer.STATUS.active,
         )
         chapter_president = OfficerFactory(
             office=chorus_manager,
             person=chorus_admin_person,
-            organization=chapter_1,
+            group=chapter_1,
             status=Officer.STATUS.active,
         )
         quartet_one_manager = OfficerFactory(
             office=quartet_1_manager,
             person=quartet_admin_person,
-            organization=chaptet_1,
+            group=quartet_1,
             status=Officer.STATUS.active,
         )
         # Create Awards
         international_quartet_championship = AwardFactory(
             name='International Quartet Championship',
-            organization=international,
+            group=international,
             rounds=1,
             level=Award.LEVEL.championship,
             kind=Award.KIND.quartet,
@@ -349,7 +364,7 @@ class Command(BaseCommand):
         )
         international_chorus_championship = AwardFactory(
             name='International Chorus Championship',
-            organization=international,
+            group=international,
             rounds=1,
             level=Award.LEVEL.championship,
             kind=Award.KIND.chorus,
@@ -357,14 +372,14 @@ class Command(BaseCommand):
         )
         district_alpha_quartet_championship = AwardFactory(
             name='District Alpha Quartet Championship',
-            organization=district_alpha,
+            group=district_alpha,
             rounds=2,
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
         district_alpha_international_quartet_championship_qualifier = AwardFactory(
             name='District Alpha International Quartet Championship Qualifier',
-            organization=district_alpha,
+            group=district_alpha,
             rounds=2,
             parent=international_quartet_championship,
             level=Award.LEVEL.qualifier,
@@ -374,7 +389,7 @@ class Command(BaseCommand):
         )
         district_alpha_international_chorus_championship_qualifier = AwardFactory(
             name='District Alpha International Chorus Championship Qualifier',
-            organization=district_alpha,
+            group=district_alpha,
             rounds=1,
             parent=international_chorus_championship,
             level=Award.LEVEL.qualifier,
@@ -384,7 +399,7 @@ class Command(BaseCommand):
         )
         international_senior_quartet_championship = AwardFactory(
             name='International Senior Quartet Championship',
-            organization=international,
+            group=international,
             rounds=1,
             level=Award.LEVEL.championship,
             kind=Award.KIND.quartet,
@@ -394,32 +409,32 @@ class Command(BaseCommand):
         # Create conventions
         international_midwinter_convention = ConventionFactory(
             name='International Midwinter Convention',
-            organization=international,
+            group=international,
             panel=3,
             season=Convention.SEASON.midwinter,
         )
         GrantorFactory(
-            organization=international,
+            group=international,
             convention=international_midwinter_convention,
         )
         district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',
-            organization=district_alpha,
+            group=district_alpha,
             panel=3,
             season=Convention.SEASON.fall,
         )
         GrantorFactory(
-            organization=district_alpha,
+            group=district_alpha,
             convention=district_alpha_fall_convention,
         )
         district_alpha_spring_convention = ConventionFactory(
             name='District Alpha Spring Convention',
-            organization=district_alpha,
+            group=district_alpha,
             panel=3,
             season=Convention.SEASON.spring,
         )
         GrantorFactory(
-            organization=district_alpha,
+            group=district_alpha,
             convention=district_alpha_spring_convention,
         )
         # Create assignments
@@ -518,47 +533,6 @@ class Command(BaseCommand):
             convention=district_alpha_fall_convention,
             kind=Session.KIND.chorus,
             num_rounds=1,
-        )
-        # Create Groups
-        quartet_1 = GroupFactory(
-            name='Quartet 1',
-            kind=Group.KIND.quartet,
-            organization=chaptet_1,
-            bhs_id=10,
-            international=international.code,
-            district=district_alpha.code,
-        )
-        quartet_2 = GroupFactory(
-            name='Quartet 2',
-            kind=Group.KIND.quartet,
-            bhs_id=20,
-            organization=chaptet_2,
-            international=international.code,
-            district=district_alpha.code,
-        )
-        quartet_3 = GroupFactory(
-            name='Quartet 3',
-            kind=Group.KIND.quartet,
-            bhs_id=30,
-            organization=chaptet_3,
-            international=international.code,
-            district=district_alpha.code,
-        )
-        # Create chorus
-        chorus_one = GroupFactory(
-            name='Chorus One',
-            kind=Group.KIND.chorus,
-            organization=chapter_1,
-            bhs_id=40,
-            international=international.code,
-            district=district_alpha.code,
-            chapter=chapter_1.name,
-        )
-        return
-        # Create enrollments
-        enrollment_chorus_admin = EnrollmentFactory(
-            organization=chapter_1,
-            person=chorus_admin_person,
         )
         # Create members
         member_quartet_admin = MemberFactory(
@@ -710,7 +684,7 @@ class Command(BaseCommand):
         )
 
         # SCJC BREAKPOINT
-
+        return
         # Contests created via signal.
         international_midwinter_convention.publish()
         international_midwinter_convention.save()

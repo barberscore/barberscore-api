@@ -133,12 +133,22 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    group = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        related_name='conventions',
+        on_delete=models.SET_NULL,
+    )
+
     organization = models.ForeignKey(
         'Organization',
         related_name='conventions',
         help_text="""
             The owning organization for the convention.""",
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Internals

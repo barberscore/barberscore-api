@@ -241,7 +241,7 @@ class Entry(TimeStampedModel):
                 ]),
                 # For Groups
                 all([
-                    self.group.organization.officers.filter(
+                    self.group.officers.filter(
                         person__user=request.user,
                         status__gt=0,
                     ),
@@ -256,7 +256,7 @@ class Entry(TimeStampedModel):
     # Entry Transition Conditions
     def can_invite_entry(self):
         return all([
-            self.group.organization.officers.filter(status__gt=0),
+            self.group.officers.filter(status__gt=0),
             self.group.status == self.group.STATUS.active,
         ])
 
