@@ -17,7 +17,6 @@ from .office import Office
 from .officer import Officer
 from .organization import Organization
 from .panelist import Panelist
-from .participant import Participant
 from .person import Person
 from .repertory import Repertory
 from .round import Round
