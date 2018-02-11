@@ -217,6 +217,15 @@ class Group(TimeStampedModel):
     )
 
     # FKs
+    parent = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
     organization = models.ForeignKey(
         'Organization',
         related_name='groups',

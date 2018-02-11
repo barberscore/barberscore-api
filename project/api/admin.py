@@ -662,6 +662,7 @@ class GroupAdmin(admin.ModelAdmin):
         'id',
         'name',
         'status',
+        'parent',
         'kind',
         'gender',
         'is_senior',
@@ -720,6 +721,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'organization',
+        'parent',
     ]
 
     ordering = [
@@ -727,6 +729,23 @@ class GroupAdmin(admin.ModelAdmin):
     ]
 
     INLINES = {
+        'International': [
+            AwardInline,
+            OfficerInline,
+            ConventionInline,
+        ],
+        'District': [
+            AwardInline,
+            OfficerInline,
+            ConventionInline,
+        ],
+        'Division': [
+            AwardInline,
+        ],
+        'Chapter': [
+            GroupInline,
+            OfficerInline,
+        ],
         'Quartet': [
             MemberInline,
             RepertoryInline,
@@ -742,14 +761,14 @@ class GroupAdmin(admin.ModelAdmin):
 
     def get_inline_instances(self, request, obj=None):
         inline_instances = []
-        try:
-            inlines = self.INLINES[obj.KIND[obj.kind]]
-        except AttributeError:
-            return inline_instances
+        # try:
+        #     inlines = self.INLINES[obj.KIND[obj.kind]]
+        # except AttributeError:
+        #     return inline_instances
 
-        for inline_class in inlines:
-            inline = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline)
+        # for inline_class in inlines:
+        #     inline = inline_class(self.model, self.admin_site)
+        #     inline_instances.append(inline)
         return inline_instances
 
     def get_formsets(self, request, obj=None):
