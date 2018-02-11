@@ -2,6 +2,9 @@
 
 from django.db import migrations
 
+import logging
+log = logging.getLogger('importer')
+
 
 def data_migration(apps, schema_editor):
     Convention = apps.get_model('api', 'Convention')
@@ -10,8 +13,11 @@ def data_migration(apps, schema_editor):
     for convention in conventions:
         try:
             convention.group = convention.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist:
+        except Group.DoesNotExist as e:
+            log.error("{} {}".format(e, convention.organization))
             convention.group = None
+        except Group.MultipleObjectsReturned as e:
+            log.error("{} {}".format(e, convention.organization))
         convention.save()
     return
 

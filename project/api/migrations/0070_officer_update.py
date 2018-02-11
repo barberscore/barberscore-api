@@ -2,6 +2,9 @@
 
 from django.db import migrations
 
+import logging
+log = logging.getLogger('importer')
+
 
 def data_migration(apps, schema_editor):
     Officer = apps.get_model('api', 'Officer')
@@ -10,7 +13,11 @@ def data_migration(apps, schema_editor):
     for officer in officers:
         try:
             officer.group = officer.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist:
+        except Group.DoesNotExist as e:
+            log.error("{} {}".format(e, officer.organization))
+            officer.group = None
+        except Group.MultipleObjectsReturned as e:
+            log.error("{} {}".format(e, officer.organization))
             officer.group = None
         officer.save()
     return

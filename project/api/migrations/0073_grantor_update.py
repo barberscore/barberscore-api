@@ -2,6 +2,9 @@
 
 from django.db import migrations
 
+import logging
+log = logging.getLogger('importer')
+
 
 def data_migration(apps, schema_editor):
     Grantor = apps.get_model('api', 'Grantor')
@@ -10,8 +13,11 @@ def data_migration(apps, schema_editor):
     for grantor in grantors:
         try:
             grantor.group = grantor.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist:
+        except Group.DoesNotExist as e:
+            log.error("{} {}".format(e, grantor.organization))
             grantor.group = None
+        except Group.MultipleObjectsReturned as e:
+            log.error("{} {}".format(e, grantor.organization))
         grantors.save()
     return
 
