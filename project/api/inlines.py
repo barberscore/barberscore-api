@@ -9,7 +9,6 @@ from .models import Competitor
 from .models import Contest
 from .models import Contestant
 from .models import Convention
-from .models import Enrollment
 from .models import Entry
 from .models import Grantor
 from .models import Grid
@@ -84,7 +83,7 @@ class AwardInline(admin.TabularInline):
         'rounds',
         'size',
         'is_improved',
-        'organization',
+        'group',
     ]
     readonly_fields = [
         'name',
@@ -153,10 +152,10 @@ class ConventionInline(admin.TabularInline):
     model = Convention
     fields = [
         'name',
-        'organization',
+        'group',
     ]
     raw_id_fields = [
-        'organization',
+        'group',
     ]
     show_change_link = True
     extra = 0
@@ -186,28 +185,6 @@ class CompetitorInline(admin.TabularInline):
     ordering = [
         'group__nomen',
     ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-
-
-class EnrollmentInline(admin.TabularInline):
-    model = Enrollment
-    fields = [
-        'person',
-        'organization',
-        'status',
-    ]
-    raw_id_fields = [
-        'person',
-        'organization',
-    ]
-    ordering = (
-        'person__last_name',
-        'person__first_name',
-    )
     show_change_link = True
     extra = 0
     classes = [
@@ -248,11 +225,11 @@ class GrantorInline(admin.TabularInline):
     model = Grantor
     fields = [
         'convention',
-        'organization',
+        'group',
     ]
     raw_id_fields = [
         'convention',
-        'organization',
+        'group',
     ]
     show_change_link = True
     extra = 0
@@ -289,13 +266,13 @@ class GroupInline(admin.TabularInline):
     model = Group
     fields = [
         'name',
-        'organization',
+        'parent',
         'kind',
         'gender',
         'bhs_id',
         'status',
     ]
-    fk_name = 'organization'
+    fk_name = 'parent'
     ordering = [
         'nomen',
     ]
@@ -336,13 +313,13 @@ class OfficerInline(admin.TabularInline):
     fields = [
         'office',
         'person',
-        'organization',
+        'group',
         'status',
     ]
     raw_id_fields = [
         'office',
         'person',
-        'organization',
+        'group',
     ]
     show_change_link = True
     extra = 0

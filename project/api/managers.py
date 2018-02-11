@@ -72,75 +72,6 @@ class ConventionManager(Manager):
         return
 
 
-class EnrollmentManager(Manager):
-    def update_or_create_from_join_pks(self, join_pks, **kwargs):
-        # Get group
-        join__bhs_pk = join_pks[0]
-        person__bhs_pk = join_pks[1]
-        organization__bhs_pk = join_pks[2]
-        Organization = api.get_model('Organization')
-        organization = Organization.objects.get(
-            bhs_pk=organization__bhs_pk,
-        )
-        # Get person
-        Person = api.get_model('Person')
-        person = Person.objects.get(
-            bhs_pk=person__bhs_pk,
-        )
-        # Set defaults and update
-        defaults = {
-            'status': 10,
-            'bhs_pk': join__bhs_pk,
-        }
-        enrollment, created = self.update_or_create(
-            person=person,
-            organization=organization,
-            defaults=defaults,
-        )
-        return enrollment, created
-
-    def update_or_create_from_join(self, join, **kwargs):
-        if join.structure.kind not in ['chapter', 'quartet', ]:
-            raise ValueError("Must be chapter or quartet record.")
-        # Flatten join objects
-        subscription = join.subscription
-        membership = join.membership
-        structure = join.structure
-        human = join.subscription.human
-        # Get group
-        Organization = api.get_model('Organization')
-        organization = Organization.objects.get(bhs_pk=structure.id)
-        # Get person
-        Person = api.get_model('Person')
-        person = Person.objects.get(bhs_pk=human.id)
-        # status = getattr(
-        #     self.model.STATUS,
-        #     subscription.status,
-        #     self.model.STATUS.inactive
-        # )
-        status = getattr(self.model.STATUS, 'active')
-        # Set the internal BHS fields
-        sub_status = getattr(self.model.SUB_STATUS, subscription.status)
-        mem_code = getattr(self.model.MEM_CODE, membership.code)
-        mem_clean = membership.status.name.replace("-", "_")
-        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
-        bhs_pk = join.id
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'mem_status': mem_status,
-            'sub_status': sub_status,
-            'mem_code': mem_code,
-            'bhs_pk': bhs_pk,
-        }
-        enrollment, created = self.update_or_create(
-            person=person,
-            organization=organization,
-            defaults=defaults,
-        )
-        return enrollment, created
-
-
 class GroupManager(Manager):
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
@@ -647,7 +578,6 @@ class MemberManager(Manager):
         Group = api.get_model('Group')
         group = Group.objects.get(
             bhs_pk=group__bhs_pk,
-            kind=Group.KIND.quartet,
         )
         # Get person
         Person = api.get_model('Person')
@@ -659,16 +589,16 @@ class MemberManager(Manager):
             'status': 10,
             'bhs_pk': join__bhs_pk,
         }
-        member, created = self.update_or_create(
+        enrollment, created = self.update_or_create(
             person=person,
             group=group,
             defaults=defaults,
         )
-        return member, created
+        return enrollment, created
 
     def update_or_create_from_join(self, join, **kwargs):
-        if join.structure.kind not in ['quartet', ]:
-            raise ValueError("Must be quartet record.")
+        if join.structure.kind not in ['chapter', 'quartet', ]:
+            raise ValueError("Must be chapter or quartet record.")
         # Flatten join objects
         subscription = join.subscription
         membership = join.membership
@@ -686,45 +616,12 @@ class MemberManager(Manager):
         #     self.model.STATUS.inactive
         # )
         status = getattr(self.model.STATUS, 'active')
-        try:
-            part_clean = join.vocal_part.strip().casefold()
-        except AttributeError:
-            part_clean = ''
-        part = getattr(self.model.PART, part_clean, None)
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
         mem_code = getattr(self.model.MEM_CODE, membership.code)
         mem_clean = membership.status.name.replace("-", "_")
         mem_status = getattr(self.model.MEM_STATUS, mem_clean)
         bhs_pk = join.id
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'part': part,
-            'mem_status': mem_status,
-            'sub_status': sub_status,
-            'mem_code': mem_code,
-            'bhs_pk': bhs_pk,
-        }
-        member, created = self.update_or_create(
-            person=person,
-            group=group,
-            defaults=defaults,
-        )
-        return member, created
-
-    def update_or_create_from_enrollment(self, enrollment, **kwargs):
-        # Get group
-        Group = api.get_model('Group')
-        group = enrollment.organization.groups.get(status=Group.STATUS.active)
-        # Get person
-        person = enrollment.person
-        # Get fields
-        status = enrollment.status
-        sub_status = enrollment.sub_status
-        mem_code = enrollment.mem_code
-        mem_status = enrollment.mem_status
-        bhs_pk = enrollment.bhs_pk
         # Set defaults and update
         defaults = {
             'status': status,

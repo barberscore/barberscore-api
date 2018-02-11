@@ -13,7 +13,6 @@ from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
 from .filters import GroupListFilter
-from .filters import ParentGroupListFilter
 from .filters import SessionGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
@@ -24,7 +23,6 @@ from .inlines import CompetitorInline
 from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
-from .inlines import EnrollmentInline
 from .inlines import EntryInline
 from .inlines import GrantorInline
 from .inlines import GridInline
@@ -45,7 +43,6 @@ from .models import Competitor
 from .models import Contest
 from .models import Contestant
 from .models import Convention
-from .models import Enrollment
 from .models import Entry
 from .models import Grantor
 from .models import Grid
@@ -53,7 +50,6 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
-from .models import Organization
 from .models import Panelist
 from .models import Person
 from .models import Repertory
@@ -167,7 +163,6 @@ class AwardAdmin(admin.ModelAdmin):
         'id',
         'name',
         'status',
-        'organization',
         'group',
         'kind',
         'gender',
@@ -185,7 +180,6 @@ class AwardAdmin(admin.ModelAdmin):
     list_display = [
         'nomen',
         'name',
-        'organization',
         'group',
         'kind',
         'gender',
@@ -216,7 +210,6 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'organization',
         'group',
     ]
 
@@ -372,7 +365,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'status',
         'is_archived',
-        'organization',
         'group',
         'year',
         'season',
@@ -385,7 +377,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'nomen',
-        'organization',
         'group',
         'start_date',
         'end_date',
@@ -421,7 +412,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     autocomplete_fields = [
-        'organization',
         'group',
         'venue',
     ]
@@ -430,7 +420,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         '-year',
         '-season',
         'group__tree_sort',
-        # 'organization__short_name',
     )
 
     save_on_top = True
@@ -493,53 +482,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         'nomen',
     )
-
-
-@admin.register(Enrollment)
-class EnrollmentAdmin(admin.ModelAdmin):
-    fields = [
-        'id',
-        'status',
-        # 'start_date',
-        # 'end_date',
-        'organization',
-        'person',
-        'bhs_pk',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-    ]
-    list_display = [
-        'nomen',
-        # 'start_date',
-        # 'end_date',
-        'organization',
-        'person',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-        'status',
-    ]
-    autocomplete_fields = [
-        'person',
-        'organization',
-    ]
-    search_fields = [
-        'nomen',
-    ]
-    list_filter = [
-        'status',
-        # 'organization',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-    ]
-    readonly_fields = [
-        'id',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-    ]
 
 
 @admin.register(Entry)
@@ -611,13 +553,11 @@ class GrantorAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'status',
-        'organization',
         'group',
         'convention',
     ]
     list_display = [
         'nomen',
-        'organization',
         'group',
         'convention',
     ]
@@ -626,7 +566,6 @@ class GrantorAdmin(admin.ModelAdmin):
         'nomen',
     ]
     autocomplete_fields = [
-        'organization',
         'group',
         'convention',
     ]
@@ -708,7 +647,6 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
         'gender',
         'parent',
-        'organization',
         'location',
         'bhs_id',
         'bhs_pk',
@@ -717,7 +655,6 @@ class GroupAdmin(admin.ModelAdmin):
         'modified',
     ]
     list_select_related = [
-        'organization',
     ]
     readonly_fields = [
         'id',
@@ -731,7 +668,6 @@ class GroupAdmin(admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'organization',
         'parent',
     ]
 
@@ -850,7 +786,6 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_convention_manager',
         'is_session_manager',
         'is_scoring_manager',
-        'is_organization_manager',
         'is_group_manager',
         'is_person_manager',
         'is_award_manager',
@@ -868,7 +803,6 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_convention_manager',
         'is_session_manager',
         'is_scoring_manager',
-        'is_organization_manager',
         'is_group_manager',
         'is_person_manager',
         'is_award_manager',
@@ -887,7 +821,6 @@ class OfficerAdmin(admin.ModelAdmin):
         'status',
         'person',
         'office',
-        'organization',
         'group',
         'start_date',
         'end_date',
@@ -910,115 +843,8 @@ class OfficerAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'office',
         'person',
-        'organization',
         'group',
     ]
-
-
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    fields = [
-        'id',
-        'name',
-        'status',
-        'kind',
-        'parent',
-        'code',
-        'start_date',
-        'end_date',
-        'location',
-        'mem_status',
-        'bhs_id',
-        'bhs_pk',
-        'website',
-        'facebook',
-        'twitter',
-        'email',
-        'phone',
-        'img',
-        'description',
-        'notes',
-    ]
-
-    list_filter = [
-        'status',
-        'kind',
-        'mem_status',
-    ]
-
-    search_fields = [
-        'nomen',
-        'bhs_id',
-        'code',
-    ]
-
-    list_display = [
-        'nomen',
-        'kind',
-        'code',
-        'bhs_id',
-        'bhs_pk',
-        'mem_status',
-        'status',
-    ]
-
-    readonly_fields = [
-        'id',
-        'nomen',
-        'mem_status',
-    ]
-
-    autocomplete_fields = [
-        'parent',
-    ]
-
-    ordering = (
-        'org_sort',
-        'name',
-    )
-
-    INLINES = {
-        'International': [
-            AwardInline,
-            OfficerInline,
-            ConventionInline,
-        ],
-        'District': [
-            AwardInline,
-            OfficerInline,
-            ConventionInline,
-        ],
-        'Division': [
-            AwardInline,
-        ],
-        'Chapter': [
-            GroupInline,
-            OfficerInline,
-        ],
-        'Group': [
-            EnrollmentInline,
-            OfficerInline,
-        ],
-    }
-
-    def get_inline_instances(self, request, obj=None):
-        inline_instances = []
-        try:
-            inlines = self.INLINES[obj.KIND[obj.kind]]
-        except AttributeError:
-            return inline_instances
-        except KeyError:
-            # Defaults to Group
-            inlines = self.INLINES['Group']
-
-        for inline_class in inlines:
-            inline = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline)
-        return inline_instances
-
-    def get_formsets(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            yield inline.get_formset(request, obj)
 
 
 @admin.register(Panelist)
@@ -1359,7 +1185,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         '-convention__year',
         '-convention__season',
         'convention__group__tree_sort',
-        # 'convention__organization__short_name',
         'kind',
     )
 

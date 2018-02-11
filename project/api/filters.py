@@ -97,8 +97,8 @@ class ParentGroupListFilter(admin.SimpleListFilter):
 
 
 class ConventionGroupListFilter(admin.SimpleListFilter):
-    title = ('organization')
-    parameter_name = 'org'
+    title = ('grp')
+    parameter_name = 'grp'
 
     def lookups(self, request, model_admin):
         orgs = Group.objects.filter(
@@ -107,26 +107,26 @@ class ConventionGroupListFilter(admin.SimpleListFilter):
         return tuple(orgs)
 
     def queryset(self, request, queryset):
-        org = request.GET.get('org')
-        if org:
-            return queryset.filter(organization=org)
+        grp = request.GET.get('grp')
+        if grp:
+            return queryset.filter(group=grp)
         return queryset
 
 
 class SessionGroupListFilter(admin.SimpleListFilter):
-    title = ('organization')
-    parameter_name = 'org'
+    title = ('grp')
+    parameter_name = 'grp'
 
     def lookups(self, request, model_admin):
-        orgs = Group.objects.filter(
+        grps = Group.objects.filter(
             kind__lte=Group.KIND.district,
         ).values_list('id', 'code')
-        return tuple(orgs)
+        return tuple(grps)
 
     def queryset(self, request, queryset):
-        org = request.GET.get('org')
-        if org:
-            return queryset.filter(convention__organization=org)
+        grp = request.GET.get('grp')
+        if grp:
+            return queryset.filter(convention__group=grp)
         return queryset
 
 
@@ -149,32 +149,32 @@ class AwardFilter(FilterSet):
             'status': [
                 'exact',
             ],
-            'organization': [
+            'group': [
                 'exact',
             ],
-            'organization__parent': [
+            'group__parent': [
                 'exact',
             ],
-            'organization__name': [
+            'group__name': [
                 'exact',
             ],
-            'organization__kind': [
+            'group__kind': [
                 'exact',
             ],
-            'organization__officers__office__short_name': [
+            'group__officers__office__short_name': [
                 'exact',
             ],
-            'organization__officers__person__user': [
+            'group__officers__person__user': [
                 'exact',
             ],
-            'organization__officers__office__is_award_manager': [
+            'group__officers__office__is_award_manager': [
                 'exact',
             ],
-            'organization__officers__status': [
+            'group__officers__status': [
                 'exact',
                 'gt',
             ],
-            'organization__grantors__convention': [
+            'group__grantors__convention': [
                 'exact',
             ],
         }
@@ -218,7 +218,7 @@ class ConventionFilter(FilterSet):
             'assignments__person__user': [
                 'exact',
             ],
-            'organization__officers__person__user': [
+            'group__officers__person__user': [
                 'exact',
             ],
             'assignments__kind': [
@@ -263,7 +263,7 @@ class GrantorFilter(FilterSet):
             'status': [
                 'exact',
             ],
-            'organization': [
+            'group': [
                 'exact',
             ],
             'convention': [
@@ -288,7 +288,7 @@ class GroupFilter(FilterSet):
             'gender': [
                 'exact',
             ],
-            'organization': [
+            'group': [
                 'exact',
             ],
             'members__person__user': [
