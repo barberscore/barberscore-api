@@ -101,10 +101,10 @@ class ConventionGroupListFilter(admin.SimpleListFilter):
     parameter_name = 'grp'
 
     def lookups(self, request, model_admin):
-        orgs = Group.objects.filter(
+        grps = Group.objects.filter(
             kind__lte=Group.KIND.district,
         ).values_list('id', 'code')
-        return tuple(orgs)
+        return tuple(grps)
 
     def queryset(self, request, queryset):
         grp = request.GET.get('grp')
@@ -288,7 +288,7 @@ class GroupFilter(FilterSet):
             'gender': [
                 'exact',
             ],
-            'group': [
+            'parent': [
                 'exact',
             ],
             'members__person__user': [

@@ -31,6 +31,75 @@ validate_twitter = RegexValidator(
 )
 
 
+class EnrollmentManager(Manager):
+    def update_or_create_from_join_pks(self, join_pks, **kwargs):
+        # Get group
+        join__bhs_pk = join_pks[0]
+        person__bhs_pk = join_pks[1]
+        organization__bhs_pk = join_pks[2]
+        Organization = api.get_model('Organization')
+        organization = Organization.objects.get(
+            bhs_pk=organization__bhs_pk,
+        )
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(
+            bhs_pk=person__bhs_pk,
+        )
+        # Set defaults and update
+        defaults = {
+            'status': 10,
+            'bhs_pk': join__bhs_pk,
+        }
+        enrollment, created = self.update_or_create(
+            person=person,
+            organization=organization,
+            defaults=defaults,
+        )
+        return enrollment, created
+
+    def update_or_create_from_join(self, join, **kwargs):
+        if join.structure.kind not in ['chapter', 'quartet', ]:
+            raise ValueError("Must be chapter or quartet record.")
+        # Flatten join objects
+        subscription = join.subscription
+        membership = join.membership
+        structure = join.structure
+        human = join.subscription.human
+        # Get group
+        Organization = api.get_model('Organization')
+        organization = Organization.objects.get(bhs_pk=structure.id)
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(bhs_pk=human.id)
+        # status = getattr(
+        #     self.model.STATUS,
+        #     subscription.status,
+        #     self.model.STATUS.inactive
+        # )
+        status = getattr(self.model.STATUS, 'active')
+        # Set the internal BHS fields
+        sub_status = getattr(self.model.SUB_STATUS, subscription.status)
+        mem_code = getattr(self.model.MEM_CODE, membership.code)
+        mem_clean = membership.status.name.replace("-", "_")
+        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
+        bhs_pk = join.id
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'mem_status': mem_status,
+            'sub_status': sub_status,
+            'mem_code': mem_code,
+            'bhs_pk': bhs_pk,
+        }
+        enrollment, created = self.update_or_create(
+            person=person,
+            organization=organization,
+            defaults=defaults,
+        )
+        return enrollment, created
+
+
 class ChartManager(Manager):
     def export_charts(self, *args, **kwargs):
         wb = Workbook()
@@ -324,7 +393,6 @@ class GroupManager(Manager):
             i += 1
             org.tree_sort = i
             org.save()
-
 
 
 class OfficerManager(Manager):
