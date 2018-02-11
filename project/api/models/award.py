@@ -26,7 +26,7 @@ class Award(TimeStampedModel):
     """
     Award Model.
 
-    The specific award conferred by an Organization.
+    The specific award conferred by a Group.
     """
 
     id = models.UUIDField(

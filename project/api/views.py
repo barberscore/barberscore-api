@@ -52,7 +52,6 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
-from .models import Organization
 from .models import Panelist
 from .models import Person
 from .models import Repertory
@@ -78,7 +77,6 @@ from .serializers import MemberSerializer
 from .serializers import OfficeCSVSerializer
 from .serializers import OfficerSerializer
 from .serializers import OfficeSerializer
-from .serializers import OrganizationSerializer
 from .serializers import PanelistSerializer
 from .serializers import PersonSerializer
 from .serializers import RepertorySerializer
@@ -141,7 +139,7 @@ class AwardViewSet(
     viewsets.ModelViewSet
 ):
     queryset = Award.objects.select_related(
-        'organization',
+        'group',
         'parent',
     ).prefetch_related(
         'children',
@@ -253,7 +251,7 @@ class ConventionViewSet(
 ):
     queryset = Convention.objects.select_related(
         'venue',
-        'organization',
+        'group',
     ).prefetch_related(
         'sessions',
         'assignments',
@@ -336,7 +334,7 @@ class GridViewSet(viewsets.ModelViewSet):
 
 class GrantorViewSet(viewsets.ModelViewSet):
     queryset = Grantor.objects.select_related(
-        'organization',
+        'group',
         'convention',
     ).prefetch_related(
     ).order_by('nomen')
@@ -357,7 +355,6 @@ class GroupViewSet(
     viewsets.ModelViewSet
 ):
     queryset = Group.objects.select_related(
-        'organization',
         'parent',
     ).prefetch_related(
         'children',
@@ -465,7 +462,7 @@ class OfficerViewSet(
     queryset = Officer.objects.select_related(
         'office',
         'person',
-        'organization',
+        'group',
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = OfficerSerializer
@@ -478,56 +475,6 @@ class OfficerViewSet(
         DRYPermissions,
     ]
     resource_name = "officer"
-
-
-class OrganizationViewSet(
-    get_viewset_transition_action_mixin(Organization),
-    viewsets.ModelViewSet
-):
-    queryset = Organization.objects.select_related(
-        'parent',
-    ).prefetch_related(
-        'awards',
-        'conventions',
-        'groups',
-        'officers',
-        'children',
-    ).order_by(
-        'nomen',
-    )
-    serializer_class = OrganizationSerializer
-    filter_backends = [
-        CoalesceFilterBackend,
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "organization"
-
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def img(self, request, *args, **kwargs):
-        if 'file' in request.data:
-            obj = self.get_object()
-            file = request.data['file']
-            public_id = str(obj.id)
-            folder = obj._meta.model_name
-            obj.img = upload_resource(
-                file,
-                public_id=public_id,
-                folder=folder,
-                overwrite=True,
-                invalidate=True,
-                format='png',
-            )
-            obj.save()
-            return Response(
-                status=status.HTTP_201_CREATED,
-                data={'image': obj.img.url},
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class PanelistViewSet(viewsets.ModelViewSet):

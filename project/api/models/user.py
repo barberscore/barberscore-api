@@ -116,17 +116,6 @@ class User(AbstractBaseUser):
         return is_manager
 
     @cached_property
-    def is_organization_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_organization_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
     def is_group_manager(self):
         try:
             is_manager = bool(

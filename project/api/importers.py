@@ -8,7 +8,6 @@ import requests
 
 # Django
 from django.db import IntegrityError
-from django.db import transaction
 from django.utils import dateparse
 from django.utils import encoding
 
@@ -43,117 +42,6 @@ def print_headers(path):
         rows = [row for row in reader]
         for key, value in enumerate(rows[0]):
             print(key, value)
-
-
-def import_quartet_entries(path, session):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            group = Group.objects.get(id=row[0])
-            if row[3]:
-                prelim = float(row[3])
-            else:
-                prelim = None
-            session.entries.create(
-                group=group,
-                prelim=prelim,
-                organization=group.organization,
-            )
-
-session = Session.objects.get(id='b26bf3db-a815-4472-afb7-e6801bf58388')
-def import_chorus_entries(path, session):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            district = Organization.objects.get(short_name='MAD')
-            chapter = row[0].partition(".")[2].partition(",")[0].strip()
-            try:
-                group = Group.objects.get(
-                    name__icontains=chapter,
-                    organization__parent=district,
-                    kind=Group.KIND.chorus,
-                    status=Group.STATUS.active,
-                )
-            except Group.DoesNotExist:
-                group = None
-            except Group.MultipleObjectsReturned:
-                group = 'Multi'
-            if row[3]:
-                prelim = float(row[3])
-            else:
-                prelim = None
-            session.entries.create(
-                group=group,
-                prelim=prelim,
-                organization=group.organization,
-            )
-
-
-def import_quartets(path):
-    with open(path) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        next(reader)
-        rows = [row for row in reader]
-        for row in rows:
-            bhs_id = int(row[0])
-            try:
-                parent_id = int(row[2])
-            except ValueError:
-                parent_id = None
-            if parent_id:
-                try:
-                    parent = Entity.objects.get(
-                        bhs_id=parent_id
-                    )
-                except Entity.DoesNotExist as e:
-                    log.error((e, parent_id))
-                    parent = None
-            else:
-                parent = None
-            name = row[1].strip()
-            kind = Entity.KIND.quartet
-            street = row[9].strip()
-            city = row[13].strip()
-            state = row[15].strip()
-            postal_code = row[16].strip()
-            location = "{1}, {2}".format(
-                street,
-                city,
-                state,
-                postal_code,
-            )
-            if "NULL" in location:
-                location = ""
-
-            phone_code = row[21]
-            if phone_code != 'NULL':
-                phone = "+{0}{1}{2}".format(
-                    str(row[21]).strip(),
-                    str(row[22]).strip(),
-                    str(row[23]).replace("-", "").strip(),
-                )
-            else:
-                phone = ""
-            website = row[31].strip()
-            email = row[28].strip()
-            defaults = {
-                'name': name,
-                'kind': kind,
-                'location': location,
-                'phone': phone,
-                'website': website,
-                'email': email,
-                'parent': parent,
-            }
-            quartet, created = Entity.objects.update_or_create(
-                bhs_id=bhs_id,
-                defaults=defaults,
-            )
-            log.info((quartet, created))
 
 
 def import_persons(path):

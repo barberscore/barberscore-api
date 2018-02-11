@@ -353,17 +353,6 @@ class SessionFactory(DjangoModelFactory):
         model = Session
 
     # @post_generation
-    # def create_contests(self, create, extracted, **kwargs):
-    #     if create:
-    #         for grantor in self.convention.grantors.all():
-    #             for award in grantor.organization.awards.all():
-    #                 ContestFactory(
-    #                     session=self,
-    #                     award=award,
-    #                     status=Contest.STATUS.included,
-    #                 )
-
-    # @post_generation
     # def create_rounds(self, create, extracted, **kwargs):
     #     if create:
     #         for i in range(self.num_rounds):

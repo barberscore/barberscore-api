@@ -11,7 +11,6 @@ class Command(BaseCommand):
 
         models = [
             # Primitives
-            'Organization',
             'Group',
             'Chart',
             'Office',

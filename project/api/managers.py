@@ -252,10 +252,10 @@ class GroupManager(Manager):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        # Set the default organization on create
+        # Set the default parent on create
         if created:
-            Organization = api.get_model('Organization')
-            group.organization = Organization.objects.get(
+            Group = api.get_model('Group')
+            group.parent = Group.objects.get(
                 bhs_pk=structure.parent.id,
             )
             group.status = self.model.STATUS.active
@@ -341,9 +341,9 @@ class OfficerManager(Manager):
         structure = role.structure
         human = role.human
         name = role.name
-        # Get organization
-        Organization = api.get_model('Organization')
-        organization = Organization.objects.get(bhs_pk=structure.id)
+        # Get group
+        Group = api.get_model('Group')
+        group = Group.objects.get(bhs_pk=structure.id)
         # Get person
         Person = api.get_model('Person')
         person = Person.objects.get(bhs_pk=human.id)
@@ -356,7 +356,7 @@ class OfficerManager(Manager):
         # Set defaults and update
         defaults = {
             'status': status,
-            'organization': organization,
+            'group': group,
             'person': person,
             'office': office,
         }
@@ -365,116 +365,6 @@ class OfficerManager(Manager):
             defaults=defaults,
         )
         return officer, created
-
-
-class OrganizationManager(Manager):
-    def sort_tree(self, **kwargs):
-        root = self.get(kind=self.model.KIND.international)
-        i = 1
-        root.tree_sort = i
-        root.save()
-        for child in root.children.order_by('kind', 'name'):
-            i += 1
-            child.tree_sort = i
-            child.save()
-            for grandchild in child.children.filter(
-                kind=self.model.KIND.division,
-            ).order_by('kind', 'name'):
-                i += 1
-                grandchild.tree_sort = i
-                grandchild.save()
-        orgs = self.filter(
-            kind__in=[
-                self.model.KIND.chapter,
-                self.model.KIND.chorus,
-                self.model.KIND.quartet,
-            ]
-        ).order_by(
-            'kind',
-            'name',
-        )
-        for org in orgs:
-            i += 1
-            org.tree_sort = i
-            org.save()
-
-    def update_or_create_from_structure(self, structure, **kwargs):
-        # Map structure kind to internal designation
-        kind_clean = structure.kind.replace('organization', 'international')
-        kind = getattr(self.model.KIND, kind_clean, None)
-        if structure.name:
-            # If the name has been assigned, use that.
-            name = structure.name.strip()
-        elif structure.preferred_name:
-            # If not yet assigned, use preferred and mark as pending.
-            name = "{0} (NAME APPROVAL PENDING)".format(
-                structure.preferred_name.strip()
-            )
-        else:
-            # Otherwise, call unknown.
-            name = 'UNKNOWN'
-        # Map to the internal designation
-        STATUS = {
-            'active': 'active',
-            'active-internal': 'active',
-            'active-licensed': 'active',
-            'cancelled': 'inactive',
-            'closed': 'inactive',
-            'closed-merged': 'inactive',
-            'closed-revoked': 'inactive',
-            'closed-voluntary': 'inactive',
-            'expelled': 'inactive',
-            'expired': 'inactive',
-            'expired-licensed': 'inactive',
-            'lapsed': 'inactive',
-            'not-approved': 'inactive',
-            'pending': 'inactive',
-            'pending-voluntary': 'inactive',
-            'suspended': 'inactive',
-            'suspended-membership': 'inactive',
-        }
-        status_clean = STATUS[str(structure.status)]
-        status = getattr(self.model.STATUS, status_clean)
-        start_date = structure.established_date
-        email = structure.email.strip()
-        try:
-            validate_email(email)
-        except ValidationError:
-            email = ""
-        phone = structure.phone.strip()
-        # And the chapter code
-        if structure.chapter_code:
-            code = structure.chapter_code
-        else:
-            code = ''
-        bhs_id = structure.bhs_id
-        mem_clean = structure.status.name.replace("-", "_")
-        mem_status = getattr(self.model.MEM_STATUS, mem_clean)
-        defaults = {
-            'name': name,
-            'status': status,
-            'kind': kind,
-            'code': code,
-            'start_date': start_date,
-            'email': email,
-            'phone': phone,
-            'bhs_id': bhs_id,
-            'mem_status': mem_status,
-        }
-        organization, created = self.update_or_create(
-            bhs_pk=structure.id,
-            defaults=defaults,
-        )
-        if created:
-            # Set the default organization on create only.
-            Organization = api.get_model('Organization')
-            parent = Organization.objects.get(
-                bhs_pk=structure.parent.id,
-            )
-            organization.parent = parent
-            organization.status = getattr(self.model.STATUS, 'active')
-            organization.save()
-        return organization, created
 
 
 class PersonManager(Manager):

@@ -241,7 +241,7 @@ class Contestant(TimeStampedModel):
                 category__lte=10,
                 kind=10,
             ),
-            self.entry.group.organization.officers.filter(
+            self.entry.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
             ),

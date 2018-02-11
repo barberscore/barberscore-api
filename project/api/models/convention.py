@@ -144,8 +144,6 @@ class Convention(TimeStampedModel):
     organization = models.ForeignKey(
         'Organization',
         related_name='conventions',
-        help_text="""
-            The owning organization for the convention.""",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -161,9 +159,9 @@ class Convention(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.organization.kind > self.organization.KIND.district:
+        if self.group.kind > self.group.KIND.district:
             raise ValidationError(
-                {'organization': 'Owning organization must be at least district'}
+                {'group': 'Owning group must be at least district'}
             )
 
     def save(self, *args, **kwargs):
@@ -192,7 +190,7 @@ class Convention(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.organization.officers.filter(
+            self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
             ),

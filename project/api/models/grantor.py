@@ -64,11 +64,6 @@ class Grantor(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # class Meta:
-    #     unique_together = (
-    #         ('convention', 'organization',),
-    #     )
-
     class JSONAPIMeta:
         resource_name = "grantor"
 
@@ -80,7 +75,7 @@ class Grantor(TimeStampedModel):
             map(
                 lambda x: smart_text(x), [
                     self.convention,
-                    self.organization,
+                    self.group,
                 ]
             )
         )

@@ -21,7 +21,6 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
-from .models import Organization
 from .models import Panelist
 from .models import Person
 from .models import Repertory
@@ -117,7 +116,6 @@ class AwardSerializer(serializers.ModelSerializer):
             'size_range',
             'scope',
             'scope_range',
-            'organization',
             'group',
             'parent',
             'children',
@@ -218,7 +216,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'location',
             'description',
             'venue',
-            'organization',
             'group',
             'assignments',
             'sessions',
@@ -337,7 +334,6 @@ class GrantorSerializer(serializers.ModelSerializer):
             'url',
             'nomen',
             'status',
-            'organization',
             'group',
             'convention',
             'permissions',
@@ -402,7 +398,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'district',
             'division',
             'chapter',
-            'organization',
             'parent',
             'children',
             'entries',
@@ -451,7 +446,6 @@ class OfficeSerializer(serializers.ModelSerializer):
             'is_convention_manager',
             'is_session_manager',
             'is_scoring_manager',
-            'is_organization_manager',
             'is_group_manager',
             'is_person_manager',
             'is_award_manager',
@@ -476,7 +470,6 @@ class OfficerSerializer(serializers.ModelSerializer):
             'end_date',
             'office',
             'person',
-            'organization',
             'group',
             'permissions',
         ]
@@ -487,45 +480,6 @@ class OfficerSerializer(serializers.ModelSerializer):
                 fields=('person', 'office'),
                 message='This person already holds this office.',
             )
-        ]
-
-
-class OrganizationSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Organization
-        fields = [
-            'id',
-            'url',
-            'nomen',
-            'name',
-            'status',
-            'kind',
-            'code',
-            'start_date',
-            'end_date',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'img',
-            'description',
-            'bhs_id',
-            'org_sort',
-            'parent',
-            'children',
-            'awards',
-            'conventions',
-            'groups',
-            'officers',
-            'permissions',
-        ]
-
-        read_only_fields = [
-            'img',
         ]
 
 
@@ -763,7 +717,6 @@ class UserSerializer(serializers.ModelSerializer):
             'is_convention_manager',
             'is_session_manager',
             'is_scoring_manager',
-            'is_organization_manager',
             'is_group_manager',
             'is_person_manager',
             'is_award_manager',
@@ -774,7 +727,6 @@ class UserSerializer(serializers.ModelSerializer):
             'is_convention_manager',
             'is_session_manager',
             'is_scoring_manager',
-            'is_organization_manager',
             'is_group_manager',
             'is_person_manager',
             'is_award_manager',

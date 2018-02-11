@@ -103,7 +103,7 @@ class Officer(TimeStampedModel):
         self.nomen = " ".join(
             map(
                 lambda x: smart_text(x), [
-                    self.organization,
+                    self.group,
                     self.office,
                     self.person,
                 ]

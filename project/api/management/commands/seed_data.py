@@ -259,7 +259,6 @@ class Command(BaseCommand):
             is_convention_manager=True,
             is_session_manager=True,
             is_scoring_manager=True,
-            is_organization_manager=True,
             is_group_manager=True,
             is_person_manager=True,
             is_award_manager=True,
@@ -271,7 +270,6 @@ class Command(BaseCommand):
             short_name='DRCJ',
             is_convention_manager=True,
             is_session_manager=True,
-            is_organization_manager=True,
             is_award_manager=True,
         )
         ca_office = OfficeFactory(

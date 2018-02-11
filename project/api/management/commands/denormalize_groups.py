@@ -3,11 +3,10 @@ from django.core.management.base import BaseCommand
 
 # First-Party
 from api.models import Group
-from api.models import Organization
 
 
 class Command(BaseCommand):
-    help = "Command to denormalize group organizations."
+    help = "Command to denormalize group ."
 
     def handle(self, *args, **options):
         gs = Group.objects.filter(
@@ -24,32 +23,32 @@ class Command(BaseCommand):
             self.stdout.write("{0}/{1}".format(i, t), ending='\r')
             self.stdout.flush()
             try:
-                organization = g.organization
-            except Organization.DoesNotExist:
-                organization = None
-            if not organization:
+                parent = g.parent
+            except Group.DoesNotExist:
+                parent = None
+            if not parent:
                 g.international = ""
                 g.district = ""
                 g.division = ""
                 g.chapter = ""
             else:
-                international = organization
-                if international.kind >= Organization.KIND.international:
+                international = parent
+                if international.kind >= Group.KIND.international:
                     try:
-                        while international.kind != Organization.KIND.international:
+                        while international.kind != Group.KIND.international:
                             international = international.parent
                         g.international = international.code
                     except AttributeError:
                         g.international = ""
                 else:
                     g.international = ""
-                district = organization
-                if district.kind >= Organization.KIND.district:
+                district = parent
+                if district.kind >= Group.KIND.district:
                     try:
                         while district.kind not in [
-                            Organization.KIND.district,
-                            Organization.KIND.noncomp,
-                            Organization.KIND.affiliate,
+                            Group.KIND.district,
+                            Group.KIND.noncomp,
+                            Group.KIND.affiliate,
                         ]:
                             district = district.parent
                         g.district = district.code
@@ -57,20 +56,20 @@ class Command(BaseCommand):
                         g.district = ""
                 else:
                     g.district = ""
-                division = organization
-                if division.kind >= Organization.KIND.division:
+                division = parent
+                if division.kind >= Group.KIND.division:
                     try:
-                        while division.kind != Organization.KIND.division:
+                        while division.kind != Group.KIND.division:
                             division = division.parent
                         g.division = division.name
                     except AttributeError:
                         g.division = ""
                 else:
                     g.division = ""
-                chapter = organization
-                if chapter.kind >= Organization.KIND.chapter:
+                chapter = parent
+                if chapter.kind >= Group.KIND.chapter:
                     try:
-                        while chapter.kind != Organization.KIND.chapter:
+                        while chapter.kind != Group.KIND.chapter:
                             chapter = chapter.parent
                         g.chapter = chapter.name
                     except AttributeError:

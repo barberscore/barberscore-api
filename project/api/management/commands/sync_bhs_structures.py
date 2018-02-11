@@ -5,7 +5,7 @@ import logging
 from django.core.management.base import BaseCommand
 
 # First-Party
-from api.models import Organization
+from api.models import Group
 from bhs.models import Structure
 
 log = logging.getLogger('updater')
@@ -25,9 +25,9 @@ class Command(BaseCommand):
         structure_pks = list(structures.values_list('id', flat=True))
 
         # Delete Orphans
-        orphans = Organization.objects.filter(
+        orphans = Group.objects.filter(
             bhs_pk__isnull=False,
-            kind=Organization.KIND.chapter,
+            kind=Group.KIND.chapter,
         ).exclude(
             bhs_pk__in=structure_pks,
         )
@@ -36,13 +36,13 @@ class Command(BaseCommand):
         for orphan in orphans:
             log.error("Delete orphan: {0}".format(orphan))
             return
-        # Creating/Update Organizations
+        # Creating/Update Groups
         i = 0
         t = structures.count()
         for structure in structures:
             i += 1
             django_rq.enqueue(
-                Organization.objects.update_or_create_from_structure,
+                Group.objects.update_or_create_from_structure,
                 structure,
             )
             self.stdout.flush()

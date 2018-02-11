@@ -19,7 +19,6 @@ from django.db import models
 
 # First-Party
 from api.fields import CloudinaryRenameField
-from api.managers import OrganizationManager
 
 api = api_apps.get_app_config('api')
 bhs = api_apps.get_app_config('bhs')
@@ -229,8 +228,6 @@ class Organization(TimeStampedModel):
         db_index=True,
         on_delete=models.SET_NULL,
     )
-
-    objects = OrganizationManager()
 
     # Internals
     class Meta:
