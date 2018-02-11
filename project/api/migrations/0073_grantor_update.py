@@ -18,7 +18,7 @@ def data_migration(apps, schema_editor):
             grantor.group = None
         except Group.MultipleObjectsReturned as e:
             log.error("{} {}".format(e, grantor.organization))
-        grantors.save()
+        grantor.save()
     return
 
 
