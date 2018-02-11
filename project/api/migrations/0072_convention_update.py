@@ -13,11 +13,10 @@ def data_migration(apps, schema_editor):
     for convention in conventions:
         try:
             convention.group = convention.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist as e:
-            log.error("{} {}".format(e, convention.organization))
+        except Group.DoesNotExist:
             convention.group = None
-        except Group.MultipleObjectsReturned as e:
-            log.error("{} {}".format(e, convention.organization))
+        except Group.MultipleObjectsReturned:
+            convention.group = None
         convention.save()
     return
 

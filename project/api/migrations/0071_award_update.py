@@ -13,11 +13,10 @@ def data_migration(apps, schema_editor):
     for award in awards:
         try:
             award.group = award.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist as e:
-            log.error("{} {}".format(e, award.organization))
+        except Group.DoesNotExist:
             award.group = None
-        except Group.MultipleObjectsReturned as e:
-            log.error("{} {}".format(e, award.organization))
+        except Group.MultipleObjectsReturned:
+            award.group = None
         award.save()
     return
 

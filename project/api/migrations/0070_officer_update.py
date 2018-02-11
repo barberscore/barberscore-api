@@ -15,19 +15,14 @@ def data_migration(apps, schema_editor):
     for officer in officers:
         try:
             officer.group = officer.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist as e:
-            log.error("{} {}".format(e, officer.organization))
+        except Group.DoesNotExist:
             officer.group = None
-        except Group.MultipleObjectsReturned as e:
-            log.error("{} {}".format(e, officer.organization))
+        except Group.MultipleObjectsReturned:
             officer.group = None
         officer.save()
     officers = Officer.objects.filter(
         group__kind=41,
     )
-    for officer in officers:
-        officer.group = officer.organization.groups.first()
-        officer.save()
     return
 
 

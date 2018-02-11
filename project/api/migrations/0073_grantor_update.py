@@ -13,11 +13,10 @@ def data_migration(apps, schema_editor):
     for grantor in grantors:
         try:
             grantor.group = grantor.organization.groups.get(status__gt=0)
-        except Group.DoesNotExist as e:
-            log.error("{} {}".format(e, grantor.organization))
+        except Group.DoesNotExist:
             grantor.group = None
-        except Group.MultipleObjectsReturned as e:
-            log.error("{} {}".format(e, grantor.organization))
+        except Group.MultipleObjectsReturned:
+            grantor.group = None
         grantor.save()
     return
 
