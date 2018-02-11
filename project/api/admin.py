@@ -221,7 +221,7 @@ class AwardAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'organization__org_sort',
+        'group__tree_sort',
         'kind',
         'gender',
         'level',
@@ -429,7 +429,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         '-year',
         '-season',
-        'organization__org_sort',
+        'group__tree_sort',
         # 'organization__short_name',
     )
 
@@ -1358,7 +1358,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         '-convention__year',
         '-convention__season',
-        'convention__organization__org_sort',
+        'convention__group__tree_sort',
         # 'convention__organization__short_name',
         'kind',
     )

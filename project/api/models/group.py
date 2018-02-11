@@ -252,6 +252,13 @@ class Group(TimeStampedModel):
     )
 
     # Denormalizations
+    tree_sort = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
     international = models.TextField(
         help_text="""
             The denormalized international organization.""",

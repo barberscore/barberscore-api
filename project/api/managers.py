@@ -364,6 +364,37 @@ class GroupManager(Manager):
             resource_type='raw',
         )
 
+    def sort_tree(self, **kwargs):
+        root = self.get(kind=self.model.KIND.international)
+        i = 1
+        root.tree_sort = i
+        root.save()
+        for child in root.children.order_by('kind', 'name'):
+            i += 1
+            child.tree_sort = i
+            child.save()
+            for grandchild in child.children.filter(
+                kind=self.model.KIND.division,
+            ).order_by('kind', 'name'):
+                i += 1
+                grandchild.tree_sort = i
+                grandchild.save()
+        orgs = self.filter(
+            kind__in=[
+                self.model.KIND.chapter,
+                self.model.KIND.chorus,
+                self.model.KIND.quartet,
+            ]
+        ).order_by(
+            'kind',
+            'name',
+        )
+        for org in orgs:
+            i += 1
+            org.tree_sort = i
+            org.save()
+
+
 
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role, **kwargs):
@@ -410,17 +441,17 @@ class OrganizationManager(Manager):
     def sort_tree(self, **kwargs):
         root = self.get(kind=self.model.KIND.international)
         i = 1
-        root.org_sort = i
+        root.tree_sort = i
         root.save()
         for child in root.children.order_by('kind', 'name'):
             i += 1
-            child.org_sort = i
+            child.tree_sort = i
             child.save()
             for grandchild in child.children.filter(
                 kind=self.model.KIND.division,
             ).order_by('kind', 'name'):
                 i += 1
-                grandchild.org_sort = i
+                grandchild.tree_sort = i
                 grandchild.save()
         orgs = self.filter(
             kind__in=[
@@ -434,7 +465,7 @@ class OrganizationManager(Manager):
         )
         for org in orgs:
             i += 1
-            org.org_sort = i
+            org.tree_sort = i
             org.save()
 
     def update_or_create_from_structure(self, structure, **kwargs):
