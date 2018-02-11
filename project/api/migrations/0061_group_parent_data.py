@@ -24,10 +24,8 @@ def create_groups_from_organizations(apps, schema_editor):
             email=organization.email,
             phone=organization.phone,
             description=organization.description,
-            bhs_id=organization.bhs_id,
             notes=organization.notes,
             mem_status=organization.mem_status,
-            bhs_pk=organization.bhs_pk,
             organization=organization,
         )
 
@@ -75,8 +73,6 @@ def copy_parent_organization(apps, schema_editor):
             kind__lte=30,
         )
         chorus.parent = parent
-        chorus.bhs_id = None
-        chorus.bhs_pk = None
         chorus.save()
     quartets = Group.objects.filter(
         kind=41,
