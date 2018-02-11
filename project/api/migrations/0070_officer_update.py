@@ -10,7 +10,7 @@ def data_migration(apps, schema_editor):
     Officer = apps.get_model('api', 'Officer')
     Group = apps.get_model('api', 'Group')
     officers = Officer.objects.exclude(
-        group__kind=Group.KIND.quartet,
+        group__kind=41,
     )
     for officer in officers:
         try:
@@ -23,7 +23,7 @@ def data_migration(apps, schema_editor):
             officer.group = None
         officer.save()
     officers = Officer.objects.filter(
-        group__kind=Group.KIND.quartet,
+        group__kind=41,
     )
     for officer in officers:
         officer.group = officer.organization.groups.first()
