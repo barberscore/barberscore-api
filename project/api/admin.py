@@ -9,6 +9,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
+from .filters import BHSListFilter
 from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
@@ -632,6 +633,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_filter = [
         'status',
+        BHSListFilter,
         'kind',
         'gender',
         DistrictListFilter,
@@ -649,7 +651,6 @@ class GroupAdmin(admin.ModelAdmin):
         'parent',
         'location',
         'bhs_id',
-        'bhs_pk',
         'status',
         'created',
         'modified',
@@ -755,6 +756,7 @@ class MemberAdmin(admin.ModelAdmin):
         'status',
         # 'start_date',
         # 'end_date',
+        'bhs_pk',
         'group',
         'person',
         'part',
@@ -773,6 +775,7 @@ class MemberAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'status',
+        BHSListFilter,
         'part',
         'group__kind',
         'sub_status',
@@ -847,6 +850,7 @@ class OfficerAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'status',
+        BHSListFilter,
         'office',
     ]
     search_fields = [
@@ -948,6 +952,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
+        BHSListFilter,
         'gender',
         'part',
         'is_deceased',

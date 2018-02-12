@@ -28,6 +28,27 @@ from .models import Session
 from .models import Venue
 
 
+class BHSListFilter(admin.SimpleListFilter):
+    title = 'is_bhs'
+    parameter_name = 'is_bhs'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('BHS', 'Yes'),
+            ('NotBHS', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'BHS':
+            return queryset.filter(
+                bhs_pk__isnull=False,
+            )
+        if self.value() == 'NotBHS':
+            return queryset.filter(
+                bhs_pk__isnull=True,
+            )
+
+
 class DistrictListFilter(admin.SimpleListFilter):
     title = 'district'
     parameter_name = 'district'
