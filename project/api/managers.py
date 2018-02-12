@@ -66,32 +66,32 @@ class ChartManager(Manager):
         )
 
 
-class ConventionManager(Manager):
-    def populate_from_last_year(self, *args, **kwargs):
-        # Copy conventions, sessions, rounds, etc. from last year.
-        return
-
-
 class GroupManager(Manager):
     def update_or_create_from_structure(self, structure, **kwargs):
         # Map structure kind to internal designation
         kind_clean = structure.kind.replace('chapter', 'chorus')
         kind = getattr(self.model.KIND, kind_clean)
         # Check for quartets
-        if kind != self.model.KIND.quartet:
-            raise ValueError("Can only update quartets")
-        if structure.name:
-            # If the name has been assigned, use that.
-            name = structure.name.strip()
-        elif structure.preferred_name:
-            # If not yet assigned, use preferred and mark as pending.
-            name = "{0} (NAME APPROVAL PENDING)".format(
-                structure.preferred_name.strip()
-            )
+        if kind == self.model.KIND.quartet:
+            if structure.name:
+                # If the name has been assigned, use that.
+                name = structure.name.strip()
+            elif structure.preferred_name:
+                # If not yet assigned, use preferred and mark as pending.
+                name = "{0} (NAME APPROVAL PENDING)".format(
+                    structure.preferred_name.strip()
+                )
+            else:
+                # Otherwise, call unknown.
+                name = 'UNKNOWN'
+            # Map to the internal designation
+        elif kind == self.model.KIND.chorus:
+            if structure.chorus_name:
+                name = structure.chorus_name.strip()
+            else:
+                name = 'UNKNOWN'
         else:
-            # Otherwise, call unknown.
-            name = 'UNKNOWN'
-        # Map to the internal designation
+            raise ValueError("Must be quartet or chapter")
         STATUS = {
             'active': 'active',
             'active-internal': 'active',
@@ -254,6 +254,9 @@ class GroupManager(Manager):
         )
         # Set the default parent on create
         if created:
+            if kind == self.model.KIND.chorus:
+                log.error("New Chorus: {0}".format(group))
+                return group, created
             Group = api.get_model('Group')
             group.parent = Group.objects.get(
                 bhs_pk=structure.parent.id,

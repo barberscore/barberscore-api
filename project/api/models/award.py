@@ -252,9 +252,9 @@ class Award(TimeStampedModel):
     # FKs
     group = models.ForeignKey(
         'Group',
+        related_name='awards',
         null=True,
         blank=True,
-        related_name='awards',
         on_delete=models.SET_NULL,
     )
 
@@ -268,9 +268,9 @@ class Award(TimeStampedModel):
 
     parent = models.ForeignKey(
         'self',
+        related_name='children',
         null=True,
         blank=True,
-        related_name='children',
         db_index=True,
         on_delete=models.SET_NULL,
     )

@@ -18,8 +18,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 # First-Party
-from api.managers import ConventionManager
-
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
@@ -150,8 +148,6 @@ class Convention(TimeStampedModel):
     )
 
     # Internals
-    objects = ConventionManager()
-
     class JSONAPIMeta:
         resource_name = "convention"
 

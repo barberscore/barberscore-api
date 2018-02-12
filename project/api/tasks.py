@@ -797,90 +797,6 @@ def create_admins_report(session):
 
 
 @job
-def create_actives_report(session):
-    Officer = api.get_model('Officer')
-    Group = api.get_model('Group')
-    groups = Group.objects.filter(
-        awards__contests__in=session.contests.filter(
-            status__gt=0,
-        )
-    ).distinct()
-    # Get active Groups in those
-    # This is really hacky.  Probably a better way available.
-    groups = []
-    for group in groups:
-        if group.kind == Group.KIND.district:
-            dist_groups = Group.objects.filter(
-                district=group.code,
-                status__gt=0,
-                kind=session.kind,
-            )
-            [groups.append(x) for x in dist_groups]
-        elif group.kind == Group.KIND.division:
-            div_groups = Group.objects.filter(
-                division=group.name,
-                status__gt=0,
-                kind=session.kind,
-            )
-            [groups.append(x) for x in div_groups]
-    # Filter admins per kind
-    admins = Officer.objects.filter(
-        status__gt=0,
-        group__in=groups,
-        person__email__isnull=False,
-    ).order_by(
-        'group__nomen',
-        'office',
-        'person__nomen',
-    )
-    wb = Workbook()
-    ws = wb.active
-    fieldnames = [
-        'group',
-        'chapter',
-        'district',
-        'division',
-        'admin',
-        'email',
-        'cell',
-    ]
-    ws.append(fieldnames)
-    for admin in admins:
-        group = admin.groups.first().nomen.encode('utf-8').strip()
-        chapter = admin.groups.first().chapter
-        district = admin.groups.first().district
-        division = admin.groups.first().division
-        person = admin.person.nomen.encode('utf-8').strip()
-        email = admin.person.email.encode('utf-8').strip()
-        cell = admin.person.cell_phone
-        row = [
-            group,
-            chapter,
-            district,
-            division,
-            person,
-            email,
-            cell,
-        ]
-        ws.append(row)
-    file = save_virtual_workbook(wb)
-    public_id = "session/{0}/{1}-actives_report.xlsx".format(
-        session.id,
-        slugify(session.nomen),
-    )
-    actives_report = upload_resource(
-        file,
-        resource_type='raw',
-        public_id=public_id,
-        overwrite=True,
-        invalidate=True,
-    )
-    session.actives_report = actives_report
-    session.save()
-    return actives_report
-
-
-@job
 def create_pdf(template, context):
     rendered = render_to_string(template, context)
     pdf = pydf.generate_pdf(rendered)
@@ -929,36 +845,23 @@ def send_entry(template, context):
 @job
 def send_session(template, context):
     session = context['session']
-    Group = api.get_model('Group')
     Officer = api.get_model('Officer')
     Assignment = api.get_model('Assignment')
     Entry = api.get_model('Entry')
     if session.status > session.STATUS.closed:
-        # only send to existing entries
-        # TODO Hack city
-        entries = session.entries.filter(
-            status=Entry.STATUS.approved,
-        )
+        # only send to approved entries
         contacts = Officer.objects.filter(
             status__gt=0,
-            groups__entries__in=entries,
             person__email__isnull=False,
+            group__entries__session=session,
+            group__entries__status=Entry.STATUS.approved,
         ).distinct()
     else:
         # send to all active groups in the district
-        # Get relevant Contests
-        contests = session.contests.filter(
-            status__gt=0,
-        )
-        groups = Group.objects.filter(
-            awards__contests__in=contests,
-        ).distinct()
-        # Get active Groups in those
-        # This is really hacky.  Probably a better way available.
         contacts = Officer.objects.filter(
             status__gt=0,
-            group__parent__in=groups,
             person__email__isnull=False,
+            group__parent__grantors__convention=session.convention,
         ).distinct()
     assignments = Assignment.objects.filter(
         convention=session.convention,
