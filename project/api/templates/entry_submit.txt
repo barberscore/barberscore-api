@@ -22,7 +22,7 @@ Contests Selected:
     Not competing for any awards.
 {% endfor %}
 {% if entry.group.kind == entry.group.KIND.chorus %}
-Director(s): {{entry.directors|default:"(No Director Specified)"}}
+Director(s): {{entry.directors|safe|default:"(No Director Specified)"}}
 
 {% endif %}
 Additional Notes/Requests:
