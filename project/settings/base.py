@@ -36,9 +36,9 @@ APPEND_SLASH = False
 # Datetime
 TIME_ZONE = 'US/Pacific'
 USE_TZ = True
-DATE_FORMAT = 'c'
-TIME_FORMAT = 'c'
-DATETIME_FORMAT = 'c'
+DATE_FORMAT = 'Y-m-d'
+TIME_FORMAT = 'H:i:s'
+DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 # Database
 DATABASES = {
