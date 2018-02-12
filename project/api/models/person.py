@@ -327,6 +327,19 @@ class Person(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def update_bhs_human(self):
+        Human = bhs.get_model('Human')
+        if not self.bhs_pk:
+            raise RuntimeError("Not BHS")
+        try:
+            human = Human.objects.get(
+                id=self.bhs_pk
+            )
+        except Human.DoesNotExist:
+            raise RuntimeError("No Human in BHS")
+        person, created = Person.objects.update_or_create_from_human(human)
+        return person, created
+
     def update_bhs_subscription(self):
         Human = bhs.get_model('Human')
         Subscription = bhs.get_model('Subscription')
