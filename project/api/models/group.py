@@ -354,6 +354,59 @@ class Group(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
+    def denormalize(self):
+        parent = self.parent
+        if not parent:
+            self.international = ""
+            self.district = ""
+            self.division = ""
+            self.chapter = ""
+        else:
+            international = parent
+            if international.kind >= self.KIND.international:
+                try:
+                    while international.kind != self.KIND.international:
+                        international = international.parent
+                    self.international = international.code
+                except AttributeError:
+                    self.international = ""
+            else:
+                self.international = ""
+            district = parent
+            if district.kind >= self.KIND.district:
+                try:
+                    while district.kind not in [
+                        self.KIND.district,
+                        self.KIND.noncomp,
+                        self.KIND.affiliate,
+                    ]:
+                        district = district.parent
+                    self.district = district.code
+                except AttributeError:
+                    self.district = ""
+            else:
+                self.district = ""
+            division = parent
+            if division.kind >= self.KIND.division:
+                try:
+                    while division.kind != self.KIND.division:
+                        division = division.parent
+                    self.division = division.name
+                except AttributeError:
+                    self.division = ""
+            else:
+                self.division = ""
+            chapter = parent
+            if chapter.kind >= self.KIND.chapter:
+                try:
+                    while chapter.kind != self.KIND.chapter:
+                        chapter = chapter.parent
+                    self.chapter = chapter.name
+                except AttributeError:
+                    self.chapter = ""
+            else:
+                self.chapter = ""
+
     def update_memberships(self):
         if self.kind != self.KIND.quartet:
             raise RuntimeError("Can only update quartets")
