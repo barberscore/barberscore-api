@@ -486,7 +486,7 @@ def create_drcj_report(session):
                 kind=Group.KIND.chapter,
             ).distinct(
             ).order_by(
-                'org_sort',
+                'tree_sort',
                 'nomen',
             ).values_list(
                 'nomen',
