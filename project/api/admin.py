@@ -667,7 +667,10 @@ class GroupAdmin(admin.ModelAdmin):
         'modified',
     ]
 
-    autocomplete_fields = [
+    # autocomplete_fields = [
+    #     'parent',
+    # ]
+    raw_id_fields = [
         'parent',
     ]
 
