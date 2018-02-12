@@ -9,13 +9,13 @@ from django.core.management.base import CommandError
 from django.utils import timezone
 
 # First-Party
-from api.models import Role
 from api.models import Member
 from api.models import Officer
 from api.models import Group
 from api.models import Person
 from bhs.models import Human
 from bhs.models import SMJoin
+from api.models import Role
 from bhs.models import Structure
 from bhs.models import Subscription
 
