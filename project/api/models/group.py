@@ -346,8 +346,8 @@ class Group(TimeStampedModel):
                     self.KIND.district,
                     self.KIND.division,
                 ]:
-                    raise ValidationError("Chorus must have Chapter parent.")
-        pass
+                    raise ValidationError("Chapter must have District or Division parent.")
+        return
 
     def save(self, *args, **kwargs):
         self.nomen = self.name
