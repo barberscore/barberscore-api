@@ -642,6 +642,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     search_fields = [
         'nomen',
+        'bhs_id',
     ]
 
     list_display = [
