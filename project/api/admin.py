@@ -649,7 +649,6 @@ class GroupAdmin(admin.ModelAdmin):
         'kind',
         'gender',
         'parent',
-        'location',
         'bhs_id',
         'status',
         'created',
