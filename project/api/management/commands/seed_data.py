@@ -341,7 +341,7 @@ class Command(BaseCommand):
         chapter_president = OfficerFactory(
             office=chorus_manager,
             person=chorus_admin_person,
-            group=chapter_1,
+            group=chorus_1,
             status=Officer.STATUS.active,
         )
         quartet_one_manager = OfficerFactory(
