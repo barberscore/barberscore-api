@@ -196,7 +196,7 @@ class Command(BaseCommand):
             parent=district_alpha,
             kind=Group.KIND.chapter,
         )
-        chorus_one = GroupFactory(
+        chorus_1 = GroupFactory(
             name='Chorus One',
             kind=Group.KIND.chorus,
             parent=chapter_1,
@@ -554,7 +554,7 @@ class Command(BaseCommand):
         )
         member_chorus_admin = MemberFactory(
             part=Member.PART.lead,
-            group=chorus_one,
+            group=chorus_1,
             person=chorus_admin_person,
         )
         member_quartet_2_admin = MemberFactory(
@@ -623,11 +623,11 @@ class Command(BaseCommand):
             chart=chart_6,
         )
         RepertoryFactory(
-            group=chorus_one,
+            group=chorus_1,
             chart=chart_1,
         )
         RepertoryFactory(
-            group=chorus_one,
+            group=chorus_1,
             chart=chart_2,
         )
         RepertoryFactory(
@@ -740,7 +740,7 @@ class Command(BaseCommand):
         )
         chorus_entry = EntryFactory(
             session=district_alpha_fall_convention_chorus_session,
-            group=chorus_one,
+            group=chorus_1,
         )
 
         # Approve entries
