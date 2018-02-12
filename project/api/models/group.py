@@ -15,7 +15,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.core.validators import RegexValidator
 from django.db import models
-# from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 # First-Party
 from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
@@ -305,6 +305,48 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
+        if self.bhs_pk:
+            if self.kind == self.KIND.international:
+                if self.parent:
+                    raise ValidationError("Toplevel must be Root")
+            else:
+                if not self.parent:
+                    raise ValidationError("Non-Root must have parent")
+            if self.kind in [
+                self.KIND.district,
+                self.KIND.noncomp,
+                self.KIND.affiliate,
+            ]:
+                if self.parent.kind != self.KIND.international:
+                    raise ValidationError("Districts must have International parent.")
+            if self.kind in [
+                self.KIND.division,
+            ]:
+                if self.parent.kind != self.KIND.district:
+                    raise ValidationError("Divisions must have District parent.")
+            if self.kind in [
+                self.KIND.chapter,
+            ]:
+                if self.parent.kind not in [
+                    self.KIND.district,
+                    self.KIND.division,
+                ]:
+                    raise ValidationError("Chapter must have District or Division parent.")
+            if self.kind in [
+                self.KIND.chorus,
+            ]:
+                if self.parent.kind not in [
+                    self.KIND.chapter,
+                ]:
+                    raise ValidationError("Chorus must have Chapter parent.")
+            if self.kind in [
+                self.KIND.quartet,
+            ]:
+                if self.parent.kind not in [
+                    self.KIND.district,
+                    self.KIND.division,
+                ]:
+                    raise ValidationError("Chorus must have Chapter parent.")
         pass
 
     def save(self, *args, **kwargs):
