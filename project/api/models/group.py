@@ -346,7 +346,7 @@ class Group(TimeStampedModel):
                     self.KIND.district,
                     self.KIND.division,
                 ]:
-                    raise ValidationError("Chapter must have District or Division parent.")
+                    raise ValidationError("Quartet must have District or Division parent.")
         return
 
     def save(self, *args, **kwargs):
