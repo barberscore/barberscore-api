@@ -257,10 +257,8 @@ class GroupManager(Manager):
             if kind == self.model.KIND.chorus:
                 log.error("New Chorus: {0}".format(group))
                 return group, created
-            Group = api.get_model('Group')
-            group.parent = Group.objects.get(
-                bhs_pk=structure.parent.id,
-            )
+            parent = self.get(bhs_pk=structure.parent.id)
+            group.parent = parent
             group.status = self.model.STATUS.active
             group.save()
         return group, created
@@ -450,11 +448,6 @@ class PersonManager(Manager):
             bhs_pk=human.id,
         )
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
-        # Override -- A person can not be acitve without valid email
-        try:
-            validate_email(person.email)
-        except ValidationError:
-            status = self.model.STATUS.inactive
         current_through = subscription.current_through
         person.status = status
         person.current_through = current_through

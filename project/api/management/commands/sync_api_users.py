@@ -18,9 +18,12 @@ class Command(BaseCommand):
         self.stdout.write("Updating...")
 
         # Active Persons MUST have Users
+        # UNLESS they don't have email
         persons = Person.objects.filter(
             status=Person.STATUS.active,
             user__isnull=True,
+        ).exclude(
+            email='',
         )
         for person in persons:
             try:

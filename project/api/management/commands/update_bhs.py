@@ -114,19 +114,19 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} groups.".format(t))
 
         # Sync Roles
-        roles = Role.objects.filter(
-            updated_ts__gt=cursor,
-        ).exclude(
-            name='Quartet Admin',
-        )
-        # Creating/Update Groups
-        self.stdout.write("Queuing officer updates...")
-        for role in roles:
-            django_rq.enqueue(
-                Officer.objects.update_or_create_from_role,
-                role,
-            )
-        self.stdout.write("Complete")
+        # roles = Role.objects.filter(
+        #     # updated_ts__gt=cursor,
+        # ).exclude(
+        #     name='Quartet Admin',
+        # )
+        # # Creating/Update Groups
+        # self.stdout.write("Queuing officer updates...")
+        # for role in roles:
+        #     django_rq.enqueue(
+        #         Officer.objects.update_or_create_from_role,
+        #         role,
+        #     )
+        # self.stdout.write("Complete")
 
         # Sync Members
         joins = SMJoin.objects.filter(
