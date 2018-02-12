@@ -363,7 +363,7 @@ class Person(TimeStampedModel):
             )
             current_through = subscription.current_through
         else:
-            status = self.STATUS.new
+            status = self.STATUS.inactive
             current_through = None
         self.status = status
         self.current_through = current_through
