@@ -75,8 +75,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'round',
         'num',
         'draw',
-        'variance_report_link',
-        # 'variance_report_new',
+        'variance_report_new',
         ('mus_points', 'per_points', 'sng_points', 'tot_points',),
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
@@ -99,7 +98,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'nomen',
-        'variance_report_link',
     ]
     autocomplete_fields = [
         'competitor',
@@ -234,8 +232,7 @@ class ChartAdmin(admin.ModelAdmin):
         'lyricists',
         'arrangers',
         'holders',
-        'img',
-        # 'image',
+        'image',
         'description',
         'notes',
         # 'gender',
@@ -439,12 +436,9 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_archived',
         'session',
         'group',
-        'img',
-        # 'image',
         'rank',
         ('is_ranked', 'is_multi',),
-        'csa_report_link',
-        # 'csa_report_new',
+        'csa_report_new',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
     )
@@ -479,7 +473,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'nomen',
-        'csa_report_link',
+        'csa_report_new',
     )
 
     save_on_top = True
@@ -633,7 +627,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'website',
         'facebook',
         'twitter',
-        # 'img',
         'image',
         'description',
         'notes',
@@ -943,8 +936,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'facebook',
         'twitter',
         'phone',
-        'img',
-        # 'image',
+        'image',
         'description',
         'notes',
         ('created', 'modified',),
@@ -1053,8 +1045,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'is_archived',
         ('session', 'kind', 'num'),
-        'ors_report_link',
-        # 'ors_report_new',
+        'ors_report_new',
 
     ]
 
@@ -1079,7 +1070,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'ors_report_link',
+        'ors_report_new',
         # 'session',
         # 'kind',
     ]
@@ -1159,14 +1150,10 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_invitational',
         'description',
         'notes',
-        'bbscores_report_link',
         'bbscores_report_new',
-        'drcj_report_link',
-        # 'drcj_report_new',
-        'admins_report_link',
-        # 'admins_report_new',
-        'sa_report_link',
-        # 'sa_report_new',
+        'drcj_report_new',
+        'admins_report_new',
+        'sa_report_new',
     ]
 
     list_display = [
@@ -1198,10 +1185,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'nomen',
-        'sa_report_link',
-        'bbscores_report_link',
-        'drcj_report_link',
-        'admins_report_link',
     ]
 
     inlines = [

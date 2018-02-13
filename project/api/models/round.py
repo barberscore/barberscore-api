@@ -156,14 +156,6 @@ class Round(TimeStampedModel):
         ])
 
     # Methods
-    def ors_report_link(self):
-        if self.ors_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.ors_report.url,
-            )
-        else:
-            return None
 
     # Round Transitions
     @fsm_log_by

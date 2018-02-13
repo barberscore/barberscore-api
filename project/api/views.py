@@ -177,29 +177,29 @@ class ChartViewSet(
     ]
     resource_name = "chart"
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def img(self, request, *args, **kwargs):
-        if 'file' in request.data:
-            obj = self.get_object()
-            file = request.data['file']
-            public_id = str(obj.id)
-            folder = obj._meta.model_name
-            obj.img = upload_resource(
-                file,
-                public_id=public_id,
-                folder=folder,
-                overwrite=True,
-                invalidate=True,
-                format='png',
-            )
-            obj.save()
-            return Response(
-                status=status.HTTP_201_CREATED,
-                data={'image': obj.img.url},
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    # @parser_classes((FormParser, MultiPartParser,))
+    # def img(self, request, *args, **kwargs):
+    #     if 'file' in request.data:
+    #         obj = self.get_object()
+    #         file = request.data['file']
+    #         public_id = str(obj.id)
+    #         folder = obj._meta.model_name
+    #         obj.img = upload_resource(
+    #             file,
+    #             public_id=public_id,
+    #             folder=folder,
+    #             overwrite=True,
+    #             invalidate=True,
+    #             format='png',
+    #         )
+    #         obj.save()
+    #         return Response(
+    #             status=status.HTTP_201_CREATED,
+    #             data={'image': obj.img.url},
+    #         )
+    #     else:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ContestViewSet(
@@ -393,29 +393,29 @@ class GroupViewSet(
     #     else:
     #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def img(self, request, *args, **kwargs):
-        if 'file' in request.data:
-            obj = self.get_object()
-            file = request.data['file']
-            public_id = str(obj.id)
-            folder = obj._meta.model_name
-            obj.img = upload_resource(
-                file,
-                public_id=public_id,
-                folder=folder,
-                overwrite=True,
-                invalidate=True,
-                format='png',
-            )
-            obj.save()
-            return Response(
-                status=status.HTTP_201_CREATED,
-                data={'image': obj.img.url},
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    # @parser_classes((FormParser, MultiPartParser,))
+    # def img(self, request, *args, **kwargs):
+    #     if 'file' in request.data:
+    #         obj = self.get_object()
+    #         file = request.data['file']
+    #         public_id = str(obj.id)
+    #         folder = obj._meta.model_name
+    #         obj.img = upload_resource(
+    #             file,
+    #             public_id=public_id,
+    #             folder=folder,
+    #             overwrite=True,
+    #             invalidate=True,
+    #             format='png',
+    #         )
+    #         obj.save()
+    #         return Response(
+    #             status=status.HTTP_201_CREATED,
+    #             data={'image': obj.img.url},
+    #         )
+    #     else:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class MemberViewSet(
@@ -516,29 +516,29 @@ class PersonViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "person"
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def img(self, request, *args, **kwargs):
-        if 'file' in request.data:
-            obj = self.get_object()
-            file = request.data['file']
-            public_id = str(obj.id)
-            folder = obj._meta.model_name
-            obj.img = upload_resource(
-                file,
-                public_id=public_id,
-                folder=folder,
-                overwrite=True,
-                invalidate=True,
-                format='png',
-            )
-            obj.save()
-            return Response(
-                status=status.HTTP_201_CREATED,
-                data={'image': obj.img.url},
-            )
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
+    # @parser_classes((FormParser, MultiPartParser,))
+    # def img(self, request, *args, **kwargs):
+    #     if 'file' in request.data:
+    #         obj = self.get_object()
+    #         file = request.data['file']
+    #         public_id = str(obj.id)
+    #         folder = obj._meta.model_name
+    #         obj.img = upload_resource(
+    #             file,
+    #             public_id=public_id,
+    #             folder=folder,
+    #             overwrite=True,
+    #             invalidate=True,
+    #             format='png',
+    #         )
+    #         obj.save()
+    #         return Response(
+    #             status=status.HTTP_201_CREATED,
+    #             data={'image': obj.img.url},
+    #         )
+    #     else:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RepertoryViewSet(

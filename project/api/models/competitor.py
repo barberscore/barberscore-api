@@ -185,15 +185,6 @@ class Competitor(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "competitor"
 
-    def csa_report_link(self):
-        if self.csa_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.csa_report.url,
-            )
-        else:
-            return None
-
     def __str__(self):
         return self.nomen if self.nomen else str(self.pk)
 

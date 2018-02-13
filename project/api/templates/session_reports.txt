@@ -1,10 +1,10 @@
 Below are the reports for the {{session|safe}}.
 
-Legacy Program Export: {{bbscores_report}}
+Legacy Program Export: {{session.bbscores_report_new.url}}
 
-DRCJ Report: {{drcj_report}}
+DRCJ Report: {{session.drcj_report_new.url}}
 
-Group Admins Email Report: {{admins_report}}
+Group Admins Email Report: {{session.admins_report_new.url}}
 
 
 The reports may change up to the start of the sesion.  To regenerate reports,

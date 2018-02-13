@@ -177,15 +177,6 @@ class Appearance(TimeStampedModel):
         )
         super().save(*args, **kwargs)
 
-    def variance_report_link(self):
-        if self.variance_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.variance_report.url,
-            )
-        else:
-            return None
-
     # Methods
     def calculate(self):
         self.mus_points = self.songs.filter(
@@ -289,7 +280,7 @@ class Appearance(TimeStampedModel):
             if variance:
                 create_variance_report(self)
                 return
-        self.variance_report = None
+        self.variance_report_new = None
         self.calculate()
         return
 

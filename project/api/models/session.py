@@ -246,50 +246,6 @@ class Session(TimeStampedModel):
         super().save(*args, **kwargs)
 
     # Methods
-    def oss_report_link(self):
-        if self.oss_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.oss_report.url,
-            )
-        else:
-            return None
-
-    def sa_report_link(self):
-        if self.sa_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.sa_report.url,
-            )
-        else:
-            return None
-
-    def bbscores_report_link(self):
-        if self.bbscores_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.bbscores_report.url,
-            )
-        else:
-            return None
-
-    def drcj_report_link(self):
-        if self.drcj_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.drcj_report.url,
-            )
-        else:
-            return None
-
-    def admins_report_link(self):
-        if self.admins_report:
-            return format_html(
-                '<a href="{0}">File Link</a>',
-                self.admins_report.url,
-            )
-        else:
-            return None
 
     # Session Permissions
     @staticmethod
@@ -427,14 +383,8 @@ class Session(TimeStampedModel):
     def start(self, *args, **kwargs):
         """Get round, seat panel, copy draw."""
         #  Create and send the reports
-        bbscores_report = create_bbscores_report(self)
-        drcj_report = create_drcj_report(self)
-        admins_report = create_admins_report(self)
         context = {
             'session': self,
-            'bbscores_report': bbscores_report,
-            'drcj_report': drcj_report,
-            'admins_report': admins_report,
         }
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants

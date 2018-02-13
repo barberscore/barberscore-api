@@ -34,7 +34,6 @@ from .models import Venue
 
 class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    variance_report = serializers.FileField(use_url=True)
 
     class Meta:
         model = Appearance
@@ -47,7 +46,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'draw',
             'actual_start',
             'actual_finish',
-            'variance_report',
+            'variance_report_new',
             'rank',
             'mus_points',
             'per_points',
@@ -140,16 +139,12 @@ class ChartSerializer(serializers.ModelSerializer):
             'lyricists',
             'description',
             'notes',
-            'img',
             'image',
             'holders',
             'repertories',
             'songs',
             'permissions',
         )
-        read_only_fields = [
-            'img',
-        ]
 
 
 class ContestSerializer(serializers.ModelSerializer):
@@ -369,7 +364,6 @@ class GridSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    img = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Group
@@ -392,7 +386,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'twitter',
             'email',
             'phone',
-            'img',
             'image',
             'description',
             'bhs_id',
@@ -406,10 +399,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'members',
             'repertories',
             'permissions',
-        ]
-
-        read_only_fields = [
-            'img',
         ]
 
 
@@ -532,7 +521,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'work_phone',
             'cell_phone',
             'airports',
-            'img',
             'image',
             'description',
             'bhs_id',
@@ -551,7 +539,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'common_name',
             'full_name',
             'sort_name',
-            'img',
         ]
 
 
@@ -623,9 +610,6 @@ class ScoreSerializer(serializers.ModelSerializer):
 
 class SessionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    bbscores_report = serializers.FileField(use_url=True)
-    drcj_report = serializers.FileField(use_url=True)
-    admins_report = serializers.FileField(use_url=True)
 
     class Meta:
         model = Session
@@ -640,9 +624,9 @@ class SessionSerializer(serializers.ModelSerializer):
             'is_invitational',
             'description',
             'notes',
-            'bbscores_report',
-            'drcj_report',
-            'admins_report',
+            'bbscores_report_new',
+            'drcj_report_new',
+            'admins_report_new',
             'num_rounds',
             'convention',
             'contests',
