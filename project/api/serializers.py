@@ -626,7 +626,6 @@ class SessionSerializer(serializers.ModelSerializer):
     bbscores_report = serializers.FileField(use_url=True)
     drcj_report = serializers.FileField(use_url=True)
     admins_report = serializers.FileField(use_url=True)
-    actives_report = serializers.FileField(use_url=True)
 
     class Meta:
         model = Session
@@ -644,7 +643,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'bbscores_report',
             'drcj_report',
             'admins_report',
-            'actives_report',
             'num_rounds',
             'convention',
             'contests',

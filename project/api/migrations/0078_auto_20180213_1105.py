@@ -17,6 +17,8 @@ class Migration(migrations.Migration):
         ('api', '0077_auto_20180212_2133'),
     ]
 
+    api.models.session.upload_to_actives = None
+
     operations = [
         migrations.AddField(
             model_name='appearance',

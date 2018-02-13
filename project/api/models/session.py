@@ -57,13 +57,6 @@ def upload_to_admins(instance, filename):
     )
 
 
-def upload_to_actives(instance, filename):
-    return 'session/{0}/{1}-actives_report.xlsx'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
-
-
 def upload_to_oss(instance, filename):
     return 'session/{0}/{1}-oss_report.pdf'.format(
         instance.id,
@@ -191,19 +184,6 @@ class Session(TimeStampedModel):
 
     admins_report_new = models.FileField(
         upload_to=upload_to_admins,
-        blank=True,
-        max_length=255,
-        storage=CustomExcelCloudinaryStorage(),
-    )
-
-    actives_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    actives_report_new = models.FileField(
-        upload_to=upload_to_actives,
         blank=True,
         max_length=255,
         storage=CustomExcelCloudinaryStorage(),
