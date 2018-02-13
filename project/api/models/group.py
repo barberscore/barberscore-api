@@ -305,7 +305,7 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.bhs_pk:
+        if self.bhs_pk and self.status == self.STATUS.active:
             if self.kind == self.KIND.international:
                 if self.parent:
                     raise ValidationError("Toplevel must be Root")
