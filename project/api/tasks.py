@@ -335,6 +335,46 @@ def create_drcj_report(session):
 
 
 @job
+def create_admins_report(session):
+    Entry = api.get_model('Entry')
+    wb = Workbook()
+    ws = wb.active
+    fieldnames = [
+        'group',
+        'admin',
+        'email',
+        'cell',
+    ]
+    ws.append(fieldnames)
+    entries = session.entries.filter(
+        status__in=[
+            Entry.STATUS.approved,
+        ]
+    ).order_by('group__nomen')
+    for entry in entries:
+        admins = entry.group.officers.filter(
+            status__gt=0,
+        )
+        for admin in admins:
+            group = entry.group.nomen.encode('utf-8').strip()
+            person = admin.person.nomen.encode('utf-8').strip()
+            email = admin.person.email.encode('utf-8').strip()
+            cell = admin.person.cell_phone
+            row = [
+                group,
+                person,
+                email,
+                cell,
+            ]
+            ws.append(row)
+    file = save_virtual_workbook(wb)
+    content = ContentFile(file)
+    session.admins_report_new.save('overwritten', content)
+    session.save()
+    return session.admins_report_new.url
+
+
+@job
 def create_variance_report(appearance):
     Score = api.get_model('Score')
     Panelist = api.get_model('Panelist')
@@ -491,46 +531,6 @@ def create_sa_report(session):
     session.sa_report_new.save('overwritten', content)
     session.save()
     return session.sa_report_new.url
-
-
-@job
-def create_admins_report(session):
-    Entry = api.get_model('Entry')
-    wb = Workbook()
-    ws = wb.active
-    fieldnames = [
-        'group',
-        'admin',
-        'email',
-        'cell',
-    ]
-    ws.append(fieldnames)
-    entries = session.entries.filter(
-        status__in=[
-            Entry.STATUS.approved,
-        ]
-    ).order_by('group__nomen')
-    for entry in entries:
-        admins = entry.group.officers.filter(
-            status__gt=0,
-        )
-        for admin in admins:
-            group = entry.group.nomen.encode('utf-8').strip()
-            person = admin.person.nomen.encode('utf-8').strip()
-            email = admin.person.email.encode('utf-8').strip()
-            cell = admin.person.cell_phone
-            row = [
-                group,
-                person,
-                email,
-                cell,
-            ]
-            ws.append(row)
-    file = save_virtual_workbook(wb)
-    content = ContentFile(file)
-    session.admins_report_new.save('overwritten', content)
-    session.save()
-    return session.admins_report_new.url
 
 
 @job
