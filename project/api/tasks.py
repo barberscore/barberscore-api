@@ -1,6 +1,7 @@
 # Standard Libary
 import logging
 import time
+import requests
 from django.core.files.base import ContentFile
 # Third-Party
 import pydf
@@ -21,6 +22,17 @@ from django.template.loader import render_to_string
 log = logging.getLogger(__name__)
 api = api_apps.get_app_config('api')
 bhs = api_apps.get_app_config('bhs')
+
+
+@job
+def copy_image(obj):
+    if not obj.img:
+        raise RuntimeError("no img")
+    resp = requests.get(obj.img.url)
+    if resp.status_code != requests.codes.ok:
+        raise RuntimeError("No bueno")
+        #  Error handling here
+    obj.image.save('overwritten', ContentFile(resp.content))
 
 
 def get_auth0():
