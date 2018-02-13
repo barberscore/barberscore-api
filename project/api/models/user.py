@@ -68,6 +68,18 @@ class User(AbstractBaseUser):
         default=False,
     )
 
+    created = models.DateTimeField(
+        # auto_now_add=True,
+        editable=False,
+        null=True,
+    )
+
+    modified = models.DateTimeField(
+        # auto_now=True,
+        editable=False,
+        null=True,
+    )
+
     objects = UserManager()
 
     @property
