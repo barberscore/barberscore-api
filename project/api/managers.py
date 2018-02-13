@@ -540,8 +540,7 @@ class UserManager(BaseUserManager):
             person=person,
             defaults=defaults,
         )
-        if created:
-            user.set_unusable_password()
+        user.set_unusable_password()
         user.full_clean()
         user.save(using=self._db)
         return user, created
