@@ -152,6 +152,8 @@ class Command(BaseCommand):
         # Sync Users
         persons = Person.objects.filter(
             modified__lt=cursor,
+        ).exclude(
+            email='',
         )
         i = 0
         t = persons.count()

@@ -530,6 +530,8 @@ class MemberManager(Manager):
 class UserManager(BaseUserManager):
 
     def update_or_create_from_person(self, person, **kwargs):
+        if not person.email:
+            raise ValidationError("Person must have email")
         defaults = {
             'name': person.nomen,
             'email': person.email,
