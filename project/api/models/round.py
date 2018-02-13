@@ -18,6 +18,8 @@ from django.apps import apps as api_apps
 from django.db import models
 from django.utils.encoding import smart_text
 from django.utils.html import format_html
+from django.utils.text import slugify
+from api.storages import CustomPDFCloudinaryStorage
 
 # First-Party
 from api.tasks import create_ors_report
@@ -25,6 +27,13 @@ from api.tasks import create_ors_report
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
+
+
+def upload_to_ors(instance, filename):
+    return 'round/{0}/{1}-ors_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen),
+    )
 
 
 class Round(TimeStampedModel):
@@ -75,6 +84,12 @@ class Round(TimeStampedModel):
         editable=False,
     )
 
+    ors_report_new = models.FileField(
+        upload_to=upload_to_ors,
+        blank=True,
+        max_length=255,
+        storage=CustomPDFCloudinaryStorage(),
+    )
     # FKs
     session = models.ForeignKey(
         'Session',

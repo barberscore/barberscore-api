@@ -20,11 +20,16 @@ from django.core.exceptions import ValidationError
 # First-Party
 from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
+from api.storages import CustomMediaCloudinaryStorage
 
 api = api_apps.get_app_config('api')
 bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
+
+
+def upload_to(instance, filename):
+    return 'group/{0}.png'.format(instance.id)
 
 
 class Group(TimeStampedModel):
@@ -179,6 +184,12 @@ class Group(TimeStampedModel):
         'image',
         null=True,
         blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=upload_to,
+        blank=True,
+        storage=CustomMediaCloudinaryStorage(),
     )
 
     description = models.TextField(

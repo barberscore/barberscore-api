@@ -22,10 +22,15 @@ from django.utils.functional import cached_property
 # First-Party
 from api.fields import CloudinaryRenameField
 from api.managers import PersonManager
+from api.storages import CustomMediaCloudinaryStorage
 
 bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
+
+
+def upload_to(instance, filename):
+    return 'person/{0}.png'.format(instance.id)
 
 
 class Person(TimeStampedModel):
@@ -219,6 +224,12 @@ class Person(TimeStampedModel):
         'image',
         null=True,
         blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=upload_to,
+        blank=True,
+        storage=CustomMediaCloudinaryStorage(),
     )
 
     description = models.TextField(

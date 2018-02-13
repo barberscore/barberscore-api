@@ -18,10 +18,15 @@ from django.db import models
 # First-Party
 from api.fields import CloudinaryRenameField
 from api.managers import ChartManager
+from api.storages import CustomMediaCloudinaryStorage
 
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
+
+
+def upload_to(instance, filename):
+    return 'chart/{0}.png'.format(instance.id)
 
 
 class Chart(TimeStampedModel):
@@ -85,6 +90,12 @@ class Chart(TimeStampedModel):
         'image',
         null=True,
         blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=upload_to,
+        blank=True,
+        storage=CustomMediaCloudinaryStorage(),
     )
 
     objects = ChartManager()

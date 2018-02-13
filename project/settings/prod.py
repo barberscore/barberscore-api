@@ -95,9 +95,6 @@ BUGSNAG = {
 }
 MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
 
-# Cloudinary
-CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
-
 # Logging
 LOGGING = {
     'version': 1,

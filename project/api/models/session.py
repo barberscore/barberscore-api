@@ -17,6 +17,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.db import models
 from django.utils.html import format_html
+from django.utils.text import slugify
 
 # First-Party
 from api.tasks import create_admins_report
@@ -27,9 +28,54 @@ from api.tasks import create_sa_report
 from api.tasks import send_session
 from api.tasks import send_session_reports
 
+from api.storages import CustomExcelCloudinaryStorage
+from api.storages import CustomPDFCloudinaryStorage
+
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
+
+
+def upload_to_bbscores(instance, filename):
+    return 'session/{0}/{1}-bbscores_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_drcj(instance, filename):
+    return 'session/{0}/{1}-drcj_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_admins(instance, filename):
+    return 'session/{0}/{1}-admins_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_actives(instance, filename):
+    return 'session/{0}/{1}-actives_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_oss(instance, filename):
+    return 'session/{0}/{1}-oss_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_sa(instance, filename):
+    return 'session/{0}/{1}-sa_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
 
 
 class Session(TimeStampedModel):
@@ -117,10 +163,24 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
+    bbscores_report_new = models.FileField(
+        upload_to=upload_to_bbscores,
+        blank=True,
+        max_length=255,
+        storage=CustomExcelCloudinaryStorage(),
+    )
+
     drcj_report = CloudinaryField(
         null=True,
         blank=True,
         editable=False,
+    )
+
+    drcj_report_new = models.FileField(
+        upload_to=upload_to_drcj,
+        blank=True,
+        max_length=255,
+        storage=CustomExcelCloudinaryStorage(),
     )
 
     admins_report = CloudinaryField(
@@ -129,10 +189,24 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
+    admins_report_new = models.FileField(
+        upload_to=upload_to_admins,
+        blank=True,
+        max_length=255,
+        storage=CustomExcelCloudinaryStorage(),
+    )
+
     actives_report = CloudinaryField(
         null=True,
         blank=True,
         editable=False,
+    )
+
+    actives_report_new = models.FileField(
+        upload_to=upload_to_actives,
+        blank=True,
+        max_length=255,
+        storage=CustomExcelCloudinaryStorage(),
     )
 
     oss_report = CloudinaryField(
@@ -141,10 +215,24 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
+    oss_report_new = models.FileField(
+        upload_to=upload_to_oss,
+        blank=True,
+        max_length=255,
+        storage=CustomPDFCloudinaryStorage(),
+    )
+
     sa_report = CloudinaryField(
         null=True,
         blank=True,
         editable=False,
+    )
+
+    sa_report_new = models.FileField(
+        upload_to=upload_to_sa,
+        blank=True,
+        max_length=255,
+        storage=CustomPDFCloudinaryStorage(),
     )
 
     # FKs

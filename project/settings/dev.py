@@ -84,9 +84,6 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
-# Cloudinary
-CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
-
 # Redis
 RQ_QUEUES['default']['ASYNC'] = False
 

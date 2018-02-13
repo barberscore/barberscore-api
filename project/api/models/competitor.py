@@ -17,13 +17,27 @@ from ranking import Ranking
 from django.apps import apps as api_apps
 from django.db import models
 from django.utils.html import format_html
+from django.utils.text import slugify
 
 # First-Party
 from api.fields import CloudinaryRenameField
+from api.storages import CustomMediaCloudinaryStorage
+from api.storages import CustomPDFCloudinaryStorage
 
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
+
+
+def upload_to(instance, filename):
+    return 'competitor/{0}.png'.format(instance.id)
+
+
+def upload_to_csa(instance, filename):
+    return 'competitor/{0}/{1}-csa_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen),
+    )
 
 
 class Competitor(TimeStampedModel):
@@ -60,6 +74,12 @@ class Competitor(TimeStampedModel):
         'image',
         null=True,
         blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=upload_to,
+        blank=True,
+        storage=CustomMediaCloudinaryStorage(),
     )
 
     is_ranked = models.BooleanField(
@@ -126,6 +146,13 @@ class Competitor(TimeStampedModel):
         null=True,
         blank=True,
         editable=False,
+    )
+
+    csa_report_new = models.FileField(
+        upload_to=upload_to_csa,
+        blank=True,
+        max_length=255,
+        storage=CustomPDFCloudinaryStorage(),
     )
 
     # FKs
