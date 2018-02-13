@@ -256,10 +256,12 @@ class GroupManager(Manager):
         if created:
             if kind == self.model.KIND.chorus:
                 log.error("New Chorus: {0}".format(group))
+                group.status = self.model.STATUS.new
+                group.save()
                 return group, created
             parent = self.get(bhs_pk=structure.parent.id)
             group.parent = parent
-            group.status = self.model.STATUS.active
+            group.status = self.model.STATUS.new
             group.save()
         return group, created
 

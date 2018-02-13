@@ -43,6 +43,7 @@ class Command(BaseCommand):
         # Activate Users where needed
         persons = Person.objects.filter(
             status=Person.STATUS.active,
+            user__isnull=False,
         ).exclude(
             user__status=User.STATUS.active,
         )
