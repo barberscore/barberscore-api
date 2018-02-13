@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 
 
 def upload_to(instance, filename):
-    return 'competitor/{0}.png'.format(instance.id)
+    return 'competitor/{0}'.format(instance.id)
 
 
 def upload_to_csa(instance, filename):

@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 
 
 def upload_to(instance, filename):
-    return 'chart/{0}.png'.format(instance.id)
+    return 'chart/{0}'.format(instance.id)
 
 
 class Chart(TimeStampedModel):

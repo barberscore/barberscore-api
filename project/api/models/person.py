@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 
 
 def upload_to(instance, filename):
-    return 'person/{0}.png'.format(instance.id)
+    return 'person/{0}'.format(instance.id)
 
 
 class Person(TimeStampedModel):

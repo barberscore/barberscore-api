@@ -29,7 +29,7 @@ log = logging.getLogger(__name__)
 
 
 def upload_to(instance, filename):
-    return 'group/{0}.png'.format(instance.id)
+    return 'group/{0}'.format(instance.id)
 
 
 class Group(TimeStampedModel):
