@@ -56,7 +56,7 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
-    auth0_id = models.CharField(
+    account_id = models.CharField(
         max_length=100,
         unique=True,
         editable=True,

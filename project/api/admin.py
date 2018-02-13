@@ -1307,12 +1307,12 @@ class UserAdmin(BaseUserAdmin):
         'name',
         'person',
         'is_staff',
-        'auth0_id',
+        'account_id',
         'status',
     ]
 
     # list_editable = [
-    #     'auth0_id',
+    #     'account_id',
     # ]
 
     list_display_links = [
@@ -1332,7 +1332,7 @@ class UserAdmin(BaseUserAdmin):
                 'name',
                 'status',
                 'email',
-                'auth0_id',
+                'account_id',
                 'is_staff',
                 'is_group_manager',
                 'is_session_manager',
@@ -1347,7 +1347,7 @@ class UserAdmin(BaseUserAdmin):
                 'name',
                 'status',
                 'email',
-                'auth0_id',
+                'account_id',
                 'is_staff',
             )
         }),
@@ -1361,7 +1361,7 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = [
         'id',
         # 'email',
-        # 'auth0_id',
+        # 'account_id',
         'is_group_manager',
         'is_session_manager',
         'is_scoring_manager',

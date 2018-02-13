@@ -10,14 +10,17 @@ from django.utils import timezone
 
 # First-Party
 from api.models import Member
-from api.models import Officer
+# from api.models import Officer
+from api.models import User
 from api.models import Group
 from api.models import Person
 from bhs.models import Human
 from bhs.models import SMJoin
-from bhs.models import Role
+# from bhs.models import Role
 from bhs.models import Structure
 from bhs.models import Subscription
+
+from api.tasks import update_account_from_user
 
 log = logging.getLogger('updater')
 
@@ -144,4 +147,34 @@ class Command(BaseCommand):
             self.stdout.flush()
             self.stdout.write("Queuing {0}/{1} members...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} members.".format(t))
+        self.stdout.write("Complete.")
+
+        # Sync Users
+        persons = Person.objects.filter(
+            modified__lt=cursor,
+        )
+        i = 0
+        t = persons.count()
+        for person in persons:
+            i += 1
+            django_rq.enqueue(
+                User.objects.update_or_create_from_person,
+                person,
+            )
+            self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} persons...".format(i, t), ending='\r')
+        self.stdout.write("Queued {0} persons.".format(t))
+
+        # Sync Accounts
+        users = User.objects.filter(
+            modified__lt=cursor,
+        )
+        i = 0
+        t = users.count()
+        for user in users:
+            i += 1
+            update_account_from_user.delay(user)
+            self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} users...".format(i, t), ending='\r')
+        self.stdout.write("Queued {0} users.".format(t))
         self.stdout.write("Complete.")

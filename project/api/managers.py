@@ -527,6 +527,21 @@ class MemberManager(Manager):
 
 class UserManager(BaseUserManager):
 
+    def update_or_create_from_person(self, person, **kwargs):
+        defaults = {
+            'name': person.nomen,
+            'email': person.email,
+        }
+        user, created = self.update_or_create(
+            person=person,
+            defaults=defaults,
+        )
+        if created:
+            user.set_unusable_password()
+        user.full_clean()
+        user.save(using=self._db)
+        return user, created
+
     def create_user(self, email, **kwargs):
         user = self.model(
             email=email,

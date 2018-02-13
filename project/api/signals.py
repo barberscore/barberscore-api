@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from .models import Entry
 from .models import Session
 from .models import User
-from .tasks import delete_auth0_account_from_user
+from .tasks import delete_account_from_user
 
 
 @receiver(post_save, sender=Entry)
@@ -67,5 +67,5 @@ def session_post_save(sender, instance, created, raw=False, **kwargs):
 
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
-    delete_auth0_account_from_user(instance)
+    delete_account_from_user(instance)
     return

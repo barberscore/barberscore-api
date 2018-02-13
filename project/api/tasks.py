@@ -48,7 +48,7 @@ def get_auth0():
     return auth0
 
 
-def get_auth0_accounts():
+def get_accounts():
     auth0 = get_auth0()
     output = []
     more = True
@@ -76,7 +76,7 @@ def get_auth0_accounts():
                 raise RuntimeError(results)
         for user in users:
             payload = {
-                'auth0_id': user['user_id'],
+                'account_id': user['user_id'],
                 'email': user['email'],
                 'name': user['user_metadata']['name'],
                 'barberscore_id': user['app_metadata']['barberscore_id'],
@@ -88,27 +88,12 @@ def get_auth0_accounts():
     return output
 
 
-# Person Updaters
 @job
-def update_bhs_subscription_from_person(person):
-    return person.update_bhs_subscription()
-
-
-# Quartet Updaters
-@job
-def update_quartet_memberships(quartet):
-    return quartet.update_memberships()
-
-
-###
-
-
-@job
-def delete_auth0_account_orphan(auth0_id):
+def delete_account(account_id):
     auth0 = get_auth0()
     # Delete Auth0
-    auth0.users.delete(auth0_id)
-    return auth0_id
+    auth0.users.delete(account_id)
+    return account_id
 
 
 @job
@@ -118,10 +103,10 @@ def update_or_create_account_from_user(user):
     # Instantiate the created variable
     created = True
     # Try to get existing
-    if user.auth0_id:
+    if user.account_id:
         try:
             # Flip the bit if you can find an account
-            account = auth0.users.get(user.auth0_id)
+            account = auth0.users.get(user.account_id)
             created = False
         except Auth0Error as e:
             # If you can't find the account legit then proceed
@@ -142,7 +127,7 @@ def update_or_create_account_from_user(user):
     }
     if created:
         account = auth0.users.create(payload)
-        user.auth0_id = account['user_id']
+        user.account_id = account['user_id']
         user.save()
     else:
         dirty = any([
@@ -151,100 +136,16 @@ def update_or_create_account_from_user(user):
             account['app_metadata']['barberscore_id'] != str(user.id),
         ])
         if dirty:
-            account = auth0.users.update(user.auth0_id, payload)
+            account = auth0.users.update(user.account_id, payload)
     return account, created
 
 
 @job
-def create_auth0_account_from_user(user):
-    auth0 = get_auth0()
-    # Build payload
-    payload = {
-        "connection": "email",
-        "email": user.email,
-        "email_verified": True,
-        "user_metadata": {
-            "name": user.name
-        },
-        "app_metadata": {
-            "barberscore_id": str(user.id),
-        }
-    }
-    # Create Auth0 Account
-    try:
-        response = auth0.users.create(payload)
-    except Auth0Error as e:
-        log.error(e)
-        user.delete()
-        return
-    user.auth0_id = response['user_id']
-    user.save()
-    return user
-
-
-@job
-def update_auth0_account_from_user(user):
-    auth0 = get_auth0()
-    # Build payload
-    payload = {
-        "connection": "email",
-        "email": user.email,
-        "email_verified": True,
-        "user_metadata": {
-            "name": user.name
-        },
-        "app_metadata": {
-            "barberscore_id": str(user.id),
-        }
-    }
-    # Update Auth0 Account
-    response = auth0.users.update(user.auth0_id, payload)
-    user.auth0_id = response['user_id']
-    user.save()
-    return user
-
-
-@job
-def delete_auth0_account_from_user(user):
+def delete_account_from_user(user):
     auth0 = get_auth0()
     # Delete Auth0
-    if user.auth0_id:
-        auth0.users.delete(user.auth0_id)
-    return
-
-
-@job
-def update_user_from_person(person):
-    User = api.get_model('User')
-    user = getattr(person, 'user', None)
-    if not user:
-        user = User.objects.create(
-            email=person.email,
-            name=person.full_name,
-        )
-        person.user = user
-        person.save()
-        return
-    user.name = person.full_name
-    user.email = person.email
-    user.save()
-    return
-
-
-@job
-def update_person_status_from_subscription(subscription):
-    Person = api.get_model('Person')
-    try:
-        person = Person.objects.get(bhs_pk=subscription.human.id)
-    except Person.DoesNotExist:
-        return
-    person.status = getattr(
-        Person.STATUS,
-        subscription.status,
-        Person.STATUS.inactive
-    )
-    person.current_through = subscription.current_through
-    person.save()
+    if user.account_id:
+        auth0.users.delete(user.account_id)
     return
 
 
@@ -269,62 +170,6 @@ def update_is_senior(group):
         group.is_senior = False
     group.save()
     return group.is_senior
-
-
-@job
-def update_group_from_bhs(group):
-    Group = api.get_model('Group')
-    Member = api.get_model('Member')
-    Structure = bhs.get_model('Structure')
-    if not group.bhs_pk:
-        return
-    structure = Structure.objects.get(id=group.bhs_pk)
-    group, created = Group.objects.update_or_create_from_structure(structure)
-
-    js = structure.smjoins.all(
-    ).values(
-        'subscription__human',
-        'structure',
-    ).distinct()
-
-    for j in js:
-        m = structure.smjoins.filter(
-            subscription__human__id=j['subscription__human'],
-            structure__id=j['structure'],
-        ).latest('established_date', 'updated_ts')
-        Member.objects.update_or_create_from_join(m)
-    return group
-
-
-@job
-def update_person_from_bhs(person):
-    Person = api.get_model('Person')
-    Human = bhs.get_model('Human')
-    if not person.bhs_pk:
-        raise RuntimeError("No BHS link")
-    try:
-        human = Human.objects.get(id=person.bhs_pk)
-    except Human.DoesNotExist:
-        person.delete()
-        return
-    person, created = Person.objects.update_or_create_from_human(human)
-    subscription = human.subscriptions.filter(
-        items_editable=True,
-    ).latest('created_ts')
-    if subscription:
-        status = getattr(
-            Person.STATUS,
-            subscription.status,
-            Person.STATUS.inactive
-        )
-        current_through = subscription.current_through
-    else:
-        status = Person.STATUS.new
-        current_through = None
-    person.status = status
-    person.current_through = current_through
-    person.save()
-    return person
 
 
 @job
