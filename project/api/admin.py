@@ -607,8 +607,12 @@ class GridAdmin(admin.ModelAdmin):
 
 
 @admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
+class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
+    fsm_field = [
+        'status',
+    ]
+
     fields = [
         'id',
         'name',
