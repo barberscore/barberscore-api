@@ -141,38 +141,6 @@ def update_or_create_account_from_user(user):
 
 
 @job
-def delete_account_from_user(user):
-    auth0 = get_auth0()
-    # Delete Auth0
-    if user.account_id:
-        auth0.users.delete(user.account_id)
-    return
-
-
-@job
-def update_is_senior(group):
-    Person = api.get_model('Person')
-    midwinter = datetime.date(2019, 1, 26)
-    persons = Person.objects.filter(
-        members__group=group,
-        members__status__gt=0,
-    )
-    all_over_55 = True
-    total_years = 0
-    for person in persons:
-        years = int((midwinter - person.birth_date).days / 365)
-        if years < 55:
-            all_over_55 = False
-        total_years += years
-    if all_over_55 and (total_years >= 240):
-        group.is_senior = True
-    else:
-        group.is_senior = False
-    group.save()
-    return group.is_senior
-
-
-@job
 def create_bbscores_report(session):
     Entry = api.get_model('Entry')
     wb = Workbook()

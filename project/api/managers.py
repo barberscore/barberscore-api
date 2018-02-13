@@ -252,8 +252,10 @@ class GroupManager(Manager):
             bhs_pk=structure.id,
             defaults=defaults,
         )
-        # Set the default parent on create
+        # Set defaults on create
         if created:
+            if kind == self.model.KIND.quartet:
+                group.is_senior = group.get_is_senior()
             if kind == self.model.KIND.chorus:
                 log.error("New Chorus: {0}".format(group))
                 group.status = self.model.STATUS.new

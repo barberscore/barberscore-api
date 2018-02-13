@@ -1,4 +1,5 @@
 # Standard Libary
+import datetime
 import logging
 import uuid
 
@@ -427,6 +428,28 @@ class Group(TimeStampedModel):
             ).latest('established_date', 'updated_ts')
             Member.objects.update_or_create_from_join(m)
         return
+
+    def get_is_senior(self):
+        if self.kind != self.KIND.quartet:
+            raise ValueError('Must be quartet')
+        Person = api.get_model('Person')
+        midwinter = datetime.date(2019, 1, 26)
+        persons = Person.objects.filter(
+            members__group=self,
+            members__status__gt=0,
+        )
+        all_over_55 = True
+        total_years = 0
+        for person in persons:
+            years = int((midwinter - person.birth_date).days / 365)
+            if years < 55:
+                all_over_55 = False
+            total_years += years
+        if all_over_55 and (total_years >= 240):
+            is_senior = True
+        else:
+            is_senior = False
+        return is_senior
 
     # Permissions
     @staticmethod

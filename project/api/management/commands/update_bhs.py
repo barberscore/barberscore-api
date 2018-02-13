@@ -20,7 +20,7 @@ from bhs.models import SMJoin
 from bhs.models import Structure
 from bhs.models import Subscription
 
-from api.tasks import update_account_from_user
+from api.tasks import update_or_create_account_from_user
 
 log = logging.getLogger('updater')
 
@@ -173,7 +173,7 @@ class Command(BaseCommand):
         t = users.count()
         for user in users:
             i += 1
-            update_account_from_user.delay(user)
+            update_or_create_account_from_user.delay(user)
             self.stdout.flush()
             self.stdout.write("Queuing {0}/{1} users...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} users.".format(t))
