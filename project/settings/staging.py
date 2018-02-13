@@ -66,6 +66,10 @@ JWT_AUTH = {
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Bugsnag
 BUGSNAG = {
     'api_key': get_env_variable("BUGSNAG_API_KEY"),

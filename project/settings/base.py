@@ -135,15 +135,15 @@ JSON_API_FORMAT_TYPES = 'dasherize'
 JSON_API_PLURALIZE_TYPES = False
 APPEND_TRAILING_SLASH = False
 
-# WhiteNoise
+# Static Files (WhiteNoise)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
 
-# Cloudinary
+# Media Files (Cloudinary)
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
-MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'
 
 # Applications
 INSTALLED_APPS = [

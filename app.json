@@ -86,7 +86,8 @@
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
-        }
+        },
+        "CLOUDINARY_URL": "none"
       },
       "scripts": {
         "test": "pytest"
