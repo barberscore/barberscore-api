@@ -113,23 +113,38 @@ class Member(TimeStampedModel):
         blank=True,
     )
 
+    inactive_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    INACTIVE_REASON = Choices(
+        (1, 'Non_renewal', 'Non-Renewal'),
+        (2, 'Renewed', 'Renewed'),
+        (3, 'NotCancelled', 'Not Cancelled'),
+        (4, 'Non_Payment', 'Non-Payment'),
+        (5, 'Expired', 'Expired'),
+        (6, 'Deceased', 'Deceased'),
+        (7, 'changedOption', 'changedOption'),
+        (8, 'Other', 'Other'),
+        (9, 'cancelled', 'cancelled'),
+        (10, 'Transferred', 'Transferred'),
+        (11, 'swappedChapter', 'swappedChapter'),
+        (12, 'swapped', 'swapped'),
+    )
+
+    inactive_int = models.IntegerField(
+        choices=INACTIVE_REASON,
+        null=True,
+        blank=True,
+    )
+
     PART = Choices(
         (-1, 'director', 'Director'),
         (1, 'tenor', 'Tenor'),
         (2, 'lead', 'Lead'),
         (3, 'baritone', 'Baritone'),
         (4, 'bass', 'Bass'),
-    )
-
-    inactive_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    inactive_reason = models.CharField(
-        max_length=255,
-        editable=False,
-        blank=True,
     )
 
     part = models.IntegerField(

@@ -550,6 +550,56 @@ class MemberManager(Manager):
         )
         return member, created
 
+    def update_or_create_from_join_object(self, join, **kwargs):
+        # Get group
+        bhs_pk = join[0]
+        Group = api.get_model('Group')
+        group = Group.objects.get(
+            bhs_pk=join[1],
+            kind__in=[
+                Group.KIND.quartet,
+                Group.KIND.chorus,
+            ]
+        )
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(
+            bhs_pk=join[2],
+        )
+        if join[3]:
+            status = self.model.STATUS.active
+        else:
+            status = self.model.STATUS.inactive
+        inactive_date = join[4]
+        # Set the internal BHS fields
+        if join[5]:
+            inactive_clean = join[5].replace("-", "_").replace(" ", "")
+        else:
+            inactive_clean = None
+        inactive_reason = getattr(
+            self.model.INACTIVE_REASON,
+            inactive_clean,
+            None,
+        )
+        mem_clean = join[6].replace("-", "_")
+        mem_status = getattr(self.model.MEM_STATUS, mem_clean, None)
+        mem_code = getattr(self.model.MEM_CODE, join[7], None)
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'mem_status': mem_status,
+            'mem_code': mem_code,
+            'inactive_date': inactive_date,
+            'inactive_reason': inactive_reason,
+            'bhs_pk': bhs_pk,
+        }
+        member, created = self.update_or_create(
+            person=person,
+            group=group,
+            defaults=defaults,
+        )
+        return member, created
+
 
 class UserManager(BaseUserManager):
 
@@ -570,7 +620,8 @@ class UserManager(BaseUserManager):
             person.status = person.STATUS.new
             person.save()
             return
-        user.set_unusable_password()
+        if not user.is_staff:
+            user.set_unusable_password()
         user.full_clean()
         user.save(using=self._db)
         return user, created

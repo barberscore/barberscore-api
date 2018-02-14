@@ -755,7 +755,7 @@ class MemberAdmin(admin.ModelAdmin):
         'mem_status',
         'mem_code',
         'inactive_date',
-        'inactive_reason',
+        # 'inactive_reason',
     ]
     list_display = [
         'status',
@@ -769,7 +769,7 @@ class MemberAdmin(admin.ModelAdmin):
         'mem_status',
         'mem_code',
         'inactive_date',
-        'inactive_reason',
+        # 'inactive_reason',
     ]
     autocomplete_fields = [
         'person',
@@ -786,14 +786,14 @@ class MemberAdmin(admin.ModelAdmin):
         'sub_status',
         'mem_status',
         'mem_code',
-        'inactive_reason',
+        # 'inactive_reason',
     ]
     readonly_fields = [
         'sub_status',
         'mem_status',
         'mem_code',
         'inactive_date',
-        'inactive_reason',
+        # 'inactive_reason',
     ]
 
 
