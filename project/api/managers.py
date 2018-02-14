@@ -557,6 +557,7 @@ class UserManager(BaseUserManager):
         defaults = {
             'name': person.nomen,
             'email': person.email,
+            'status': person.status,
         }
         user, created = self.update_or_create(
             person=person,
