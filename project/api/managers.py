@@ -573,16 +573,18 @@ class MemberManager(Manager):
         inactive_date = join[4]
         # Set the internal BHS fields
         if join[5]:
-            inactive_clean = join[5].replace("-", "_").replace(" ", "")
+            inactive_reason = getattr(
+                self.model.INACTIVE_REASON,
+                join[5].replace("-", "_").replace(" ", ""),
+                None,
+            )
         else:
-            inactive_clean = None
-        inactive_reason = getattr(
-            self.model.INACTIVE_REASON,
-            inactive_clean,
-            None,
+            inactive_reason = None
+        mem_status = getattr(
+            self.model.MEM_STATUS,
+            join[6].replace("-", "_"),
+            None
         )
-        mem_clean = join[6].replace("-", "_")
-        mem_status = getattr(self.model.MEM_STATUS, mem_clean, None)
         mem_code = getattr(self.model.MEM_CODE, join[7], None)
         # Set defaults and update
         defaults = {
