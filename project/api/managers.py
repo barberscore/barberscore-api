@@ -440,7 +440,9 @@ class PersonManager(Manager):
         except AttributeError:
             part_clean = ""
         part = getattr(self.model.PART, part_clean, None)
+        status = self.model.STATUS.inactive
         defaults = {
+            'status': status,
             'first_name': first_name,
             'middle_name': middle_name,
             'last_name': last_name,
