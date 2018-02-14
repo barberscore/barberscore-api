@@ -133,7 +133,7 @@ class Member(TimeStampedModel):
         (12, 'swapped', 'swapped'),
     )
 
-    inactive_int = models.IntegerField(
+    inactive_reason = models.IntegerField(
         choices=INACTIVE_REASON,
         null=True,
         blank=True,
