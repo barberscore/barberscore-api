@@ -10,7 +10,7 @@ from django.utils import timezone
 
 # First-Party
 from api.models import Member
-# from api.models import Officer
+from api.models import Officer
 from api.models import User
 from api.models import Group
 from api.models import Person
@@ -116,24 +116,12 @@ class Command(BaseCommand):
             self.stdout.write("Queuing {0}/{1} groups...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} groups.".format(t))
 
-        # Sync Roles
-        # roles = Role.objects.filter(
-        #     # updated_ts__gt=cursor,
-        # ).exclude(
-        #     name='Quartet Admin',
-        # )
-        # # Creating/Update Groups
-        # self.stdout.write("Queuing officer updates...")
-        # for role in roles:
-        #     django_rq.enqueue(
-        #         Officer.objects.update_or_create_from_role,
-        #         role,
-        #     )
-        # self.stdout.write("Complete")
-
         # Sync Members
         joins = SMJoin.objects.filter(
-            structure__kind__in=['chapter', 'quartet', ],
+            structure__kind__in=[
+                'chapter',
+                'quartet',
+            ],
             updated_ts__gt=cursor,
         )
         i = 0
@@ -179,4 +167,36 @@ class Command(BaseCommand):
             self.stdout.flush()
             self.stdout.write("Queuing {0}/{1} users...".format(i, t), ending='\r')
         self.stdout.write("Queued {0} users.".format(t))
+
+        # Sync Roles
+        # TODO this is waiting for an updated TS
+        # roles = Role.objects.filter(
+        #     updated_ts__gt=cursor,
+        # ).exclude(
+        #     name='Quartet Admin',
+        # )
+        # # Creating/Update Groups
+        # self.stdout.write("Queuing officer updates...")
+        # for role in roles:
+        #     django_rq.enqueue(
+        #         Officer.objects.update_or_create_from_role,
+        #         role,
+        #     )
+
+        # Quartet Admins Update
+        members = Member.objects.filter(
+            group__kind=Group.KIND.quartet,
+            modified__gt=cursor,
+        )
+        i = 0
+        t = members.count()
+        for member in members:
+            django_rq.enqueue(
+                Officer.objects.update_or_create_from_member,
+                member,
+            )
+            self.stdout.flush()
+            self.stdout.write("Queuing {0}/{1} quartet officers...".format(i, t), ending='\r')
+        self.stdout.write("Queued {0} officers.".format(t))
+
         self.stdout.write("Complete.")

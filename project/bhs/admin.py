@@ -393,31 +393,39 @@ class SMJoinAdmin(ReadOnlyAdmin):
     list_display = [
         'id',
         'status',
-        'vocal_part',
         'subscription',
         'membership',
-        'established_date',
+        'vocal_part',
         'inactive_date',
         'inactive_reason',
+        'established_date',
         'updated_ts',
     ]
 
     readonly_fields = [
         'id',
         'status',
-        'vocal_part',
         'subscription',
         'membership',
-        'established_date',
+        'vocal_part',
         'inactive_date',
         'inactive_reason',
+        'established_date',
         'updated_ts',
+    ]
+
+    list_display_links = [
+        'id',
     ]
 
     list_filter = [
         'vocal_part',
+        'structure__kind',
     ]
 
-    # search_fields = [
-    #     'subscription',
-    # ]
+    search_fields = [
+        'subscription__human__last_name',
+        'subscription__human__bhs_id',
+        # 'membership__structure__name',
+        # 'membership__structure__bhs_id',
+    ]

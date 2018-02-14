@@ -371,6 +371,30 @@ class OfficerManager(Manager):
         )
         return officer, created
 
+    def update_or_create_from_member(self, member, **kwargs):
+        if member.group.kind != member.group.KIND.quartet:
+            raise ValueError("Must be quartet record.")
+        # Flatten join objects
+        # Get group
+        if member.status > 0:
+            status = self.model.STATUS.active
+        elif member.status < 0:
+            status = self.model.STATUS.inactive
+        else:
+            status = 0
+        bhs_pk = None
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'bhs_pk': bhs_pk,
+        }
+        officer, created = self.update_or_create(
+            person=member.person,
+            group=member.group,
+            defaults=defaults,
+        )
+        return officer, created
+
 
 class PersonManager(Manager):
     def update_or_create_from_human(self, human, **kwargs):
@@ -499,12 +523,10 @@ class MemberManager(Manager):
         # Get person
         Person = api.get_model('Person')
         person = Person.objects.get(bhs_pk=human.id)
-        # status = getattr(
-        #     self.model.STATUS,
-        #     subscription.status,
-        #     self.model.STATUS.inactive
-        # )
-        status = getattr(self.model.STATUS, 'active')
+        if join.status:
+            status = self.model.STATUS.active
+        else:
+            status = self.model.STATUS.inactive
         # Set the internal BHS fields
         sub_status = getattr(self.model.SUB_STATUS, subscription.status)
         mem_code = getattr(self.model.MEM_CODE, membership.code)
