@@ -559,10 +559,15 @@ class UserManager(BaseUserManager):
             'email': person.email,
             'status': person.status,
         }
-        user, created = self.update_or_create(
-            person=person,
-            defaults=defaults,
-        )
+        try:
+            user, created = self.update_or_create(
+                person=person,
+                defaults=defaults,
+            )
+        except IntegrityError:
+            person.status = person.STATUS.new
+            person.save()
+            return
         user.set_unusable_password()
         user.full_clean()
         user.save(using=self._db)
