@@ -570,6 +570,14 @@ class MemberManager(Manager):
             status = self.model.STATUS.active
         else:
             status = self.model.STATUS.inactive
+        if join[8]:
+            part = getattr(
+                self.model.PART,
+                join[8].lower(),
+                None,
+            )
+        else:
+            part = None
         inactive_date = join[4]
         # Set the internal BHS fields
         if join[5]:
@@ -589,6 +597,7 @@ class MemberManager(Manager):
         # Set defaults and update
         defaults = {
             'status': status,
+            'part': part,
             'mem_status': mem_status,
             'mem_code': mem_code,
             'inactive_date': inactive_date,
