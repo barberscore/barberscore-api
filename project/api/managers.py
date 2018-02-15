@@ -764,6 +764,8 @@ class PersonManager(Manager):
             gender = getattr(self.model.GENDER, gender.casefold(), None)
         if part:
             part = getattr(self.model.PART, part.casefold(), None)
+        else:
+            part = None
         # Set default; subscriptions updates it.
         defaults = {
             'first_name': first_name,
