@@ -2,6 +2,12 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from bhs.managers import StructureManager
+from bhs.managers import HumanManager
+from bhs.managers import RoleManager
+from bhs.managers import SMJoinManager
+from bhs.managers import SubscriptionManager
+
 
 class Human(models.Model):
     id = models.CharField(
@@ -78,6 +84,8 @@ class Human(models.Model):
         null=True,
         editable=False,
     )
+
+    objects = HumanManager()
 
     # Properties
     @property
@@ -218,6 +226,8 @@ class Structure(models.Model):
         on_delete=models.CASCADE,
     )
 
+    objects = StructureManager()
+
     def __str__(self):
         if self.name:
             name = self.name.strip()
@@ -338,6 +348,9 @@ class Subscription(models.Model):
         null=True,
         editable=False,
     )
+
+    objects = SubscriptionManager()
+
     # FKs
     human = models.ForeignKey(
         'Human',
@@ -389,6 +402,8 @@ class Role(models.Model):
         on_delete=models.CASCADE,
     )
 
+    objects = RoleManager()
+
     # Internals
     def __str__(self):
         return "{0} {1} {2}".format(
@@ -434,6 +449,8 @@ class SMJoin(models.Model):
         null=True,
         editable=False,
     )
+
+    objects = SMJoinManager()
 
     # FKs
     subscription = models.ForeignKey(

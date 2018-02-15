@@ -1,12 +1,13 @@
 # Standard Libary
 import logging
+import django_rq
 
 # Third-Party
 from cloudinary.uploader import upload
 from openpyxl import Workbook
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -15,9 +16,11 @@ from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import Manager
 from django.utils.timezone import now
+from api.tasks import get_accounts
+from api.tasks import update_or_create_account_from_user
+from api.tasks import delete_account
 
-api = api_apps.get_app_config('api')
-bhs = api_apps.get_app_config('bhs')
+
 log = logging.getLogger(__name__)
 
 validate_url = URLValidator()
@@ -553,13 +556,13 @@ class OfficerManager(Manager):
         human = role.human
         name = role.name
         # Get group
-        Group = api.get_model('Group')
+        Group = apps.get_model('api.group')
         group = Group.objects.get(bhs_pk=structure.id)
         # Get person
-        Person = api.get_model('Person')
+        Person = apps.get_model('api.person')
         person = Person.objects.get(bhs_pk=human.id)
         # Get office
-        Office = api.get_model('Office')
+        Office = apps.get_model('api.office')
         office = Office.objects.get(name=name)
 
         # Set the internal BHS fields
@@ -595,13 +598,13 @@ class OfficerManager(Manager):
             status = self.model.STATUS.active
 
         # Get group
-        Group = api.get_model('Group')
+        Group = apps.get_model('api.group')
         group = Group.objects.get(bhs_pk=group)
         # Get person
-        Person = api.get_model('Person')
+        Person = apps.get_model('api.person')
         person = Person.objects.get(bhs_pk=person)
         # Get office
-        Office = api.get_model('Office')
+        Office = apps.get_model('api.office')
         office = Office.objects.get(name=office)
 
         # Set defaults and update
@@ -632,7 +635,7 @@ class OfficerManager(Manager):
             status = 0
         bhs_pk = None
         # Get office
-        Office = api.get_model('Office')
+        Office = apps.get_model('api.office')
         office = Office.objects.get(name='Quartet Manager')
         # Set defaults and update
         defaults = {
@@ -642,6 +645,40 @@ class OfficerManager(Manager):
         officer, created = self.update_or_create(
             person=member.person,
             group=member.group,
+            office=office,
+            defaults=defaults,
+        )
+        return officer, created
+
+    def update_or_create_from_join_object(self, join, **kwargs):
+        bhs_pk = join[0]
+        status = join[1]
+        group = join[2]
+        person = join[3]
+
+        if status:
+            status = self.model.STATUS.active
+        else:
+            status = self.model.STATUS.inactive
+
+        # Get group
+        Group = apps.get_model('api.group')
+        group = Group.objects.get(bhs_pk=group)
+        # Get person
+        Person = apps.get_model('api.person')
+        person = Person.objects.get(bhs_pk=person)
+        # Get office
+        Office = apps.get_model('api.office')
+        office = Office.objects.get(name='Quartet Manager')
+
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'bhs_pk': bhs_pk,
+        }
+        officer, created = self.update_or_create(
+            person=person,
+            group=group,
             office=office,
             defaults=defaults,
         )
@@ -830,12 +867,30 @@ class PersonManager(Manager):
         person.current_through = current_through
         person.save()
 
+    def update_users(self, cursor=None, *args, **kwargs):
+        # Get Base
+        persons = self.filter(
+            email__isnull=False,
+        )
+        if cursor:
+            persons = persons.filter(
+                modified__gt=cursor,
+            )
+        # Return as objects
+        User = apps.get_model('api.user')
+        for person in persons:
+            django_rq.enqueue(
+                User.objects.update_or_create_from_person,
+                person,
+            )
+        return
+
 
 class MemberManager(Manager):
     def update_or_create_from_join_object(self, join, **kwargs):
         # Get group
         bhs_pk = join[0]
-        Group = api.get_model('Group')
+        Group = apps.get_model('api.group')
         group = Group.objects.get(
             bhs_pk=join[1],
             kind__in=[
@@ -844,7 +899,7 @@ class MemberManager(Manager):
             ]
         )
         # Get person
-        Person = api.get_model('Person')
+        Person = apps.get_model('api.person')
         person = Person.objects.get(
             bhs_pk=join[2],
         )
@@ -918,6 +973,31 @@ class UserManager(BaseUserManager):
         user.full_clean()
         user.save(using=self._db)
         return user, created
+
+    def update_accounts(self, cursor=None, *args, **kwargs):
+        # Get Base
+        users = self.filter(
+            status=self.model.STATUS.active,
+            modified__gt=cursor,
+        )
+        if cursor:
+            users = users.filter(
+                modified=cursor,
+            )
+        # Return as objects
+        for user in users:
+            update_or_create_account_from_user.delay(user)
+        return
+
+    def delete_orphans(self, *args, **kwargs):
+        accounts = get_accounts()
+        users = list(self.filter(
+            account_id__isnull=False
+        ).values_list('account_id', flat=True))
+        for account in accounts:
+            if account['account_id'] not in users:
+                delete_account(account['account_id'])
+        return
 
     def create_user(self, email, **kwargs):
         user = self.model(
