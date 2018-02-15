@@ -762,6 +762,8 @@ class PersonManager(Manager):
             work_phone = ''
         if gender:
             gender = getattr(self.model.GENDER, gender.casefold(), None)
+        else:
+            gender = None
         if part:
             part = getattr(self.model.PART, part.casefold(), None)
         else:
