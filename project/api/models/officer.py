@@ -74,25 +74,20 @@ class Officer(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='officers',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     group = models.ForeignKey(
         'Group',
-        null=True,
-        blank=True,
         related_name='officers',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     objects = OfficerManager()
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('group', 'person', 'office'),
+        )
+
     class JSONAPIMeta:
         resource_name = "officer"
 

@@ -371,6 +371,48 @@ class OfficerManager(Manager):
         )
         return officer, created
 
+    def update_or_create_from_role_object(self, role, **kwargs):
+        today = now().date()
+        bhs_pk = role[0]
+        office = role[1]
+        group = role[2]
+        person = role[3]
+        start_date = role[4]
+        end_date = role[5]
+
+        if end_date:
+            if end_date < today:
+                status = self.model.STATUS.inactive
+            else:
+                status = self.model.STATUS.active
+        else:
+            status = self.model.STATUS.active
+
+        # Get group
+        Group = api.get_model('Group')
+        group = Group.objects.get(bhs_pk=group)
+        # Get person
+        Person = api.get_model('Person')
+        person = Person.objects.get(bhs_pk=person)
+        # Get office
+        Office = api.get_model('Office')
+        office = Office.objects.get(name=office)
+
+        # Set defaults and update
+        defaults = {
+            'status': status,
+            'start_date': start_date,
+            'end_date': end_date,
+            'bhs_pk': bhs_pk,
+        }
+        officer, created = self.update_or_create(
+            person=person,
+            group=group,
+            office=office,
+            defaults=defaults,
+        )
+        return officer, created
+
     def update_or_create_from_member(self, member, **kwargs):
         if member.group.kind != member.group.KIND.quartet:
             raise ValueError("Must be quartet record.")
@@ -483,6 +525,22 @@ class PersonManager(Manager):
         )
         status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
         current_through = subscription.current_through
+        person.status = status
+        person.current_through = current_through
+        person.save()
+
+    def update_status_from_subscription_object(self, subscription, **kwargs):
+        items_editable = subscription[1]
+        if not items_editable:
+            raise ValueError("Not canonical record")
+        bhs_pk = subscription[0]
+        status = getattr(self.model.STATUS, subscription[2], self.model.STATUS.inactive)
+        current_through = subscription[3]
+        if not subscription[1]:
+            raise ValueError("Not canonical record.")
+        person = self.get(
+            bhs_pk=bhs_pk,
+        )
         person.status = status
         person.current_through = current_through
         person.save()

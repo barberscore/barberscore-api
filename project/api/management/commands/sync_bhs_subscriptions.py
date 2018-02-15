@@ -16,13 +16,20 @@ class Command(BaseCommand):
 
         subscriptions = Subscription.objects.filter(
             items_editable=True,
-        ).order_by('created_ts')
+        ).order_by(
+            'created_ts',
+        ).values_list(
+            'human__id',
+            'items_editable',
+            'status',
+            'current_through',
+        )
         i = 0
         t = subscriptions.count()
         for subscription in subscriptions:
             i += 1
             django_rq.enqueue(
-                Person.objects.update_status_from_subscription,
+                Person.objects.update_status_from_subscription_object,
                 subscription,
             )
             self.stdout.flush()

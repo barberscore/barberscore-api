@@ -1,9 +1,7 @@
 import logging
 import django_rq
-from datetime import date
 # Django
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 # First-Party
 from api.models import Officer
 from bhs.models import Role
@@ -17,18 +15,23 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Updating officers...")
         # Get unique active joins for Chapters
-        today = date.today()
-        roles = Role.objects.filter(
-            Q(end_date=None) |
-            Q(end_date__gt=today)
-        ).exclude(
+        roles = Role.objects.exclude(
             name='Quartet Admin',
+        ).order_by(
+            'start_date'
+        ).values_list(
+            'id',
+            'name',
+            'structure',
+            'human',
+            'start_date',
+            'end_date',
         )
         # Creating/Update Groups
         self.stdout.write("Queuing officer updates...")
         for role in roles:
             django_rq.enqueue(
-                Officer.objects.update_or_create_from_role,
+                Officer.objects.update_or_create_from_role_object,
                 role,
             )
         self.stdout.write("Complete")
