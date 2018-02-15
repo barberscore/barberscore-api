@@ -383,6 +383,9 @@ class OfficerManager(Manager):
         else:
             status = 0
         bhs_pk = None
+        # Get office
+        Office = api.get_model('Office')
+        office = Office.objects.get(name='Quartet Manager')
         # Set defaults and update
         defaults = {
             'status': status,
@@ -391,6 +394,7 @@ class OfficerManager(Manager):
         officer, created = self.update_or_create(
             person=member.person,
             group=member.group,
+            office=office,
             defaults=defaults,
         )
         return officer, created
