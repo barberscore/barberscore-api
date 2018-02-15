@@ -1,1 +1,1 @@
-default_app_config = 'bhs.apps.BhsConfig'
+default_app_config = 'bhs.config.BhsConfig'
