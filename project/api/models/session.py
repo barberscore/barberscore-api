@@ -361,9 +361,9 @@ class Session(TimeStampedModel):
         admins_report = create_admins_report(self)
         context = {
             'session': self,
-            'bbscores_report': bbscores_report.url,
-            'drcj_report': drcj_report.url,
-            'admins_report': admins_report.url,
+            'bbscores_report': bbscores_report,
+            'drcj_report': drcj_report,
+            'admins_report': admins_report,
         }
         send_session_reports.delay('session_reports.txt', context)
         # approved_entries = self.entries.filter(
