@@ -540,7 +540,7 @@ def create_pdf(template, context):
     return pdf
 
 
-@job
+@job('high')
 def send_entry(template, context):
     entry = context['entry']
     contacts = entry.group.officers.filter(
@@ -579,7 +579,7 @@ def send_entry(template, context):
     return
 
 
-@job
+@job('high')
 def send_session(template, context):
     session = context['session']
     Officer = api.get_model('Officer')
@@ -623,7 +623,7 @@ def send_session(template, context):
     return email.send()
 
 
-@job
+@job('high')
 def send_session_reports(template, context):
     session = context['session']
     Assignment = api.get_model('Assignment')

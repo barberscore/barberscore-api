@@ -419,27 +419,6 @@ class Group(TimeStampedModel):
             else:
                 self.chapter = ""
 
-    def update_memberships(self):
-        if self.kind != self.KIND.quartet:
-            raise RuntimeError("Can only update quartets")
-        if not self.bhs_pk:
-            raise RuntimeError("No BHS Link.")
-        Member = api.get_model('Member')
-        Structure = bhs.get_model('Structure')
-        structure = Structure.objects.get(id=self.bhs_pk)
-        js = structure.smjoins.values(
-            'subscription__human',
-            'structure',
-        ).distinct()
-
-        for j in js:
-            m = structure.smjoins.filter(
-                subscription__human__id=j['subscription__human'],
-                structure__id=j['structure'],
-            ).latest('established_date', 'updated_ts')
-            Member.objects.update_or_create_from_join(m)
-        return
-
     def get_is_senior(self):
         if self.kind != self.KIND.quartet:
             raise ValueError('Must be quartet')
