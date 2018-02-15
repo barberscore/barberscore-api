@@ -15,25 +15,34 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Get unique active joins
-        join_pks = SMJoin.objects.filter(
-            inactive_date=None,
+        js = SMJoin.objects.filter(
+            structure__status__name='active',
             structure__kind__in=[
-                'Chapter',
-                'Quartet',
+                'quartet',
+                'chapter',
             ],
+        ).order_by(
+            'established_date',
+            '-inactive_date',
         ).values_list(
             'id',
-            'subscription__human',
-            'structure',
+            'structure__id',
+            'subscription__human__id',
+            'status',
+            'inactive_date',
+            'inactive_reason',
+            'membership__status__name',
+            'membership__code',
+            'vocal_part',
         )
         # Creating/Update Groups
         i = 0
-        t = len(join_pks)
-        for join_pk in join_pks:
+        t = js.count()
+        for j in js:
             i += 1
             django_rq.enqueue(
-                Member.objects.update_or_create_from_join_pks,
-                join_pk,
+                Member.objects.update_or_create_from_join_objects,
+                j,
             )
             self.stdout.flush()
             self.stdout.write("Queuing {0}/{1} members...".format(i, t), ending='\r')

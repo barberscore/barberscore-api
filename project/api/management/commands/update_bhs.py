@@ -123,13 +123,26 @@ class Command(BaseCommand):
                 'quartet',
             ],
             updated_ts__gt=cursor,
+        ).order_by(
+            'established_date',
+            '-inactive_date',
+        ).values_list(
+            'id',
+            'structure__id',
+            'subscription__human__id',
+            'status',
+            'inactive_date',
+            'inactive_reason',
+            'membership__status__name',
+            'membership__code',
+            'vocal_part',
         )
         i = 0
         t = joins.count()
         for join in joins:
             i += 1
             django_rq.enqueue(
-                Member.objects.update_or_create_from_join,
+                Member.objects.update_or_create_from_join_object,
                 join,
             )
             self.stdout.flush()
