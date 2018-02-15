@@ -21,6 +21,7 @@ class Command(BaseCommand):
                 'Chapter',
                 'Quartet',
             ],
+            status__name='active',
         ).values_list(
             'id',
             'name',

@@ -722,6 +722,81 @@ class PersonManager(Manager):
             )
         return person, created
 
+    def update_or_create_from_human_object(self, human, **kwargs):
+        bhs_pk = human[0]
+        first_name = human[1]
+        middle_name = human[2]
+        last_name = human[3]
+        nick_name = human[4]
+        email = human[5]
+        birth_date = human[6]
+        phone = human[7]
+        cell_phone = human[8]
+        work_phone = human[9]
+        bhs_id = human[10]
+        gender = human[11]
+        part = human[12]
+
+        first_name = first_name.strip()
+        try:
+            middle_name = middle_name.strip()
+        except AttributeError:
+            middle_name = ""
+        last_name = last_name.strip()
+        try:
+            nick_name = nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
+        except AttributeError:
+            nick_name = ""
+        if nick_name == first_name:
+            nick_name = ""
+        if email:
+            try:
+                validate_email(email.strip())
+            except ValidationError:
+                email = ""
+        if not phone:
+            phone = ''
+        if not cell_phone:
+            cell_phone = ''
+        if not work_phone:
+            work_phone = ''
+        if gender:
+            gender = getattr(self.model.GENDER, gender.casefold(), None)
+        if part:
+            part = getattr(self.model.PART, part.casefold(), None)
+        # Set default; subscriptions updates it.
+        defaults = {
+            'first_name': first_name,
+            'middle_name': middle_name,
+            'last_name': last_name,
+            'nick_name': nick_name,
+            'email': email,
+            'birth_date': birth_date,
+            'phone': phone,
+            'cell_phone': cell_phone,
+            'work_phone': work_phone,
+            'bhs_id': bhs_id,
+            'gender': gender,
+            'part': part,
+        }
+        try:
+            person, created = self.update_or_create(
+                bhs_pk=bhs_pk,
+                defaults=defaults,
+            )
+        except IntegrityError:
+            defaults['bhs_pk'] = bhs_pk
+            defaults.pop('bhs_id', None)
+            person, created = self.update_or_create(
+                bhs_id=bhs_id,
+                defaults=defaults,
+            )
+        if created:
+            # Subscription overwrites, set default
+            person.status = self.model.STATUS.inactive
+            person.save()
+        return person, created
+
     def update_status_from_subscription(self, subscription, **kwargs):
         if not subscription.items_editable:
             raise ValueError("Not canonical record.")
