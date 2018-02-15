@@ -681,7 +681,7 @@ class Command(BaseCommand):
         )
 
         # SCJC BREAKPOINT
-        return
+
         # Contests created via signal.
         international_midwinter_convention.publish()
         international_midwinter_convention.save()
