@@ -267,6 +267,212 @@ class GroupManager(Manager):
             group.save()
         return group, created
 
+    def update_or_create_from_structure_object(self, structure, **kwargs):
+        STATUS = {
+            'active': 'active',
+            'active-internal': 'active',
+            'active-licensed': 'active',
+            'cancelled': 'inactive',
+            'closed': 'inactive',
+            'closed-merged': 'inactive',
+            'closed-revoked': 'inactive',
+            'closed-voluntary': 'inactive',
+            'expelled': 'inactive',
+            'expired': 'inactive',
+            'expired-licensed': 'inactive',
+            'lapsed': 'inactive',
+            'not-approved': 'inactive',
+            'pending': 'inactive',
+            'pending-voluntary': 'inactive',
+            'suspended': 'inactive',
+            'suspended-membership': 'inactive',
+        }
+        AIC = {
+            "501972": "Main Street",
+            "501329": "Forefront",
+            "500922": "Instant Classic",
+            "304772": "Musical Island Boys",
+            "500000": "Masterpiece",
+            "501150": "Ringmasters",
+            "317293": "Old School",
+            "286100": "Storm Front",
+            "500035": "Crossroads",
+            "297201": "OC Times",
+            "299233": "Max Q",
+            "302244": "Vocal Spectrum",
+            "299608": "Realtime",
+            "6158": "Gotcha!",
+            "2496": "Power Play",
+            "276016": "Four Voices",
+            "5619": "Michigan Jake",
+            "6738": "Platinum",
+            "3525": "FRED",
+            "5721": "Revival",
+            "2079": "Yesteryear",
+            "2163": "Nightlife",
+            "4745": "Marquis",
+            "3040": "Joker's Wild",
+            "1259": "Gas House Gang",
+            "2850": "Keepsake",
+            "1623": "The Ritz",
+            "3165": "Acoustix",
+            "1686": "Second Edition",
+            "492": "Chiefs of Staff",
+            "1596": "Interstate Rivals",
+            "1654": "Rural Route 4",
+            "406": "The New Tradition",
+            "1411": "Rapscallions",
+            "1727": "Side Street Ramblers",
+            "545": "Classic Collection",
+            "490": "Chicago News",
+            "329": "Boston Common",
+            "4034": "Grandma's Boys",
+            "318": "Bluegrass Student Union",
+            "362": "Most Happy Fellows",
+            "1590": "Innsiders",
+            "1440": "Happiness Emporium",
+            "1427": "Regents",
+            "627": "Dealer's Choice",
+            "1288": "Golden Staters",
+            "1275": "Gentlemen's Agreement",
+            "709": "Oriole Four",
+            "711": "Mark IV",
+            "2047": "Western Continentals",
+            "1110": "Four Statesmen",
+            "713": "Auto Towners",
+            "715": "Four Renegades",
+            "1729": "Sidewinders",
+            "718": "Town and Country 4",
+            "719": "Gala Lads",
+            "1871": "The Suntones",
+            "722": "Evans Quartet",
+            "724": "Four Pitchikers",
+            "726": "Gaynotes",
+            "729": "Lads of Enchantment",
+            "731": "Confederates",
+            "732": "Four Hearsemen",
+            "736": "The Orphans",
+            "739": "Vikings",
+            "743": "Four Teens",
+            "746": "Schmitt Brothers",
+            "748": "Buffalo Bills",
+            "750": "Mid-States Four",
+            "753": "Pittsburghers",
+            "756": "Doctors of Harmony",
+            "759": "Garden State Quartet",
+            "761": "Misfits",
+            "764": "Harmony Halls",
+            "766": "Four Harmonizers",
+            "770": "Elastic Four",
+            "773": "Chord Busters",
+            "775": "Flat Foot Four",
+            "776": "Bartlesville Barflies",
+        }
+        # Map to incoming
+        bhs_pk = structure[0]
+        name = structure[1]
+        preferred_name = structure[2]
+        chorus_name = structure[3]
+        status = getattr(self.model.STATUS, STATUS[str(structure[4])])
+        kind = getattr(self.model.KIND, structure[5].replace('chapter', 'chorus'))
+        start_date = structure[6]
+        email = structure[7]
+        phone = structure[8]
+        website = structure[9]
+        facebook = structure[10]
+        twitter = structure[11]
+        bhs_id = structure[12]
+        parent = structure[13]
+        mem_status = getattr(self.model.MEM_STATUS, structure[4].replace("-", "_"))
+
+        if kind == self.model.KIND.quartet:
+            if name:
+                # If the name has been assigned, use that.
+                name = name.strip()
+            elif preferred_name:
+                # If not yet assigned, use preferred and mark as pending.
+                name = "{0} (NAME APPROVAL PENDING)".format(
+                    preferred_name.strip()
+                )
+            else:
+                # Otherwise, call unknown.
+                name = 'UNKNOWN'
+            # Map to the internal designation
+        elif kind == self.model.KIND.chorus:
+            if chorus_name:
+                name = chorus_name.strip()
+            else:
+                name = 'UNKNOWN'
+        else:
+            raise ValueError("Must be quartet or chapter")
+        # Clean the raw inputs.
+        email = email.strip()
+        try:
+            validate_email(email)
+        except ValidationError:
+            email = ""
+        phone = phone.strip()
+        website = website.strip()
+        try:
+            validate_url(website)
+        except ValidationError:
+            website = ""
+        facebook = facebook.strip()
+        try:
+            validate_url(facebook)
+        except ValidationError:
+            facebook = ""
+        twitter = twitter.strip()
+        if '@' in twitter:
+            if '/' in twitter:
+                twitter = twitter.rpartition("/")[2]
+            else:
+                twitter = twitter
+        else:
+            if '/' in twitter:
+                twitter = twitter.rpartition('/')[2]
+            else:
+                twitter = "@{0}".format(twitter)
+        try:
+            validate_twitter(twitter)
+        except ValidationError:
+            twitter = ""
+        # Monkey-patch for the AIC
+        if str(bhs_id) in AIC:
+            status = getattr(self.model.STATUS, 'aic')
+            name = AIC[str(bhs_id)]
+        defaults = {
+            'name': name,
+            'status': status,
+            'kind': kind,
+            'start_date': start_date,
+            'email': email,
+            'phone': phone,
+            'website': website,
+            'facebook': facebook,
+            'twitter': twitter,
+            'bhs_id': bhs_id,
+            'mem_status': mem_status,
+        }
+        group, created = self.update_or_create(
+            bhs_pk=bhs_pk,
+            defaults=defaults,
+        )
+        # Set defaults on create
+        if created:
+            if kind == self.model.KIND.quartet:
+                group.is_senior = group.get_is_senior()
+            if kind == self.model.KIND.chorus:
+                log.error("New Chorus: {0}".format(group))
+                group.status = self.model.STATUS.new
+                group.save()
+                return group, created
+            parent = self.get(bhs_pk=parent)
+            group.parent = parent
+            group.status = self.model.STATUS.new
+            group.save()
+        return group, created
+
     def export_active_quartets(self, *args, **kwargs):
         wb = Workbook()
         ws = wb.active

@@ -21,28 +21,41 @@ class Command(BaseCommand):
                 'Chapter',
                 'Quartet',
             ],
+        ).values_list(
+            'id',
+            'name',
+            'preferred_name',
+            'chorus_name',
+            'status__name',
+            'kind',
+            'established_date',
+            'email',
+            'phone',
+            'website',
+            'facebook',
+            'twitter',
+            'bhs_id',
+            'parent',
         )
-        structure_pks = list(structures.values_list('id', flat=True))
-
-        # Delete Orphans
-        orphans = Group.objects.filter(
-            bhs_pk__isnull=False,
-            kind=Group.KIND.chapter,
-        ).exclude(
-            bhs_pk__in=structure_pks,
-        )
-        t = orphans.count()
-        self.stdout.write("Deleting {0} orphans...".format(t))
-        for orphan in orphans:
-            log.error("Delete orphan: {0}".format(orphan))
-            return
+        # # Delete Orphans
+        # orphans = Group.objects.filter(
+        #     bhs_pk__isnull=False,
+        #     kind=Group.KIND.chapter,
+        # ).exclude(
+        #     bhs_pk__in=structure_pks,
+        # )
+        # t = orphans.count()
+        # self.stdout.write("Deleting {0} orphans...".format(t))
+        # for orphan in orphans:
+        #     log.error("Delete orphan: {0}".format(orphan))
+        #     return
         # Creating/Update Groups
         i = 0
         t = structures.count()
         for structure in structures:
             i += 1
             django_rq.enqueue(
-                Group.objects.update_or_create_from_structure,
+                Group.objects.update_or_create_from_structure_object,
                 structure,
             )
             self.stdout.flush()
