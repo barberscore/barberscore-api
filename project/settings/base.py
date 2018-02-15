@@ -45,17 +45,37 @@ DATABASES = {
     'default': dj_database_url.config(conn_max_age=600),
 }
 
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": get_env_variable("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 200},
+        }
+    },
+}
+
+# Session Engines
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+DJANGO_REDIS_IGNORE_EXCEPTIONS = True
+DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
+
 # Redis
 RQ_QUEUES = {
     'default': {
-        'URL': get_env_variable("REDIS_URL"),
-        'DEFAULT_TIMEOUT': 360,
-        'ASYNC': True,
+        'USE_REDIS_CACHE': 'default',
+        # 'URL': get_env_variable("REDIS_URL"),
+        # 'DEFAULT_TIMEOUT': 360,
+        # 'ASYNC': True,
     },
     'high': {
-        'URL': get_env_variable("REDIS_URL"),
-        'DEFAULT_TIMEOUT': 360,
-        'ASYNC': True,
+        'USE_REDIS_CACHE': 'default',
+        # 'URL': get_env_variable("REDIS_URL"),
+        # 'DEFAULT_TIMEOUT': 360,
+        # 'ASYNC': True,
     },
 }
 RQ_SHOW_ADMIN_LINK = True

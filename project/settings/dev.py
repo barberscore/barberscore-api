@@ -86,6 +86,7 @@ JWT_AUTH = {
 
 # Redis
 RQ_QUEUES['default']['ASYNC'] = False
+RQ_QUEUES['high']['ASYNC'] = False
 
 # Logging
 LOGGING = {
