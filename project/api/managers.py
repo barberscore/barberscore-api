@@ -883,7 +883,7 @@ class PersonManager(Manager):
                 User.objects.update_or_create_from_person,
                 person,
             )
-        return
+        return persons.count()
 
 
 class MemberManager(Manager):
@@ -987,7 +987,7 @@ class UserManager(BaseUserManager):
         # Return as objects
         for user in users:
             update_or_create_account_from_user.delay(user)
-        return
+        return users.count()
 
     def delete_orphans(self, *args, **kwargs):
         accounts = get_accounts()

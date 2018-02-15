@@ -40,7 +40,7 @@ class HumanManager(Manager):
                 Person.objects.update_or_create_from_human_object,
                 human,
             )
-        return
+        return humans.count()
 
     def delete_orphans(self, *args, **kwargs):
         # Get base
@@ -95,7 +95,7 @@ class StructureManager(Manager):
                 Group.objects.update_or_create_from_structure_object,
                 structure,
             )
-        return
+        return structures.count()
 
     def delete_orphans(self, *args, **kwargs):
         # Get base
@@ -141,7 +141,7 @@ class SubscriptionManager(Manager):
                 Person.objects.update_status_from_subscription_object,
                 subscription,
             )
-        return
+        return subscriptions.count()
 
 
 class RoleManager(Manager):
@@ -219,7 +219,7 @@ class SMJoinManager(Manager):
                 Member.objects.update_or_create_from_join_object,
                 join,
             )
-        return
+        return joins.count()
 
     def update_quartet_officers(self, cursor=None, active_only=True, *args, **kwargs):
         # Get base
@@ -254,4 +254,4 @@ class SMJoinManager(Manager):
                 Officer.objects.update_or_create_from_join_object,
                 join,
             )
-        return
+        return joins.count()
