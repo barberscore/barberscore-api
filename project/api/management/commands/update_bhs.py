@@ -87,7 +87,7 @@ class Command(BaseCommand):
         subscriptions = Subscription.objects.filter(
             items_editable=True,
             updated_ts__gt=cursor,
-        )
+        ).order_by('created_ts')
         i = 0
         t = subscriptions.count()
         for subscription in subscriptions:
