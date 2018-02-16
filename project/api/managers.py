@@ -982,7 +982,7 @@ class UserManager(BaseUserManager):
         )
         if cursor:
             users = users.filter(
-                modified=cursor,
+                modified__gt=cursor,
             )
         # Return as objects
         for user in users:
