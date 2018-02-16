@@ -140,7 +140,7 @@ class Member(TimeStampedModel):
     )
 
     PART = Choices(
-        (-1, 'director', 'Director'),
+        # (-1, 'director', 'Director'),
         (1, 'tenor', 'Tenor'),
         (2, 'lead', 'Lead'),
         (3, 'baritone', 'Baritone'),
