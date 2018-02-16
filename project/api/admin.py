@@ -424,6 +424,9 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         '-season',
         'group__tree_sort',
     )
+    list_select_related = [
+        'group',
+    ]
 
     save_on_top = True
 
@@ -659,9 +662,9 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'created',
         'modified',
-        'tree_sort',
     ]
     list_select_related = [
+        'parent',
     ]
     readonly_fields = [
         'id',
@@ -801,6 +804,10 @@ class MemberAdmin(admin.ModelAdmin):
         'inactive_date',
         'inactive_reason',
     ]
+    list_select_related = [
+        'person',
+        'group',
+    ]
 
 
 @admin.register(Office)
@@ -826,6 +833,7 @@ class OfficeAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
+        BHSListFilter,
         'is_convention_manager',
         'is_session_manager',
         'is_scoring_manager',
@@ -843,6 +851,9 @@ class OfficeAdmin(admin.ModelAdmin):
 
 @admin.register(Officer)
 class OfficerAdmin(admin.ModelAdmin):
+    def office__code(self, obj):
+        return "{0}".format(obj.office.short_name)
+
     fields = [
         'status',
         'person',
@@ -854,10 +865,21 @@ class OfficerAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
+        'person',
+        'office',
+        'office__code',
+        'group',
         'start_date',
         'end_date',
         'status',
+    ]
+    readonly_fields = [
+        office__code,
+    ]
+    list_select_related = [
+        'person',
+        'group',
+        'office',
     ]
     list_filter = [
         'status',
@@ -871,6 +893,9 @@ class OfficerAdmin(admin.ModelAdmin):
         'office',
         'person',
         'group',
+    ]
+    ordering = [
+        'group__tree_sort',
     ]
 
 
