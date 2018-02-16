@@ -787,10 +787,13 @@ class PersonManager(Manager):
         if nick_name == first_name:
             nick_name = ""
         if email:
+            email = email.strip()
             try:
-                validate_email(email.strip())
+                validate_email(email)
             except ValidationError:
                 email = None
+        else:
+            email = None
         if not phone:
             phone = ''
         if not cell_phone:
