@@ -52,6 +52,7 @@ class User(AbstractBaseUser):
     )
 
     email = models.EmailField(
+        blank=False,
         unique=True,
         editable=True,
     )
