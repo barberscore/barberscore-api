@@ -378,6 +378,14 @@ class Role(models.Model):
         max_length=255,
         editable=False,
     )
+    abbv = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    officer_roles_id = models.CharField(
+        max_length=255,
+        editable=False,
+    )
     start_date = models.DateField(
         null=True,
         editable=False,

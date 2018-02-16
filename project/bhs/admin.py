@@ -344,6 +344,8 @@ class RoleAdmin(ReadOnlyAdmin):
         'structure',
         'start_date',
         'end_date',
+        'abbv',
+        'officer_roles_id',
     ]
 
     list_display = [
@@ -352,6 +354,8 @@ class RoleAdmin(ReadOnlyAdmin):
         'structure',
         'start_date',
         'end_date',
+        'abbv',
+        'officer_roles_id',
     ]
 
     list_filter = [
@@ -364,6 +368,8 @@ class RoleAdmin(ReadOnlyAdmin):
         'structure',
         'start_date',
         'end_date',
+        'abbv',
+        'officer_roles_id',
     ]
 
     ordering = (
