@@ -593,13 +593,24 @@ def send_session(template, context):
             group__entries__session=session,
             group__entries__status=Entry.STATUS.approved,
         ).distinct()
-    else:
+    elif not session.is_invitational:
         # send to all active groups in the district
-        contacts = Officer.objects.filter(
-            status__gt=0,
-            person__email__isnull=False,
-            group__parent__grantors__convention=session.convention,
-        ).distinct()
+        if session.kind == session.KIND.quartet:
+            contacts = Officer.objects.filter(
+                status__gt=0,
+                person__email__isnull=False,
+                group__status__gt=0,
+                group__kind=session.kind,
+                group__parent__grantors__convention=session.convention,
+            ).distinct()
+        else:
+            contacts = Officer.objects.filter(
+                status__gt=0,
+                person__email__isnull=False,
+                group__status__gt=0,
+                group__kind=session.kind,
+                group__parent__parent__grantors__convention=session.convention,
+            ).distinct()
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,
