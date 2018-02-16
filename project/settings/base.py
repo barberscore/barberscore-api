@@ -52,7 +52,7 @@ CACHES = {
         "LOCATION": get_env_variable("REDIS_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {"max_connections": 200},
+            "CONNECTION_POOL_KWARGS": {"max_connections": 80},
         }
     },
 }
