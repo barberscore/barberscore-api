@@ -17,6 +17,9 @@ from .filters import GroupListFilter
 from .filters import SessionGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
+from .inlines import ActiveQuartetInline
+from .inlines import ActiveChapterInline
+from .inlines import ActiveChorusInline
 from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline
@@ -615,11 +618,11 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'name',
         'status',
-        'parent',
         'kind',
         'gender',
         'is_senior',
-        ('bhs_id', 'bhs_pk',),
+        ('bhs_id', 'bhs_pk', 'code',),
+        'parent',
         ('international', 'district', 'division', 'chapter',),
         'location',
         'email',
@@ -656,6 +659,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'created',
         'modified',
+        'tree_sort',
     ]
     list_select_related = [
     ]
@@ -678,7 +682,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     ordering = [
-        'name',
+        'tree_sort',
     ]
 
     INLINES = {
@@ -691,22 +695,24 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             AwardInline,
             OfficerInline,
             ConventionInline,
+            ActiveChapterInline,
+            ActiveQuartetInline,
         ],
         'Noncompetitive': [
-            AwardInline,
             OfficerInline,
-            ConventionInline,
+            GroupInline,
         ],
         'Affiliate': [
-            AwardInline,
             OfficerInline,
-            ConventionInline,
+            GroupInline,
         ],
         'Division': [
             AwardInline,
+            ActiveChapterInline,
+            ActiveQuartetInline,
         ],
         'Chapter': [
-            GroupInline,
+            ActiveChorusInline,
         ],
         'Chorus': [
             OfficerInline,

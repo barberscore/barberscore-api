@@ -29,7 +29,7 @@ from .models import Venue
 
 
 class BHSListFilter(admin.SimpleListFilter):
-    title = 'is_bhs'
+    title = 'BHS'
     parameter_name = 'is_bhs'
 
     def lookups(self, request, model_admin):

@@ -23,6 +23,101 @@ from .models import Session
 from .models import Song
 
 
+class ActiveChapterInline(admin.TabularInline):
+    model = Group
+    fields = [
+        'name',
+        'parent',
+        'code',
+        # 'kind',
+        'gender',
+        # 'bhs_id',
+        # 'status',
+    ]
+    fk_name = 'parent'
+    ordering = [
+        'nomen',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    verbose_name_plural = 'Active Chapters'
+
+    def get_queryset(self, request):
+        """Alter the queryset to return no existing entries."""
+        qs = super().get_queryset(request)
+        qs = qs.filter(
+            status__gt=0,
+            kind=Group.KIND.chapter,
+        )
+        return qs
+
+
+class ActiveChorusInline(admin.TabularInline):
+    model = Group
+    fields = [
+        'name',
+        'parent',
+        'bhs_id',
+        # 'code',
+        # 'kind',
+        'gender',
+        # 'status',
+    ]
+    fk_name = 'parent'
+    ordering = [
+        'nomen',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    verbose_name_plural = 'Active Choruses'
+
+    def get_queryset(self, request):
+        """Alter the queryset to return no existing entries."""
+        qs = super().get_queryset(request)
+        qs = qs.filter(
+            status__gt=0,
+            kind=Group.KIND.chorus,
+        )
+        return qs
+
+
+class ActiveQuartetInline(admin.TabularInline):
+    model = Group
+    fields = [
+        'name',
+        'parent',
+        'bhs_id',
+        'is_senior',
+        'gender',
+        # 'status',
+    ]
+    fk_name = 'parent'
+    ordering = [
+        'nomen',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    verbose_name_plural = 'Active Quartets'
+
+    def get_queryset(self, request):
+        """Alter the queryset to return no existing entries."""
+        qs = super().get_queryset(request)
+        qs = qs.filter(
+            status__gt=0,
+            kind=Group.KIND.quartet,
+        )
+        return qs
+
+
 class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [

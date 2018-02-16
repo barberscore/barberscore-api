@@ -538,6 +538,7 @@ class GroupManager(Manager):
             i += 1
             org.tree_sort = i
             org.save()
+        return
 
 
 class OfficerManager(Manager):
