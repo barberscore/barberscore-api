@@ -92,7 +92,7 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
-    image = models.ImageField(
+    image = models.FileField(
         upload_to=upload_to,
         blank=True,
         storage=CustomMediaCloudinaryStorage(),
