@@ -880,10 +880,16 @@ class PersonManager(Manager):
                 modified__gt=cursor,
             )
         # Return as objects
+        # persons = persons.values_list(
+        #     'id',
+        #     'nomen',
+        #     'email',
+        #     'status',
+        # )
         User = apps.get_model('api.user')
         for person in persons:
             django_rq.enqueue(
-                User.objects.update_or_create_from_person,
+                User.objects.update_or_create_from_person_objects,
                 person,
             )
         return persons.count()
@@ -957,24 +963,22 @@ class UserManager(BaseUserManager):
     def update_or_create_from_person(self, person, **kwargs):
         if not person.email:
             raise ValidationError("Person must have email")
-        defaults = {
-            'name': person.nomen,
-            'email': person.email,
-            'status': person.status,
-        }
+        created = False
         try:
-            user, created = self.update_or_create(
-                person=person,
-                defaults=defaults,
+            user = self.get(person=person)
+        except self.model.DoesNotExist:
+            created = True
+            user = self.create_user(
+                email=person.email,
+                name=person.name,
+                status=person.status,
             )
-        except IntegrityError:
-            person.status = person.STATUS.new
+            person.user = user
             person.save()
-            return
-        if not user.is_staff:
-            user.set_unusable_password()
-        user.full_clean()
-        user.save(using=self._db)
+            return user, created
+        user.email = person.email
+        user.name = person.nomen
+        user.status = person.status
         return user, created
 
     def update_accounts(self, cursor=None, *args, **kwargs):
