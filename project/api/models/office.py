@@ -75,6 +75,13 @@ class Office(TimeStampedModel):
         blank=True,
     )
 
+    bhs_pk = models.UUIDField(
+        null=True,
+        blank=True,
+        unique=True,
+        db_index=True,
+    )
+
     # Office Permissions
     is_convention_manager = models.BooleanField(
         default=False,
