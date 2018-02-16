@@ -978,7 +978,7 @@ class UserManager(BaseUserManager):
         # Get Base
         users = self.filter(
             status=self.model.STATUS.active,
-            modified__gt=cursor,
+            person__officers__isnull=False,  # for time being, only sync officers
         )
         if cursor:
             users = users.filter(
