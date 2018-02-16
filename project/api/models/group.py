@@ -463,10 +463,13 @@ class Group(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+            all([
+                self.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.status > 0,
+            ])
         ])
 
     # Transitions
