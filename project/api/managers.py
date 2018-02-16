@@ -971,7 +971,7 @@ class UserManager(BaseUserManager):
             created = True
             user = self.create_user(
                 email=person.email,
-                name=person.name,
+                name=person.nomen,
                 status=person.status,
             )
             person.user = user
