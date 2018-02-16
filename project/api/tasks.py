@@ -543,17 +543,17 @@ def create_pdf(template, context):
 @job('high')
 def send_entry(template, context):
     entry = context['entry']
-    contacts = entry.group.officers.filter(
+    officers = entry.group.officers.filter(
         status__gt=0,
         person__email__isnull=False,
     )
-    if not contacts:
-        log.error("No valid contacts for {0}".format(entry))
+    if not officers:
+        log.error("No valid officers for {0}".format(entry))
         return
     assignments = entry.session.convention.assignments.filter(
         category__lt=10,
     ).exclude(person__email=None)
-    tos = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
+    tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
     ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     rendered = render_to_string(template, context)
     subject = "[Barberscore] {0}".format(entry.nomen)
@@ -587,7 +587,7 @@ def send_session(template, context):
     Entry = api.get_model('Entry')
     if session.status > session.STATUS.closed:
         # only send to approved entries
-        contacts = Officer.objects.filter(
+        officers = Officer.objects.filter(
             status__gt=0,
             person__email__isnull=False,
             group__entries__session=session,
@@ -596,7 +596,7 @@ def send_session(template, context):
     elif not session.is_invitational:
         # send to all active groups in the district
         if session.kind == session.KIND.quartet:
-            contacts = Officer.objects.filter(
+            officers = Officer.objects.filter(
                 status__gt=0,
                 person__email__isnull=False,
                 group__status__gt=0,
@@ -604,7 +604,7 @@ def send_session(template, context):
                 group__parent__grantors__convention=session.convention,
             ).distinct()
         else:
-            contacts = Officer.objects.filter(
+            officers = Officer.objects.filter(
                 status__gt=0,
                 person__email__isnull=False,
                 group__status__gt=0,
@@ -617,7 +617,7 @@ def send_session(template, context):
         status=Assignment.STATUS.confirmed,
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-    bcc = ["{0} <{1}>".format(contact.person.common_name, contact.person.email) for contact in contacts]
+    bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
     bcc.extend([
         'Barberscore Admin <admin@barberscore.com>',
         'David Mills <proclamation56@gmail.com>',
