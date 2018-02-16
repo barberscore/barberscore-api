@@ -14,7 +14,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import RegexValidator
-from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
@@ -319,8 +319,8 @@ class Person(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.status == self.STATUS.active:
-            validate_email(self.email)
+        if self.email == '':
+            raise ValidationError("Email must be null, not blank")
 
     def save(self, *args, **kwargs):
         self.nomen = " ".join(

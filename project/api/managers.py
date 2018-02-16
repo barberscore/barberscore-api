@@ -705,7 +705,7 @@ class PersonManager(Manager):
             try:
                 validate_email(email)
             except ValidationError:
-                email = ""
+                email = None
         birth_date = human.birth_date
         if human.phone:
             phone = human.phone
@@ -790,7 +790,7 @@ class PersonManager(Manager):
             try:
                 validate_email(email.strip())
             except ValidationError:
-                email = ""
+                email = None
         if not phone:
             phone = ''
         if not cell_phone:
