@@ -67,5 +67,6 @@ def session_post_save(sender, instance, created, raw=False, **kwargs):
 
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
-    delete_account(instance.account_id)
+    if instance.account_id:
+        delete_account(instance.account_id)
     return
