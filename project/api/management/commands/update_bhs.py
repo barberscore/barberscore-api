@@ -85,8 +85,9 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} accounts.".format(t))
 
         # Sync Roles
-        t = Role.objects.update_chapter_officers(cursor=cursor)
-        self.stdout.write("Queued {0} chapter officers.".format(t))
+        # t = Role.objects.update_chapter_officers(cursor=cursor)
+        # self.stdout.write("Queued {0} chapter officers.".format(t))
+        self.stdout.write("BYPASSED chapter officers.")
         t = SMJoin.objects.update_quartet_officers(cursor=cursor)
         self.stdout.write("Queued {0} quartet officers.".format(t))
 
