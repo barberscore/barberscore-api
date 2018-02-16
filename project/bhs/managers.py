@@ -244,7 +244,7 @@ class SMJoinManager(Manager):
             'id',
             'status',
             'structure',
-            'human',
+            'subscription__human',
         )
 
         # Creating/Update Officers
