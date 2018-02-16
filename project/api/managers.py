@@ -890,7 +890,7 @@ class PersonManager(Manager):
         User = apps.get_model('api.user')
         for person in persons:
             django_rq.enqueue(
-                User.objects.update_or_create_from_person_objects,
+                User.objects.update_or_create_from_person,
                 person,
             )
         return persons.count()
