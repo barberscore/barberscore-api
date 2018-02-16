@@ -10,6 +10,8 @@ from django.contrib.auth.models import Group as AuthGroup
 
 # Local
 from .filters import BHSListFilter
+from .filters import AccountListFilter
+from .filters import OfficeListFilter
 from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
@@ -844,9 +846,9 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_chart_manager',
     ]
 
-    # inlines = [
-    #     OfficerInline,
-    # ]
+    inlines = [
+        OfficerInline,
+    ]
 
 
 @admin.register(Officer)
@@ -884,7 +886,7 @@ class OfficerAdmin(admin.ModelAdmin):
     list_filter = [
         'status',
         BHSListFilter,
-        'office',
+        OfficeListFilter,
     ]
     search_fields = [
         'nomen',
@@ -977,7 +979,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'nomen',
         'email',
         'bhs_id',
-        'bhs_pk',
+        # 'bhs_pk',
         'current_through',
         'part',
         'gender',
@@ -1336,7 +1338,7 @@ class UserAdmin(BaseUserAdmin):
         'name',
         'person',
         'is_staff',
-        'account_id',
+        # 'account_id',
         'status',
     ]
 
@@ -1344,14 +1346,15 @@ class UserAdmin(BaseUserAdmin):
     #     'account_id',
     # ]
 
-    list_display_links = [
-        'email',
-        'person',
-    ]
+    # list_display_links = [
+    #     'email',
+    #     'person',
+    # ]
 
     list_filter = (
         'status',
         'is_staff',
+        AccountListFilter,
     )
 
     fieldsets = (

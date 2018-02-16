@@ -421,6 +421,10 @@ class OfficerInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    ordering = [
+        'person__last_name',
+        'person__first_name',
+    ]
 
 
 class PanelistInline(admin.TabularInline):

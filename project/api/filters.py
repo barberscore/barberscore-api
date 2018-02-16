@@ -49,15 +49,72 @@ class BHSListFilter(admin.SimpleListFilter):
             )
 
 
+class AccountListFilter(admin.SimpleListFilter):
+    title = 'account'
+    parameter_name = 'account'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Yes':
+            return queryset.filter(
+                account_id__isnull=False,
+            )
+        if self.value() == 'No':
+            return queryset.filter(
+                account_id__isnull=True,
+            )
+
+
+class OfficeListFilter(admin.SimpleListFilter):
+    title = 'Office'
+    parameter_name = 'office'
+
+    def lookups(self, request, model_admin):
+        # offices = Office.objects.order_by(
+        #     'short_name',
+        # ).values_list('short_name', 'short_name').distinct()
+        # return tuple(offices)
+        return (
+            ('SCJC', 'SCJC'),
+            ('DRCJ', 'DRCJ'),
+            ('JUDGE', 'JUDGE'),
+            ('JUDGE CA', '- Contest Administrator'),
+            ('JUDGE MUS', '- Music'),
+            ('JUDGE PER', '- Performance'),
+            ('JUDGE SNG', '- Singing'),
+            ('C', 'CHORUS'),
+            ('Q', 'QUARTET'),
+        )
+
+    def queryset(self, request, queryset):
+        office = request.GET.get('office')
+        if office:
+            return queryset.filter(
+                office__short_name__startswith=office
+            )
+        return queryset
+
+
 class DistrictListFilter(admin.SimpleListFilter):
     title = 'district'
     parameter_name = 'district'
 
     def lookups(self, request, model_admin):
-        districts = Group.objects.order_by(
-            'district',
-        ).values_list('district', 'district').distinct()
-        return tuple(districts)
+        districts = Group.objects.filter(
+            kind__in=[
+                Group.KIND.district,
+                Group.KIND.noncomp,
+                Group.KIND.affiliate
+            ]
+        ).order_by(
+            'tree_sort',
+        ).values_list('id', 'code')
+        return districts
 
     def queryset(self, request, queryset):
         district = request.GET.get('district')
@@ -71,10 +128,12 @@ class DivisionListFilter(admin.SimpleListFilter):
     parameter_name = 'division'
 
     def lookups(self, request, model_admin):
-        divisions = Group.objects.order_by(
-            'division',
-        ).values_list('division', 'division').distinct()
-        return tuple(divisions)
+        divisions = Group.objects.filter(
+            kind=Group.KIND.division,
+        ).order_by(
+            'tree_sort',
+        ).values_list('id', 'name')
+        return divisions
 
     def queryset(self, request, queryset):
         division = request.GET.get('division')
@@ -91,7 +150,7 @@ class GroupListFilter(admin.SimpleListFilter):
         orgs = Group.objects.filter(
             kind__lte=Group.KIND.division,
         ).values_list('id', 'code')
-        return tuple(orgs)
+        return orgs
 
     def queryset(self, request, queryset):
         group = request.GET.get('group')
@@ -108,7 +167,7 @@ class ParentGroupListFilter(admin.SimpleListFilter):
         orgs = Group.objects.filter(
             kind__lte=Group.KIND.division,
         ).values_list('id', 'code')
-        return tuple(orgs)
+        return orgs
 
     def queryset(self, request, queryset):
         org = request.GET.get('org')
@@ -118,36 +177,40 @@ class ParentGroupListFilter(admin.SimpleListFilter):
 
 
 class ConventionGroupListFilter(admin.SimpleListFilter):
-    title = ('grp')
-    parameter_name = 'grp'
+    title = ('district')
+    parameter_name = 'district'
 
     def lookups(self, request, model_admin):
-        grps = Group.objects.filter(
+        districts = Group.objects.filter(
             kind__lte=Group.KIND.district,
+        ).order_by(
+            'tree_sort',
         ).values_list('id', 'code')
-        return tuple(grps)
+        return districts
 
     def queryset(self, request, queryset):
-        grp = request.GET.get('grp')
-        if grp:
-            return queryset.filter(group=grp)
+        district = request.GET.get('district')
+        if district:
+            return queryset.filter(group=district)
         return queryset
 
 
 class SessionGroupListFilter(admin.SimpleListFilter):
-    title = ('grp')
-    parameter_name = 'grp'
+    title = ('district')
+    parameter_name = 'district'
 
     def lookups(self, request, model_admin):
-        grps = Group.objects.filter(
-            kind__lte=Group.KIND.district,
+        districts = Group.objects.filter(
+            kind=Group.KIND.district,
+        ).order_by(
+            'tree_sort',
         ).values_list('id', 'code')
-        return tuple(grps)
+        return districts
 
     def queryset(self, request, queryset):
-        grp = request.GET.get('grp')
-        if grp:
-            return queryset.filter(convention__group=grp)
+        district = request.GET.get('district')
+        if district:
+            return queryset.filter(convention__group=district)
         return queryset
 
 
