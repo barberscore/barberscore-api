@@ -857,16 +857,14 @@ class PersonManager(Manager):
         person.save()
 
     def update_status_from_subscription_object(self, subscription, **kwargs):
+        person = subscription[0]
         items_editable = subscription[1]
-        if not items_editable:
-            raise ValueError("Not canonical record")
-        bhs_pk = subscription[0]
         status = getattr(self.model.STATUS, subscription[2], self.model.STATUS.inactive)
         current_through = subscription[3]
-        if not subscription[1]:
-            raise ValueError("Not canonical record.")
+        if not items_editable:
+            raise ValueError("Not canonical record")
         person = self.get(
-            bhs_pk=bhs_pk,
+            bhs_pk=person,
         )
         person.status = status
         person.current_through = current_through
