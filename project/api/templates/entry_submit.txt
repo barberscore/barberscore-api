@@ -26,6 +26,7 @@ Contests Selected:
 {% endfor %}
 {% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|safe|default:"(No Director Specified)"}}
+
 Estimated Participants-on-Stage:  {{entry.mos|default:"(No Estimate Provided)"}}
 
 {% endif %}
