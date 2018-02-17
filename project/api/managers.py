@@ -653,14 +653,15 @@ class OfficerManager(Manager):
 
     def update_or_create_from_join_object(self, join, **kwargs):
         bhs_pk = join[0]
-        status = join[1]
+        # status = join[1] #OVERRIDE
         group = join[2]
         person = join[3]
+        inactive_date = join[4]
 
-        if status:
-            status = self.model.STATUS.active
-        else:
+        if inactive_date:
             status = self.model.STATUS.inactive
+        else:
+            status = self.model.STATUS.active
 
         # Get group
         Group = apps.get_model('api.group')
@@ -898,11 +899,28 @@ class PersonManager(Manager):
 
 class MemberManager(Manager):
     def update_or_create_from_join_object(self, join, **kwargs):
-        # Get group
+        # Set variables
         bhs_pk = join[0]
+        structure = join[1]
+        person = join[2]
+        # status = join[3] # Overriden by inactive_date
+        inactive_date = join[4]
+        inactive_reason = join[5]
+        mem_status = getattr(
+            self.model.MEM_STATUS,
+            join[6].replace("-", "_"),
+            None
+        )
+        mem_code = getattr(
+            self.model.MEM_CODE,
+            join[7],
+            None,
+        )
+        part = join[8]
+
         Group = apps.get_model('api.group')
         group = Group.objects.get(
-            bhs_pk=join[1],
+            bhs_pk=structure,
             kind__in=[
                 Group.KIND.quartet,
                 Group.KIND.chorus,
@@ -911,36 +929,29 @@ class MemberManager(Manager):
         # Get person
         Person = apps.get_model('api.person')
         person = Person.objects.get(
-            bhs_pk=join[2],
+            bhs_pk=person,
         )
-        if join[3]:
-            status = self.model.STATUS.active
-        else:
+        if inactive_date:
             status = self.model.STATUS.inactive
-        if join[8]:
+        else:
+            status = self.model.STATUS.active
+        if part:
             part = getattr(
                 self.model.PART,
-                join[8].lower(),
+                part.lower(),
                 None,
             )
         else:
             part = None
-        inactive_date = join[4]
         # Set the internal BHS fields
-        if join[5]:
+        if inactive_reason:
             inactive_reason = getattr(
                 self.model.INACTIVE_REASON,
-                join[5].replace("-", "_").replace(" ", ""),
+                inactive_reason.replace("-", "_").replace(" ", ""),
                 None,
             )
         else:
             inactive_reason = None
-        mem_status = getattr(
-            self.model.MEM_STATUS,
-            join[6].replace("-", "_"),
-            None
-        )
-        mem_code = getattr(self.model.MEM_CODE, join[7], None)
         # Set defaults and update
         defaults = {
             'status': status,
