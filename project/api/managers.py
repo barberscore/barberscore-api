@@ -981,14 +981,14 @@ class UserManager(BaseUserManager):
             user = self.create_user(
                 email=person.email,
                 name=person.nomen,
-                status=person.status,
+                status=10,
             )
             person.user = user
             person.save()
             return user, created
         user.email = person.email
         user.name = person.nomen
-        user.status = person.status
+        user.status = 10
         return user, created
 
     def update_accounts(self, cursor=None, *args, **kwargs):
