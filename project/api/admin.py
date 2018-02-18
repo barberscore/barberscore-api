@@ -788,6 +788,9 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'person',
         'group',
     ]
+    inlines = [
+        StateLogInline,
+    ]
 
 
 @admin.register(Office)

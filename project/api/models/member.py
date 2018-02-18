@@ -237,14 +237,14 @@ class Member(TimeStampedModel):
     # Transitions
     @fsm_log_by
     @fsm_log_description
-    @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.active)
+    @transition(field=status, source='*', target=STATUS.active)
     def activate(self, description=None, *args, **kwargs):
         """Activate the Member."""
         return
 
     @fsm_log_by
     @fsm_log_description
-    @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.inactive)
+    @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
         """Deactivate the Member."""
         return

@@ -983,7 +983,7 @@ class MemberManager(Manager):
         if part:
             part = getattr(
                 self.model.PART,
-                part.lower(),
+                part.strip().lower(),
                 None,
             )
         else:
@@ -1017,47 +1017,39 @@ class MemberManager(Manager):
 
         # Now, the update logic.
         if created:
-            if status:
-                member.activate(
-                    description='Initial',
-                )
-                member.save()
-            else:
-                member.deactivate(
-                    description='Initial',
-                )
-                member.save()
+            description = "Initial import"
         else:
-            old_bhs_pk = member.bhs_pk
-            old_status = member.status
-            if status:
-                if not old_status:
-                    member.activate(
-                        description="{0} {1} {2}".format(
-                            old_bhs_pk,
-                            inactive_date,
-                            inactive_reason,
-                        )
-                    )
-                    member.part = part
-                    member.bhs_pk = bhs_pk
-                    member.save()
-                else:
-                    raise ValueError('Bad data')
+            if member.status == member.STATUS.new:
+                description = "Initial import"
             else:
-                if old_status:
-                    member.deactivate(
-                        description="{0} {1} {2}".format(
-                            old_bhs_pk,
-                            inactive_date,
-                            inactive_reason,
-                        )
-                    )
-                    member.part = part
-                    member.bhs_pk = bhs_pk
-                    member.save()
-                else:
-                    raise ValueError('Bad data')
+                prior_pk = member.bhs_pk
+                prior_status = member.get_status_display()
+                prior_part = member.get_part_display()
+                description = "Prior BHS PK: {0}; Prior Status: {1}; Prior Part: {2}; Inactive Date: {3}; Inactive Reason: {4}".format(
+                    prior_pk,
+                    prior_status,
+                    prior_part,
+                    inactive_date,
+                    inactive_reason,
+                )
+
+        if status == self.model.STATUS.active:
+            member.activate(
+                description=description,
+            )
+            member.part = part
+            member.bhs_pk = bhs_pk
+            member.save()
+        elif status == self.model.STATUS.inactive:
+            member.deactivate(
+                description=description,
+            )
+            member.part = part
+            member.bhs_pk = bhs_pk
+            member.save()
+        else:
+            raise ValueError('Unknown status')
+        return
 
 
 class UserManager(BaseUserManager):
