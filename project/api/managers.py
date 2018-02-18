@@ -731,9 +731,11 @@ class PersonManager(Manager):
         except AttributeError:
             part_clean = ""
         part = getattr(self.model.PART, part_clean, None)
-        status = self.model.STATUS.inactive
+        # TODO Should be more precise with this when the
+        # front-end is fixed.
+        # status = self.model.STATUS.active
         defaults = {
-            'status': status,
+            # 'status': status,
             'first_name': first_name,
             'middle_name': middle_name,
             'last_name': last_name,
@@ -1065,14 +1067,16 @@ class UserManager(BaseUserManager):
             user = self.create_user(
                 email=person.email,
                 name=person.nomen,
-                status=10,
+                # Should fix this when able
+                status=self.model.STATUS.active,
             )
             person.user = user
             person.save()
             return user, created
         user.email = person.email
         user.name = person.nomen
-        user.status = 10
+        # Same here
+        user.status = self.model.STATUS.active
         return user, created
 
     def update_accounts(self, cursor=None, *args, **kwargs):
