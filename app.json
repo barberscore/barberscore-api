@@ -90,6 +90,7 @@
         "CLOUDINARY_URL": "none"
       },
       "scripts": {
+        "test-setup": "pipenv install --dev",
         "test": "pytest"
       }
     }
