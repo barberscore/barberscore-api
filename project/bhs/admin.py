@@ -186,6 +186,11 @@ class StructureAdmin(ReadOnlyAdmin):
         'chapter_code',
         'chorus_name',
     ]
+
+    list_select_related = [
+        'parent',
+    ]
+
     ordering = (
         '-created_ts',
     )
@@ -243,6 +248,10 @@ class MembershipAdmin(ReadOnlyAdmin):
         'status',
         'created_ts',
         'updated_ts',
+    ]
+
+    list_select_related = [
+        'structure',
     ]
 
     list_filter = [
@@ -358,6 +367,10 @@ class RoleAdmin(ReadOnlyAdmin):
         'officer_roles_id',
     ]
 
+    list_select_related = [
+        'structure',
+        'human',
+    ]
     list_filter = [
         'name',
     ]
@@ -408,6 +421,10 @@ class SMJoinAdmin(ReadOnlyAdmin):
         'updated_ts',
     ]
 
+    list_select_related = [
+        'subscription',
+        'membership',
+    ]
     readonly_fields = [
         'id',
         'status',
