@@ -183,45 +183,9 @@ class RoleManager(Manager):
 
 
 class SMJoinManager(Manager):
-    def update_members(self, cursor=None, *args, **kwargs):
-        # Get base
-        joins = self.filter(
-            structure__kind__in=[
-                'quartet',
-                'chapter',
-            ],
-        )
-        # Filter if cursored
-        if cursor:
-            joins = joins.filter(
-                updated_ts__gt=cursor,
-            )
-        # Order and Return as objects
-        joins = joins.order_by(
-            'established_date',
-            '-inactive_date',
-        ).values_list(
-            'id',
-            'structure__id',
-            'subscription__human__id',
-            'status',
-            'inactive_date',
-            'inactive_reason',
-            'membership__status__name',
-            'membership__code',
-            'vocal_part',
-        )
-
-        # Creating/Update Persons
+    def update_members(self, rebuild=False, *args, **kwargs):
         Member = apps.get_model('api.member')
-        for join in joins:
-            django_rq.enqueue(
-                Member.objects.update_or_create_from_join_object,
-                join,
-            )
-        return joins.count()
-
-    def transition_members(self, cursor=None, *args, **kwargs):
+        cursor = Member.objects.latest('created').created
         # Get base
         joins = self.select_related(
             'structure',
@@ -232,14 +196,15 @@ class SMJoinManager(Manager):
                 'chapter',
             ],
         )
-        # Filter if cursored
-        if cursor:
+        # Rebuild will do the whole thing.
+        if not rebuild:
             joins = joins.filter(
-                established_date__gte=cursor,
+                created__gt=cursor,
             )
         # Order and Return as objects
         joins = joins.order_by(
             'established_date',
+            'updated_ts',
         ).values_list(
             'id',
             'structure__id',
@@ -253,7 +218,7 @@ class SMJoinManager(Manager):
         Member = apps.get_model('api.member')
         for join in joins:
             django_rq.enqueue(
-                Member.objects.create_or_transition_from_join_object,
+                Member.objects.create_from_join_object,
                 join,
             )
         return joins.count()

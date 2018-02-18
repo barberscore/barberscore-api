@@ -64,17 +64,9 @@ class Command(BaseCommand):
         t = Human.objects.update_persons(cursor=cursor)
         self.stdout.write("Queued {0} persons.".format(t))
 
-        # Sync Subsciptions
-        # t = Subscription.objects.update_persons(cursor=cursor)
-        # self.stdout.write("Queued {0} subscriptions.".format(t))
-
         # Sync Groups
         t = Structure.objects.update_groups(cursor=cursor)
         self.stdout.write("Queued {0} groups.".format(t))
-
-        # Sync Members
-        # t = SMJoin.objects.update_members(cursor=cursor)
-        # self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Users
         t = Person.objects.update_users(cursor=cursor)
@@ -83,6 +75,14 @@ class Command(BaseCommand):
         # Sync Accounts
         t = User.objects.update_accounts(cursor=cursor)
         self.stdout.write("Queued {0} accounts.".format(t))
+
+        # Sync Members
+        t = SMJoin.objects.update_members()
+        self.stdout.write("Queued {0} members.".format(t))
+
+        # Sync Subsciptions
+        # t = Subscription.objects.update_persons(cursor=cursor)
+        # self.stdout.write("Queued {0} subscriptions.".format(t))
 
         # Sync Roles
         # t = Role.objects.update_chapter_officers(cursor=cursor)

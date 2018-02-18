@@ -898,78 +898,7 @@ class PersonManager(Manager):
 
 
 class MemberManager(Manager):
-    def update_or_create_from_join_object(self, join, **kwargs):
-        # Set variables
-        bhs_pk = join[0]
-        structure = join[1]
-        person = join[2]
-        # status = join[3] # Overriden by inactive_date
-        inactive_date = join[4]
-        inactive_reason = join[5]
-        mem_status = getattr(
-            self.model.MEM_STATUS,
-            join[6].replace("-", "_"),
-            None
-        )
-        mem_code = getattr(
-            self.model.MEM_CODE,
-            join[7],
-            None,
-        )
-        part = join[8]
-
-        Group = apps.get_model('api.group')
-        group = Group.objects.get(
-            bhs_pk=structure,
-            kind__in=[
-                Group.KIND.quartet,
-                Group.KIND.chorus,
-            ]
-        )
-        # Get person
-        Person = apps.get_model('api.person')
-        person = Person.objects.get(
-            bhs_pk=person,
-        )
-        if inactive_date:
-            status = self.model.STATUS.inactive
-        else:
-            status = self.model.STATUS.active
-        if part:
-            part = getattr(
-                self.model.PART,
-                part.lower(),
-                None,
-            )
-        else:
-            part = None
-        # Set the internal BHS fields
-        if inactive_reason:
-            inactive_reason = getattr(
-                self.model.INACTIVE_REASON,
-                inactive_reason.replace("-", "_").replace(" ", ""),
-                None,
-            )
-        else:
-            inactive_reason = None
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'part': part,
-            'mem_status': mem_status,
-            'mem_code': mem_code,
-            'inactive_date': inactive_date,
-            'inactive_reason': inactive_reason,
-            'bhs_pk': bhs_pk,
-        }
-        member, created = self.update_or_create(
-            person=person,
-            group=group,
-            defaults=defaults,
-        )
-        return member, created
-
-    def create_or_transition_from_join_object(self, join, **kwargs):
+    def create_from_join_object(self, join, **kwargs):
         # Set variables
         bhs_pk = join[0]
         structure = join[1]
