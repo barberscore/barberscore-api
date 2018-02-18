@@ -65,16 +65,16 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} persons.".format(t))
 
         # Sync Subsciptions
-        t = Subscription.objects.update_persons(cursor=cursor)
-        self.stdout.write("Queued {0} subscriptions.".format(t))
+        # t = Subscription.objects.update_persons(cursor=cursor)
+        # self.stdout.write("Queued {0} subscriptions.".format(t))
 
         # Sync Groups
         t = Structure.objects.update_groups(cursor=cursor)
         self.stdout.write("Queued {0} groups.".format(t))
 
         # Sync Members
-        t = SMJoin.objects.update_members(cursor=cursor)
-        self.stdout.write("Queued {0} members.".format(t))
+        # t = SMJoin.objects.update_members(cursor=cursor)
+        # self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Users
         t = Person.objects.update_users(cursor=cursor)
@@ -88,7 +88,7 @@ class Command(BaseCommand):
         # t = Role.objects.update_chapter_officers(cursor=cursor)
         # self.stdout.write("Queued {0} chapter officers.".format(t))
         self.stdout.write("BYPASSED chapter officers.")
-        t = SMJoin.objects.update_quartet_officers(cursor=cursor)
-        self.stdout.write("Queued {0} quartet officers.".format(t))
+        # t = SMJoin.objects.update_quartet_officers(cursor=cursor)
+        # self.stdout.write("Queued {0} quartet officers.".format(t))
 
         self.stdout.write("Complete.")
