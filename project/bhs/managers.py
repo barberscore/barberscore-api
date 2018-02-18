@@ -189,12 +189,8 @@ class SMJoinManager(Manager):
         # Get base
         joins = self.select_related(
             'structure',
+            'subscription',
             'subscription__human',
-        ).filter(
-            structure__kind__in=[
-                'quartet',
-                'chapter',
-            ],
         )
         # Rebuild will do the whole thing.
         if not rebuild:
@@ -212,6 +208,8 @@ class SMJoinManager(Manager):
             'inactive_date',
             'inactive_reason',
             'vocal_part',
+            'subscription__status',
+            'subscription__current_through',
         )
 
         # Creating/Update Persons

@@ -906,6 +906,8 @@ class MemberManager(Manager):
         inactive_date = join[3]
         inactive_reason = join[4]
         part = join[5]
+        status = join[6]
+        current_through = join[7]
 
         if inactive_date:
             status = self.model.STATUS.inactive
