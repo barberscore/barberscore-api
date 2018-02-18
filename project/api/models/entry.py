@@ -341,7 +341,8 @@ class Entry(TimeStampedModel):
         members = self.group.members.filter(
             status__gt=0,
         ).order_by(
-            'nomen',
+            'person__last_name',
+            'person__first_name',
         )
         context = {
             'entry': self,
