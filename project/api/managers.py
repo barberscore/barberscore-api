@@ -857,16 +857,14 @@ class PersonManager(Manager):
         person.save()
 
     def update_status_from_subscription_object(self, subscription, **kwargs):
+        person = subscription[0]
         items_editable = subscription[1]
-        if not items_editable:
-            raise ValueError("Not canonical record")
-        bhs_pk = subscription[0]
         status = getattr(self.model.STATUS, subscription[2], self.model.STATUS.inactive)
         current_through = subscription[3]
-        if not subscription[1]:
-            raise ValueError("Not canonical record.")
+        if not items_editable:
+            raise ValueError("Not canonical record")
         person = self.get(
-            bhs_pk=bhs_pk,
+            bhs_pk=person,
         )
         person.status = status
         person.current_through = current_through
@@ -983,14 +981,14 @@ class UserManager(BaseUserManager):
             user = self.create_user(
                 email=person.email,
                 name=person.nomen,
-                status=person.status,
+                status=10,
             )
             person.user = user
             person.save()
             return user, created
         user.email = person.email
         user.name = person.nomen
-        user.status = person.status
+        user.status = 10
         return user, created
 
     def update_accounts(self, cursor=None, *args, **kwargs):

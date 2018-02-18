@@ -8,7 +8,9 @@ Break a leg!
 ENTRY DETAILS
 
 Group: {{entry.group.name|safe}}
-{% if entry.group.bhs_id %}BHS ID: {{entry.group.bhs_id}}{% endif %}
+{% if entry.group.bhs_id %}
+BHS ID: {{entry.group.bhs_id}}
+{% endif %}
 
 Session: {{entry.session.nomen|safe}}
 
@@ -24,10 +26,12 @@ Contests Selected:
 {% endfor %}
 {% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|safe|default:"(No Director Specified)"}}
+
 Estimated Participants-on-Stage:  {{entry.mos|default:"(No Estimate Provided)"}}
 
 {% endif %}
 Additional Notes/Requests:
+
 {{entry.description|safe|default:"(No additional notes/requests)"}}
 
 
