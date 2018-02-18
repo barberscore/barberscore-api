@@ -240,8 +240,6 @@ class MemberFactory(DjangoModelFactory):
         Member.PART.baritone,
         Member.PART.bass,
     ])
-    start_date = None
-    end_date = None
     group = SubFactory('api.factories.GroupFactory')
     person = SubFactory('api.factories.PersonFactory')
 
