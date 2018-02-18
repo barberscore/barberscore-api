@@ -256,6 +256,8 @@ class MembershipAdmin(ReadOnlyAdmin):
 
     list_filter = [
         'structure__kind',
+        'code',
+        'status',
     ]
 
     readonly_fields = [
@@ -444,6 +446,8 @@ class SMJoinAdmin(ReadOnlyAdmin):
     list_filter = [
         'vocal_part',
         'structure__kind',
+        'inactive_reason',
+        'inactive_date',
     ]
 
     search_fields = [

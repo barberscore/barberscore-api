@@ -1,7 +1,7 @@
 # Standard Libary
 import logging
 import django_rq
-
+import json
 # Third-Party
 from cloudinary.uploader import upload
 from openpyxl import Workbook
@@ -541,6 +541,117 @@ class GroupManager(Manager):
         return
 
 
+class MemberManager(Manager):
+    def create_from_join_object(self, join, **kwargs):
+        # Set variables
+        bhs_pk = join[0]
+        structure = join[1]
+        person = join[2]
+        inactive_date = join[3]
+        inactive_reason = join[4]
+        part = join[5]
+        sub_status = join[6]
+        current_through = join[7]
+        established_date = join[8]
+        mem_code = join[9]
+        mem_status = join[10]
+
+        status = getattr(
+            self.model.STATUS,
+            sub_status,
+            self.model.STATUS.inactive,
+        )
+
+        sub_status = getattr(
+            self.model.SUB_STATUS,
+            sub_status,
+            None,
+        )
+
+        part = getattr(
+            self.model.PART,
+            part.strip().lower() if part else '',
+            None,
+        )
+
+        mem_code = getattr(
+            self.model.MEM_CODE,
+            mem_code,
+            None,
+        )
+
+        mem_status = getattr(
+            self.model.MEM_STATUS,
+            mem_status,
+            None,
+        )
+
+        # Get the related fields
+        Group = apps.get_model('api.group')
+        group = Group.objects.get(
+            bhs_pk=structure,
+        )
+        Person = apps.get_model('api.person')
+        person = Person.objects.get(
+            bhs_pk=person,
+        )
+
+        # get or create
+        member, created = self.get_or_create(
+            person=person,
+            group=group,
+        )
+
+        # Skip duplicates
+        if member.bhs_pk == bhs_pk:
+            return
+
+        # Instantiate prior values dictionary
+        prior = {
+            'bhs_pk': member.bhs_pk,
+            'sub_status': member.sub_status,
+            'current_through': member.current_through,
+            'established_date': member.established_date,
+            'inactive_date': member.inactive_date,
+            'inactive_reason': member.inactive_reason,
+            'part': member.part,
+            'mem_code': member.mem_code,
+            'mem_status': member.mem_status,
+        }
+
+        # Update the fields
+        member.bhs_pk = bhs_pk
+        member.inactive_date = inactive_date
+        member.inactive_reason = inactive_reason
+        member.part = part
+        member.sub_status = sub_status
+        member.current_through = current_through
+        member.established_date = established_date
+        member.mem_code = mem_code
+        member.mem_status = mem_status
+
+        # Set the transition description
+        if member.status == member.STATUS.new:
+            description = "Initial import"
+        else:
+            description = json.dumps(prior)
+
+        # Transition as appropriate
+        if status == self.model.STATUS.active:
+            member.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            member.deactivate(
+                description=description,
+            )
+        else:
+            raise ValueError('Unknown status')
+        # Finally, save the record.
+        member.save()
+        return
+
+
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role, **kwargs):
         today = now().date()
@@ -895,94 +1006,6 @@ class PersonManager(Manager):
                 person,
             )
         return persons.count()
-
-
-class MemberManager(Manager):
-    def create_from_join_object(self, join, **kwargs):
-        # Set variables
-        bhs_pk = join[0]
-        structure = join[1]
-        person = join[2]
-        inactive_date = join[3]
-        inactive_reason = join[4]
-        part = join[5]
-        status = join[6]
-        current_through = join[7]
-
-        if inactive_date:
-            status = self.model.STATUS.inactive
-        else:
-            status = self.model.STATUS.active
-        if part:
-            part = getattr(
-                self.model.PART,
-                part.strip().lower(),
-                None,
-            )
-        else:
-            part = None
-
-        # Get the related fields
-        Group = apps.get_model('api.group')
-        group = Group.objects.get(
-            bhs_pk=structure,
-        )
-        Person = apps.get_model('api.person')
-        person = Person.objects.get(
-            bhs_pk=person,
-        )
-
-        # get or create
-        try:
-            member = self.get(
-                person=person,
-                group=group,
-            )
-            created = False
-        except self.model.DoesNotExist:
-            member = self.create(
-                person=person,
-                group=group,
-                part=part,
-                bhs_pk=bhs_pk,
-            )
-            created = True
-
-        # Now, the update logic.
-        if created:
-            description = "Initial import"
-        else:
-            if member.status == member.STATUS.new:
-                description = "Initial import"
-            else:
-                prior_pk = member.bhs_pk
-                prior_status = member.get_status_display()
-                prior_part = member.get_part_display()
-                description = "Prior BHS PK: {0}; Prior Status: {1}; Prior Part: {2}; Inactive Date: {3}; Inactive Reason: {4}".format(
-                    prior_pk,
-                    prior_status,
-                    prior_part,
-                    inactive_date,
-                    inactive_reason,
-                )
-
-        if status == self.model.STATUS.active:
-            member.activate(
-                description=description,
-            )
-            member.part = part
-            member.bhs_pk = bhs_pk
-            member.save()
-        elif status == self.model.STATUS.inactive:
-            member.deactivate(
-                description=description,
-            )
-            member.part = part
-            member.bhs_pk = bhs_pk
-            member.save()
-        else:
-            raise ValueError('Unknown status')
-        return
 
 
 class UserManager(BaseUserManager):

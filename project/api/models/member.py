@@ -142,18 +142,14 @@ class Member(TimeStampedModel):
         blank=True,
     )
 
-    start_date = models.DateField(
+    established_date = models.DateField(
         null=True,
         blank=True,
     )
 
-    end_date = models.DateField(
+    current_through = models.DateField(
         null=True,
         blank=True,
-    )
-
-    is_admin = models.BooleanField(
-        default=False,
     )
 
     bhs_pk = models.UUIDField(

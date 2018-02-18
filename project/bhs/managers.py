@@ -191,11 +191,13 @@ class SMJoinManager(Manager):
             'structure',
             'subscription',
             'subscription__human',
+            'membership',
         )
         # Rebuild will do the whole thing.
         if not rebuild:
             joins = joins.filter(
-                created__gt=cursor,
+                # This needs to be `created`!
+                established_date__gte=cursor,
             )
         # Order and Return as objects
         joins = joins.order_by(
@@ -210,6 +212,9 @@ class SMJoinManager(Manager):
             'vocal_part',
             'subscription__status',
             'subscription__current_through',
+            'established_date',
+            'membership__code',
+            'membership__status',
         )
 
         # Creating/Update Persons

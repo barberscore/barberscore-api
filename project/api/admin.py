@@ -764,13 +764,31 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'person',
         'part',
         'bhs_pk',
+        'inactive_date',
+        'inactive_reason',
+        'sub_status',
+        'current_through',
+        'established_date',
+        'mem_code',
+        'mem_status',
     ]
     list_display = [
         'status',
-        'group',
         'person',
+        'group',
         'part',
     ]
+    readonly_fields = [
+        'part',
+        'inactive_date',
+        'inactive_reason',
+        'sub_status',
+        'current_through',
+        'established_date',
+        'mem_code',
+        'mem_status',
+    ]
+
     autocomplete_fields = [
         'person',
         'group',
@@ -783,6 +801,13 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         BHSListFilter,
         'part',
+        'inactive_date',
+        'inactive_reason',
+        'sub_status',
+        'current_through',
+        'established_date',
+        'mem_code',
+        'mem_status',
     ]
     list_select_related = [
         'person',
