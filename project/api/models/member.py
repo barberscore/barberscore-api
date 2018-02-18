@@ -6,21 +6,17 @@ import uuid
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.decorators import fsm_log_description
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.exceptions import ValidationError
 from django.db import models
 
 # First-Party
 from api.managers import MemberManager
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -32,17 +28,10 @@ class Member(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
-        (-20, 'legacy', 'Legacy',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
-        (20, 'exempt', 'Exempt',),
     )
 
     status = FSMIntegerField(
@@ -199,7 +188,7 @@ class Member(TimeStampedModel):
         resource_name = "member"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
+        return str(self.id)
 
     def clean(self):
         pass
@@ -214,17 +203,6 @@ class Member(TimeStampedModel):
         #         raise ValidationError(
         #             {'is_admin': 'Admin User account must be active.'}
         #         )
-
-    def save(self, *args, **kwargs):
-        # self.nomen = " ".join(
-        #     map(
-        #         lambda x: smart_text(x), [
-        #             self.person,
-        #             self.group,
-        #         ]
-        #     )
-        # )
-        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod
@@ -258,13 +236,15 @@ class Member(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
+    @fsm_log_description
+    @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.active)
+    def activate(self, description=None, *args, **kwargs):
         """Activate the Member."""
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
+    @fsm_log_description
+    @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.inactive)
+    def deactivate(self, description=None, *args, **kwargs):
         """Deactivate the Member."""
         return

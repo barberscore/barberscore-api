@@ -221,6 +221,43 @@ class SMJoinManager(Manager):
             )
         return joins.count()
 
+    def transition_members(self, cursor=None, *args, **kwargs):
+        # Get base
+        joins = self.select_related(
+            'structure',
+            'subscription__human',
+        ).filter(
+            structure__kind__in=[
+                'quartet',
+                'chapter',
+            ],
+        )
+        # Filter if cursored
+        if cursor:
+            joins = joins.filter(
+                established_date__gte=cursor,
+            )
+        # Order and Return as objects
+        joins = joins.order_by(
+            'established_date',
+        ).values_list(
+            'id',
+            'structure__id',
+            'subscription__human__id',
+            'inactive_date',
+            'inactive_reason',
+            'vocal_part',
+        )
+
+        # Creating/Update Persons
+        Member = apps.get_model('api.member')
+        for join in joins:
+            django_rq.enqueue(
+                Member.objects.create_or_transition_from_join_object,
+                join,
+            )
+        return joins.count()
+
     def update_quartet_officers(self, cursor=None, active_only=True, *args, **kwargs):
         # Get base
         joins = self.filter(

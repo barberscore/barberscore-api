@@ -410,11 +410,8 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'url',
-            'nomen',
             'status',
             'part',
-            'start_date',
-            'end_date',
             'group',
             'person',
             'permissions',

@@ -967,6 +967,98 @@ class MemberManager(Manager):
         )
         return member, created
 
+    def create_or_transition_from_join_object(self, join, **kwargs):
+        # Set variables
+        bhs_pk = join[0]
+        structure = join[1]
+        person = join[2]
+        inactive_date = join[3]
+        inactive_reason = join[4]
+        part = join[5]
+
+        if inactive_date:
+            status = self.model.STATUS.inactive
+        else:
+            status = self.model.STATUS.active
+        if part:
+            part = getattr(
+                self.model.PART,
+                part.lower(),
+                None,
+            )
+        else:
+            part = None
+
+        # Get the related fields
+        Group = apps.get_model('api.group')
+        group = Group.objects.get(
+            bhs_pk=structure,
+        )
+        Person = apps.get_model('api.person')
+        person = Person.objects.get(
+            bhs_pk=person,
+        )
+
+        # get or create
+        try:
+            member = self.get(
+                person=person,
+                group=group,
+            )
+            created = False
+        except self.model.DoesNotExist:
+            member = self.create(
+                person=person,
+                group=group,
+                part=part,
+                bhs_pk=bhs_pk,
+            )
+            created = True
+
+        # Now, the update logic.
+        if created:
+            if status:
+                member.activate(
+                    description='Initial',
+                )
+                member.save()
+            else:
+                member.deactivate(
+                    description='Initial',
+                )
+                member.save()
+        else:
+            old_bhs_pk = member.bhs_pk
+            old_status = member.status
+            if status:
+                if not old_status:
+                    member.activate(
+                        description="{0} {1} {2}".format(
+                            old_bhs_pk,
+                            inactive_date,
+                            inactive_reason,
+                        )
+                    )
+                    member.part = part
+                    member.bhs_pk = bhs_pk
+                    member.save()
+                else:
+                    raise ValueError('Bad data')
+            else:
+                if old_status:
+                    member.deactivate(
+                        description="{0} {1} {2}".format(
+                            old_bhs_pk,
+                            inactive_date,
+                            inactive_reason,
+                        )
+                    )
+                    member.part = part
+                    member.bhs_pk = bhs_pk
+                    member.save()
+                else:
+                    raise ValueError('Bad data')
+
 
 class UserManager(BaseUserManager):
 

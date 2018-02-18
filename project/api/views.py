@@ -425,7 +425,7 @@ class MemberViewSet(
     queryset = Member.objects.select_related(
         'group',
         'person',
-    ).order_by('nomen')
+    )
     serializer_class = MemberSerializer
     filter_class = MemberFilter
     filter_backends = [

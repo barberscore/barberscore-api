@@ -7,7 +7,8 @@ import uuid
 from cloudinary.models import CloudinaryField
 from django_fsm import FSMIntegerField
 from django_fsm import transition
-from django_fsm_log.decorators import fsm_log_by, fsm_log_description
+from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.decorators import fsm_log_description
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
@@ -16,7 +17,6 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
-from django.utils.html import format_html
 from django.utils.text import slugify
 
 # First-Party
@@ -298,14 +298,13 @@ class Session(TimeStampedModel):
 
     # Session Transitions
     @fsm_log_by
-    @fsm_log_description
     @transition(
         field=status,
         source=STATUS.new,
         target=STATUS.opened,
         conditions=[can_open_session],
     )
-    def open(self, description=None, *args, **kwargs):
+    def open(self, *args, **kwargs):
         """Make session available for entry."""
         if not self.is_invitational:
             context = {'session': self}

@@ -753,58 +753,36 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Member)
-class MemberAdmin(admin.ModelAdmin):
+class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
     fields = [
         'status',
-        # 'start_date',
-        # 'end_date',
         'group',
         'person',
         'part',
         'bhs_pk',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-        'inactive_date',
-        'inactive_reason',
     ]
     list_display = [
         'status',
-        # 'start_date',
-        # 'end_date',
-        'bhs_pk',
         'group',
         'person',
         'part',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-        'inactive_date',
-        'inactive_reason',
     ]
     autocomplete_fields = [
         'person',
         'group',
     ]
     search_fields = [
-        'nomen',
+        'person',
+        'group',
     ]
     list_filter = [
         'status',
         BHSListFilter,
         'part',
-        'group__kind',
-        'sub_status',
-        'mem_status',
-        'mem_code',
-        'inactive_reason',
-    ]
-    readonly_fields = [
-        'sub_status',
-        'mem_status',
-        'mem_code',
-        'inactive_date',
-        'inactive_reason',
     ]
     list_select_related = [
         'person',
