@@ -4,6 +4,7 @@ from .base import *
 # Heroku
 ALLOWED_HOSTS = [
     'testserver',
+    'localhost',
 ]
 
 # Redis
