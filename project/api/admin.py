@@ -1029,6 +1029,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         OfficerInline,
         MemberInline,
         AssignmentInline,
+        StateLogInline,
     ]
 
     # readonly_fields = [

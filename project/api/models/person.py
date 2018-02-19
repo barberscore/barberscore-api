@@ -372,6 +372,8 @@ class Person(TimeStampedModel):
         """Activate the Person."""
         return
 
+    @fsm_log_by
+    @fsm_log_description
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
         """Deactivate the Person."""
