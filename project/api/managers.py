@@ -550,33 +550,6 @@ class PersonManager(Manager):
             person.save()
         return person, created
 
-    def update_status_from_subscription(self, subscription, **kwargs):
-        if not subscription.items_editable:
-            raise ValueError("Not canonical record.")
-        human = subscription.human
-        person = self.get(
-            bhs_pk=human.id,
-        )
-        status = getattr(self.model.STATUS, subscription.status, self.model.STATUS.inactive)
-        current_through = subscription.current_through
-        person.status = status
-        person.current_through = current_through
-        person.save()
-
-    def update_status_from_subscription_object(self, subscription, **kwargs):
-        person = subscription[0]
-        items_editable = subscription[1]
-        status = getattr(self.model.STATUS, subscription[2], self.model.STATUS.inactive)
-        current_through = subscription[3]
-        if not items_editable:
-            raise ValueError("Not canonical record")
-        person = self.get(
-            bhs_pk=person,
-        )
-        person.status = status
-        person.current_through = current_through
-        person.save()
-
     def update_users(self, cursor=None, *args, **kwargs):
         # Get Base
         persons = self.filter(

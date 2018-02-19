@@ -6,7 +6,6 @@ from bhs.managers import StructureManager
 from bhs.managers import HumanManager
 from bhs.managers import RoleManager
 from bhs.managers import SMJoinManager
-from bhs.managers import SubscriptionManager
 
 
 class Human(models.Model):
@@ -348,8 +347,6 @@ class Subscription(models.Model):
         null=True,
         editable=False,
     )
-
-    objects = SubscriptionManager()
 
     # FKs
     human = models.ForeignKey(

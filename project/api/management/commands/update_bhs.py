@@ -11,7 +11,6 @@ from api.models import Person
 from api.models import User
 from bhs.models import Human
 from bhs.models import Structure
-from bhs.models import Subscription
 from bhs.models import Role
 from bhs.models import SMJoin
 
@@ -69,6 +68,19 @@ class Command(BaseCommand):
         # Sync Groups
         t = Structure.objects.update_groups(cursor=cursor)
         self.stdout.write("Queued {0} groups.".format(t))
+        t = Structure.objects.delete_orphans()
+        self.stdout.write("Deleted {0} group orphans.".format(t))
+
+        # Sync Members
+        t = SMJoin.objects.update_members()
+        self.stdout.write("Queued {0} members.".format(t))
+
+        # Sync Roles
+        # t = Role.objects.update_chapter_officers(cursor=cursor)
+        # self.stdout.write("Queued {0} chapter officers.".format(t))
+        self.stdout.write("BYPASSED chapter officers.")
+        # t = SMJoin.objects.update_quartet_officers(cursor=cursor)
+        # self.stdout.write("Queued {0} quartet officers.".format(t))
 
         # Sync Users
         t = Person.objects.update_users(cursor=cursor)
@@ -78,19 +90,5 @@ class Command(BaseCommand):
         t = User.objects.update_accounts(cursor=cursor)
         self.stdout.write("Queued {0} accounts.".format(t))
 
-        # Sync Members
-        t = SMJoin.objects.update_members()
-        self.stdout.write("Queued {0} members.".format(t))
-
-        # Sync Subsciptions
-        # t = Subscription.objects.update_persons(cursor=cursor)
-        # self.stdout.write("Queued {0} subscriptions.".format(t))
-
-        # Sync Roles
-        # t = Role.objects.update_chapter_officers(cursor=cursor)
-        # self.stdout.write("Queued {0} chapter officers.".format(t))
-        self.stdout.write("BYPASSED chapter officers.")
-        # t = SMJoin.objects.update_quartet_officers(cursor=cursor)
-        # self.stdout.write("Queued {0} quartet officers.".format(t))
 
         self.stdout.write("Complete.")

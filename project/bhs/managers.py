@@ -117,37 +117,6 @@ class StructureManager(Manager):
         return t
 
 
-class SubscriptionManager(Manager):
-    def update_persons(self, cursor=None, *args, **kwargs):
-        # Get base
-        subscriptions = self.filter(
-            items_editable=True,
-        )
-        # Filter if cursored
-        if cursor:
-            subscriptions = subscriptions.filter(
-                updated_ts__gt=cursor,
-            )
-        # Order and Return as objects
-        subscriptions = subscriptions.order_by(
-            'created_ts',
-        ).values_list(
-            'human__id',
-            'items_editable',
-            'status',
-            'current_through',
-        )
-
-        # Creating/Update Persons
-        Person = apps.get_model('api.person')
-        for subscription in subscriptions:
-            django_rq.enqueue(
-                Person.objects.update_status_from_subscription_object,
-                subscription,
-            )
-        return subscriptions.count()
-
-
 class RoleManager(Manager):
     def update_chapter_officers(self, cursor=None, active_only=True, *args, **kwargs):
         # Get base
