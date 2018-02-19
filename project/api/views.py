@@ -20,6 +20,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 # Local
 from .backends import CoalesceFilterBackend
+from .backends import GroupFilterBackend
 from .filters import AwardFilter
 from .filters import ChartFilter
 from .filters import CompetitorFilter
@@ -368,7 +369,7 @@ class GroupViewSet(
     filter_class = GroupFilter
     filter_backends = [
         CoalesceFilterBackend,
-        DjangoFilterBackend,
+        GroupFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -425,7 +426,7 @@ class MemberViewSet(
     queryset = Member.objects.select_related(
         'group',
         'person',
-    )
+    ).order_by('id')
     serializer_class = MemberSerializer
     filter_class = MemberFilter
     filter_backends = [
