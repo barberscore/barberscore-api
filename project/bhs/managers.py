@@ -185,7 +185,9 @@ class RoleManager(Manager):
 class SMJoinManager(Manager):
     def update_members(self, rebuild=False, *args, **kwargs):
         Member = apps.get_model('api.member')
-        cursor = Member.objects.latest('created').created
+        cursor = Member.objects.filter(
+            bhs_pk__isnull=False,
+        ).latest('created').created
         # Get base
         joins = self.select_related(
             'structure',
