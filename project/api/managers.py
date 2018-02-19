@@ -330,6 +330,20 @@ class MemberManager(Manager):
             )
         else:
             raise ValueError('Unknown status')
+        # Transition the person and save record if BHS group
+        if group.bhs_id == 1:
+            if status == self.model.STATUS.active:
+                person.activate(
+                    description=description,
+                )
+            elif status == self.model.STATUS.inactive:
+                person.deactivate(
+                    description=description,
+                )
+            else:
+                raise ValueError('Unknown status')
+            person.current_through = current_through
+            person.save()
         # Finally, save the record.
         member.save()
         return

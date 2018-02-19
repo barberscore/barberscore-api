@@ -8,7 +8,6 @@ from cloudinary.models import CloudinaryField
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
-from django_fsm_log.decorators import fsm_log_description
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices

@@ -18,6 +18,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
+from django_fsm import transition
+from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.decorators import fsm_log_description
 
 # First-Party
 from api.fields import CloudinaryRenameField
@@ -361,26 +364,15 @@ class Person(TimeStampedModel):
             self.user == request.user,
         ])
 
-    # Person transitions
-    # @transition(field=status, source=[STATUS.new, STATUS.inactive], target=STATUS.active)
-    # def activate(self, *args, **kwargs):
-    #     """Activate the Person."""
-    #     try:
-    #         user = self.user
-    #     except ObjectDoesNotExist:
-    #         User.objects.create_user(
-    #             email=self.email,
-    #             person=self,
-    #         )
-    #         return
-    #     user.is_active = True
-    #     user.full_clean()
-    #     user.save()
-    #     return
+    # Transitions
+    @fsm_log_by
+    @fsm_log_description
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, description=None, *args, **kwargs):
+        """Activate the Person."""
+        return
 
-    # @transition(field=status, source=[STATUS.new, STATUS.active], target=STATUS.inactive)
-    # def deactivate(self, *args, **kwargs):
-    #     self.user.is_active = False
-    #     self.user.save()
-    #     """Deactivate the Person."""
-    #     return
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, description=None, *args, **kwargs):
+        """Deactivate the Person."""
+        return
