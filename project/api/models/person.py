@@ -338,50 +338,6 @@ class Person(TimeStampedModel):
             self.email = self.email.lower()
         super().save(*args, **kwargs)
 
-    # Methods
-    def update_bhs_human(self):
-        Human = bhs.get_model('Human')
-        if not self.bhs_pk:
-            raise RuntimeError("Not BHS")
-        try:
-            human = Human.objects.get(
-                id=self.bhs_pk
-            )
-        except Human.DoesNotExist:
-            raise RuntimeError("No Human in BHS")
-        person, created = Person.objects.update_or_create_from_human(human)
-        return person, created
-
-    def update_bhs_subscription(self):
-        Human = bhs.get_model('Human')
-        Subscription = bhs.get_model('Subscription')
-        if not self.bhs_pk:
-            raise RuntimeError("No BHS PK")
-        try:
-            human = Human.objects.get(id=self.bhs_pk)
-        except Human.DoesNotExist:
-            raise RuntimeError("No Human in BHS")
-        try:
-            subscription = human.subscriptions.filter(
-                items_editable=True,
-            ).latest('created_ts')
-        except Subscription.DoesNotExist:
-            subscription = None
-        if subscription:
-            status = getattr(
-                self.STATUS,
-                subscription.status,
-                self.STATUS.inactive
-            )
-            current_through = subscription.current_through
-        else:
-            status = self.STATUS.inactive
-            current_through = None
-        self.status = status
-        self.current_through = current_through
-        self.save()
-        return status, current_through
-
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
