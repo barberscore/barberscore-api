@@ -17,7 +17,6 @@ from django.db import models
 
 # First-Party
 from api.fields import CloudinaryRenameField
-from api.managers import ChartManager
 from api.storages import CustomMediaCloudinaryStorage
 
 config = api_apps.get_app_config('api')
@@ -97,8 +96,6 @@ class Chart(TimeStampedModel):
         blank=True,
         storage=CustomMediaCloudinaryStorage(),
     )
-
-    objects = ChartManager()
 
     # Internals
     class Meta:

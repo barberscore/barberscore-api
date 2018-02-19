@@ -20,7 +20,6 @@ from api.tasks import get_accounts
 from api.tasks import update_or_create_account_from_user
 from api.tasks import delete_account
 
-
 log = logging.getLogger(__name__)
 
 validate_url = URLValidator()
@@ -32,41 +31,6 @@ validate_twitter = RegexValidator(
         in the form `@twitter_handle`.
     """,
 )
-
-
-class ChartManager(Manager):
-    def export_charts(self, *args, **kwargs):
-        wb = Workbook()
-        ws = wb.active
-        fieldnames = [
-            'id',
-            'title',
-            'arrangers',
-            'composers',
-            'lyricists',
-        ]
-        ws.append(fieldnames)
-        charts = self.all()
-        for chart in charts:
-            pk = str(chart.id)
-            title = chart.title
-            arrangers = chart.arrangers
-            composers = chart.composers
-            lyricists = chart.lyricists
-            row = [
-                pk,
-                title,
-                arrangers,
-                composers,
-                lyricists,
-            ]
-            ws.append(row)
-        wb.save('barberscore_charts.xlsx')
-        return upload(
-            'barberscore_charts.xlsx',
-            public_id='barberscore_charts.xlsx',
-            resource_type='raw',
-        )
 
 
 class GroupManager(Manager):
