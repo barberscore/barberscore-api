@@ -61,7 +61,7 @@ class HumanManager(Manager):
 
 
 class StructureManager(Manager):
-    def update_groups(self, cursor=None, active_only=True, *args, **kwargs):
+    def update_groups(self, cursor=None, active_only=True):
         # Get base
         structures = self.all()
         # Filter if cursored
@@ -89,13 +89,15 @@ class StructureManager(Manager):
             'twitter',
             'bhs_id',
             'parent',
+            'chapter_code',
         )
         # Creating/Update Groups
         Group = apps.get_model('api.group')
         for structure in structures:
             django_rq.enqueue(
-                Group.objects.update_or_create_from_structure_object,
+                Group.objects.update_or_create_from_structure,
                 structure,
+                is_object=True,
             )
         return structures.count()
 
@@ -110,9 +112,9 @@ class StructureManager(Manager):
         ).exclude(
             bhs_pk__in=structures,
         )
-        for orphan in orphans:
-            print(orphan)
-            return
+        t = orphans.count()
+        orphans.delete()
+        return t
 
 
 class SubscriptionManager(Manager):

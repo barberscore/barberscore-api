@@ -70,162 +70,83 @@ class ChartManager(Manager):
 
 
 class GroupManager(Manager):
-    def update_or_create_from_structure_object(self, structure, **kwargs):
-        STATUS = {
-            'active': 'active',
-            'active-internal': 'active',
-            'active-licensed': 'active',
-            'cancelled': 'inactive',
-            'closed': 'inactive',
-            'closed-merged': 'inactive',
-            'closed-revoked': 'inactive',
-            'closed-voluntary': 'inactive',
-            'expelled': 'inactive',
-            'expired': 'inactive',
-            'expired-licensed': 'inactive',
-            'lapsed': 'inactive',
-            'not-approved': 'inactive',
-            'pending': 'inactive',
-            'pending-voluntary': 'inactive',
-            'suspended': 'inactive',
-            'suspended-membership': 'inactive',
-        }
-        AIC = {
-            "501972": "Main Street",
-            "501329": "Forefront",
-            "500922": "Instant Classic",
-            "304772": "Musical Island Boys",
-            "500000": "Masterpiece",
-            "501150": "Ringmasters",
-            "317293": "Old School",
-            "286100": "Storm Front",
-            "500035": "Crossroads",
-            "297201": "OC Times",
-            "299233": "Max Q",
-            "302244": "Vocal Spectrum",
-            "299608": "Realtime",
-            "6158": "Gotcha!",
-            "2496": "Power Play",
-            "276016": "Four Voices",
-            "5619": "Michigan Jake",
-            "6738": "Platinum",
-            "3525": "FRED",
-            "5721": "Revival",
-            "2079": "Yesteryear",
-            "2163": "Nightlife",
-            "4745": "Marquis",
-            "3040": "Joker's Wild",
-            "1259": "Gas House Gang",
-            "2850": "Keepsake",
-            "1623": "The Ritz",
-            "3165": "Acoustix",
-            "1686": "Second Edition",
-            "492": "Chiefs of Staff",
-            "1596": "Interstate Rivals",
-            "1654": "Rural Route 4",
-            "406": "The New Tradition",
-            "1411": "Rapscallions",
-            "1727": "Side Street Ramblers",
-            "545": "Classic Collection",
-            "490": "Chicago News",
-            "329": "Boston Common",
-            "4034": "Grandma's Boys",
-            "318": "Bluegrass Student Union",
-            "362": "Most Happy Fellows",
-            "1590": "Innsiders",
-            "1440": "Happiness Emporium",
-            "1427": "Regents",
-            "627": "Dealer's Choice",
-            "1288": "Golden Staters",
-            "1275": "Gentlemen's Agreement",
-            "709": "Oriole Four",
-            "711": "Mark IV",
-            "2047": "Western Continentals",
-            "1110": "Four Statesmen",
-            "713": "Auto Towners",
-            "715": "Four Renegades",
-            "1729": "Sidewinders",
-            "718": "Town and Country 4",
-            "719": "Gala Lads",
-            "1871": "The Suntones",
-            "722": "Evans Quartet",
-            "724": "Four Pitchikers",
-            "726": "Gaynotes",
-            "729": "Lads of Enchantment",
-            "731": "Confederates",
-            "732": "Four Hearsemen",
-            "736": "The Orphans",
-            "739": "Vikings",
-            "743": "Four Teens",
-            "746": "Schmitt Brothers",
-            "748": "Buffalo Bills",
-            "750": "Mid-States Four",
-            "753": "Pittsburghers",
-            "756": "Doctors of Harmony",
-            "759": "Garden State Quartet",
-            "761": "Misfits",
-            "764": "Harmony Halls",
-            "766": "Four Harmonizers",
-            "770": "Elastic Four",
-            "773": "Chord Busters",
-            "775": "Flat Foot Four",
-            "776": "Bartlesville Barflies",
-        }
-        # Map to incoming
-        bhs_pk = structure[0]
-        name = structure[1]
-        preferred_name = structure[2]
-        chorus_name = structure[3]
-        status = getattr(self.model.STATUS, STATUS[str(structure[4])])
-        kind = getattr(self.model.KIND, structure[5].replace('chapter', 'chorus'))
-        start_date = structure[6]
-        email = structure[7]
-        phone = structure[8]
-        website = structure[9]
-        facebook = structure[10]
-        twitter = structure[11]
-        bhs_id = structure[12]
-        parent = structure[13]
-        mem_status = getattr(self.model.MEM_STATUS, structure[4].replace("-", "_"))
-
-        if kind == self.model.KIND.quartet:
-            if name:
-                # If the name has been assigned, use that.
-                name = name.strip()
-            elif preferred_name:
-                # If not yet assigned, use preferred and mark as pending.
-                name = "{0} (NAME APPROVAL PENDING)".format(
-                    preferred_name.strip()
-                )
-            else:
-                # Otherwise, call unknown.
-                name = 'UNKNOWN'
-            # Map to the internal designation
-        elif kind == self.model.KIND.chorus:
-            if chorus_name:
-                name = chorus_name.strip()
-            else:
-                name = 'UNKNOWN'
+    def update_or_create_from_structure(self, structure, is_object=False):
+        # Map between object/instance
+        if is_object:
+            bhs_pk = structure[0]
+            raw_name = structure[1]
+            preferred_name = structure[2]
+            chorus_name = structure[3]
+            status = structure[4]
+            kind = structure[5]
+            start_date = structure[6]
+            email = structure[7]
+            phone = structure[8]
+            website = structure[9]
+            facebook = structure[10]
+            twitter = structure[11]
+            bhs_id = structure[12]
+            parent = structure[13]
+            code = structure[14]
         else:
-            raise ValueError("Must be quartet or chapter")
-        # Clean the raw inputs.
+            bhs_pk = structure.bhs_pk
+            raw_name = structure.name
+            preferred_name = structure.preferred_name
+            chorus_name = structure.chorus_name
+            status = structure.status.name
+            kind = structure.kind
+            start_date = structure.start_date
+            email = structure.email
+            phone = structure.phone
+            website = structure.website
+            facebook = structure.facebook
+            twitter = structure.twitter
+            bhs_id = structure.bhs_id
+            parent = structure.parent
+            code = structure.chapter_code
+
+        # Transform as needed
+        name = raw_name.strip()
+        preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
+        chorus_name = chorus_name.strip()
+        status = getattr(self.model.STATUS, status, self.model.STATUS.inactive)
+        kind = getattr(self.model.KIND, kind.replace('chapter', 'chorus'))
         email = email.strip()
+        phone = phone.strip()
+        website = website.strip()
+        facebook = facebook.strip()
+        twitter = twitter.strip()
+        mem_status = getattr(self.model.MEM_STATUS, status.replace("-", "_"))
+
+        # Construct the group name
+        if kind == self.model.KIND.quartet:
+            # If the name has not been assigned, use preferred. Otherwise, call unknown.
+            if not name:
+                name = preferred_name if preferred_name else 'UNKNOWN'
+        elif kind == self.model.KIND.chorus:
+            name = chorus_name if chorus_name else 'UNKNOWN'
+        else:
+            name = name if name else 'UNKNOWN'
+
+        # Clean email
         try:
             validate_email(email)
         except ValidationError:
             email = ""
-        phone = phone.strip()
-        website = website.strip()
+
+        # Clean website
         try:
             validate_url(website)
         except ValidationError:
             website = ""
-        facebook = facebook.strip()
+
+        # Clean facebook
         try:
             validate_url(facebook)
         except ValidationError:
             facebook = ""
-        twitter = twitter.strip()
+
+        # Clean twitter
         if '@' in twitter:
             if '/' in twitter:
                 twitter = twitter.rpartition("/")[2]
@@ -240,10 +161,11 @@ class GroupManager(Manager):
             validate_twitter(twitter)
         except ValidationError:
             twitter = ""
+
         # Monkey-patch for the AIC
-        if str(bhs_id) in AIC:
+        if str(bhs_id) in self.model.AIC:
             status = getattr(self.model.STATUS, 'aic')
-            name = AIC[str(bhs_id)]
+            name = self.model.AIC[str(bhs_id)]
         defaults = {
             'name': name,
             'status': status,
@@ -265,49 +187,21 @@ class GroupManager(Manager):
         if created:
             if kind == self.model.KIND.quartet:
                 group.is_senior = group.get_is_senior()
-            if kind == self.model.KIND.chorus:
-                log.error("New Chorus: {0}".format(group))
-                group.status = self.model.STATUS.new
-                group.save()
-                return group, created
-            parent = self.get(bhs_pk=parent)
+                parent = self.get(bhs_pk=parent)
+            elif kind == self.model.KIND.chorus:
+                kind = self.model.KIND.chapter
+                name = raw_name.strip() if raw_name else 'UNKNOWN'
+                parent = self.model.get_or_create(
+                    name=name,
+                    code=code,
+                    bhs_id=bhs_id,
+                    kind=kind,
+                )
+            else:
+                parent = self.get(bhs_pk=parent)
             group.parent = parent
-            group.status = self.model.STATUS.new
             group.save()
         return group, created
-
-    def export_active_quartets(self, *args, **kwargs):
-        wb = Workbook()
-        ws = wb.active
-        fieldnames = [
-            'id',
-            'name',
-            'bhs_id',
-            'district',
-        ]
-        ws.append(fieldnames)
-        quartets = self.filter(
-            kind=self.model.KIND.quartet,
-            status=self.model.STATUS.active,
-        )
-        for quartet in quartets:
-            pk = str(quartet.id)
-            name = quartet.name
-            bhs_id = quartet.bhs_id
-            district = str(quartet.parent)
-            row = [
-                pk,
-                name,
-                bhs_id,
-                district,
-            ]
-            ws.append(row)
-        wb.save('active_quartets.xlsx')
-        return upload(
-            'active_quartets.xlsx',
-            public_id='active_quartets.xlsx',
-            resource_type='raw',
-        )
 
     def sort_tree(self, **kwargs):
         root = self.get(kind=self.model.KIND.international)
