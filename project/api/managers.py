@@ -2,9 +2,6 @@
 import logging
 import django_rq
 import json
-# Third-Party
-from cloudinary.uploader import upload
-from openpyxl import Workbook
 
 # Django
 from django.apps import apps
@@ -53,7 +50,7 @@ class GroupManager(Manager):
             parent = structure[13]
             code = structure[14]
         else:
-            bhs_pk = structure.bhs_pk
+            bhs_pk = structure.id
             raw_name = structure.name
             preferred_name = structure.preferred_name
             chorus_name = structure.chorus_name
@@ -167,7 +164,7 @@ class GroupManager(Manager):
             group.save()
         return group, created
 
-    def sort_tree(self, **kwargs):
+    def sort_tree(self):
         root = self.get(kind=self.model.KIND.international)
         i = 1
         root.tree_sort = i
@@ -200,20 +197,34 @@ class GroupManager(Manager):
 
 
 class MemberManager(Manager):
-    def create_from_join_object(self, join, **kwargs):
-        # Set variables
-        bhs_pk = join[0]
-        structure = join[1]
-        person = join[2]
-        inactive_date = join[3]
-        inactive_reason = join[4]
-        part = join[5]
-        sub_status = join[6]
-        current_through = join[7]
-        established_date = join[8]
-        mem_code = join[9]
-        mem_status = join[10]
+    def create_from_join(self, join, is_object=False):
+        # Map variables
+        if is_object:
+            bhs_pk = join[0]
+            structure = join[1]
+            person = join[2]
+            inactive_date = join[3]
+            inactive_reason = join[4]
+            part = join[5]
+            sub_status = join[6]
+            current_through = join[7]
+            established_date = join[8]
+            mem_code = join[9]
+            mem_status = join[10]
+        else:
+            bhs_pk = join.id
+            structure = join.structure
+            person = join.subscription.human
+            inactive_date = join.inactive_date
+            inactive_reason = join.inactive_reason
+            part = join.vocal_part
+            sub_status = join.subscription.status
+            current_through = join.subscription.current_through
+            established_date = join.established_date
+            mem_code = join.membership.code
+            mem_status = join.membership.status.name
 
+        # Set variables
         status = getattr(
             self.model.STATUS,
             sub_status,
@@ -272,7 +283,6 @@ class MemberManager(Manager):
 
         # Instantiate prior values dictionary
         prior = {}
-
         if member.bhs_pk:
             prior['bhs_pk'] = str(member.bhs_pk)
         if member.sub_status:
@@ -326,54 +336,24 @@ class MemberManager(Manager):
 
 
 class OfficerManager(Manager):
-    def update_or_create_from_role(self, role, **kwargs):
-        today = now().date()
-        if role.end_date:
-            if role.end_date < today:
-                status = self.model.STATUS.inactive
-            else:
-                status = self.model.STATUS.active
+    def update_or_create_from_role(self, role, is_object=False):
+        # Map
+        if is_object:
+            bhs_pk = role[0]
+            office = role[1]
+            group = role[2]
+            person = role[3]
+            start_date = role[4]
+            end_date = role[5]
         else:
-            status = self.model.STATUS.active
+            bhs_pk = role.id
+            office = role.name
+            group = role.structure
+            person = role.human
+            start_date = role.start_date
+            end_date = role.end_date
 
-        # Flatten join objects
-        structure = role.structure
-        human = role.human
-        name = role.name
-        # Get group
-        Group = apps.get_model('api.group')
-        group = Group.objects.get(bhs_pk=structure.id)
-        # Get person
-        Person = apps.get_model('api.person')
-        person = Person.objects.get(bhs_pk=human.id)
-        # Get office
-        Office = apps.get_model('api.office')
-        office = Office.objects.get(name=name)
-
-        # Set the internal BHS fields
-        bhs_pk = role.id
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'group': group,
-            'person': person,
-            'office': office,
-        }
-        officer, created = self.update_or_create(
-            bhs_pk=bhs_pk,
-            defaults=defaults,
-        )
-        return officer, created
-
-    def update_or_create_from_role_object(self, role, **kwargs):
         today = now().date()
-        bhs_pk = role[0]
-        office = role[1]
-        group = role[2]
-        person = role[3]
-        start_date = role[4]
-        end_date = role[5]
-
         if end_date:
             if end_date < today:
                 status = self.model.STATUS.inactive

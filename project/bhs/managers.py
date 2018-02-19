@@ -180,8 +180,9 @@ class RoleManager(Manager):
         Officer = apps.get_model('api.officer')
         for role in roles:
             django_rq.enqueue(
-                Officer.objects.update_or_create_from_role_object,
+                Officer.objects.update_or_create_from_role,
                 role,
+                is_object=True,
             )
         return
 
@@ -228,8 +229,9 @@ class SMJoinManager(Manager):
         Member = apps.get_model('api.member')
         for join in joins:
             django_rq.enqueue(
-                Member.objects.create_from_join_object,
+                Member.objects.create_from_join,
                 join,
+                is_object=True,
             )
         return joins.count()
 
