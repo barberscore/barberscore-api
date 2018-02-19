@@ -192,6 +192,7 @@ class SMJoinManager(Manager):
             'subscription',
             'subscription__human',
             'membership',
+            'membership__status',
         )
         # Rebuild will do the whole thing.
         if not rebuild:
@@ -214,7 +215,7 @@ class SMJoinManager(Manager):
             'subscription__current_through',
             'established_date',
             'membership__code',
-            'membership__status',
+            'membership__status__name',
         )
 
         # Creating/Update Persons

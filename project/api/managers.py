@@ -564,7 +564,7 @@ class MemberManager(Manager):
 
         sub_status = getattr(
             self.model.SUB_STATUS,
-            sub_status,
+            sub_status if sub_status else '',
             None,
         )
 
@@ -574,15 +574,21 @@ class MemberManager(Manager):
             None,
         )
 
+        inactive_reason = getattr(
+            self.model.INACTIVE_REASON,
+            inactive_reason.strip().replace("-", "_").replace(" ", "") if inactive_reason else '',
+            None,
+        )
+
         mem_code = getattr(
             self.model.MEM_CODE,
-            mem_code,
+            mem_code if mem_code else '',
             None,
         )
 
         mem_status = getattr(
             self.model.MEM_STATUS,
-            mem_status,
+            mem_status.strip().replace("-", "_") if mem_status else '',
             None,
         )
 
@@ -607,17 +613,26 @@ class MemberManager(Manager):
             return
 
         # Instantiate prior values dictionary
-        prior = {
-            'bhs_pk': member.bhs_pk,
-            'sub_status': member.sub_status,
-            'current_through': member.current_through,
-            'established_date': member.established_date,
-            'inactive_date': member.inactive_date,
-            'inactive_reason': member.inactive_reason,
-            'part': member.part,
-            'mem_code': member.mem_code,
-            'mem_status': member.mem_status,
-        }
+        prior = {}
+
+        if member.bhs_pk:
+            prior['bhs_pk'] = str(member.bhs_pk)
+        if member.sub_status:
+            prior['sub_status'] = member.get_sub_status_display()
+        if member.current_through:
+            prior['current_through'] = member.current_through.strftime('%Y-%m-%d')
+        if member.established_date:
+            prior['established_date'] = member.established_date.strftime('%Y-%m-%d')
+        if member.inactive_date:
+            prior['inactive_date'] = member.inactive_date.strftime('%Y-%m-%d')
+        if member.inactive_reason:
+            prior['inactive_reason'] = member.get_inactive_reason_display()
+        if member.part:
+            prior['part'] = member.get_part_display()
+        if member.mem_code:
+            prior['mem_code'] = member.get_mem_code_display()
+        if member.mem_status:
+            prior['mem_status'] = member.get_mem_status_display()
 
         # Update the fields
         member.bhs_pk = bhs_pk
