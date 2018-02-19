@@ -614,96 +614,38 @@ class OfficerManager(Manager):
 
 
 class PersonManager(Manager):
-    def update_or_create_from_human(self, human, **kwargs):
-        first_name = human.first_name.strip()
-        try:
-            middle_name = human.middle_name.strip()
-        except AttributeError:
-            middle_name = ""
-        last_name = human.last_name.strip()
-        try:
-            nick_name = human.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
-        except AttributeError:
-            nick_name = ""
-        if nick_name == first_name:
-            nick_name = ""
-        bhs_id = human.bhs_id
-        email = human.email.strip()
-        if email:
-            try:
-                validate_email(email)
-            except ValidationError:
-                email = None
-        birth_date = human.birth_date
-        if human.phone:
+    def update_or_create_from_human(self, human, is_object=False, **kwargs):
+        # Map between object/instance
+        if is_object:
+            bhs_pk = human[0]
+            first_name = human[1]
+            middle_name = human[2]
+            last_name = human[3]
+            nick_name = human[4]
+            email = human[5]
+            birth_date = human[6]
+            phone = human[7]
+            cell_phone = human[8]
+            work_phone = human[9]
+            bhs_id = human[10]
+            gender = human[11]
+            part = human[12]
+        else:
+            bhs_pk = human.bhs_pk
+            first_name = human.first_name
+            middle_name = human.middle_name
+            last_name = human.last_name
+            nick_name = human.nick_name
+            email = human.email
+            birth_date = human.birth_date
             phone = human.phone
-        else:
-            phone = ''
-        if human.cell_phone:
             cell_phone = human.cell_phone
-        else:
-            cell_phone = ''
-        if human.work_phone:
             work_phone = human.work_phone
-        else:
-            work_phone = ''
-        try:
-            gender_clean = human.sex.casefold()
-        except AttributeError:
-            gender_clean = ""
-        gender = getattr(self.model.GENDER, gender_clean, None)
-        try:
-            part_clean = human.primary_voice_part.casefold()
-        except AttributeError:
-            part_clean = ""
-        part = getattr(self.model.PART, part_clean, None)
-        # TODO Should be more precise with this when the
-        # front-end is fixed.
-        # status = self.model.STATUS.active
-        defaults = {
-            # 'status': status,
-            'first_name': first_name,
-            'middle_name': middle_name,
-            'last_name': last_name,
-            'nick_name': nick_name,
-            'email': email,
-            'birth_date': birth_date,
-            'phone': phone,
-            'cell_phone': cell_phone,
-            'work_phone': work_phone,
-            'bhs_id': bhs_id,
-            'gender': gender,
-            'part': part,
-        }
-        try:
-            person, created = self.update_or_create(
-                bhs_pk=human.id,
-                defaults=defaults,
-            )
-        except IntegrityError:
-            defaults['bhs_pk'] = human.id
-            defaults.pop('bhs_id', None)
-            person, created = self.update_or_create(
-                bhs_id=human.bhs_id,
-                defaults=defaults,
-            )
-        return person, created
+            bhs_id = human.bhs_id
+            gender = human.gender
+            part = human.part
 
-    def update_or_create_from_human_object(self, human, **kwargs):
-        bhs_pk = human[0]
-        first_name = human[1]
-        middle_name = human[2]
-        last_name = human[3]
-        nick_name = human[4]
-        email = human[5]
-        birth_date = human[6]
-        phone = human[7]
-        cell_phone = human[8]
-        work_phone = human[9]
-        bhs_id = human[10]
-        gender = human[11]
-        part = human[12]
-
+        # Same logic regardless of inbound form
         first_name = first_name.strip()
         try:
             middle_name = middle_name.strip()

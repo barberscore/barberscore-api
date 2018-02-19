@@ -63,6 +63,8 @@ class Command(BaseCommand):
         # Sync Persons
         t = Human.objects.update_persons(cursor=cursor)
         self.stdout.write("Queued {0} persons.".format(t))
+        t = Human.objects.delete_orphans()
+        self.stdout.write("Deleted {0} person orphans.".format(t))
 
         # Sync Groups
         t = Structure.objects.update_groups(cursor=cursor)

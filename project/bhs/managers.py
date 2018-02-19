@@ -37,10 +37,12 @@ class HumanManager(Manager):
         Person = apps.get_model('api.person')
         for human in humans:
             django_rq.enqueue(
-                Person.objects.update_or_create_from_human_object,
+                Person.objects.update_or_create_from_human,
                 human,
+                is_object=True,
             )
-        return humans.count()
+        t = humans.count()
+        return t
 
     def delete_orphans(self, *args, **kwargs):
         # Get base
@@ -53,9 +55,9 @@ class HumanManager(Manager):
         ).exclude(
             bhs_pk__in=humans,
         )
-        for orphan in orphans:
-            print(orphan)
-            return
+        t = orphans.count()
+        orphans.delete()
+        return t
 
 
 class StructureManager(Manager):
