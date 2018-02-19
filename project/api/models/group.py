@@ -428,7 +428,7 @@ class Group(TimeStampedModel):
             members__group=self,
             members__status__gt=0,
         )
-        if persons.count > 4:
+        if persons.count() > 4:
             return False
         all_over_55 = True
         total_years = 0
