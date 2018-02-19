@@ -265,6 +265,10 @@ class Entry(TimeStampedModel):
             any([
                 self.group.status == self.group.STATUS.active,
                 self.group.status == self.group.STATUS.new,
+            ]),
+            not all([
+                self.is_private,
+                self.contestants.filter(status__gt=0).count() > 0,
             ])
         ])
 
