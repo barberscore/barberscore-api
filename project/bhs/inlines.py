@@ -6,7 +6,7 @@ from .models import (
     Human,
     Membership,
     Role,
-    SMJoin,
+    Join,
     Status,
     Structure,
     Subscription,
@@ -36,8 +36,8 @@ class SubscriptionInline(admin.TabularInline):
     can_delete = False
 
 
-class SMJoinInline(admin.TabularInline):
-    model = SMJoin
+class JoinInline(admin.TabularInline):
+    model = Join
     fields = [
         '__str__',
         'subscription',

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from bhs.managers import StructureManager
 from bhs.managers import HumanManager
 from bhs.managers import RoleManager
-from bhs.managers import SMJoinManager
+from bhs.managers import JoinManager
 
 
 class Human(models.Model):
@@ -241,7 +241,7 @@ class Structure(models.Model):
         if not self.kind == 'quartet' or not self.status.name == 'active':
             return
         members = self.memberships.filter(
-            smjoins__status=True,
+            joins__status=True,
         )
         count = members.count()
         if count != 4:
@@ -421,7 +421,7 @@ class Role(models.Model):
         db_table = 'vwOfficers'
 
 
-class SMJoin(models.Model):
+class Join(models.Model):
     id = models.CharField(
         primary_key=True,
         max_length=255,
@@ -455,26 +455,26 @@ class SMJoin(models.Model):
         editable=False,
     )
 
-    objects = SMJoinManager()
+    objects = JoinManager()
 
     # FKs
     subscription = models.ForeignKey(
         'Subscription',
         editable=False,
-        related_name='smjoins',
+        related_name='joins',
         on_delete=models.CASCADE,
     )
     membership = models.ForeignKey(
         'Membership',
         editable=False,
-        related_name='smjoins',
+        related_name='joins',
         on_delete=models.CASCADE,
     )
 
     structure = models.ForeignKey(
         'Structure',
         editable=False,
-        related_name='smjoins',
+        related_name='joins',
         db_column='reference_structure_id',
         on_delete=models.CASCADE,
     )

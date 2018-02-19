@@ -6,14 +6,14 @@ from django.contrib import admin
 from .inlines import (
     MembershipInline,
     RoleInline,
-    SMJoinInline,
+    JoinInline,
     SubscriptionInline,
 )
 from .models import (
     Human,
     Membership,
     Role,
-    SMJoin,
+    Join,
     Status,
     Structure,
     Subscription,
@@ -207,7 +207,7 @@ class StructureAdmin(ReadOnlyAdmin):
         ],
         'quartet': [
             RoleInline,
-            SMJoinInline,
+            JoinInline,
         ],
     }
 
@@ -269,7 +269,7 @@ class MembershipAdmin(ReadOnlyAdmin):
     ]
 
     inlines = [
-        SMJoinInline,
+        JoinInline,
     ]
 
     ordering = (
@@ -343,7 +343,7 @@ class SubscriptionAdmin(ReadOnlyAdmin):
     )
 
     inlines = [
-        SMJoinInline,
+        JoinInline,
     ]
 
 
@@ -397,8 +397,8 @@ class RoleAdmin(ReadOnlyAdmin):
     ]
 
 
-@admin.register(SMJoin)
-class SMJoinAdmin(ReadOnlyAdmin):
+@admin.register(Join)
+class JoinAdmin(ReadOnlyAdmin):
     fields = [
         'id',
         'status',

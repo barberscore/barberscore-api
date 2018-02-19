@@ -156,7 +156,7 @@ class RoleManager(Manager):
         return
 
 
-class SMJoinManager(Manager):
+class JoinManager(Manager):
     def update_members(self, rebuild=False, *args, **kwargs):
         Member = apps.get_model('api.member')
         cursor = Member.objects.filter(

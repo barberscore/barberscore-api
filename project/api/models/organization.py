@@ -270,13 +270,13 @@ class Organization(TimeStampedModel):
         Member = api.get_model('Member')
         Structure = bhs.get_model('Structure')
         structure = Structure.objects.get(id=self.bhs_pk)
-        js = structure.smjoins.values(
+        js = structure.joins.values(
             'subscription__human',
             'structure',
         ).distinct()
 
         for j in js:
-            m = structure.smjoins.filter(
+            m = structure.joins.filter(
                 subscription__human__id=j['subscription__human'],
                 structure__id=j['structure'],
             ).latest('established_date', 'updated_ts')

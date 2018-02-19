@@ -12,7 +12,7 @@ from api.models import User
 from bhs.models import Human
 from bhs.models import Structure
 from bhs.models import Role
-from bhs.models import SMJoin
+from bhs.models import Join
 
 log = logging.getLogger('updater')
 
@@ -72,14 +72,14 @@ class Command(BaseCommand):
         self.stdout.write("Deleted {0} group orphans.".format(t))
 
         # Sync Members
-        t = SMJoin.objects.update_members()
+        t = Join.objects.update_members()
         self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Roles
         # t = Role.objects.update_chapter_officers(cursor=cursor)
         # self.stdout.write("Queued {0} chapter officers.".format(t))
         self.stdout.write("BYPASSED chapter officers.")
-        # t = SMJoin.objects.update_quartet_officers(cursor=cursor)
+        # t = Join.objects.update_quartet_officers(cursor=cursor)
         # self.stdout.write("Queued {0} quartet officers.".format(t))
 
         # Sync Users
