@@ -103,6 +103,7 @@ LOGGING = {
             'level': 'DEBUG',
             'handlers': [
                 'console',
+                'logfile',
             ],
         },
         'updater': {
@@ -124,10 +125,22 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'dev.log'),
+            'maxBytes': 5000000,
+            'backupCount': 10,
+            'formatter': 'standard',
+        },
     },
     'formatters': {
         'simple': {
             'format': '%(levelname)s %(message)s',
+        },
+        'standard': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
     },
 }
