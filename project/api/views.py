@@ -17,7 +17,6 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
-
 # Local
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
@@ -360,9 +359,10 @@ class GroupViewSet(
         'parent',
     ).prefetch_related(
         'children',
-        'members',
+        # 'members',
         'entries',
         'repertories',
+        'officers',
     ).order_by(
         'nomen',
     )
@@ -424,7 +424,9 @@ class MemberViewSet(
     get_viewset_transition_action_mixin(Member),
     viewsets.ModelViewSet
 ):
-    queryset = Member.objects.select_related(
+    queryset = Member.objects.exclude(
+        group__kind__lte=30,
+    ).select_related(
         'group',
         'person',
     ).order_by('id')
@@ -432,7 +434,7 @@ class MemberViewSet(
     filter_class = MemberFilter
     filter_backends = [
         CoalesceFilterBackend,
-        MemberFilterBackend,
+        DjangoFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -503,7 +505,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'user',
     ).prefetch_related(
         'assignments',
-        'members',
+        # 'members',
         'officers',
         'panelists',
     ).order_by('nomen')

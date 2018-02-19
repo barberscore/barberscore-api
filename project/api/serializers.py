@@ -3,6 +3,7 @@ from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
+from rest_framework_json_api.relations import ResourceRelatedField
 
 # Local
 from .fields import TimezoneField
@@ -364,6 +365,13 @@ class GridSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # members = ResourceRelatedField(
+    #     queryset=Member.objects.none()
+    #     # queryset=Member.objects.exclude(
+    #     #     group__kind__lte=Group.KIND.chapter,
+    #     # ),
+    #     # many=True,
+    # )
 
     class Meta:
         model = Group
@@ -394,9 +402,9 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
             'parent',
-            'children',
+            # 'children',
             'entries',
-            'members',
+            # 'members',
             'repertories',
             'permissions',
         ]
