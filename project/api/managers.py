@@ -390,14 +390,13 @@ class OfficerManager(Manager):
     def update_or_create_from_member(self, member, **kwargs):
         if member.group.kind != member.group.KIND.quartet:
             raise ValueError("Must be quartet record.")
-        # Flatten join objects
-        # Get group
+        # Set Status
         if member.status > 0:
             status = self.model.STATUS.active
         elif member.status < 0:
             status = self.model.STATUS.inactive
         else:
-            status = 0
+            status = self.model.STATUS.new
         bhs_pk = None
         # Get office
         Office = apps.get_model('api.office')
