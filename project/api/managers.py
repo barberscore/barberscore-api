@@ -69,8 +69,7 @@ class GroupManager(Manager):
         # Transform as needed
         name = raw_name.strip()
         preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
-        chorus_name = chorus_name.strip()
-        status = getattr(self.model.STATUS, status, self.model.STATUS.inactive)
+        chorus_name = chorus_name.strip() if chorus_name else ''
         kind = getattr(self.model.KIND, kind.replace('chapter', 'chorus'))
         email = email.strip()
         phone = phone.strip()
@@ -78,6 +77,7 @@ class GroupManager(Manager):
         facebook = facebook.strip()
         twitter = twitter.strip()
         mem_status = getattr(self.model.MEM_STATUS, status.replace("-", "_"))
+        status = getattr(self.model.STATUS, status, self.model.STATUS.inactive)
 
         # Construct the group name
         if kind == self.model.KIND.quartet:
@@ -354,7 +354,7 @@ class MemberManager(Manager):
             office = Office.objects.get(
                 name='Quartet Manager',
             )
-            officer = Officer.objects.get(
+            officer, created = Officer.objects.get_or_create(
                 person=person,
                 group=group,
                 office=office,
@@ -545,10 +545,19 @@ class PersonManager(Manager):
         except IntegrityError:
             defaults['bhs_pk'] = bhs_pk
             defaults.pop('bhs_id', None)
-            person, created = self.update_or_create(
-                bhs_id=bhs_id,
-                defaults=defaults,
-            )
+            try:
+                person, created = self.update_or_create(
+                    bhs_id=bhs_id,
+                    defaults=defaults,
+                )
+            except IntegrityError:
+                defaults['bhs_pk'] = bhs_pk
+                defaults['bhs_id'] = bhs_id
+                defaults.pop('email', None)
+                person, created = self.update_or_create(
+                    email=email,
+                    defaults=defaults,
+                )
         if created:
             # Subscription overwrites, set default
             person.status = self.model.STATUS.inactive

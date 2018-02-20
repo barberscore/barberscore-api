@@ -129,10 +129,11 @@ class RoleManager(Manager):
             )
         # Filter if cursored
         if cursor:
-            raise RuntimeError("Not currently supported")
-            roles = roles.filter(
-                updated_ts__gt=cursor,
-            )
+            pass
+            # raise RuntimeError("Not currently supported")
+            # roles = roles.filter(
+            #     updated_ts__gt=cursor,
+            # )
         # Order and Return as objects
         roles = roles.order_by(
             'start_date'
@@ -197,9 +198,13 @@ class JoinManager(Manager):
         # Creating/Update Persons
         Member = apps.get_model('api.member')
         for join in joins:
-            django_rq.enqueue(
-                Member.objects.create_from_join,
-                join,
-                is_object=True,
-            )
+            try:
+                django_rq.enqueue(
+                    Member.objects.create_from_join,
+                    join,
+                    is_object=True,
+                )
+            except Exception as e:
+                print(e)
+                continue
         return joins.count()
