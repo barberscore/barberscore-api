@@ -74,7 +74,9 @@ class StructureManager(Manager):
                 updated_ts__gt=cursor,
             )
         # Return as objects
-        structures = structures.values_list(
+        structures = structures.select_related(
+            'status',
+        ).values_list(
             'id',
             'name',
             'preferred_name',

@@ -135,10 +135,12 @@ class Structure(models.Model):
     DISTRICT = 'district'
     ORGANIZATION = 'organization'
     QUARTET = 'quartet'
+    GROUP = 'group'
 
     KIND = [
         (ORGANIZATION, 'Organization'),
         (DISTRICT, 'District'),
+        (GROUP, 'Group'),
         (CHAPTER, 'Chapter'),
         (QUARTET, 'Quartet'),
     ]

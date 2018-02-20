@@ -126,6 +126,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'name',
         'kind',
         'bhs_id',
+        'preferred_name',
         'chapter_code',
         'chorus_name',
         'phone',
@@ -145,6 +146,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'name',
         'kind',
         'bhs_id',
+        'preferred_name',
         'chapter_code',
         'chorus_name',
         'phone',
@@ -161,6 +163,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'name',
         'kind',
         'bhs_id',
+        'preferred_name',
         'chapter_code',
         'chorus_name',
         'phone',
@@ -200,6 +203,9 @@ class StructureAdmin(ReadOnlyAdmin):
             RoleInline,
         ],
         'district': [
+            RoleInline,
+        ],
+        'group': [
             RoleInline,
         ],
         'chapter': [

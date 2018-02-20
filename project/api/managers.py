@@ -71,7 +71,10 @@ class GroupManager(Manager):
         name = raw_name.strip()
         preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
         chorus_name = chorus_name.strip() if chorus_name else ''
-        kind = getattr(self.model.KIND, kind.replace('chapter', 'chorus'))
+        kind = getattr(
+            self.model.KIND,
+            kind.replace('chapter', 'chorus').replace('group', 'noncomp')
+        )
         email = email.strip()
         phone = phone.strip()
         website = website.strip()
@@ -196,6 +199,9 @@ class GroupManager(Manager):
                     diff[key] = self.model.MEM_STATUS[value]
                 else:
                     diff[key] = value
+
+        if not diff:
+            return group, 'Unchanged'
 
         # Set the transition description
         if group.status == group.STATUS.new:
