@@ -82,11 +82,6 @@ class Assignment(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('convention', 'person',)
-        )
-
     class JSONAPIMeta:
         resource_name = "assignment"
 
