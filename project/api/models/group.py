@@ -131,6 +131,7 @@ class Group(TimeStampedModel):
             The name of the resource.
         """,
         max_length=255,
+        default='UNKNOWN',
     )
 
     STATUS = Choices(
