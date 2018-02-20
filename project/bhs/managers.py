@@ -120,25 +120,25 @@ class StructureManager(Manager):
 
 
 class RoleManager(Manager):
-    def update_chapter_officers(self, cursor=None, active_only=True):
-        # Get base
+    def update_officers(self, rebuild=False):
+        # Get the cursor
+        Officer = apps.get_model('api.officer')
+        cursor = Officer.objects.filter(
+            bhs_pk__isnull=False,
+        ).latest('created').created
+
+        # Get base, excluding Quartets
         roles = self.exclude(
             name='Quartet Admin',
         )
-        if active_only:
+        # Rebuild will do the whole thing.
+        if not rebuild:
             roles = roles.filter(
-                structure__status__name='active',
+                created__gt=cursor,
             )
-        # Filter if cursored
-        if cursor:
-            pass
-            # raise RuntimeError("Not currently supported")
-            # roles = roles.filter(
-            #     updated_ts__gt=cursor,
-            # )
         # Order and Return as objects
         roles = roles.order_by(
-            'start_date'
+            'created'
         ).values_list(
             'id',
             'name',

@@ -11,7 +11,7 @@ from api.models import Person
 from api.models import User
 from bhs.models import Human
 from bhs.models import Structure
-# from bhs.models import Role
+from bhs.models import Role
 from bhs.models import Join
 
 log = logging.getLogger('updater')
@@ -76,8 +76,8 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Roles
-        # t = Role.objects.update_chapter_officers(cursor=cursor)
-        # self.stdout.write("Queued {0} chapter officers.".format(t))
+        t = Role.objects.update_officers()
+        # self.stdout.write("Queued {0} officers.".format(t))
         self.stdout.write("BYPASSED chapter officers.")
 
         # Sync Users

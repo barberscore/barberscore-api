@@ -492,34 +492,6 @@ class OfficerManager(Manager):
         )
         return officer, created
 
-    def update_or_create_from_member(self, member, is_object=False):
-        if member.group.kind != member.group.KIND.quartet:
-            raise ValueError("Must be quartet record.")
-        # Set Status
-        if member.status > 0:
-            status = self.model.STATUS.active
-        elif member.status < 0:
-            status = self.model.STATUS.inactive
-        else:
-            status = self.model.STATUS.new
-        bhs_pk = None
-        # Get office
-        Office = apps.get_model('api.office')
-        office = Office.objects.get(name='Quartet Manager')
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'bhs_pk': bhs_pk,
-        }
-        officer, created = self.update_or_create(
-            person=member.person,
-            group=member.group,
-            office=office,
-            defaults=defaults,
-        )
-        return officer, created
-
-
 class PersonManager(Manager):
     def update_or_create_from_human(self, human, is_object=False):
         # Map between object/instance
