@@ -12,6 +12,7 @@ from django.core.validators import URLValidator
 from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import Manager
+from django.forms.models import model_to_dict
 from django.utils.timezone import now
 from api.tasks import get_accounts
 from api.tasks import update_or_create_account_from_user
@@ -137,19 +138,40 @@ class GroupManager(Manager):
             'website': website,
             'facebook': facebook,
             'twitter': twitter,
+            'code': code,
             'bhs_id': bhs_id,
             'mem_status': mem_status,
         }
-        group, created = self.update_or_create(
+        group, created = self.get_or_create(
             bhs_pk=bhs_pk,
-            defaults=defaults,
         )
-        # Set defaults on create
+
+        # set prior values
+        prior = model_to_dict(
+            group,
+            fields=[
+                'name',
+                'status',
+                'kind',
+                'start_date',
+                'email',
+                'phone',
+                'website',
+                'facebook',
+                'twitter',
+                'code',
+                'bhs_id',
+                'mem_status',
+            ],
+        )
+
+        # update the group to new values
+        for key, value in defaults:
+            setattr(group, key, value)
+
+        # Set parent on create only
         if created:
-            if kind == self.model.KIND.quartet:
-                group.is_senior = group.get_is_senior()
-                parent = self.get(bhs_pk=parent)
-            elif kind == self.model.KIND.chorus:
+            if kind == self.model.KIND.chorus:
                 kind = self.model.KIND.chapter
                 name = raw_name.strip() if raw_name else 'UNKNOWN'
                 parent = self.model.get_or_create(
@@ -161,7 +183,40 @@ class GroupManager(Manager):
             else:
                 parent = self.get(bhs_pk=parent)
             group.parent = parent
-            group.save()
+
+        # Build the diff from prior to new
+        diff = {}
+        for key, value in prior.items():
+            if defaults[key] != value:
+                if key == 'status':
+                    diff[key] = self.model.STATUS[value]
+                elif key == 'kind':
+                    diff[key] = self.model.KIND[value]
+                elif key == 'mem_status':
+                    diff[key] = self.model.MEM_STATUS[value]
+                else:
+                    diff[key] = value
+
+        # Set the transition description
+        if group.status == group.STATUS.new:
+            description = "Initial import"
+        else:
+            description = json.dumps(diff)
+
+        # Transition as appropriate
+        if status == self.model.STATUS.active:
+            group.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            group.deactivate(
+                description=description,
+            )
+        else:
+            raise ValueError('Unknown status')
+
+        # Finally, save the record
+        group.save()
         return group, created
 
     def sort_tree(self):
@@ -349,7 +404,7 @@ class MemberManager(Manager):
             else:
                 raise ValueError('Unknown status')
             person.save()
-        # Transition the person and save record if BHS group
+        # Transition the officer and save record if quartet
         if group.kind == group.KIND.quartet:
             # Transition as appropriate
             Office = apps.get_model('api.office')
