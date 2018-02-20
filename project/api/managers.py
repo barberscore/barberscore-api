@@ -263,9 +263,12 @@ class MemberManager(Manager):
 
         # Get the related fields
         Group = apps.get_model('api.group')
-        group = Group.objects.get(
-            bhs_pk=structure,
-        )
+        try:
+            group = Group.objects.get(
+                bhs_pk=structure,
+            )
+        except Group.DoesNotExist:
+            return
         Person = apps.get_model('api.person')
         person = Person.objects.get(
             bhs_pk=person,
