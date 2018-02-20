@@ -82,6 +82,7 @@ class GroupManager(Manager):
         twitter = twitter.strip()
         mem_status = getattr(self.model.MEM_STATUS, status.replace("-", "_"))
         status = getattr(self.model.STATUS, status, self.model.STATUS.inactive)
+        code = code.strip() if code else ''
 
         # Construct the group name
         if kind == self.model.KIND.quartet:
@@ -169,7 +170,7 @@ class GroupManager(Manager):
         )
 
         # update the group to new values
-        for key, value in defaults:
+        for key, value in defaults.items():
             setattr(group, key, value)
 
         # Set parent on create only
