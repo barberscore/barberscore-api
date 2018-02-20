@@ -59,8 +59,10 @@ class User(AbstractBaseUser):
 
     person = models.OneToOneField(
         'Person',
-        related_name='newuser',
-        on_delete=models.CASCADE,
+        related_name='user',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     account_id = models.CharField(

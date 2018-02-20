@@ -233,7 +233,7 @@ class Entry(TimeStampedModel):
             # For Judges
             all([
                 self.session.convention.assignments.filter(
-                    person__newuser=request.user,
+                    person__user=request.user,
                     category__lt=10,
                     kind=10,
                 ),
@@ -241,7 +241,7 @@ class Entry(TimeStampedModel):
             # For Groups
             all([
                 self.group.officers.filter(
-                    person__newuser=request.user,
+                    person__user=request.user,
                     status__gt=0,
                 ),
                 self.status < self.STATUS.approved,

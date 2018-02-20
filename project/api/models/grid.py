@@ -159,7 +159,7 @@ class Grid(TimeStampedModel):
         return True
         # return any([
         #     self.round.session.convention.assignments.filter(
-        #         person__newuser=request.user,
+        #         person__user=request.user,
         #         category__lt=30,
         #         kind=10,
         #     ),

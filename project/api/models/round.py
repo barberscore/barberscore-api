@@ -146,7 +146,7 @@ class Round(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.session.convention.assignments.filter(
-                person__newuser=request.user,
+                person__user=request.user,
                 category__in=[
                     10,
                     20,

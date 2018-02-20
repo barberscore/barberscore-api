@@ -274,7 +274,7 @@ class Session(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person__newuser=request.user,
+                person__user=request.user,
                 category__lt=30,
                 kind=10,
             ),

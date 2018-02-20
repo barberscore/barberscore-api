@@ -539,7 +539,7 @@ class Group(TimeStampedModel):
         return any([
             all([
                 self.officers.filter(
-                    person__newuser=request.user,
+                    person__user=request.user,
                     status__gt=0,
                 ),
                 self.status > 0,

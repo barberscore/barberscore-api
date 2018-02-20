@@ -303,15 +303,6 @@ class Person(TimeStampedModel):
             self.first_name[0].upper(),
         )
 
-    # Person FKs
-    # user = models.OneToOneField(
-    #     'User',
-    #     related_name='people',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
     # Internals
     objects = PersonManager()
 

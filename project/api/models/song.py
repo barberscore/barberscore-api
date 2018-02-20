@@ -243,7 +243,7 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         assi = bool(self.appearance.competitor.session.convention.assignments.filter(
-            person__newuser=request.user,
+            person__user=request.user,
             status__gt=0,
         ))
         return assi
@@ -258,7 +258,7 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         assi = bool(self.appearance.competitor.session.convention.assignments.filter(
-            person__newuser=request.user,
+            person__user=request.user,
             status__gt=0,
         ))
         return assi

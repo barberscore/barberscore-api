@@ -224,7 +224,7 @@ class Member(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.officers.filter(
-                person__newuser=request.user,
+                person__user=request.user,
                 status__gt=0,
             ),
             request.user.is_session_manager,
