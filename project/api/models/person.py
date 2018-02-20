@@ -352,7 +352,7 @@ class Person(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.user == request.user,
+            self == request.user.person,
         ])
 
     # Transitions
