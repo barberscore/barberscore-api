@@ -335,15 +335,6 @@ class Group(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='groups',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        db_index=True,
-    )
-
     # Denormalizations
     tree_sort = models.IntegerField(
         unique=True,

@@ -258,14 +258,6 @@ class Award(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='awards',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     parent = models.ForeignKey(
         'self',
         related_name='children',

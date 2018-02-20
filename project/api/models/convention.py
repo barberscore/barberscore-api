@@ -139,14 +139,6 @@ class Convention(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    organization = models.ForeignKey(
-        'Organization',
-        related_name='conventions',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "convention"
