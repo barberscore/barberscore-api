@@ -304,19 +304,19 @@ class Command(BaseCommand):
         # Create Core Officers
         scjc_officer = OfficerFactory(
             office=scjc_office,
-            person=scjc_person,
+            person=admin_person,
             group=international,
             status=Officer.STATUS.active,
         )
         drcj_alpha_officer = OfficerFactory(
             office=drcj_office,
-            person=drcj_person,
+            person=admin_person,
             group=district_alpha,
             status=Officer.STATUS.active,
         )
         ca_officer = OfficerFactory(
             office=ca_office,
-            person=ca_person,
+            person=admin_person,
             group=international,
             status=Officer.STATUS.active,
         )
@@ -340,13 +340,13 @@ class Command(BaseCommand):
         )
         chapter_president = OfficerFactory(
             office=chorus_manager,
-            person=chorus_admin_person,
+            person=admin_person,
             group=chorus_1,
             status=Officer.STATUS.active,
         )
         quartet_one_manager = OfficerFactory(
             office=quartet_1_manager,
-            person=quartet_admin_person,
+            person=admin_person,
             group=quartet_1,
             status=Officer.STATUS.active,
         )
@@ -438,12 +438,12 @@ class Command(BaseCommand):
         AssignmentFactory(
             category=Assignment.CATEGORY.drcj,
             convention=district_alpha_fall_convention,
-            person=drcj_person,
+            person=admin_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.ca,
             convention=district_alpha_fall_convention,
-            person=ca_person,
+            person=admin_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.music,
@@ -463,12 +463,12 @@ class Command(BaseCommand):
         AssignmentFactory(
             category=Assignment.CATEGORY.drcj,
             convention=district_alpha_spring_convention,
-            person=drcj_person,
+            person=admin_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.ca,
             convention=district_alpha_spring_convention,
-            person=ca_person,
+            person=admin_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.music,
@@ -488,12 +488,12 @@ class Command(BaseCommand):
         AssignmentFactory(
             category=Assignment.CATEGORY.drcj,
             convention=international_midwinter_convention,
-            person=drcj_person,
+            person=admin_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.ca,
             convention=international_midwinter_convention,
-            person=ca_person,
+            person=admin_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.music,
@@ -535,7 +535,7 @@ class Command(BaseCommand):
         member_quartet_admin = MemberFactory(
             part=Member.PART.lead,
             group=quartet_1,
-            person=quartet_admin_person,
+            person=admin_person,
         )
         member_quartet_tenor = MemberFactory(
             part=Member.PART.tenor,
@@ -555,12 +555,12 @@ class Command(BaseCommand):
         member_chorus_admin = MemberFactory(
             part=Member.PART.lead,
             group=chorus_1,
-            person=chorus_admin_person,
+            person=admin_person,
         )
         member_quartet_2_admin = MemberFactory(
             part=Member.PART.lead,
             group=quartet_2,
-            person=quartet_admin_person,
+            person=admin_person,
         )
         member_quartet_2_tenor = MemberFactory(
             part=Member.PART.tenor,
@@ -580,7 +580,7 @@ class Command(BaseCommand):
         member_quartet_3_admin = MemberFactory(
             part=Member.PART.lead,
             group=quartet_3,
-            person=quartet_admin_person,
+            person=admin_person,
         )
         member_quartet_3_tenor = MemberFactory(
             part=Member.PART.tenor,
@@ -765,7 +765,7 @@ class Command(BaseCommand):
         spring_quartet_3_entry.save()
         chorus_entry.approve()
         chorus_entry.save()
-
+        return
         # Close sessions
         international_midwinter_convention_quartet_session.close()
         international_midwinter_convention_quartet_session.save()
