@@ -695,6 +695,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             AwardInline,
             OfficerInline,
             ConventionInline,
+            StateLogInline,
         ],
         'District': [
             AwardInline,
@@ -702,22 +703,27 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             ConventionInline,
             ActiveChapterInline,
             ActiveQuartetInline,
+            StateLogInline,
         ],
         'Noncompetitive': [
             OfficerInline,
             GroupInline,
+            StateLogInline,
         ],
         'Affiliate': [
             OfficerInline,
             GroupInline,
+            StateLogInline,
         ],
         'Division': [
             AwardInline,
             ActiveChapterInline,
             ActiveQuartetInline,
+            StateLogInline,
         ],
         'Chapter': [
             ActiveChorusInline,
+            StateLogInline,
         ],
         'Chorus': [
             OfficerInline,
@@ -725,6 +731,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             RepertoryInline,
             EntryInline,
             CompetitorInline,
+            StateLogInline,
         ],
         'Quartet': [
             OfficerInline,
@@ -732,6 +739,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             RepertoryInline,
             EntryInline,
             CompetitorInline,
+            StateLogInline,
         ],
     }
 
