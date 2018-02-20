@@ -85,7 +85,7 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} users.".format(t))
 
         # Sync Accounts
-        # t = User.objects.update_accounts(cursor=cursor)
-        # self.stdout.write("Queued {0} accounts.".format(t))
+        t = User.objects.update_accounts(cursor=cursor)
+        self.stdout.write("Queued {0} accounts.".format(t))
 
         self.stdout.write("Complete.")
