@@ -6,6 +6,7 @@ import uuid
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.decorators import fsm_log_description
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
@@ -41,7 +42,7 @@ class Officer(TimeStampedModel):
     status = FSMIntegerField(
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
-        default=STATUS.active,
+        default=STATUS.new,
     )
 
     start_date = models.DateField(
@@ -129,11 +130,13 @@ class Officer(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
+    @fsm_log_description
     @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
+    def activate(self, description=None, *args, **kwargs):
         return
 
     @fsm_log_by
+    @fsm_log_description
     @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
+    def deactivate(self, description=None, *args, **kwargs):
         return

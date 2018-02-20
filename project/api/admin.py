@@ -800,6 +800,8 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         BHSListFilter,
+        'group__kind',
+        'group__status',
         'part',
         'inactive_date',
         'inactive_reason',
@@ -858,9 +860,13 @@ class OfficeAdmin(admin.ModelAdmin):
 
 
 @admin.register(Officer)
-class OfficerAdmin(admin.ModelAdmin):
+class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     def office__code(self, obj):
         return "{0}".format(obj.office.short_name)
+
+    fsm_field = [
+        'status',
+    ]
 
     fields = [
         'status',
@@ -893,6 +899,10 @@ class OfficerAdmin(admin.ModelAdmin):
         'status',
         BHSListFilter,
         OfficeListFilter,
+        'group__kind',
+    ]
+    inlines = [
+        StateLogInline,
     ]
     search_fields = [
         'nomen',
