@@ -120,7 +120,7 @@ class Assignment(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 category__lt=20,
                 status__gt=0,
             )

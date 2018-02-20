@@ -179,7 +179,7 @@ class Convention(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.officers.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 status__gt=0,
             ),
         ])

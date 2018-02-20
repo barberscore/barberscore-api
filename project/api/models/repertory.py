@@ -101,7 +101,7 @@ class Repertory(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.group.officers.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 status__gt=0,
             ),
             request.user.is_convention_manager,
@@ -124,7 +124,7 @@ class Repertory(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.officers.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 status__gt=0,
             ),
             request.user.is_convention_manager,

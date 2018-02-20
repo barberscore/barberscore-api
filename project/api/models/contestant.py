@@ -237,12 +237,12 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.contest.session.convention.assignments.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 category__lte=10,
                 kind=10,
             ),
             self.entry.group.officers.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 status__gt=0,
             ),
         ])

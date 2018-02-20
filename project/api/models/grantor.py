@@ -100,7 +100,7 @@ class Grantor(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.convention.assignments.filter(
-                person__user=request.user,
+                person__newuser=request.user,
                 category__lt=30,
                 kind=10,
             ),

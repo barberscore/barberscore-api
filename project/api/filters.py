@@ -248,7 +248,7 @@ class AwardFilter(FilterSet):
             'group__officers__office__short_name': [
                 'exact',
             ],
-            'group__officers__person__user': [
+            'group__officers__person__newuser': [
                 'exact',
             ],
             'group__officers__office__is_award_manager': [
@@ -299,10 +299,10 @@ class ConventionFilter(FilterSet):
             'year': [
                 'exact',
             ],
-            'assignments__person__user': [
+            'assignments__person__newuser': [
                 'exact',
             ],
-            'group__officers__person__user': [
+            'group__officers__person__newuser': [
                 'exact',
             ],
             'assignments__kind': [
@@ -375,10 +375,10 @@ class GroupFilter(FilterSet):
             'parent': [
                 'exact',
             ],
-            'members__person__user': [
+            'members__person__newuser': [
                 'exact',
             ],
-            'officers__person__user': [
+            'officers__person__newuser': [
                 'exact',
             ],
             'nomen': [
@@ -408,7 +408,7 @@ class MemberFilter(FilterSet):
             'group': [
                 'exact',
             ],
-            'person__user': [
+            'person__newuser': [
                 'exact',
             ],
             'status': [
@@ -466,7 +466,7 @@ class PersonFilter(FilterSet):
             'status': [
                 'exact',
             ],
-            'user': [
+            'newuser': [
                 'exact',
             ],
             'officers__office__kind': [
@@ -485,7 +485,7 @@ class RoundFilter(FilterSet):
             'session__convention__status': [
                 'exact',
             ],
-            'session__convention__assignments__person__user': [
+            'session__convention__assignments__person__newuser': [
                 'exact',
             ],
             'session__convention__year': [
@@ -509,8 +509,8 @@ class ScoreFilter(FilterSet):
 
 
 class SessionFilter(FilterSet):
-    convention__assignments__person__user = UUIDFilter(
-        field_name='convention__assignments__person__user',
+    convention__assignments__person__newuser = UUIDFilter(
+        field_name='convention__assignments__person__newuser',
         lookup_expr='exact',
         distinct=True,
     )
@@ -557,7 +557,7 @@ class SessionFilter(FilterSet):
             'is_invitational',
             'convention__status',
             'nomen__icontains',
-            'convention__assignments__person__user',
+            'convention__assignments__person__newuser',
             'convention__assignments__kind',
             'convention__assignments__category',
         ]

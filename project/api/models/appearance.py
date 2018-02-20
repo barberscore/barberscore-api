@@ -238,7 +238,7 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         assi = bool(self.competitor.session.convention.assignments.filter(
-            person__user=request.user,
+            person__newuser=request.user,
             status__gt=0,
         ))
         return assi
@@ -253,7 +253,7 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         assi = bool(self.competitor.session.convention.assignments.filter(
-            person__user=request.user,
+            person__newuser=request.user,
             status__gt=0,
         ))
         return assi
