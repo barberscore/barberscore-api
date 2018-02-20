@@ -978,7 +978,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         ('first_name', 'middle_name', 'last_name', 'nick_name',),
         'status',
-        'user',
+        # 'user',
         'email',
         'is_deceased',
         'bhs_id',
@@ -1037,9 +1037,9 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'email',
     )
 
-    autocomplete_fields = [
-        'user',
-    ]
+    # autocomplete_fields = [
+    #     'user',
+    # ]
 
     save_on_top = True
 
@@ -1363,18 +1363,25 @@ class UserAdmin(BaseUserAdmin):
         'name',
         'person',
         'is_staff',
-        # 'account_id',
+        'account_id',
         'status',
     ]
 
     # list_editable = [
     #     'account_id',
     # ]
+    list_select_related = [
+        'person',
+    ]
 
     # list_display_links = [
     #     'email',
     #     'person',
     # ]
+
+    autocomplete_fields = [
+        'person',
+    ]
 
     list_filter = (
         'status',
@@ -1389,6 +1396,7 @@ class UserAdmin(BaseUserAdmin):
                 'name',
                 'status',
                 'email',
+                'person',
                 'account_id',
                 'is_staff',
                 'is_group_manager',
@@ -1404,6 +1412,7 @@ class UserAdmin(BaseUserAdmin):
                 'name',
                 'status',
                 'email',
+                'person',
                 'account_id',
                 'is_staff',
             )

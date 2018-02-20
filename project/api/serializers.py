@@ -537,7 +537,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'members',
             'officers',
             'panelists',
-            'user',
+            # 'user',
             'permissions',
         )
         read_only_fields = [
@@ -702,7 +702,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'name',
             'is_staff',
-            'person',
+            # 'person',
             'permissions',
             'is_convention_manager',
             'is_session_manager',

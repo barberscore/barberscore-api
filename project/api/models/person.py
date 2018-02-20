@@ -304,13 +304,13 @@ class Person(TimeStampedModel):
         )
 
     # Person FKs
-    user = models.OneToOneField(
-        'User',
-        related_name='person',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # user = models.OneToOneField(
+    #     'User',
+    #     related_name='people',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     # Internals
     objects = PersonManager()
