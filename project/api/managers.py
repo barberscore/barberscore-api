@@ -227,6 +227,7 @@ class GroupManager(Manager):
         return group, created
 
     def sort_tree(self):
+        self.all().update(tree_sort=None)
         root = self.get(kind=self.model.KIND.international)
         i = 1
         root.tree_sort = i
