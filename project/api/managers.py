@@ -346,6 +346,30 @@ class MemberManager(Manager):
             else:
                 raise ValueError('Unknown status')
             person.save()
+        # Transition the person and save record if BHS group
+        if group.kind == group.KIND.quartet:
+            # Transition as appropriate
+            Office = apps.get_model('api.office')
+            Officer = apps.get_model('api.officer')
+            office = Office.objects.get(
+                name='Quartet Manager',
+            )
+            officer = Officer.objects.get(
+                person=person,
+                group=group,
+                office=office,
+            )
+            if status == self.model.STATUS.active:
+                officer.activate(
+                    description=description,
+                )
+            elif status == self.model.STATUS.inactive:
+                officer.deactivate(
+                    description=description,
+                )
+            else:
+                raise ValueError('Unknown status')
+            officer.save()
         # Finally, save the record.
         member.save()
         return
@@ -403,7 +427,7 @@ class OfficerManager(Manager):
         )
         return officer, created
 
-    def update_or_create_from_member(self, member, **kwargs):
+    def update_or_create_from_member(self, member, is_object=False):
         if member.group.kind != member.group.KIND.quartet:
             raise ValueError("Must be quartet record.")
         # Set Status
@@ -430,44 +454,9 @@ class OfficerManager(Manager):
         )
         return officer, created
 
-    def update_or_create_from_join_object(self, join, **kwargs):
-        bhs_pk = join[0]
-        # status = join[1] #OVERRIDE
-        group = join[2]
-        person = join[3]
-        inactive_date = join[4]
-
-        if inactive_date:
-            status = self.model.STATUS.inactive
-        else:
-            status = self.model.STATUS.active
-
-        # Get group
-        Group = apps.get_model('api.group')
-        group = Group.objects.get(bhs_pk=group)
-        # Get person
-        Person = apps.get_model('api.person')
-        person = Person.objects.get(bhs_pk=person)
-        # Get office
-        Office = apps.get_model('api.office')
-        office = Office.objects.get(name='Quartet Manager')
-
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'bhs_pk': bhs_pk,
-        }
-        officer, created = self.update_or_create(
-            person=person,
-            group=group,
-            office=office,
-            defaults=defaults,
-        )
-        return officer, created
-
 
 class PersonManager(Manager):
-    def update_or_create_from_human(self, human, is_object=False, **kwargs):
+    def update_or_create_from_human(self, human, is_object=False):
         # Map between object/instance
         if is_object:
             bhs_pk = human[0]
@@ -566,7 +555,7 @@ class PersonManager(Manager):
             person.save()
         return person, created
 
-    def update_users(self, cursor=None, *args, **kwargs):
+    def update_users(self, cursor=None):
         # Get Base
         persons = self.filter(
             email__isnull=False,
@@ -587,14 +576,25 @@ class PersonManager(Manager):
             django_rq.enqueue(
                 User.objects.update_or_create_from_person,
                 person,
+                is_object=False,
             )
         return persons.count()
 
 
 class UserManager(BaseUserManager):
-
-    def update_or_create_from_person(self, person, **kwargs):
-        if not person.email:
+    def update_or_create_from_person(self, person, is_object=False):
+        # mapping
+        Person = apps.get_model('api.person')
+        if is_object:
+            email = person[0]
+            nomen = person[1]
+            person = Person.objects.get(id=person[2])
+        else:
+            email = person.email
+            nomen = person.nomen
+        # Should fix this
+        status = self.model.STATUS.active
+        if not email:
             raise ValidationError("Person must have email")
         created = False
         try:
@@ -602,21 +602,20 @@ class UserManager(BaseUserManager):
         except self.model.DoesNotExist:
             created = True
             user = self.create_user(
-                email=person.email,
-                name=person.nomen,
-                # Should fix this when able
-                status=self.model.STATUS.active,
+                email=email,
+                name=nomen,
+                status=status,
             )
             person.user = user
             person.save()
             return user, created
-        user.email = person.email
-        user.name = person.nomen
+        user.email = email
+        user.name = nomen
         # Same here
-        user.status = self.model.STATUS.active
+        user.status = status
         return user, created
 
-    def update_accounts(self, cursor=None, *args, **kwargs):
+    def update_accounts(self, cursor=None):
         # Get Base
         users = self.filter(
             status=self.model.STATUS.active,
@@ -631,7 +630,7 @@ class UserManager(BaseUserManager):
             update_or_create_account_from_user.delay(user)
         return users.count()
 
-    def delete_orphans(self, *args, **kwargs):
+    def delete_orphans(self):
         accounts = get_accounts()
         users = list(self.filter(
             account_id__isnull=False

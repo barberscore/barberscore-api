@@ -76,19 +76,16 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Roles
-        # t = Role.objects.update_chapter_officers(cursor=cursor)
-        # self.stdout.write("Queued {0} chapter officers.".format(t))
+        t = Role.objects.update_chapter_officers(cursor=cursor)
+        self.stdout.write("Queued {0} chapter officers.".format(t))
         self.stdout.write("BYPASSED chapter officers.")
-        # t = Join.objects.update_quartet_officers(cursor=cursor)
-        # self.stdout.write("Queued {0} quartet officers.".format(t))
 
         # Sync Users
         t = Person.objects.update_users(cursor=cursor)
         self.stdout.write("Queued {0} users.".format(t))
 
         # Sync Accounts
-        t = User.objects.update_accounts(cursor=cursor)
-        self.stdout.write("Queued {0} accounts.".format(t))
-
+        # t = User.objects.update_accounts(cursor=cursor)
+        # self.stdout.write("Queued {0} accounts.".format(t))
 
         self.stdout.write("Complete.")

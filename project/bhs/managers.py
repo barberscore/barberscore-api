@@ -118,7 +118,7 @@ class StructureManager(Manager):
 
 
 class RoleManager(Manager):
-    def update_chapter_officers(self, cursor=None, active_only=True, *args, **kwargs):
+    def update_chapter_officers(self, cursor=None, active_only=True):
         # Get base
         roles = self.exclude(
             name='Quartet Admin',
@@ -157,7 +157,7 @@ class RoleManager(Manager):
 
 
 class JoinManager(Manager):
-    def update_members(self, rebuild=False, *args, **kwargs):
+    def update_members(self, rebuild=False):
         Member = apps.get_model('api.member')
         cursor = Member.objects.filter(
             bhs_pk__isnull=False,
@@ -201,41 +201,5 @@ class JoinManager(Manager):
                 Member.objects.create_from_join,
                 join,
                 is_object=True,
-            )
-        return joins.count()
-
-    def update_quartet_officers(self, cursor=None, active_only=True, *args, **kwargs):
-        # Get base
-        joins = self.filter(
-            structure__kind='quartet',
-        )
-        # Filter if cursored
-        if active_only:
-            joins = joins.filter(
-                structure__status__name='active',
-            )
-        # Filter if cursored
-        if cursor:
-            joins = joins.filter(
-                updated_ts__gt=cursor,
-            )
-        # Order and Return as objects
-        joins = joins.order_by(
-            'established_date',
-            '-inactive_date',
-        ).values_list(
-            'id',
-            'status',
-            'structure',
-            'subscription__human',
-            'inactive_date',
-        )
-
-        # Creating/Update Officers
-        Officer = apps.get_model('api.officer')
-        for join in joins:
-            django_rq.enqueue(
-                Officer.objects.update_or_create_from_join_object,
-                join,
             )
         return joins.count()
