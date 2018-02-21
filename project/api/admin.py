@@ -227,7 +227,10 @@ class AwardAdmin(admin.ModelAdmin):
 
 
 @admin.register(Chart)
-class ChartAdmin(admin.ModelAdmin):
+class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
 
     fields = [
         'nomen',
@@ -270,6 +273,7 @@ class ChartAdmin(admin.ModelAdmin):
 
     inlines = [
         RepertoryInline,
+        StateLogInline,
     ]
 
     readonly_fields = [
