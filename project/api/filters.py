@@ -28,24 +28,24 @@ from .models import Session
 from .models import Venue
 
 
-class BHSListFilter(admin.SimpleListFilter):
-    title = 'BHS'
-    parameter_name = 'is_bhs'
+class MCListFilter(admin.SimpleListFilter):
+    title = 'Member Center'
+    parameter_name = 'is_mc'
 
     def lookups(self, request, model_admin):
         return (
-            ('BHS', 'Yes'),
-            ('NotBHS', 'No'),
+            ('MC', 'Yes'),
+            ('NotMC', 'No'),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'BHS':
+        if self.value() == 'MC':
             return queryset.filter(
-                bhs_pk__isnull=False,
+                mc_pk__isnull=False,
             )
-        if self.value() == 'NotBHS':
+        if self.value() == 'NotMC':
             return queryset.filter(
-                bhs_pk__isnull=True,
+                mc_pk__isnull=True,
             )
 
 

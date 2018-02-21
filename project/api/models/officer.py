@@ -55,7 +55,7 @@ class Officer(TimeStampedModel):
         blank=True,
     )
 
-    bhs_pk = models.UUIDField(
+    mc_pk = models.UUIDField(
         null=True,
         blank=True,
         unique=True,
@@ -82,6 +82,11 @@ class Officer(TimeStampedModel):
     )
 
     objects = OfficerManager()
+
+    # Properties
+    @property
+    def is_mc(self):
+        return bool(self.mc_pk)
 
     # Internals
     class Meta:

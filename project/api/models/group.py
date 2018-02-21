@@ -14,7 +14,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -23,8 +23,6 @@ from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
 from api.storages import CustomMediaCloudinaryStorage
 
-api = api_apps.get_app_config('api')
-bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
 
@@ -318,7 +316,7 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    bhs_pk = models.UUIDField(
+    mc_pk = models.UUIDField(
         null=True,
         blank=True,
         # unique=True,
@@ -376,6 +374,11 @@ class Group(TimeStampedModel):
         default=False,
     )
 
+    # Properties
+    @property
+    def is_mc(self):
+        return bool(self.mc_pk)
+
     # Internals
     objects = GroupManager()
 
@@ -389,7 +392,7 @@ class Group(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def clean(self):
-        if self.bhs_pk and self.status == self.STATUS.active:
+        if self.mc_pk and self.status == self.STATUS.active:
             if self.kind == self.KIND.international:
                 if self.parent:
                     raise ValidationError("Toplevel must be Root")
@@ -494,7 +497,7 @@ class Group(TimeStampedModel):
     def get_is_senior(self):
         if self.kind != self.KIND.quartet:
             raise ValueError('Must be quartet')
-        Person = api.get_model('Person')
+        Person = apps.get_model('api.person')
         midwinter = datetime.date(2019, 1, 26)
         persons = Person.objects.filter(
             members__group=self,

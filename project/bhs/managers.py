@@ -51,9 +51,9 @@ class HumanManager(Manager):
         # Delete Orphans
         Person = apps.get_model('api.person')
         orphans = Person.objects.filter(
-            bhs_pk__isnull=False,
+            mc_pk__isnull=False,
         ).exclude(
-            bhs_pk__in=humans,
+            mc_pk__in=humans,
         )
         t = orphans.count()
         orphans.delete()
@@ -110,9 +110,9 @@ class StructureManager(Manager):
         # Delete Orphans
         Group = apps.get_model('api.group')
         orphans = Group.objects.filter(
-            bhs_pk__isnull=False,
+            mc_pk__isnull=False,
         ).exclude(
-            bhs_pk__in=structures,
+            mc_pk__in=structures,
         )
         t = orphans.count()
         orphans.delete()
@@ -124,7 +124,7 @@ class RoleManager(Manager):
         # Get the cursor
         Officer = apps.get_model('api.officer')
         cursor = Officer.objects.filter(
-            bhs_pk__isnull=False,
+            mc_pk__isnull=False,
         ).latest('created').created
 
         # Get base, excluding Quartets
@@ -163,7 +163,7 @@ class JoinManager(Manager):
     def update_members(self, rebuild=False):
         Member = apps.get_model('api.member')
         cursor = Member.objects.filter(
-            bhs_pk__isnull=False,
+            mc_pk__isnull=False,
         ).latest('created').created
         # Get base
         joins = self.select_related(

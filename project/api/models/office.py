@@ -75,7 +75,7 @@ class Office(TimeStampedModel):
         blank=True,
     )
 
-    bhs_pk = models.UUIDField(
+    mc_pk = models.UUIDField(
         null=True,
         blank=True,
         unique=True,
@@ -114,6 +114,11 @@ class Office(TimeStampedModel):
     is_chart_manager = models.BooleanField(
         default=False,
     )
+
+    # Properties
+    @property
+    def is_mc(self):
+        return bool(self.mc_pk)
 
     # Office Methods
     def save(self, *args, **kwargs):

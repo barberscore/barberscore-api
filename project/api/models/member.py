@@ -152,7 +152,7 @@ class Member(TimeStampedModel):
         blank=True,
     )
 
-    bhs_pk = models.UUIDField(
+    mc_pk = models.UUIDField(
         null=True,
         blank=True,
         unique=True,
@@ -172,6 +172,11 @@ class Member(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    # Properties
+    @property
+    def is_mc(self):
+        return bool(self.mc_pk)
+
     # Internals
     objects = MemberManager()
 
@@ -184,12 +189,12 @@ class Member(TimeStampedModel):
         resource_name = "member"
 
     def __str__(self):
-        return "; ".join([
+        return "; ".join(filter(None, [
             self.person.full_name,
             self.get_part_display(),
             self.group.name,
             self.get_status_display(),
-        ])
+        ]))
 
     def clean(self):
         pass

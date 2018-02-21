@@ -9,7 +9,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
-from .filters import BHSListFilter
+from .filters import MCListFilter
 from .filters import AccountListFilter
 from .filters import OfficeListFilter
 from .filters import ConventionGroupListFilter
@@ -622,15 +622,15 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
-
     fields = [
         'id',
+        'is_mc',
         'name',
         'status',
         'kind',
         'gender',
         'is_senior',
-        ('bhs_id', 'bhs_pk', 'code',),
+        ('bhs_id', 'mc_pk', 'code',),
         'parent',
         ('international', 'district', 'division', 'chapter',),
         'location',
@@ -647,7 +647,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        BHSListFilter,
+        MCListFilter,
         'kind',
         'gender',
         DistrictListFilter,
@@ -661,6 +661,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'name',
+        'is_mc',
         'kind',
         'gender',
         'parent',
@@ -674,6 +675,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = [
         'id',
+        'is_mc',
         'nomen',
         'international',
         'district',
@@ -763,6 +765,11 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         for inline in self.get_inline_instances(request, obj):
             yield inline.get_formset(request, obj)
 
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
 
 @admin.register(Member)
 class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -771,11 +778,13 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     fields = [
+        'id',
+        'is_mc',
         'status',
         'group',
         'person',
         'part',
-        'bhs_pk',
+        'mc_pk',
         'inactive_date',
         'inactive_reason',
         'sub_status',
@@ -786,11 +795,14 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_display = [
         'status',
+        'is_mc',
         'person',
         'group',
         'part',
     ]
     readonly_fields = [
+        'id',
+        'is_mc',
         'part',
         'inactive_date',
         'inactive_reason',
@@ -811,7 +823,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_filter = [
         'status',
-        BHSListFilter,
+        MCListFilter,
         'group__kind',
         'group__status',
         'part',
@@ -831,11 +843,34 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
 
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
 
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'name',
+        'is_mc',
+        'short_name',
+        'kind',
+        'mc_pk',
+        'is_convention_manager',
+        'is_session_manager',
+        'is_scoring_manager',
+        'is_group_manager',
+        'is_person_manager',
+        'is_award_manager',
+        'is_judge_manager',
+        'is_chart_manager',
+    ]
+
     list_display = [
         'name',
+        'is_mc',
         'short_name',
         'kind',
         'is_convention_manager',
@@ -852,10 +887,15 @@ class OfficeAdmin(admin.ModelAdmin):
         'short_name',
     ]
 
+    readonly_fields = [
+        'id',
+        'is_mc',
+    ]
+
     list_filter = [
         'status',
         'kind',
-        BHSListFilter,
+        MCListFilter,
         'is_convention_manager',
         'is_session_manager',
         'is_scoring_manager',
@@ -870,6 +910,11 @@ class OfficeAdmin(admin.ModelAdmin):
         OfficerInline,
     ]
 
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
 
 @admin.register(Officer)
 class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -881,16 +926,19 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     fields = [
+        'id',
+        'is_mc',
         'status',
         'person',
         'office',
         'group',
         'start_date',
         'end_date',
-        'bhs_pk'
+        'mc_pk'
     ]
 
     list_display = [
+        'is_mc',
         'person',
         'office',
         'office__code',
@@ -900,6 +948,8 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
     readonly_fields = [
+        'id',
+        'is_mc',
         office__code,
     ]
     list_select_related = [
@@ -909,7 +959,7 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_filter = [
         'status',
-        BHSListFilter,
+        MCListFilter,
         OfficeListFilter,
         'group__kind',
     ]
@@ -927,6 +977,11 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = [
         'group__tree_sort',
     ]
+
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
 
 
 @admin.register(Panelist)
@@ -982,11 +1037,11 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         ('first_name', 'middle_name', 'last_name', 'nick_name',),
         'status',
-        # 'user',
+        'is_mc',
         'email',
         'is_deceased',
         'bhs_id',
-        'bhs_pk',
+        'mc_pk',
         'current_through',
         'birth_date',
         'part',
@@ -1005,9 +1060,10 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'nomen',
+        'is_mc',
         'email',
         'bhs_id',
-        # 'bhs_pk',
+        # 'mc_pk',
         'current_through',
         'part',
         'gender',
@@ -1018,7 +1074,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        BHSListFilter,
+        MCListFilter,
         'gender',
         'part',
         'is_deceased',
@@ -1026,6 +1082,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
+        'is_mc',
         'nomen',
         'current_through',
         'created',
@@ -1057,6 +1114,10 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     # readonly_fields = [
     #     'common_name',
     # ]
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
 
 
 @admin.register(Repertory)

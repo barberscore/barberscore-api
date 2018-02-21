@@ -257,7 +257,7 @@ class Person(TimeStampedModel):
         unique=True,
     )
 
-    bhs_pk = models.UUIDField(
+    mc_pk = models.UUIDField(
         null=True,
         blank=True,
         unique=True,
@@ -269,6 +269,11 @@ class Person(TimeStampedModel):
         blank=True,
         editable=False,
     )
+
+    # Properties
+    @property
+    def is_mc(self):
+        return bool(self.mc_pk)
 
     @cached_property
     def full_name(self):

@@ -12,7 +12,7 @@ class Command(BaseCommand):
         quartets = Group.objects.filter(
             kind=Group.KIND.quartet,
             status__gt=0,
-            bhs_pk__isnull=False,
+            mc_pk__isnull=False,
         )
 
         for quartet in quartets:

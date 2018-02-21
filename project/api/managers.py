@@ -34,7 +34,7 @@ class GroupManager(Manager):
     def update_or_create_from_structure(self, structure, is_object=False):
         # Map between object/instance
         if is_object:
-            bhs_pk = structure[0]
+            mc_pk = structure[0]
             raw_name = structure[1]
             preferred_name = structure[2]
             chorus_name = structure[3]
@@ -50,7 +50,7 @@ class GroupManager(Manager):
             parent = structure[13]
             code = structure[14]
         else:
-            bhs_pk = structure.id
+            mc_pk = structure.id
             raw_name = structure.name
             preferred_name = structure.preferred_name
             chorus_name = structure.chorus_name
@@ -146,7 +146,7 @@ class GroupManager(Manager):
             'mem_status': mem_status,
         }
         group, created = self.get_or_create(
-            bhs_pk=bhs_pk,
+            mc_pk=mc_pk,
         )
 
         # set prior values
@@ -184,7 +184,7 @@ class GroupManager(Manager):
                     kind=kind,
                 )
             else:
-                parent = self.get(bhs_pk=parent)
+                parent = self.get(mc_pk=parent)
             group.parent = parent
 
         # Build the diff from prior to new
@@ -263,7 +263,7 @@ class MemberManager(Manager):
     def create_from_join(self, join, is_object=False):
         # Map variables
         if is_object:
-            bhs_pk = join[0]
+            mc_pk = join[0]
             structure = join[1]
             person = join[2]
             inactive_date = join[3]
@@ -275,7 +275,7 @@ class MemberManager(Manager):
             mem_code = join[9]
             mem_status = join[10]
         else:
-            bhs_pk = join.id
+            mc_pk = join.id
             structure = join.structure
             person = join.subscription.human
             inactive_date = join.inactive_date
@@ -328,13 +328,13 @@ class MemberManager(Manager):
         Group = apps.get_model('api.group')
         try:
             group = Group.objects.get(
-                bhs_pk=structure,
+                mc_pk=structure,
             )
         except Group.DoesNotExist:
             return
         Person = apps.get_model('api.person')
         person = Person.objects.get(
-            bhs_pk=person,
+            mc_pk=person,
         )
 
         # get or create
@@ -344,13 +344,13 @@ class MemberManager(Manager):
         )
 
         # Skip duplicates
-        if member.bhs_pk == bhs_pk:
+        if member.mc_pk == mc_pk:
             return
 
         # Instantiate prior values dictionary
         prior = {}
-        if member.bhs_pk:
-            prior['bhs_pk'] = str(member.bhs_pk)
+        if member.mc_pk:
+            prior['mc_pk'] = str(member.mc_pk)
         if member.sub_status:
             prior['sub_status'] = member.get_sub_status_display()
         if member.current_through:
@@ -369,7 +369,7 @@ class MemberManager(Manager):
             prior['mem_status'] = member.get_mem_status_display()
 
         # Update the fields
-        member.bhs_pk = bhs_pk
+        member.mc_pk = mc_pk
         member.inactive_date = inactive_date
         member.inactive_reason = inactive_reason
         member.part = part
@@ -445,14 +445,14 @@ class OfficerManager(Manager):
     def update_or_create_from_role(self, role, is_object=False):
         # Map
         if is_object:
-            bhs_pk = role[0]
+            mc_pk = role[0]
             office = role[1]
             group = role[2]
             person = role[3]
             start_date = role[4]
             end_date = role[5]
         else:
-            bhs_pk = role.id
+            mc_pk = role.id
             office = role.name
             group = role.structure
             person = role.human
@@ -470,10 +470,10 @@ class OfficerManager(Manager):
 
         # Get group
         Group = apps.get_model('api.group')
-        group = Group.objects.get(bhs_pk=group)
+        group = Group.objects.get(mc_pk=group)
         # Get person
         Person = apps.get_model('api.person')
-        person = Person.objects.get(bhs_pk=person)
+        person = Person.objects.get(mc_pk=person)
         # Get office
         Office = apps.get_model('api.office')
         office = Office.objects.get(name=office)
@@ -483,7 +483,7 @@ class OfficerManager(Manager):
             'status': status,
             'start_date': start_date,
             'end_date': end_date,
-            'bhs_pk': bhs_pk,
+            'mc_pk': mc_pk,
         }
         officer, created = self.update_or_create(
             person=person,
@@ -498,7 +498,7 @@ class PersonManager(Manager):
     def update_or_create_from_human(self, human, is_object=False):
         # Map between object/instance
         if is_object:
-            bhs_pk = human[0]
+            mc_pk = human[0]
             first_name = human[1]
             middle_name = human[2]
             last_name = human[3]
@@ -512,7 +512,7 @@ class PersonManager(Manager):
             gender = human[11]
             part = human[12]
         else:
-            bhs_pk = human.bhs_pk
+            mc_pk = human.mc_pk
             first_name = human.first_name
             middle_name = human.middle_name
             last_name = human.last_name
@@ -578,11 +578,11 @@ class PersonManager(Manager):
         }
         try:
             person, created = self.update_or_create(
-                bhs_pk=bhs_pk,
+                mc_pk=mc_pk,
                 defaults=defaults,
             )
         except IntegrityError:
-            defaults['bhs_pk'] = bhs_pk
+            defaults['mc_pk'] = mc_pk
             defaults.pop('bhs_id', None)
             try:
                 person, created = self.update_or_create(
@@ -590,7 +590,7 @@ class PersonManager(Manager):
                     defaults=defaults,
                 )
             except IntegrityError:
-                defaults['bhs_pk'] = bhs_pk
+                defaults['mc_pk'] = mc_pk
                 defaults['bhs_id'] = bhs_id
                 defaults.pop('email', None)
                 person, created = self.update_or_create(
