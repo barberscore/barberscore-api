@@ -11,12 +11,13 @@ Clone the repo.
 Install the core dependencies:
   - Python 3.6.x
   - PostgreSQL 10.x
+  - MySQL 5.7.x
   - Redis 4.0.x
-  - Pipenv 9.0.x
+  - Pipenv 9.1.x
 
 Use `pipenv` to install python dependencies.
 ```
-pipenv install
+pipenv install --dev
 ```
 
 
@@ -28,6 +29,7 @@ PYTHONPATH=project
 SECRET_KEY=(your secret here)
 
 DATABASE_URL=(your credentials here)
+BHS_DATABASE_URL=(your credentials here)
 REDIS_URL=(your credentials here)
 
 AUTH0_CLIENT_ID=(your credentials here)
@@ -38,6 +40,9 @@ AUTH0_API_SECRET=(your credentials here)
 AUTH0_AUDIENCE=(your credentials here)
 
 CLOUDINARY_URL=(your credentials here)
+
+WKHTMLTOPDF_PATH=/usr/local/bin/wkhtmltopdf (or your path)
+
 ```
 
 Next, set up your local environment:
