@@ -224,23 +224,23 @@ def create_drcj_report(session):
     wb = Workbook()
     ws = wb.active
     fieldnames = [
-        'oa',
-        'group_name',
-        'representing',
-        'evaluation',
-        'private',
-        'bhs_id',
-        'group_status',
-        'repertory_count',
-        'particpant_count',
-        'expiring_count',
-        'tenor',
-        'lead',
-        'baritone',
-        'bass',
-        'directors',
-        'awards',
-        'chapters',
+        'OA',
+        'Group Name',
+        'Eepresenting',
+        'Evaluation?',
+        'Keep Private?',
+        'BHS ID',
+        'Group Status',
+        'Repertory Count',
+        'Estimated MoS',
+        'Members Expiring',
+        'Tenor',
+        'Lead',
+        'Baritone',
+        'Bass',
+        'Director(s)',
+        'Awards',
+        'Chapters',
     ]
     ws.append(fieldnames)
     entries = session.entries.filter(
@@ -262,10 +262,10 @@ def create_drcj_report(session):
         repertory_count = entry.group.repertories.filter(
             status__gt=0,
         ).count()
+        participant_count = entry.mos
         members = entry.group.members.filter(
             status__gt=0,
         )
-        member_count = members.count()
         expiring_count = members.filter(
             person__current_through__lte=session.convention.close_date,
         ).count()
@@ -333,7 +333,7 @@ def create_drcj_report(session):
             bhs_id,
             group_status,
             repertory_count,
-            member_count,
+            participant_count,
             expiring_count,
             parts[1],
             parts[2],
