@@ -675,7 +675,6 @@ class UserManager(BaseUserManager):
             fields=[
                 'name',
                 'email',
-                'status',
             ],
         )
 
