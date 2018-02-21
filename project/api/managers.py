@@ -680,9 +680,8 @@ class UserManager(BaseUserManager):
         )
 
         # Update to new values
-        defaults.pop('status')
-        for key, value in defaults.items():
-            setattr(user, key, value)
+        user.email = email
+        user.name = name
 
         # Build the diff from prior to new
         diff = {}
